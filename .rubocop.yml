@@ -1,0 +1,34 @@
+# rubocop config files for small Rails4/Ruby2 project
+# blog post: http://joanswork.com/rubocop-rails-getting-started/
+
+# .rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.4
+  Include:
+    - Rakefile
+    - config.ru
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/**/*'
+    - 'script/**/*'
+    - 'app/views/**/*.html.erb'
+
+IndentationConsistency:
+  EnforcedStyle: 'rails'
+
+Documentation:
+  Enabled: false
+
+# SpaceInsideHashLiteralBraces:
+#   EnforcedStyle: no_space
+
+# MethodLength:
+#   Max: 20 # revisit
+
+HasAndBelongsToMany: # being used for a reason
+  Enabled: false
+
+# complains about Gemfile
+Naming/FileName:
+  Enabled: false
