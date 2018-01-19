@@ -3,8 +3,5 @@
 inherit_from:
   - ../.rubocop.yml
 
-Blocks:
-  Enabled: false
-
 StringLiterals:
   EnforcedStyle: double_quotes
