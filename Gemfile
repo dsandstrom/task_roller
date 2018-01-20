@@ -41,6 +41,7 @@ group :development, :test do
   gem 'capybara', '~> 2.13'
   gem 'fabrication', '~> 2.19.0'
   gem 'guard', '~> 2.14.2'
+  gem 'guard-bundler', require: false
   gem 'guard-rails', '~> 0.8.1', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'rspec', '~> 3.7.0'
