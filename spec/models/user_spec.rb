@@ -35,4 +35,36 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  # CLASS
+
+  describe ".reporters" do
+    it "includes only Reporters" do
+      user_reporter = Fabricate(:user_reporter)
+      Fabricate(:user_reviewer)
+      Fabricate(:user_worker)
+
+      expect(User.reporters).to eq([user_reporter])
+    end
+  end
+
+  describe ".reviewers" do
+    it "includes only Reviewers" do
+      user_reviewer = Fabricate(:user_reviewer)
+      Fabricate(:user_reporter)
+      Fabricate(:user_worker)
+
+      expect(User.reviewers).to eq([user_reviewer])
+    end
+  end
+
+  describe ".workers" do
+    it "includes only Workers" do
+      user_worker = Fabricate(:user_worker)
+      Fabricate(:user_reporter)
+      Fabricate(:user_reviewer)
+
+      expect(User.workers).to eq([user_worker])
+    end
+  end
 end

@@ -7,3 +7,6 @@ StringLiterals:
   EnforcedStyle: double_quotes
   Exclude:
     - '*_helper.rb'
+
+Metrics/BlockLength:
+  Max: 200
