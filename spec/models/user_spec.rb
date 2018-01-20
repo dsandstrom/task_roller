@@ -15,4 +15,19 @@ RSpec.describe User, type: :model do
   it { is_expected.to respond_to(:name) }
   it { is_expected.to respond_to(:email) }
   it { is_expected.to respond_to(:employee_id) }
+
+  it { is_expected.to belong_to(:employee) }
+
+  describe "#employee" do
+    describe "destroying user" do
+      it "destroys employee" do
+        employee = Fabricate(:employee)
+        user = Fabricate(:user, employee: employee)
+
+        expect do
+          user.destroy
+        end.to change(Employee, :count).by(-1)
+      end
+    end
+  end
 end
