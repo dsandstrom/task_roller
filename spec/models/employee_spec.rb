@@ -16,7 +16,7 @@ RSpec.describe Employee, type: :model do
   describe "#user" do
     describe "destroying employee" do
       it "nullifys employee" do
-        employee = Fabricate(:employee, type: "Reviewer")
+        employee = Fabricate(:reviewer)
         user = Fabricate(:user, employee: employee)
 
         expect do

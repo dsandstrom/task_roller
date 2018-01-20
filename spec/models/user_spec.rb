@@ -3,11 +3,11 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  let(:employee) { Fabricate(:employee) }
+  let(:reviewer) { Fabricate(:reviewer) }
 
   before do
     @user = User.new(name: "User Name", email: "test@example.com",
-                     employee_id: employee.id)
+                     employee_id: reviewer.id)
   end
 
   subject { @user }
@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
   describe "#employee" do
     describe "destroying user" do
       it "destroys employee" do
-        employee = Fabricate(:employee)
+        employee = Fabricate(:reviewer)
         user = Fabricate(:user, employee: employee)
 
         expect do
