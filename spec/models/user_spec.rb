@@ -18,6 +18,11 @@ RSpec.describe User, type: :model do
 
   it { is_expected.to belong_to(:employee) }
 
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:email) }
+  it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+  it { is_expected.to validate_presence_of(:employee_id) }
+
   describe "#employee" do
     describe "destroying user" do
       it "destroys employee" do

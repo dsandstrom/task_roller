@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Employee, type: :model do
-  before { @employee = Employee.new }
+  before { @employee = Employee.new(type: "Reviewer") }
 
   subject { @employee }
 
@@ -11,10 +11,12 @@ RSpec.describe Employee, type: :model do
 
   it { is_expected.to have_one(:user) }
 
+  it { is_expected.to validate_presence_of(:type) }
+
   describe "#user" do
     describe "destroying employee" do
       it "nullifys employee" do
-        employee = Fabricate(:employee)
+        employee = Fabricate(:employee, type: "Reviewer")
         user = Fabricate(:user, employee: employee)
 
         expect do
