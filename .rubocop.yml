@@ -1,5 +1,6 @@
 # rubocop config files for small Rails4/Ruby2 project
 # blog post: http://joanswork.com/rubocop-rails-getting-started/
+# TODO: copy to gist
 
 # .rubocop.yml
 
@@ -33,3 +34,7 @@ HasAndBelongsToMany: # being used for a reason
 # complains about Gemfile
 Naming/FileName:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Guardfile'
