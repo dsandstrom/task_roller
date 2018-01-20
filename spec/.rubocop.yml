@@ -5,3 +5,5 @@ inherit_from:
 
 StringLiterals:
   EnforcedStyle: double_quotes
+  Exclude:
+    - '*_helper.rb'
