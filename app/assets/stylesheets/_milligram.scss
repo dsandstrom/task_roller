@@ -1,0 +1,24 @@
+// milligram
+
+$color-initial: #fff;
+$color-primary: #9b4dca;
+$color-secondary: #606c76;
+$color-tertiary: #f4f5f6;
+$color-quaternary: #d1d1d1;
+$color-quinary: #e1e1e1;
+
+@import 'milligram/src/Color';
+@import 'milligram/src/Base';
+// @import Blockquote;
+@import 'milligram/src/Button';
+// @import Code;
+@import 'milligram/src/Divider';
+@import 'milligram/src/Form';
+// @import Grid;
+@import 'milligram/src/Link';
+@import 'milligram/src/List';
+@import 'milligram/src/Spacing';
+@import 'milligram/src/Table';
+@import 'milligram/src/Typography';
+@import 'milligram/src/Image';
+// @import Utility;

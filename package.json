@@ -1,5 +1,7 @@
 {
   "name": "task_roller",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "milligram": "^1.3.0"
+  }
 }
