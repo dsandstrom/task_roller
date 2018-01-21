@@ -52,6 +52,8 @@ group :development, :test do
 end
 
 group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
   gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
