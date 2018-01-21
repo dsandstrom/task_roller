@@ -7,14 +7,20 @@
 AllCops:
   TargetRubyVersion: 2.5
   Include:
-    - Rakefile
-    - config.ru
+    - 'Gemfile'
+    - 'Guardfile'
+    - 'Rakefile'
+    - 'config.ru'
+
   Exclude:
     - 'db/schema.rb'
     - 'db/**/*'
     - 'script/**/*'
     - 'app/views/**/*.html.erb'
     - 'bin/*'
+    - 'tmp/*'
+    - 'node_modules/*'
+    - 'log/*'
 
 IndentationConsistency:
   EnforcedStyle: 'rails'
@@ -22,18 +28,11 @@ IndentationConsistency:
 Documentation:
   Enabled: false
 
-# SpaceInsideHashLiteralBraces:
-#   EnforcedStyle: no_space
-
-# MethodLength:
-#   Max: 20 # revisit
-
-HasAndBelongsToMany: # being used for a reason
-  Enabled: false
-
-# complains about Gemfile
 Naming/FileName:
-  Enabled: false
+  Exclude:
+    - 'Gemfile'
+    - 'Guardfile'
+    - 'Rakefile'
 
 Metrics/BlockLength:
   Exclude:
