@@ -1,0 +1,18 @@
+<div id="user-<%= user.id %>" class="user">
+  <p class="user-name">
+    <%= user.name %>
+  </p>
+
+  <p class="user-email">
+    <%= user.email %>
+  </p>
+
+  <p>
+    <%= link_to 'edit', edit_user_path(user) %>
+    <%= link_to 'delete',
+                user,
+                method: :delete,
+                data: { confirm: 'Are you sure?' },
+                class: 'destroy-link' %>
+  </p>
+</div>

@@ -4,11 +4,23 @@
     <title>TaskRoller</title>
     <%= csrf_meta_tags %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'application', media: 'all',
+                            'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application',
+                               'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="main-container">
+      <%= render 'layouts/header' %>
+
+      <main class="main-content">
+        <div class="page">
+          <%= yield %>
+        </div>
+      </main>
+
+      <%= render 'layouts/footer' %>
+    </div>
   </body>
 </html>

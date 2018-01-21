@@ -1,0 +1,16 @@
+<p id="notice"><%= notice %></p>
+
+<div id="user-detail-<%= @user.id %>" class="user-detail">
+  <p>
+    <%= @user.name %>
+  </p>
+
+  <p>
+    <%= @user.email %>
+  </p>
+</div>
+
+<p><%= link_to 'Edit', edit_user_path(@user) %></p>
+<p><%= link_to 'Delete', @user, method: :delete,
+                                data: { confirm: 'Are you sure?' },
+                                class: 'destroy-link' %></p>
