@@ -6,7 +6,7 @@ module ApplicationHelper
 
     title = 'There was an problem saving the form.'
     content_tag :div, class: 'error error-card' do
-      concat content_tag(:h3, title, class: 'card-title')
+      concat content_tag(:h2, title, class: 'card-title')
       concat form_errors_messages(obj)
     end
   end
@@ -23,10 +23,10 @@ module ApplicationHelper
 
     def form_errors_messages(obj)
       message_count =
-        "Please correct the #{pluralize(obj.errors.count, 'error')} below:"
+        "Please correct the #{pluralize(obj.errors.count, 'error')} below"
 
       content_tag :div, class: 'card-body' do
-        concat content_tag(:p, message_count)
+        concat content_tag(:h3, message_count, class: 'secondary')
         concat form_errors_list(obj)
       end
     end
