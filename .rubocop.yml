@@ -14,7 +14,8 @@ AllCops:
 
   Exclude:
     - 'db/schema.rb'
-    - 'db/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/*'
     - 'script/**/*'
     - 'app/views/**/*.html.erb'
     - 'bin/*'
