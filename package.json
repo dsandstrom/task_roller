@@ -2,6 +2,7 @@
   "name": "task_roller",
   "private": true,
   "dependencies": {
+    "foundation-sites": "^6.4.4-rc1",
     "milligram": "^1.3.0",
     "normalize.css": "^7.0.0"
   }

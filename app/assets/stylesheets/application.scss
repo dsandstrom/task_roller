@@ -1,4 +1,10 @@
+// foundation breakpoint mixin
+@import 'foundation-sites/scss/util/unit';
+@import 'foundation-sites/scss/util/value';
+@import 'foundation-sites/scss/util/breakpoint';
+
 @import 'normalize.css/normalize';
+
 @import 'colors';
 @import 'milligram';
 
