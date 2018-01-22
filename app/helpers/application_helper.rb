@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  FLASH_MESSSAGE_TYPES = { 'notice' => 'primary', 'success' => 'success',
+                           'warning' => 'warning', 'error' => 'danger' }.freeze
+
   def form_errors(obj)
     return if obj.errors.none?
 
@@ -13,17 +16,6 @@ module ApplicationHelper
 
   def flash_messages
     flash.each { |t, m| concat flash_message(t, m) }
-  end
-
-  def flash_message(type, message)
-    content_tag :div, class: "flash-message #{flash_message_class(type)}" do
-      concat message
-      concat link_to("\u2716", 'javascript:void(0)', class: 'close-link')
-    end
-  end
-
-  def flash_message_class(_type)
-    'flash-message-success'
   end
 
   private
@@ -43,6 +35,17 @@ module ApplicationHelper
       content_tag :div, class: 'card-body' do
         concat content_tag(:h3, message_count, class: 'secondary')
         concat form_errors_list(obj)
+      end
+    end
+
+    def flash_message_class(key)
+      "flash-message-#{FLASH_MESSSAGE_TYPES[key] || 'primary'}"
+    end
+
+    def flash_message(key, message)
+      content_tag :div, class: "flash-message #{flash_message_class(key)}" do
+        concat message
+        concat link_to("\u2716", 'javascript:void(0)', class: 'close-link')
       end
     end
 end
