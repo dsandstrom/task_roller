@@ -54,6 +54,7 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'faker', '~> 1.8.7', require: false
   gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
