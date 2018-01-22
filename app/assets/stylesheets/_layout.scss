@@ -2,6 +2,7 @@ $border-radius: .2rem;
 
 body {
   margin: 0;
+  background: $white;
 }
 
 .main-container {
@@ -17,11 +18,11 @@ body {
 
 .main-header {
   padding-top: 1rem;
-  background: $color-primary;
+  background: $off-white;
   color: $ink;
 
   a {
-    color: $off-white;
+    color: $lavender;
     font-weight: bold;
 
     &:hover {
