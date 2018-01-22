@@ -5,18 +5,18 @@
 
   <% unless user.persisted? %>
     <%= form.hidden_field :employee_type %>
+
+    <div class="field">
+      <%= form.label :email %>
+      <%= form.text_field :email, id: :user_email, required: 'required' %>
+      <span class="field-error">Email is required</span>
+    </div>
   <% end %>
 
   <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name, id: :user_name, required: 'required' %>
     <span class="field-error">Name is required</span>
-  </div>
-
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email, id: :user_email, required: 'required' %>
-    <span class="field-error">Email is required</span>
   </div>
 
   <div class="actions">

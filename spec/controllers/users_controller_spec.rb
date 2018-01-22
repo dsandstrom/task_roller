@@ -100,6 +100,26 @@ RSpec.describe UsersController, type: :controller do
         expect(response).to be_success
       end
     end
+
+    context "with email hash params" do
+      let(:valid_attributes) do
+        { name: "New Name", email: "new-email@example.com" }
+      end
+
+      it "doesn't updates the requested user's email" do
+        user = Fabricate(:user)
+        expect do
+          put :update, params: { id: user.to_param, user: valid_attributes }
+          user.reload
+        end.not_to change(user, :email)
+      end
+
+      it "redirects to the user" do
+        user = Fabricate(:user)
+        put :update, params: { id: user.to_param, user: valid_attributes }
+        expect(response).to redirect_to(user)
+      end
+    end
   end
 
   describe "DELETE #destroy" do

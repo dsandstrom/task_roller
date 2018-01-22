@@ -51,7 +51,8 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:name, :email, :employee_type)
+      keys = @user&.persisted? ? %i[name] : %i[name email employee_type]
+      params.require(:user).permit(keys)
     end
 
     def employee_type
