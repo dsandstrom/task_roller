@@ -7,7 +7,6 @@ class UsersController < ApplicationController
     @workers = User.workers
     @reporters = User.reporters
     @reviewers = User.reviewers
-    flash[:notice] = 'message'
   end
 
   def show; end

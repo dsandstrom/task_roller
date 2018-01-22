@@ -18,12 +18,12 @@ module ApplicationHelper
   def flash_message(type, message)
     content_tag :div, class: "flash-message #{flash_message_class(type)}" do
       concat message
-      concat content_tag(:button, 'x', class: 'close')
+      concat link_to("\u2716", 'javascript:void(0)', class: 'close-link')
     end
   end
 
   def flash_message_class(_type)
-    'flash-message'
+    'flash-message-success'
   end
 
   private
