@@ -38,4 +38,11 @@
   &.flash-message-danger {
     border-color: $color-danger;
   }
+
+  &.hide {
+    transition: opacity 300ms ease-in,
+                box-shadow 200ms ease-in;
+    opacity: 0;
+    box-shadow: none;
+  }
 }
