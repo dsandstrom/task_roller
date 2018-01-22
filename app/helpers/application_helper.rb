@@ -18,6 +18,15 @@ module ApplicationHelper
     flash.each { |t, m| concat flash_message(t, m) }
   end
 
+  def menu_link(text, path)
+    klass = 'menu-link'
+    klass += ' current-page' if current_page?(path)
+
+    content_tag :p do
+      link_to(text, path, class: klass)
+    end
+  end
+
   private
 
     def form_errors_list(obj)
