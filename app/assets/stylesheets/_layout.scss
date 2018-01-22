@@ -51,6 +51,27 @@ body {
   margin-bottom: 1rem;
   color: $color-secondary;
   font-size: 3rem;
+
+  a {
+    color: $ink;
+  }
+}
+
+@include breakpoint(medium up) {
+  .main-header > .page {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+  }
+
+  .app-name {
+    order: 1;
+    border-right: 2rem solid transparent;
+  }
+
+  .menu {
+    order: 2;
+  }
 }
 
 .main-footer {
