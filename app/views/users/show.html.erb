@@ -1,14 +1,18 @@
 <div id="user-detail-<%= @user.id %>" class="user-detail">
-  <p>
+  <h1 class="user-name">
     <%= @user.name %>
+  </h1>
+
+  <p class="user-email">
+    <code><%= @user.email %></code>
   </p>
 
-  <p>
-    <%= @user.email %>
+  <p class=user-links>
+    <%= link_to 'Edit', edit_user_path(@user), class: 'button button' %>
+    <%= link_to 'Delete',
+                @user,
+                method: :delete,
+                data: { confirm: 'Are you sure?' },
+                class: 'button button-outline destroy-button' %>
   </p>
 </div>
-
-<p><%= link_to 'Edit', edit_user_path(@user) %></p>
-<p><%= link_to 'Delete', @user, method: :delete,
-                                data: { confirm: 'Are you sure?' },
-                                class: 'destroy-link' %></p>

@@ -5,16 +5,16 @@
     </h3>
 
     <p class="user-email">
-      <%= user.email %>
+      <code><%= user.email %></code>
     </p>
   </div>
 
-  <p class=user-links>
-    <%= link_to 'delete',
+  <p class="user-links">
+    <%= link_to 'Delete',
                 user,
                 method: :delete,
                 data: { confirm: 'Are you sure?' },
                 class: 'button button-outline destroy-button' %>
-    <%= link_to 'edit', edit_user_path(user), class: 'button button' %>
+    <%= link_to 'Edit', edit_user_path(user), class: 'button button' %>
   </p>
 </div>
