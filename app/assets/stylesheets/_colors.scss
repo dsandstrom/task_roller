@@ -2,26 +2,34 @@ $black: #000;
 $purple: #9b4dca;
 // $dark-gray: #606c76;
 $dark-gray: #696969;
-$gray: #d1d1d1;
+// $gray: #d1d1d1;
 $light-gray: #e1e1e1;
-$off-white: #f4f5f6;
+// $off-white: #f4f5f6;
 $white: #fff;
 
-$blue: #287EFF;
-$purple: #E80DE3;
+// colormind
+$blue: #287eff;
+$light-blue: #5cbedb;
+$dark-blue: #1c1e34;
 
-$yellow: #FFDB35;
-$green: #1EE83F;
-$orange: #FF8515;
+$ink: #191919;
 
-$color-danger: $orange;
+$green: #42a080;
+$yellow: #b3baa1;
+$red: #c1826b;
+
+$off-white: #f6efec;
+$lavender: #7b5c78;
+$gray: #999;
+
+$color-danger: $red;
 $color-warning: $yellow;
 $color-success: $green;
 
 // milligram
 $color-initial: $white;
 $color-primary: $blue;
-$color-secondary: $dark-gray;
+$color-secondary: $dark-blue;
 $color-tertiary: $off-white;
 $color-quaternary: $gray;
-$color-quinary: $light-gray;
+$color-quinary: $lavender;

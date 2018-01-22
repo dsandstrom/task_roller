@@ -7,6 +7,7 @@ class UsersController < ApplicationController
     @workers = User.workers
     @reporters = User.reporters
     @reviewers = User.reviewers
+    render :index, notice: 'yo yo ma'
   end
 
   def show; end
