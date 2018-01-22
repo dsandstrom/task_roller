@@ -1,0 +1,21 @@
+.button {
+  &.destroy-button {
+    border-color: $color-warning;
+    background-color: $color-warning;
+
+    &.button-outline {
+      background-color: transparent;
+      color: $color-warning;
+    }
+
+    &:hover {
+      border-color: $color-warning-hover;
+      background-color: $color-warning-hover;
+
+      &.button-outline {
+        background-color: transparent;
+        color: $color-warning-hover;
+      }
+    }
+  }
+}
