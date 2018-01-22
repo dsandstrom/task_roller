@@ -28,7 +28,7 @@ h5 {
 h2,
 h4,
 h6 {
-  color: $color-quaternary;
+  color: $color-tertiary;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -51,7 +51,7 @@ p {
 
 a {
   &:hover {
-    color: $color-quinary;
+    color: $color-quaternary;
   }
 }
 

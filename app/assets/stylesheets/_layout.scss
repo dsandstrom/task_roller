@@ -29,6 +29,10 @@ body {
     &:hover {
       color: $color-secondary;
     }
+
+    &.current-page {
+      color: $color-tertiary;
+    }
   }
 }
 
