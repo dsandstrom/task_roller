@@ -26,6 +26,10 @@ $color-danger: $red;
 $color-warning: $yellow;
 $color-success: $green;
 
+$color-danger-hover: $dark-red;
+$color-warning-hover: darken($yellow, 5%);
+$color-success-hover: darken($green, 8%);
+
 // milligram
 $color-initial: $white;
 $color-primary: $blue;

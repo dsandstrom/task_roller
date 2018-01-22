@@ -1,3 +1,71 @@
 .users {
   margin-bottom: 4rem;
+  border-radius: $border-radius;
+  background: $off-white;
+
+  .user {
+    padding: 1rem 1.5rem 1.5rem;
+
+    &:nth-child(odd) {
+      background: $light-gray;
+    }
+
+    &:last-child {
+      border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+
+  .user-name-and-email {
+    margin-bottom: 1.5rem;
+  }
+
+  .user-name {
+    margin-bottom: .2rem;
+  }
+
+  .user-email {
+    margin-bottom: 0;
+  }
+
+  .user-links {
+    margin-bottom: 0;
+    text-align: center;
+
+    .button {
+      margin-bottom: 0;
+    }
+  }
+
+  .new-user {
+    text-align: center;
+
+    .button {
+      margin: .5rem auto;
+    }
+  }
+}
+
+.users-heading {
+  margin: 0;
+  padding: 1rem;
+  border-radius: $border-radius $border-radius 0 0;
+  background-color: $dark-blue;
+  color: $white;
+  font-size: 2.6rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+@include breakpoint(medium up) {
+  .users {
+    .user {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .user-name-and-email {
+      border-right: 3rem solid transparent;
+    }
+  }
 }

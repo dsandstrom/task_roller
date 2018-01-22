@@ -1,28 +1,31 @@
 <h1>Employees</h1>
 
-<h2>Reviewers</h2>
+<h2 class="users-heading">Reviewers</h2>
 <div class="users reviewers">
   <%= render @reviewers %>
 
   <div class="user new-user">
-    <%= link_to 'New Reviewer', new_user_path(employee_type: 'Reviewer') %>
+    <%= link_to 'New Reviewer', new_user_path(employee_type: 'Reviewer'),
+                                class: 'button button-clear' %>
   </div>
 </div>
 
-<h2>Workers</h2>
+<h2 class="users-heading">Workers</h2>
 <div class="users workers">
   <%= render @workers %>
 
   <div class="user new-user">
-    <%= link_to 'New Worker', new_user_path(employee_type: 'Worker') %>
+    <%= link_to 'New Worker', new_user_path(employee_type: 'Worker'),
+                              class: 'button button-clear' %>
   </div>
 </div>
 
-<h2>Reporters</h2>
+<h2 class="users-heading">Reporters</h2>
 <div class="users reporters">
   <%= render @reporters %>
 
   <div class="user new-user">
-    <%= link_to 'New Reporter', new_user_path(employee_type: 'Reporter') %>
+    <%= link_to 'New Reporter', new_user_path(employee_type: 'Reporter'),
+                                class: 'button button-clear' %>
   </div>
 </div>
