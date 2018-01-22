@@ -11,6 +11,21 @@ module ApplicationHelper
     end
   end
 
+  def flash_messages
+    flash.each { |t, m| concat flash_message(t, m) }
+  end
+
+  def flash_message(type, message)
+    content_tag :div, class: "flash-message #{flash_message_class(type)}" do
+      concat message
+      concat content_tag(:button, 'x', class: 'close')
+    end
+  end
+
+  def flash_message_class(_type)
+    'flash-message'
+  end
+
   private
 
     def form_errors_list(obj)
