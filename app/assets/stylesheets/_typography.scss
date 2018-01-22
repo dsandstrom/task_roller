@@ -22,7 +22,7 @@ h1 {
 h1,
 h3,
 h5 {
-  color: $color-secondary;
+  color: $color-quaternary;
 }
 
 h2,
@@ -51,7 +51,7 @@ p {
 
 a {
   &:hover {
-    color: $color-quaternary;
+    color: $color-secondary;
   }
 }
 
