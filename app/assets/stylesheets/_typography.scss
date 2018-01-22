@@ -47,11 +47,16 @@ h6 {
 
 p {
   margin-bottom: 1.5rem;
-  line-height: 1.7;
 }
 
 a {
   &:hover {
     color: $color-quinary;
+  }
+}
+
+@include breakpoint(small down) {
+  body {
+    font-size: 1.8em;
   }
 }
