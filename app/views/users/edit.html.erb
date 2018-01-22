@@ -1,4 +1,4 @@
-<h1>Edit <%= @user.employee&.type.&present? ? @user.employee.type : 'User' %></h1>
+<h1>Edit <%= @user.employee&.type&.present? ? @user.employee.type : 'User' %></h1>
 
 <%= render 'form', user: @user %>
 
