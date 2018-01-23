@@ -1,20 +1,26 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
+  # TODO: restrict to reviewers
   before_action :set_category, only: %i[show edit update destroy]
 
+  # TODO: just reviewer categories
   def index
     @categories = Category.all
   end
 
+  # TODO: restrict to category reviewers
   def show; end
 
+  # TODO: restrict to admins
   def new
     @category = Category.new
   end
 
+  # TODO: restrict to category reviewers
   def edit; end
 
+  # TODO: restrict to admins
   def create
     @category = Category.new(category_params)
 
@@ -25,6 +31,7 @@ class CategoriesController < ApplicationController
     end
   end
 
+  # TODO: restrict to category reviewers
   def update
     if @category.update(category_params)
       redirect_to @category, notice: 'Category was successfully updated.'
@@ -33,6 +40,7 @@ class CategoriesController < ApplicationController
     end
   end
 
+  # TODO: restrict to admins
   def destroy
     @category.destroy
     redirect_to categories_url, notice: 'Category was successfully destroyed.'

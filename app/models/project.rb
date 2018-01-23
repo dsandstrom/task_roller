@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add friendly_id/slug
+
 class Project < ApplicationRecord
   belongs_to :category
 
