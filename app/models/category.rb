@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: add dependent destroy
 # TODO: add category_reviewers
 
 class Category < ApplicationRecord
