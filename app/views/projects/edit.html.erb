@@ -1,0 +1,9 @@
+<h1>Edit <%= @project.name %></h1>
+<p>
+  <%= link_to @category.name, @category %> &gt;
+  <%= link_to @project.name, category_project_path(@category, @project) %>
+</p>
+
+<%= render 'form', category: @category, project: @project %>
+
+<p><%= link_to 'back', :back %></p>

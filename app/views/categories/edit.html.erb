@@ -1,0 +1,11 @@
+<h1>Edit Category</h1>
+<p>
+  <%= link_to 'Categories', categories_path %> &gt;
+  <%= link_to @category.name, @category %>
+</p>
+
+<%= render 'form', category: @category %>
+
+<p>
+  <%= link_to 'back', :back %>
+</p>

@@ -1,0 +1,22 @@
+<%= form_with(model: category, local: true) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :category_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :visible %>
+    <%= form.check_box :visible, id: :category_visible %>
+  </div>
+
+  <div class="field">
+    <%= form.label :internal %>
+    <%= form.check_box :internal, id: :category_internal %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

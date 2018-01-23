@@ -1,0 +1,6 @@
+<h1>New Project</h1>
+<p><%= link_to @category.name, @category %></p>
+
+<%= render 'form', category: @category, project: @project %>
+
+<%= link_to 'back', :back %>

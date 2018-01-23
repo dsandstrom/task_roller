@@ -1,0 +1,8 @@
+<div id="category-<%= category.id %>" class="category">
+  <h3 class="category-name"><%= category.name %></h3>
+  <p><%= category.visible %></p>
+  <p><%= category.internal %></p>
+  <p><%= link_to 'Show', category %></p>
+  <p><%= link_to 'Edit', edit_category_path(category) %></p>
+  <p><%= link_to 'Destroy', category, method: :delete, data: { confirm: 'Are you sure?' } %></p>
+</div>

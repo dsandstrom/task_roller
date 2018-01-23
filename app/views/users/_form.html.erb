@@ -1,7 +1,7 @@
 <%= form_with(model: user, local: true,
               html: { id: 'user-form', class: 'user-form',
                       novalidate: 'novalidate' }) do |form| %>
-  <%= form_errors(user) %>
+  <%= form_errors(form.object) %>
 
   <% unless user.persisted? %>
     <%= form.hidden_field :employee_type %>

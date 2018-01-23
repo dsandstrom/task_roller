@@ -1,0 +1,9 @@
+<h1>Projects</h1>
+
+<div class="projects">
+  <% if @projects.any? %>
+    <%= render @projects %>
+  <% else %>
+    <p>none</p>
+  <% end %>
+</div>
