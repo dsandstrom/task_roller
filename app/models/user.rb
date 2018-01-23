@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add Admin type,
+
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Reporter Reviewer Worker].freeze
 

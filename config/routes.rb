@@ -4,6 +4,10 @@
 # http://guides.rubyonrails.org/routing.html
 
 Rails.application.routes.draw do
-  resources :users
   root to: 'static#dashboard'
+
+  resources :users
+  resources :categories do
+    resources :projects
+  end
 end
