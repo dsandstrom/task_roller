@@ -4,11 +4,16 @@
     return content_tag(:code, 'ERROR: No Category') unless category
   %>
 
-  <h3><%= project.name %></h3>
-  <p><%= project.visible %></p>
-  <p><%= project.internal %></p>
-  <p><%= project.category.name %></p>
-  <p><%= link_to 'Show', category_project_path(category, project) %></p>
-  <p><%= link_to 'Edit', edit_category_project_path(category, project) %></p>
-  <p><%= link_to 'Destroy', category_project_path(category, project), method: :delete, data: { confirm: 'Are you sure?' } %></p>
+  <div class="project-name-and-tags">
+    <h3><%= link_to project.name, category_project_path(category, project) %></h3>
+    <%= project_tags(project) %>
+  </div>
+
+  <p class="project-links">
+    <%= link_to 'Delete', category_project_path(category, project),
+                           method: :delete, data: { confirm: 'Are you sure?' },
+                           class: 'button button-outline button-warning' %>
+    <%= link_to 'Edit', edit_category_project_path(category, project),
+                class: 'button' %>
+  </p>
 </div>

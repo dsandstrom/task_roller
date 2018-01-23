@@ -53,6 +53,14 @@ a {
   &:hover {
     color: $color-secondary;
   }
+
+  &.destroy-link {
+    color: $color-warning;
+
+    &:hover {
+      color: $color-warning-hover;
+    }
+  }
 }
 
 @include breakpoint(small down) {

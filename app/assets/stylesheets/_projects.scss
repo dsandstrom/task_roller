@@ -1,9 +1,9 @@
-.users {
+.projects {
   margin-bottom: 4rem;
   border-radius: $border-radius;
   background: $pearl;
 
-  .user {
+  .project {
     padding: 1rem 1.5rem 1.5rem;
 
     &:nth-child(odd) {
@@ -15,19 +15,19 @@
     }
   }
 
-  .user-name-and-email {
+  .project-name-and-tags {
     margin-bottom: 1.5rem;
   }
 
-  .user-name {
+  .project-name {
     margin-bottom: .2rem;
   }
 
-  .user-email {
+  .project-tags {
     margin-bottom: 0;
   }
 
-  .user-links {
+  .project-links {
     margin-bottom: 0;
     text-align: center;
 
@@ -36,7 +36,7 @@
     }
   }
 
-  .new-user {
+  .new-project {
     text-align: center;
 
     .button {
@@ -45,34 +45,34 @@
   }
 }
 
-.users-heading {
-  margin: 0;
-  padding: 1rem;
-  border-radius: $border-radius $border-radius 0 0;
-  background-color: $dark-blue;
-  color: $white;
-  font-size: 2.6rem;
-  font-weight: bold;
-  text-align: center;
+.project-tags {
+  .tag {
+    margin-right: .7rem;
+    padding: .2rem .5rem;
+    background: rgba($black, .05);
+    color: $color-tertiary;
+    font-family: $heading-font;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    &.tag-warning {
+      color: $color-quinary;
+    }
+  }
 }
 
 @include breakpoint(medium up) {
-  .users {
-    .user {
+  .projects {
+    .project {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .user-name-and-email {
+    .project-name-and-tags {
       margin-bottom: 0;
       border-right: 3rem solid transparent;
     }
-  }
-}
-
-.user-detail {
-  .user-email {
-    margin-bottom: 3rem;
   }
 }
