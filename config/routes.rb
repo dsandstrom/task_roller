@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   root to: 'static#dashboard'
 
   resources :users
+  resources :projects, only: :index
   resources :categories do
-    resources :projects
+    resources :projects, except: :index
   end
 end
