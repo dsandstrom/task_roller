@@ -10,7 +10,9 @@ class CategoriesController < ApplicationController
   end
 
   # TODO: restrict to category reviewers
-  def show; end
+  def show
+    @projects = @category.projects
+  end
 
   # TODO: restrict to admins
   def new

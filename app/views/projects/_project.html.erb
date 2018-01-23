@@ -5,10 +5,10 @@
   %>
 
   <h3><%= project.name %></h3>
-  <td><%= project.visible %></td>
-  <td><%= project.internal %></td>
-  <td><%= project.category.name %></td>
-  <td><%= link_to 'Show', category_project_path(category, project) %></td>
-  <td><%= link_to 'Edit', edit_category_project_path(category, project) %></td>
-  <td><%= link_to 'Destroy', category_project_path(category, project), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  <p><%= project.visible %></p>
+  <p><%= project.internal %></p>
+  <p><%= project.category.name %></p>
+  <p><%= link_to 'Show', category_project_path(category, project) %></p>
+  <p><%= link_to 'Edit', edit_category_project_path(category, project) %></p>
+  <p><%= link_to 'Destroy', category_project_path(category, project), method: :delete, data: { confirm: 'Are you sure?' } %></p>
 </div>
