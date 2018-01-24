@@ -15,4 +15,19 @@ RSpec.describe Category, type: :model do
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_length_of(:name).is_at_most(200) }
+
+  describe "#projects" do
+    let(:category) { Fabricate(:category) }
+
+    describe "destroying category" do
+      it "destroy it's projects" do
+        Fabricate(:project, category: category)
+        Fabricate(:project) # another category
+
+        expect do
+          category.destroy
+        end.to change(Project, :count).by(-1)
+      end
+    end
+  end
 end
