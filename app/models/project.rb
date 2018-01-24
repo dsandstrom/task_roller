@@ -3,6 +3,7 @@
 # TODO: add friendly_id/slug
 # TODO: add icon options
 # TODO: add image
+# TODO: validate unique name within category
 
 class Project < ApplicationRecord
   belongs_to :category
