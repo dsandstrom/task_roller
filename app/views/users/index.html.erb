@@ -1,31 +1,41 @@
 <h1>Employees</h1>
 
-<h2 class="users-heading">Reviewers</h2>
+<header class="users-header">
+  <h2 class="users-heading">Reviewers</h2>
+
+  <p>
+    <%= link_to 'Add Reviewer', new_user_path(employee_type: 'Reviewer'),
+                class: 'button button-success' %>
+  </p>
+</header>
+
 <div class="users reviewers">
   <%= render @reviewers %>
 
-  <div class="user new-user">
-    <%= link_to 'New Reviewer', new_user_path(employee_type: 'Reviewer'),
-                                class: 'button button-clear' %>
-  </div>
 </div>
 
-<h2 class="users-heading">Workers</h2>
+<header class="users-header">
+  <h2 class="users-heading">Workers</h2>
+
+  <p class="user new-user">
+    <%= link_to 'New Worker', new_user_path(employee_type: 'Worker'),
+                class: 'button button-success' %>
+  </p>
+</header>
+
 <div class="users workers">
   <%= render @workers %>
-
-  <div class="user new-user">
-    <%= link_to 'New Worker', new_user_path(employee_type: 'Worker'),
-                              class: 'button button-clear' %>
-  </div>
 </div>
 
-<h2 class="users-heading">Reporters</h2>
-<div class="users reporters">
-  <%= render @reporters %>
+<header class="users-header">
+  <h2 class="users-heading">Reporters</h2>
 
   <div class="user new-user">
     <%= link_to 'New Reporter', new_user_path(employee_type: 'Reporter'),
-                                class: 'button button-clear' %>
+                class: 'button button-success' %>
   </div>
+</header>
+
+<div class="users reporters">
+  <%= render @reporters %>
 </div>
