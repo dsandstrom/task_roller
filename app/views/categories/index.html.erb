@@ -1,11 +1,12 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Categories</h1>
+
+<header class="categories-header">
+  <p>
+    <%= link_to 'New Category', new_category_path,
+                class: 'button button-success' %>
+  </p>
+</header>
 
 <div class="categories">
   <%= render @categories %>
-
-  <div class="category new-category">
-    <p><%= link_to 'New Category', new_category_path %></p>
-  </div>
 </div>

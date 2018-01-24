@@ -1,0 +1,14 @@
+@mixin tag {
+  margin-right: .7rem;
+  padding: .2rem .5rem;
+  background: rgba($black, .05);
+  color: $color-tertiary;
+  font-family: $heading-font;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  &.tag-warning {
+    color: $color-quinary;
+  }
+}

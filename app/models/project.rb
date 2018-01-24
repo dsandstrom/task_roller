@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # TODO: add friendly_id/slug
+# TODO: add icon options
+# TODO: add image
 
 class Project < ApplicationRecord
   belongs_to :category

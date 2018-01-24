@@ -2,6 +2,8 @@
 
 # TODO: add dependent destroy
 # TODO: add category_reviewers
+# TODO: add icon options
+# TODO: add image
 
 class Category < ApplicationRecord
   has_many :projects

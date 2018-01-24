@@ -9,7 +9,7 @@
     <%= project_tags(project) %>
   </div>
 
-  <p class="project category">
+  <p class="project-category">
     <%= link_to project.category.name, project.category %>
   </p>
 
@@ -18,6 +18,6 @@
                            method: :delete, data: { confirm: 'Are you sure?' },
                            class: 'button button-outline button-warning' %>
     <%= link_to 'Edit', edit_category_project_path(category, project),
-                class: 'button' %>
+                class: 'button button-outline' %>
   </p>
 </div>
