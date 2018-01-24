@@ -9,9 +9,11 @@
     <%= project_tags(project) %>
   </div>
 
-  <p class="project-category">
-    <%= link_to project.category.name, project.category %>
-  </p>
+  <% unless @category %>
+    <p class="project-category">
+      <%= link_to project.category.name, project.category %>
+    </p>
+  <% end %>
 
   <p class="project-links">
     <%= link_to 'Delete', category_project_path(category, project),

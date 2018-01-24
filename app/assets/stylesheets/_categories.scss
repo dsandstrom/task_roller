@@ -28,11 +28,12 @@
   }
 
   .category-links {
-    margin-bottom: 0;
-    text-align: center;
+    display: flex;
+    margin: 0 -.5rem;
 
     .button {
-      margin-bottom: 0;
+      flex: 1 1 50%;
+      margin: 0 .5rem;
     }
   }
 
