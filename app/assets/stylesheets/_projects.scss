@@ -4,9 +4,12 @@
   border-radius: $border-radius;
   background: $pearl;
 
-  .project {
+  .project,
+  .no-project {
     padding: 1rem 1.5rem 1.5rem;
+  }
 
+  .project {
     h3 {
       margin-bottom: .3rem;
     }
@@ -17,6 +20,12 @@
 
     &:last-child {
       border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+
+  .no-project {
+    p {
+      margin-bottom: 0;
     }
   }
 
@@ -73,6 +82,11 @@
         border: 1px solid transparent;
         border-width: 0 2rem;
       }
+    }
+
+    .no-project {
+      padding-right: 2rem;
+      padding-left: 2rem;
     }
   }
 }

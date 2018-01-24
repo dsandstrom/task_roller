@@ -8,5 +8,9 @@
 </header>
 
 <div class="categories">
-  <%= render @categories %>
+  <% if @categories.any? %>
+    <%= render @categories %>
+  <% else %>
+    <p class="no-category">none</p>
+  <% end %>
 </div>

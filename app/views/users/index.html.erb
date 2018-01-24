@@ -10,8 +10,11 @@
 </header>
 
 <div class="users reviewers">
-  <%= render @reviewers %>
-
+  <% if @reviewers.any? %>
+    <%= render @reviewers %>
+  <% else %>
+    <p class="no-user">none</p>
+  <% end %>
 </div>
 
 <header class="users-header">
@@ -24,7 +27,11 @@
 </header>
 
 <div class="users workers">
-  <%= render @workers %>
+  <% if @workers.any? %>
+    <%= render @workers %>
+  <% else %>
+    <p class="no-user">none</p>
+  <% end %>
 </div>
 
 <header class="users-header">
@@ -37,5 +44,9 @@
 </header>
 
 <div class="users reporters">
-  <%= render @reporters %>
+  <% if @reporters.any? %>
+    <%= render @reporters %>
+  <% else %>
+    <p class="no-user">none</p>
+  <% end %>
 </div>

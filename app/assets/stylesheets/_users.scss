@@ -3,9 +3,12 @@
   border-radius: $border-radius;
   background: $pearl;
 
-  .user {
+  .user,
+  .no-user {
     padding: 1rem 1.5rem 1.5rem;
+  }
 
+  .user {
     &:nth-child(odd) {
       background: $light-gray;
     }
@@ -28,11 +31,12 @@
   }
 
   .user-links {
-    margin-bottom: 0;
-    text-align: center;
+    display: flex;
+    margin: 0 -.5rem;
 
     .button {
-      margin-bottom: 0;
+      flex: 1 1 50%;
+      margin: 0 .5rem;
     }
   }
 
@@ -75,17 +79,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
+      padding-right: 0;
+      padding-left: 0;
 
-    .user-name-and-email {
-      margin-bottom: 0;
-      border-right: 3rem solid transparent;
+      > * {
+        margin-bottom: 0;
+        border: 1px solid transparent;
+        border-width: 0 2rem;
+      }
     }
   }
 
   .users-header {
     display: flex;
     justify-content: space-between;
+    padding-right: 2rem;
+    padding-left: 2rem;
 
     h2 {
       margin-bottom: 0;
