@@ -1,20 +1,10 @@
 <h1><%= @project.name %></h1>
-<p>
-  <strong>Category:</strong>
-  <%= @project.category.name %>
-</p>
+
+<p><%= link_to @category.name, @category %></p>
+
+<%= project_tags(@project) %>
 
 <p>
-  <strong>Visible:</strong>
-  <%= @project.visible %>
-</p>
-
-<p>
-  <strong>Internal:</strong>
-  <%= @project.internal %>
-</p>
-
-<p>
-  <%= link_to 'Edit', edit_category_project_path(@category, @project) %> |
-  <%= link_to 'Back', @category %>
+  <%= link_to 'Edit', edit_category_project_path(@category, @project),
+              class: 'button' %>
 </p>
