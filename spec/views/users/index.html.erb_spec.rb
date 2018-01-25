@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "users/index", type: :view do
+  let(:first_user_admin) { Fabricate(:user_admin) }
+  let(:second_user_admin) { Fabricate(:user_admin) }
   let(:first_user_reporter) { Fabricate(:user_reporter) }
   let(:second_user_reporter) { Fabricate(:user_reporter) }
   let(:first_user_reviewer) { Fabricate(:user_reviewer) }
@@ -11,6 +13,7 @@ RSpec.describe "users/index", type: :view do
   let(:second_user_worker) { Fabricate(:user_worker) }
 
   before(:each) do
+    assign(:admins, [first_user_admin, second_user_admin])
     assign(:reviewers, [first_user_reviewer, second_user_reviewer])
     assign(:reporters, [first_user_reporter, second_user_reporter])
     assign(:workers, [first_user_worker, second_user_worker])

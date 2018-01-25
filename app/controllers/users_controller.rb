@@ -4,9 +4,10 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i[show edit update destroy]
 
   def index
-    @workers = User.workers
+    @admins = User.admins
     @reporters = User.reporters
     @reviewers = User.reviewers
+    @workers = User.workers
   end
 
   def show; end

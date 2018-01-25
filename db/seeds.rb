@@ -3,6 +3,12 @@
 require 'faker'
 
 class Seeds
+  def create_admins
+    return if Admin.any?
+
+    3.times { create_user('Admin') }
+  end
+
   def create_reporters
     return if Reporter.any?
 
@@ -12,7 +18,7 @@ class Seeds
   def create_reviewers
     return if Reviewer.any?
 
-    3.times { create_user('Reviewer') }
+    6.times { create_user('Reviewer') }
   end
 
   def create_workers
@@ -64,6 +70,7 @@ class Seeds
 end
 
 seeds = Seeds.new
+seeds.create_admins
 seeds.create_reporters
 seeds.create_reviewers
 seeds.create_workers

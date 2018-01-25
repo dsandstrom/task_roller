@@ -1,13 +1,25 @@
 <h1>Employees</h1>
 
 <header class="users-header">
-  <h2 class="users-heading">Reviewers</h2>
+  <h2 class="users-heading">Admins</h2>
+  <p class="users-new-button">
+    <%= render 'new_user_button', employee_type: 'Admin' %>
+  </p>
+</header>
+<div class="users admins">
+  <% if @admins.any? %>
+    <%= render @admins %>
+  <% else %>
+    <p class="no-user">none</p>
+  <% end %>
+</div>
 
+<header class="users-header">
+  <h2 class="users-heading">Reviewers</h2>
   <p class="users-new-button">
     <%= render 'new_user_button', employee_type: 'Reviewer' %>
   </p>
 </header>
-
 <div class="users reviewers">
   <% if @reviewers.any? %>
     <%= render @reviewers %>
@@ -18,12 +30,10 @@
 
 <header class="users-header">
   <h2 class="users-heading">Workers</h2>
-
   <p class="users-new-button">
     <%= render 'new_user_button', employee_type: 'Worker' %>
   </p>
 </header>
-
 <div class="users workers">
   <% if @workers.any? %>
     <%= render @workers %>
@@ -34,12 +44,10 @@
 
 <header class="users-header">
   <h2 class="users-heading">Reporters</h2>
-
   <p class="users-new-button">
     <%= render 'new_user_button', employee_type: 'Reporter' %>
   </p>
 </header>
-
 <div class="users reporters">
   <% if @reporters.any? %>
     <%= render @reporters %>
