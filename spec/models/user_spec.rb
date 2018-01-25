@@ -22,8 +22,8 @@ RSpec.describe User, type: :model do
   it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
 
   describe "on create" do
-    context "for a valid employee_type" do
-      %w[Reporter Reviewer Worker].each do |employee_type|
+    %w[Reporter Reviewer Worker Admin].each do |employee_type|
+      context "for a valid employee_type" do
         before { subject.employee_type = employee_type }
 
         it { is_expected.to be_valid }
@@ -47,9 +47,21 @@ RSpec.describe User, type: :model do
 
   # CLASS
 
+  describe ".admins" do
+    it "includes only Admins" do
+      user_admin = Fabricate(:user_admin)
+      Fabricate(:user_reporter)
+      Fabricate(:user_reviewer)
+      Fabricate(:user_worker)
+
+      expect(User.admins).to eq([user_admin])
+    end
+  end
+
   describe ".reporters" do
     it "includes only Reporters" do
       user_reporter = Fabricate(:user_reporter)
+      Fabricate(:user_admin)
       Fabricate(:user_reviewer)
       Fabricate(:user_worker)
 
@@ -60,6 +72,7 @@ RSpec.describe User, type: :model do
   describe ".reviewers" do
     it "includes only Reviewers" do
       user_reviewer = Fabricate(:user_reviewer)
+      Fabricate(:user_admin)
       Fabricate(:user_reporter)
       Fabricate(:user_worker)
 
@@ -70,6 +83,7 @@ RSpec.describe User, type: :model do
   describe ".workers" do
     it "includes only Workers" do
       user_worker = Fabricate(:user_worker)
+      Fabricate(:user_admin)
       Fabricate(:user_reporter)
       Fabricate(:user_reviewer)
 
@@ -105,6 +119,24 @@ RSpec.describe User, type: :model do
       end
 
       context "for a valid user" do
+        context "with employee_type of 'Admin'" do
+          before { subject.employee_type = "Admin" }
+
+          it "creates a Admin" do
+            expect do
+              subject.save
+            end.to change(Admin, :count).by(1)
+          end
+
+          it "sets employee_id" do
+            expect(subject.employee_id).to be_nil
+            subject.save
+            subject.reload
+            expect(subject.employee_id).not_to be_nil
+            expect(subject.employee_id).to eq(Employee.last.id)
+          end
+        end
+
         context "with employee_type of 'Reporter'" do
           before { subject.employee_type = "Reporter" }
 

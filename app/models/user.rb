@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-# TODO: add Admin type,
-
 class User < ApplicationRecord
-  VALID_EMPLOYEE_TYPES = %w[Reporter Reviewer Worker].freeze
+  VALID_EMPLOYEE_TYPES = %w[Reporter Reviewer Worker Admin].freeze
 
   belongs_to :employee, dependent: :destroy, required: false
 
@@ -15,6 +13,11 @@ class User < ApplicationRecord
   before_create :create_employee
 
   attr_accessor :employee_type
+
+  def self.admins
+    where("employees.type = 'Admin'").includes(:employee)
+                                     .references(:employees)
+  end
 
   def self.reporters
     where("employees.type = 'Reporter'").includes(:employee)
@@ -34,14 +37,15 @@ class User < ApplicationRecord
   private
 
     def create_employee
-      self.employee =
-        case employee_type
-        when 'Reporter'
-          Reporter.create
-        when 'Reviewer'
-          Reviewer.create
-        when 'Worker'
-          Worker.create
-        end
+      self.employee = case employee_type
+                      when 'Admin'
+                        Admin.create
+                      when 'Reporter'
+                        Reporter.create
+                      when 'Reviewer'
+                        Reviewer.create
+                      when 'Worker'
+                        Worker.create
+                      end
     end
 end

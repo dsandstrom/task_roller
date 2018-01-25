@@ -6,6 +6,12 @@ Fabricator(:user, aliases: :user_worker) do
   employee_type { 'Worker' }
 end
 
+Fabricator(:user_admin, from: :user) do
+  name { sequence(:users) { |n| "Admin Name #{n + 1}" } }
+  email { sequence(:users) { |n| "admin-email-#{n + 1}@example.com" } }
+  employee_type { 'Admin' }
+end
+
 Fabricator(:user_reporter, from: :user) do
   name { sequence(:users) { |n| "Reporter Name #{n + 1}" } }
   email { sequence(:users) { |n| "reporter-email-#{n + 1}@example.com" } }
