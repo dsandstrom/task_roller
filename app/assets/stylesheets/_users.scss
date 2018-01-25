@@ -68,7 +68,6 @@
   }
 
   .button {
-    width: 100%;
     margin-bottom: 0;
   }
 }
@@ -76,40 +75,45 @@
 @include breakpoint(medium up) {
   .users {
     .user {
-      display: flex;
+      display: grid;
       align-items: center;
-      justify-content: space-between;
-      padding-right: 0;
-      padding-left: 0;
+      grid-column-gap: 2rem;
+      grid-template-columns: 60% auto;
 
-      > * {
+      .user-name-and-email {
         margin-bottom: 0;
-        border: 1px solid transparent;
-        border-width: 0 2rem;
       }
     }
   }
 
   .users-header {
-    display: flex;
-    justify-content: space-between;
-    padding-right: 2rem;
-    padding-left: 2rem;
+    display: grid;
+    align-items: center;
+    text-align: left;
+    grid-column-gap: 2rem;
+    grid-template-columns: 70% auto;
 
     h2 {
       margin-bottom: 0;
-      border: 0 solid transparent;
-      border-right-width: 2rem;
     }
 
-    .button {
-      width: auto;
+    .users-new-button {
+      text-align: right;
     }
   }
 }
 
-.user-detail {
-  .user-email {
-    margin-bottom: 3rem;
+@include breakpoint(large up) {
+  .users {
+    .user {
+      grid-template-columns: 70% auto;
+    }
+
+    .user-name-and-email {
+      display: grid;
+      align-items: center;
+      grid-column-gap: 2rem;
+      grid-template-columns: 40% auto;
+    }
   }
 }

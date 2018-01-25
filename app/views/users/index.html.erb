@@ -3,9 +3,8 @@
 <header class="users-header">
   <h2 class="users-heading">Reviewers</h2>
 
-  <p>
-    <%= link_to 'Add Reviewer', new_user_path(employee_type: 'Reviewer'),
-                class: 'button button-success' %>
+  <p class="users-new-button">
+    <%= render 'new_user_button', employee_type: 'Reviewer' %>
   </p>
 </header>
 
@@ -20,9 +19,8 @@
 <header class="users-header">
   <h2 class="users-heading">Workers</h2>
 
-  <p class="user new-user">
-    <%= link_to 'New Worker', new_user_path(employee_type: 'Worker'),
-                class: 'button button-success' %>
+  <p class="users-new-button">
+    <%= render 'new_user_button', employee_type: 'Worker' %>
   </p>
 </header>
 
@@ -37,10 +35,9 @@
 <header class="users-header">
   <h2 class="users-heading">Reporters</h2>
 
-  <div class="user new-user">
-    <%= link_to 'New Reporter', new_user_path(employee_type: 'Reporter'),
-                class: 'button button-success' %>
-  </div>
+  <p class="users-new-button">
+    <%= render 'new_user_button', employee_type: 'Reporter' %>
+  </p>
 </header>
 
 <div class="users reporters">
