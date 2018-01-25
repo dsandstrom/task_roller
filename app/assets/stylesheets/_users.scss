@@ -80,7 +80,8 @@
       grid-column-gap: 2rem;
       grid-template-columns: 60% auto;
 
-      .user-name-and-email {
+      .user-name-and-email,
+      .user-name {
         margin-bottom: 0;
       }
     }

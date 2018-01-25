@@ -6,11 +6,13 @@
     end
   %>
 
-  <h3 class="project-name">
-    <%= link_to project.name, category_project_path(category, project) %>
-  </h3>
+  <div class="project-name-and-tags">
+    <h3 class="project-name">
+      <%= link_to project.name, category_project_path(category, project) %>
+    </h3>
 
-  <%= project_tags(project) %>
+    <%= project_tags(project) %>
+  </div>
 
   <% unless @category %>
     <p class="project-category">
