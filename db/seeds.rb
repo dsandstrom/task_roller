@@ -21,28 +21,28 @@ class Seeds
     5.times { create_user('Worker') }
   end
 
-  # TODO: make visible/interal random
   def create_categories
     return if Category.any?
 
-    SecureRandom.random_number(11).times do
+    rand(11).times do
       name = Faker::Commerce.department
       name = Faker::Commerce.department while Category.find_by(name: name)
 
-      Category.create(name: name)
+      Category.create(name: name, visible: random_visible,
+                      internal: random_internal)
     end
   end
 
-  # TODO: make visible/interal random
   def create_projects
     Category.all.each do |category|
       next if category.projects.any?
 
-      SecureRandom.random_number(11).times do
+      rand(11).times do
         name = Faker::App.name
         name = Faker::App.name while category.projects.find_by(name: name)
 
-        category.projects.create(name: name)
+        category.projects.create(name: name, visible: random_visible,
+                                 internal: random_internal)
       end
     end
   end
@@ -52,6 +52,14 @@ class Seeds
     def create_user(employee_type)
       User.create(name: Faker::Name.name, email: Faker::Internet.email,
                   employee_type: employee_type)
+    end
+
+    def random_visible
+      rand(2).zero?
+    end
+
+    def random_internal
+      rand(4).zero?
     end
 end
 
