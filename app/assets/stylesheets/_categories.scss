@@ -58,22 +58,38 @@
 @include breakpoint(medium up) {
   .categories {
     .category {
-      display: flex;
+      display: grid;
       align-items: center;
-      justify-content: space-between;
-      padding-right: 0;
-      padding-left: 0;
+      grid-column-gap: 2rem;
+      grid-template-columns: 60% auto;
+    }
 
-      > * {
-        margin-bottom: 0;
-        border: 1px solid transparent;
-        border-width: 0 2rem;
-      }
+    .category-name-and-tags {
+      margin-bottom: 0;
     }
 
     .no-category {
       padding-right: 2rem;
       padding-left: 2rem;
+    }
+  }
+}
+
+@include breakpoint(large up) {
+  .categories {
+    .category {
+      grid-template-columns: 70% auto;
+    }
+
+    .category-name-and-tags {
+      display: grid;
+      align-items: center;
+      grid-column-gap: 2rem;
+      grid-template-columns: 60% auto;
+    }
+
+    .category-name {
+      margin-bottom: 0;
     }
   }
 }
