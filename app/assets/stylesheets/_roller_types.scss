@@ -1,0 +1,69 @@
+.issue-type-icon-options {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -.5rem 2rem;
+}
+
+.issue-type-tag,
+.issue-type-icon-option,
+.issue-type-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 .5rem 1rem;
+  padding: .1rem .5rem;
+  border: 1px solid $light-gray;
+  border-radius: $border-radius;
+  color: $color-quaternary;
+  line-height: 1.2;
+
+  i {
+    margin-right: .3rem;
+    color: $color-quinary;
+  }
+
+  [class^="icon-"],
+  [class*=" icon-"] {
+    display: flex;
+  }
+}
+
+.issue-type-colors {
+  display: flex;
+  margin-bottom: 3rem;
+}
+
+.issue-type-color-green,
+.issue-type-color-yellow,
+.issue-type-color-red,
+.issue-type-color-purple {
+  color: $off-white;
+}
+
+.issue-type-color-blue {
+  background: $light-blue;
+}
+
+.issue-type-color-brown {
+  background: $light-brown;
+}
+
+.issue-type-color-green {
+  background: $green;
+}
+
+.issue-type-color-gray {
+  background: $light-gray;
+}
+
+.issue-type-color-purple {
+  background: $lavender;
+}
+
+.issue-type-color-red {
+  background: $red;
+}
+
+.issue-type-color-yellow {
+  background: $yellow;
+}
