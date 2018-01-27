@@ -8,4 +8,5 @@ RSpec.describe Worker, type: :model do
   subject { @worker }
 
   it { is_expected.to be_a(Employee) }
+  it { is_expected.to be_valid }
 end

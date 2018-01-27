@@ -11,6 +11,8 @@ RSpec.describe Employee, type: :model do
 
   it { is_expected.to have_one(:user) }
 
+  it { is_expected.to be_valid }
+
   it { is_expected.to validate_presence_of(:type) }
 
   describe "#user" do
