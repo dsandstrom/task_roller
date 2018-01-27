@@ -4,11 +4,12 @@
 # http://guides.rubyonrails.org/routing.html
 
 Rails.application.routes.draw do
-  root to: 'static#dashboard'
-
   resources :users
   resources :projects, only: :index
   resources :categories do
     resources :projects, except: :index
   end
+  resources :issue_types, except: :show
+  resources :task_types, except: :show
+  root to: 'static#dashboard'
 end
