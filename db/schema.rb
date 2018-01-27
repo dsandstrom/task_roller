@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123031710) do
+ActiveRecord::Schema.define(version: 20180127033058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,19 @@ ActiveRecord::Schema.define(version: 20180123031710) do
     t.index ["type"], name: "index_employees_on_type"
   end
 
+  create_table "issues", force: :cascade do |t|
+    t.string "summary"
+    t.text "description"
+    t.integer "issue_type_id"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
+    t.index ["project_id"], name: "index_issues_on_project_id"
+    t.index ["user_id"], name: "index_issues_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "name"
     t.boolean "visible", default: true
@@ -42,6 +55,32 @@ ActiveRecord::Schema.define(version: 20180123031710) do
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
     t.index ["visible"], name: "index_projects_on_visible"
+  end
+
+  create_table "roller_types", force: :cascade do |t|
+    t.string "name"
+    t.string "icon"
+    t.string "color"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roller_types_on_name"
+    t.index ["type"], name: "index_roller_types_on_type"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "summary"
+    t.text "description"
+    t.integer "task_type_id"
+    t.integer "issue_id"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id"], name: "index_tasks_on_issue_id"
+    t.index ["project_id"], name: "index_tasks_on_project_id"
+    t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
+    t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
