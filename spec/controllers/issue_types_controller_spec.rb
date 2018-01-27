@@ -29,9 +29,9 @@ RSpec.describe IssueTypesController, type: :controller do
         end.to change(IssueType, :count).by(1)
       end
 
-      it "redirects to the created issue_type" do
+      it "redirects to the issue_type list" do
         post :create, params: { issue_type: valid_attributes }
-        expect(response).to redirect_to(IssueType.last)
+        expect(response).to redirect_to(roller_types_url)
       end
     end
 
@@ -56,11 +56,11 @@ RSpec.describe IssueTypesController, type: :controller do
         end.to change(issue_type, :name).to("New Name")
       end
 
-      it "redirects to the issue_type" do
+      it "redirects to the issue_type list" do
         issue_type = Fabricate(:issue_type)
         put :update, params: { id: issue_type.to_param,
                                issue_type: valid_attributes }
-        expect(response).to redirect_to(issue_type)
+        expect(response).to redirect_to(roller_types_url)
       end
     end
 
@@ -85,7 +85,7 @@ RSpec.describe IssueTypesController, type: :controller do
     it "redirects to the issue_types list" do
       issue_type = Fabricate(:issue_type)
       delete :destroy, params: { id: issue_type.to_param }
-      expect(response).to redirect_to(issue_types_url)
+      expect(response).to redirect_to(roller_types_url)
     end
   end
 end

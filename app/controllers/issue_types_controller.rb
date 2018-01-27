@@ -13,7 +13,7 @@ class IssueTypesController < ApplicationController
     @issue_type = IssueType.new(issue_type_params)
 
     if @issue_type.save
-      redirect_to @issue_type,
+      redirect_to roller_types_url,
                   notice: 'Issue type was successfully created.'
     else
       render :new
@@ -22,7 +22,7 @@ class IssueTypesController < ApplicationController
 
   def update
     if @issue_type.update(issue_type_params)
-      redirect_to @issue_type,
+      redirect_to roller_types_url,
                   notice: 'Issue type was successfully updated.'
     else
       render :edit
@@ -31,7 +31,7 @@ class IssueTypesController < ApplicationController
 
   def destroy
     @issue_type.destroy
-    redirect_to issue_types_url,
+    redirect_to roller_types_url,
                 notice: 'Issue type was successfully destroyed.'
   end
 
