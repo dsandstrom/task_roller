@@ -1,22 +1,3 @@
 //= require 'normalize.css/normalize'
 //= require fontastic
-
-// foundation breakpoint mixin
-@import 'foundation-sites/scss/util/unit';
-@import 'foundation-sites/scss/util/value';
-@import 'foundation-sites/scss/util/breakpoint';
-
-// global
-@import 'colors';
-@import 'milligram';
-@import 'mixins';
-
-@import 'typography';
-@import 'layout';
-@import 'buttons';
-@import 'forms';
-@import 'flash_messages';
-
-@import 'users';
-@import 'categories';
-@import 'projects';
+//= require base
