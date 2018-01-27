@@ -11,6 +11,7 @@
   font-style: normal;
 }
 
+
 [data-icon]::before {
   content: attr(data-icon);
   font-family: 'task-roller';
@@ -24,18 +25,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-[class^="icon-"]::before,
-[class*=" icon-"]::before {
-  font-family: 'task-roller';
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  text-transform: none;
-  speak: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+[class^="icon-"],
+[class*=" icon-"] {
+  display: flex;
+
+
+  &::before {
+    font-family: 'task-roller';
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
+
 
 .icon-thumbsdown::before {
   content: '\e000';
@@ -61,7 +68,7 @@
   content: '\e005';
 }
 
-.icon-social-buffer::before {
+.icon-buffer::before {
   content: '\e006';
 }
 
@@ -73,7 +80,7 @@
   content: '\e008';
 }
 
-.icon-ribbon-b::before {
+.icon-ribbon::before {
   content: '\e009';
 }
 
@@ -89,7 +96,7 @@
   content: '\e00c';
 }
 
-.icon-person-stalker::before {
+.icon-person-group::before {
   content: '\e00d';
 }
 
@@ -101,7 +108,7 @@
   content: '\e00f';
 }
 
-.icon-navicon-round::before {
+.icon-hamburger::before {
   content: '\e010';
 }
 
@@ -157,19 +164,19 @@
   content: '\e020';
 }
 
-.icon-arrow-up-a::before {
+.icon-arrow-up::before {
   content: '\e021';
 }
 
-.icon-arrow-down-a::before {
+.icon-arrow-down::before {
   content: '\e022';
 }
 
-.icon-arrow-left-a::before {
+.icon-arrow-left::before {
   content: '\e023';
 }
 
-.icon-arrow-right-a::before {
+.icon-arrow-right::before {
   content: '\e024';
 }
 
