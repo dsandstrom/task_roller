@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe RollerType, type: :model do
+  let(:color_options) { %w[green yellow red brown gray blue purple] }
   let(:icon_options) do
     { "social-usd" => "57346", "umbrella" => "57347", "trophy" => "57348",
       "speakerphone" => "57349", "buffer" => "57350", "settings" => "57351",
@@ -14,7 +15,7 @@ RSpec.describe RollerType, type: :model do
       "plane" => "57374", "stopwatch" => "57375", "textsms" => "57376",
       "bug" => "57382", "backspace" => "57384", "earth" => "57388",
       "flask" => "57389", "image" => "57393", "gear" => "57394",
-      "share" => "57395", "fireball" => "57362", "fork-repo" => "57363" }.freeze
+      "share" => "57395", "fireball" => "57362", "fork-repo" => "57363" }
   end
 
   before do
@@ -34,7 +35,13 @@ RSpec.describe RollerType, type: :model do
   it { is_expected.to validate_length_of(:name).is_at_most(100) }
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:type) }
   it { is_expected.to validate_presence_of(:icon) }
+  it do
+    is_expected.to validate_inclusion_of(:icon).in_array(
+      icon_options.map(&:first)
+    )
+  end
   it { is_expected.to validate_presence_of(:color) }
+  it { is_expected.to validate_inclusion_of(:color).in_array(color_options) }
   it { is_expected.to validate_presence_of(:type) }
 
   describe ".icon_options" do

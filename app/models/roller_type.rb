@@ -5,18 +5,10 @@ class RollerType < ApplicationRecord
   RESERVED_ICON_NAMES = %w[arrow-up arrow-down arrow-left arrow-right thumbsup
                            thumbsdown close checkmark eye eye-disabled heart
                            heart-outline hamburger delete plus].freeze
+  COLOR_OPTIONS = %w[green yellow red brown gray blue purple].freeze
 
-  validates :name, presence: true, length: { maximum: 100 },
-                   uniqueness: { scope: :type }
-  # TODO: add options for icon and color
-  # TODO: validate icon, color are one of the options
-  validates :icon, presence: true
-  validates :color, presence: true
-  validates :type, presence: true
-
-  def self.icon_options
+  private_class_method def self.pull_icon_options_from_font
     icon_names = {}
-
     File.open(FONT_FILE, 'r') do |f|
       f.each_line do |l|
         matches = l.match(/glyph-name="(\w+|\w+\-\w+)"\sunicode="&#(\d+)\;\"/)
@@ -25,7 +17,18 @@ class RollerType < ApplicationRecord
         icon_names[matches[1]] = matches[2]
       end
     end
-
     icon_names
   end
+
+  def self.icon_options
+    pull_icon_options_from_font
+  rescue Errno::ENOENT
+    raise 'App Error: Add icon font files'
+  end
+
+  validates :icon, presence: true, inclusion: { in: icon_options }
+  validates :name, presence: true, length: { maximum: 100 },
+                   uniqueness: { scope: :type }
+  validates :color, presence: true, inclusion: { in: COLOR_OPTIONS }
+  validates :type, presence: true
 end
