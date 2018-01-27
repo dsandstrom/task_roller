@@ -33,7 +33,7 @@ module TaskRoller
       g.helper false
       g.jbuilder false
       g.fixture_replacement :fabrication
-      # g.request_specs false
+      g.request_specs false
       g.routing_specs false
     end
   end
