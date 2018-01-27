@@ -27,9 +27,6 @@
 
 [class^="icon-"],
 [class*=" icon-"] {
-  display: flex;
-
-
   &::before {
     font-family: 'task-roller';
     font-style: normal;

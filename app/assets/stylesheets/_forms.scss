@@ -30,14 +30,14 @@ input[type='submit'],
 .error-card {
   margin-bottom: 2rem;
   border-radius: $border-radius;
-  background: $color-tertiary;
+  background: $pearl;
   color: $black;
 
   .card-title {
     margin: 0;
     padding: 1rem;
     border-radius: $border-radius $border-radius 0 0;
-    background: $color-danger;
+    background: $color-warning;
     color: $white;
     line-height: 1.2;
   }
