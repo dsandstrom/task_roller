@@ -43,10 +43,4 @@ RSpec.describe RollerType, type: :model do
   it { is_expected.to validate_presence_of(:color) }
   it { is_expected.to validate_inclusion_of(:color).in_array(color_options) }
   it { is_expected.to validate_presence_of(:type) }
-
-  describe ".icon_options" do
-    it "returns hash of icon names and unicodes" do
-      expect(RollerType.icon_options).to eq(icon_options)
-    end
-  end
 end
