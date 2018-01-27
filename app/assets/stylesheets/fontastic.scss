@@ -1,0 +1,230 @@
+@charset 'UTF-8';
+
+@font-face {
+  font-family: 'task-roller';
+  src: asset-url('task-roller.eot');
+  src: asset-url('task-roller.eot?#iefix') format('embedded-opentype'),
+       asset-url('task-roller.woff') format('woff'),
+       asset-url('task-roller.ttf') format('truetype'),
+       asset-url('task-roller.svg#task-roller') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'task-roller';
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  text-transform: none;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"]::before,
+[class*=" icon-"]::before {
+  font-family: 'task-roller';
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  text-transform: none;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-thumbsdown::before {
+  content: '\e000';
+}
+
+.icon-thumbsup::before {
+  content: '\e001';
+}
+
+.icon-social-usd::before {
+  content: '\e002';
+}
+
+.icon-umbrella::before {
+  content: '\e003';
+}
+
+.icon-trophy::before {
+  content: '\e004';
+}
+
+.icon-speakerphone::before {
+  content: '\e005';
+}
+
+.icon-social-buffer::before {
+  content: '\e006';
+}
+
+.icon-settings::before {
+  content: '\e007';
+}
+
+.icon-scissors::before {
+  content: '\e008';
+}
+
+.icon-ribbon-b::before {
+  content: '\e009';
+}
+
+.icon-pull-request::before {
+  content: '\e00a';
+}
+
+.icon-person::before {
+  content: '\e00b';
+}
+
+.icon-person-add::before {
+  content: '\e00c';
+}
+
+.icon-person-stalker::before {
+  content: '\e00d';
+}
+
+.icon-paintbucket::before {
+  content: '\e00e';
+}
+
+.icon-network::before {
+  content: '\e00f';
+}
+
+.icon-navicon-round::before {
+  content: '\e010';
+}
+
+.icon-alert::before {
+  content: '\e011';
+}
+
+.icon-bulb::before {
+  content: '\e014';
+}
+
+.icon-cart::before {
+  content: '\e015';
+}
+
+.icon-calendar::before {
+  content: '\e016';
+}
+
+.icon-delete::before {
+  content: '\e017';
+}
+
+.icon-heart::before {
+  content: '\e018';
+}
+
+.icon-heart-outline::before {
+  content: '\e019';
+}
+
+.icon-globe::before {
+  content: '\e01b';
+}
+
+.icon-options::before {
+  content: '\e01c';
+}
+
+.icon-notifications::before {
+  content: '\e01d';
+}
+
+.icon-plane::before {
+  content: '\e01e';
+}
+
+.icon-stopwatch::before {
+  content: '\e01f';
+}
+
+.icon-textsms::before {
+  content: '\e020';
+}
+
+.icon-arrow-up-a::before {
+  content: '\e021';
+}
+
+.icon-arrow-down-a::before {
+  content: '\e022';
+}
+
+.icon-arrow-left-a::before {
+  content: '\e023';
+}
+
+.icon-arrow-right-a::before {
+  content: '\e024';
+}
+
+.icon-plus::before {
+  content: '\e025';
+}
+
+.icon-bug::before {
+  content: '\e026';
+}
+
+.icon-backspace::before {
+  content: '\e028';
+}
+
+.icon-close::before {
+  content: '\e02a';
+}
+
+.icon-checkmark::before {
+  content: '\e02b';
+}
+
+.icon-earth::before {
+  content: '\e02c';
+}
+
+.icon-flask::before {
+  content: '\e02d';
+}
+
+.icon-eye::before {
+  content: '\e02e';
+}
+
+.icon-eye-disabled::before {
+  content: '\e02f';
+}
+
+.icon-image::before {
+  content: '\e031';
+}
+
+.icon-gear::before {
+  content: '\e032';
+}
+
+.icon-share::before {
+  content: '\e033';
+}
+
+.icon-fireball::before {
+  content: '\e012';
+}
+
+.icon-fork-repo::before {
+  content: '\e013';
+}
