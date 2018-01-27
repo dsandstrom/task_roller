@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   resources :categories do
     resources :projects, except: :index
   end
-  resources :issue_types, except: :show
-  resources :task_types, except: :show
+  resources :roller_types, only: :index
+  resources :issue_types, except: %i[index show]
+  resources :task_types, except: %i[index show]
+
   root to: 'static#dashboard'
 end

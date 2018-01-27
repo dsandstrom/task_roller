@@ -6,14 +6,6 @@ RSpec.describe IssueTypesController, type: :controller do
   let(:valid_attributes) { { name: "Bug", icon: "bug", color: "red" } }
   let(:invalid_attributes) { { name: "" } }
 
-  describe "GET #index" do
-    it "returns a success response" do
-      Fabricate(:issue_type)
-      get :index, params: {}
-      expect(response).to be_success
-    end
-  end
-
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: {}

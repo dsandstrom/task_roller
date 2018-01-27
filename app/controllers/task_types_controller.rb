@@ -3,10 +3,6 @@
 class TaskTypesController < ApplicationController
   before_action :set_task_type, only: %i[show edit update destroy]
 
-  def index
-    @task_types = TaskType.all
-  end
-
   def new
     @task_type = TaskType.new
   end

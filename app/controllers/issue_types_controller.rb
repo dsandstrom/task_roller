@@ -3,10 +3,6 @@
 class IssueTypesController < ApplicationController
   before_action :set_issue_type, only: %i[show edit update destroy]
 
-  def index
-    @issue_types = IssueType.all
-  end
-
   def new
     @issue_type = IssueType.new
   end
