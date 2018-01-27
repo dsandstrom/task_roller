@@ -4,8 +4,11 @@
 <header class="category-projects-header">
   <h2>Projects</h2>
   <p>
-    <%= link_to 'Add Project', new_category_project_path(@category),
-                class: 'button button-success' %>
+    <%= link_to new_category_project_path(@category),
+                class: 'button button-success' do %>
+      <i class="icon-plus"></i>
+      Add Project
+    <% end %>
   </p>
   <p>
     <%= link_to 'Edit Category', edit_category_path(@category),

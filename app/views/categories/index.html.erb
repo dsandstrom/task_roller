@@ -2,8 +2,10 @@
 
 <header class="categories-header">
   <p>
-    <%= link_to 'New Category', new_category_path,
-                class: 'button button-success' %>
+    <%= link_to new_category_path, class: 'button button-success' do %>
+      <i class="icon-plus"></i>
+      Add Category
+    <% end %>
   </p>
 </header>
 

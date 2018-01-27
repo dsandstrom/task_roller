@@ -1,2 +1,5 @@
-<%= link_to "Add #{employee_type}", new_user_path(employee_type: employee_type),
-            class: 'button button-success' %>
+<%= link_to  new_user_path(employee_type: employee_type),
+            class: 'button button-success' do %>
+  <i class="icon-plus"></i>
+  Add <%= employee_type %>
+<% end %>
