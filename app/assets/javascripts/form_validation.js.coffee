@@ -1,4 +1,4 @@
-class Field
+class FieldValidation
   constuctor: (@elem) ->
     @isValid = true
 
@@ -9,13 +9,13 @@ class Field
     # console.log @elem
     # @isValid = @elem.value.length > 0
 
-class Form
+class FormValidation
   constructor: (@id) ->
     @elem = document.getElementById(@id)
     return unless @elem
     @fields = []
     for required in document.querySelectorAll('[required="required"]')
-      field = new Field(required)
+      field = new FieldValidation(required)
       @fields.push(field)
     return unless @fields.length
 
@@ -34,4 +34,4 @@ class Form
     @isValid
 
 document.addEventListener 'turbolinks:load', () ->
-  new Form('user-form')
+  new FormValidation('user-form')
