@@ -1,0 +1,40 @@
+<h2>Icon Options</h2>
+<div class="issue-type-icon-options">
+  <% RollerType::ICON_OPTIONS.each do |icon| %>
+    <span class="issue-type-icon-option">
+      <%= content_tag :i, '', class: "icon-#{icon}" %>
+      <%= icon %>
+    </span>
+  <% end %>
+</div>
+
+<h2>Color Options</h2>
+<div class="issue-type-colors">
+  <% RollerType::COLOR_OPTIONS.each do |color| %>
+    <%= content_tag :span, color,
+                    class: "issue-type-color issue-type-color-#{color}" %>
+  <% end %>
+</div>
+
+<%= form_with(model: issue_type, local: true) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :issue_type_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :icon %>
+    <%= form.text_field :icon, id: :issue_type_icon %>
+  </div>
+
+  <div class="field">
+    <%= form.label :color %>
+    <%= form.text_field :color, id: :issue_type_color %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
