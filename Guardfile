@@ -42,7 +42,7 @@ group :frontend do
   guard 'rails' do
     watch('Gemfile.lock')
     watch(%r{^(config|lib)/.*})
-    watch('app/assets/fonts/*')
+    watch(%r{app/assets/fonts/*})
   end
 
   guard 'livereload' do
