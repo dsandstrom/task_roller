@@ -26,12 +26,27 @@
 
   <div class="field">
     <%= form.label :icon %>
-    <%= form.text_field :icon, id: :issue_type_icon %>
+    <% roller_type_icon_options.each do |title, name| %>
+      <% id = "issue_type_icon_#{name.parameterize}" %>
+
+      <%= form.label :icon, for: id do %>
+        <%= form.radio_button :icon, name, id: id %>
+        <%= icon(name) %>
+        <%= title %>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="field">
     <%= form.label :color %>
-    <%= form.text_field :color, id: :issue_type_color %>
+    <% roller_type_color_options.each do |title, name| %>
+      <% id = "issue_type_color_#{name.parameterize}" %>
+
+      <%= form.label :color, for: id do %>
+        <%= form.radio_button :color, name, id: id %>
+        <%= title %>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="actions">

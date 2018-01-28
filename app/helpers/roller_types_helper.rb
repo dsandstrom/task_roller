@@ -8,6 +8,14 @@ module RollerTypesHelper
     roller_type_tag issue_type.name, icon, css_class
   end
 
+  def roller_type_icon_options
+    RollerType::ICON_OPTIONS.map { |t| [t.titleize, t] }
+  end
+
+  def roller_type_color_options
+    RollerType::COLOR_OPTIONS.map { |t| [t.titleize, t] }
+  end
+
   private
 
     def roller_type_tag(name, icon, css_class)
