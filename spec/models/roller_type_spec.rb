@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe RollerType, type: :model do
   let(:color_options) { %w[green yellow red brown gray blue purple] }
   let(:icon_options) do
-    { "social-usd" => "57346", "umbrella" => "57347", "trophy" => "57348",
+    { "money" => "57346", "umbrella" => "57347", "trophy" => "57348",
       "speakerphone" => "57349", "buffer" => "57350", "settings" => "57351",
       "scissors" => "57352", "ribbon" => "57353", "pull-request" => "57354",
       "person" => "57355", "person-add" => "57356", "person-group" => "57357",
