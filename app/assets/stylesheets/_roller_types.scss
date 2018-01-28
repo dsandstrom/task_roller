@@ -10,7 +10,6 @@
     justify-content: center;
     margin: 0 .5rem 1rem;
     padding: .3rem .5rem;
-    border: 1px solid $light-gray;
     border-radius: $border-radius;
     color: $color-quaternary;
     line-height: 1.2;
@@ -21,6 +20,40 @@
       color: $color-quinary;
       font-weight: normal;
     }
+
+    &.disabled {
+      opacity: .5;
+    }
+
+    &.active {
+      border-color: $gray;
+    }
+  }
+}
+
+.issue-type-color-options {
+  margin-bottom: 1rem;
+
+  label {
+    border-width: 1px;
+    border-style: solid;
+
+    &.active {
+      border-color: $black;
+    }
+  }
+}
+
+.issue-type-icon-options {
+  label {
+    border: 1px solid $light-gray;
+    background-color: $off-white;
+  }
+}
+
+.roller-radio-button-label {
+  input {
+    display: none;
   }
 }
 
@@ -61,29 +94,36 @@
 }
 
 .issue-type-color-blue {
+  border-color: $dark-blue;
   background: $light-blue;
 }
 
 .issue-type-color-brown {
+  border-color: $dark-gray;
   background: $light-brown;
 }
 
 .issue-type-color-green {
+  border-color: $dark-green;
   background: $green;
 }
 
 .issue-type-color-gray {
+  border-color: $gray;
   background: $light-gray;
 }
 
 .issue-type-color-purple {
+  border-color: $dark-gray;
   background: $lavender;
 }
 
 .issue-type-color-red {
+  border-color: $dark-red;
   background: $red;
 }
 
 .issue-type-color-yellow {
+  border-color: $dark-yellow;
   background: $yellow;
 }
