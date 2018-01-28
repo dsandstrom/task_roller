@@ -1,21 +1,3 @@
-<h2>Icon Options</h2>
-<div class="issue-type-icon-options">
-  <% RollerType::ICON_OPTIONS.each do |icon| %>
-    <span class="issue-type-icon-option">
-      <%= content_tag :i, '', class: "icon-#{icon}" %>
-      <%= icon %>
-    </span>
-  <% end %>
-</div>
-
-<h2>Color Options</h2>
-<div class="issue-type-colors">
-  <% RollerType::COLOR_OPTIONS.each do |color| %>
-    <%= content_tag :span, color,
-                    class: "issue-type-color issue-type-color-#{color}" %>
-  <% end %>
-</div>
-
 <%= form_with(model: issue_type, local: true) do |form| %>
   <%= form_errors(form.object) %>
 
@@ -25,28 +7,32 @@
   </div>
 
   <div class="field">
-    <%= form.label :icon %>
-    <% roller_type_icon_options.each do |title, name| %>
-      <% id = "issue_type_icon_#{name.parameterize}" %>
+    <%= form.label :color %>
+    <div class="issue-type-color-options">
+      <% roller_type_color_options.each do |title, name| %>
+        <% id = "issue_type_color_#{name.parameterize}" %>
 
-      <%= form.label :icon, for: id do %>
-        <%= form.radio_button :icon, name, id: id %>
-        <%= icon(name) %>
-        <%= title %>
+        <%= form.label :color, for: id, class: "issue-type-color-#{name}" do %>
+          <%= form.radio_button :color, name, id: id %>
+          <%= title %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 
   <div class="field">
-    <%= form.label :color %>
-    <% roller_type_color_options.each do |title, name| %>
-      <% id = "issue_type_color_#{name.parameterize}" %>
+    <%= form.label :icon %>
+    <div class="issue-type-icon-options">
+      <% roller_type_icon_options.each do |title, name| %>
+        <% id = "issue_type_icon_#{name.parameterize}" %>
 
-      <%= form.label :color, for: id do %>
-        <%= form.radio_button :color, name, id: id %>
-        <%= title %>
+        <%= form.label :icon, for: id do %>
+          <%= form.radio_button :icon, name, id: id %>
+          <%= icon(name) %>
+          <%= title %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 
   <div class="actions">
