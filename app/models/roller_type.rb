@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: add sort position
 class RollerType < ApplicationRecord
   # TODO: make separate class/helper
   private_class_method def self.pull_icon_options_from_font
@@ -25,7 +26,7 @@ class RollerType < ApplicationRecord
   FONT_FILE = Rails.root.join('app', 'assets', 'fonts', 'task-roller.svg')
   RESERVED_ICON_NAMES = %w[arrow-up arrow-down arrow-left arrow-right thumbsup
                            thumbsdown close checkmark eye eye-disabled heart
-                           heart-outline hamburger delete plus].freeze
+                           heart-outline hamburger delete plus alert].freeze
   COLOR_OPTIONS = %w[default blue brown green purple red yellow].freeze
   ICON_OPTIONS = set_icon_options.freeze
 

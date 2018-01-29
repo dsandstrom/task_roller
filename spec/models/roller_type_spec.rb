@@ -9,13 +9,13 @@ RSpec.describe RollerType, type: :model do
       "speakerphone" => "57349", "buffer" => "57350", "settings" => "57351",
       "scissors" => "57352", "ribbon" => "57353", "pull-request" => "57354",
       "person" => "57355", "person-add" => "57356", "person-group" => "57357",
-      "paintbucket" => "57358", "network" => "57359", "alert" => "57361",
-      "bulb" => "57364", "cart" => "57365", "calendar" => "57366",
-      "globe" => "57371", "options" => "57372", "notifications" => "57373",
-      "plane" => "57374", "stopwatch" => "57375", "textsms" => "57376",
-      "bug" => "57382", "backspace" => "57384", "earth" => "57388",
-      "flask" => "57389", "image" => "57393", "gear" => "57394",
-      "share" => "57395", "fireball" => "57362", "fork-repo" => "57363" }
+      "paintbucket" => "57358", "network" => "57359", "bulb" => "57364",
+      "cart" => "57365", "calendar" => "57366", "globe" => "57371",
+      "options" => "57372", "notifications" => "57373", "plane" => "57374",
+      "stopwatch" => "57375", "textsms" => "57376", "bug" => "57382",
+      "backspace" => "57384", "earth" => "57388", "flask" => "57389",
+      "image" => "57393", "gear" => "57394", "share" => "57395",
+      "fireball" => "57362", "fork-repo" => "57363", "help" => "57370" }
   end
 
   before do
