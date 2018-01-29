@@ -1,37 +1,52 @@
-class FieldValidation
-  constuctor: (@elem) ->
-    @isValid = true
+class Form
+  options: [{name: 'issue_type[name]', display: 'Name', rules: 'required'}]
 
-  validate: ->
-    # console.log 'validate'
-    # console.log @elem
-    false
-    # console.log @elem
-    # @isValid = @elem.value.length > 0
+  constructor: (@name) ->
+    @form = document.querySelector("[name='#{@name}']")
+    return unless @form
+    @button = @form.querySelector("[type='submit']")
+    return unless @button
+    @validator = new FormValidator(@name, @options, @afterValidate)
+    @watchInputs()
 
-class FormValidation
-  constructor: (@id) ->
-    @elem = document.getElementById(@id)
-    return unless @elem
-    @fields = []
-    for required in document.querySelectorAll('[required="required"]')
-      field = new FieldValidation(required)
-      @fields.push(field)
-    return unless @fields.length
+  watchInputs: ->
+    for input in @form.querySelectorAll("input[type='text']")
+      input.addEventListener 'keyup', =>
+        @validator._validateForm()
 
-    @isValid = true
-    @watchSubmit()
+  clearErrors: ->
+    @button.disabled = false
+    for error in @form.querySelectorAll('.error')
+      error.classList.remove('error')
 
-  watchSubmit: ->
-    @elem.addEventListener 'submit', (event) =>
-      return event.preventDefault() unless @valid()
-      true
+  afterValidate: (errors, event) =>
+    @clearErrors()
+    return unless errors.length
+    for error in errors
+      displayError(error)
 
-  valid: ->
-    for required in document.querySelectorAll('[required="required"]')
-      isValid = required.value.length > 0
-      @isValid = false unless isValid
-    @isValid
+  displayError = (error) ->
+    input = document.getElementById(error.id)
+    return unless input
+    addClass(input)
+    updateMessage(input, error.message)
+
+  addClass = (input) ->
+    input.classList.add('error')
+    input.parentNode.classList.add('error')
+
+  updateMessage = (input, message) ->
+    messageClass = 'field-error-message'
+    elem = input.parentNode.querySelector(".#{messageClass}")
+    elem = addNewMessage(input, messageClass) unless elem
+    elem.innerHTML = message
+
+  addNewMessage = (input, messageClass) ->
+    elem = document.createElement('span')
+    elem.classList.add(messageClass)
+    input.parentNode.appendChild(elem)
+    elem
 
 document.addEventListener 'turbolinks:load', () ->
-  new FormValidation('user-form')
+  for formName in ['issue_type_form']
+    new Form(formName)
