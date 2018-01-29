@@ -1,5 +1,7 @@
 .issue-type-color-options,
-.issue-type-icon-options {
+.issue-type-icon-options,
+.task-type-color-options,
+.task-type-icon-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -38,7 +40,8 @@
   }
 }
 
-.issue-type-color-options {
+.issue-type-color-options,
+.task-type-color-options {
   margin-bottom: 1rem;
 
   label {
@@ -51,7 +54,8 @@
   }
 }
 
-.issue-type-icon-options {
+.issue-type-icon-options,
+.task-type-icon-options {
   label {
     border: 1px solid $light-gray;
     background-color: $off-white;
@@ -65,8 +69,9 @@
 }
 
 .issue-type-tag,
+.task-type-tag,
 .issue-type-icon-option,
-.issue-type-color {
+.task-type-icon-option {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,55 +93,52 @@
   }
 }
 
-.issue-type-colors {
-  display: flex;
-  margin-bottom: 3rem;
-}
-
-.issue-type-color-green,
-.issue-type-color-yellow,
-.issue-type-color-red,
-.issue-type-color-purple {
+.roller-type-color-green,
+.roller-type-color-yellow,
+.roller-type-color-red,
+.roller-type-color-purple {
   color: $off-white;
 }
 
-.issue-type-color-default {
+.roller-type-color-default {
   border-color: $gray;
   background: $light-gray;
 }
 
-.issue-type-color-blue {
+.roller-type-color-blue {
   border-color: $dark-blue;
   background: $light-blue;
 }
 
-.issue-type-color-brown {
+.roller-type-color-brown {
   border-color: $dark-gray;
   background: $light-brown;
 }
 
-.issue-type-color-green {
+.roller-type-color-green {
   border-color: $dark-green;
   background: $green;
 }
 
-.issue-type-color-purple {
+.roller-type-color-purple {
   border-color: $dark-gray;
   background: $lavender;
 }
 
-.issue-type-color-red {
+.roller-type-color-red {
   border-color: $dark-red;
   background: $red;
 }
 
-.issue-type-color-yellow {
+.roller-type-color-yellow {
   border-color: $dark-yellow;
   background: $yellow;
 }
 
-.issue-types {
-  .issue-type {
+.issue-types,
+.task-types {
+  .issue-type,
+  .task-type {
     display: grid;
     align-items: center;
     margin-bottom: 1.5rem;
