@@ -1,17 +1,17 @@
-<%= form_with(model: issue_type, local: true,
-              html: { name: 'issue_type_form' }) do |form| %>
+<%= form_with(model: task_type, local: true,
+              html: { name: 'task_type_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">
     <%= form.label :name %>
-    <%= form.text_field :name, id: :issue_type_name %>
+    <%= form.text_field :name, id: :task_type_name %>
   </div>
 
   <div class="field">
     <%= form.label :color %>
-    <div id="issue_type_color_labels" class="issue-type-color-options">
+    <div id="task_type_color_labels" class="task-type-color-options">
       <% roller_type_color_options.each do |title, name| %>
-        <% id = "issue_type_color_#{name.parameterize}" %>
+        <% id = "task_type_color_#{name.parameterize}" %>
 
         <%= form.label :color, for: id, class: "roller-type-color-#{name}" do %>
           <%= form.radio_button :color, name, id: id %>
@@ -23,9 +23,9 @@
 
   <div class="field">
     <%= form.label :icon %>
-    <div id="issue_type_icon_labels" class="issue-type-icon-options">
+    <div id="task_type_icon_labels" class="task-type-icon-options">
       <% roller_type_icon_options.each do |title, name| %>
-        <% id = "issue_type_icon_#{name.parameterize}" %>
+        <% id = "task_type_icon_#{name.parameterize}" %>
 
         <%= form.label :icon, for: id do %>
           <%= form.radio_button :icon, name, id: id %>

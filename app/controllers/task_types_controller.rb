@@ -4,7 +4,7 @@ class TaskTypesController < ApplicationController
   before_action :set_task_type, only: %i[show edit update destroy]
 
   def new
-    @task_type = TaskType.new
+    @task_type = TaskType.new(color: 'default', icon: 'bulb')
   end
 
   def edit; end
@@ -13,7 +13,8 @@ class TaskTypesController < ApplicationController
     @task_type = TaskType.new(task_type_params)
 
     if @task_type.save
-      redirect_to @task_type, notice: 'Task type was successfully created.'
+      redirect_to roller_types_url,
+                  success: 'Task type was successfully created.'
     else
       render :new
     end
@@ -21,7 +22,8 @@ class TaskTypesController < ApplicationController
 
   def update
     if @task_type.update(task_type_params)
-      redirect_to @task_type, notice: 'Task type was successfully updated.'
+      redirect_to roller_types_url,
+                  success: 'Task type was successfully updated.'
     else
       render :edit
     end
@@ -29,7 +31,8 @@ class TaskTypesController < ApplicationController
 
   def destroy
     @task_type.destroy
-    redirect_to task_types_url, notice: 'Task type was successfully destroyed.'
+    redirect_to roller_types_url,
+                success: 'Task type was successfully destroyed.'
   end
 
   private
