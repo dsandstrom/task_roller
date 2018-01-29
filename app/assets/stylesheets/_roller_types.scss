@@ -11,8 +11,8 @@
     margin: 0 .5rem 1rem;
     padding: .3rem .5rem;
     border-radius: $border-radius;
-    color: $color-quaternary;
     line-height: 1.2;
+    cursor: pointer;
 
     i {
       display: flex;
@@ -22,7 +22,14 @@
     }
 
     &.disabled {
+      border-color: $light-gray;
       opacity: .5;
+      background-color: $off-white;
+      color: $color-quaternary;
+
+      i {
+        color: $gray;
+      }
     }
 
     &.active {
