@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  FLASH_MESSSAGE_TYPES = { 'notice' => 'primary', 'success' => 'success',
+  FLASH_MESSSAGE_TYPES = { 'notice' => 'success', 'success' => 'success',
                            'error' => 'warning' }.freeze
 
   def form_errors(obj)
