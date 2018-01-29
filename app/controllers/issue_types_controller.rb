@@ -4,7 +4,7 @@ class IssueTypesController < ApplicationController
   before_action :set_issue_type, only: %i[show edit update destroy]
 
   def new
-    @issue_type = IssueType.new
+    @issue_type = IssueType.new(color: 'default', icon: 'bulb')
   end
 
   def edit; end

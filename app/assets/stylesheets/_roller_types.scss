@@ -100,6 +100,11 @@
   color: $off-white;
 }
 
+.issue-type-color-default {
+  border-color: $gray;
+  background: $light-gray;
+}
+
 .issue-type-color-blue {
   border-color: $dark-blue;
   background: $light-blue;
@@ -113,11 +118,6 @@
 .issue-type-color-green {
   border-color: $dark-green;
   background: $green;
-}
-
-.issue-type-color-gray {
-  border-color: $gray;
-  background: $light-gray;
 }
 
 .issue-type-color-purple {

@@ -15,6 +15,7 @@ class RollerType < ApplicationRecord
     icon_names
   end
 
+  # TODO: sort by name
   private_class_method def self.set_icon_options
     pull_icon_options_from_font
   rescue Errno::ENOENT
@@ -25,7 +26,7 @@ class RollerType < ApplicationRecord
   RESERVED_ICON_NAMES = %w[arrow-up arrow-down arrow-left arrow-right thumbsup
                            thumbsdown close checkmark eye eye-disabled heart
                            heart-outline hamburger delete plus].freeze
-  COLOR_OPTIONS = %w[blue brown gray green purple red yellow].freeze
+  COLOR_OPTIONS = %w[default blue brown green purple red yellow].freeze
   ICON_OPTIONS = set_icon_options.freeze
 
   validates :icon, presence: true, inclusion: { in: ICON_OPTIONS }
