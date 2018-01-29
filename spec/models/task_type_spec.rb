@@ -4,8 +4,8 @@ require "rails_helper"
 
 RSpec.describe TaskType, type: :model do
   before do
-    @task_type = TaskType.new(name: "Task Type Name", icon: "icon",
-                              color: "color")
+    @task_type =
+      TaskType.new(name: "Task Type Name", icon: "bulb", color: "blue")
   end
 
   subject { @task_type }
