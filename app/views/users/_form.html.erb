@@ -1,6 +1,5 @@
 <%= form_with(model: user, local: true,
-              html: { id: 'user-form', class: 'user-form',
-                      novalidate: 'novalidate' }) do |form| %>
+              html: { name: 'user_form', class: 'user-form' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <% unless user.persisted? %>
@@ -8,15 +7,13 @@
 
     <div class="field">
       <%= form.label :email %>
-      <%= form.text_field :email, id: :user_email, required: 'required' %>
-      <span class="field-error">Email is required</span>
+      <%= form.text_field :email, id: :user_email %>
     </div>
   <% end %>
 
   <div class="field">
     <%= form.label :name %>
-    <%= form.text_field :name, id: :user_name, required: 'required' %>
-    <span class="field-error">Name is required</span>
+    <%= form.text_field :name, id: :user_name %>
   </div>
 
   <div class="actions">

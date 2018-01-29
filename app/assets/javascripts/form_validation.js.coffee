@@ -1,7 +1,5 @@
 class Form
-  options: [{name: 'issue_type[name]', display: 'Name', rules: 'required'}]
-
-  constructor: (@name) ->
+  constructor: (@name, @options = {}) ->
     @form = document.querySelector("[name='#{@name}']")
     return unless @form
     @button = @form.querySelector("[type='submit']")
@@ -47,6 +45,15 @@ class Form
     input.parentNode.appendChild(elem)
     elem
 
+class RollerTypeForm
+
+  constructor: () ->
+
 document.addEventListener 'turbolinks:load', () ->
-  for formName in ['issue_type_form']
-    new Form(formName)
+  validationOptions = [
+    {name: 'issue_type[name]', display: 'Name', rules: 'required'},
+    {name: 'task_type[name]', display: 'Name', rules: 'required'}
+  ]
+
+  for formName in ['issue_type_form', 'task_type_form']
+    new Form(formName, validationOptions)

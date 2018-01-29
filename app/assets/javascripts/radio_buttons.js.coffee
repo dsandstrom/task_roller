@@ -35,6 +35,8 @@ class RadioButtons
       label.toggleDisabledClass()
 
 document.addEventListener 'turbolinks:load', () ->
-  for id in ['issue_type_color_labels', 'issue_type_icon_labels']
+  radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
+                    'task_type_color_labels', 'task_type_icon_labels']
+  for id in radioButtonIds
     labels = document.getElementById(id)
     new RadioButtons(labels) if labels
