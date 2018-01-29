@@ -1,12 +1,21 @@
 <h1>Issue Types</h1>
 
-<% @issue_types.each do |issue_type| %>
-  <div id="issue-type-<%= issue_type.id %>" class="issue-type">
-    <p><%= issue_type_tag(issue_type) %></p>
-    <p><%= link_to 'Edit', edit_issue_type_path(issue_type) %></p>
-    <p><%= link_to 'Destroy', issue_type, method: :delete, data: { confirm: 'Are you sure?' } %></p>
-  </div>
-<% end %>
+<div class="issue-types">
+  <% @issue_types.each do |issue_type| %>
+    <div id="issue-type-<%= issue_type.id %>" class="issue-type">
+      <p>
+        <%= link_to edit_issue_type_path(issue_type) do %>
+          <%= issue_type_tag(issue_type) %>
+        <% end %>
+      </p>
+      <p>
+        <%= link_to 'Remove', issue_type,
+                    method: :delete, class: 'link-warning',
+                    data: { confirm: 'Are you sure?' } %>
+      </p>
+    </div>
+  <% end %>
+</div>
 
 <p><%= link_to 'New Issue Type', new_issue_type_path %></p>
 
