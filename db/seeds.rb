@@ -53,6 +53,22 @@ class Seeds
     end
   end
 
+  def create_issue_types
+    return if IssueType.all.any?
+
+    IssueType.create(name: 'Bug', color: 'red', icon: 'bug')
+    IssueType.create(name: 'Suggestion', color: 'green', icon: 'options')
+    IssueType.create(name: 'Question', color: 'blue', icon: 'help')
+  end
+
+  def create_task_types
+    return if TaskType.all.any?
+
+    TaskType.create(name: 'Bug', color: 'red', icon: 'bug')
+    TaskType.create(name: 'Improvement', color: 'yellow', icon: 'options')
+    TaskType.create(name: 'Feature Request', color: 'green', icon: 'bulb')
+  end
+
   private
 
     def create_user(employee_type)
@@ -76,3 +92,5 @@ seeds.create_reviewers
 seeds.create_workers
 seeds.create_categories
 seeds.create_projects
+seeds.create_issue_types
+seeds.create_task_types
