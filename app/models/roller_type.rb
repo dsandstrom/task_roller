@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add sort position
 class RollerType < ApplicationRecord
   # TODO: make separate class/helper
   private_class_method def self.pull_icon_options_from_font

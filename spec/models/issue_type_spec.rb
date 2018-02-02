@@ -13,4 +13,15 @@ RSpec.describe IssueType, type: :model do
   it { is_expected.to be_a(RollerType) }
   it { expect(subject.type).to eq("IssueType") }
   it { is_expected.to be_valid }
+
+  describe ".default_scope" do
+    it "orders by position" do
+      Fabricate(:task_type)
+      second = Fabricate(:issue_type)
+      first = Fabricate(:issue_type)
+      first.move_to_top
+
+      expect(IssueType.all).to eq([first, second])
+    end
+  end
 end
