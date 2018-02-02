@@ -17,10 +17,10 @@ module ProjectsHelper
     def project_visible_tag(project)
       if project.visible?
         text = 'Visible'
-        klass = 'default'
+        klass = 'visible'
       else
         text = 'Invisible'
-        klass = 'warning'
+        klass = 'invisible'
       end
 
       project_tag text, klass
@@ -29,10 +29,10 @@ module ProjectsHelper
     def project_internal_tag(project)
       if project.internal?
         text = 'Internal'
-        klass = 'default'
+        klass = 'internal'
       else
         text = 'External'
-        klass = 'warning'
+        klass = 'external'
       end
 
       project_tag text, klass
