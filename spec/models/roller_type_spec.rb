@@ -29,6 +29,7 @@ RSpec.describe RollerType, type: :model do
   it { is_expected.to respond_to(:icon) }
   it { is_expected.to respond_to(:color) }
   it { is_expected.to respond_to(:type) }
+  it { is_expected.to respond_to(:position) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
