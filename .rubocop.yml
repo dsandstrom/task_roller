@@ -43,3 +43,6 @@ Naming/FileName:
 
 Rails:
   Enabled: true
+
+Style/EmptyMethod:
+  Enabled: false
