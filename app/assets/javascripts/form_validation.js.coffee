@@ -40,7 +40,7 @@ class Form
     elem.innerHTML = message
 
   addNewMessage = (input, messageClass) ->
-    elem = document.createElement('span')
+    elem = document.createElement('p')
     elem.classList.add(messageClass)
     input.parentNode.appendChild(elem)
     elem
