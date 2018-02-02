@@ -9,6 +9,22 @@
         <% end %>
       </p>
       <p>
+        <% unless issue_type.first?  %>
+          <%= link_to reposition_issue_type_path(issue_type, sort: 'up'),
+                      class: 'issue-type-sort-up', title: 'Move Up',
+                      method: :patch do %>
+            <i class="icon-arrow-up"></i>
+          <% end %>
+        <% end %>
+        <% unless issue_type.last?  %>
+          <%= link_to reposition_issue_type_path(issue_type, sort: 'down'),
+                      class: 'issue-type-sort-down', title: 'Move Down',
+                      method: :patch do %>
+            <i class="icon-arrow-down"></i>
+          <% end %>
+        <% end %>
+      </p>
+      <p>
         <%= link_to 'Remove', issue_type,
                     method: :delete, class: 'link-warning',
                     data: { confirm: 'Are you sure?' } %>
@@ -31,6 +47,24 @@
           <%= task_type_tag(task_type) %>
         <% end %>
       </p>
+
+      <p>
+        <% unless task_type.first?  %>
+          <%= link_to reposition_task_type_path(task_type, sort: 'up'),
+                      class: 'task-type-sort-up', title: 'Move Up',
+                      method: :patch do %>
+            <i class="icon-arrow-up"></i>
+          <% end %>
+        <% end %>
+        <% unless task_type.last?  %>
+          <%= link_to reposition_task_type_path(task_type, sort: 'down'),
+                      class: 'task-type-sort-down', title: 'Move Down',
+                      method: :patch do %>
+            <i class="icon-arrow-down"></i>
+          <% end %>
+        <% end %>
+      </p>
+
       <p>
         <%= link_to 'Remove', task_type,
                     method: :delete, class: 'link-warning',
