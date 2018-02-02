@@ -7,27 +7,33 @@
 AllCops:
   TargetRubyVersion: 2.5
   Include:
+    - 'config.ru'
     - 'Gemfile'
     - 'Guardfile'
     - 'Rakefile'
-    - 'config.ru'
 
   Exclude:
-    - 'db/schema.rb'
+    - 'app/views/**/*'
+    - 'bin/*'
     - 'db/schema.rb'
     - 'db/migrate/*'
+    - 'log/**/*'
+    - 'node_modules/**/*'
+    - 'public/**/*'
     - 'script/**/*'
-    - 'app/views/**/*.html.erb'
-    - 'bin/*'
-    - 'tmp/*'
-    - 'node_modules/*'
-    - 'log/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - '.git/**/*'
+
+Documentation:
+  Enabled: false
 
 IndentationConsistency:
   EnforcedStyle: 'rails'
 
-Documentation:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'Guardfile'
 
 Naming/FileName:
   Exclude:
@@ -35,6 +41,5 @@ Naming/FileName:
     - 'Guardfile'
     - 'Rakefile'
 
-Metrics/BlockLength:
-  Exclude:
-    - 'Guardfile'
+Rails:
+  Enabled: true

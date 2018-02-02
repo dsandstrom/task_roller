@@ -1,0 +1,5 @@
+##
+# ./spec/support/.rubocop.yml
+
+inherit_from:
+  - ../../.rubocop.yml
