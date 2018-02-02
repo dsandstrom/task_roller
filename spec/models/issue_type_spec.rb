@@ -24,4 +24,66 @@ RSpec.describe IssueType, type: :model do
       expect(IssueType.all).to eq([first, second])
     end
   end
+
+  describe "#reposition" do
+    context "when 'up'" do
+      it "sorts issue_type up one" do
+        _first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        third = Fabricate(:issue_type)
+
+        expect do
+          third.reposition("up")
+        end.to change(third, :position).from(3).to(2)
+      end
+
+      it "returns true" do
+        _first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        third = Fabricate(:issue_type)
+
+        expect(third.reposition("up")).to be_truthy
+      end
+    end
+
+    context "when 'down'" do
+      it "sorts issue_type up one" do
+        first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        _third = Fabricate(:issue_type)
+
+        expect do
+          first.reposition("down")
+        end.to change(first, :position).from(1).to(2)
+      end
+
+      it "returns true" do
+        first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        _third = Fabricate(:issue_type)
+
+        expect(first.reposition("down")).to be_truthy
+      end
+    end
+
+    context "when 'something else'" do
+      it "doesn't change the issue_type" do
+        first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        _third = Fabricate(:issue_type)
+
+        expect do
+          first.reposition("something else")
+        end.not_to change(first, :position)
+      end
+
+      it "returns false" do
+        first = Fabricate(:issue_type)
+        _second = Fabricate(:issue_type)
+        _third = Fabricate(:issue_type)
+
+        expect(first.reposition("something else")).to be_falsy
+      end
+    end
+  end
 end
