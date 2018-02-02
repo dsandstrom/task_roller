@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TaskTypesController < ApplicationController
-  before_action :set_task_type, only: %i[show edit update destroy]
+  before_action :set_task_type, only: %i[edit update destroy]
 
   def new
     @task_type = TaskType.new(color: 'default', icon: 'bulb')

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IssueTypesController < ApplicationController
-  before_action :set_issue_type, only: %i[show edit update destroy]
+  before_action :set_issue_type, only: %i[edit update destroy]
 
   def new
     @issue_type = IssueType.new(color: 'default', icon: 'bulb')
