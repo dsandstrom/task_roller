@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: don't allow destroying when issues
+# TODO: when destroying, add way to move issues to new type
+
 class RollerType < ApplicationRecord
   # TODO: make separate class/helper
   private_class_method def self.pull_icon_options_from_font
