@@ -37,10 +37,6 @@ class TaskTypesController < ApplicationController
 
   private
 
-    def set_task_type
-      @task_type = TaskType.find(params[:id])
-    end
-
     def task_type_params
       params.require(:task_type).permit(:name, :icon, :color)
     end

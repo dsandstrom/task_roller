@@ -37,10 +37,6 @@ class IssueTypesController < ApplicationController
 
   private
 
-    def set_issue_type
-      @issue_type = IssueType.find(params[:id])
-    end
-
     def issue_type_params
       params.require(:issue_type).permit(:name, :icon, :color)
     end
