@@ -7,7 +7,6 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
@@ -33,7 +32,10 @@ gem 'turbolinks', '~> 5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-gem 'autoprefixer-rails'
+# https://github.com/swanandp/acts_as_list
+gem 'acts_as_list', '~> 0.9.10'
+# https://github.com/ai/autoprefixer-rails
+gem 'autoprefixer-rails', '~> 7.2.5'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger

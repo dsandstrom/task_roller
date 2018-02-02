@@ -38,6 +38,8 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    acts_as_list (0.9.10)
+      activerecord (>= 3.0)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     arel (8.0.0)
@@ -265,7 +267,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  autoprefixer-rails
+  acts_as_list (~> 0.9.10)
+  autoprefixer-rails (~> 7.2.5)
   better_errors
   binding_of_caller
   byebug
