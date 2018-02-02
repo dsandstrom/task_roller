@@ -52,8 +52,10 @@ class RollerTypeForm
 document.addEventListener 'turbolinks:load', () ->
   validationOptions = [
     {name: 'issue_type[name]', display: 'Name', rules: 'required'},
-    {name: 'task_type[name]', display: 'Name', rules: 'required'}
+    {name: 'task_type[name]', display: 'Name', rules: 'required'},
+    {name: 'user[email]', display: 'Email', rules: 'required|valid_email'},
+    {name: 'user[name]', display: 'Name', rules: 'required'},
   ]
 
-  for formName in ['issue_type_form', 'task_type_form']
+  for formName in ['issue_type_form', 'task_type_form', 'user_form']
     new Form(formName, validationOptions)

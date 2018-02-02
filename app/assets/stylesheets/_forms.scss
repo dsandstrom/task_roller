@@ -57,7 +57,6 @@ input[type='submit'],
   .field-error-message {
     display: none;
     align-items: center;
-    height: 3.8rem;
     margin-bottom: 1.5rem;
     padding: 0 1rem;
     opacity: .75;
@@ -92,7 +91,7 @@ label {
   }
 }
 
-@include breakpoint(medium up) {
+@include breakpoint(large up) {
   .field {
     &.error {
       input {
@@ -104,6 +103,7 @@ label {
       position: absolute;
       right: 0;
       bottom: 1.5rem;
+      height: 3.8rem;
       margin: 0;
     }
   }
