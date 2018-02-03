@@ -18,6 +18,8 @@ RSpec.describe Project, type: :model do
 
   it { is_expected.to belong_to(:category) }
 
+  it { is_expected.to have_many(:issues) }
+
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
   it do
@@ -26,4 +28,19 @@ RSpec.describe Project, type: :model do
   end
   it { is_expected.to validate_length_of(:name).is_at_most(250) }
   it { is_expected.to validate_presence_of(:category_id) }
+
+  describe "issues" do
+    let(:project) { Fabricate(:project) }
+
+    context "when destroying Project" do
+      it "destroys its issues" do
+        Fabricate(:issue, project: project)
+        Fabricate(:issue)
+
+        expect do
+          project.destroy
+        end.to change(Issue, :count).by(-1)
+      end
+    end
+  end
 end

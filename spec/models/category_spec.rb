@@ -12,6 +12,7 @@ RSpec.describe Category, type: :model do
   it { is_expected.to respond_to(:internal) }
 
   it { is_expected.to have_many(:projects) }
+  it { is_expected.to have_many(:issues).through(:projects) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
