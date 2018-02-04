@@ -48,6 +48,86 @@ RSpec.describe User, type: :model do
 
   # CLASS
 
+  describe ".employees" do
+    let(:user) { Fabricate(:user) }
+
+    before { user.employee.destroy }
+
+    context "when no type specifed" do
+      it "includes admins" do
+        employee = Fabricate(:user_admin)
+        expect(User.employees).to eq([employee])
+      end
+
+      it "includes reporters" do
+        employee = Fabricate(:user_reporter)
+        expect(User.employees).to eq([employee])
+      end
+
+      it "includes reviewers" do
+        employee = Fabricate(:user_reviewer)
+        expect(User.employees).to eq([employee])
+      end
+
+      it "includes workers" do
+        employee = Fabricate(:user_worker)
+        expect(User.employees).to eq([employee])
+      end
+    end
+
+    context "when given 'Admin'" do
+      let(:type) { "Admin" }
+
+      it "includes only Admins" do
+        employee = Fabricate(:user_admin)
+        Fabricate(:user_reporter)
+        Fabricate(:user_reviewer)
+        Fabricate(:user_worker)
+
+        expect(User.employees(type)).to eq([employee])
+      end
+    end
+
+    context "when given 'Reporter'" do
+      let(:type) { "Reporter" }
+
+      it "includes only Reporters" do
+        employee = Fabricate(:user_reporter)
+        Fabricate(:user_admin)
+        Fabricate(:user_reviewer)
+        Fabricate(:user_worker)
+
+        expect(User.employees(type)).to eq([employee])
+      end
+    end
+
+    context "when given 'Reviewer'" do
+      let(:type) { "Reviewer" }
+
+      it "includes only Reviewers" do
+        employee = Fabricate(:user_reviewer)
+        Fabricate(:user_admin)
+        Fabricate(:user_reporter)
+        Fabricate(:user_worker)
+
+        expect(User.employees(type)).to eq([employee])
+      end
+    end
+
+    context "when given 'Worker'" do
+      let(:type) { "Worker" }
+
+      it "includes only Workers" do
+        employee = Fabricate(:user_worker)
+        Fabricate(:user_admin)
+        Fabricate(:user_reporter)
+        Fabricate(:user_reviewer)
+
+        expect(User.employees(type)).to eq([employee])
+      end
+    end
+  end
+
   describe ".admins" do
     it "includes only Admins" do
       user_admin = Fabricate(:user_admin)
@@ -89,32 +169,6 @@ RSpec.describe User, type: :model do
       Fabricate(:user_reviewer)
 
       expect(User.workers).to eq([user_worker])
-    end
-  end
-
-  describe ".employees" do
-    let(:user) { Fabricate(:user) }
-
-    before { user.employee.destroy }
-
-    it "includes admins" do
-      employee = Fabricate(:user_admin)
-      expect(User.employees).to eq([employee])
-    end
-
-    it "includes reporters" do
-      employee = Fabricate(:user_reporter)
-      expect(User.employees).to eq([employee])
-    end
-
-    it "includes reviewers" do
-      employee = Fabricate(:user_reviewer)
-      expect(User.employees).to eq([employee])
-    end
-
-    it "includes workers" do
-      employee = Fabricate(:user_worker)
-      expect(User.employees).to eq([employee])
     end
   end
 

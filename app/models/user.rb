@@ -16,29 +16,31 @@ class User < ApplicationRecord
 
   # CLASS
 
+  def self.employees(type = nil)
+    if type
+      return none unless VALID_EMPLOYEE_TYPES.include?(type)
+      return where('employees.type = ?', type).includes(:employee)
+                                              .references(:employees)
+    end
+
+    where('employees.type IN (?)', VALID_EMPLOYEE_TYPES).includes(:employee)
+                                                        .references(:employees)
+  end
+
   def self.admins
-    where("employees.type = 'Admin'").includes(:employee)
-                                     .references(:employees)
+    employees('Admin')
   end
 
   def self.reporters
-    where("employees.type = 'Reporter'").includes(:employee)
-                                        .references(:employees)
+    employees('Reporter')
   end
 
   def self.reviewers
-    where("employees.type = 'Reviewer'").includes(:employee)
-                                        .references(:employees)
+    employees('Reviewer')
   end
 
   def self.workers
-    where("employees.type = 'Worker'").includes(:employee)
-                                      .references(:employees)
-  end
-
-  def self.employees
-    where('employees.type IN (?)', VALID_EMPLOYEE_TYPES).includes(:employee)
-                                                        .references(:employees)
+    employees('Worker')
   end
 
   # INSTANCE
