@@ -8,6 +8,15 @@ module ProjectsHelper
     end
   end
 
+  def project_header(project, category)
+    content_tag :header, class: 'project-header' do
+      concat content_tag(:h1, link_to(project.name,
+                                      category_project_path(category, project)))
+      concat content_tag(:p, link_to(category.name, category))
+      concat project_tags(project)
+    end
+  end
+
   private
 
     def project_tag(text, klass)

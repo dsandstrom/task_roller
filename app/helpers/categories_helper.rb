@@ -9,6 +9,13 @@ module CategoriesHelper
     end
   end
 
+  def category_header(category)
+    content_tag :header, class: 'category-header' do
+      concat content_tag(:h1, link_to(category.name, category))
+      concat category_tags(category)
+    end
+  end
+
   private
 
     def category_tag(text, klass)
