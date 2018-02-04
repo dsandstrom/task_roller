@@ -133,6 +133,63 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#employee_type" do
+    describe "reader" do
+      context "when no employee" do
+        let(:user) { Fabricate(:user) }
+
+        before do
+          user.employee_type = nil
+          user.employee.destroy
+        end
+
+        it "returns nil" do
+          expect(user.employee_type).to be_nil
+        end
+      end
+
+      context "when employee type is 'Admin'" do
+        let(:user) { Fabricate(:user_admin) }
+
+        before { user.employee_type = nil }
+
+        it "returns it" do
+          expect(user.employee_type).to eq("Admin")
+        end
+      end
+
+      context "when employee type is 'Reporter'" do
+        let(:user) { Fabricate(:user_reporter) }
+
+        before { user.employee_type = nil }
+
+        it "returns it" do
+          expect(user.employee_type).to eq("Reporter")
+        end
+      end
+
+      context "when employee type is 'Reviewer'" do
+        let(:user) { Fabricate(:user_reviewer) }
+
+        before { user.employee_type = nil }
+
+        it "returns it" do
+          expect(user.employee_type).to eq("Reviewer")
+        end
+      end
+
+      context "when employee type is 'Worker'" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { user.employee_type = nil }
+
+        it "returns it" do
+          expect(user.employee_type).to eq("Worker")
+        end
+      end
+    end
+  end
+
   describe "#create_employee" do
     context "for a new User" do
       context "for an invalid user" do

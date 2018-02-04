@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
   before_create :create_employee
 
-  attr_accessor :employee_type
+  attr_writer :employee_type
 
   # CLASS
 
@@ -42,6 +42,10 @@ class User < ApplicationRecord
   end
 
   # INSTANCE
+
+  def employee_type
+    @employee_type ||= employee&.type
+  end
 
   def name_and_email
     @name_and_email ||=
