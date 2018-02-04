@@ -1,8 +1,4 @@
-<h1><%= @project.name %></h1>
-
-<p><%= link_to @category.name, @category %></p>
-
-<%= project_tags(@project) %>
+<%= project_header @project, @category %>
 
 <p>
   <%= link_to 'Edit', edit_category_project_path(@category, @project),
