@@ -8,11 +8,11 @@ class IssuesController < ApplicationController
   def index
     @issues =
       if @category && @project
-        @project.issues
+        @project.issues.order(updated_at: :desc)
       elsif @category
-        @category.issues
+        @category.issues.order(updated_at: :desc)
       else
-        Issue.all
+        Issue.all.order(updated_at: :desc)
       end
   end
 
