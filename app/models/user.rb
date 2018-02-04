@@ -14,6 +14,8 @@ class User < ApplicationRecord
 
   attr_accessor :employee_type
 
+  # CLASS
+
   def self.admins
     where("employees.type = 'Admin'").includes(:employee)
                                      .references(:employees)
@@ -32,6 +34,23 @@ class User < ApplicationRecord
   def self.workers
     where("employees.type = 'Worker'").includes(:employee)
                                       .references(:employees)
+  end
+
+  # INSTANCE
+
+  def name_and_email
+    @name_and_email ||=
+      if name && email
+        "#{name} (#{email})"
+      elsif name
+        name
+      else
+        email
+      end
+  end
+
+  def name_or_email
+    @name_or_email ||= (name ? name : email)
   end
 
   private

@@ -208,4 +208,64 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#name_and_email" do
+    let(:user) { Fabricate(:user) }
+
+    context "when user has both" do
+      it "returns 'name (email)'" do
+        expect(user.name_and_email).to eq("#{user.name} (#{user.email})")
+      end
+    end
+
+    context "when user doesn't have a name" do
+      before { user.name = nil }
+
+      it "returns their email" do
+        expect(user.name_and_email).to eq(user.email)
+      end
+    end
+
+    context "when user doesn't have an email" do
+      before { user.email = nil }
+
+      it "returns their name" do
+        expect(user.name_and_email).to eq(user.name)
+      end
+    end
+
+    context "when user doesn't have both" do
+      before { user.email = user.name = nil }
+
+      it "returns nil" do
+        expect(user.name_and_email).to be_nil
+      end
+    end
+  end
+
+  describe "#name_or_email" do
+    let(:user) { Fabricate(:user) }
+
+    context "when user has both" do
+      it "returns their.name" do
+        expect(user.name_or_email).to eq(user.name)
+      end
+    end
+
+    context "when user doesn't have a name" do
+      before { user.name = nil }
+
+      it "returns their email" do
+        expect(user.name_or_email).to eq(user.email)
+      end
+    end
+
+    context "when user doesn't have both" do
+      before { user.email = user.name = nil }
+
+      it "returns nil" do
+        expect(user.name_or_email).to be_nil
+      end
+    end
+  end
 end
