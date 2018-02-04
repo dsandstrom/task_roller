@@ -2,7 +2,7 @@
 
 module ApplicationHelper
   FLASH_MESSSAGE_TYPES = { 'notice' => 'success', 'success' => 'success',
-                           'error' => 'warning' }.freeze
+                           'alert' => 'warning' }.freeze
 
   def form_errors(obj)
     return if obj.errors.none?
