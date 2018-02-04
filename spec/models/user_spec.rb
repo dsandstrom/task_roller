@@ -92,6 +92,32 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".employees" do
+    let(:user) { Fabricate(:user) }
+
+    before { user.employee.destroy }
+
+    it "includes admins" do
+      employee = Fabricate(:user_admin)
+      expect(User.employees).to eq([employee])
+    end
+
+    it "includes reporters" do
+      employee = Fabricate(:user_reporter)
+      expect(User.employees).to eq([employee])
+    end
+
+    it "includes reviewers" do
+      employee = Fabricate(:user_reviewer)
+      expect(User.employees).to eq([employee])
+    end
+
+    it "includes workers" do
+      employee = Fabricate(:user_worker)
+      expect(User.employees).to eq([employee])
+    end
+  end
+
   # INSTANCE
 
   describe "#employee" do

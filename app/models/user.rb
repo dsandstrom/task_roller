@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  VALID_EMPLOYEE_TYPES = %w[Reporter Reviewer Worker Admin].freeze
+  VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
 
   belongs_to :employee, dependent: :destroy, required: false
 
@@ -34,6 +34,11 @@ class User < ApplicationRecord
   def self.workers
     where("employees.type = 'Worker'").includes(:employee)
                                       .references(:employees)
+  end
+
+  def self.employees
+    where('employees.type IN (?)', VALID_EMPLOYEE_TYPES).includes(:employee)
+                                                        .references(:employees)
   end
 
   # INSTANCE
