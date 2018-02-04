@@ -1,3 +1,41 @@
+.issues {
+  background-color: $pearl;
+
+  .issue {
+    padding: 1rem;
+
+    &:nth-child(odd) {
+      background: $light-gray;
+    }
+  }
+
+  .issue-header {
+    margin-bottom: 1rem;
+  }
+
+  .issue-type-tag {
+    margin: .3rem 1rem 0 0;
+    float: left;
+
+    i {
+      &::before {
+        display: block;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .issue-summary {
+    margin-bottom: .5rem;
+  }
+
+  .issue-user {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}
+
 .issue-show-page {
   h2 {
     text-transform: none;

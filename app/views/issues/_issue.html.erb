@@ -1,13 +1,19 @@
-<div id="issue-<%= issue.id %>" class="category-issue">
-  <p>
-    <%= link_to issue.summary,
-                category_project_issue_path(issue.category, issue.project, issue) %>
-  </p>
-  <p><%= issue_type_tag(issue.issue_type) %></p>
-  <p><%= issue.description %></p>
+<div id="issue-<%= issue.id %>" class="issue">
+  <header class="issue-header">
+    <%= issue_type_icon_tag(issue.issue_type) %>
+    <h3 class="issue-summary">
+      <%= link_to issue.summary,
+                  category_project_issue_path(issue.category, issue.project, issue) %>
+    </h3>
+    <p class="issue-user"><%= issue.user.name %></p>
+  </header>
 
-  <p class="issue-edit-links">
+  <main class="issue-main">
+    <p class="issue-description"><%= issue.description %></p>
+  </main>
+
+  <footer class="issue-footer">
     <%= link_to 'Edit',
                 edit_category_project_issue_path(issue.category, issue.project, issue) %>
-  </p>
+  </footer>
 </div>
