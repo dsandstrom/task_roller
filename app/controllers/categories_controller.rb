@@ -12,6 +12,7 @@ class CategoriesController < ApplicationController
   # TODO: restrict to category reviewers
   def show
     @projects = @category.projects
+    @issues = @category.issues.order(updated_at: :desc).limit(3)
   end
 
   # TODO: restrict to admins

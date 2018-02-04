@@ -10,7 +10,9 @@ class ProjectsController < ApplicationController
     @projects = Project.all
   end
 
-  def show; end
+  def show
+    @issues = @project.issues.order(updated_at: :desc).limit(3)
+  end
 
   def new
     @project = @category.projects.build
