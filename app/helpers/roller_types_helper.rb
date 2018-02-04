@@ -7,6 +7,12 @@ module RollerTypesHelper
     roller_type_tag issue_type, css_class
   end
 
+  def issue_type_icon_tag(issue_type)
+    css_class = "issue-type-tag #{roller_type_color(issue_type)}"
+
+    roller_type_icon_tag issue_type, css_class
+  end
+
   def task_type_tag(task_type)
     css_class = "task-type-tag #{roller_type_color(task_type)}"
 
@@ -31,6 +37,12 @@ module RollerTypesHelper
       content_tag :span, class: css_class do
         concat roller_type_icon(roller_type)
         concat roller_type.name
+      end
+    end
+
+    def roller_type_icon_tag(roller_type, css_class)
+      content_tag :span, class: css_class do
+        concat roller_type_icon(roller_type)
       end
     end
 
