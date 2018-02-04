@@ -27,6 +27,12 @@ input[type='submit'],
 }
 // scss-lint:enable QualifyingElement
 
+label {
+  input {
+    margin-bottom: 0;
+  }
+}
+
 .error-card {
   margin-bottom: 2rem;
   border-radius: $border-radius;
@@ -54,57 +60,38 @@ input[type='submit'],
 .field {
   position: relative;
 
-  .field-error-message {
-    display: none;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding: 0 1rem;
-    opacity: .75;
-    background: $color-warning;
-    color: $off-white;
-    font-weight: bold;
+  .field-label-and-message {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    label {
+      margin-right: 1rem;
+    }
+  }
+
+  .field-message {
+    margin: 0 .5rem 0 1rem;
+    color: $gray;
+    font-family: $heading-font;
+    font-size: 1.35rem;
+    font-weight: normal;
+    text-transform: uppercase;
+
+    &.hide {
+      // TODO: fade out
+      display: none;
+    }
   }
 
   &.error {
-    label {
+    .field-message {
       color: $color-warning;
+      font-weight: bold;
     }
 
     input {
-      margin-bottom: 0;
       border-color: $color-warning;
-    }
-
-    .field-error-message {
-      display: flex;
-    }
-  }
-}
-
-.field-error {
-  display: none;
-}
-
-label {
-  input {
-    margin-bottom: 0;
-  }
-}
-
-@include breakpoint(large up) {
-  .field {
-    &.error {
-      input {
-        margin-bottom: 1.5rem;
-      }
-    }
-
-    .field-error-message {
-      position: absolute;
-      right: 0;
-      bottom: 1.5rem;
-      height: 3.8rem;
-      margin: 0;
     }
   }
 }

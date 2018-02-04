@@ -7,13 +7,13 @@
     <%= form.hidden_field :employee_type %>
 
     <div class="field">
-      <%= form.label :email %>
+      <%= required_field_label form, :email %>
       <%= form.email_field :email, id: :user_email %>
     </div>
   <% end %>
 
   <div class="field">
-    <%= form.label :name %>
+    <%= required_field_label form, :name %>
     <%= form.text_field :name, id: :user_name %>
   </div>
 

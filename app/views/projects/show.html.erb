@@ -4,3 +4,15 @@
   <%= link_to 'Edit', edit_category_project_path(@category, @project),
               class: 'button' %>
 </p>
+
+<h2>Issues</h2>
+<p>
+  <%= link_to 'Report Issue',
+              new_category_project_issue_path(@category, @project),
+              class: 'button button-success' %>
+</p>
+<% if @issues.any? %>
+  <%= render @issues %>
+<% else %>
+  <p>None yet</p>
+<% end %>

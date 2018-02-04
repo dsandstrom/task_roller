@@ -1,4 +1,5 @@
-<%= form_with(model: issue, url: url, local: true) do |form| %>
+<%= form_with(model: issue, url: url, local: true,
+              html: { name: 'issue_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <%# TODO: only show for reviewers, otherwise always current_user %>
@@ -26,12 +27,12 @@
   </div>
 
   <div class="field">
-    <%= form.label :summary %>
+    <%= required_field_label form, :summary %>
     <%= form.text_field :summary, id: :issue_summary %>
   </div>
 
   <div class="field">
-    <%= form.label :description %>
+    <%= required_field_label form, :description %>
     <%= form.text_area :description, id: :issue_description %>
   </div>
 

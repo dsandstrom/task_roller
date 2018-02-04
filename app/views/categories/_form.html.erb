@@ -1,8 +1,9 @@
-<%= form_with(model: category, local: true) do |form| %>
+<%= form_with(model: category, local: true,
+              html: { name: :category_form }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= form.label :name %>
+    <%= required_field_label form, :name %>
     <%= form.text_field :name, id: :category_name %>
   </div>
 

@@ -7,11 +7,12 @@
     end
 %>
 
-<%= form_with(model: project, url: url, local: true) do |form| %>
+<%= form_with(model: project, url: url, local: true,
+              html: { name: 'project_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= form.label :name %>
+    <%= required_field_label form, :name %>
     <%= form.text_field :name, id: :project_name %>
   </div>
 

@@ -31,6 +31,13 @@ module ApplicationHelper
     content_tag :i, nil, class: "icon-#{name}"
   end
 
+  def required_field_label(form, field_name)
+    content_tag :div, class: 'field-label-and-message' do
+      concat form.label(field_name)
+      concat content_tag :span, 'required', class: 'field-message'
+    end
+  end
+
   private
 
     def form_errors_list(obj)
