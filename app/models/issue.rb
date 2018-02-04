@@ -4,6 +4,7 @@ class Issue < ApplicationRecord
   belongs_to :user # reporter
   belongs_to :issue_type
   belongs_to :project
+  delegate :category, to: :project
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }

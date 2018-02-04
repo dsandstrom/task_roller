@@ -22,6 +22,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:issue_type_id) }
   it { is_expected.to respond_to(:project_id) }
+  it { is_expected.to respond_to(:category) }
 
   it { is_expected.to validate_presence_of(:summary) }
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
