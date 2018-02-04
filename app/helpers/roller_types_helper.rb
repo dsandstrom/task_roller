@@ -13,6 +13,10 @@ module RollerTypesHelper
     roller_type_tag task_type, css_class
   end
 
+  def roller_type_icon(roller_type)
+    content_tag :i, '', class: "icon-#{roller_type.icon}"
+  end
+
   def roller_type_icon_options
     RollerType::ICON_OPTIONS.map { |t| [t.titleize, t] }
   end
@@ -24,18 +28,13 @@ module RollerTypesHelper
   private
 
     def roller_type_tag(roller_type, css_class)
-      icon = roller_type_icon(roller_type)
       content_tag :span, class: css_class do
-        concat icon
+        concat roller_type_icon(roller_type)
         concat roller_type.name
       end
     end
 
     def roller_type_color(roller_type)
       "roller-type-color-#{roller_type.color}"
-    end
-
-    def roller_type_icon(roller_type)
-      content_tag :i, '', class: "icon-#{roller_type.icon}"
     end
 end
