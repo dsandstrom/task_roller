@@ -3,7 +3,7 @@
 class IssuesController < ApplicationController
   before_action :set_category, :set_project
   before_action :set_issue, only: %i[show edit update destroy]
-  before_action :set_issue_types, only: %i[new edit]
+  before_action :set_issue_types, :set_user_options, only: %i[new edit]
 
   def index
     @issues =
@@ -19,6 +19,7 @@ class IssuesController < ApplicationController
   def show; end
 
   def new
+    # TODO: set user_id to current user
     if @issue_types.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
     else
@@ -37,6 +38,7 @@ class IssuesController < ApplicationController
                   success: 'Issue was successfully created.'
     else
       set_issue_types
+      set_user_options
       render :new
     end
   end
@@ -47,6 +49,7 @@ class IssuesController < ApplicationController
                   success: 'Issue was successfully updated.'
     else
       set_issue_types
+      set_user_options
       render :edit
     end
   end
@@ -86,5 +89,13 @@ class IssuesController < ApplicationController
       # TODO: set user_id from logged in user
       params.require(:issue)
             .permit(:summary, :description, :issue_type_id, :user_id)
+    end
+
+    def set_user_options
+      # TODO: only set for reviewers, otherwise always current_user
+      @user_options =
+        User::VALID_EMPLOYEE_TYPES.map do |type|
+          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+        end
     end
 end

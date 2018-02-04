@@ -8,6 +8,7 @@ RSpec.describe "issues/edit", type: :view do
     @project = assign(:project, Fabricate(:project, category: @category))
     @issue_types = assign(:issue_types, [Fabricate(:issue_type)])
     @issue = assign(:issue, Fabricate(:issue, project: @project))
+    assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
   end
 
   let(:url) { category_project_issue_path(@category, @project, @issue) }

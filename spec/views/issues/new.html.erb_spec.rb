@@ -13,6 +13,7 @@ RSpec.describe "issues/new", type: :view do
     assign(:project, project)
     assign(:issue_types, [issue_type])
     assign(:issue, project.issues.build)
+    assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
   end
 
   it "renders new issue form" do
