@@ -1,10 +1,20 @@
 class Form
-  constructor: (@name, @options = {}) ->
+  OPTIONS: [
+    {name: 'issue_type[name]', display: 'Name', rules: 'required'},
+    {name: 'task_type[name]', display: 'Name', rules: 'required'},
+    {name: 'user[email]', display: 'Email', rules: 'required|valid_email'},
+    {name: 'user[name]', display: 'Name', rules: 'required'},
+    {name: 'issue[summary]', display: 'Summary', rules: 'required'},
+    {name: 'issue[description]', display: 'Description', rules: 'required'},
+  ]
+
+  constructor: (@name) ->
     @form = document.querySelector("[name='#{@name}']")
     return unless @form
     @button = @form.querySelector("[type='submit']")
     return unless @button
-    @validator = new FormValidator(@name, @options, @afterValidate)
+    @validator = new FormValidator(@name, Form::OPTIONS, @afterValidate)
+    @validator.setMessage('required', 'Please fill out')
     @watchInputs()
 
   watchInputs: ->
@@ -45,17 +55,6 @@ class Form
     input.parentNode.appendChild(elem)
     elem
 
-class RollerTypeForm
-
-  constructor: () ->
-
 document.addEventListener 'turbolinks:load', () ->
-  validationOptions = [
-    {name: 'issue_type[name]', display: 'Name', rules: 'required'},
-    {name: 'task_type[name]', display: 'Name', rules: 'required'},
-    {name: 'user[email]', display: 'Email', rules: 'required|valid_email'},
-    {name: 'user[name]', display: 'Name', rules: 'required'},
-  ]
-
-  for formName in ['issue_type_form', 'task_type_form', 'user_form']
-    new Form(formName, validationOptions)
+  formNames = ['issue_type_form', 'task_type_form', 'user_form', 'issue_form']
+  new Form(formName) for formName in formNames
