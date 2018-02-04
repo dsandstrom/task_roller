@@ -9,4 +9,4 @@ StringLiterals:
     - '*_helper.rb'
 
 Metrics/BlockLength:
-  Max: 200
+  Enabled: false
