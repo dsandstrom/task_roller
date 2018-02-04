@@ -1,6 +1,5 @@
 class Form
   constructor: (@form) ->
-    console.log @form
     @button = @form.querySelector("[type='submit']")
     return unless @button
     @validator = new FormValidator(@form.name, @options(), @afterValidate)
