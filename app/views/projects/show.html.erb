@@ -5,14 +5,18 @@
               class: 'button' %>
 </p>
 
-<h2>Issues</h2>
-<p>
-  <%= link_to 'Report Issue',
-              new_category_project_issue_path(@category, @project),
-              class: 'button button-success' %>
-</p>
-<% if @issues.any? %>
-  <%= render @issues %>
-<% else %>
-  <p>None yet</p>
-<% end %>
+<header class="issues-header">
+  <h2>Latest Issues</h2>
+  <p>
+    <%= link_to 'View All',
+                category_project_issues_path(@category, @project),
+                class: 'button' %>
+  </p>
+</header>
+<div class="issues">
+  <% if @issues.any? %>
+    <%= render @issues %>
+  <% else %>
+    <p class="no-issue">None yet</p>
+  <% end %>
+</div>

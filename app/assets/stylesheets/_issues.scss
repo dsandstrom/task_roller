@@ -1,16 +1,19 @@
 .issues {
   background-color: $pearl;
 
-  .issue {
-    padding: 1rem;
+  .issue,
+  .no-issue {
+    padding: 1rem 1.5rem 1.5rem;
+  }
 
-    &:nth-child(odd) {
+  .issue {
+    &:nth-child(even) {
       background: $light-gray;
     }
   }
 
   .issue-header {
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
   }
 
   .issue-type-tag {
@@ -26,11 +29,11 @@
   }
 
   .issue-summary {
-    margin-bottom: .5rem;
+    margin-bottom: 0;
   }
 
   .issue-user {
-    margin-bottom: 0;
+    margin-bottom: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
   }

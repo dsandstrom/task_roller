@@ -6,7 +6,10 @@ RSpec.describe "categories/show", type: :view do
   before(:each) { @category = assign(:category, Fabricate(:category)) }
 
   context "when it has no projects" do
-    before { @projects = assign(:projects, []) }
+    before do
+      @projects = assign(:projects, [])
+      @issues = assign(:issues, [])
+    end
 
     it "renders name" do
       render
@@ -19,14 +22,23 @@ RSpec.describe "categories/show", type: :view do
     end
   end
 
-  context "when it has projects" do
+  context "when it has projects and issues" do
     let(:project) { Fabricate(:project, category: @category) }
+    let(:issue) { Fabricate(:issue, project: project) }
 
-    before { @projects = assign(:projects, [project]) }
+    before do
+      @projects = assign(:projects, [project])
+      @issues = assign(:issues, [issue])
+    end
 
     it "renders a list of projects" do
       render
       assert_select "#project-#{project.id}.project"
+    end
+
+    it "renders a list of issues" do
+      render
+      assert_select "#issue-#{issue.id}.issue"
     end
   end
 end

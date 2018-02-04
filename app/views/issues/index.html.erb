@@ -1,15 +1,27 @@
 <% if @category && @project %>
   <%= project_header @project, @category %>
+  <header class="issues-header">
+    <h2>Project Issues</h2>
+    <p>
+      <%= link_to 'Report Issue',
+                  new_category_project_issue_path(@category, @project),
+                  class: 'button button-success' %>
+    </p>
+  </header>
 <% elsif @category %>
   <%= category_header @category %>
+  <header class="issues-header">
+    <h2>Category Issues</h2>
+  </header>
+<% else %>
+  <h1>All Issues</h1>
+  <header class="issues-header"></header>
 <% end %>
-
-<%= content_tag (@category ? :h2 : :h1), 'Issues' %>
 
 <div class="issues">
   <% if @issues.any? %>
     <%= render @issues %>
   <% else %>
-    <p>None yet</p>
+    <p class="no-issue">None yet</p>
   <% end %>
 </div>

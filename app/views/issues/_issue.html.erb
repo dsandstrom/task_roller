@@ -5,12 +5,9 @@
       <%= link_to issue.summary,
                   category_project_issue_path(issue.category, issue.project, issue) %>
     </h3>
-    <p class="issue-user"><%= issue.user.name %></p>
   </header>
 
-  <main class="issue-main">
-    <p class="issue-description"><%= issue.description %></p>
-  </main>
+  <p class="issue-user"><%= issue.user.name %></p>
 
   <footer class="issue-footer">
     <%= link_to 'Edit',

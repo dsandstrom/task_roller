@@ -10,7 +10,7 @@
   }
 
   .project {
-    &:nth-child(odd) {
+    &:nth-child(even) {
       background: $light-gray;
     }
 
@@ -69,7 +69,8 @@
 }
 
 .projects-header,
-.category-projects-header {
+.category-projects-header,
+.issues-header {
   padding: 1.5rem 2rem;
   border-radius: $border-radius $border-radius 0 0;
   background-color: $dark-blue;
@@ -134,6 +135,21 @@
     align-items: center;
     grid-column-gap: 2rem;
     grid-template-columns: 5fr 1fr 1fr;
+
+    h2 {
+      margin-right: auto;
+      margin-bottom: 0;
+      line-height: 1.2;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  .issues-header {
+    display: flex;
+    justify-content: space-between;
 
     h2 {
       margin-right: auto;

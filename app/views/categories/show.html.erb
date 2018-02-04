@@ -14,11 +14,25 @@
                 class: 'button' %>
   </p>
 </header>
-
 <div class="category-projects">
   <% if @projects.any? %>
     <%= render @projects %>
   <% else %>
     <p class="no-project">none</p>
+  <% end %>
+</div>
+
+<header class="issues-header">
+  <h2>Latest Issues</h2>
+  <p>
+    <%= link_to 'View All', category_issues_path(@category),
+                class: 'button' %>
+  </p>
+</header>
+<div class="issues">
+  <% if @issues.any? %>
+    <%= render @issues, locals: { format: :short } %>
+  <% else %>
+    <p class="no-issue">None yet</p>
   <% end %>
 </div>
