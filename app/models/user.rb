@@ -56,15 +56,7 @@ class User < ApplicationRecord
   private
 
     def create_employee
-      self.employee = case employee_type
-                      when 'Admin'
-                        Admin.create
-                      when 'Reporter'
-                        Reporter.create
-                      when 'Reviewer'
-                        Reviewer.create
-                      when 'Worker'
-                        Worker.create
-                      end
+      return if employee_type.blank?
+      self.employee = employee_type.constantize.create
     end
 end
