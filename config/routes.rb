@@ -4,9 +4,9 @@ Rails.application.routes.draw do
   resources :users
   resources :projects, only: :index
   resources :categories do
-    resources :issues, only: :show
+    resources :issues, only: %i[index show]
     resources :projects, except: :index do
-      resources :issues, except: :index
+      resources :issues
     end
   end
   resources :roller_types, only: :index

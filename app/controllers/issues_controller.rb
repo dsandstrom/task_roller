@@ -1,17 +1,30 @@
 # frozen_string_literal: true
 
 class IssuesController < ApplicationController
-  before_action :set_category, :set_project, except: :index
+  before_action :set_category, :set_project
   before_action :set_issue, only: %i[show edit update destroy]
+  before_action :set_issue_types, only: %i[new edit]
 
   def index
-    @issues = Issue.all
+    @issues =
+      if @category && @project
+        @project.issues
+      elsif @category
+        @category.issues
+      else
+        Issue.all
+      end
   end
 
   def show; end
 
   def new
-    @issue = @project.issues.build
+    if @issue_types.any?
+      @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
+    else
+      redirect_to category_project_url(@category, @project),
+                  alert: 'Invalid configuration: Issue types are required'
+    end
   end
 
   def edit; end
@@ -23,6 +36,7 @@ class IssuesController < ApplicationController
       redirect_to category_project_issue_url(@category, @project, @issue),
                   success: 'Issue was successfully created.'
     else
+      set_issue_types
       render :new
     end
   end
@@ -32,6 +46,7 @@ class IssuesController < ApplicationController
       redirect_to category_project_issue_url(@category, @project, @issue),
                   success: 'Issue was successfully updated.'
     else
+      set_issue_types
       render :edit
     end
   end
@@ -45,11 +60,12 @@ class IssuesController < ApplicationController
   private
 
     def set_category
+      return unless params[:category_id]
       @category = Category.find(params[:category_id])
     end
 
     def set_project
-      return unless params[:project_id]
+      return unless @category && params[:project_id]
       @project = @category.projects.find(params[:project_id])
     end
 
@@ -60,6 +76,10 @@ class IssuesController < ApplicationController
         else
           @category.issues.find(params[:id])
         end
+    end
+
+    def set_issue_types
+      @issue_types = IssueType.all
     end
 
     def issue_params

@@ -16,10 +16,32 @@ RSpec.describe IssuesController, type: :controller do
   let(:invalid_attributes) { { summary: "" } }
 
   describe "GET #index" do
-    it "returns a success response" do
-      _issue = Fabricate(:issue)
-      get :index, params: {}
-      expect(response).to be_success
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+
+    context "when no category and project" do
+      it "returns a success response" do
+        _issue = Fabricate(:issue, project: project)
+        get :index, params: {}
+        expect(response).to be_success
+      end
+    end
+
+    context "when only category" do
+      it "returns a success response" do
+        _issue = Fabricate(:issue, project: project)
+        get :index, params: { category_id: category.to_param }
+        expect(response).to be_success
+      end
+    end
+
+    context "when category and project" do
+      it "returns a success response" do
+        _issue = Fabricate(:issue, project: project)
+        get :index, params: { category_id: category.to_param,
+                              project_id: project.to_param }
+        expect(response).to be_success
+      end
     end
   end
 
@@ -45,10 +67,27 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: { category_id: category.to_param,
-                          project_id: project.to_param }
-      expect(response).to be_success
+    context "when an IssueType and a User" do
+      before do
+        Fabricate(:issue_type)
+        Fabricate(:user_reporter)
+      end
+
+      it "returns a success response" do
+        get :new, params: { category_id: category.to_param,
+                            project_id: project.to_param }
+        expect(response).to be_success
+      end
+    end
+
+    context "when no IssueTypes" do
+      before { Fabricate(:user_reporter) }
+
+      it "redirects to project" do
+        get :new, params: { category_id: category.to_param,
+                            project_id: project.to_param }
+        expect(response).to redirect_to(category_project_url(category, project))
+      end
     end
   end
 
