@@ -1,7 +1,8 @@
 .issue-type-color-options,
 .issue-type-icon-options,
 .task-type-color-options,
-.task-type-icon-options {
+.task-type-icon-options,
+.issue-issue-type-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -15,13 +16,6 @@
     border-radius: $border-radius;
     line-height: 1.2;
     cursor: pointer;
-
-    i {
-      display: flex;
-      margin-right: .3rem;
-      color: $color-quinary;
-      font-weight: normal;
-    }
 
     &.disabled {
       border-color: $light-gray;
@@ -38,10 +32,18 @@
       border-color: $gray;
     }
   }
+
+  i {
+    display: flex;
+    margin-right: .3rem;
+    color: $color-quinary;
+    font-weight: normal;
+  }
 }
 
 .issue-type-color-options,
-.task-type-color-options {
+.task-type-color-options,
+.issue-issue-type-options {
   margin-bottom: 1rem;
 
   label {
@@ -98,6 +100,10 @@
 .roller-type-color-red,
 .roller-type-color-purple {
   color: $off-white;
+
+  i {
+    color: $dark-blue;
+  }
 }
 
 .roller-type-color-default {
