@@ -1,0 +1,13 @@
+<div id="issue-<%= issue.id %>" class="category-issue">
+  <p>
+    <%= link_to issue.summary,
+                category_project_issue_path(issue.category, issue.project, issue) %>
+  </p>
+  <p><%= issue_type_tag(issue.issue_type) %></p>
+  <p><%= issue.description %></p>
+
+  <p class="issue-edit-links">
+    <%= link_to 'Edit',
+                edit_category_project_issue_path(issue.category, issue.project, issue) %>
+  </p>
+</div>

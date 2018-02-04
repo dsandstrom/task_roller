@@ -1,0 +1,14 @@
+<h1>
+  <%= link_to @project.name, category_project_path(@category, @project) %>
+</h1>
+
+<p><%= link_to @category.name, @category %></p>
+
+<%= project_tags(@project) %>
+
+<h2>Edit Issue</h2>
+
+<%= render 'form', issue: @issue, issue_types: @issue_types,
+                   url: category_project_issue_path(@category, @project, @issue) %>
+
+<%= link_to 'Back', :back %>

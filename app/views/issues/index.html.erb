@@ -1,0 +1,15 @@
+<% if @category && @project %>
+  <%= project_header @project, @category %>
+<% elsif @category %>
+  <%= category_header @category %>
+<% end %>
+
+<%= content_tag (@category ? :h2 : :h1), 'Issues' %>
+
+<div class="issues">
+  <% if @issues.any? %>
+    <%= render @issues %>
+  <% else %>
+    <p>None yet</p>
+  <% end %>
+</div>

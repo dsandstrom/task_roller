@@ -1,0 +1,33 @@
+<div class="issue-show-page">
+  <% if @project %>
+    <%= project_header(@project, @category) %>
+  <% else %>
+    <%= category_header(@category) %>
+  <% end %>
+
+  <h2 class="issue-summary">
+    <%= @issue.summary %>
+  </h2>
+
+  <p>
+    <%= issue_type_tag @issue.issue_type %>
+  </p>
+
+  <% if @project %>
+    <p>
+      <%= link_to 'Edit',
+                  edit_category_project_issue_path(@category, @project, @issue) %>
+    </p>
+  <% end %>
+
+  <div class="issue-comments">
+    <blockquote class="comment first-comment">
+      <p>
+        <%= @issue.description %>
+      </p>
+      <footer>
+        - <%= @issue.user.name_or_email %>
+      </footer>
+    </blockquote>
+  </div>
+</div>

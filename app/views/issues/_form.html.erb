@@ -1,0 +1,41 @@
+<%= form_with(model: issue, url: url, local: true) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <%# TODO: only show for reviewers, otherwise always current_user %>
+  <%# TODO: group %>
+  <div class="field">
+    <%= form.label :user_id, 'Reporter' %>
+    <%= form.collection_select :user_id, User.all, :id, :name_and_email, {},
+                               id: :issue_user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :issue_type_id, 'Type' %>
+    <div id="issue_issue_type_labels" class="issue-issue-type-options">
+      <% issue_types.each do |issue_type| %>
+        <% id = "issue_issue_type_id_#{issue_type.id}" %>
+
+        <%= form.label :issue_type_id, for: id,
+                       class: "roller-type-color-#{issue_type.color}" do %>
+          <%= form.radio_button :issue_type_id, issue_type.id, id: id %>
+          <%= roller_type_icon(issue_type) %>
+          <%= issue_type.name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= form.label :summary %>
+    <%= form.text_field :summary, id: :issue_summary %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, id: :issue_description %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
