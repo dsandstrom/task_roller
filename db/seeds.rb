@@ -31,11 +31,10 @@ class Seeds
     return if Category.any?
 
     rand(11).times do
-      name = Faker::Commerce.department
-      name = Faker::Commerce.department while Category.find_by(name: name)
+      name = Faker::Commerce.unique.department
 
-      Category.create(name: name, visible: random_visible,
-                      internal: random_internal)
+      Category.create!(name: name, visible: random_visible,
+                       internal: random_internal)
     end
   end
 
@@ -44,11 +43,10 @@ class Seeds
       next if category.projects.any?
 
       rand(11).times do
-        name = Faker::App.name
-        name = Faker::App.name while category.projects.find_by(name: name)
+        name = Faker::App.unique.name
 
-        category.projects.create(name: name, visible: random_visible,
-                                 internal: random_internal)
+        category.projects.create!(name: name, visible: random_visible,
+                                  internal: random_internal)
       end
     end
   end
@@ -56,24 +54,41 @@ class Seeds
   def create_issue_types
     return if IssueType.all.any?
 
-    IssueType.create(name: 'Bug', color: 'red', icon: 'bug')
-    IssueType.create(name: 'Suggestion', color: 'green', icon: 'options')
-    IssueType.create(name: 'Question', color: 'blue', icon: 'help')
+    IssueType.create!(name: 'Bug', color: 'red', icon: 'bug')
+    IssueType.create!(name: 'Suggestion', color: 'green', icon: 'options')
+    IssueType.create!(name: 'Question', color: 'blue', icon: 'help')
   end
 
   def create_task_types
     return if TaskType.all.any?
 
-    TaskType.create(name: 'Bug', color: 'red', icon: 'bug')
-    TaskType.create(name: 'Improvement', color: 'yellow', icon: 'options')
-    TaskType.create(name: 'Feature Request', color: 'green', icon: 'bulb')
+    TaskType.create!(name: 'Bug', color: 'red', icon: 'bug')
+    TaskType.create!(name: 'Improvement', color: 'yellow', icon: 'options')
+    TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
+  end
+
+  def create_issues
+    return if Issue.all.any?
+
+    Project.all.each do |project|
+      rand(11..23).times { create_issue(project) }
+    end
   end
 
   private
 
     def create_user(employee_type)
-      User.create(name: Faker::Name.name, email: Faker::Internet.email,
-                  employee_type: employee_type)
+      User.create!(name: Faker::Name.unique.name,
+                   email: Faker::Internet.unique.email,
+                   employee_type: employee_type)
+    end
+
+    def create_issue(project)
+      description = Faker::Lorem.paragraphs(3, true).join("\r\n")
+      project.issues.create!(issue_type_id: IssueType.ids.sample,
+                             user_id: Reporter.ids.sample,
+                             summary: Faker::Company.catch_phrase,
+                             description: description)
     end
 
     def random_visible
@@ -94,3 +109,4 @@ seeds.create_categories
 seeds.create_projects
 seeds.create_issue_types
 seeds.create_task_types
+seeds.create_issues
