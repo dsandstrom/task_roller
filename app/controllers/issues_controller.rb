@@ -63,7 +63,6 @@ class IssuesController < ApplicationController
   private
 
     def set_category
-      return unless params[:category_id]
       @category = Category.find(params[:category_id])
     end
 

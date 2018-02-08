@@ -19,14 +19,6 @@ RSpec.describe IssuesController, type: :controller do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }
 
-    context "when no category and project" do
-      it "returns a success response" do
-        _issue = Fabricate(:issue, project: project)
-        get :index, params: {}
-        expect(response).to be_success
-      end
-    end
-
     context "when only category" do
       it "returns a success response" do
         _issue = Fabricate(:issue, project: project)
