@@ -61,10 +61,11 @@
       display: grid;
       align-items: center;
       grid-column-gap: 2rem;
-      grid-template-columns: 60% auto;
+      grid-template-columns: 3fr 1fr 1fr;
     }
 
-    .category-name-and-tags {
+    .category-name-and-tags,
+    p {
       margin-bottom: 0;
     }
 
@@ -77,10 +78,6 @@
 
 @include breakpoint(large up) {
   .categories {
-    .category {
-      grid-template-columns: 70% auto;
-    }
-
     .category-name-and-tags {
       display: grid;
       align-items: center;

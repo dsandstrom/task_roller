@@ -2,7 +2,7 @@
   <%
     category = project.category
     unless category
-      return content_tag(:p, content_tag(:code, 'ERROR: No Category'))
+      return content_tag(:p, content_tag(:code, 'App Error: No Category'))
     end
   %>
 
@@ -19,6 +19,12 @@
       <%= link_to project.category.name, project.category %>
     </p>
   <% end %>
+
+  <p class="project-issues-link">
+    <%# TODO: change to open issues %>
+    <%= link_to pluralize(project.issues.count, 'Issue'),
+                category_project_issues_path(project.category, project) %>
+  </p>
 
   <p class="project-links">
     <%= link_to 'Delete', category_project_path(category, project),

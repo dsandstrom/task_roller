@@ -4,6 +4,12 @@
     <%= category_tags(category) %>
   </div>
 
+  <p class="category-issues-link">
+    <%# TODO: change to open issues %>
+    <%= link_to pluralize(category.issues.count, 'Issue'),
+                category_issues_path(category) %>
+  </p>
+
   <p class="category-links">
     <%= link_to 'Delete', category_path(category),
                 method: :delete, data: { confirm: 'Are you sure?' },

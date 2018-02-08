@@ -113,20 +113,20 @@
   .projects,
   .category-projects {
     .project-name-and-tags,
-    .project-category {
+    p {
       margin-bottom: 0;
     }
   }
 
   .projects {
     .project {
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr 2fr;
     }
   }
 
   .category-projects {
     .project {
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr;
     }
   }
 
@@ -159,20 +159,6 @@
 
     p {
       margin-bottom: 0;
-    }
-  }
-}
-
-@include breakpoint(large up) {
-  .projects {
-    .project {
-      grid-template-columns: 2fr 2fr 1fr;
-    }
-  }
-
-  .category-projects {
-    .project {
-      grid-template-columns: 3fr 1fr;
     }
   }
 }
