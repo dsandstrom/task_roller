@@ -62,15 +62,6 @@ class IssuesController < ApplicationController
 
   private
 
-    def set_category
-      @category = Category.find(params[:category_id])
-    end
-
-    def set_project
-      return unless @category && params[:project_id]
-      @project = @category.projects.find(params[:project_id])
-    end
-
     def set_issue
       @issue =
         if @project
