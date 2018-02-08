@@ -5,8 +5,10 @@ Rails.application.routes.draw do
   resources :projects, only: :index
   resources :categories do
     resources :issues, only: %i[index show]
+    resources :tasks, only: %i[index show]
     resources :projects, except: :index do
       resources :issues
+      resources :tasks
     end
   end
   resources :roller_types, only: :index
