@@ -19,6 +19,7 @@ RSpec.describe Project, type: :model do
   it { is_expected.to belong_to(:category) }
 
   it { is_expected.to have_many(:issues) }
+  it { is_expected.to have_many(:tasks) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
@@ -29,7 +30,7 @@ RSpec.describe Project, type: :model do
   it { is_expected.to validate_length_of(:name).is_at_most(250) }
   it { is_expected.to validate_presence_of(:category_id) }
 
-  describe "issues" do
+  describe "#issues" do
     let(:project) { Fabricate(:project) }
 
     context "when destroying Project" do
@@ -40,6 +41,21 @@ RSpec.describe Project, type: :model do
         expect do
           project.destroy
         end.to change(Issue, :count).by(-1)
+      end
+    end
+  end
+
+  describe "#tasks" do
+    let(:project) { Fabricate(:project) }
+
+    context "when destroying Project" do
+      it "destroys its tasks" do
+        Fabricate(:task, project: project)
+        Fabricate(:task)
+
+        expect do
+          project.destroy
+        end.to change(Task, :count).by(-1)
       end
     end
   end
