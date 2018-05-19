@@ -9,6 +9,7 @@ RSpec.describe "categories/show", type: :view do
     before do
       @projects = assign(:projects, [])
       @issues = assign(:issues, [])
+      @tasks = assign(:issues, [])
     end
 
     it "renders name" do
@@ -20,15 +21,27 @@ RSpec.describe "categories/show", type: :view do
       render
       assert_select ".project", count: 0
     end
+
+    it "doesn't render a list of issues" do
+      render
+      assert_select ".issue", count: 0
+    end
+
+    it "doesn't render a list of tasks" do
+      render
+      assert_select ".task", count: 0
+    end
   end
 
-  context "when it has projects and issues" do
+  context "when it has projects, issues, and tasks" do
     let(:project) { Fabricate(:project, category: @category) }
     let(:issue) { Fabricate(:issue, project: project) }
+    let(:task) { Fabricate(:task, project: project) }
 
     before do
       @projects = assign(:projects, [project])
       @issues = assign(:issues, [issue])
+      @tasks = assign(:tasks, [task])
     end
 
     it "renders a list of projects" do
@@ -39,6 +52,11 @@ RSpec.describe "categories/show", type: :view do
     it "renders a list of issues" do
       render
       assert_select "#issue-#{issue.id}.issue"
+    end
+
+    it "renders a list of tasks" do
+      render
+      assert_select "#task-#{task.id}.task"
     end
   end
 end
