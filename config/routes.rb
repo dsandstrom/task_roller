@@ -7,7 +7,9 @@ Rails.application.routes.draw do
     resources :issues, only: %i[index show]
     resources :tasks, only: %i[index show]
     resources :projects, except: :index do
-      resources :issues
+      resources :issues do
+        resources :tasks, only: %i[new create]
+      end
       resources :tasks
     end
   end

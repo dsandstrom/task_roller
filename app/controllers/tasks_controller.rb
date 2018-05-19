@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TasksController < ApplicationController
-  before_action :set_category, :set_project
+  before_action :set_category, :set_project, :set_issue
   before_action :set_task, only: %i[show edit update destroy]
   before_action :set_task_types, :set_user_options, only: %i[new edit]
 
@@ -20,6 +20,7 @@ class TasksController < ApplicationController
     if @task_types.any?
       @task = @project.tasks.build(task_type_id: @task_types.first.id)
     else
+      # TODO: redirect to /issues_types if admin signed in
       redirect_to category_project_url(@category, @project),
                   alert: 'App Error: Task types are required'
     end
@@ -29,6 +30,7 @@ class TasksController < ApplicationController
 
   def create
     @task = @project.tasks.build(task_params)
+    @task.issue = @issue if @issue
 
     if @task.save
       redirect_to category_project_task_url(@category, @project, @task),
@@ -70,6 +72,10 @@ class TasksController < ApplicationController
 
     def set_task_types
       @task_types = TaskType.all
+    end
+
+    def set_issue
+      @issue = @project.issues.find(params[:issue_id]) if params[:issue_id]
     end
 
     def task_params

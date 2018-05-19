@@ -3,10 +3,11 @@
 require "rails_helper"
 
 RSpec.describe TasksController, type: :controller do
-  let(:category) { Fabricate(:category) }
-  let(:project) { Fabricate(:project, category: category) }
   let(:task_type) { Fabricate(:task_type) }
   let(:user) { Fabricate(:user_reporter) }
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
+  let(:issue) { Fabricate(:issue, project: project) }
 
   let(:valid_attributes) do
     { task_type_id: task_type.id, user_id: user.id, summary: "Summary",
@@ -57,49 +58,108 @@ RSpec.describe TasksController, type: :controller do
   describe "GET #new" do
     before { Fabricate(:task_type) }
 
-    it "returns a success response" do
-      get :new, params: { category_id: category.to_param,
-                          project_id: project.to_param }
+    context "when category and project" do
+      it "returns a success response" do
+        get :new, params: { category_id: category.to_param,
+                            project_id: project.to_param }
 
-      expect(response).to be_success
+        expect(response).to be_success
+      end
+    end
+
+    context "when category, project, and issue" do
+      it "returns a success response" do
+        get :new, params: { category_id: category.to_param,
+                            project_id: project.to_param,
+                            issue_id: issue.to_param }
+
+        expect(response).to be_success
+      end
     end
   end
 
   describe "GET #edit" do
-    it "returns a success response" do
-      task = Fabricate(:task, project: project)
-      get :edit, params: { category_id: category.to_param,
-                           project_id: project.to_param,
-                           id: task.to_param }
-      expect(response).to be_success
+    context "when category and project" do
+      it "returns a success response" do
+        task = Fabricate(:task, project: project)
+        get :edit, params: { category_id: category.to_param,
+                             project_id: project.to_param,
+                             id: task.to_param }
+        expect(response).to be_success
+      end
+    end
+
+    context "when category, project, and issue" do
+      it "returns a success response" do
+        task = Fabricate(:task, project: project, issue: issue)
+        get :edit, params: { category_id: category.to_param,
+                             project_id: project.to_param,
+                             issue_id: issue.to_param,
+                             id: task.to_param }
+        expect(response).to be_success
+      end
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Task" do
-        expect do
+    context "when category and project" do
+      context "with valid params" do
+        it "creates a new Task" do
+          expect do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    task: valid_attributes }
+          end.to change(project.tasks, :count).by(1)
+        end
+
+        it "redirects to the created task" do
           post :create, params: { category_id: category.to_param,
                                   project_id: project.to_param,
                                   task: valid_attributes }
-        end.to change(Task, :count).by(1)
+          url = category_project_task_path(category, project, Task.last)
+          expect(response).to redirect_to(url)
+        end
       end
 
-      it "redirects to the created task" do
-        post :create, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                task: valid_attributes }
-        url = category_project_task_path(category, project, Task.last)
-        expect(response).to redirect_to(url)
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: { category_id: category.to_param,
+                                  project_id: project.to_param,
+                                  task: invalid_attributes }
+          expect(response).to be_success
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                task: invalid_attributes }
-        expect(response).to be_success
+    context "when category, project, and issue" do
+      context "with valid params" do
+        it "creates a new Task" do
+          expect do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    issue_id: issue.to_param,
+                                    task: valid_attributes }
+          end.to change(issue.tasks, :count).by(1)
+        end
+
+        it "redirects to the created task" do
+          post :create, params: { category_id: category.to_param,
+                                  project_id: project.to_param,
+                                  issue_id: issue.to_param,
+                                  task: valid_attributes }
+          url = category_project_task_path(category, project, Task.last)
+          expect(response).to redirect_to(url)
+        end
+      end
+
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: { category_id: category.to_param,
+                                  project_id: project.to_param,
+                                  issue_id: issue.to_param,
+                                  task: invalid_attributes }
+          expect(response).to be_success
+        end
       end
     end
   end
