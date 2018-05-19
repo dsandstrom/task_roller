@@ -2,8 +2,8 @@
 
 class TasksController < ApplicationController
   before_action :set_category, :set_project
-  before_action :set_task_types, only: %i[new edit]
   before_action :set_task, only: %i[show edit update destroy]
+  before_action :set_task_types, :set_user_options, only: %i[new edit]
 
   def index
     @tasks =
@@ -35,6 +35,7 @@ class TasksController < ApplicationController
                   success: 'Task was successfully created.'
     else
       set_task_types
+      set_user_options
       render :new
     end
   end
@@ -45,6 +46,7 @@ class TasksController < ApplicationController
                   success: 'Task was successfully updated.'
     else
       set_task_types
+      set_user_options
       render :edit
     end
   end
@@ -73,5 +75,13 @@ class TasksController < ApplicationController
     def task_params
       params.require(:task)
             .permit(:summary, :description, :task_type_id, :user_id)
+    end
+
+    def set_user_options
+      # TODO: only set for reviewers, otherwise always current_user
+      @user_options =
+        %w[Admin Reviewer].map do |type|
+          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+        end
     end
 end

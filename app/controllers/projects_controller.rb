@@ -12,6 +12,7 @@ class ProjectsController < ApplicationController
 
   def show
     @issues = @project.issues.order(updated_at: :desc).limit(3)
+    @tasks = @project.tasks.order(updated_at: :desc).limit(3)
   end
 
   def new
