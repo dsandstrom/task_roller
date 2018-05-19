@@ -23,8 +23,9 @@ class IssuesController < ApplicationController
     if @issue_types.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
     else
+      # TODO: redirect to /issues_types if admin signed in
       redirect_to category_project_url(@category, @project),
-                  alert: 'Invalid configuration: Issue types are required'
+                  alert: 'App Error: Issue types are required'
     end
   end
 
