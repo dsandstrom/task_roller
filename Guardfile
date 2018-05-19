@@ -69,7 +69,7 @@ group :frontend do
     extensions.each do |ext, type|
       watch(%r{
             (?:app|vendor)
-            (?:/assets/\w+/(?<path>[^.]+) # path+base without extension
+            (?:/assets/\w+/_?(?<path>[^.]+) # path+base without extension
              (?<ext>\.#{ext})) # matching extension (must be first encountered)
             (?:\.\w+|$) # other extensions
             }x) do |m|
