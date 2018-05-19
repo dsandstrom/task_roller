@@ -2,30 +2,35 @@
 
 module RollerTypesHelper
   def issue_type_tag(issue_type)
-    css_class = "issue-type-tag #{roller_type_color(issue_type)}"
+    return unless issue_type
 
-    roller_type_tag issue_type, css_class
-  end
-
-  def issue_type_icon_tag(issue_type)
-    css_class = "issue-type-tag #{roller_type_color(issue_type)}"
-
-    roller_type_icon_tag issue_type, css_class
-  end
-
-  def task_type_icon_tag(task_type)
-    css_class = "task-type-tag #{roller_type_color(task_type)}"
-
-    roller_type_icon_tag task_type, css_class
+    roller_type_tag issue_type,
+                    "issue-type-tag #{roller_type_color(issue_type)}"
   end
 
   def task_type_tag(task_type)
-    css_class = "task-type-tag #{roller_type_color(task_type)}"
+    return unless task_type
 
-    roller_type_tag task_type, css_class
+    roller_type_tag task_type, "task-type-tag #{roller_type_color(task_type)}"
+  end
+
+  def issue_type_icon_tag(issue_type)
+    return unless issue_type
+
+    roller_type_icon_tag issue_type,
+                         "issue-type-tag #{roller_type_color(issue_type)}"
+  end
+
+  def task_type_icon_tag(task_type)
+    return unless task_type
+
+    roller_type_icon_tag task_type,
+                         "task-type-tag #{roller_type_color(task_type)}"
   end
 
   def roller_type_icon(roller_type)
+    return unless roller_type
+
     content_tag :i, '', class: "icon-#{roller_type.icon}"
   end
 

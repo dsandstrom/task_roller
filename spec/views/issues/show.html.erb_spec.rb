@@ -28,4 +28,18 @@ RSpec.describe "issues/show", type: :view do
       assert_select ".issue-summary", @issue.summary
     end
   end
+
+  context "when no issue_type" do
+    before do
+      @project = assign(:project, Fabricate(:project, category: @category))
+      @issue = assign(:issue, Fabricate(:issue, project: @project))
+      @issue.issue_type.destroy
+      @issue.reload
+    end
+
+    it "renders summary>" do
+      render
+      assert_select ".issue-summary", @issue.summary
+    end
+  end
 end

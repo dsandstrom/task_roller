@@ -13,32 +13,67 @@ RSpec.describe "projects/show", type: :view do
   before(:each) do
     @category = category
     @project = project
-    @issues = [first_issue, second_issue]
-    @tasks = [first_task, second_task]
   end
 
-  it "renders name" do
-    render
-    assert_select "h1", @project.name
+  context "when tasks and issues" do
+    before(:each) do
+      @issues = [first_issue, second_issue]
+      @tasks = [first_task, second_task]
+    end
+
+    it "renders name" do
+      render
+      assert_select "h1", @project.name
+    end
+
+    it "renders a list of issues" do
+      other_issue =
+        Fabricate(:issue, project: Fabricate(:project, category: category))
+
+      render
+      assert_select "#issue-#{first_issue.id}", count: 1
+      assert_select "#issue-#{second_issue.id}", count: 1
+      assert_select "#issue-#{other_issue.id}", count: 0
+    end
+
+    it "renders a list of tasks" do
+      other_task =
+        Fabricate(:task, project: Fabricate(:project, category: category))
+
+      render
+      assert_select "#task-#{first_task.id}", count: 1
+      assert_select "#task-#{second_task.id}", count: 1
+      assert_select "#task-#{other_task.id}", count: 0
+    end
   end
 
-  it "renders a list of issues" do
-    other_issue =
-      Fabricate(:issue, project: Fabricate(:project, category: category))
+  context "when task missing type" do
+    before(:each) do
+      first_task.task_type.destroy
+      first_task.reload
+      @issues = []
+      @tasks = [first_task]
+      Fabricate(:task_type)
+    end
 
-    render
-    assert_select "#issue-#{first_issue.id}", count: 1
-    assert_select "#issue-#{second_issue.id}", count: 1
-    assert_select "#issue-#{other_issue.id}", count: 0
+    it "renders broken tasks" do
+      render
+      assert_select "#task-#{first_task.id}", count: 1
+    end
   end
 
-  it "renders a list of tasks" do
-    other_task =
-      Fabricate(:task, project: Fabricate(:project, category: category))
+  context "when issue missing type" do
+    before do
+      first_issue.issue_type.destroy
+      first_issue.reload
+      @issues = [first_issue]
+      @tasks = []
+      Fabricate(:issue_type)
+    end
 
-    render
-    assert_select "#task-#{first_task.id}", count: 1
-    assert_select "#task-#{second_task.id}", count: 1
-    assert_select "#task-#{other_task.id}", count: 0
+    it "renders broken issues" do
+      render
+      assert_select "#issue-#{first_issue.id}", count: 1
+    end
   end
 end

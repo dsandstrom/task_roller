@@ -28,4 +28,18 @@ RSpec.describe "tasks/show", type: :view do
       assert_select ".task-summary", @task.summary
     end
   end
+
+  context "when no task_type" do
+    before do
+      @project = assign(:project, Fabricate(:project, category: @category))
+      @task = assign(:task, Fabricate(:task, project: @project))
+      @task.task_type.destroy
+      @task.reload
+    end
+
+    it "renders summary>" do
+      render
+      assert_select ".task-summary", @task.summary
+    end
+  end
 end
