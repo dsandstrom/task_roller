@@ -13,6 +13,12 @@ module RollerTypesHelper
     roller_type_icon_tag issue_type, css_class
   end
 
+  def task_type_icon_tag(task_type)
+    css_class = "task-type-tag #{roller_type_color(task_type)}"
+
+    roller_type_icon_tag task_type, css_class
+  end
+
   def task_type_tag(task_type)
     css_class = "task-type-tag #{roller_type_color(task_type)}"
 

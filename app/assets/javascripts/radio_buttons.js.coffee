@@ -27,7 +27,6 @@ class RadioButtons
       radio = label.elem.querySelector('input')
       next unless radio
       radio.addEventListener 'change', =>
-        console.log 'change'
         @toggleDisabledClasses()
 
   toggleDisabledClasses: ->
@@ -37,7 +36,7 @@ class RadioButtons
 document.addEventListener 'turbolinks:load', () ->
   radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
                     'task_type_color_labels', 'task_type_icon_labels',
-                    'issue_issue_type_labels']
+                    'issue_issue_type_labels', 'task_task_type_labels']
   for id in radioButtonIds
     labels = document.getElementById(id)
     new RadioButtons(labels) if labels

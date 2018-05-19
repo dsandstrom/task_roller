@@ -1,22 +1,28 @@
-.issues {
+.issues,
+.tasks {
   background-color: $pearl;
 
   .issue,
-  .no-issue {
+  .no-issue,
+  .task,
+  .no-task {
     padding: 1rem 1.5rem 1.5rem;
   }
 
-  .issue {
+  .issue,
+  .task {
     &:nth-child(even) {
       background: $light-gray;
     }
   }
 
-  .issue-header {
+  .issue-header,
+  .task-header {
     margin-bottom: .5rem;
   }
 
-  .issue-type-tag {
+  .issue-type-tag,
+  .task-type-tag {
     margin: .3rem 1rem 0 0;
     float: left;
 
@@ -28,18 +34,21 @@
     }
   }
 
-  .issue-summary {
+  .issue-summary,
+  .task-summary {
     margin-bottom: 0;
   }
 
-  .issue-user {
+  .issue-user,
+  .task-user {
     margin-bottom: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
   }
 }
 
-.issue-show-page {
+.issue-show-page,
+.task-show-page {
   h2 {
     text-transform: none;
   }

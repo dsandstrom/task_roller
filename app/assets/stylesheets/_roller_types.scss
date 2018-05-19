@@ -2,7 +2,8 @@
 .issue-type-icon-options,
 .task-type-color-options,
 .task-type-icon-options,
-.issue-issue-type-options {
+.issue-issue-type-options,
+.task-task-type-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -18,9 +19,9 @@
     cursor: pointer;
 
     &.disabled {
-      border-color: $light-gray;
+      border-color: $gray;
       opacity: .6;
-      background-color: $off-white;
+      background-color: $light-gray;
       color: $color-quaternary;
 
       i {

@@ -1,0 +1,44 @@
+<%= form_with(model: task, url: url, local: true,
+              html: { name: 'task_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <%# TODO: add choices, not a choice, bub %>
+  <% if user_options&.any? %>
+    <div class="field">
+      <%= form.label :user_id, 'Assigner' %>
+      <%= form.select :user_id,
+                      grouped_options_for_select(user_options, task.user_id),
+                      {}, id: :task_user_id %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :task_type_id, 'Type' %>
+    <div id="task_task_type_labels" class="task-task-type-options">
+      <% task_types.each do |task_type| %>
+        <% id = "task_task_type_id_#{task_type.id}" %>
+
+        <%= form.label :task_type_id, for: id,
+                       class: "roller-type-color-#{task_type.color}" do %>
+          <%= form.radio_button :task_type_id, task_type.id, id: id %>
+          <%= roller_type_icon(task_type) %>
+          <%= task_type.name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= required_field_label form, :summary %>
+    <%= form.text_field :summary, id: :task_summary %>
+  </div>
+
+  <div class="field">
+    <%= required_field_label form, :description %>
+    <%= form.text_area :description, id: :task_description %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,16 @@
+<div id="task-<%= task.id %>" class="task">
+  <header class="task-header">
+    <%= task_type_icon_tag(task.task_type) %>
+    <h3 class="task-summary">
+      <%= link_to task.summary,
+                  category_project_task_path(task.category, task.project, task) %>
+    </h3>
+  </header>
+
+  <p class="task-user"><%= task.user.name %></p>
+
+  <footer class="task-footer">
+    <%= link_to 'Edit',
+                edit_category_project_task_path(task.category, task.project, task) %>
+  </footer>
+</div>

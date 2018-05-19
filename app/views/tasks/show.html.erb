@@ -1,0 +1,33 @@
+<div class="task-show-page">
+  <% if @project %>
+    <%= project_header(@project, @category) %>
+  <% else %>
+    <%= category_header(@category) %>
+  <% end %>
+
+  <h2 class="task-summary">
+    <%= @task.summary %>
+  </h2>
+
+  <p>
+    <%= task_type_tag @task.task_type %>
+  </p>
+
+  <% if @project %>
+    <p>
+      <%= link_to 'Edit',
+                  edit_category_project_task_path(@category, @project, @task) %>
+    </p>
+  <% end %>
+
+  <div class="task-comments">
+    <blockquote class="comment first-comment">
+      <p>
+        <%= @task.description %>
+      </p>
+      <footer>
+        - <%= @task.user.name_or_email %>
+      </footer>
+    </blockquote>
+  </div>
+</div>

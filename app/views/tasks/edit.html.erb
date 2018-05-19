@@ -1,0 +1,15 @@
+<h1>
+  <%= link_to @project.name, category_project_path(@category, @project) %>
+</h1>
+
+<p><%= link_to @category.name, @category %></p>
+
+<%= project_tags(@project) %>
+
+<h2>Edit Task</h2>
+
+<%= render 'form', task: @task, task_types: @task_types,
+                   url: category_project_task_path(@category, @project, @task),
+                   user_options: @user_options %>
+
+<%= link_to 'Back', :back %>
