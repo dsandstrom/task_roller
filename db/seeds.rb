@@ -75,6 +75,14 @@ class Seeds
     end
   end
 
+  def create_tasks
+    return if Task.all.any?
+
+    Project.all.each do |project|
+      rand(11..23).times { create_task(project) }
+    end
+  end
+
   private
 
     def create_user(employee_type)
@@ -89,6 +97,14 @@ class Seeds
                              user_id: Reporter.ids.sample,
                              summary: Faker::Company.catch_phrase,
                              description: description)
+    end
+
+    def create_task(project)
+      description = Faker::Lorem.paragraphs(3, true).join("\r\n")
+      project.tasks.create!(task_type_id: TaskType.ids.sample,
+                            user_id: Reviewer.ids.sample,
+                            summary: Faker::Company.bs.capitalize,
+                            description: description)
     end
 
     def random_visible
@@ -110,3 +126,4 @@ seeds.create_projects
 seeds.create_issue_types
 seeds.create_task_types
 seeds.create_issues
+seeds.create_tasks
