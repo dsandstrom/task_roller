@@ -35,4 +35,20 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:issue_type) }
   it { is_expected.to belong_to(:project) }
+  it { is_expected.to have_many(:tasks) }
+
+  describe "#tasks" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when destroying task" do
+      it "nullifies tasks" do
+        task = Fabricate(:task, issue: issue)
+
+        expect do
+          issue.destroy
+          task.reload
+        end.to change(task, :issue_id).to(nil)
+      end
+    end
+  end
 end

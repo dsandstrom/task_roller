@@ -35,4 +35,5 @@ RSpec.describe Task, type: :model do
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:task_type) }
   it { is_expected.to belong_to(:project) }
+  it { is_expected.to belong_to(:issue) }
 end

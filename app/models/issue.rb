@@ -6,6 +6,7 @@ class Issue < ApplicationRecord
   belongs_to :user # reporter
   belongs_to :issue_type
   belongs_to :project
+  has_many :tasks, dependent: :nullify
   delegate :category, to: :project
 
   validates :summary, presence: true, length: { maximum: 200 }

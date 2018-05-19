@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   belongs_to :user # reviewer
   belongs_to :task_type
   belongs_to :project
+  belongs_to :issue, required: false
   delegate :category, to: :project
 
   validates :summary, presence: true, length: { maximum: 200 }
