@@ -13,7 +13,7 @@ RSpec.describe "tasks/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".task-summary", @task.summary
+      assert_select ".task-summary", "Task: #{@task.summary}"
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe "tasks/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".task-summary", @task.summary
+      assert_select ".task-summary", "Task: #{@task.summary}"
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe "tasks/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".task-summary", @task.summary
+      assert_select ".task-summary", "Task: #{@task.summary}"
     end
   end
 end

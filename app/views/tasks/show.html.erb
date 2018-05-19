@@ -6,7 +6,7 @@
   <% end %>
 
   <h2 class="task-summary">
-    <%= @task.summary %>
+    Task: <%= @task.summary %>
   </h2>
 
   <p>
@@ -18,6 +18,11 @@
       <%= link_to 'Edit',
                   edit_category_project_task_path(@category, @project, @task) %>
     </p>
+  <% end %>
+
+  <% if @task.issue %>
+    <%= link_to @task.issue.summary,
+                category_project_issue_path(@category, @project, @task.issue) %>
   <% end %>
 
   <div class="task-comments">

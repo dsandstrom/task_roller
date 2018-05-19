@@ -13,7 +13,7 @@ RSpec.describe "issues/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".issue-summary", @issue.summary
+      assert_select ".issue-summary", "Issue: #{@issue.summary}"
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe "issues/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".issue-summary", @issue.summary
+      assert_select ".issue-summary", "Issue: #{@issue.summary}"
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe "issues/show", type: :view do
 
     it "renders summary>" do
       render
-      assert_select ".issue-summary", @issue.summary
+      assert_select ".issue-summary", "Issue: #{@issue.summary}"
     end
   end
 end
