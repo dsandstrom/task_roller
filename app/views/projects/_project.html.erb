@@ -24,6 +24,9 @@
     <%# TODO: change to open issues %>
     <%= link_to pluralize(project.issues.count, 'Issue'),
                 category_project_issues_path(project.category, project) %>
+    <%# TODO: change to open tasks %>
+    <%= link_to pluralize(project.tasks.count, 'Task'),
+                category_project_tasks_path(project.category, project) %>
   </p>
 
   <p class="project-links">

@@ -96,6 +96,12 @@
   }
 }
 
+.project-issues-link {
+  a {
+    display: block;
+  }
+}
+
 @include breakpoint(medium up) {
   .projects,
   .category-projects {

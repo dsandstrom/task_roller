@@ -55,6 +55,12 @@
   }
 }
 
+.category-issues-link {
+  a {
+    display: block;
+  }
+}
+
 @include breakpoint(medium up) {
   .categories {
     .category {
