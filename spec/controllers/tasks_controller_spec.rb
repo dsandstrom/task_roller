@@ -129,6 +129,20 @@ RSpec.describe TasksController, type: :controller do
           expect(response).to be_success
         end
       end
+
+      context "when assigning" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { valid_attributes.merge!(assignee_ids: [user.id]) }
+
+        it "creates an assignment" do
+          expect do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    task: valid_attributes }
+          end.to change(user.assignments, :count).by(1)
+        end
+      end
     end
 
     context "when category, project, and issue" do

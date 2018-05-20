@@ -9,6 +9,8 @@ class Task < ApplicationRecord
   has_many :assignees, through: :task_assignees
   delegate :category, to: :project
 
+  accepts_nested_attributes_for :assignees
+
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
   validates :user_id, presence: true

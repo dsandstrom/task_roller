@@ -82,8 +82,8 @@ class TasksController < ApplicationController
     end
 
     def task_params
-      params.require(:task)
-            .permit(:summary, :description, :task_type_id, :user_id)
+      params.require(:task).permit(:summary, :description, :task_type_id,
+                                   :user_id, assignee_ids: [])
     end
 
     def set_user_options
