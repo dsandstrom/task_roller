@@ -3,6 +3,11 @@
   border-radius: $border-radius;
   background: $pearl;
 
+  h3,
+  p {
+    margin: 0;
+  }
+
   .user,
   .no-user {
     padding: 1rem 1.5rem 1.5rem;
@@ -56,7 +61,7 @@
   text-align: center;
 
   h2 {
-    margin-bottom: 1rem;
+    margin: 0 0 1rem;
     color: $white;
     font-size: 2.6rem;
     font-weight: bold;

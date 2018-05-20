@@ -2,6 +2,11 @@
 .tasks {
   background-color: $pearl;
 
+  h3,
+  p {
+    margin: 0;
+  }
+
   .issue,
   .no-issue,
   .task,
@@ -51,5 +56,12 @@
 .task-show-page {
   h2 {
     text-transform: none;
+  }
+}
+
+.issue-task {
+  .task-type-tag {
+    display: inline-block;
+    margin-bottom: 0;
   }
 }

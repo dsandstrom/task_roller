@@ -3,6 +3,11 @@
   border-radius: $border-radius;
   background: $pearl;
 
+  h3,
+  p {
+    margin: 0;
+  }
+
   .category,
   .no-category {
     padding: 1rem 1.5rem 1.5rem;
