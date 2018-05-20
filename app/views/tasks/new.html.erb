@@ -1,3 +1,12 @@
+<%
+  url =
+    if @issue
+      category_project_issue_tasks_path(@category, @project, @issue)
+    else
+      category_project_tasks_path(@category, @project)
+    end
+  %>
+
 <h1>
   <%= link_to @project.name, category_project_path(@category, @project) %>
 </h1>
@@ -8,8 +17,7 @@
 
 <h2>New Task</h2>
 
-<%= render 'form', task: @task, task_types: @task_types,
-                   url: category_project_tasks_path(@category, @project),
+<%= render 'form', task: @task, task_types: @task_types, url: url,
                    user_options: @user_options %>
 
 <%= link_to 'Back', :back %>
