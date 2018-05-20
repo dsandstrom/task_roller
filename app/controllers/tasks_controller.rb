@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: allow admins to  connect task to issue, move to different issue
+# TODO: restrict to reviewers except index, show
+
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue
   before_action :set_task, only: %i[show edit update destroy]
