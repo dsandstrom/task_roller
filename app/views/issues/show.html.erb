@@ -9,16 +9,12 @@
     Issue: <%= @issue.summary %>
   </h2>
 
-  <p>
-    <%= issue_type_tag @issue.issue_type %>
-  </p>
+  <p><%= issue_type_tag(@issue.issue_type) %></p>
 
-  <% if @project %>
-    <p>
-      <%= link_to 'Edit',
-                  edit_category_project_issue_path(@category, @project, @issue) %>
-    </p>
-  <% end %>
+  <p>
+    <%= link_to 'Edit',
+                edit_category_project_issue_path(@category, @issue.project, @issue) %>
+  </p>
 
   <div class="issue-comments">
     <blockquote class="comment first-comment">
@@ -30,4 +26,19 @@
       </footer>
     </blockquote>
   </div>
+
+  <h3>Tasks</h3>
+  <ul class="issue-tasks">
+    <% @issue.tasks.each do |task| %>
+      <%= content_tag :li, class: 'issue-task', id: "issue-task-#{task.id}" do %>
+        <%= link_to task.summary,
+                    category_project_task_path(@category, @issue.project, task) %>
+        <%= task_type_icon_tag task.task_type %>
+      <% end %>
+    <% end %>
+    <li>
+      <%= link_to 'New task',
+                  new_category_project_issue_task_path(@category, @issue.project, @issue) %>
+    </li>
+  </ul>
 </div>

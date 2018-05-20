@@ -15,6 +15,19 @@ RSpec.describe "tasks/show", type: :view do
       render
       assert_select ".task-summary", "Task: #{@task.summary}"
     end
+
+    context "task belongs to an issue" do
+      let(:issue) { Fabricate(:issue, project: @project) }
+
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project, issue: issue))
+      end
+
+      it "renders summary>" do
+        render
+        assert_select "#task-issue-#{issue.id}"
+      end
+    end
   end
 
   context "when no project" do

@@ -20,11 +20,6 @@
     </p>
   <% end %>
 
-  <% if @task.issue %>
-    <%= link_to @task.issue.summary,
-                category_project_issue_path(@category, @project, @task.issue) %>
-  <% end %>
-
   <div class="task-comments">
     <blockquote class="comment first-comment">
       <p>
@@ -35,4 +30,12 @@
       </footer>
     </blockquote>
   </div>
+
+  <% if @task.issue %>
+    <h3>Stems from Issue:</h3>
+    <p id="task-issue-<%= @task.issue_id %>" class="task-issue">
+      <%= link_to @task.issue.summary,
+                  category_project_issue_path(@category, @project, @task.issue) %>
+    </p>
+  <% end %>
 </div>
