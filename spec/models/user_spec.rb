@@ -16,6 +16,8 @@ RSpec.describe User, type: :model do
   it { is_expected.to respond_to(:employee_type) }
 
   it { is_expected.to belong_to(:employee) }
+  it { is_expected.to have_many(:task_assignees) }
+  it { is_expected.to have_many(:assignments) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
@@ -402,6 +404,20 @@ RSpec.describe User, type: :model do
 
       it "returns nil" do
         expect(user.name_or_email).to be_nil
+      end
+    end
+  end
+
+  describe "#task_assignments" do
+    let(:user) { Fabricate(:user_worker) }
+
+    before { Fabricate(:task_assignee, assignee: user) }
+
+    context "when destroying user" do
+      it "destroys it's task_assignments" do
+        expect do
+          user.destroy
+        end.to change(TaskAssignee, :count).by(-1)
       end
     end
   end

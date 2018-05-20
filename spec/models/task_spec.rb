@@ -36,4 +36,20 @@ RSpec.describe Task, type: :model do
   it { is_expected.to belong_to(:task_type) }
   it { is_expected.to belong_to(:project) }
   it { is_expected.to belong_to(:issue) }
+  it { is_expected.to have_many(:task_assignees) }
+  it { is_expected.to have_many(:assignees) }
+
+  describe "#task_assignees" do
+    let(:task) { Fabricate(:task) }
+
+    context "when destroying task" do
+      before { Fabricate(:task_assignee, task: task) }
+
+      it "destroys it's task_assignees" do
+        expect do
+          task.destroy
+        end.to change(TaskAssignee, :count).by(-1)
+      end
+    end
+  end
 end

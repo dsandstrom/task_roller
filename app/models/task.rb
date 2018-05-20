@@ -5,6 +5,8 @@ class Task < ApplicationRecord
   belongs_to :task_type
   belongs_to :project
   belongs_to :issue, required: false
+  has_many :task_assignees, dependent: :destroy
+  has_many :assignees, through: :task_assignees
   delegate :category, to: :project
 
   validates :summary, presence: true, length: { maximum: 200 }

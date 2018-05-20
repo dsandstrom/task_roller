@@ -4,6 +4,10 @@ class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
 
   belongs_to :employee, dependent: :destroy, required: false
+  has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
+                            dependent: :destroy
+  has_many :assignments, through: :task_assignees, class_name: 'Task',
+                         source: :task
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
