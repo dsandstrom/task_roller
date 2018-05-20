@@ -18,6 +18,7 @@
 <h2>New Task</h2>
 
 <%= render 'form', task: @task, task_types: @task_types, url: url,
-                   user_options: @user_options %>
+                   user_options: @user_options,
+                   assignee_options: @assignee_options %>
 
 <%= link_to 'Back', :back %>

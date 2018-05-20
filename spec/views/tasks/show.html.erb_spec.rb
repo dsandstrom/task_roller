@@ -23,9 +23,22 @@ RSpec.describe "tasks/show", type: :view do
         @task = assign(:task, Fabricate(:task, project: @project, issue: issue))
       end
 
-      it "renders summary>" do
+      it "renders issue" do
         render
         assert_select "#task-issue-#{issue.id}"
+      end
+    end
+
+    context "task assigned to a user" do
+      let(:user) { Fabricate(:user_worker) }
+
+      before do
+        @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
+      end
+
+      it "renders assignee" do
+        render
+        assert_select "#task-assignee-#{user.id}"
       end
     end
   end

@@ -31,6 +31,19 @@
     </blockquote>
   </div>
 
+  <h3>Assignees</h3>
+  <% if @task.assignees.any? %>
+    <ul class="task-assignees">
+      <% @task.assignees.each do |assignee|  %>
+        <li id="task-assignee-<%= assignee.id %>" class="task-assignee">
+          <%= assignee.name %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No one assigned</p>
+  <% end %>
+
   <% if @task.issue %>
     <h3>Stems from Issue:</h3>
     <p id="task-issue-<%= @task.issue_id %>" class="task-issue">

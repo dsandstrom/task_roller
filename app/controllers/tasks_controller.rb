@@ -6,7 +6,7 @@
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue
   before_action :set_task, only: %i[show edit update destroy]
-  before_action :set_task_types, :set_user_options, only: %i[new edit]
+  before_action :set_form_options, only: %i[new edit]
 
   def index
     @tasks =
@@ -39,8 +39,7 @@ class TasksController < ApplicationController
       redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully created.'
     else
-      set_task_types
-      set_user_options
+      set_form_options
       render :new
     end
   end
@@ -50,8 +49,7 @@ class TasksController < ApplicationController
       redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully updated.'
     else
-      set_task_types
-      set_user_options
+      set_form_options
       render :edit
     end
   end
@@ -86,10 +84,22 @@ class TasksController < ApplicationController
                                    :user_id, assignee_ids: [])
     end
 
+    def set_form_options
+      set_task_types
+      set_user_options
+      set_assignee_options
+    end
+
     def set_user_options
-      # TODO: only set for reviewers, otherwise always current_user
       @user_options =
         %w[Admin Reviewer].map do |type|
+          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+        end
+    end
+
+    def set_assignee_options
+      @assignee_options =
+        %w[Reviewer Worker].map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
         end
     end

@@ -12,6 +12,15 @@
     </div>
   <% end %>
 
+  <% if assignee_options&.any? %>
+    <div class="field">
+      <%= form.label :assignee_ids, 'Assignees' %>
+      <%= form.select :assignee_ids,
+                      grouped_options_for_select(assignee_options, task.assignee_ids),
+                      {}, id: :task_assignee_ids, multiple: true %>
+    </div>
+  <% end %>
+
   <div class="field">
     <%= form.label :task_type_id, 'Type' %>
     <div id="task_task_type_labels" class="task-task-type-options">
