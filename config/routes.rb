@@ -12,7 +12,9 @@ Rails.application.routes.draw do
         resources :tasks, only: %i[new create]
         resources :issue_comments, except: %i[index show]
       end
-      resources :tasks
+      resources :tasks do
+        resources :task_comments, except: %i[index show]
+      end
     end
   end
   resources :roller_types, only: :index
