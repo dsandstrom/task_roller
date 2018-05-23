@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180520042246) do
+ActiveRecord::Schema.define(version: 20180523210421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,15 @@ ActiveRecord::Schema.define(version: 20180520042246) do
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
     t.index ["visible"], name: "index_projects_on_visible"
+  end
+
+  create_table "roller_comments", force: :cascade do |t|
+    t.string "type"
+    t.integer "roller_id"
+    t.integer "user_id"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "roller_types", force: :cascade do |t|
