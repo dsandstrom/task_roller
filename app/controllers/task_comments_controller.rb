@@ -3,6 +3,7 @@
 class TaskCommentsController < ApplicationController
   before_action :set_category, :set_project, :set_task
   before_action :set_task_comment, only: %i[edit update destroy]
+  before_action :set_user_options, only: %i[new edit]
 
   def new
     @task_comment = @task.comments.build
@@ -18,6 +19,7 @@ class TaskCommentsController < ApplicationController
       redirect_to category_project_task_url(@category, @project, @task),
                   notice: 'Task comment was successfully created.'
     else
+      set_user_options
       render :new
     end
   end
@@ -27,6 +29,7 @@ class TaskCommentsController < ApplicationController
       redirect_to category_project_task_url(@category, @project, @task),
                   notice: 'Task comment was successfully updated.'
     else
+      set_user_options
       render :edit
     end
   end
@@ -45,6 +48,14 @@ class TaskCommentsController < ApplicationController
 
     def set_task_comment
       @task_comment = @task.comments.find(params[:id])
+    end
+
+    def set_user_options
+      # TODO: only set for reviewers, otherwise always current_user
+      @user_options =
+        User::VALID_EMPLOYEE_TYPES.map do |type|
+          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+        end
     end
 
     def task_comment_params
