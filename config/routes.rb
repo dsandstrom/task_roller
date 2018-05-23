@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :projects, except: :index do
       resources :issues do
         resources :tasks, only: %i[new create]
+        resources :issue_comments, except: %i[index show]
       end
       resources :tasks
     end
