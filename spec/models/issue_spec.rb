@@ -36,6 +36,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to belong_to(:issue_type) }
   it { is_expected.to belong_to(:project) }
   it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:comments).dependent(:destroy) }
 
   describe "#tasks" do
     let(:issue) { Fabricate(:issue) }

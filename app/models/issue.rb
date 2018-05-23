@@ -7,6 +7,8 @@ class Issue < ApplicationRecord
   belongs_to :issue_type
   belongs_to :project
   has_many :tasks, dependent: :nullify
+  has_many :comments, class_name: 'IssueComment', foreign_key: :roller_id,
+                      dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
 
   validates :summary, presence: true, length: { maximum: 200 }
