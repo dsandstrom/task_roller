@@ -1,0 +1,30 @@
+<%
+  url =
+    if task_comment.persisted?
+      category_project_task_task_comment_url(category, project, task, task_comment)
+    else
+      category_project_task_task_comments_url(category, project, task)
+    end
+%>
+
+<%= form_with(model: task_comment, url: url, local: true) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <% if user_options&.any? %>
+    <div class="field">
+      <%= form.label :user_id, 'Author' %>
+      <%= form.select :user_id,
+                      grouped_options_for_select(user_options, task_comment.user_id),
+                      {}, id: :task_comment_user_id %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :body %>
+    <%= form.text_area :body, id: :task_comment_body %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Save" %>
+  </div>
+<% end %>

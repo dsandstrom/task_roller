@@ -1,0 +1,13 @@
+<%= project_header(@project, @category) %>
+
+<h2 class="task-summary">
+  <%= link_to "Task: #{@task.summary}",
+              category_project_task_path(@category, @project, @task) %>
+</h2>
+
+<h3>New Comment</h3>
+
+<%= render 'form', category: @category, project: @project, task: @task,
+                   task_comment: @task_comment, user_options: @user_options %>
+
+<p><%= link_to 'Back', :back %></p>
