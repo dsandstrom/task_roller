@@ -7,6 +7,8 @@ class Task < ApplicationRecord
   belongs_to :issue, required: false
   has_many :task_assignees, dependent: :destroy
   has_many :assignees, through: :task_assignees
+  has_many :comments, class_name: 'TaskComment', foreign_key: :roller_id,
+                      dependent: :destroy, inverse_of: :task
   delegate :category, to: :project
 
   accepts_nested_attributes_for :assignees

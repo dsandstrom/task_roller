@@ -38,6 +38,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to belong_to(:issue) }
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignees) }
+  it { is_expected.to have_many(:comments).dependent(:destroy) }
 
   describe "#task_assignees" do
     let(:task) { Fabricate(:task) }
