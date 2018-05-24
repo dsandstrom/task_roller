@@ -14,20 +14,19 @@
     </div>
 
     <div class="task-user">
-      Assigned:
+      <%= @task.user.name_or_email %> -
       <%= format_date @task.created_at %>
-      <%= @task.user.name_or_email %>
     </div>
 
-    <h3>Assigned to complete task:</h3>
+    <h3>Assigned:</h3>
     <% if @task.assignees.any? %>
-      <ul class="task-assignees">
-        <% @task.assignees.each do |assignee|  %>
-          <li id="task-assignee-<%= assignee.id %>" class="task-assignee">
-            <%= assignee.name %>
-          </li>
+      <%# TODO: join by comma %>
+      <p  class="task-assignees">
+        <% @task.assignees.map.each_with_index do |assignee, index| %>
+          <%# TODO: helper, link? %>
+          <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
         <% end %>
-      </ul>
+      </p>
     <% else %>
       <p>No one assigned</p>
     <% end %>
