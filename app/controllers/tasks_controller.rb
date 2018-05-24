@@ -19,6 +19,8 @@ class TasksController < ApplicationController
 
   def show
     @comments = @task.comments.includes(:user)
+    @task_comment = @task.comments.build
+    set_user_options
   end
 
   def new

@@ -60,6 +60,15 @@
         </footer>
       </blockquote>
     <% end %>
+    <div class="comment">
+      <header>
+        <%# TODO: use current user %>
+        <p>Add Comment:</p>
+      </header>
+      <%= render 'task_comments/form', category: @category, project: @task.project,
+                                       task: @task, task_comment: @task_comment,
+                                       user_options: @user_options %>
+    </div>
   </div>
 
   <h3>Assigned to complete task:</h3>

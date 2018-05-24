@@ -12,6 +12,10 @@ RSpec.describe "tasks/show", type: :view do
       @comments = assign(:comments, [])
     end
 
+    let(:url) do
+      category_project_task_task_comments_url(@category, @project, @task)
+    end
+
     it "renders task's summary" do
       render
       assert_select ".task-summary", "Task: #{@task.summary}"
@@ -20,6 +24,14 @@ RSpec.describe "tasks/show", type: :view do
     it "renders task's description" do
       render
       assert_select ".task-description", @task.description
+    end
+
+    it "renders new task_comment form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "textarea[name=?]", "task_comment[body]"
+      end
     end
 
     context "task belongs to an issue" do
