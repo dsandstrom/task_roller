@@ -1,44 +1,23 @@
 <div class="task-show-page">
-  <% if @project %>
-    <%= project_header(@project, @category) %>
+  <%= task_header(@task, @project, @category) %>
+
+  <div class="task-user">
+    <%= @task.user.name_or_email %> -
+    <%= format_date @task.created_at %>
+  </div>
+
+  <h3>Assigned:</h3>
+  <% if @task.assignees.any? %>
+    <%# TODO: join by comma %>
+    <p  class="task-assignees">
+      <% @task.assignees.map.each_with_index do |assignee, index| %>
+        <%# TODO: helper, link? %>
+        <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
+      <% end %>
+    </p>
   <% else %>
-    <%= category_header(@category) %>
+    <p>No one assigned</p>
   <% end %>
-
-  <header class="task-header">
-    <div class="task-title">
-      <h2 class="task-summary">
-        Task: <%= @task.summary %>
-      </h2>
-      <%= task_type_tag @task.task_type %>
-    </div>
-
-    <div class="task-user">
-      <%= @task.user.name_or_email %> -
-      <%= format_date @task.created_at %>
-    </div>
-
-    <h3>Assigned:</h3>
-    <% if @task.assignees.any? %>
-      <%# TODO: join by comma %>
-      <p  class="task-assignees">
-        <% @task.assignees.map.each_with_index do |assignee, index| %>
-          <%# TODO: helper, link? %>
-          <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
-        <% end %>
-      </p>
-    <% else %>
-      <p>No one assigned</p>
-    <% end %>
-
-    <% if @task.issue %>
-      <h3>Stems from Issue:</h3>
-      <p id="task-issue-<%= @task.issue_id %>" class="task-issue">
-        <%= link_to @task.issue.summary,
-                    category_project_issue_path(@category, @project, @task.issue) %>
-      </p>
-    <% end %>
-  </header>
 
   <p>
     <%= link_to 'Edit',
