@@ -1,0 +1,12 @@
+<div class="comment">
+  <header>
+    <%# TODO: use current user %>
+    <p>Add Comment:</p>
+  </header>
+
+  <% if task %>
+    <%= render 'task_comments/form', category: category, project: project,
+                                     task: task, task_comment: task_comment,
+                                     user_options: user_options %>
+  <% end %>
+</div>

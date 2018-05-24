@@ -48,40 +48,11 @@
   <%= content_tag :p, @task.description, class: 'task-description' %>
 
   <div class="task-comments comments">
-    <% @comments.each do |comment|  %>
-      <blockquote id="task-comment-<%= comment.id %>" class="comment">
-        <header>
-          <p class="comment-user"><%= comment.user.name_or_email %>:</p>
-          <p class="comment-dates">
-            <%= format_date comment.created_at %>
-            <% if comment.created_at != comment.updated_at %>
-            (edited <%= format_date comment.updated_at %>)
-            <% end %>
-          </p>
-        </header>
-        <%# TODO: add markup support %>
-        <main><%= content_tag :p, comment.body %></main>
-        <footer>
-          <p>
-            <%= link_to 'edit', edit_category_project_task_task_comment_path(@category, @task.project,
-                                                                             @task, comment) %> |
-            <%= link_to 'delete',
-                        category_project_task_task_comment_path(@category, @task.project,
-                                                                             @task, comment),
-                        method: :delete,
-                        data: { confirm: 'Are you sure?' } %>
-          </p>
-        </footer>
-      </blockquote>
-    <% end %>
-    <div class="comment">
-      <header>
-        <%# TODO: use current user %>
-        <p>Add Comment:</p>
-      </header>
-      <%= render 'task_comments/form', category: @category, project: @task.project,
-                                       task: @task, task_comment: @task_comment,
-                                       user_options: @user_options %>
-    </div>
+    <%= render partial: 'roller_comments/comment', collection: @comments,
+               locals: { category: @category, project: @task.project, task: @task } %>
+
+    <%= render 'roller_comments/form',
+               category: @category, project: @task.project, task: @task,
+               task_comment: @task_comment, user_options: @user_options %>
   </div>
 </div>

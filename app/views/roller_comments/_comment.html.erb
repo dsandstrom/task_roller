@@ -1,0 +1,26 @@
+<blockquote id="comment-<%= comment.id %>" class="comment">
+  <header>
+    <p class="comment-user"><%= comment.user.name_or_email %>:</p>
+    <p class="comment-dates">
+      <%= format_date comment.created_at %>
+      <% if comment.created_at != comment.updated_at %>
+      (edited <%= format_date comment.updated_at %>)
+      <% end %>
+    </p>
+  </header>
+  <%# TODO: add markup support %>
+  <main><%= content_tag :p, comment.body %></main>
+  <footer>
+    <p>
+      <%= link_to 'edit',
+                  edit_category_project_task_task_comment_path(category,
+                                                               project, task,
+                                                               comment) %> |
+      <%= link_to 'delete',
+                  category_project_task_task_comment_path(category, project,
+                                                          task, comment),
+                  method: :delete,
+                  data: { confirm: 'Are you sure?' } %>
+    </p>
+  </footer>
+</blockquote>

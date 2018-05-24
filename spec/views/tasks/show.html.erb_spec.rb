@@ -76,7 +76,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders them" do
         render
-        assert_select "#task-comment-#{task_comment.id}"
+        assert_select "#comment-#{task_comment.id}"
       end
     end
   end
