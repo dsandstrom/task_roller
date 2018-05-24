@@ -65,3 +65,19 @@
     margin-bottom: 0;
   }
 }
+
+.task-title {
+  display: flex;
+  align-items: baseline;
+
+  h2 {
+    margin-right: .5rem;
+  }
+}
+
+.task-description {
+  margin-bottom: .5rem;
+  padding: 1rem;
+  border: 1px solid $color-tertiary;
+  background: $light-gray;
+}

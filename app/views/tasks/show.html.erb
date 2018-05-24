@@ -5,35 +5,50 @@
     <%= category_header(@category) %>
   <% end %>
 
-  <h2 class="task-summary">
-    Task: <%= @task.summary %>
-  </h2>
+  <header class="task-header">
+    <div class="task-title">
+      <h2 class="task-summary">
+        Task: <%= @task.summary %>
+      </h2>
+      <%= task_type_tag @task.task_type %>
+    </div>
+
+    <div class="task-user">
+      Assigned:
+      <%= format_date @task.created_at %>
+      <%= @task.user.name_or_email %>
+    </div>
+
+    <h3>Assigned to complete task:</h3>
+    <% if @task.assignees.any? %>
+      <ul class="task-assignees">
+        <% @task.assignees.each do |assignee|  %>
+          <li id="task-assignee-<%= assignee.id %>" class="task-assignee">
+            <%= assignee.name %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No one assigned</p>
+    <% end %>
+
+    <% if @task.issue %>
+      <h3>Stems from Issue:</h3>
+      <p id="task-issue-<%= @task.issue_id %>" class="task-issue">
+        <%= link_to @task.issue.summary,
+                    category_project_issue_path(@category, @project, @task.issue) %>
+      </p>
+    <% end %>
+  </header>
 
   <p>
-    <%= task_type_tag @task.task_type %>
+    <%= link_to 'Edit',
+                edit_category_project_task_path(@category, @task.project, @task) %>
   </p>
 
-  <% if @project %>
-    <p>
-      <%= link_to 'Edit',
-                  edit_category_project_task_path(@category, @project, @task) %>
-    </p>
-  <% end %>
-
+  <%= content_tag :p, @task.description, class: 'task-description' %>
 
   <div class="task-comments comments">
-    <blockquote class="comment first-comment">
-      <header>
-        <p class="comment-user"><%= @task.user.name_or_email %>:</p>
-        <p class="comment-dates">
-          <%= format_date @task.created_at %>
-        </p>
-      </header>
-      <main>
-        <%= content_tag :p, @task.description, class: 'task-description' %>
-      </main>
-    </blockquote>
-
     <% @comments.each do |comment|  %>
       <blockquote id="task-comment-<%= comment.id %>" class="comment">
         <header>
@@ -70,25 +85,4 @@
                                        user_options: @user_options %>
     </div>
   </div>
-
-  <h3>Assigned to complete task:</h3>
-  <% if @task.assignees.any? %>
-    <ul class="task-assignees">
-      <% @task.assignees.each do |assignee|  %>
-        <li id="task-assignee-<%= assignee.id %>" class="task-assignee">
-          <%= assignee.name %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p>No one assigned</p>
-  <% end %>
-
-  <% if @task.issue %>
-    <h3>Stems from Issue:</h3>
-    <p id="task-issue-<%= @task.issue_id %>" class="task-issue">
-      <%= link_to @task.issue.summary,
-                  category_project_issue_path(@category, @project, @task.issue) %>
-    </p>
-  <% end %>
 </div>
