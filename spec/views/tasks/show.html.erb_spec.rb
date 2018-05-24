@@ -9,11 +9,17 @@ RSpec.describe "tasks/show", type: :view do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
       @task = assign(:task, Fabricate(:task, project: @project))
+      @comments = assign(:comments, [])
     end
 
-    it "renders summary>" do
+    it "renders task's summary" do
       render
       assert_select ".task-summary", "Task: #{@task.summary}"
+    end
+
+    it "renders task's description" do
+      render
+      assert_select ".task-description", @task.description
     end
 
     context "task belongs to an issue" do
@@ -34,11 +40,27 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
+        @comments = assign(:comments, [])
       end
 
       it "renders assignee" do
         render
         assert_select "#task-assignee-#{user.id}"
+      end
+    end
+
+    context "when task has comments" do
+      let(:user) { Fabricate(:user_worker) }
+      let(:task_comment) { Fabricate(:task_comment, task: @task) }
+
+      before do
+        @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
+        @comments = assign(:comments, [task_comment])
+      end
+
+      it "renders them" do
+        render
+        assert_select "#task-comment-#{task_comment.id}"
       end
     end
   end
@@ -47,6 +69,7 @@ RSpec.describe "tasks/show", type: :view do
     before do
       project = Fabricate(:project, category: @category)
       @task = assign(:task, Fabricate(:task, project: project))
+      @comments = assign(:comments, [])
     end
 
     it "renders summary>" do
@@ -59,6 +82,7 @@ RSpec.describe "tasks/show", type: :view do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
       @task = assign(:task, Fabricate(:task, project: @project))
+      @comments = assign(:comments, [])
       @task.task_type.destroy
       @task.reload
     end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add active boolean
+
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
 

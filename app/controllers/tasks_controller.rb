@@ -17,7 +17,9 @@ class TasksController < ApplicationController
       end
   end
 
-  def show; end
+  def show
+    @comments = @task.comments.includes(:user)
+  end
 
   def new
     if @task_types.any?

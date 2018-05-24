@@ -20,15 +20,46 @@
     </p>
   <% end %>
 
-  <div class="task-comments">
+
+  <div class="task-comments comments">
     <blockquote class="comment first-comment">
-      <p>
-        <%= @task.description %>
-      </p>
-      <footer>
-        - <%= @task.user.name_or_email %>
-      </footer>
+      <header>
+        <p class="comment-user"><%= @task.user.name_or_email %>:</p>
+        <p class="comment-dates">
+          <%= format_date @task.created_at %>
+        </p>
+      </header>
+      <main>
+        <%= content_tag :p, @task.description, class: 'task-description' %>
+      </main>
     </blockquote>
+
+    <% @comments.each do |comment|  %>
+      <blockquote id="task-comment-<%= comment.id %>" class="comment">
+        <header>
+          <p class="comment-user"><%= comment.user.name_or_email %>:</p>
+          <p class="comment-dates">
+            <%= format_date comment.created_at %>
+            <% if comment.created_at != comment.updated_at %>
+            (edited <%= format_date comment.updated_at %>)
+            <% end %>
+          </p>
+        </header>
+        <%# TODO: add markup support %>
+        <main><%= content_tag :p, comment.body %></main>
+        <footer>
+          <p>
+            <%= link_to 'edit', edit_category_project_task_task_comment_path(@category, @task.project,
+                                                                             @task, comment) %> |
+            <%= link_to 'delete',
+                        category_project_task_task_comment_path(@category, @task.project,
+                                                                             @task, comment),
+                        method: :delete,
+                        data: { confirm: 'Are you sure?' } %>
+          </p>
+        </footer>
+      </blockquote>
+    <% end %>
   </div>
 
   <h3>Assigned to complete task:</h3>

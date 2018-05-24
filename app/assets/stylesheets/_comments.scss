@@ -1,0 +1,46 @@
+.comments {
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: .5rem;
+    background: $off-white;
+    font-family: $heading-font;
+    font-size: 1.4rem;
+
+    p {
+      margin: 0;
+      border: 0 solid transparent;
+      border-width: 0 .5rem;
+    }
+  }
+
+  main {
+    border-top: 1px solid $off-white;
+
+    p {
+      margin: 0;
+      padding: 1rem;
+    }
+  }
+
+  footer {
+    padding: .5rem 1rem;
+    border-top: 1px dashed $light-gray;
+
+    p {
+      margin: 0;
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .comment {
+    margin: 0 0 1rem;
+    padding: 0;
+    border: 1px solid $light-gray;
+    border-color: $color-quaternary;
+  }
+}
