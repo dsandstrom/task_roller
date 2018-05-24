@@ -21,4 +21,13 @@ RSpec.describe RollerComment, type: :model do
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:body) }
   it { is_expected.to validate_presence_of(:user_id) }
+
+  describe "#default_scope" do
+    it "orders by created_at asc" do
+      second_comment = Fabricate(:task_comment)
+      first_comment = Fabricate(:task_comment, created_at: 1.day.ago)
+
+      expect(RollerComment.all).to eq([first_comment, second_comment])
+    end
+  end
 end
