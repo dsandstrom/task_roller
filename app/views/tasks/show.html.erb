@@ -5,8 +5,8 @@
     <div class="task-column first-column">
       <h4 class="task-column-title">Created</h4>
       <p class="task-user-date">
-        <span class="task-user"><%= @task.user.name_or_email %></span>
-        <span class="task-dates">[<%= format_date @task.created_at %>]</span>
+        <span class="task-dates"><%= format_date @task.created_at %></span>
+        <span class="task-user">(<%= @task.user.name_or_email %>)</span>
       </p>
       <% if @task.assignees.any? %>
         <h4 class="task-column-title">Assigned</h4>
