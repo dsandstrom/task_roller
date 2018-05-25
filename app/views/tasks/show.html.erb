@@ -9,7 +9,6 @@
         <span class="task-dates">[<%= format_date @task.created_at %>]</span>
       </p>
       <% if @task.assignees.any? %>
-        <%# TODO: join by comma %>
         <h4 class="task-column-title">Assigned</h4>
         <p  class="task-assignees">
           <% @task.assignees.map.each_with_index do |assignee, index| %>
@@ -21,8 +20,18 @@
         <p>No one assigned</p>
       <% end %>
 
+      <% if @task.issue %>
+        <h4 class="task-column-title">Addresses</h4>
+        <p>
+          <%= issue_type_icon_tag(@task.issue.issue_type) %>
+          <%= link_to @task.issue.summary,
+                      category_project_issue_path(@category, @task.project, @task.issue) %>
+        </p>
+
+      <% end %>
+
       <p>
-        <%= link_to 'Edit',
+        <%= link_to 'Edit Task',
                     edit_category_project_task_path(@category, @task.project, @task) %>
       </p>
     </div>
