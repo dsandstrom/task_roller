@@ -51,5 +51,9 @@
     padding: 0;
     border: 1px solid $light-gray;
     border-color: $color-tertiary;
+
+    &:last-child {
+      border-radius: 0 0 $border-radius $border-radius;
+    }
   }
 }

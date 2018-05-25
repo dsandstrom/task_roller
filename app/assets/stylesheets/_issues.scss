@@ -84,6 +84,7 @@
   padding: 1rem;
   border: 1px solid $color-tertiary;
   background: $light-gray;
+  border-radius: $border-radius $border-radius 0 0;
 }
 
 .task-assignee {
