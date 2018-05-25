@@ -17,6 +17,7 @@ module ProjectsHelper
     end
   end
 
+  # TODO: move
   def breadcrumbs(views)
     return if views.none?
 
@@ -27,6 +28,7 @@ module ProjectsHelper
     end
   end
 
+  # TODO: move
   def task_header(task, project, category)
     pages = []
     pages << [category.name, category] if category

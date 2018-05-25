@@ -18,14 +18,14 @@ module RollerTypesHelper
     return unless issue_type
 
     roller_type_icon_tag issue_type,
-                         "issue-type-tag #{roller_type_color(issue_type)}"
+                         "issue-type-icon #{roller_type_color(issue_type)}"
   end
 
   def task_type_icon_tag(task_type)
     return unless task_type
 
     roller_type_icon_tag task_type,
-                         "task-type-tag #{roller_type_color(task_type)}"
+                         "task-type-icon #{roller_type_color(task_type)}"
   end
 
   def roller_type_icon(roller_type)
@@ -47,7 +47,7 @@ module RollerTypesHelper
     def roller_type_tag(roller_type, css_class)
       content_tag :span, class: css_class do
         concat roller_type_icon(roller_type)
-        concat roller_type.name
+        concat content_tag(:span, roller_type.name)
       end
     end
 
