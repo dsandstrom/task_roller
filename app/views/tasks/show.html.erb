@@ -1,37 +1,43 @@
 <div class="task-show-page">
   <%= task_header(@task, @project, @category) %>
 
-  <div class="task-user">
-    <%= @task.user.name_or_email %> -
-    <%= format_date @task.created_at %>
-  </div>
-
-  <h3>Assigned:</h3>
-  <% if @task.assignees.any? %>
-    <%# TODO: join by comma %>
-    <p  class="task-assignees">
-      <% @task.assignees.map.each_with_index do |assignee, index| %>
-        <%# TODO: helper, link? %>
-        <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
+  <div class="task-columns">
+    <div class="task-column first-column">
+      <h4 class="task-column-title">Created</h4>
+      <p class="task-user-date">
+        <span class="task-user"><%= @task.user.name_or_email %></span>
+        <span class="task-dates">[<%= format_date @task.created_at %>]</span>
+      </p>
+      <% if @task.assignees.any? %>
+        <%# TODO: join by comma %>
+        <h4 class="task-column-title">Assigned</h4>
+        <p  class="task-assignees">
+          <% @task.assignees.map.each_with_index do |assignee, index| %>
+            <%# TODO: helper, link? %>
+            <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
+          <% end %>
+        </p>
+      <% else %>
+        <p>No one assigned</p>
       <% end %>
-    </p>
-  <% else %>
-    <p>No one assigned</p>
-  <% end %>
 
-  <p>
-    <%= link_to 'Edit',
-                edit_category_project_task_path(@category, @task.project, @task) %>
-  </p>
+      <p>
+        <%= link_to 'Edit',
+                    edit_category_project_task_path(@category, @task.project, @task) %>
+      </p>
+    </div>
 
-  <%= content_tag :p, @task.description, class: 'task-description' %>
+    <div class="task-column second-column">
+      <%= content_tag :p, @task.description, class: 'task-description' %>
 
-  <div class="task-comments comments">
-    <%= render partial: 'roller_comments/comment', collection: @comments,
-               locals: { category: @category, project: @task.project, task: @task } %>
+      <div class="task-comments comments">
+        <%= render partial: 'roller_comments/comment', collection: @comments,
+                   locals: { category: @category, project: @task.project, task: @task } %>
 
-    <%= render 'roller_comments/form',
-               category: @category, project: @task.project, task: @task,
-               task_comment: @task_comment, user_options: @user_options %>
+        <%= render 'roller_comments/form',
+                   category: @category, project: @task.project, task: @task,
+                   task_comment: @task_comment, user_options: @user_options %>
+      </div>
+    </div>
   </div>
 </div>

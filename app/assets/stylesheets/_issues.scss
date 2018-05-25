@@ -57,6 +57,10 @@
   h2 {
     text-transform: none;
   }
+
+  .issue-header {
+    margin-bottom: 2rem;
+  }
 }
 
 .issue-task {
@@ -82,13 +86,46 @@
   background: $light-gray;
 }
 
+.task-assignee {
+  white-space: nowrap;
+}
+
+.task-column-title {
+  margin: 0 0 .1rem;
+  line-height: 1.1;
+}
+
+@include breakpoint(large up) {
+  .task-columns {
+    display: flex;
+    margin: 0 -1rem;
+
+    .task-column {
+      border: 0 solid transparent;
+      border-width: 0 1rem;
+    }
+
+    .first-column {
+      flex: 0 0 30rem;
+      order: 2;
+    }
+
+    .second-column {
+      flex: 1 1 auto;
+      order: 1;
+    }
+  }
+}
+
 .breadcrumbs {
   display: flex;
-  margin: 0 -.25rem .5rem;
+  flex-wrap: wrap;
+  margin: 0 -.25rem;
 
   .breadcrumb {
     border: 0 solid transparent;
     border-width: 0 .25rem;
+    white-space: nowrap;
 
     &:not(:last-child) {
       &::after {
