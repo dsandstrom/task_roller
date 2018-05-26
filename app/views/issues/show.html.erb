@@ -42,6 +42,7 @@
       <%= content_tag :p, @issue.description, class: 'issue-description' %>
 
       <div class="issue-comments comments">
+        <%# TODO: link to new task from comment, auto assign %>
         <%= render partial: 'roller_comments/comment', collection: @comments,
                    locals: { category: @category, project: @issue.project,
                              object: @issue } %>

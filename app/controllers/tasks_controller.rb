@@ -2,6 +2,7 @@
 
 # TODO: allow admins to connect task to issue, move to different issue
 # TODO: restrict to reviewers except index, show
+# TODO: when issue, auto assign summary/description
 
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue
