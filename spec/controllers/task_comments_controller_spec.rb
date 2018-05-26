@@ -33,6 +33,11 @@ RSpec.describe TaskCommentsController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:url) do
+      category_project_task_url(category, project, task,
+                                anchor: "comment-#{TaskComment.last.id}")
+    end
+
     context "with valid params" do
       it "creates a new TaskComment" do
         expect do
@@ -48,8 +53,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                                 project_id: project.to_param,
                                 task_id: task.to_param,
                                 task_comment: valid_attributes }
-        expect(response)
-          .to redirect_to(category_project_task_url(category, project, task))
+        expect(response).to redirect_to(url)
       end
     end
 
@@ -65,6 +69,9 @@ RSpec.describe TaskCommentsController, type: :controller do
   end
 
   describe "PUT #update" do
+    let(:url) do
+    end
+
     context "with valid params" do
       let(:new_attributes) { { body: "New body" } }
 
@@ -87,8 +94,9 @@ RSpec.describe TaskCommentsController, type: :controller do
                                task_id: task.to_param,
                                id: task_comment.to_param,
                                task_comment: new_attributes }
-        expect(response)
-          .to redirect_to(category_project_task_url(category, project, task))
+        url = category_project_task_url(category, project, task,
+                                        anchor: "comment-#{task_comment.id}")
+        expect(response).to redirect_to(url)
       end
     end
 

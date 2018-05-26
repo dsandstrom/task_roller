@@ -16,8 +16,7 @@ class TaskCommentsController < ApplicationController
     @task_comment = @task.comments.build(task_comment_params)
 
     if @task_comment.save
-      redirect_to category_project_task_url(@category, @project, @task),
-                  notice: 'Comment was successfully created.'
+      redirect_to redirect_url, notice: 'Comment was successfully created.'
     else
       set_user_options
       render :new
@@ -26,8 +25,7 @@ class TaskCommentsController < ApplicationController
 
   def update
     if @task_comment.update(task_comment_params)
-      redirect_to category_project_task_url(@category, @project, @task),
-                  notice: 'Comment was successfully updated.'
+      redirect_to redirect_url, notice: 'Comment was successfully updated.'
     else
       set_user_options
       render :edit
@@ -56,6 +54,12 @@ class TaskCommentsController < ApplicationController
         User::VALID_EMPLOYEE_TYPES.map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
         end
+    end
+
+    def redirect_url
+      @redirect_url ||=
+        category_project_task_url(@category, @project, @task,
+                                  anchor: "comment-#{@task_comment.id}")
     end
 
     def task_comment_params
