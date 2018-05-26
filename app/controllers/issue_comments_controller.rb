@@ -16,8 +16,7 @@ class IssueCommentsController < ApplicationController
     @issue_comment = @issue.comments.build(issue_comment_params)
 
     if @issue_comment.save
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  notice: 'Issue comment was successfully created.'
+      redirect_to redirect_url, notice: 'Comment was successfully created.'
     else
       set_user_options
       render :new
@@ -26,8 +25,7 @@ class IssueCommentsController < ApplicationController
 
   def update
     if @issue_comment.update(issue_comment_params)
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  notice: 'Comment was successfully updated.'
+      redirect_to redirect_url, notice: 'Comment was successfully updated.'
     else
       set_user_options
       render :edit
@@ -56,6 +54,12 @@ class IssueCommentsController < ApplicationController
         User::VALID_EMPLOYEE_TYPES.map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
         end
+    end
+
+    def redirect_url
+      @redirect_url ||=
+        category_project_issue_url(@category, @project, @issue,
+                                   anchor: "comment-#{@issue_comment.id}")
     end
 
     def issue_comment_params
