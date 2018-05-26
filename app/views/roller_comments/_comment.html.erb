@@ -4,7 +4,7 @@
     <p class="comment-dates">
       <%= format_date comment.created_at %>
       <% if comment.created_at != comment.updated_at %>
-      (edited <%= format_date comment.updated_at %>)
+      (ed. <%= format_date comment.updated_at %>)
       <% end %>
     </p>
   </header>
