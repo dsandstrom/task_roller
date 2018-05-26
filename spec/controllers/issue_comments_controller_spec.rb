@@ -48,8 +48,10 @@ RSpec.describe IssueCommentsController, type: :controller do
                                 project_id: project.to_param,
                                 issue_id: issue.to_param,
                                 issue_comment: valid_attributes }
-        expect(response)
-          .to redirect_to(category_project_issue_url(category, project, issue))
+        url =
+          category_project_issue_url(category, project, issue,
+                                     anchor: "comment-#{IssueComment.last.id}")
+        expect(response).to redirect_to(url)
       end
     end
 
@@ -82,13 +84,15 @@ RSpec.describe IssueCommentsController, type: :controller do
 
       it "redirects to the issue_comment" do
         issue_comment = Fabricate(:issue_comment, issue: issue)
+        url =
+          category_project_issue_url(category, project, issue,
+                                     anchor: "comment-#{issue_comment.id}")
         put :update, params: { category_id: category.to_param,
                                project_id: project.to_param,
                                issue_id: issue.to_param,
                                id: issue_comment.to_param,
                                issue_comment: new_attributes }
-        expect(response)
-          .to redirect_to(category_project_issue_url(category, project, issue))
+        expect(response).to redirect_to(url)
       end
     end
 

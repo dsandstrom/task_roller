@@ -27,7 +27,7 @@ class IssueCommentsController < ApplicationController
   def update
     if @issue_comment.update(issue_comment_params)
       redirect_to category_project_issue_url(@category, @project, @issue),
-                  notice: 'Issue comment was successfully updated.'
+                  notice: 'Comment was successfully updated.'
     else
       set_user_options
       render :edit
@@ -37,7 +37,7 @@ class IssueCommentsController < ApplicationController
   def destroy
     @issue_comment.destroy
     redirect_to category_project_issue_url(@category, @project, @issue),
-                notice: 'Issue comment was successfully destroyed.'
+                notice: 'Comment was successfully destroyed.'
   end
 
   private
