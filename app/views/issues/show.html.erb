@@ -21,6 +21,12 @@
                           category_project_task_path(@category, @issue.project, task) %>
             </li>
           <% end %>
+          <li class="new-issue-task">
+            <%= icon('plus') %>
+            <%= link_to 'Add Task',
+                        new_category_project_issue_task_path(@category, @issue.project,
+                                                             @issue) %>
+          </li>
         </ul>
       <% else %>
         <p>unassigned</p>
@@ -37,7 +43,8 @@
 
       <div class="issue-comments comments">
         <%= render partial: 'roller_comments/comment', collection: @comments,
-                   locals: { category: @category, project: @issue.project, object: @issue } %>
+                   locals: { category: @category, project: @issue.project,
+                             object: @issue } %>
 
         <%= render 'roller_comments/form',
                    category: @category, project: @issue.project, object: @issue,
