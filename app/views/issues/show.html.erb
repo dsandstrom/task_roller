@@ -5,12 +5,14 @@
     <div class="issue-column first-column">
       <h4 class="issue-column-title">Created</h4>
       <p class="issue-user-date">
+        by
+        <span class="issue-user"><%= @issue.user.name_or_email %></span>
+        on
         <span class="issue-dates"><%= format_date @issue.created_at %></span>
-        <span class="issue-user">(<%= @issue.user.name_or_email %>)</span>
       </p>
 
+      <h4 class="issue-column-title">Addressed By</h4>
       <% if @issue.tasks.any? %>
-        <h4 class="issue-column-title">Fixes</h4>
         <ul class="issue-tasks">
           <% @issue.tasks.each do |task| %>
             <li class="issue-task" id="issue-task-<%= task.id %>">
@@ -20,7 +22,8 @@
             </li>
           <% end %>
         </ul>
-
+      <% else %>
+        <p>unassigned</p>
       <% end %>
 
       <p>
