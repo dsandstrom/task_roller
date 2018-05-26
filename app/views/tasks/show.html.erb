@@ -3,11 +3,11 @@
 
   <div class="task-columns">
     <div class="task-column first-column">
-      <h4 class="task-column-title">Created</h4>
+      <h4 class="task-column-title">Details</h4>
       <p class="task-user-date">
-        by
+        Created by
         <span class="task-user"><%= @task.user.name_or_email %></span>
-        on
+        at
         <span class="task-date"><%= format_date @task.created_at %></span>
       </p>
       <h4 class="task-column-title">Assigned</h4>
@@ -19,7 +19,7 @@
         <p>undecided</p>
       <% end %>
 
-      <h4 class="task-column-title">Addresses</h4>
+      <h4 class="task-column-title">Issue</h4>
       <% if @task.issue %>
         <p class="task-issue">
           <%= issue_type_icon_tag(@task.issue.issue_type) %>
@@ -32,7 +32,8 @@
 
       <p>
         <%= link_to 'Edit Task',
-                    edit_category_project_task_path(@category, @task.project, @task) %>
+                    edit_category_project_task_path(@category, @task.project, @task),
+                    class: 'button' %>
       </p>
     </div>
 

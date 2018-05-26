@@ -3,15 +3,15 @@
 
   <div class="issue-columns">
     <div class="issue-column first-column">
-      <h4 class="issue-column-title">Created</h4>
+      <h4 class="issue-column-title">Details</h4>
       <p class="issue-user-date">
-        by
+        Created by
         <span class="issue-user"><%= @issue.user.name_or_email %></span>
-        on
+        at
         <span class="issue-dates"><%= format_date @issue.created_at %></span>
       </p>
 
-      <h4 class="issue-column-title">Addressed By</h4>
+      <h4 class="issue-column-title">Tasks</h4>
       <% if @issue.tasks.any? %>
         <ul class="issue-tasks">
           <% @issue.tasks.each do |task| %>
@@ -34,7 +34,8 @@
 
       <p>
         <%= link_to 'Edit Issue',
-                    edit_category_project_issue_path(@category, @issue.project, @issue) %>
+                    edit_category_project_issue_path(@category, @issue.project, @issue),
+                    class: 'button' %>
       </p>
     </div>
 
