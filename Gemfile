@@ -37,6 +37,8 @@ gem 'acts_as_list', '~> 0.9.10'
 # https://github.com/ai/autoprefixer-rails
 gem 'autoprefixer-rails', '~> 7.2.5'
 
+gem 'redcarpet', '~> 3.4.0'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console
