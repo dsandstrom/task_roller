@@ -27,6 +27,11 @@ RSpec.describe "tasks/show", type: :view do
       assert_select ".task-description", @task.description
     end
 
+    it "renders task's user" do
+      render
+      assert_select ".task-user", @task.user.name_or_email
+    end
+
     it "renders new task_comment form" do
       render
 
