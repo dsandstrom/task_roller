@@ -18,7 +18,7 @@ class IssuesController < ApplicationController
 
   def show
     @comments = @issue.comments.includes(:user)
-    @issue_comment = @issue.comments.build
+    @comment = @issue.comments.build
     set_user_options
   end
 

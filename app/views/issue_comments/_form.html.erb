@@ -1,21 +1,21 @@
 <%
   # TODO: add js form validation
   url =
-    if issue_comment.persisted?
-      category_project_issue_issue_comment_url(category, project, issue, issue_comment)
+    if comment.persisted?
+      category_project_issue_issue_comment_url(category, project, issue, comment)
     else
       category_project_issue_issue_comments_url(category, project, issue)
     end
 %>
 
-<%= form_with(model: issue_comment, url: url, local: true) do |form| %>
+<%= form_with(model: comment, url: url, local: true) do |form| %>
   <%= form_errors(form.object) %>
 
   <% if user_options&.any? %>
     <div class="field">
       <%= form.label :user_id, 'Author' %>
       <%= form.select :user_id,
-                      grouped_options_for_select(user_options, issue_comment.user_id),
+                      grouped_options_for_select(user_options, comment.user_id),
                       {}, id: :issue_comment_user_id %>
     </div>
   <% end %>
@@ -26,7 +26,7 @@
   </div>
 
   <div class="actions">
-    <%= form.submit comment_button_text(issue_comment),
+    <%= form.submit comment_button_text(comment),
                     class: 'button button-success' %>
   </div>
 <% end %>

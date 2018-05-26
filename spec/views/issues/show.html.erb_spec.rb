@@ -9,7 +9,7 @@ RSpec.describe "issues/show", type: :view do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
       @issue = assign(:issue, Fabricate(:issue, project: @project))
-      @issue_comment = assign(:issue_comment, @issue.comments.build)
+      @comment = assign(:issue_comment, @issue.comments.build)
       @comments = assign(:comments, [])
     end
 
@@ -49,7 +49,7 @@ RSpec.describe "issues/show", type: :view do
     before do
       project = Fabricate(:project, category: @category)
       @issue = assign(:issue, Fabricate(:issue, project: project))
-      @issue_comment = assign(:issue_comment, @issue.comments.build)
+      @comment = assign(:issue_comment, @issue.comments.build)
       @comments = assign(:comments, [])
     end
 
@@ -63,7 +63,7 @@ RSpec.describe "issues/show", type: :view do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
       @issue = assign(:issue, Fabricate(:issue, project: @project))
-      @issue_comment = assign(:issue_comment, @issue.comments.build)
+      @comment = assign(:issue_comment, @issue.comments.build)
       @comments = assign(:comments, [])
       @issue.issue_type.destroy
       @issue.reload

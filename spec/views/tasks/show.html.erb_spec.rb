@@ -9,7 +9,7 @@ RSpec.describe "tasks/show", type: :view do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
       @task = assign(:task, Fabricate(:task, project: @project))
-      @task_comment = assign(:task_comment, @task.comments.build)
+      @comment = assign(:task_comment, @task.comments.build)
       @comments = assign(:comments, [])
     end
 
@@ -45,7 +45,7 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, Fabricate(:task, project: @project, issue: issue))
-        @task_comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:task_comment, @task.comments.build)
       end
 
       it "renders issue" do
@@ -60,7 +60,7 @@ RSpec.describe "tasks/show", type: :view do
       before do
         @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
         @comments = assign(:comments, [])
-        @task_comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:task_comment, @task.comments.build)
       end
 
       it "renders assignee" do
@@ -76,7 +76,7 @@ RSpec.describe "tasks/show", type: :view do
       before do
         @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
         @comments = assign(:comments, [task_comment])
-        @task_comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:task_comment, @task.comments.build)
       end
 
       it "renders them" do
@@ -91,7 +91,7 @@ RSpec.describe "tasks/show", type: :view do
       project = Fabricate(:project, category: @category)
       @task = assign(:task, Fabricate(:task, project: project))
       @comments = assign(:comments, [])
-      @task_comment = assign(:task_comment, @task.comments.build)
+      @comment = assign(:task_comment, @task.comments.build)
     end
 
     it "renders summary>" do
@@ -105,7 +105,7 @@ RSpec.describe "tasks/show", type: :view do
       @project = assign(:project, Fabricate(:project, category: @category))
       @task = assign(:task, Fabricate(:task, project: @project))
       @comments = assign(:comments, [])
-      @task_comment = assign(:task_comment, @task.comments.build)
+      @comment = assign(:task_comment, @task.comments.build)
 
       @task.task_type.destroy
       @task.reload
