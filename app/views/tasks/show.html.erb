@@ -19,14 +19,15 @@
         <p>undecided</p>
       <% end %>
 
+      <h4 class="task-column-title">Addresses</h4>
       <% if @task.issue %>
-        <h4 class="task-column-title">Addresses</h4>
         <p class="task-issue">
           <%= issue_type_icon_tag(@task.issue.issue_type) %>
           <%= link_to @task.issue.summary,
                       category_project_issue_path(@category, @task.project, @task.issue) %>
         </p>
-
+      <% else %>
+        <p>n/a</p>
       <% end %>
 
       <p>
