@@ -11,10 +11,7 @@
       <% if @task.assignees.any? %>
         <h4 class="task-column-title">Assigned</h4>
         <p  class="task-assignees">
-          <% @task.assignees.map.each_with_index do |assignee, index| %>
-            <%# TODO: helper, link? %>
-            <span id="task-assignee-<%= assignee.id %>" class="task-assignee"><%= assignee.name_or_email %></span><%= ',' unless index + 1 == @task.assignees.count %>
-          <% end %>
+          <%= render partial: 'shared/assignee', collection: @task.assignees %>
         </p>
       <% else %>
         <p>No one assigned</p>
