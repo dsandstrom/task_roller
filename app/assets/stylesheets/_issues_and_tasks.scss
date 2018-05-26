@@ -70,6 +70,7 @@
   }
 }
 
+.issue-title,
 .task-title {
   display: flex;
   align-items: baseline;
@@ -79,12 +80,38 @@
   }
 }
 
+.issue-description,
 .task-description {
   margin-bottom: .5rem;
   padding: 1rem;
   border: 1px solid $color-tertiary;
   border-radius: $border-radius $border-radius 0 0;
   background: $light-gray;
+}
+
+.issue-task,
+.task-issue {
+
+  i {
+    font-size: 1.4rem;
+  }
+}
+
+.issue-tasks {
+  margin: 0 0 1.5rem;
+  list-style-type: none;
+
+  li {
+    margin: .7rem 0 0;
+    line-height: 1.3;
+  }
+}
+
+.issue-user,
+.issue-dates,
+.task-user,
+.task-dates {
+  white-space: nowrap;
 }
 
 .assignee {
@@ -97,16 +124,19 @@
   }
 }
 
+.issue-column-title,
 .task-column-title {
   margin: 0 0 .1rem;
   line-height: 1.1;
 }
 
 @include breakpoint(large up) {
+  .issue-columns,
   .task-columns {
     display: flex;
     margin: 0 -1rem;
 
+    .issue-column,
     .task-column {
       border: 0 solid transparent;
       border-width: 0 1rem;

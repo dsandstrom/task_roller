@@ -38,10 +38,10 @@
 
       <div class="task-comments comments">
         <%= render partial: 'roller_comments/comment', collection: @comments,
-                   locals: { category: @category, project: @task.project, task: @task } %>
+                   locals: { category: @category, project: @task.project, object: @task } %>
 
         <%= render 'roller_comments/form',
-                   category: @category, project: @task.project, task: @task,
+                   category: @category, project: @task.project, object: @task,
                    task_comment: @task_comment, user_options: @user_options %>
       </div>
     </div>

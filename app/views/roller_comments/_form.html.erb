@@ -4,9 +4,13 @@
     <p>Add Comment:</p>
   </header>
 
-  <% if task %>
+  <% if object.is_a?(Task) %>
     <%= render 'task_comments/form', category: category, project: project,
-                                     task: task, task_comment: task_comment,
+                                     task: object, task_comment: task_comment,
+                                     user_options: user_options %>
+  <% else %>
+    <%= render 'issue_comments/form', category: category, project: project,
+                                     issue: object, issue_comment: issue_comment,
                                      user_options: user_options %>
   <% end %>
 </div>

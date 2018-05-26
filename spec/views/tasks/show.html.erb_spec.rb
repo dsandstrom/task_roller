@@ -60,7 +60,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders assignee" do
         render
-        assert_select "#task-assignee-#{user.id}"
+        assert_select "#assignee-#{user.id}"
       end
     end
 

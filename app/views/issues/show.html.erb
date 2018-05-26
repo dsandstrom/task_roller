@@ -1,44 +1,45 @@
 <div class="issue-show-page">
-  <% if @project %>
-    <%= project_header(@project, @category) %>
-  <% else %>
-    <%= category_header(@category) %>
-  <% end %>
+  <%= issue_header(@issue, @project, @category) %>
 
-  <h2 class="issue-summary">
-    Issue: <%= @issue.summary %>
-  </h2>
-
-  <p><%= issue_type_tag(@issue.issue_type) %></p>
-
-  <p>
-    <%= link_to 'Edit',
-                edit_category_project_issue_path(@category, @issue.project, @issue) %>
-  </p>
-
-  <div class="issue-comments">
-    <blockquote class="comment first-comment">
-      <p>
-        <%= @issue.description %>
+  <div class="issue-columns">
+    <div class="issue-column first-column">
+      <h4 class="issue-column-title">Created</h4>
+      <p class="issue-user-date">
+        <span class="issue-dates"><%= format_date @issue.created_at %></span>
+        <span class="issue-user">(<%= @issue.user.name_or_email %>)</span>
       </p>
-      <footer>
-        - <%= @issue.user.name_or_email %>
-      </footer>
-    </blockquote>
-  </div>
 
-  <h3>Tasks</h3>
-  <ul class="issue-tasks">
-    <% @issue.tasks.each do |task| %>
-      <%= content_tag :li, class: 'issue-task', id: "issue-task-#{task.id}" do %>
-        <%= link_to task.summary,
-                    category_project_task_path(@category, @issue.project, task) %>
-        <%= task_type_icon_tag task.task_type %>
+      <% if @issue.tasks.any? %>
+        <h4 class="issue-column-title">Fixes</h4>
+        <ul class="issue-tasks">
+          <% @issue.tasks.each do |task| %>
+            <li class="issue-task" id="issue-task-<%= task.id %>">
+              <%= task_type_icon_tag(task.task_type) %>
+              <%= link_to task.summary,
+                          category_project_task_path(@category, @issue.project, task) %>
+            </li>
+          <% end %>
+        </ul>
+
       <% end %>
-    <% end %>
-    <li>
-      <%= link_to 'New task',
-                  new_category_project_issue_task_path(@category, @issue.project, @issue) %>
-    </li>
-  </ul>
+
+      <p>
+        <%= link_to 'Edit Issue',
+                    edit_category_project_issue_path(@category, @issue.project, @issue) %>
+      </p>
+    </div>
+
+    <div class="issue-column second-column">
+      <%= content_tag :p, @issue.description, class: 'issue-description' %>
+
+      <div class="issue-comments comments">
+        <%= render partial: 'roller_comments/comment', collection: @comments,
+                   locals: { category: @category, project: @issue.project, object: @issue } %>
+
+        <%= render 'roller_comments/form',
+                   category: @category, project: @issue.project, object: @issue,
+                   issue_comment: @issue_comment, user_options: @user_options %>
+      </div>
+    </div>
+  </div>
 </div>

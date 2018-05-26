@@ -12,15 +12,27 @@
   <main><%= content_tag :p, comment.body %></main>
   <footer>
     <p>
-      <%= link_to 'edit',
-                  edit_category_project_task_task_comment_path(category,
-                                                               project, task,
-                                                               comment) %> |
-      <%= link_to 'delete',
-                  category_project_task_task_comment_path(category, project,
-                                                          task, comment),
-                  method: :delete,
-                  data: { confirm: 'Are you sure?' } %>
+      <% if object.is_a?(Task) %>
+        <%= link_to 'edit',
+                    edit_category_project_task_task_comment_path(category,
+                                                                 project, object,
+                                                                 comment) %> |
+        <%= link_to 'delete',
+                    category_project_task_task_comment_path(category, project,
+                                                            object, comment),
+                    method: :delete,
+                    data: { confirm: 'Are you sure?' } %>
+      <% else %>
+        <%= link_to 'edit',
+                    edit_category_project_issue_issue_comment_path(category,
+                                                                 project, object,
+                                                                 comment) %> |
+        <%= link_to 'delete',
+                    category_project_issue_issue_comment_path(category, project,
+                                                            object, comment),
+                    method: :delete,
+                    data: { confirm: 'Are you sure?' } %>
+      <% end %>
     </p>
   </footer>
 </blockquote>

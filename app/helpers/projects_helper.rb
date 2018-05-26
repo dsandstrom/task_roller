@@ -41,6 +41,18 @@ module ProjectsHelper
     end
   end
 
+  # TODO: move
+  def issue_header(issue, project, category)
+    pages = []
+    pages << [category.name, category] if category
+    pages << project_breadcrumb_item(project) if project
+
+    content_tag :header, class: 'issue-header' do
+      concat issue_title(issue)
+      concat breadcrumbs(pages)
+    end
+  end
+
   private
 
     def project_breadcrumb_item(project)
@@ -63,6 +75,14 @@ module ProjectsHelper
       content_tag :div, class: 'task-title' do
         concat content_tag :h1, "Task: #{task.summary}", class: 'task-summary'
         concat task_type_tag task.task_type
+      end
+    end
+
+    def issue_title(issue)
+      content_tag :div, class: 'issue-title' do
+        concat content_tag :h1, "Issue: #{issue.summary}",
+                           class: 'issue-summary'
+        concat issue_type_tag issue.issue_type
       end
     end
 
