@@ -63,13 +63,6 @@
   }
 }
 
-.issue-task {
-  .task-type-tag {
-    display: inline-block;
-    margin-bottom: 0;
-  }
-}
-
 .issue-title,
 .task-title {
   display: flex;
@@ -90,10 +83,16 @@
 }
 
 .issue-task,
-.task-issue {
-
+.task-issue,
+.new-issue-task {
   i {
     font-size: 1.4rem;
+  }
+}
+
+.new-issue-task {
+  i {
+    color: $dark-green;
   }
 }
 
@@ -102,7 +101,7 @@
   list-style-type: none;
 
   li {
-    margin: .7rem 0 0;
+    margin: 1rem 0 0;
     line-height: 1.3;
   }
 }
