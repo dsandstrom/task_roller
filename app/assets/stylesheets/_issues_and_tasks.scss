@@ -83,12 +83,18 @@
   margin-bottom: .5rem;
   padding: 1rem;
   border: 1px solid $color-tertiary;
-  background: $light-gray;
   border-radius: $border-radius $border-radius 0 0;
+  background: $light-gray;
 }
 
-.task-assignee {
+.assignee {
   white-space: nowrap;
+
+  &:not(:last-child) {
+    &::after {
+      content: ',';
+    }
+  }
 }
 
 .task-column-title {
