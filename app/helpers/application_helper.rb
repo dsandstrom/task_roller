@@ -38,6 +38,11 @@ module ApplicationHelper
     end
   end
 
+  def comment_button_text(comment)
+    return 'Update Comment' if comment.persisted?
+    'Add Comment'
+  end
+
   private
 
     def form_errors_list(obj)

@@ -25,6 +25,7 @@
   </div>
 
   <div class="actions">
-    <%= form.submit "Save" %>
+    <%= form.submit comment_button_text(issue_comment),
+                    class: 'button button-success' %>
   </div>
 <% end %>
