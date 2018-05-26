@@ -107,19 +107,20 @@
   }
 }
 
-.roller-type-color-green,
-.roller-type-color-yellow,
-.roller-type-color-red,
-.roller-type-color-purple {
-  color: $off-white;
-
-  i {
-    color: $dark-blue;
-  }
-}
-
 .issue-type-tag,
-.task-type-tag {
+.task-type-tag,
+.roller-radio-button-label {
+  &.roller-type-color-green,
+  &.roller-type-color-yellow,
+  &.roller-type-color-red,
+  &.roller-type-color-purple {
+    color: $off-white;
+
+    i {
+      color: $dark-blue;
+    }
+  }
+
   &.roller-type-color-default {
     border-color: $gray;
     background: $light-gray;
