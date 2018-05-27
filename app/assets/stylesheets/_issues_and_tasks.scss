@@ -68,28 +68,6 @@
   margin-bottom: 1.5rem;
 }
 
-.issue-description,
-.task-description {
-  margin-bottom: .5rem;
-  padding: 1rem;
-  border: 1px solid $gray;
-  border-radius: $border-radius $border-radius 0 0;
-  background: $light-gray;
-
-  * {
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  blockquote {
-    margin: 1rem 0;
-    padding: 0 0 0 1rem;
-    border-width: 2px;
-    border-color: $color-quinary;
-  }
-}
-
 .issue-task,
 .task-issue,
 .new-issue-task {

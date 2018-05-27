@@ -24,7 +24,7 @@ RSpec.describe "issues/show", type: :view do
 
     it "renders issue's description" do
       render
-      assert_select ".issue-description", @issue.description
+      assert_select ".issue-description main", @issue.description
     end
 
     it "renders new issue_comment form" do

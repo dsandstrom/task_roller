@@ -17,12 +17,7 @@
   }
 
   main {
-    border-top: 1px solid $off-white;
-
-    p {
-      margin: 0;
-      padding: 1rem;
-    }
+    padding: 1rem;
   }
 
   footer {
@@ -52,8 +47,37 @@
     padding: 0;
     border: 1px solid $light-gray;
 
+    &:first-child {
+      border-radius: $border-radius $border-radius 0 0;
+    }
+
     &:last-child {
       border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+}
+
+.comment {
+  &.issue-description,
+  &.task-description {
+    border-color: $light-gray;
+    background: $off-white;
+
+    header {
+      color: $black;
+    }
+
+    main {
+      *:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    blockquote {
+      margin: 1rem 0;
+      padding: 0 0 0 1rem;
+      border-width: 2px;
+      border-color: $color-quinary;
     }
   }
 }
