@@ -40,7 +40,7 @@
     </div>
 
     <div class="issue-column second-column">
-      <%= content_tag :p, @issue.description, class: 'issue-description' %>
+      <%= content_tag :div, @issue.description_html.html_safe, class: 'issue-description' %>
 
       <div class="issue-comments comments">
         <%# TODO: link to new task from comment, auto assign %>
