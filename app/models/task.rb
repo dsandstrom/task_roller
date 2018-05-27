@@ -18,4 +18,12 @@ class Task < ApplicationRecord
   validates :user_id, presence: true
   validates :task_type_id, presence: true
   validates :project_id, presence: true
+
+  # CLASS
+
+  # INSTANCE
+
+  def description_html
+    @description_html ||= RollerMarkdown.new.render(description)
+  end
 end

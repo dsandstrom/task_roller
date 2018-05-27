@@ -53,4 +53,14 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#description_html" do
+    context "when description is _foo_" do
+      before { subject.description = "_foo_" }
+
+      it "adds em tags" do
+        expect(subject.description_html).to eq("<p><em>foo</em></p>\n")
+      end
+    end
+  end
 end
