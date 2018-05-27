@@ -28,18 +28,12 @@ class Issue < ApplicationRecord
 
   private
 
-    def markdown_renderer
-      options = { filter_html: true, no_images: true, no_styles: true,
-                  safe_links_only: true, hard_wrap: true, prettify: true }
-      Redcarpet::Render::HTML.new(options)
-    end
-
     def markdown
       options = { no_intra_emphasis: true, tables: false, autolink: true,
                   strikethrough: true, space_after_headers: true,
                   superscript: false, underline: false, quote: false,
                   footnotes: false, fenced_code_blocks: true,
                   disable_indented_code_blocks: true }
-      Redcarpet::Markdown.new(markdown_renderer, options)
+      Redcarpet::Markdown.new(HTMLRenderer.new, options)
     end
 end

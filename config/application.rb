@@ -36,5 +36,7 @@ module TaskRoller
       g.request_specs false
       g.routing_specs false
     end
+
+    config.autoload_paths << Rails.root.join('app', 'classes')
   end
 end
