@@ -138,5 +138,14 @@ RSpec.describe Issue, type: :model do
           .to eq("<p>foo</p>\n")
       end
     end
+
+    context "when description contains a script tag" do
+      before { subject.description = "<script>alert('foo');<script>" }
+
+      it "filters the tags" do
+        expect(subject.description_html)
+          .to eq("<p>alert(&#39;foo&#39;);</p>\n")
+      end
+    end
   end
 end
