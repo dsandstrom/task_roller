@@ -23,17 +23,6 @@ class Issue < ApplicationRecord
   # INSTANCE
 
   def description_html
-    @description_html ||= markdown.render(description)
+    @description_html ||= RollerMarkdown.new.render(description)
   end
-
-  private
-
-    def markdown
-      options = { no_intra_emphasis: true, tables: false, autolink: true,
-                  strikethrough: true, space_after_headers: true,
-                  superscript: false, underline: false, quote: false,
-                  footnotes: false, fenced_code_blocks: true,
-                  disable_indented_code_blocks: true }
-      Redcarpet::Markdown.new(HTMLRenderer.new, options)
-    end
 end

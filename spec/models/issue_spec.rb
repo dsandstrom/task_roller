@@ -58,93 +58,11 @@ RSpec.describe Issue, type: :model do
   end
 
   describe "#description_html" do
-    context "when description is simple" do
-      before { subject.description = "simple" }
-
-      it "adds paragraph tags" do
-        expect(subject.description_html).to eq("<p>simple</p>\n")
-      end
-    end
-
-    context "when description contains _em_" do
+    context "when description is _foo_" do
       before { subject.description = "_foo_" }
 
       it "adds em tags" do
         expect(subject.description_html).to eq("<p><em>foo</em></p>\n")
-      end
-    end
-
-    context "when description contains *em*" do
-      before { subject.description = "*foo*" }
-
-      it "adds em tags" do
-        expect(subject.description_html).to eq("<p><em>foo</em></p>\n")
-      end
-    end
-
-    context "when description contains __strong__" do
-      before { subject.description = "__foo__" }
-
-      it "adds strong tags" do
-        expect(subject.description_html)
-          .to eq("<p><strong>foo</strong></p>\n")
-      end
-    end
-
-    context "when description contains **strong**" do
-      before { subject.description = "**foo**" }
-
-      it "adds strong tags" do
-        expect(subject.description_html)
-          .to eq("<p><strong>foo</strong></p>\n")
-      end
-    end
-
-    context "when description contains ~~del~~" do
-      before { subject.description = "~~foo~~" }
-
-      it "adds del tags" do
-        expect(subject.description_html)
-          .to eq("<p><del>foo</del></p>\n")
-      end
-    end
-
-    context "when description contains `code`" do
-      before { subject.description = "`foo`" }
-
-      it "adds code tags" do
-        expect(subject.description_html)
-          .to eq("<p><code class=\"prettyprint\">foo</code></p>\n")
-      end
-    end
-
-    context "when description contains ```codeblock```" do
-      before { subject.description = "```ruby\nfoo = bar\n```" }
-
-      let(:html) do
-        "<pre><code class=\"prettyprint lang-ruby\">foo = bar\n</code></pre>\n"
-      end
-
-      it "adds pre and code tags" do
-        expect(subject.description_html).to eq(html)
-      end
-    end
-
-    context "when description contains html" do
-      before { subject.description = "<i>foo<i>" }
-
-      it "filters the tags" do
-        expect(subject.description_html)
-          .to eq("<p>foo</p>\n")
-      end
-    end
-
-    context "when description contains a script tag" do
-      before { subject.description = "<script>alert('foo');<script>" }
-
-      it "filters the tags" do
-        expect(subject.description_html)
-          .to eq("<p>alert(&#39;foo&#39;);</p>\n")
       end
     end
   end
