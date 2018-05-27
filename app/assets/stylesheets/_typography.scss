@@ -1,5 +1,6 @@
 $heading-font: 'Roboto', 'Helvetica Neue', 'Helvetica', sans-serif;
 $body-font: 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
+$code-font: "Lucida Console", Monaco, monospace;
 
 body {
   color: $ink;
@@ -56,6 +57,10 @@ h6 {
 
 p {
   margin-bottom: 1.5rem;
+
+  code {
+    font-weight: bold;
+  }
 }
 
 a {
@@ -80,4 +85,20 @@ a {
 
 li {
   margin-bottom: .5rem;
+}
+
+code {
+  color: $color-quinary;
+  font-family: $code-font;
+}
+
+pre {
+  margin: 1rem 0 1.5rem;
+  padding: 1rem;
+  border-radius: .5rem;
+  background: $dark-gray;
+
+  code {
+    color: $off-white;
+  }
 }
