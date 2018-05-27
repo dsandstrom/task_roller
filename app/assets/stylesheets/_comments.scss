@@ -70,6 +70,15 @@
     border-color: $color-quinary;
   }
 
+  ul,
+  p {
+    margin: 0 0 1rem;
+  }
+
+  li {
+    line-height: 1.3;
+  }
+
   main {
     .markdown-heading {
       margin: 1rem 0 0;
