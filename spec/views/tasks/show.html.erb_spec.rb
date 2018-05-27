@@ -24,7 +24,7 @@ RSpec.describe "tasks/show", type: :view do
 
     it "renders task's description" do
       render
-      assert_select ".task-description", @task.description
+      assert_select ".task-description main", @task.description
     end
 
     it "renders task's user" do

@@ -36,8 +36,8 @@
           <%= content_tag :main, @issue.description_html.html_safe %>
 
           <footer>
-            <%= link_to 'edit', edit_category_project_issue_path(@category, @issue.project,
-                                                                 @issue) %>
+            <%= link_to 'edit',
+                        edit_category_project_issue_path(@category, @issue.project, @issue) %>
           </footer>
         </div>
 

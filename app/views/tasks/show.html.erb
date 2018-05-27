@@ -3,13 +3,6 @@
 
   <div class="task-columns">
     <div class="task-column first-column">
-      <h4 class="task-column-title">Details</h4>
-      <p class="task-user-date">
-        Created by
-        <span class="task-user"><%= @task.user.name_or_email %></span>
-        at
-        <span class="task-date"><%= format_date @task.created_at %></span>
-      </p>
       <h4 class="task-column-title">Assigned</h4>
       <% if @task.assignees.any? %>
         <p  class="task-assignees">
@@ -29,18 +22,24 @@
       <% else %>
         <p>n/a</p>
       <% end %>
-
-      <p>
-        <%= link_to 'Edit Task',
-                    edit_category_project_task_path(@category, @task.project, @task),
-                    class: 'button' %>
-      </p>
     </div>
 
     <div class="task-column second-column">
-      <%= content_tag :p, @task.description, class: 'task-description' %>
-
       <div class="task-comments comments">
+        <div class="comment task-description">
+          <header class="task-user-date">
+            <p><span class="task-user"><%= @task.user.name_or_email %></span>:</p>
+            <p class="task-date"><%= format_date @task.created_at %></p>
+          </header>
+
+          <%= content_tag :main, @task.description_html.html_safe %>
+
+          <footer>
+            <%= link_to 'edit',
+                        edit_category_project_task_path(@category, @task.project, @task) %>
+          </footer>
+        </div>
+
         <%= render partial: 'roller_comments/comment', collection: @comments,
                    locals: { category: @category, project: @task.project, object: @task } %>
 
