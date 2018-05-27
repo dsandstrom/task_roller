@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: add CustomField/Value/Option for more issue/task attrs
+# TODO: add visible boolean (for moderation)
 
 class Issue < ApplicationRecord
   belongs_to :user # reporter
