@@ -58,6 +58,14 @@
 }
 
 .comment {
+  main {
+    .markdown-heading {
+      margin: 1rem 0 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  }
+
   &.issue-description,
   &.task-description {
     border-color: $light-gray;

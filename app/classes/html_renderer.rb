@@ -7,4 +7,8 @@ class HTMLRenderer < Redcarpet::Render::HTML
   def initialize(*_)
     super OPTIONS.dup
   end
+
+  def header(text, header_level)
+    %(<p class="markdown-heading markdown-h#{header_level}">#{text}</p>)
+  end
 end

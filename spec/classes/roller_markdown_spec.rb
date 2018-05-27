@@ -73,5 +73,12 @@ RSpec.describe RollerMarkdown, type: :class do
           .to eq("<p>alert(&#39;foo&#39;);</p>\n")
       end
     end
+
+    context "when input contains '# heading'" do
+      it "doesn't exchanges heading tags" do
+        expect(subject.render("# Foo\n"))
+          .to eq(%(<p class="markdown-heading markdown-h1">Foo</p>))
+      end
+    end
   end
 end
