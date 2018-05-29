@@ -13,4 +13,5 @@
                    user_options: @user_options,
                    assignee_options: @assignee_options %>
 
-<%= link_to 'Back', :back %>
+<%= link_to 'Back to task',
+            category_project_task_path(@category, @project, @task) %>
