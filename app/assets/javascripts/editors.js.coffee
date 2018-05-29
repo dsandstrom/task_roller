@@ -30,6 +30,9 @@ class Editor
     # TODO: change heading
 
 document.addEventListener 'turbolinks:load', () ->
+  # syntax highlight
+  Rainbow.color()
+
   taskDescription = document.getElementById('task_description')
   if taskDescription
     new Editor(taskDescription)

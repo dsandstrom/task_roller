@@ -14,4 +14,8 @@
 //= require turbolinks
 //= require validate-js/validate
 //= require simplemde/dist/simplemde.min
+//= require rainbow-code/dist/rainbow
+//= require rainbow-code/src/language/generic
+//= require rainbow-code/src/language/ruby
+//= require rainbow-code/src/language/coffeescript
 //= require_tree .
