@@ -14,9 +14,6 @@ class Editor
       }
       placeholder: 'Start typing here...'
       promptURLs: false
-      renderingConfig: {
-        codeSyntaxHighlighting: true
-      }
       showIcons: ['code', 'table']
       status: false
       toolbar: ['bold', 'italic', 'code', '|',
@@ -31,9 +28,6 @@ class Editor
   editTitles: ->
     changes = { 'Big Heading', 'Heading' }
     # TODO: change heading
-
-
-
 
 document.addEventListener 'turbolinks:load', () ->
   taskDescription = document.getElementById('task_description')
