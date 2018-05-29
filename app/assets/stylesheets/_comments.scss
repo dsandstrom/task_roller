@@ -122,27 +122,37 @@
 
 // TODO: move
 // scss-lint:disable SelectorFormat ImportantRule
+
+$editor-button-size: 3rem;
+
 .editor-toolbar {
+  padding: .5rem 1rem;
   border-radius: $border-radius $border-radius 0 0;
   border-color: $gray;
   opacity: 1;
   background: $off-white;
 
+  &::before,
+  &::after {
+    display: none;
+  }
+
   a {
-    opacity: .8;
+    width: $editor-button-size;
+    height: $editor-button-size;
     color: $dark-gray !important;
 
     &.active {
       color: $black !important;
     }
+
+    &::before {
+      line-height: $editor-button-size;
+    }
   }
 
   &:hover {
     opacity: 1;
-
-    a {
-      opacity: 1;
-    }
   }
 }
 
