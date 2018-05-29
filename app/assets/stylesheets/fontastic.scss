@@ -26,7 +26,8 @@
 }
 
 [class^="icon-"],
-[class*=" icon-"] {
+[class*=" icon-"],
+.fa {
   &::before {
     font-family: 'task-roller';
     font-style: normal;
@@ -204,7 +205,8 @@
   content: '\e02d';
 }
 
-.icon-eye::before {
+.icon-eye::before,
+%icon-eye {
   content: '\e02e';
 }
 
@@ -232,6 +234,119 @@
   content: '\e013';
 }
 
-.icon-help::before {
+.icon-help::before,
+%icon-help {
   content: '\e01a';
+}
+
+.icon-quote::before,
+%icon-quote {
+  content: '\e027';
+}
+
+.icon-code::before,
+%icon-code {
+  content: '\e029';
+}
+
+.icon-arrow-expand::before,
+%icon-fullscreen {
+  content: '\e030';
+}
+
+.icon-bold::before,
+%icon-bold {
+  content: '\e034';
+}
+
+.icon-italic::before,
+%icon-italic {
+  content: '\e035';
+}
+
+.icon-link::before,
+%icon-link {
+  content: '\e036';
+}
+
+.icon-ordered-list::before,
+%icon-ordered-list {
+  content: '\e037';
+}
+
+.icon-unordered-list::before,
+%icon-unordered-list {
+  content: '\e038';
+}
+
+.icon-split::before,
+%icon-split {
+  content: '\e039';
+}
+
+.icon-strikethrough::before,
+%icon-strikethrough {
+  content: '\e03a';
+}
+
+.icon-header::before,
+%icon-header {
+  content: '\e03b';
+}
+
+
+.fa.fa-bold::before {
+  @extend %icon-bold;
+}
+
+.fa.fa-italic::before {
+  @extend %icon-italic;
+}
+
+.fa.fa-code::before {
+  @extend %icon-code;
+}
+
+.fa.fa-strikethrough::before {
+  @extend %icon-strikethrough;
+}
+
+.fa.fa-link::before {
+  @extend %icon-link;
+}
+
+.fa.fa-quote-left::before {
+  @extend %icon-quote;
+}
+
+.fa.fa-list-ul::before {
+  @extend %icon-unordered-list;
+}
+
+.fa.fa-list-ol::before {
+  @extend %icon-ordered-list;
+}
+
+.fa.fa-quote::before {
+  @extend %icon-quote;
+}
+
+.fa.fa-header::before {
+  @extend %icon-header;
+}
+
+.fa.fa-question-circle::before {
+  @extend %icon-help;
+}
+
+.fa.fa-eye::before {
+  @extend %icon-eye;
+}
+
+.fa.fa-columns::before {
+  @extend %icon-split;
+}
+
+.fa.fa-arrows-alt::before {
+  @extend %icon-fullscreen;
 }

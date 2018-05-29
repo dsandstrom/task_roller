@@ -3,21 +3,30 @@
 $editor-button-size: 3rem;
 
 .editor-toolbar {
-  padding: .5rem 1rem;
+  padding: 0 1rem;
   border-radius: $border-radius $border-radius 0 0;
   border-color: $gray;
   opacity: 1;
   background: $off-white;
 
-  &::before,
+  &::before {
+    margin-bottom: .5rem;
+  }
+
   &::after {
-    display: none;
+    margin-top: .5rem;
   }
 
   a {
     width: $editor-button-size;
     height: $editor-button-size;
     color: $dark-gray !important;
+
+    &.fa-header {
+      &::after {
+        display: none;
+      }
+    }
 
     &.active {
       color: $black !important;

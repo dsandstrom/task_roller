@@ -5,7 +5,7 @@ class Editor
     options = {
       element: @elem
       # TODO: replace with own font
-      autoDownloadFontAwesome: true
+      autoDownloadFontAwesome: false
       autofocus: false
       autosave: false
       blockStyles: {
