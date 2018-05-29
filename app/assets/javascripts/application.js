@@ -13,4 +13,5 @@
 //= require rails-ujs
 //= require turbolinks
 //= require validate-js/validate
+//= require simplemde/dist/simplemde.min
 //= require_tree .
