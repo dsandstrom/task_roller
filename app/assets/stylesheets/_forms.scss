@@ -16,6 +16,7 @@ input:not([type]),
 textarea,
 select {
   border-radius: $border-radius;
+  border-color: $gray;
 }
 
 button,

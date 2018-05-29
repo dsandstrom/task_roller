@@ -88,17 +88,5 @@ li {
 }
 
 code {
-  color: $color-quinary;
   font-family: $code-font;
-}
-
-pre {
-  margin: 1rem 0 1.5rem;
-  padding: 1rem;
-  border-radius: .5rem;
-  background: $dark-gray;
-
-  code {
-    color: $off-white;
-  }
 }
