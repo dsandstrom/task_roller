@@ -56,3 +56,15 @@ $editor-button-size: 3rem;
   }
 }
 // scss-lint:enable SelectorFormat ImportantRule
+
+// fix syntax highlighting
+// selectors have to be deep
+code {
+  &.prettyprint {
+    .comment {
+      margin: inherit;
+      padding: inherit;
+      border: inherit;
+    }
+  }
+}
