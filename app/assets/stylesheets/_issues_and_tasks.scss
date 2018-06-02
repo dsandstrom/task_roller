@@ -23,7 +23,15 @@
 
   .issue-header,
   .task-header {
+    display: flex;
+    align-items: baseline;
     margin-bottom: .5rem;
+
+    .issue-type-icon,
+    .task-type-icon {
+      margin-right: .5rem;
+      font-size: 2rem;
+    }
   }
 
   .issue-type-tag,
