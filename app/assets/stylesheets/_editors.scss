@@ -9,14 +9,6 @@ $editor-button-size: 3rem;
   opacity: 1;
   background: $off-white;
 
-  &::before {
-    margin-bottom: .5rem;
-  }
-
-  &::after {
-    margin-top: .5rem;
-  }
-
   a {
     width: $editor-button-size;
     height: $editor-button-size;
@@ -39,6 +31,24 @@ $editor-button-size: 3rem;
 
   &:hover {
     opacity: 1;
+  }
+
+  &::before {
+    margin-bottom: .5rem;
+  }
+
+  &::after {
+    margin-top: .5rem;
+  }
+
+  &.disabled-for-preview {
+    a {
+      &:not(.no-disable) {
+        opacity: .75;
+        background: transparent;
+        color: $gray !important;
+      }
+    }
   }
 }
 
