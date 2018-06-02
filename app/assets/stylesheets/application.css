@@ -2,8 +2,8 @@
   *= require 'normalize.css/normalize'
   *= require fontastic
   *= require simplemde/dist/simplemde.min
-  *= require rainbow-code/themes/css/tomorrow-night
   *= require base
+  *= require rainbow-code/rainbow
 */
 
 /* TODO: change fontastic to svg sprite */
