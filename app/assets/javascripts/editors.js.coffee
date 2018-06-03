@@ -4,7 +4,6 @@ class Editor
   constructor: (@elem) ->
     options = {
       element: @elem
-      # TODO: replace with own font
       autoDownloadFontAwesome: false
       autofocus: false
       autosave: false
@@ -30,7 +29,7 @@ class Editor
 
 document.addEventListener 'turbolinks:load', () ->
   # syntax highlight
-  Rainbow.color()
+  Rainbow.color() if document.querySelector('.comment')
 
   taskDescription = document.getElementById('task_description')
   if taskDescription
