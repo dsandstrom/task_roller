@@ -63,6 +63,7 @@
 }
 
 // TODO: make preview heading a p tag
+// FIXME: editor preview isn't working the same - wraps instead of overflow
 .comment,
 .editor-preview,
 .editor-preview-active-side {
@@ -89,8 +90,11 @@
   pre {
     margin: 1rem 0 1.5rem;
     padding: 1rem;
+    overflow-x: auto;
     border-radius: $border-radius;
     background: $color-quaternary;
+    font-size: .95em;
+    word-wrap: break-word;
 
     code {
       color: $off-white;
