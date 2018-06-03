@@ -56,13 +56,21 @@ $editor-button-size: 3rem;
   border-radius: 0 0 $border-radius $border-radius;
   border-color: $gray;
 
-  &.CodeMirror-focused {
-    border-color: $color-primary;
-  }
-
   .CodeMirror-placeholder {
     opacity: 1;
     color: $gray;
+  }
+
+  .CodeMirror-code {
+    .cm-header-1 {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 1.3em;
+    }
+  }
+
+  &.CodeMirror-focused {
+    border-color: $color-primary;
   }
 }
 // scss-lint:enable SelectorFormat ImportantRule
