@@ -30,6 +30,7 @@ class Editor
     # TODO: change heading
 
   # https://github.com/sparksuite/simplemde-markdown-editor/issues/138
+  # FIXME: very jumpy on side-by-side view
   previewRender = (plainText, preview) ->
     editor = this.parent
     setTimeout ->
