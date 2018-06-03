@@ -1,5 +1,22 @@
 # FIXME: rc requires code block to have emtpy line above
 
+# patchHTML = require("html2idom").patchHTML
+
+SimpleMDE::renderPreview = (previewTarget) ->
+  editor = this
+  if previewTarget == false
+    # stop rendering preview
+    editor.previewElement = null
+  if typeof previewTarget == 'object' and previewTarget.nodeType == 1
+    # remember new preview target
+    editor.previewElement = previewTarget
+  if !editor.previewElement
+    return
+  # SimpleMDE.patchHTML editor.previewElement,
+  #   editor.options.previewRender(editor.value())
+  editor.previewElement.innerHTML = editor.options.previewRender(editor.value())
+  Rainbow.color()
+
 class Editor
   constructor: (@elem) ->
     options = {
