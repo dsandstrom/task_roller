@@ -44,7 +44,7 @@ $editor-button-size: 3rem;
   &.disabled-for-preview {
     a {
       &:not(.no-disable) {
-        opacity: .75;
+        opacity: .5;
         background: transparent;
         color: $gray !important;
       }
