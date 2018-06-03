@@ -9,10 +9,24 @@ $editor-button-size: 3rem;
   opacity: 1;
   background: $off-white;
 
-  a {
+  button {
     width: $editor-button-size;
     height: $editor-button-size;
-    color: $dark-gray !important;
+    margin: 0 .5rem;
+    padding: initial;
+    border: 0;
+    border-radius: $border-radius;
+    background: none;
+    color: $dark-gray;
+    font-size: initial;
+    font-weight: initial;
+    line-height: initial;
+    text-decoration: initial;
+    text-transform: initial;
+
+    &:hover {
+      background: $light-gray;
+    }
 
     &.fa-header {
       &::after {
@@ -21,12 +35,23 @@ $editor-button-size: 3rem;
     }
 
     &.active {
-      color: $black !important;
+      background: $dark-gray;
+      color: $off-white;
+
+      &:hover {
+        background: $gray;
+      }
     }
 
     &::before {
+      position: relative;
+      left: 1px;
       line-height: $editor-button-size;
     }
+  }
+
+  i.separator {
+    margin: 0 .5rem;
   }
 
   &:hover {
@@ -42,8 +67,9 @@ $editor-button-size: 3rem;
   }
 
   &.disabled-for-preview {
-    a {
+    button {
       &:not(.no-disable) {
+        pointer-events: none;
         opacity: .5;
         background: transparent;
         color: $gray !important;

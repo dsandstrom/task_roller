@@ -14,7 +14,6 @@ class Editor
       }
       placeholder: 'Start typing here...'
       promptURLs: false
-      previewRender: previewRender
       status: false
       toolbar: ['bold', 'italic', 'code', '|',
                 'heading-1', 'strikethrough', 'link', '|',
@@ -28,16 +27,6 @@ class Editor
   editTitles: ->
     changes = { 'Big Heading', 'Heading' }
     # TODO: change heading
-
-  # https://github.com/sparksuite/simplemde-markdown-editor/issues/138
-  # FIXME: very jumpy on side-by-side view
-  previewRender = (plainText, preview) ->
-    editor = this.parent
-    setTimeout ->
-      preview.innerHTML = editor.markdown(plainText)
-      Rainbow.color()
-    , 1
-    "Loading..."
 
 document.addEventListener 'turbolinks:load', () ->
   # syntax highlight

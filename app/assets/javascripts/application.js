@@ -13,7 +13,7 @@
 //= require rails-ujs
 //= require turbolinks
 //= require validate-js/validate
-//= require simplemde/dist/simplemde.min
+//= require simplemde.min
 //= require rainbow-code/dist/rainbow
 //= require rainbow-code/src/language/generic
 //= require rainbow-code/src/language/ruby
