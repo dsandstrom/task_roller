@@ -11,6 +11,25 @@
 #       (simplemde.min.self-.js?body=1:9)
 # orig version doesn't auto number, switch between unordered -> ordered
 
+hightlight = (html) ->
+  promises = []
+  htmlParts = html.split(/<\/?pre>/g)
+  promises = htmlParts.map (value, index) ->
+    # TODO: pull out lang from class
+    # TODO: put back in class
+    if /^<code/.test(value)
+      value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
+      new Promise (resolve, reject) ->
+        Rainbow.color(
+          value,
+          'ruby',
+          (highlighted, language) ->
+            resolve("<pre><code>#{highlighted}</code></pre>")
+        )
+    else
+      new Promise((resolve, reject) -> resolve(value))
+  Promise.all(promises)
+
 SimpleMDE::renderPreview = (previewTarget) ->
   editor = this
   if previewTarget == false
@@ -21,10 +40,10 @@ SimpleMDE::renderPreview = (previewTarget) ->
     editor.previewElement = previewTarget
   if !editor.previewElement
     return
-  # SimpleMDE.patchHTML editor.previewElement,
-  #   editor.options.previewRender(editor.value())
-  editor.previewElement.innerHTML = editor.options.previewRender(editor.value())
-  Rainbow.color()
+  html = editor.options.previewRender(editor.value())
+  hightlight(html).then (htmlParts) ->
+    editor.patchHTML(editor.previewElement, htmlParts.join(''))
+  editor
 
 class Editor
   constructor: (@elem) ->
