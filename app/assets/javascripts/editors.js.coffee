@@ -1,6 +1,15 @@
 # FIXME: rc requires code block to have emtpy line above
-
-# patchHTML = require("html2idom").patchHTML
+# FIXME: simple editor fork - ordered list -> unordered list
+# simplemde.min.self-.js?body=1:9 Uncaught SyntaxError: Invalid regular
+#   expression: /*/: Nothing to repeat
+#     at new RegExp (<anonymous>)
+#     at c (simplemde.min.self-.js?body=1:9)
+#     at simplemde.min.self-.js?body=1:9
+#     at O (simplemde.min.self-.js?body=1:9)
+#     at Object.b [as action] (simplemde.min.self-.js?body=1:9)
+#     at HTMLButtonElement.e.action.function.e.action.t.onclick
+#       (simplemde.min.self-.js?body=1:9)
+# orig version doesn't auto number, switch between unordered -> ordered
 
 SimpleMDE::renderPreview = (previewTarget) ->
   editor = this
