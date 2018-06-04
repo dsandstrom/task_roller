@@ -30,6 +30,8 @@ hightlight = (html) ->
       new Promise((resolve, reject) -> resolve(value))
   Promise.all(promises)
 
+# TODO: On IE, replace innerHTML and run Rainbow.color()
+# instead of using patchHTML
 SimpleMDE::renderPreview = (previewTarget) ->
   editor = this
   if previewTarget == false
