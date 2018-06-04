@@ -11,7 +11,7 @@
 #       (simplemde.min.self-.js?body=1:9)
 # orig version doesn't auto number, switch between unordered -> ordered
 
-hightlight = (html) ->
+startHightlighting = (html) ->
   promises = []
   htmlParts = html.split(/<\/?pre>/g)
   promises = htmlParts.map (value, index) ->
@@ -34,16 +34,14 @@ hightlight = (html) ->
 # instead of using patchHTML
 SimpleMDE::renderPreview = (previewTarget) ->
   editor = this
-  if previewTarget == false
-    # stop rendering preview
-    editor.previewElement = null
+  # stop rendering preview
+  editor.previewElement = null if previewTarget == false
   if typeof previewTarget == 'object' and previewTarget.nodeType == 1
     # remember new preview target
     editor.previewElement = previewTarget
-  if !editor.previewElement
-    return
+  return unless editor.previewElement
   html = editor.options.previewRender(editor.value())
-  hightlight(html).then (htmlParts) ->
+  startHightlighting(html).then (htmlParts) ->
     editor.patchHTML(editor.previewElement, htmlParts.join(''))
   editor
 
