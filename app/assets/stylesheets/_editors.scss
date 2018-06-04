@@ -36,7 +36,7 @@ $editor-button-size: 3rem;
 
     &.active {
       background: $dark-gray;
-      color: $off-white;
+      color: $pearl;
 
       &:hover {
         background: $gray;
@@ -50,8 +50,10 @@ $editor-button-size: 3rem;
     }
   }
 
-  i.separator {
-    margin: 0 .5rem;
+  i {
+    &.separator {
+      margin: 0 .5rem;
+    }
   }
 
   &:hover {
@@ -67,12 +69,14 @@ $editor-button-size: 3rem;
   }
 
   &.disabled-for-preview {
+    border-color: $light-gray;
+
     button {
       &:not(.no-disable) {
-        pointer-events: none;
         opacity: .5;
         background: transparent;
         color: $gray !important;
+        pointer-events: none;
       }
     }
   }
