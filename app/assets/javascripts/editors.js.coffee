@@ -58,7 +58,11 @@ SimpleMDE::renderPreview = (previewTarget) ->
 
 class Editor
   constructor: (@elem) ->
-    options = {
+    @editor = new SimpleMDE(@options())
+    @editTitles()
+
+  options: ->
+    {
       element: @elem
       autoDownloadFontAwesome: false
       autofocus: false
@@ -76,8 +80,6 @@ class Editor
                 'fullscreen', 'side-by-side', 'preview', '|',
                 'guide']
     }
-    @editor = new SimpleMDE(options)
-    @editTitles()
 
   editTitles: ->
     changes = { 'Big Heading', 'Heading' }
