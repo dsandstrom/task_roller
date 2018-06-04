@@ -72,9 +72,13 @@ class Editor
     changes = { 'Big Heading', 'Heading' }
     # TODO: change heading
 
+
+# use turbolinks:load event instead
+Rainbow.defer = true
+
 document.addEventListener 'turbolinks:load', () ->
   # syntax highlight
-  Rainbow.color() if document.querySelector('.comment')
+  Rainbow.color() if document.querySelector('.comment pre code')
 
   taskDescription = document.getElementById('task_description')
   if taskDescription
