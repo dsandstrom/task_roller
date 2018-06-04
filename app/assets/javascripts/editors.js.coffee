@@ -11,23 +11,33 @@
 #       (simplemde.min.self-.js?body=1:9)
 # orig version doesn't auto number, switch between unordered -> ordered
 
+simplyPromise = (value) ->
+  new Promise((resolve, reject) -> resolve(value))
+
 startHightlighting = (html) ->
   promises = []
   htmlParts = html.split(/<\/?pre>/g)
   promises = htmlParts.map (value, index) ->
-    # TODO: pull out lang from class
-    # TODO: put back in class
     if /^<code/.test(value)
-      value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
-      new Promise (resolve, reject) ->
-        Rainbow.color(
-          value,
-          'ruby',
-          (highlighted, language) ->
-            resolve("<pre><code>#{highlighted}</code></pre>")
-        )
+      matches = value.match(/^<code class="lang-(\w+)"/)
+      language = matches[1] if matches?.length
+      if language
+        value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
+        new Promise (resolve, reject) ->
+          Rainbow.color(
+            value,
+            language,
+            (highlighted, l) ->
+              codeClass = "prettyprint rainbow"
+              codeClass += " lang-#{l}" if l
+              resolve(
+                "<pre><code class=\"#{codeClass}\">#{highlighted}</code></pre>"
+              )
+          )
+      else
+        simplyPromise("<pre>#{value}</pre>")
     else
-      new Promise((resolve, reject) -> resolve(value))
+      simplyPromise(value)
   Promise.all(promises)
 
 # TODO: On IE, replace innerHTML and run Rainbow.color()
