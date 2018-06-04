@@ -42,6 +42,7 @@ startHightlighting = (html) ->
 
 # TODO: On IE, replace innerHTML and run Rainbow.color()
 # instead of using patchHTML
+# FIXME: not updating both fullscreen preview and split screen preview
 SimpleMDE::renderPreview = (previewTarget) ->
   editor = this
   # stop rendering preview
