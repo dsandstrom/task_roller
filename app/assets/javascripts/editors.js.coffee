@@ -53,7 +53,7 @@ SimpleMDE::renderPreview = (previewTarget) ->
   html = editor.options.previewRender(editor.value())
   startHightlighting(html).then (htmlParts) ->
     editor.patchHTML(editor.previewElement, htmlParts.join(''))
-  editor
+  true
 
 class Editor
   constructor: (@elem) ->
@@ -81,7 +81,6 @@ class Editor
   editTitles: ->
     changes = { 'Big Heading', 'Heading' }
     # TODO: change heading
-
 
 # use turbolinks:load event instead
 Rainbow.defer = true
