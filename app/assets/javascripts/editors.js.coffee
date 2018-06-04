@@ -62,7 +62,7 @@ class Editor
       toolbar: ['bold', 'italic', 'code', '|',
                 'heading-1', 'strikethrough', 'link', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
-                'preview', 'side-by-side', 'fullscreen', '|',
+                'fullscreen', 'side-by-side', 'preview', '|',
                 'guide']
     }
     @editor = new SimpleMDE(options)
