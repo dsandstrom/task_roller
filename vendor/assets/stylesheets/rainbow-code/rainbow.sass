@@ -35,7 +35,16 @@ pre
     .comment
         color: $gray
 
-    .keyword, .selector, .operator
+    .keyword,
+    .argument
+        color: $yellow
+
+    .keyword
+        &.function
+            color: $violet
+
+    .selector,
+    .operator,
         color: $violet
 
     .keyword.control,
