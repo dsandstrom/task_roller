@@ -10,6 +10,7 @@
 #     at HTMLButtonElement.e.action.function.e.action.t.onclick
 #       (simplemde.min.self-.js?body=1:9)
 # orig version doesn't auto number, switch between unordered -> ordered
+# FIXME: help button no longer works
 
 simplyPromise = (value) ->
   new Promise((resolve, reject) -> resolve(value))
@@ -53,6 +54,7 @@ SimpleMDE::renderPreview = (previewTarget) ->
   return unless editor.previewElement
   html = editor.options.previewRender(editor.value())
   startHightlighting(html).then (htmlParts) ->
+    # TODO: don't need expose both attributes, just need html
     editor.patchHTML(editor.previewElement, htmlParts.join(''))
   true
 
