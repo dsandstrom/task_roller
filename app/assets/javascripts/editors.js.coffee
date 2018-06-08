@@ -9,23 +9,20 @@ startHightlighting = (html) ->
   promises = htmlParts.map (value, index) ->
     if /^<code/.test(value)
       matches = value.match(/^<code class="lang-(\w+)"/)
-      language = matches[1] if matches?.length
-      if language
-        value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
-        value = unescapeHtml(value)
-        new Promise (resolve, reject) ->
-          Rainbow.color(
-            value,
-            language,
-            (highlighted, l) ->
-              codeClass = "prettyprint rainbow"
-              codeClass += " lang-#{l}" if l
-              resolve(
-                "<pre><code class=\"#{codeClass}\">#{highlighted}</code></pre>"
-              )
-          )
-      else
-        simplyPromise("<pre>#{value}</pre>")
+      language = if matches?.length then matches[1] else 'generic'
+      value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
+      value = unescapeHtml(value)
+      new Promise (resolve, reject) ->
+        Rainbow.color(
+          value,
+          language,
+          (highlighted, l) ->
+            codeClass = "prettyprint rainbow"
+            codeClass += " lang-#{l}" if l
+            resolve(
+              "<pre><code class=\"#{codeClass}\">#{highlighted}</code></pre>"
+            )
+        )
     else
       simplyPromise(value)
   Promise.all(promises)
