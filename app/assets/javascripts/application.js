@@ -15,9 +15,5 @@
 //= require validate-js/validate
 //= require simplemde.min
 //= require rainbow-code/dist/rainbow
-//= require rainbow-code/src/language/generic
-//= require rainbow-code/src/language/ruby
-//= require rainbow-code/src/language/coffeescript
+//= require_tree ../../../node_modules/rainbow-code/src/language
 //= require_tree .
-
-// TODO: add more rainbow languages
