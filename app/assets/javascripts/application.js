@@ -19,3 +19,5 @@
 //= require rainbow-code/src/language/ruby
 //= require rainbow-code/src/language/coffeescript
 //= require_tree .
+
+// TODO: add more rainbow languages
