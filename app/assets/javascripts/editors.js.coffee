@@ -12,6 +12,7 @@ startHightlighting = (html) ->
       language = matches[1] if matches?.length
       if language
         value = value.replace(/^<code[^>]*>|<\/code>$/g, '')
+        value = unescapeHtml(value)
         new Promise (resolve, reject) ->
           Rainbow.color(
             value,
@@ -28,6 +29,14 @@ startHightlighting = (html) ->
     else
       simplyPromise(value)
   Promise.all(promises)
+
+unescapeHtml = (value) ->
+  value
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
 
 # TODO: On IE, replace innerHTML and run Rainbow.color()
 # instead of using patchHTML
