@@ -1,5 +1,4 @@
 # FIXME: rc requires code block to have emtpy line above
-# FIXME: help button no longer works
 
 simplyPromise = (value) ->
   new Promise((resolve, reject) -> resolve(value))
@@ -68,8 +67,7 @@ class Editor
       toolbar: ['bold', 'italic', 'code', '|',
                 'heading-1', 'strikethrough', 'link', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
-                'fullscreen', 'side-by-side', 'preview', '|',
-                'guide']
+                'fullscreen', 'side-by-side', 'preview']
     }
 
   editTitles: ->
