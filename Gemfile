@@ -7,15 +7,15 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.1.4'
+gem 'rails' #, '~> 5.1.4'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 0.18'
+gem 'pg' #, '~> 0.18'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma' #, '~> 3.7'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails' #, '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+# gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -35,7 +35,7 @@ gem 'turbolinks', '~> 5'
 # https://github.com/swanandp/acts_as_list
 gem 'acts_as_list', '~> 0.9.10'
 # https://github.com/ai/autoprefixer-rails
-gem 'autoprefixer-rails', '~> 7.2.5'
+# gem 'autoprefixer-rails', '~> 7.2.5'
 
 gem 'redcarpet', '~> 3.4.0'
 
@@ -44,12 +44,12 @@ group :development, :test do
   # console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 2.13'
+  gem 'capybara' #, '~> 2.13'
   gem 'fabrication', '~> 2.19.0'
-  gem 'guard', '~> 2.14.2'
-  gem 'guard-bundler', require: false
-  gem 'guard-rails', '~> 0.8.1', require: false
-  gem 'guard-rspec', '~> 4.7.3', require: false
+  # gem 'guard', '~> 2.14.2'
+  # gem 'guard-bundler', require: false
+  # gem 'guard-rails', '~> 0.8.1', require: false
+  # gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'rspec', '~> 3.7.0'
   gem 'rspec-rails', '~> 3.7'
   gem 'selenium-webdriver'
@@ -58,14 +58,14 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'faker', '~> 1.8.7', require: false
-  gem 'guard-livereload', '~> 2.5', require: false
+  # gem 'faker', '~> 1.8.7', require: false
+  # gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
-  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'listen' #, '>= 3.0.5', '< 3.2'
   # Spring speeds up development by keeping your application running in the
   # background. Read more: https://github.com/rails/spring
-  gem 'rubocop', '~> 0.52.1'
+  # gem 'rubocop', '~> 0.52.1'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
