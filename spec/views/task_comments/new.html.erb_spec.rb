@@ -16,7 +16,7 @@ RSpec.describe "task_comments/new", type: :view do
     assign(:category, category)
     assign(:project, project)
     assign(:task, task)
-    assign(:comment, task.comments.build)
+    assign(:task_comment, task.comments.build)
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
   end
 

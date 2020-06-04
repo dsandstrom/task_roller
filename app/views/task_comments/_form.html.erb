@@ -3,21 +3,21 @@
   # load form partial with ajax
   # TODO: allow destroy comment with ajax
   url =
-    if comment.persisted?
-      category_project_task_task_comment_url(category, project, task, comment)
+    if task_comment.persisted?
+      category_project_task_task_comment_url(category, project, task, task_comment)
     else
       category_project_task_task_comments_url(category, project, task)
     end
 %>
 
-<%= form_with(model: comment, url: url, local: true) do |form| %>
+<%= form_with(model: task_comment, url: url, local: true) do |form| %>
   <%= form_errors(form.object) %>
 
   <% if user_options&.any? %>
     <div class="field">
       <%= form.label :user_id, 'Author' %>
       <%= form.select :user_id,
-                      grouped_options_for_select(user_options, comment.user_id),
+                      grouped_options_for_select(user_options, task_comment.user_id),
                       {}, id: :task_comment_user_id %>
     </div>
   <% end %>
@@ -28,7 +28,7 @@
   </div>
 
   <div class="actions">
-    <%= form.submit comment_button_text(comment),
+    <%= form.submit comment_button_text(task_comment),
                     class: 'button button-success' %>
   </div>
 <% end %>
