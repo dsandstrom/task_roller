@@ -24,6 +24,7 @@
 
 # Ignore encrypted secrets key file.
 config/secrets.yml
+config/secrets.yml.enc
 config/secrets.yml.key
 
 *.debug.js
