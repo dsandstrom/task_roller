@@ -17,7 +17,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       get :new, params: { category_id: category.to_param,
                           project_id: project.to_param,
                           task_id: task.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                            project_id: project.to_param,
                            task_id: task.to_param,
                            id: task_comment.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -63,7 +63,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                                 project_id: project.to_param,
                                 task_id: task.to_param,
                                 task_comment: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -108,7 +108,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                                task_id: task.to_param,
                                id: task_comment.to_param,
                                task_comment: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

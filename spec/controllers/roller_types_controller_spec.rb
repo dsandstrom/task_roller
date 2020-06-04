@@ -8,7 +8,7 @@ RSpec.describe RollerTypesController, type: :controller do
       Fabricate(:issue_type)
       Fabricate(:task_type)
       get :index, params: {}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 end

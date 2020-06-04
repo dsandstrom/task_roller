@@ -10,7 +10,7 @@ RSpec.describe ProjectsController, type: :controller do
     it "returns a success response" do
       _project = Fabricate(:project, category: category)
       get :index
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -19,14 +19,14 @@ RSpec.describe ProjectsController, type: :controller do
       project = Fabricate(:project, category: category)
       get :show, params: { id: project.to_param,
                            category_id: category.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: { category_id: category.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe ProjectsController, type: :controller do
       project = Fabricate(:project, category: category)
       get :edit, params: { id: project.to_param,
                            category_id: category.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -62,7 +62,7 @@ RSpec.describe ProjectsController, type: :controller do
       it "returns a success response (i.e. to display the 'new' template)" do
         post :create, params: { category_id: category.to_param,
                                 project: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -97,7 +97,7 @@ RSpec.describe ProjectsController, type: :controller do
         put :update, params: { id: project.to_param,
                                category_id: category.to_param,
                                project: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

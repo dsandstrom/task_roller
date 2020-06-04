@@ -9,7 +9,7 @@ RSpec.describe UsersController, type: :controller do
     context "when no users" do
       it "returns a success response" do
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -19,7 +19,7 @@ RSpec.describe UsersController, type: :controller do
         Fabricate(:user_reviewer)
         Fabricate(:user_worker)
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -28,14 +28,14 @@ RSpec.describe UsersController, type: :controller do
     it "returns a success response" do
       user = Fabricate(:user)
       get :show, params: { id: user.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
   describe "GET #new" do
     it "returns a success response" do
       get :new
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -43,7 +43,7 @@ RSpec.describe UsersController, type: :controller do
     it "returns a success response" do
       user = Fabricate(:user)
       get :edit, params: { id: user.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.describe UsersController, type: :controller do
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'new' template)" do
         post :create, params: { user: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -97,7 +97,7 @@ RSpec.describe UsersController, type: :controller do
       it "returns a success response (i.e. to display the 'edit' template)" do
         user = Fabricate(:user)
         put :update, params: { id: user.to_param, user: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 

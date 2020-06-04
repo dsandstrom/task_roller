@@ -23,7 +23,7 @@ RSpec.describe IssuesController, type: :controller do
       it "returns a success response" do
         _issue = Fabricate(:issue, project: project)
         get :index, params: { category_id: category.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -32,7 +32,7 @@ RSpec.describe IssuesController, type: :controller do
         _issue = Fabricate(:issue, project: project)
         get :index, params: { category_id: category.to_param,
                               project_id: project.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe IssuesController, type: :controller do
         issue = Fabricate(:issue, project: project)
         get :show, params: { category_id: category.to_param,
                              id: issue.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -53,7 +53,7 @@ RSpec.describe IssuesController, type: :controller do
         get :show, params: { category_id: category.to_param,
                              project_id: project.to_param,
                              id: issue.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe IssuesController, type: :controller do
       it "returns a success response" do
         get :new, params: { category_id: category.to_param,
                             project_id: project.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -89,7 +89,7 @@ RSpec.describe IssuesController, type: :controller do
       get :edit, params: { category_id: category.to_param,
                            project_id: project.to_param,
                            id: issue.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -117,7 +117,7 @@ RSpec.describe IssuesController, type: :controller do
         post :create, params: { category_id: category.to_param,
                                 project_id: project.to_param,
                                 issue: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -156,7 +156,7 @@ RSpec.describe IssuesController, type: :controller do
                                project_id: project.to_param,
                                id: issue.to_param,
                                issue: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

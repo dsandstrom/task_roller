@@ -21,7 +21,7 @@ RSpec.describe TasksController, type: :controller do
       it "returns a success response" do
         _task = Fabricate(:task, project: project)
         get :index, params: { category_id: category.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe TasksController, type: :controller do
         _task = Fabricate(:task, project: project)
         get :index, params: { category_id: category.to_param,
                               project_id: project.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe TasksController, type: :controller do
       it "returns a success response" do
         task = Fabricate(:task, project: project)
         get :show, params: { category_id: category.to_param, id: task.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -50,7 +50,7 @@ RSpec.describe TasksController, type: :controller do
         get :show, params: { category_id: category.to_param,
                              project_id: project.to_param,
                              id: task.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe TasksController, type: :controller do
         get :new, params: { category_id: category.to_param,
                             project_id: project.to_param }
 
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -73,7 +73,7 @@ RSpec.describe TasksController, type: :controller do
                             project_id: project.to_param,
                             issue_id: issue.to_param }
 
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -85,7 +85,7 @@ RSpec.describe TasksController, type: :controller do
         get :edit, params: { category_id: category.to_param,
                              project_id: project.to_param,
                              id: task.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -96,7 +96,7 @@ RSpec.describe TasksController, type: :controller do
                              project_id: project.to_param,
                              issue_id: issue.to_param,
                              id: task.to_param }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -126,7 +126,7 @@ RSpec.describe TasksController, type: :controller do
           post :create, params: { category_id: category.to_param,
                                   project_id: project.to_param,
                                   task: invalid_attributes }
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -172,7 +172,7 @@ RSpec.describe TasksController, type: :controller do
                                   project_id: project.to_param,
                                   issue_id: issue.to_param,
                                   task: invalid_attributes }
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
     end
@@ -211,7 +211,7 @@ RSpec.describe TasksController, type: :controller do
                                project_id: project.to_param,
                                id: task.to_param,
                                task: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end

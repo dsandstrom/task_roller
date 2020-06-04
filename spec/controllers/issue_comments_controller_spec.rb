@@ -17,7 +17,7 @@ RSpec.describe IssueCommentsController, type: :controller do
       get :new, params: { category_id: category.to_param,
                           project_id: project.to_param,
                           issue_id: issue.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe IssueCommentsController, type: :controller do
                            project_id: project.to_param,
                            issue_id: issue.to_param,
                            id: issue_comment.to_param }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.describe IssueCommentsController, type: :controller do
                                 project_id: project.to_param,
                                 issue_id: issue.to_param,
                                 issue_comment: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -104,7 +104,7 @@ RSpec.describe IssueCommentsController, type: :controller do
                                issue_id: issue.to_param,
                                id: issue_comment.to_param,
                                issue_comment: invalid_attributes }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
