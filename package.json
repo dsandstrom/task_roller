@@ -4,8 +4,7 @@
   "dependencies": {
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
-    "milligram": "^1.4.0",
-    "normalize.css": "^7.0.0",
+    "normalize.css": "^8.0.1",
     "rainbow-code": "^2.1.4",
     "validate-js": "^2.0.1"
   }
