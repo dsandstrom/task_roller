@@ -56,10 +56,10 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'fabrication', '~> 2.19.0'
-  # gem 'guard', '~> 2.14.2'
-  # gem 'guard-bundler', require: false
-  # gem 'guard-rails', '~> 0.8.1', require: false
-  # gem 'guard-rspec', '~> 4.7.3', require: false
+  gem 'guard', '~> 2.0'
+  gem 'guard-bundler', require: false
+  gem 'guard-rails', '~> 0.8.1', require: false
+  gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'rspec', '~> 3.7.0'
   gem 'rspec-rails', '~> 3.7'
   gem 'selenium-webdriver'
@@ -69,7 +69,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   # gem 'faker', '~> 1.8.7', require: false
-  # gem 'guard-livereload', '~> 2.5', require: false
+  gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
   gem 'listen', '~> 3.2'
