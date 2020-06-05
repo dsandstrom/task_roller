@@ -38,7 +38,7 @@ unescapeHtml = (value) ->
 # TODO: On IE, replace innerHTML and run Rainbow.color()
 # instead of using patchHTML
 # FIXME: not updating both fullscreen preview and split screen preview
-SimpleMDE::renderPreview = (previewTarget) ->
+EasyMDE::renderPreview = (previewTarget) ->
   editor = this
   # stop rendering preview
   editor.previewElement = null if previewTarget == false
@@ -54,7 +54,7 @@ SimpleMDE::renderPreview = (previewTarget) ->
 
 class Editor
   constructor: (@elem) ->
-    @editor = new SimpleMDE(@options())
+    @editor = new EasyMDE(@options())
     @editTitles()
 
   options: ->
@@ -62,7 +62,7 @@ class Editor
       element: @elem
       autoDownloadFontAwesome: false
       autofocus: false
-      autosave: false
+      # autosave: false
       blockStyles: {
         bold: '**'
         italic: '_'
