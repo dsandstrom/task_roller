@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-bindings@^1.2.1:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
-  integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
-  dependencies:
-    file-uri-to-path "1.0.0"
-
 codemirror-spell-checker@1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/codemirror-spell-checker/-/codemirror-spell-checker-1.1.2.tgz#1c660f9089483ccb5113b9ba9ca19c3f4993371e"
@@ -30,11 +23,6 @@ easymde@^2.10.1:
     codemirror-spell-checker "1.1.2"
     marked "^0.8.2"
 
-file-uri-to-path@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
-  integrity sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==
-
 foundation-sites@^6.6.3:
   version "6.6.3"
   resolved "https://registry.yarnpkg.com/foundation-sites/-/foundation-sites-6.6.3.tgz#8ca5f246357db69e6a0e73351ce06aa8acce6540"
@@ -45,22 +33,17 @@ marked@^0.8.2:
   resolved "https://registry.yarnpkg.com/marked/-/marked-0.8.2.tgz#4faad28d26ede351a7a1aaa5fec67915c869e355"
   integrity sha512-EGwzEeCcLniFX51DhTpmTom+dSA/MG/OBUDjnWtHbEnjAH180VzUeAw+oE4+Zv+CoYBWyRlYOTR0N8SO9R1PVw==
 
-nan@^2.4.0:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.1.tgz#d7be34dfa3105b91494c3147089315eff8874b01"
-  integrity sha512-isWHgVjnFjh2x2yuJ/tj3JbwoHu3UC2dX5G/88Cm24yB6YopVgxvBObDY7n5xW6ExmFhJpSEQqFPvq9zaXc8Jw==
+milligram@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/milligram/-/milligram-1.4.0.tgz#6e44bd4c134bde1abfdc04aca81073f626d264a6"
+  integrity sha512-ZkuBd7r3NVNLmaG/LPV8/lJJg09rK6qZn3cwEY5Pm7biosrJG1/KW6KNRMHeeJScVJLmmRcorROBXYaOH8WtNQ==
+  dependencies:
+    normalize.css "~8.0.1"
 
-normalize.css@^8.0.1:
+normalize.css@^8.0.1, normalize.css@~8.0.1:
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/normalize.css/-/normalize.css-8.0.1.tgz#9b98a208738b9cc2634caacbc42d131c97487bf3"
   integrity sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg==
-
-rainbow-code@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/rainbow-code/-/rainbow-code-2.1.4.tgz#343c70ec77ea2d7fdb927744067bda05ad6bcff9"
-  integrity sha512-Kbt5KzAq4UKiZGI0ZWu+QvVSsAStE1vINHG9mqAa5h71miUJTN04l7mGC55HJO8it161RdIE12G4684RIGkc9g==
-  dependencies:
-    webworker-threads "0.7.13"
 
 typo-js@*:
   version "1.0.3"
@@ -70,11 +53,3 @@ validate-js@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/validate-js/-/validate-js-2.0.1.tgz#e9fe263f2dc1294e5c5fc6e8e2eb8fb6d6bac0cc"
   integrity sha1-6f4mPy3BKU5cX8bo4uuPtta6wMw=
-
-webworker-threads@0.7.13:
-  version "0.7.13"
-  resolved "https://registry.yarnpkg.com/webworker-threads/-/webworker-threads-0.7.13.tgz#c84b18b6ba24125bb9d37342e44deb815162fb83"
-  integrity sha1-yEsYtrokElu503NC5E3rgVFi+4M=
-  dependencies:
-    bindings "^1.2.1"
-    nan "^2.4.0"

@@ -14,6 +14,4 @@
 //= require turbolinks
 //= require validate-js/validate
 //= require easymde/dist/easymde.min
-//= require rainbow-code/dist/rainbow
-//= require_tree ../../../node_modules/rainbow-code/src/language
 //= require_tree .
