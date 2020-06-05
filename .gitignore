@@ -28,3 +28,10 @@ config/secrets.yml.enc
 config/secrets.yml.key
 
 *.debug.js
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
