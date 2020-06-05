@@ -47,9 +47,9 @@ EasyMDE::renderPreview = (previewTarget) ->
     editor.previewElement = previewTarget
   return unless editor.previewElement
   html = editor.options.previewRender(editor.value())
-  startHightlighting(html).then (htmlParts) ->
-    # TODO: don't need expose both attributes, just need html
-    editor.patchHTML(editor.previewElement, htmlParts.join(''))
+  # startHightlighting(html).then (htmlParts) ->
+  #   # TODO: don't need expose both attributes, just need html
+  #   editor.patchHTML(editor.previewElement, htmlParts.join(''))
   true
 
 class Editor
@@ -81,11 +81,11 @@ class Editor
     # TODO: change heading
 
 # use turbolinks:load event instead
-Rainbow.defer = true
+# Rainbow.defer = true
 
 document.addEventListener 'turbolinks:load', () ->
   # syntax highlight
-  Rainbow.color() if document.querySelector('.comment pre code')
+  # Rainbow.color() if document.querySelector('.comment pre code')
 
   taskDescription = document.getElementById('task_description')
   if taskDescription
