@@ -7,13 +7,15 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 6.0' #, '~> 5.1.4'
+ruby '2.7.1'
+
+gem 'rails', '~> 6.0'
 # Use postgresql as the database for Active Record
-gem 'pg' #, '~> 0.18'
+gem 'pg', '~> 1.2.3'
 # Use Puma as the app server
-gem 'puma' #, '~> 3.7'
+gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
-gem 'sass-rails' #, '~> 5.0'
+gem 'sass-rails', '~> 6.0'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 4.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -22,7 +24,7 @@ gem 'webpacker', '~> 4.0'
 # gem 'therubyracer', platforms: :ruby
 
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails' #, '~> 4.2'
+gem 'coffee-rails', '~> 5.0'
 # Turbolinks makes navigating your web application faster.
 # Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
@@ -52,7 +54,7 @@ group :development, :test do
   # console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara' #, '~> 2.13'
+  gem 'capybara', '~> 3.32'
   gem 'fabrication', '~> 2.19.0'
   # gem 'guard', '~> 2.14.2'
   # gem 'guard-bundler', require: false
@@ -70,11 +72,11 @@ group :development do
   # gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
-  gem 'listen' #, '>= 3.0.5', '< 3.2'
+  gem 'listen', '~> 3.2'
   # Spring speeds up development by keeping your application running in the
   # background. Read more: https://github.com/rails/spring
   # gem 'rubocop', '~> 0.52.1'
-  gem 'spring'
+  gem 'spring', '~> 2.1'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
 end

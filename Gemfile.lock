@@ -241,25 +241,28 @@ DEPENDENCIES
   binding_of_caller
   bootsnap (>= 1.4.2)
   byebug
-  capybara
-  coffee-rails
+  capybara (~> 3.32)
+  coffee-rails (~> 5.0)
   fabrication (~> 2.19.0)
-  listen
-  pg
-  puma
+  listen (~> 3.2)
+  pg (~> 1.2.3)
+  puma (~> 4.3)
   rails (~> 6.0)
   redcarpet (~> 3.4.0)
   rspec (~> 3.7.0)
   rspec-rails (~> 3.7)
-  sass-rails
+  sass-rails (~> 6.0)
   selenium-webdriver
   shoulda-matchers (~> 3.1)
-  spring
+  spring (~> 2.1)
   spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)
   tzinfo-data
   web-console (>= 3.3.0)
   webpacker (~> 4.0)
+
+RUBY VERSION
+   ruby 2.7.1p83
 
 BUNDLED WITH
    2.1.4
