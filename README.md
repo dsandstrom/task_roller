@@ -1,6 +1,6 @@
 # Task Roller
 ###### Issue and Task Manager
-[![dsandstrom](https://circleci.com/gh/dsandstrom/task_roller.svg?style=svg)](https://github.com/dsandstrom/task_roller)
+[![dsandstrom](https://circleci.com/gh/dsandstrom/task_roller.svg?style=svg)](https://circleci.com/gh/dsandstrom/task_roller)
 
 ## Local Setup
 
