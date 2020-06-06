@@ -12,15 +12,49 @@ jobs:
   build: # our first job, named "build"
     docker:
       - image: cimg/ruby:2.7.1-node # use a tailored CircleCI docker image.
+    environment:
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
     steps:
       - checkout # pull down our git code.
-      - ruby/install-deps # use the ruby orb to install dependencies
+      # use the ruby orb to install dependencies
+      # - ruby/install-deps
+      - restore_cache:
+          keys:
+            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install Ruby Gems
+          command: BUNDLE_PATH=vendor/bundle bundle install
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       # use the node orb to install our packages
       # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
       # learn more: https://circleci.com/docs/2.0/caching/
       - node/install:
           install-yarn: true
-          node-version: '12.18.0'
+          node-version: 12.18.0
+      - restore_cache:
+          keys:
+            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Frontend Dependencies
+          command: YARN_CACHE_FOLDER=~/.cache/yarn yarn install
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - run:
+          name: Lint Ruby Code
+          command: bundle exec rubocop --require rubocop/formatter/junit_formatter --format RuboCop::Formatter::JUnitFormatter --out /tmp/test-results/rubocop/results.xml
+      - store_test_results:
+          path: /tmp/test-results/rubocop
+      - store_artifacts:
+          destination: test-results
+          path: /tmp/test-results
 
   test:  # our next job, called "test"
     # we run "parallel job containers" to enable speeding up our tests;
@@ -35,31 +69,49 @@ jobs:
         environment: # add POSTGRES environment variables.
           POSTGRES_DB: task_roller_test
           POSTGRES_USER: postgres-user
-          POSTGRES_PASSWORD: "pass123"
+          POSTGRES_PASSWORD: pass123
     # environment variables specific to Ruby/Rails, applied to the primary container.
     environment:
-      BUNDLE_JOBS: "3"
-      BUNDLE_RETRY: "3"
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
       PG_USERNAME: postgres-user
-      PG_PASSWORD: "pass123"
+      PG_PASSWORD: pass123
       RAILS_ENV: test
     # A series of steps to run, some are similar to those in "build".
     steps:
       - checkout
-      - ruby/install-deps
+      # - ruby/install-deps
+      - restore_cache:
+          keys:
+            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install Ruby Gems
+          command: BUNDLE_PATH=vendor/bundle bundle install
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - node/install:
           install-yarn: true
-          node-version: '12.18.0'
+          node-version: 12.18.0
+      - restore_cache:
+          keys:
+            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
-          name: Install dependencies using Yarn
-          command: yarn install
+          name: Install Frontend Dependencies
+          command: YARN_CACHE_FOLDER=~/.cache/yarn yarn install
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
       # Here we make sure that the secondary container boots
       # up before we run operations on the database.
       - run:
-          name: Wait for DB
+          name: Wait For Database
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
-          name: Database setup
+          name: Setup Database
           command: bundle exec rails db:schema:load --trace
       # Run rspec in parallel
       - ruby/rspec-test

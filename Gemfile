@@ -82,9 +82,11 @@ group :development do
 end
 
 group :test do
+  # for circleci support
   gem 'rspec_junit_formatter', '~> 0.4.1'
+  gem 'rubocop-junit_formatter', '~> 0.2', require: false
   gem 'shoulda-matchers', '~> 3.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+# gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
