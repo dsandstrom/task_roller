@@ -22,7 +22,7 @@ gem install bundler
 bundle install --without production
 ```
 
-Setup secrets
+#### Setup secrets
 
 ```sh
 bin/rails secrets:edit
