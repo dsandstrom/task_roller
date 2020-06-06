@@ -81,7 +81,10 @@ group :development do
   gem 'web-console', '>= 3.3.0'
 end
 
-gem 'shoulda-matchers', '~> 3.1', group: :test
+group :test do
+  gem 'shoulda-matchers', '~> 3.1'
+  gem 'rspec_junit_formatter', '~> 0.4.1'
+end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
