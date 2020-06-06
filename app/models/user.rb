@@ -25,6 +25,7 @@ class User < ApplicationRecord
   def self.employees(type = nil)
     if type
       return none unless VALID_EMPLOYEE_TYPES.include?(type)
+
       return where('employees.type = ?', type).includes(:employee)
                                               .references(:employees)
     end
@@ -67,13 +68,14 @@ class User < ApplicationRecord
   end
 
   def name_or_email
-    @name_or_email ||= (name ? name : email)
+    @name_or_email ||= (name || email)
   end
 
   private
 
     def create_employee
       return if employee_type.blank?
+
       self.employee = employee_type.constantize.create
     end
 end

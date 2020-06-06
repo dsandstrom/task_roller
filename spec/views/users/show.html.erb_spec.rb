@@ -9,6 +9,6 @@ RSpec.describe "users/show", type: :view do
 
   it "renders attributes in #user-detail-{@user.id}" do
     render
-    expect(rendered).to match(/id=\"user-detail-#{@user.id}\"/)
+    expect(rendered).to match(/id="user-detail-#{@user.id}"/)
   end
 end

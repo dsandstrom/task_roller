@@ -5,15 +5,20 @@
 # .rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.7
+  NewCops: enable
+
   Include:
     - 'config.ru'
     - 'Gemfile'
     - 'Guardfile'
     - 'Rakefile'
+    - 'app/**/*.rb'
+    - 'config/**/*.rb'
+    - 'lib/**/*.rb'
+    - 'spec/**/*.rb'
 
   Exclude:
-    - 'app/views/**/*'
     - 'bin/*'
     - 'db/schema.rb'
     - 'db/migrate/*'
@@ -29,20 +34,20 @@ Documentation:
   Enabled: false
 
 IndentationConsistency:
-  EnforcedStyle: 'rails'
+  EnforcedStyle: 'indented_internal_methods'
 
 Metrics/BlockLength:
   Exclude:
     - 'Guardfile'
+
+Metrics/LineLength:
+  Max: 80
 
 Naming/FileName:
   Exclude:
     - 'Gemfile'
     - 'Guardfile'
     - 'Rakefile'
-
-Rails:
-  Enabled: true
 
 Style/EmptyMethod:
   Enabled: false

@@ -22,9 +22,10 @@ class IconFileReader
       icon_names = []
       File.open(FONT_FILE, 'r') do |f|
         f.each_line do |l|
-          matches = l.match(/glyph-name="(\w+|\w+\-\w+)"\sunicode="&#\d+\;\"/)
+          matches = l.match(/glyph-name="(\w+|\w+-\w+)"\sunicode="&#\d+;"/)
           next unless matches && matches[1]
           next if RESERVED_ICON_NAMES.include?(matches[1])
+
           icon_names << matches[1]
         end
       end

@@ -65,6 +65,7 @@ class UsersController < ApplicationController
     def fetch_employee_type
       return unless params[:type] &&
                     %w[Reporter Reviewer Worker].includes?(params[:type])
+
       params[:type]
     end
 end

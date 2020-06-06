@@ -31,7 +31,6 @@ RSpec.describe Task, type: :model do
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:task_type_id) }
   it { is_expected.to validate_presence_of(:project_id) }
-  #
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:task_type) }
   it { is_expected.to belong_to(:project) }

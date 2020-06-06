@@ -14,6 +14,7 @@ module CommentsHelper
     if value.year == now.year
       return value.strftime("#{date_format}-#{time_format}")
     end
+
     value.strftime("#{date_format}/%Y - #{time_format}")
   end
 end

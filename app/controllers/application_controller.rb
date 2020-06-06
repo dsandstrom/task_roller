@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
 
     def set_project
       return unless @category && params[:project_id]
+
       @project = @category.projects.find(params[:project_id])
     end
 end
