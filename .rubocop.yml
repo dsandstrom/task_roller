@@ -30,24 +30,24 @@ AllCops:
     - 'tmp/**/*'
     - '.git/**/*'
 
-Documentation:
-  Enabled: false
-
-IndentationConsistency:
+Layout/IndentationConsistency:
   EnforcedStyle: 'indented_internal_methods'
+
+Layout/LineLength:
+  Max: 80
 
 Metrics/BlockLength:
   Exclude:
     - 'Guardfile'
-
-Metrics/LineLength:
-  Max: 80
 
 Naming/FileName:
   Exclude:
     - 'Gemfile'
     - 'Guardfile'
     - 'Rakefile'
+
+Style/Documentation:
+  Enabled: false
 
 Style/EmptyMethod:
   Enabled: false
