@@ -70,7 +70,7 @@ group :frontend do
       watch(%r{
             (?:app|vendor)
             (?:/assets/\w+/_?(?<path>[^.]+) # path+base without extension
-             (?<ext>\.#{ext})) # matching extension (must be first encountered)
+            (?<ext>\.#{ext})) # matching extension (must be first encountered)
             (?:\.\w+|$) # other extensions
             }x) do |m|
         path = m[1]
@@ -79,9 +79,10 @@ group :frontend do
     end
 
     # file needing a full reload of the page anyway
-    watch(%r{app/views/.+\.(#{rails_view_exts * '|'})$})
-    watch(%r{app/helpers/.+\.rb})
-    watch(%r{config/locales/.+\.yml})
+    watch(%r{app/javascript/packs/[^.]+\.js$})
+    watch(%r{app/views/[^.]\.(#{rails_view_exts * '|'})$})
+    watch(%r{app/helpers/[^.]\.rb})
+    watch(%r{config/locales/[^.]\.yml})
   end
 end
 
