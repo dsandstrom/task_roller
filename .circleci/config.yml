@@ -41,6 +41,12 @@ parameters:
   ruby_version:
     type: string
     default: '2.7.1'
+  yarn_cache_folder:
+    type: string
+    default: tmp/cache/yarn
+  yarn_cache_key:
+    type: string
+    default: yarn-packages-v1
 
 # Re-usable defaults
 default_environment: &default_environment
@@ -51,7 +57,7 @@ default_environment: &default_environment
     PG_USERNAME: <<pipeline.parameters.postgres_username>>
     PG_PASSWORD: <<pipeline.parameters.postgres_password>>
     RAILS_ENV: test
-    YARN_CACHE_FOLDER: tmp/cache/yarn
+    YARN_CACHE_FOLDER: <<pipeline.parameters.yarn_cache_folder>>
 
 default_ruby:
   # use the ruby orb to install dependencies
@@ -92,7 +98,7 @@ default_node:
     restore_cache:
       name: Restore Frontend Dependencies Cache
       keys:
-        - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+        - <<pipeline.parameters.yarn_cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
   - &install_frontend_packages
     run:
       name: Install Frontend Dependencies
@@ -101,8 +107,8 @@ default_node:
     save_cache:
       name: Cache Frontend Dependencies
       paths:
-        - tmp/cache/yarn
-      key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+        - <<pipeline.parameters.yarn_cache_folder>>
+      key: <<pipeline.parameters.yarn_cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
 jobs:
   build: # our first job, named "build"
