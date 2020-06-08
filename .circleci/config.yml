@@ -8,45 +8,118 @@ orbs:
   ruby: circleci/ruby@1.0
   node: circleci/node@3.0
 
+# Global variables
+parameters:
+  bundle_jobs:
+    type: integer
+    default: 3
+  bundle_path:
+    type: string
+    default: vendor/bundle
+  bundle_retry:
+    type: integer
+    default: 2
+  bundler_version:
+    description: Configure which version of bundler to install and utilize.
+    default: '2.1.4'
+    type: string
+  node_version:
+    type: string
+    default: '12.18.0'
+  postgres_database:
+    type: string
+    default: task_roller_test
+  postgres_username:
+    type: string
+    default: postgres-user
+  postgres_password:
+    type: string
+    default: pass123
+  postgres_version:
+    type: string
+    default: '12.3'
+  ruby_version:
+    type: string
+    default: '2.7.1'
+
+# Re-usable defaults
+default_environment: &default_environment
+  environment:
+    BUNDLE_JOBS: <<pipeline.parameters.bundle_jobs>>
+    BUNDLE_PATH: <<pipeline.parameters.bundle_path>>
+    BUNDLE_RETRY: <<pipeline.parameters.bundle_retry>>
+    PG_USERNAME: <<pipeline.parameters.postgres_username>>
+    PG_PASSWORD: <<pipeline.parameters.postgres_password>>
+    RAILS_ENV: test
+
+default_ruby:
+  # use the ruby orb to install dependencies
+  # caching broken in orb
+  # - ruby/install-deps
+  - &restore_ruby_gems
+    restore_cache:
+      name: Restore Ruby Gems Cache
+      keys:
+        - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+  - &install_ruby_gems
+    run:
+      name: Install Ruby Gems
+      command: |
+        if ! echo $(bundle version) | grep -q <<pipeline.parameters.bundler_version>>; then
+          echo "Installing bundler <<pipeline.parameters.bundler_version>>"
+          gem install bundler:<<pipeline.parameters.bundler_version>>
+        else
+          echo "bundler <<pipeline.parameters.bundler_version>> is already installed."
+        fi
+        bundle install
+  - &cache_ruby_gems
+    save_cache:
+      name: Cache Ruby Gems
+      paths:
+        - << pipeline.parameters.bundle_path >>
+      key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+
+default_node:
+  # use the node orb to install our packages
+  # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
+  # learn more: https://circleci.com/docs/2.0/caching/
+  - &install_node_and_npm
+    node/install:
+      install-yarn: true
+      node-version: <<pipeline.parameters.node_version>>
+  - &restore_frontend_packages
+    restore_cache:
+      name: Restore Frontend Dependencies Cache
+      keys:
+        - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+  - &install_frontend_packages
+    run:
+      name: Install Frontend Dependencies
+      command: YARN_CACHE_FOLDER=~/.cache/yarn yarn install
+  - &cache_frontend_packages
+    save_cache:
+      name: Cache Frontend Dependencies
+      paths:
+        - ~/.cache/yarn
+      key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
 jobs:
   build: # our first job, named "build"
     docker:
-      - image: cimg/ruby:2.7.1-node # use a tailored CircleCI docker image.
-    environment:
-      BUNDLE_JOBS: 3
-      BUNDLE_RETRY: 3
-      BUNDLE_PATH: vendor/bundle
-      RAILS_ENV: test
+      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
+    <<: *default_environment
     steps:
       - checkout # pull down our git code.
-      # use the ruby orb to install dependencies
-      # - ruby/install-deps
-      - restore_cache:
-          keys:
-            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: Install Ruby Gems
-          command: BUNDLE_PATH=vendor/bundle bundle install
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      # use the node orb to install our packages
-      # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
-      # learn more: https://circleci.com/docs/2.0/caching/
-      - node/install:
-          install-yarn: true
-          node-version: 12.18.0
-      - restore_cache:
-          keys:
-            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Frontend Dependencies
-          command: YARN_CACHE_FOLDER=~/.cache/yarn yarn install
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+      - *restore_ruby_gems
+      - *install_ruby_gems
+      - *cache_ruby_gems
+
+      - *install_node_and_npm
+      - *restore_frontend_packages
+      - *install_frontend_packages
+      - *cache_frontend_packages
+
       - run:
           name: Lint Ruby Code
           command: bundle exec rubocop --require rubocop/formatter/junit_formatter --format RuboCop::Formatter::JUnitFormatter --out /tmp/test-results/rubocop/results.xml
@@ -60,51 +133,29 @@ jobs:
     # we run "parallel job containers" to enable speeding up our tests;
     # this splits our tests across multiple containers.
     parallelism: 3
-    # here we set TWO docker images.
     docker:
-      - image: cimg/ruby:2.7.1-node # this is our primary docker image, where step commands run.
+      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
         environment:
           PGHOST: 127.0.0.1
-      - image: circleci/postgres:12.3
-        environment: # add POSTGRES environment variables.
-          POSTGRES_DB: task_roller_test
-          POSTGRES_USER: postgres-user
-          POSTGRES_PASSWORD: pass123
-    # environment variables specific to Ruby/Rails, applied to the primary container.
-    environment:
-      BUNDLE_JOBS: 3
-      BUNDLE_RETRY: 3
-      BUNDLE_PATH: vendor/bundle
-      PG_USERNAME: postgres-user
-      PG_PASSWORD: pass123
-      RAILS_ENV: test
+      - image: circleci/postgres:<<pipeline.parameters.postgres_version>>
+        environment:
+          POSTGRES_DB: <<pipeline.parameters.postgres_database>>
+          POSTGRES_USER: <<pipeline.parameters.postgres_username>>
+          POSTGRES_PASSWORD: <<pipeline.parameters.postgres_password>>
+    <<: *default_environment
     # A series of steps to run, some are similar to those in "build".
     steps:
       - checkout
-      # - ruby/install-deps
-      - restore_cache:
-          keys:
-            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: Install Ruby Gems
-          command: BUNDLE_PATH=vendor/bundle bundle install
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      - node/install:
-          install-yarn: true
-          node-version: 12.18.0
-      - restore_cache:
-          keys:
-            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Frontend Dependencies
-          command: YARN_CACHE_FOLDER=~/.cache/yarn yarn install
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+      - *restore_ruby_gems
+      - *install_ruby_gems
+      - *cache_ruby_gems
+
+      - *install_node_and_npm
+      - *restore_frontend_packages
+      - *install_frontend_packages
+      - *cache_frontend_packages
+
       # Here we make sure that the secondary container boots
       # up before we run operations on the database.
       - run:
