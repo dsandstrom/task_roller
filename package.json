@@ -2,7 +2,7 @@
   "name": "task_roller",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "4.2.2",
+    "@rails/webpacker": "5.1.1",
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
     "milligram": "^1.4.0",
