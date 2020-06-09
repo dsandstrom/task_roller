@@ -19,13 +19,6 @@ parameters:
   bundle_retry:
     type: integer
     default: 2
-  bundler_version:
-    description: Configure which version of bundler to install and utilize.
-    default: '2.1.4'
-    type: string
-  node_version:
-    type: string
-    default: '12.18.0'
   postgres_database:
     type: string
     default: task_roller_test
@@ -41,12 +34,80 @@ parameters:
   ruby_version:
     type: string
     default: '2.7.1'
-  yarn_cache_folder:
-    type: string
-    default: tmp/cache/yarn
-  yarn_cache_key:
-    type: string
-    default: yarn-packages-v1
+
+commands:
+  # use the node orb to install our packages
+  # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
+  # learn more: https://circleci.com/docs/2.0/caching/
+  lint_ruby_code:
+    description: 'Lint Ruby Code using Rubocop'
+    steps:
+      - run:
+          name: Lint Ruby Code
+          command: bundle exec rubocop --require rubocop/formatter/junit_formatter --format RuboCop::Formatter::JUnitFormatter --out /tmp/test-results/rubocop/results.xml
+      - store_test_results:
+          path: /tmp/test-results/rubocop
+      - store_artifacts:
+          destination: test-results
+          path: /tmp/test-results
+  install_node:
+    parameters:
+      version:
+        type: string
+        default: '12.18.0'
+    steps:
+      - node/install:
+          install-yarn: true
+          node-version: <<parameters.version>>
+  install_node_packages:
+    description: 'Install Node Packages using Yarn'
+    parameters:
+      cache_folder:
+        type: string
+        default: tmp/cache/yarn
+      cache_key:
+        type: string
+        default: yarn-packages-v1
+    steps:
+      - restore_cache:
+          name: Restore Node Packages Cache
+          keys:
+            - <<parameters.cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Node Packages
+          command: yarn install --production --cache-folder <<parameters.cache_folder>>
+      - save_cache:
+          name: Cache Node Packages
+          paths:
+            - <<parameters.cache_folder>>
+          key: <<parameters.cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
+  install_ruby_gems:
+    description: 'Install Ruby Gems using cache'
+    parameters:
+      bundler_version:
+        description: 'Configure which version of bundler to install and utilize'
+        default: '2.1.4'
+        type: string
+    steps:
+      - restore_cache:
+          name: Restore Ruby Gems Cache
+          keys:
+            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install Ruby Gems
+          command: |
+            if ! echo $(bundle version) | grep -q <<parameters.bundler_version>>; then
+              echo "Installing bundler <<parameters.bundler_version>>"
+              gem install bundler:<<parameters.bundler_version>>
+            else
+              echo "bundler <<parameters.bundler_version>> is already installed."
+            fi
+            bundle config; bundle install
+      - save_cache:
+          name: Cache Ruby Gems
+          paths:
+            - << pipeline.parameters.bundle_path >>
+          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 
 # Re-usable defaults
 default_environment: &default_environment
@@ -57,58 +118,6 @@ default_environment: &default_environment
     PG_USERNAME: <<pipeline.parameters.postgres_username>>
     PG_PASSWORD: <<pipeline.parameters.postgres_password>>
     RAILS_ENV: test
-    YARN_CACHE_FOLDER: <<pipeline.parameters.yarn_cache_folder>>
-
-default_ruby:
-  # use the ruby orb to install dependencies
-  # caching broken in orb
-  # - ruby/install-deps
-  - &restore_ruby_gems
-    restore_cache:
-      name: Restore Ruby Gems Cache
-      keys:
-        - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-  - &install_ruby_gems
-    run:
-      name: Install Ruby Gems
-      command: |
-        if ! echo $(bundle version) | grep -q <<pipeline.parameters.bundler_version>>; then
-          echo "Installing bundler <<pipeline.parameters.bundler_version>>"
-          gem install bundler:<<pipeline.parameters.bundler_version>>
-        else
-          echo "bundler <<pipeline.parameters.bundler_version>> is already installed."
-        fi
-        bundle install
-  - &cache_ruby_gems
-    save_cache:
-      name: Cache Ruby Gems
-      paths:
-        - << pipeline.parameters.bundle_path >>
-      key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-
-default_node:
-  # use the node orb to install our packages
-  # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
-  # learn more: https://circleci.com/docs/2.0/caching/
-  - &install_node_and_npm
-    node/install:
-      install-yarn: true
-      node-version: <<pipeline.parameters.node_version>>
-  - &restore_frontend_packages
-    restore_cache:
-      name: Restore Frontend Dependencies Cache
-      keys:
-        - <<pipeline.parameters.yarn_cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
-  - &install_frontend_packages
-    run:
-      name: Install Frontend Dependencies
-      command: yarn install --production
-  - &cache_frontend_packages
-    save_cache:
-      name: Cache Frontend Dependencies
-      paths:
-        - <<pipeline.parameters.yarn_cache_folder>>
-      key: <<pipeline.parameters.yarn_cache_key>>-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
 jobs:
   build: # our first job, named "build"
@@ -117,24 +126,10 @@ jobs:
     <<: *default_environment
     steps:
       - checkout # pull down our git code.
-
-      - *restore_ruby_gems
-      - *install_ruby_gems
-      - *cache_ruby_gems
-
-      - *install_node_and_npm
-      - *restore_frontend_packages
-      - *install_frontend_packages
-      - *cache_frontend_packages
-
-      - run:
-          name: Lint Ruby Code
-          command: bundle exec rubocop --require rubocop/formatter/junit_formatter --format RuboCop::Formatter::JUnitFormatter --out /tmp/test-results/rubocop/results.xml
-      - store_test_results:
-          path: /tmp/test-results/rubocop
-      - store_artifacts:
-          destination: test-results
-          path: /tmp/test-results
+      - install_ruby_gems
+      - install_node
+      - install_node_packages
+      - lint_ruby_code
 
   test:  # our next job, called "test"
     # we run "parallel job containers" to enable speeding up our tests;
@@ -153,16 +148,9 @@ jobs:
     # A series of steps to run, some are similar to those in "build".
     steps:
       - checkout
-
-      - *restore_ruby_gems
-      - *install_ruby_gems
-      - *cache_ruby_gems
-
-      - *install_node_and_npm
-      - *restore_frontend_packages
-      - *install_frontend_packages
-      - *cache_frontend_packages
-
+      - install_ruby_gems
+      - install_node
+      - install_node_packages
       # Here we make sure that the secondary container boots
       # up before we run operations on the database.
       - run:
