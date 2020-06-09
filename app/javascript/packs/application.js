@@ -7,7 +7,10 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the
 // appropriate layout file, like app/views/layouts/application.html.erb
 
+require("@rails/ujs").start()
 require("turbolinks").start()
+// require("@rails/activestorage").start()
+// require("channels")
 
 
 // Uncomment to copy all static images under ../images to the output folder and
