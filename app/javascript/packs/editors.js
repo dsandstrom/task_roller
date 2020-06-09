@@ -9,8 +9,6 @@
 const EasyMDE = require('easymde/dist/easymde.min.js')
 const hljs = require('highlight.js')
 
-const simplyPromise = value => new Promise((resolve, reject) => resolve(value));
-
 class Editor {
   constructor(elem) {
     this.elem = elem;
