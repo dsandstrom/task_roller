@@ -101,15 +101,16 @@
 
   pre {
     margin: 1rem 0 1.5rem;
-    padding: 1rem;
     overflow-x: auto;
-    border-radius: $border-radius;
-    background: $color-quaternary;
     font-size: .95em;
     word-wrap: break-word;
 
     code {
+      display: block;
+      border-radius: $border-radius;
+      background: $color-quaternary;
       color: $off-white;
+      padding: 1rem;
     }
   }
 

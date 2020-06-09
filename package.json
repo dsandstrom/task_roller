@@ -6,6 +6,7 @@
     "@rails/webpacker": "5.1.1",
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
+    "highlight.js": "^10.0.3",
     "milligram": "^1.4.0",
     "normalize.css": "^8.0.1",
     "turbolinks": "^5.2.0",

@@ -1,0 +1,78 @@
+@import "_colors.scss";
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: $off-white;
+  background: $color-quaternary;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: $color-tertiary;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-keyword,
+.hljs-formula {
+  color: $color-secondary;
+}
+
+.hljs-number,
+.hljs-section,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: $color-quinary;
+}
+
+.hljs-doctag,
+.hljs-literal {
+  color: $color-quinary;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta-string {
+  color: $color-success;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: $color-primary;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: $color-primary;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: $color-warning;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
