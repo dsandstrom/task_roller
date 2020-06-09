@@ -11,5 +11,4 @@
 // about supported directives.
 //
 //= require validate-js/validate
-//= require easymde/dist/easymde.min
 //= require_tree .
