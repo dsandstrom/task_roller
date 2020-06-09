@@ -54,8 +54,12 @@ document.addEventListener('turbolinks:load', function() {
     hljs.highlightBlock(block);
   });
 
-  const taskDescription = document.getElementById('task_description');
-  if (taskDescription) {
-    return new Editor(taskDescription);
-  }
+  const editorIds = ['task_description', 'issue_description']
+  editorIds.forEach((id, i) => {
+    var description = document.getElementById(id);
+
+    if (description) {
+      new Editor(description);
+    }
+  });
 });
