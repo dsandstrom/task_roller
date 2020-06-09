@@ -11,7 +11,6 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require turbolinks
 //= require validate-js/validate
 //= require easymde/dist/easymde.min
 //= require_tree .
