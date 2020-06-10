@@ -50,12 +50,12 @@ document.addEventListener('turbolinks:load', function() {
     hljs.highlightBlock(block);
   });
 
-  const editorIds = ['task_description', 'issue_description']
+  const editorIds = ['task_description', 'issue_description',
+                     'issue_comment_body', 'task_comment_body'];
   editorIds.forEach((id, i) => {
-    var description = document.getElementById(id);
+    var editorTarget = document.getElementById(id);
+    if (!editorTarget || editorTarget.style.display == 'none') return;
 
-    if (description) {
-      new Editor(description);
-    }
+    new Editor(editorTarget);
   });
 });
