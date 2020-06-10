@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // FIXME: redcarpet requires code block to have emtpy line above
 
 const EasyMDE = require('easymde/dist/easymde.min.js')
@@ -13,7 +7,6 @@ class Editor {
   constructor(elem) {
     this.elem = elem;
     this.editor = new EasyMDE(this.options());
-    this.editTitles();
   }
 
   options() {
@@ -40,11 +33,6 @@ class Editor {
                 'quote', 'unordered-list', 'ordered-list', '|',
                 'fullscreen', 'side-by-side', 'preview']
     };
-  }
-
-  editTitles() {
-    let changes;
-    return changes = { 'Big Heading': 'Big Heading', 'Heading': 'Heading' };
   }
 }
 
