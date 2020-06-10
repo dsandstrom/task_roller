@@ -50,6 +50,10 @@ class User < ApplicationRecord
     employees('Worker')
   end
 
+  def self.destroyed_name
+    'removed'
+  end
+
   # INSTANCE
 
   def employee_type

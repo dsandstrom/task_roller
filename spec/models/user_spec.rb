@@ -174,6 +174,12 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".destroyed_name" do
+    it "includes only Workers" do
+      expect(User.destroyed_name).to eq("removed")
+    end
+  end
+
   # INSTANCE
 
   describe "#employee" do
