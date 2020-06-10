@@ -1,4 +1,5 @@
 // FIXME: redcarpet requires code block to have emtpy line above
+// TODO: comment forms - hide toolbar and shorten unless focused once
 
 const EasyMDE = require('easymde/dist/easymde.min.js')
 const hljs = require('highlight.js')

@@ -11,11 +11,13 @@
 
 const FormValidator = require("validate-js/validate")
 
+// TODO: validate editors
 var Form = (function() {
   let displayError = undefined;
   let addClass = undefined;
   let updateMessage = undefined;
   let addNewMessage = undefined;
+
   Form = class Form {
     static initClass() {
 
@@ -118,8 +120,7 @@ var Form = (function() {
       if (!errors.length) { return; }
       const message = this.form.querySelector('.field-message');
       if (message) { message.classList.remove('hide'); }
-      return Array.from(errors).map((error) =>
-        displayError(error));
+      return Array.from(errors).map((error) => displayError(error));
     }
   };
   Form.initClass();
