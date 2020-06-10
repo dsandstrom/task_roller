@@ -10,6 +10,14 @@ class Editor {
   }
 
   options() {
+    // just want one heading version (h1, h2, h3 are all the same size)
+    // so button should toggle h1, but look like a generic Heading
+    var headingTool = {
+      name: 'heading-1',
+      action: EasyMDE.toggleHeading1,
+      className: "fa fa-header",
+      title: 'Heading'
+    }
     return {
       autoDownloadFontAwesome: false,
       autofocus: false,
@@ -29,7 +37,7 @@ class Editor {
         hljs: hljs
       },
       toolbar: ['bold', 'italic', 'code', '|',
-                'heading-1', 'strikethrough', 'link', '|',
+                headingTool, 'strikethrough', 'link', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
                 'fullscreen', 'side-by-side', 'preview']
     };

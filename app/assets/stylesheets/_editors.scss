@@ -48,6 +48,13 @@ $editor-button-size: 3rem;
       left: 1px;
       line-height: $editor-button-size;
     }
+
+    // remove 1 from heading button in toolbar
+    &.heading-1 {
+      &::after {
+        content: '';
+      }
+    }
   }
 
   i {
