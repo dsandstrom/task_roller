@@ -10,7 +10,8 @@
     end
 %>
 
-<%= form_with(model: task_comment, url: url, local: true) do |form| %>
+<%= form_with(model: task_comment, url: url, local: true,
+              html: { name: 'task_comment_form', novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <% if user_options&.any? %>

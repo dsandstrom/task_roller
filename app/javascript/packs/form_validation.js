@@ -76,6 +76,11 @@ var Form = (function() {
           rules: 'required'
         },
         {
+          name: `${objectName}[body]`,
+          display: 'Body',
+          rules: 'required'
+        },
+        {
           name: `${objectName}[description]`,
           display: 'Description',
           rules: 'required'
@@ -122,8 +127,9 @@ var Form = (function() {
 })();
 
 document.addEventListener('turbolinks:load', function() {
-  const formNames = ['issue_type_form', 'task_type_form', 'user_form', 'issue_form',
-               'category_form', 'project_form'];
+  const formNames = ['issue_type_form', 'task_type_form', 'user_form',
+                     'issue_form', 'category_form', 'project_form',
+                     'task_form', 'task_comment_form', 'issue_comment_form'];
   return (() => {
     const result = [];
     for (let form of Array.from(document.querySelectorAll('form'))) {
