@@ -29,7 +29,7 @@
       <div class="issue-comments comments">
         <div class="comment issue-description">
           <header class="issue-user-date">
-            <p class="issue-user"><%= @issue.user.name_or_email %>:</p>
+            <p><span class="issue-user"><%= @issue.user ? @issue.user.name_or_email : User.destroyed_name %></span>:</p>
             <p class="issue-dates"><%= format_date @issue.created_at %></p>
           </header>
 
