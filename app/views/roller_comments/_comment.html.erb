@@ -1,6 +1,6 @@
 <blockquote id="comment-<%= comment.id %>" class="comment">
   <header>
-    <p class="comment-user"><%= comment.user.name_or_email %>:</p>
+    <p><span class="comment-user"><%= comment.user ? comment.user.name_or_email : User.destroyed_name %></span>:</p>
     <p class="comment-dates">
       <%= format_date comment.created_at %>
       <% if comment.created_at != comment.updated_at %>

@@ -5,7 +5,7 @@
     <div class="task-column first-column">
       <h4 class="task-column-title">Assigned</h4>
       <% if @task.assignees.any? %>
-        <p  class="task-assignees">
+        <p class="task-assignees">
           <%= render partial: 'shared/assignee', collection: @task.assignees %>
         </p>
       <% else %>
@@ -28,7 +28,7 @@
       <div class="task-comments comments">
         <div class="comment task-description">
           <header class="task-user-date">
-            <p><span class="task-user"><%= @task.user.name_or_email %></span>:</p>
+            <p><span class="task-user"><%= @task.user ? @task.user.name_or_email : User.destroyed_name %></span>:</p>
             <p class="task-date"><%= format_date @task.created_at %></p>
           </header>
 

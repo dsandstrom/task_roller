@@ -116,4 +116,79 @@ RSpec.describe "tasks/show", type: :view do
       assert_select ".task-summary", "Task: #{@task.summary}"
     end
   end
+
+  context "when task's user destroyed" do
+    before do
+      @project = assign(:project, Fabricate(:project, category: @category))
+      @task = assign(:task, Fabricate(:task, project: @project))
+      @comments = assign(:comments, [])
+      @comment = assign(:task_comment, @task.comments.build)
+
+      @task.user.destroy
+      @task.reload
+    end
+
+    it "renders default user name" do
+      render
+      assert_select ".task-user", User.destroyed_name
+    end
+  end
+
+  context "when comment's user destroyed" do
+    let(:user) { Fabricate(:user_worker) }
+
+    before do
+      @task = assign(:task, Fabricate(:task))
+      @task_comment = Fabricate(:task_comment, task: @task, user: user)
+      @comments = assign(:comments, [@task_comment])
+      @comment = assign(:task_comment, @task.comments.build)
+
+      @task_comment.user.destroy
+      @task_comment.reload
+    end
+
+    it "renders default user name" do
+      render
+      assert_select "#comment-#{@task_comment.id} .comment-user",
+                    User.destroyed_name
+    end
+  end
+
+  context "when task's assignee destroyed" do
+    let(:user) { Fabricate(:user_worker) }
+
+    before do
+      @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
+      @comments = assign(:comments, [])
+      @comment = assign(:task_comment, @task.comments.build)
+
+      user.destroy
+      @task.reload
+    end
+
+    it "renders" do
+      expect do
+        render
+      end.not_to raise_error
+    end
+  end
+
+  context "task's issue destroyed" do
+    before do
+      @project = assign(:project, Fabricate(:project, category: @category))
+      @issue = Fabricate(:issue, project: @project)
+      @task = assign(:task, Fabricate(:task, project: @project, issue: @issue))
+      @comment = assign(:task_comment, @task.comments.build)
+      @comments = assign(:comments, [])
+
+      @issue.destroy
+      @task.reload
+    end
+
+    it "renders" do
+      expect do
+        render
+      end.not_to raise_error
+    end
+  end
 end
