@@ -24,6 +24,6 @@ class Task < ApplicationRecord
   # INSTANCE
 
   def description_html
-    @description_html ||= RollerMarkdown.new.render(description)
+    @description_html ||= (RollerMarkdown.new.render(description) || '')
   end
 end

@@ -30,4 +30,30 @@ RSpec.describe RollerComment, type: :model do
       expect(RollerComment.all).to eq([first_comment, second_comment])
     end
   end
+
+  describe "#body_html" do
+    context "when body is **foo**" do
+      before { subject.body = "**foo**" }
+
+      it "adds strong tags" do
+        expect(subject.body_html).to eq("<p><strong>foo</strong></p>\n")
+      end
+    end
+
+    context "when body is nil" do
+      before { subject.body = nil }
+
+      it "returns empty string" do
+        expect(subject.body_html).to eq("")
+      end
+    end
+
+    context "when body is blank" do
+      before { subject.body = "" }
+
+      it "returns empty string" do
+        expect(subject.body_html).to eq("")
+      end
+    end
+  end
 end

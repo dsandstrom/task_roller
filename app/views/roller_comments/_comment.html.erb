@@ -8,8 +8,7 @@
       <% end %>
     </p>
   </header>
-  <%# TODO: add markup support %>
-  <main><%= content_tag :p, comment.body %></main>
+  <%= content_tag :main, comment.body_html.html_safe %>
   <footer>
     <p>
       <% if object.is_a?(Task) %>
