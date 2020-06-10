@@ -55,4 +55,23 @@ RSpec.describe "tasks/index", type: :view do
       assert_select "#task-#{second_task.id}"
     end
   end
+
+  context "when a task user was destroyed" do
+    let(:first_task) { Fabricate(:task) }
+    let(:second_task) { Fabricate(:task) }
+
+    before(:each) do
+      second_task.user.destroy
+      second_task.reload
+      assign(:tasks, [first_task, second_task])
+    end
+
+    it "renders a list of tasks" do
+      render
+      assert_select "#task-#{first_task.id} .task-user",
+                    first_task.user.name
+      assert_select "#task-#{second_task.id} .task-user",
+                    User.destroyed_name
+    end
+  end
 end

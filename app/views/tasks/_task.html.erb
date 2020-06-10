@@ -7,7 +7,7 @@
     </h3>
   </header>
 
-  <p class="task-user"><%= task.user ? task.user.name : 'removed' %></p>
+  <p class="task-user"><%= task.user ? task.user.name : User.destroyed_name %></p>
 
   <footer class="task-footer">
     <%= link_to 'Edit',

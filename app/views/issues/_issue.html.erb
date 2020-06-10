@@ -7,7 +7,7 @@
     </h3>
   </header>
 
-  <p class="issue-user"><%= issue.user ? issue.user.name : 'removed' %></p>
+  <p class="issue-user"><%= issue.user ? issue.user.name : User.destroyed_name %></p>
 
   <footer class="issue-footer">
     <%= link_to 'Edit',

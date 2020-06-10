@@ -55,4 +55,23 @@ RSpec.describe "issues/index", type: :view do
       assert_select "#issue-#{second_issue.id}"
     end
   end
+
+  context "when an issue user was destroyed" do
+    let(:first_issue) { Fabricate(:issue) }
+    let(:second_issue) { Fabricate(:issue) }
+
+    before(:each) do
+      second_issue.user.destroy
+      second_issue.reload
+      assign(:issues, [first_issue, second_issue])
+    end
+
+    it "renders a list of issues" do
+      render
+      assert_select "#issue-#{first_issue.id} .issue-user",
+                    first_issue.user.name
+      assert_select "#issue-#{second_issue.id} .issue-user",
+                    User.destroyed_name
+    end
+  end
 end
