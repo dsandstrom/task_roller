@@ -11,7 +11,6 @@
 
 const FormValidator = require("validate-js/validate")
 
-// TODO: validate editors
 var Form = (function() {
   let displayError = undefined;
   let addClass = undefined;
@@ -53,9 +52,31 @@ var Form = (function() {
       this.button = this.form.querySelector("[type='submit']");
       if (!this.button) { return; }
       this.validator = new FormValidator(this.form.name, this.options(), this.afterValidate);
+      this.validator.registerCallback('required_with_editor', this.validateEditorRequired)
       this.validator.setMessage('required', 'required');
+      this.validator.setMessage('required_with_editor', 'required');
       this.watchInputs();
       this.watchTextareas();
+    }
+
+    // check editor below
+    validateEditorRequired(value, param, field) {
+      // var validator = this;
+      let fieldNode = field.element;
+      if (!fieldNode) return false;
+
+      let parentNode = fieldNode.parentNode
+      if (!parentNode || !parentNode.classList.contains('field')) return false;
+
+      let editorNode = fieldNode.parentNode.querySelector('.CodeMirror-code');
+      if (!editorNode) return false;
+
+      // TODO: make less dependent on editor html
+      // hidden <U+200B> inside cm-text
+      let blankValue = '<pre class=" CodeMirror-line " role="presentation">'
+                     + '<span role="presentation" style="padding-right: 0.1px;">'
+                     + '<span cm-text="">​</span></span></pre>';
+      return editorNode.innerHTML != blankValue;
     }
 
     options() {
@@ -80,12 +101,12 @@ var Form = (function() {
         {
           name: `${objectName}[body]`,
           display: 'Body',
-          rules: 'required'
+          rules: 'callback_required_with_editor'
         },
         {
           name: `${objectName}[description]`,
           display: 'Description',
-          rules: 'required'
+          rules: 'callback_required_with_editor'
         }
       ];
     }
@@ -120,7 +141,8 @@ var Form = (function() {
       if (!errors.length) { return; }
       const message = this.form.querySelector('.field-message');
       if (message) { message.classList.remove('hide'); }
-      return Array.from(errors).map((error) => displayError(error));
+      Array.from(errors).map((error) => displayError(error));
+      return true;
     }
   };
   Form.initClass();
