@@ -1,4 +1,6 @@
 // FIXME: flash message doesn't get removed completely, covers nav links
+// TODO: make flash message fixed so it's visible when scrolled down the page
+// then absolute on scroll (so you can scroll away from it)
 
 .flash-message {
   position: absolute;

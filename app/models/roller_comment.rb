@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: allow reporting comments to admin
+
 class RollerComment < ApplicationRecord
   belongs_to :user
 
