@@ -94,6 +94,14 @@ label {
     input {
       border-color: $color-warning;
     }
+
+    .CodeMirror {
+      border-color: $color-warning;
+    }
+
+    .CodeMirror-placeholder {
+      color: $color-warning;
+    }
   }
 }
 

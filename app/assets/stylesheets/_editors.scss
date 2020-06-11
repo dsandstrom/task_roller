@@ -92,10 +92,10 @@ $editor-button-size: 3rem;
 .CodeMirror {
   border-radius: 0 0 $border-radius $border-radius;
   border-color: $gray;
+  color: $ink;
 
   .CodeMirror-placeholder {
-    opacity: 1;
-    color: $gray;
+    opacity: .7;
   }
 
   .CodeMirror-code {

@@ -8,6 +8,7 @@
       color: $color-warning;
     }
 
+    &:focus,
     &:hover {
       border-color: $color-warning-hover;
       background-color: $color-warning-hover;
@@ -28,6 +29,7 @@
       color: $color-success;
     }
 
+    &:focus,
     &:hover {
       border-color: $color-success-hover;
       background-color: $color-success-hover;
@@ -36,6 +38,20 @@
         background-color: transparent;
         color: $color-success-hover;
       }
+    }
+  }
+}
+
+// form has valiation errors
+input[type='submit'][disabled] {
+  &:focus,
+  &:hover {
+    background: $color-warning;
+    border-color: $color-warning-hover;
+
+    &.button-outline {
+      background-color: transparent;
+      color: $color-warning-hover;
     }
   }
 }
