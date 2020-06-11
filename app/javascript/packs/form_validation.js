@@ -9,6 +9,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
+// FIXME: when issue form, changing summary validates description
+// make watchers only validate field
+// or add a way to see if editor has been touched yet
+
 const FormValidator = require("validate-js/validate")
 
 var Form = (function() {
@@ -60,6 +64,8 @@ var Form = (function() {
     }
 
     // check editor below
+    // TODO: make invalid if only spaces/tabs
+    // TODO: make less dependent on editor logic
     validateEditorRequired(value, param, field) {
       // var validator = this;
       let fieldNode = field.element;
@@ -68,15 +74,10 @@ var Form = (function() {
       let parentNode = fieldNode.parentNode
       if (!parentNode || !parentNode.classList.contains('field')) return false;
 
-      let editorNode = fieldNode.parentNode.querySelector('.CodeMirror-code');
+      let editorNode = fieldNode.parentNode.querySelector('.CodeMirror');
       if (!editorNode) return false;
 
-      // TODO: make less dependent on editor html
-      // hidden <U+200B> inside cm-text
-      let blankValue = '<pre class=" CodeMirror-line " role="presentation">'
-                     + '<span role="presentation" style="padding-right: 0.1px;">'
-                     + '<span cm-text="">​</span></span></pre>';
-      return editorNode.innerHTML != blankValue;
+      return !editorNode.classList.contains('CodeMirror-empty');
     }
 
     options() {
