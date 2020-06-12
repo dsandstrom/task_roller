@@ -9,10 +9,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-// FIXME: when issue form, changing summary validates description
-// make watchers only validate field
-// or add a way to see if editor has been touched yet
-
 const FormValidator = require("validate-js/validate")
 
 var Form = (function() {
@@ -113,21 +109,57 @@ var Form = (function() {
     }
 
     watchInputs() {
-      return Array.from(this.form.querySelectorAll("input[type='text']")).map((input) =>
-        input.addEventListener('keyup', () => {
-          // TODO: validate field instead
-          return this.validator._validateForm();
-        }));
+      const form = this;
+      const fields = this.validator.fields
+      const values = Object.values(fields)
+
+      values.forEach((field) => {
+        const selector = 'input[name="' + field.name + '"]';
+        const inputNode = this.form.querySelector(selector);
+        if (!inputNode) return;
+
+        inputNode.addEventListener('keyup', (event) => {
+          const currentField = fields[event.target.name]
+          currentField.element = event.target;
+          currentField.value = event.target.value;
+          currentField.id = event.target.id;
+          // clear error for field
+          form.validator.errors = form.validator.errors.filter(function (obj) {
+            return obj.name !== currentField.name;
+          });
+          form.validator._validateField(currentField);
+          this.afterValidate(form.validator.errors, event);
+        })
+      });
     }
 
     watchTextareas() {
-      return Array.from(this.form.querySelectorAll('textarea')).map((textarea) =>
-        textarea.addEventListener('keyup', () => {
-          // TODO: validate field instead
-          return this.validator._validateForm();
-        }));
+      const form = this;
+      const fields = form.validator.fields;
+
+      Array.from(this.form.querySelectorAll('textarea')).map((textarea) =>
+        textarea.addEventListener('keyup', (event) => {
+          const fieldNode = event.target.parentNode.parentNode.parentNode;
+          const inputNode = fieldNode.querySelector('textarea');
+          const currentField = fields[inputNode.name];
+
+          currentField.element = inputNode;
+          currentField.value = event.target.value;
+          currentField.id = inputNode.id;
+
+          // clear error for field
+          form.validator.errors = form.validator.errors.filter(function (obj) {
+            return obj.name !== currentField.name;
+          });
+          form.validator._validateField(currentField);
+          this.afterValidate(form.validator.errors, event);
+        })
+      );
     }
 
+    // FIXME: if other fields have errors, fixing the current field doesn't
+    // clear the required message
+    // maybe clear message of current field only
     clearErrors() {
       this.button.disabled = false;
       for (let error of Array.from(this.form.querySelectorAll('.error'))) {
