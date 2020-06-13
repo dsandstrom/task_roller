@@ -45,6 +45,7 @@ export class Form {
       elem = this.addNewMessage(input, messageClass);
     }
     elem.innerHTML = message;
+    elem.classList.remove('hide');
   }
 
   // used by displayError
@@ -60,7 +61,6 @@ export class Form {
   // TODO: make invalid if only spaces/tabs
   // TODO: make less dependent on editor logic
   validateEditorRequired(value, param, field) {
-    // var validator = this;
     let fieldNode = field.element;
     if (!fieldNode) return false;
 
@@ -123,15 +123,26 @@ export class Form {
         const currentField = fields[event.target.name]
         if (!currentField) return;
 
-        currentField.element = event.target;
-        currentField.value = event.target.value;
-        currentField.id = event.target.id;
+        const currentInput = event.target;
+        currentField.element = currentInput;
+        currentField.value = currentInput.value;
+        currentField.id = currentInput.id;
 
         // clear error for field
         form.validator.errors = form.validator.errors.filter(function (obj) {
           return obj.name !== currentField.name;
         });
         form.validator._validateField(currentField);
+
+        const newErrors = form.validator.errors.filter(function (obj) {
+          return obj.name === currentField.name;
+        });
+        if (newErrors.length === 0) {
+          for (let message of currentInput.parentNode.querySelectorAll('.field-message')) {
+            message.classList.add('hide');
+          }
+        }
+
         form.afterValidate(form.validator.errors, event);
       })
     });
@@ -142,7 +153,6 @@ export class Form {
     const fields = form.validator.fields;
 
     this.editors.forEach((editor) => {
-
       // https://codemirror.net/doc/manual.html
       editor.editor.codemirror.on("changes", function(codemirror, changes) {
         const textarea = codemirror.getTextArea();
@@ -160,33 +170,32 @@ export class Form {
           return obj.name !== currentField.name;
         });
         form.validator._validateField(currentField);
-        form.afterValidate(form.validator.errors);
+
+        const newErrors = form.validator.errors.filter(function (obj) {
+          return obj.name === currentField.name;
+        });
+        if (newErrors.length === 0) {
+          for (let message of textarea.parentNode.querySelectorAll('.field-message')) {
+            message.classList.add('hide');
+          }
+        }
+
+        form.afterValidate(form.validator.errors, codemirror);
       });
     });
   }
 
-  // FIXME: if other fields have errors, fixing the current field doesn't
-  // clear the required message
-  // maybe clear message of current field only
   clearErrors() {
     this.button.disabled = false;
     for (let error of this.form.querySelectorAll('.error')) {
       error.classList.remove('error');
     }
-    const message = this.form.querySelector('.field-message');
-    if (message) { message.classList.add('hide'); }
   }
 
   afterValidate(errors, _event) {
     this.clearErrors();
     if (!errors.length) return;
 
-    const message = this.form.querySelector('.field-message');
-
-    // FIXME: always removes the first message it finds
-    if (message) {
-      message.classList.remove('hide');
-    }
     for (let error of errors) {
       this.displayError(error);
     }
