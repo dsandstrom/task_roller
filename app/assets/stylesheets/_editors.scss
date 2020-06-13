@@ -95,7 +95,8 @@ $editor-button-size: 3rem;
   color: $ink;
 
   .CodeMirror-placeholder {
-    opacity: .7;
+    opacity: 1;
+    color: $gray !important;
   }
 
   .CodeMirror-code {
