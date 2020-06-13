@@ -46,21 +46,3 @@ export class MarkdownEditor {
     };
   }
 }
-
-// export { MarkdownEditor };
-
-// document.addEventListener('turbolinks:load', function() {
-//   // syntax highlight
-//   document.querySelectorAll('.comment pre code').forEach((block) => {
-//     hljs.highlightBlock(block);
-//   });
-//
-//   const editorIds = ['task_description', 'issue_description',
-//                      'issue_comment_body', 'task_comment_body'];
-//   editorIds.forEach((id, i) => {
-//     var editorTarget = document.getElementById(id);
-//     if (!editorTarget || editorTarget.style.display == 'none') return;
-//
-//     new Editor(editorTarget);
-//   });
-// });
