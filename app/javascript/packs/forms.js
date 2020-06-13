@@ -9,52 +9,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-const EasyMDE = require('easymde/dist/easymde.min.js')
-const hljs = require('highlight.js')
-
-class Editor {
-  constructor(elem) {
-    this.elem = elem;
-    this.editor = new EasyMDE(this.options());
-  }
-
-  options() {
-    // just want one heading version (h1, h2, h3 are all the same size)
-    // so button should toggle h1, but look like a generic Heading
-    var headingTool = {
-      name: 'heading-1',
-      action: EasyMDE.toggleHeading1,
-      className: "fa fa-header",
-      title: 'Heading'
-    }
-    return {
-      autoDownloadFontAwesome: false,
-      autofocus: false,
-      autosave: {
-        enabled: false
-      },
-      blockStyles: {
-        bold: '**',
-        italic: '_'
-      },
-      element: this.elem,
-      placeholder: 'Start typing here...',
-      promptURLs: false,
-      status: false,
-      renderingConfig: {
-        codeSyntaxHighlighting: true,
-        hljs: hljs
-      },
-      toolbar: ['bold', 'italic', headingTool, '|',
-                'quote', 'unordered-list', 'ordered-list', '|',
-                'link', 'code', 'strikethrough', '|',
-                'preview', 'side-by-side', 'fullscreen', '|',
-                'guide']
-    };
-  }
-}
-
-const FormValidator = require("validate-js/validate")
+import {MarkdownEditor, hljs} from 'src/markdown_editor';
+import FormValidator from 'validate-js/validate';
 
 var Form = (function() {
   let displayError = undefined;
@@ -199,7 +155,6 @@ var Form = (function() {
           currentField.element = textarea;
           currentField.value = codemirror.doc.getValue();
           currentField.id = textarea.id;
-          console.log(currentField);
 
           // clear error for field
           form.validator.errors = form.validator.errors.filter(function (obj) {
@@ -228,6 +183,7 @@ var Form = (function() {
       this.clearErrors();
       if (!errors.length) { return; }
       const message = this.form.querySelector('.field-message');
+      // FIXME: always removes the first message it finds
       if (message) { message.classList.remove('hide'); }
       Array.from(errors).map((error) => displayError(error));
       return true;
@@ -251,7 +207,7 @@ document.addEventListener('turbolinks:load', function() {
     var editorTarget = document.getElementById(id);
     if (!editorTarget || editorTarget.style.display == 'none') return;
 
-    currentEditors.push(new Editor(editorTarget));
+    currentEditors.push(new MarkdownEditor(editorTarget));
   });
 
   // add validation to forms
@@ -262,6 +218,7 @@ document.addEventListener('turbolinks:load', function() {
 
   for (let form of Array.from(document.querySelectorAll('form'))) {
     if (!formNames.includes(form.name)) { continue; }
+
     currentForms.push(new Form(form, currentEditors));
   }
 

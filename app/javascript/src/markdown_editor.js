@@ -1,10 +1,12 @@
 // FIXME: redcarpet requires code block to have emtpy line above
 // TODO: comment forms - hide toolbar and shorten unless focused once
 
-const EasyMDE = require('easymde/dist/easymde.min.js')
-const hljs = require('highlight.js')
+import EasyMDE from 'easymde/dist/easymde.min.js';
+import hljs from 'highlight.js';
 
-class Editor {
+export {hljs} from 'highlight.js';
+
+export class MarkdownEditor {
   constructor(elem) {
     this.elem = elem;
     this.editor = new EasyMDE(this.options());
@@ -45,18 +47,20 @@ class Editor {
   }
 }
 
-document.addEventListener('turbolinks:load', function() {
-  // syntax highlight
-  document.querySelectorAll('.comment pre code').forEach((block) => {
-    hljs.highlightBlock(block);
-  });
+// export { MarkdownEditor };
 
-  const editorIds = ['task_description', 'issue_description',
-                     'issue_comment_body', 'task_comment_body'];
-  editorIds.forEach((id, i) => {
-    var editorTarget = document.getElementById(id);
-    if (!editorTarget || editorTarget.style.display == 'none') return;
-
-    new Editor(editorTarget);
-  });
-});
+// document.addEventListener('turbolinks:load', function() {
+//   // syntax highlight
+//   document.querySelectorAll('.comment pre code').forEach((block) => {
+//     hljs.highlightBlock(block);
+//   });
+//
+//   const editorIds = ['task_description', 'issue_description',
+//                      'issue_comment_body', 'task_comment_body'];
+//   editorIds.forEach((id, i) => {
+//     var editorTarget = document.getElementById(id);
+//     if (!editorTarget || editorTarget.style.display == 'none') return;
+//
+//     new Editor(editorTarget);
+//   });
+// });
