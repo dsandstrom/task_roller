@@ -1,4 +1,5 @@
-import {MarkdownEditor, hljs} from 'src/markdown_editor';
+import {MarkdownEditor} from 'src/markdown_editor';
+import hljs from 'highlight.js';
 import {Form} from 'src/form';
 
 document.addEventListener('turbolinks:load', function() {
@@ -27,7 +28,7 @@ document.addEventListener('turbolinks:load', function() {
   }
 
   // syntax highlight
-  document.querySelectorAll('.comment pre code').forEach((block) => {
+  for (var block of document.querySelectorAll('.comment pre code')) {
     hljs.highlightBlock(block);
-  });
+  }
 });

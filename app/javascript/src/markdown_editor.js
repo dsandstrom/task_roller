@@ -4,8 +4,6 @@
 import EasyMDE from 'easymde/dist/easymde.min.js';
 import hljs from 'highlight.js';
 
-export {hljs} from 'highlight.js';
-
 export class MarkdownEditor {
   constructor(elem) {
     this.elem = elem;

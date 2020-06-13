@@ -17,7 +17,7 @@ export class Form {
   initValidator() {
     const validator = new FormValidator(this.form.name, this.options(), this.afterValidate);
 
-    validator.registerCallback('required_with_editor', this.validateEditorRequired)
+    validator.registerCallback('required_with_editor', this.validateTextarea)
     validator.setMessage('required', 'required');
     validator.setMessage('required_with_editor', 'required');
     return validator;
@@ -58,20 +58,9 @@ export class Form {
     return elem;
   }
 
-  // when a textarea with a markdown editor, use editor's value
-  // TODO: make invalid if only spaces/tabs
-  // TODO: make less dependent on editor logic
-  validateEditorRequired(value, param, field) {
-    let fieldNode = field.element;
-    if (!fieldNode) return false;
-
-    let parentNode = fieldNode.parentNode
-    if (!parentNode || !parentNode.classList.contains('field')) return false;
-
-    let editorNode = fieldNode.parentNode.querySelector('.CodeMirror');
-    if (!editorNode) return false;
-
-    return !editorNode.classList.contains('CodeMirror-empty');
+  validateTextarea(value, _param, _field) {
+    const matches = value.match(/[^\s\t]+/);
+    return matches != null;
   }
 
   options() {
