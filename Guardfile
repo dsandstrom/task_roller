@@ -79,7 +79,7 @@ group :frontend do
     end
 
     # file needing a full reload of the page anyway
-    watch(%r{app/javascript/packs/[^.]+\.js$})
+    watch(%r{app/javascript/(?:packs|src)/[^.]+\.js$})
     watch(%r{app/views/[^.]\.(#{rails_view_exts * '|'})$})
     watch(%r{app/helpers/[^.]\.rb})
     watch(%r{config/locales/[^.]\.yml})
