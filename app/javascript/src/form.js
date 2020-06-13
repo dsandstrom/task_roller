@@ -9,6 +9,7 @@ export class Form {
     if (!this.button) return;
 
     this.validator = this.initValidator();
+    this.fields = this.validator.fields;
     this.watchInputs();
     this.watchEditors();
   }
@@ -109,10 +110,35 @@ export class Form {
     ];
   }
 
+  validateField(input, value) {
+    if (!input) return;
+
+    const field = this.fields[input.name]
+    if (!field) return;
+
+    field.element = input;
+    field.value = value;
+    field.id = input.id;
+
+    // clear error for field
+    this.validator.errors = this.validator.errors.filter(function (obj) {
+      return obj.name !== field.name;
+    });
+    this.validator._validateField(field);
+
+    const newErrors = this.validator.errors.filter(function (obj) {
+      return obj.name === field.name;
+    });
+    if (newErrors.length === 0) {
+      for (let message of field.element.parentNode.querySelectorAll('.field-message')) {
+        message.classList.add('hide');
+      }
+    }
+  }
+
   watchInputs() {
     const form = this;
-    const fields = this.validator.fields
-    const values = Object.values(fields)
+    const values = Object.values(form.fields)
 
     values.forEach((field) => {
       const selector = 'input[name="' + field.name + '"]';
@@ -120,29 +146,7 @@ export class Form {
       if (!inputNode) return;
 
       inputNode.addEventListener('keyup', (event) => {
-        const currentField = fields[event.target.name]
-        if (!currentField) return;
-
-        const currentInput = event.target;
-        currentField.element = currentInput;
-        currentField.value = currentInput.value;
-        currentField.id = currentInput.id;
-
-        // clear error for field
-        form.validator.errors = form.validator.errors.filter(function (obj) {
-          return obj.name !== currentField.name;
-        });
-        form.validator._validateField(currentField);
-
-        const newErrors = form.validator.errors.filter(function (obj) {
-          return obj.name === currentField.name;
-        });
-        if (newErrors.length === 0) {
-          for (let message of currentInput.parentNode.querySelectorAll('.field-message')) {
-            message.classList.add('hide');
-          }
-        }
-
+        form.validateField(event.target, event.target.value);
         form.afterValidate(form.validator.errors, event);
       })
     });
@@ -150,36 +154,11 @@ export class Form {
 
   watchEditors() {
     const form = this;
-    const fields = form.validator.fields;
 
     this.editors.forEach((editor) => {
       // https://codemirror.net/doc/manual.html
       editor.editor.codemirror.on("changes", function(codemirror, changes) {
-        const textarea = codemirror.getTextArea();
-        if (!textarea) return;
-
-        const currentField = fields[textarea.name]
-        if (!currentField) return;
-
-        currentField.element = textarea;
-        currentField.value = codemirror.doc.getValue();
-        currentField.id = textarea.id;
-
-        // clear errors for field
-        form.validator.errors = form.validator.errors.filter(function (obj) {
-          return obj.name !== currentField.name;
-        });
-        form.validator._validateField(currentField);
-
-        const newErrors = form.validator.errors.filter(function (obj) {
-          return obj.name === currentField.name;
-        });
-        if (newErrors.length === 0) {
-          for (let message of textarea.parentNode.querySelectorAll('.field-message')) {
-            message.classList.add('hide');
-          }
-        }
-
+        form.validateField(codemirror.getTextArea(), codemirror.doc.getValue());
         form.afterValidate(form.validator.errors, codemirror);
       });
     });
