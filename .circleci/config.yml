@@ -44,9 +44,29 @@ commands:
     steps:
       - run:
           name: Lint Ruby Code
-          command: bundle exec rubocop --require rubocop/formatter/junit_formatter --format RuboCop::Formatter::JUnitFormatter --out /tmp/test-results/rubocop/results.xml
+          command: |
+            bundle exec rubocop \
+            --require rubocop/formatter/junit_formatter \
+            --format RuboCop::Formatter::JUnitFormatter \
+            --out /tmp/test-results/rubocop/results.xml
       - store_test_results:
           path: /tmp/test-results/rubocop
+      - store_artifacts:
+          destination: test-results
+          path: /tmp/test-results
+  lint_scss_code:
+    description: 'Lint SCSS Code using scss-lint'
+    steps:
+      - run:
+          name: Lint SCSS Code
+          command: |
+            mkdir -p /tmp/test-results/scss-lint
+            bundle exec scss-lint \
+            --require=scss_lint_reporter_junit --format=JUnit \
+            --config=./.scss-lint.yml \
+            --out=/tmp/test-results/scss-lint/results.xml
+      - store_test_results:
+          path: /tmp/test-results/scss-lint
       - store_artifacts:
           destination: test-results
           path: /tmp/test-results
@@ -102,7 +122,7 @@ commands:
             else
               echo "bundler <<parameters.bundler_version>> is already installed."
             fi
-            bundle config; bundle install
+            bundle install
       - save_cache:
           name: Cache Ruby Gems
           paths:
@@ -130,6 +150,7 @@ jobs:
       - install_node
       - install_node_packages
       - lint_ruby_code
+      - lint_scss_code
 
   test:  # our next job, called "test"
     # we run "parallel job containers" to enable speeding up our tests;
