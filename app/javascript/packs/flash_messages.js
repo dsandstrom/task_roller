@@ -9,6 +9,7 @@ class FlashMessage {
     closeLink.addEventListener('click', () => this.close());
     this.timeout = null;
     this.autoClose();
+    this.watchScroll();
   }
 
   close() {
@@ -26,6 +27,26 @@ class FlashMessage {
       this.elem.addEventListener('mouseleave', () => {
         this.timeout = window.setTimeout(this.close, 5000);
       });
+    });
+  }
+
+  // message is static initially, but absolute on scroll
+  // static allows the message to show up even if scrolled down the page,
+  // absolute allows you to scroll away from the message so it's not annoying
+  // becomes static-like when scrolling up and sticks to the top of the page
+  watchScroll() {
+    let top = this.elem.style.top || null;
+
+    document.addEventListener('scroll', function(event) {
+      // TODO: use querySelectorAll
+      // multiple messages not really supported by the css anyways
+      const currentElem = event.target.querySelector('.flash-message');
+      if (top === null || top > window.pageYOffset) {
+        top = window.pageYOffset
+
+        currentElem.style.position = 'absolute';
+        currentElem.style.top = top + 'px';
+      }
     });
   }
 }
