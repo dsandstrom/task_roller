@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  FLASH_MESSSAGE_TYPES = { 'notice' => 'success', 'success' => 'success',
-                           'alert' => 'warning' }.freeze
+  FLASH_MESSSAGE_TYPES = {
+    'alert' => 'warning',
+    'notice' => 'success',
+    'success' => 'success'
+  }.freeze
 
   def form_errors(obj)
     return if obj.errors.none?
@@ -69,9 +72,13 @@ module ApplicationHelper
     end
 
     def flash_message(key, message)
+      css_class = 'close-link flash-message-close-link'
+
       content_tag :div, class: "flash-message #{flash_message_class(key)}" do
-        concat message
-        concat link_to("\u2716", 'javascript:void(0)', class: 'close-link')
+        content_tag :div, class: 'flash-message-container' do
+          concat message
+          concat link_to("\u2716", 'javascript:void(0)', class: css_class)
+        end
       end
     end
 end
