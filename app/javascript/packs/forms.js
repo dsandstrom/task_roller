@@ -1,6 +1,6 @@
 import {MarkdownEditor} from 'src/markdown_editor';
-import hljs from 'highlight.js';
 import {Form} from 'src/form';
+import hljs from 'highlight.js';
 
 document.addEventListener('turbolinks:load', function() {
   // add markdown editor to textareas
