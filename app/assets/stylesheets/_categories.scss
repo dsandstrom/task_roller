@@ -70,9 +70,9 @@
   .categories {
     .category {
       display: grid;
-      align-items: center;
       grid-column-gap: 2rem;
       grid-template-columns: 3fr 1fr 1fr;
+      align-items: center;
     }
 
     .category-name-and-tags,
@@ -91,9 +91,9 @@
   .categories {
     .category-name-and-tags {
       display: grid;
-      align-items: center;
       grid-column-gap: 2rem;
       grid-template-columns: 60% auto;
+      align-items: center;
     }
 
     .category-name {

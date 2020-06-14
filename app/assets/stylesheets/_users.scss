@@ -81,9 +81,9 @@
   .users {
     .user {
       display: grid;
-      align-items: center;
       grid-column-gap: 2rem;
       grid-template-columns: 60% auto;
+      align-items: center;
 
       .user-name-and-email,
       .user-name {
@@ -94,10 +94,10 @@
 
   .users-header {
     display: grid;
-    align-items: center;
-    text-align: left;
     grid-column-gap: 2rem;
     grid-template-columns: 70% auto;
+    align-items: center;
+    text-align: left;
 
     h2 {
       margin-bottom: 0;
@@ -117,9 +117,9 @@
 
     .user-name-and-email {
       display: grid;
-      align-items: center;
       grid-column-gap: 2rem;
       grid-template-columns: 40% auto;
+      align-items: center;
     }
   }
 }

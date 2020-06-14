@@ -95,6 +95,7 @@ label {
       border-color: $color-warning;
     }
 
+    // scss-lint:disable SelectorFormat
     .CodeMirror {
       border-color: $color-warning;
     }
@@ -102,6 +103,7 @@ label {
     .CodeMirror-placeholder {
       color: $color-warning;
     }
+    // scss-lint:enable SelectorFormat
   }
 }
 

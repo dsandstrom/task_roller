@@ -112,8 +112,8 @@
   .category-projects {
     .project {
       display: grid;
-      align-items: center;
       grid-column-gap: 2rem;
+      align-items: center;
     }
 
     .no-project {
@@ -144,9 +144,9 @@
 
   .category-projects-header {
     display: grid;
-    align-items: center;
     grid-column-gap: 2rem;
     grid-template-columns: 5fr 1fr 1fr;
+    align-items: center;
 
     h2 {
       margin-right: auto;

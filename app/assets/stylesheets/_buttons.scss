@@ -43,11 +43,12 @@
 }
 
 // form has valiation errors
+// scss-lint:disable QualifyingElement
 input[type='submit'][disabled] {
   &:focus,
   &:hover {
-    background: $color-warning;
     border-color: $color-warning-hover;
+    background: $color-warning;
 
     &.button-outline {
       background-color: transparent;
@@ -55,3 +56,4 @@ input[type='submit'][disabled] {
     }
   }
 }
+// scss-lint:enable QualifyingElement
