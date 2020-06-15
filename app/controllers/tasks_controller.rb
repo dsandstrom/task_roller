@@ -66,14 +66,16 @@ class TasksController < ApplicationController
   end
 
   def open
+    project = @task.project
     @task.update(closed: false)
-    redirect_to category_project_task_url(@category, @project, @task),
+    redirect_to category_project_task_url(@category, project, @task),
                 success: 'Task was successfully opened.'
   end
 
   def close
+    project = @task.project
     @task.update(closed: true)
-    redirect_to category_project_task_url(@category, @project, @task),
+    redirect_to category_project_task_url(@category, project, @task),
                 success: 'Task was successfully closed.'
   end
 

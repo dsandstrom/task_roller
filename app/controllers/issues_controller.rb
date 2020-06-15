@@ -69,14 +69,16 @@ class IssuesController < ApplicationController
   end
 
   def open
+    project = @issue.project
     @issue.update(closed: false)
-    redirect_to category_project_issue_url(@category, @project, @issue),
+    redirect_to category_project_issue_url(@category, project, @issue),
                 success: 'Issue was successfully opened.'
   end
 
   def close
+    project = @issue.project
     @issue.update(closed: true)
-    redirect_to category_project_issue_url(@category, @project, @issue),
+    redirect_to category_project_issue_url(@category, project, @issue),
                 success: 'Issue was successfully closed.'
   end
 

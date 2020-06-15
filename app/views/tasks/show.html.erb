@@ -25,6 +25,23 @@
     </div>
 
     <div class="task-column second-column">
+      <div class="task-status">
+        <p>
+          Status:
+          <% if @task.open? %>
+            Open
+            <%= link_to 'Change to closed',
+                        close_category_task_path(@category, @task),
+                        method: :patch  %>
+          <% else %>
+            Closed
+            <%= link_to 'Change to open',
+                        open_category_task_path(@category, @task),
+                        method: :patch  %>
+          <% end %>
+        </p>
+      </div>
+
       <div class="task-comments comments">
         <div class="comment task-description">
           <header class="task-user-date">
