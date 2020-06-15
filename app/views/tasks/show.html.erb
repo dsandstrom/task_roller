@@ -15,7 +15,8 @@
 
         <span class="divider">|</span>
         <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task) %>
+                    edit_category_project_task_path(@category, @task.project, @task),
+                    class: 'secondary-link' %>
       </p>
 
       <h4 class="task-column-title">Issue</h4>
@@ -30,7 +31,8 @@
 
         <span class="divider">|</span>
         <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task) %>
+                    edit_category_project_task_path(@category, @task.project, @task),
+                    class: 'secondary-link' %>
       </p>
 
       <h4 class="task-column-title">Status</h4>
@@ -40,13 +42,15 @@
           <span class="divider">|</span>
           <%= link_to 'change to closed',
                       close_category_task_path(@category, @task),
-                      method: :patch  %>
+                      method: :patch,
+                      class: 'secondary-link' %>
         <% else %>
           Closed
           <span class="divider">|</span>
           <%= link_to 'change to open',
                       open_category_task_path(@category, @task),
-                      method: :patch  %>
+                      method: :patch,
+                      class: 'secondary-link' %>
         <% end %>
       </p>
     </div>

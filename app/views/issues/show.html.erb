@@ -1,3 +1,8 @@
+<%
+  create_path =
+    new_category_project_issue_task_path(@category, @issue.project, @issue)
+%>
+
 <div class="issue-show-page">
   <%= issue_header(@issue, @project, @category) %>
 
@@ -15,9 +20,7 @@
           <% end %>
           <li class="new-issue-task">
             <%= icon('plus') %>
-            <%= link_to 'Add Task',
-                        new_category_project_issue_task_path(@category, @issue.project,
-                                                             @issue) %>
+            <%= link_to 'Add Task', create_path, class: 'create-link' %>
           </li>
         </ul>
       <% else %>
@@ -31,13 +34,15 @@
           <span class="divider">|</span>
           <%= link_to 'change to closed',
                       close_category_issue_path(@category, @issue),
-                      method: :patch  %>
+                      method: :patch,
+                      class: 'secondary-link' %>
         <% else %>
           Closed
           <span class="divider">|</span>
           <%= link_to 'change to open',
                       open_category_issue_path(@category, @issue),
-                      method: :patch  %>
+                      method: :patch,
+                      class: 'secondary-link' %>
         <% end %>
       </p>
     </div>

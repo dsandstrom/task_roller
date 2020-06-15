@@ -75,6 +75,22 @@ a {
       color: $color-warning-hover;
     }
   }
+
+  &.create-link {
+    color: $color-success;
+
+    &:hover {
+      color: $color-success-hover;
+    }
+  }
+
+  &.secondary-link {
+    color: $color-tertiary;
+
+    &:hover {
+      color: $color-secondary;
+    }
+  }
 }
 
 @include breakpoint(small down) {
@@ -92,5 +108,5 @@ code {
 }
 
 .divider {
-  color: $gray;
+  color: $light-gray;
 }
