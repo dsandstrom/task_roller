@@ -25,4 +25,8 @@ class Issue < ApplicationRecord
   def description_html
     @description_html ||= (RollerMarkdown.new.render(description) || '')
   end
+
+  def open?
+    !closed?
+  end
 end

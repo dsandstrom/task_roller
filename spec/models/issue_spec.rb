@@ -67,4 +67,22 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#open?" do
+    context "closed is false" do
+      before { subject.closed = false }
+
+      it "returns true" do
+        expect(subject.open?).to eq(true)
+      end
+    end
+
+    context "closed is true" do
+      before { subject.closed = true }
+
+      it "returns false" do
+        expect(subject.open?).to eq(false)
+      end
+    end
+  end
 end
