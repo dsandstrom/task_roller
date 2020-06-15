@@ -89,7 +89,7 @@ class IssuesController < ApplicationController
     end
 
     def issue_params
-      # TODO: set user_id from logged in user
+      # TODO: set user_id from logged in user, but allow admin to change
       params.require(:issue)
             .permit(:summary, :description, :issue_type_id, :user_id)
     end
