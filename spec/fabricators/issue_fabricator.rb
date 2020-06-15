@@ -7,3 +7,11 @@ Fabricator(:issue) do
   user
   project
 end
+
+Fabricator(:open_issue, from: :issue) do
+  closed false
+end
+
+Fabricator(:closed_issue, from: :issue) do
+  closed true
+end

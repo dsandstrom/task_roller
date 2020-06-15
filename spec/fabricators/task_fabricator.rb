@@ -7,3 +7,11 @@ Fabricator(:task) do
   user
   project
 end
+
+Fabricator(:open_task, from: :task) do
+  closed false
+end
+
+Fabricator(:closed_task, from: :task) do
+  closed true
+end

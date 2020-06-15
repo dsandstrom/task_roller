@@ -2,7 +2,7 @@
 
 class IssuesController < ApplicationController
   before_action :set_category, :set_project
-  before_action :set_issue, only: %i[show edit update destroy]
+  before_action :set_issue, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
 
   def index
@@ -66,6 +66,18 @@ class IssuesController < ApplicationController
     @issue.destroy
     redirect_to category_project_url(@category, @project),
                 success: 'Issue was successfully destroyed.'
+  end
+
+  def open
+    @issue.update(closed: false)
+    redirect_to category_project_issue_url(@category, @project, @issue),
+                success: 'Issue was successfully opened.'
+  end
+
+  def close
+    @issue.update(closed: true)
+    redirect_to category_project_issue_url(@category, @project, @issue),
+                success: 'Issue was successfully closed.'
   end
 
   private

@@ -6,7 +6,7 @@
 
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue
-  before_action :set_task, only: %i[show edit update destroy]
+  before_action :set_task, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
 
   def index
@@ -63,6 +63,18 @@ class TasksController < ApplicationController
     @task.destroy
     redirect_to category_project_url(@category, @project),
                 success: 'Task was successfully destroyed.'
+  end
+
+  def open
+    @task.update(closed: false)
+    redirect_to category_project_task_url(@category, @project, @task),
+                success: 'Task was successfully opened.'
+  end
+
+  def close
+    @task.update(closed: true)
+    redirect_to category_project_task_url(@category, @project, @task),
+                success: 'Task was successfully closed.'
   end
 
   private
