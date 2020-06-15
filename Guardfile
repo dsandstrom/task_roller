@@ -46,6 +46,13 @@ group :frontend do
   end
 
   guard 'livereload' do
+    require 'guard/rspec/dsl'
+    dsl = Guard::RSpec::Dsl.new(self)
+    rails_view_exts = %w[erb haml slim]
+    rails = dsl.rails(view_extensions: rails_view_exts)
+
+    watch(rails.view_dirs)
+
     extensions = {
       css: :css,
       scss: :css,
@@ -59,8 +66,6 @@ group :frontend do
       jpeg: :jpeg
       # less: :less, # uncomment if you want LESS stylesheets done in browser
     }
-
-    rails_view_exts = %w[erb haml slim]
 
     # file types LiveReload may optimize refresh for
     compiled_exts = extensions.values.uniq
@@ -80,9 +85,8 @@ group :frontend do
 
     # file needing a full reload of the page anyway
     watch(%r{app/javascript/(?:packs|src)/[^.]+\.js$})
-    watch(%r{app/views/[^.]\.(#{rails_view_exts * '|'})$})
-    watch(%r{app/helpers/[^.]\.rb})
-    watch(%r{config/locales/[^.]\.yml})
+    watch(%r{app/helpers/[^.]+\.rb})
+    watch(%r{config/locales/[^.]+\.yml})
   end
 end
 
