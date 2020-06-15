@@ -4,6 +4,8 @@
 # TODO: restrict to reviewers except index, show
 # TODO: when issue, auto assign summary/description
 
+# rubocop:disable Metrics/ClassLength
+
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue
   before_action :set_task, only: %i[show edit update destroy open close]
@@ -131,3 +133,4 @@ class TasksController < ApplicationController
         end
     end
 end
+# rubocop:enable Metrics/ClassLength
