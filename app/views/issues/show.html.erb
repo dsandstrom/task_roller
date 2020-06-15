@@ -21,30 +21,28 @@
           </li>
         </ul>
       <% else %>
-        <p>unassigned</p>
+        <p><em>none</em></p>
       <% end %>
+
+      <h4 class="task-column-title">Status</h4>
+      <p class="issue-status">
+        <% if @issue.open? %>
+          Open
+          <span class="divider">|</span>
+          <%= link_to 'change to closed',
+                      close_category_issue_path(@category, @issue),
+                      method: :patch  %>
+        <% else %>
+          Closed
+          <span class="divider">|</span>
+          <%= link_to 'change to open',
+                      open_category_issue_path(@category, @issue),
+                      method: :patch  %>
+        <% end %>
+      </p>
     </div>
 
     <div class="issue-column second-column">
-      <div class="issue-status">
-        <p>
-          Status:
-          <% if @issue.open? %>
-            Open
-            <span class="divider">|</span>
-            <%= link_to 'change to closed',
-                        close_category_issue_path(@category, @issue),
-                        method: :patch  %>
-          <% else %>
-            Closed
-            <span class="divider">|</span>
-            <%= link_to 'change to open',
-                        open_category_issue_path(@category, @issue),
-                        method: :patch  %>
-          <% end %>
-        </p>
-      </div>
-
       <div class="issue-comments comments">
         <div class="comment issue-description">
           <header class="issue-user-date">

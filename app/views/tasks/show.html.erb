@@ -32,28 +32,26 @@
         <%= link_to 'change',
                     edit_category_project_task_path(@category, @task.project, @task) %>
       </p>
+
+      <h4 class="task-column-title">Status</h4>
+      <p class="task-status">
+        <% if @task.open? %>
+          Open
+          <span class="divider">|</span>
+          <%= link_to 'change to closed',
+                      close_category_task_path(@category, @task),
+                      method: :patch  %>
+        <% else %>
+          Closed
+          <span class="divider">|</span>
+          <%= link_to 'change to open',
+                      open_category_task_path(@category, @task),
+                      method: :patch  %>
+        <% end %>
+      </p>
     </div>
 
     <div class="task-column second-column">
-      <div class="task-status">
-        <p>
-          Status:
-          <% if @task.open? %>
-            Open
-            <span class="divider">|</span>
-            <%= link_to 'change to closed',
-                        close_category_task_path(@category, @task),
-                        method: :patch  %>
-          <% else %>
-            Closed
-            <span class="divider">|</span>
-            <%= link_to 'change to open',
-                        open_category_task_path(@category, @task),
-                        method: :patch  %>
-          <% end %>
-        </p>
-      </div>
-
       <div class="task-comments comments">
         <div class="comment task-description">
           <header class="task-user-date">
