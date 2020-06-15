@@ -4,13 +4,19 @@
   <div class="task-columns">
     <div class="task-column first-column">
       <h4 class="task-column-title">Assigned</h4>
-      <% if @task.assignees.any? %>
-        <p class="task-assignees">
-          <%= render partial: 'shared/assignee', collection: @task.assignees %>
-        </p>
-      <% else %>
-        <p>undecided</p>
-      <% end %>
+      <p>
+        <span class="task-assignees">
+          <% if @task.assignees.any? %>
+            <%= render partial: 'shared/assignee', collection: @task.assignees %>
+          <% else %>
+            <em>undecided</em>
+          <% end %>
+        </span>
+
+        <span class="divider">|</span>
+        <%= link_to 'change',
+                    edit_category_project_task_path(@category, @task.project, @task) %>
+      </p>
 
       <h4 class="task-column-title">Issue</h4>
       <p class="task-issue">
@@ -21,6 +27,7 @@
         <% else %>
           <em>none</em>
         <% end %>
+
         <span class="divider">|</span>
         <%= link_to 'change',
                     edit_category_project_task_path(@category, @task.project, @task) %>
@@ -33,12 +40,14 @@
           Status:
           <% if @task.open? %>
             Open
-            <%= link_to 'Change to closed',
+            <span class="divider">|</span>
+            <%= link_to 'change to closed',
                         close_category_task_path(@category, @task),
                         method: :patch  %>
           <% else %>
             Closed
-            <%= link_to 'Change to open',
+            <span class="divider">|</span>
+            <%= link_to 'change to open',
                         open_category_task_path(@category, @task),
                         method: :patch  %>
           <% end %>

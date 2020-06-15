@@ -31,12 +31,14 @@
           Status:
           <% if @issue.open? %>
             Open
-            <%= link_to 'Change to closed',
+            <span class="divider">|</span>
+            <%= link_to 'change to closed',
                         close_category_issue_path(@category, @issue),
                         method: :patch  %>
           <% else %>
             Closed
-            <%= link_to 'Change to open',
+            <span class="divider">|</span>
+            <%= link_to 'change to open',
                         open_category_issue_path(@category, @issue),
                         method: :patch  %>
           <% end %>
