@@ -13,15 +13,18 @@
       <% end %>
 
       <h4 class="task-column-title">Issue</h4>
-      <% if @task.issue %>
-        <p class="task-issue">
+      <p class="task-issue">
+        <% if @task.issue %>
           <%= issue_type_icon_tag(@task.issue.issue_type) %>
           <%= link_to @task.issue.summary,
                       category_project_issue_path(@category, @task.project, @task.issue) %>
-        </p>
-      <% else %>
-        <p>n/a</p>
-      <% end %>
+        <% else %>
+          <em>none</em>
+        <% end %>
+        <span class="divider">|</span>
+        <%= link_to 'change',
+                    edit_category_project_task_path(@category, @task.project, @task) %>
+      </p>
     </div>
 
     <div class="task-column second-column">

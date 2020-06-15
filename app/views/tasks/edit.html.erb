@@ -11,7 +11,8 @@
 <%= render 'form', task: @task, task_types: @task_types,
                    url: category_project_task_path(@category, @project, @task),
                    user_options: @user_options,
-                   assignee_options: @assignee_options %>
+                   assignee_options: @assignee_options,
+                   issue_options: @issue_options %>
 
 <%= link_to 'Back to task',
             category_project_task_path(@category, @project, @task) %>

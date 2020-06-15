@@ -21,6 +21,16 @@
     </div>
   <% end %>
 
+  <% if issue_options&.any? %>
+    <div class="field">
+      <%= form.label :issue_id, 'Linked Issue' %>
+      <%= form.select :issue_id,
+                      options_for_select(issue_options, task.issue_id),
+                      { include_blank: '- None -' },
+                      { id: :task_issue_id } %>
+    </div>
+  <% end %>
+
   <div class="field">
     <%= form.label :task_type_id, 'Type' %>
     <div id="task_task_type_labels" class="task-task-type-options">
