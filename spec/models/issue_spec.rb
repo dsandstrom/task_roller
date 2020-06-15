@@ -68,6 +68,27 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#short_summary" do
+    let(:short_summary_length) { 100 }
+
+    context "when summary is short" do
+      before { subject.summary = "short" }
+
+      it "lets it be" do
+        expect(subject.short_summary).to eq("short")
+      end
+    end
+
+    context "when summary is 1 too long" do
+      before { subject.summary = "#{'a' * short_summary_length}b" }
+
+      it "truncates it" do
+        expect(subject.short_summary)
+          .to eq("#{'a' * (short_summary_length - 3)}...")
+      end
+    end
+  end
+
   describe "#open?" do
     context "closed is false" do
       before { subject.closed = false }

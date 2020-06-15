@@ -26,6 +26,10 @@ class Issue < ApplicationRecord
     @description_html ||= (RollerMarkdown.new.render(description) || '')
   end
 
+  def short_summary
+    @short_summary ||= summary&.truncate(100)
+  end
+
   def open?
     !closed?
   end
