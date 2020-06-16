@@ -21,6 +21,14 @@ class Task < ApplicationRecord
 
   # CLASS
 
+  def self.all_open
+    where(closed: false)
+  end
+
+  def self.all_closed
+    where(closed: true)
+  end
+
   # INSTANCE
 
   def description_html

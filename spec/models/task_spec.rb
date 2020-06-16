@@ -40,6 +40,54 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:assignees) }
   it { is_expected.to have_many(:comments).dependent(:destroy) }
 
+  # CLASS
+
+  describe ".all_open" do
+    context "when no tasks" do
+      before { Task.destroy_all }
+
+      it "returns []" do
+        expect(Task.all_open).to eq([])
+      end
+    end
+
+    context "when one open, one closed tasks" do
+      let!(:task) { Fabricate(:open_task) }
+
+      before do
+        Fabricate(:closed_task)
+      end
+
+      it "returns the open one" do
+        expect(Task.all_open).to eq([task])
+      end
+    end
+  end
+
+  describe ".all_closed" do
+    context "when no tasks" do
+      before { Task.destroy_all }
+
+      it "returns []" do
+        expect(Task.all_closed).to eq([])
+      end
+    end
+
+    context "when one closed, one closed tasks" do
+      let!(:task) { Fabricate(:closed_task) }
+
+      before do
+        Fabricate(:open_task)
+      end
+
+      it "returns the closed one" do
+        expect(Task.all_closed).to eq([task])
+      end
+    end
+  end
+
+  # INSTANCE
+
   describe "#task_assignees" do
     let(:task) { Fabricate(:task) }
 
