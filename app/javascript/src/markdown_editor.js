@@ -4,6 +4,30 @@
 import EasyMDE from 'easymde/dist/easymde.min.js';
 import hljs from 'highlight.js';
 
+// TODO: import just the highlight.js languages that are needed
+// https://bjacobel.com/2016/12/04/highlight-bundle-size/
+//
+// import hljs from 'highlight.js/lib/highlight';
+//
+// ['javascript', 'python', 'bash'].forEach((langName) => {
+//   // Using require() here because import() support hasn't landed in Webpack
+//   // yet
+//   const langModule = require(`highlight.js/lib/languages/${langName}`);
+//   hljs.registerLanguage(langName, langModule);
+// });
+// to exclude from pack (not sure where to add)
+// module.exports = {
+//   ...
+//   plugins: [
+//     ...
+//     new webpack.ContextReplacementPlugin(
+//       /highlight\.js\/lib\/languages$/,
+//       new RegExp(`^./(${['javascript', 'python', 'bash'].join('|')})$`),
+//     ),
+//   ],
+//   ...
+// }
+
 export class MarkdownEditor {
   constructor(elem) {
     this.elem = elem;
