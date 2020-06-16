@@ -20,6 +20,7 @@
 
 <div class="issues">
   <% if @issues.any? %>
+    <%= render 'filter_form', category: @category, project: @project %>
     <%= render @issues %>
   <% else %>
     <p class="no-issue">None yet</p>

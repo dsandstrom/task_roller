@@ -1,0 +1,33 @@
+<%
+return unless category
+
+index_path =
+  if category && project
+    category_project_issues_path(category, project)
+  else
+    category_issues_path(category, project)
+  end
+%>
+
+<div class="issue">
+  <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
+    <div class="field">
+      <%= label_tag :status_all, 'All' %>
+      <%= radio_button_tag :status, :all, (params[:status].blank? || params[:status] == 'all') %>
+
+      <%= label_tag :status_open, 'Open' %>
+      <%= radio_button_tag :status, :open, params[:status] == 'open' %>
+
+      <%= label_tag :status_closed, 'Closed' %>
+      <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
+    </div>
+
+    <div class="actions">
+      <%= submit_tag 'Filter' %>
+    </div>
+  <% end %>
+
+  <p>
+    <%= link_to 'Clear filters', index_path %>
+  </p>
+</div>
