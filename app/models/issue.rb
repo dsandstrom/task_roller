@@ -28,6 +28,28 @@ class Issue < ApplicationRecord
     where(closed: true)
   end
 
+  def self.filter(filters = {})
+    parent = filters[:project] || filters[:category]
+    return Issue.none unless parent
+
+    issues = parent.issues
+    return Issue.none unless issues&.any?
+
+    issues = issues.filter_by_status(filters[:status])
+    issues.order(updated_at: :desc)
+  end
+
+  # used by .filter
+  def self.filter_by_status(status)
+    if status == 'open'
+      all_open
+    elsif status == 'closed'
+      all_closed
+    else
+      all
+    end
+  end
+
   # INSTANCE
 
   def description_html

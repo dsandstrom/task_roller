@@ -85,6 +85,137 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".filter" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:different_project) { Fabricate(:project, category: category) }
+
+    context "when filters" do
+      context ":category" do
+        context "when no issues" do
+          it "returns []" do
+            expect(Issue.filter(category: category)).to eq([])
+          end
+        end
+
+        context "when the category has an issue" do
+          let!(:issue) { Fabricate(:issue, project: project) }
+
+          before { Fabricate(:issue) }
+
+          it "returns it" do
+            expect(Issue.filter(category: category)).to eq([issue])
+          end
+        end
+
+        context "when the category open and closed issues" do
+          let!(:open_issue) { Fabricate(:open_issue, project: project) }
+          let!(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+          before do
+            Timecop.freeze(2.weeks.ago) do
+              open_issue.touch
+            end
+            Timecop.freeze(1.week.ago) do
+              closed_issue.touch
+            end
+          end
+
+          it "orders by updated_at desc" do
+            expect(Issue.filter(category: category))
+              .to eq([closed_issue, open_issue])
+          end
+        end
+
+        context "and :open" do
+          context "is set as 'open'" do
+            context "returns non-closed issues" do
+              let!(:issue) { Fabricate(:open_issue, project: project) }
+
+              before do
+                Fabricate(:open_issue)
+                Fabricate(:closed_issue, project: project)
+              end
+
+              it "returns it" do
+                expect(Issue.filter(category: category, status: "open"))
+                  .to eq([issue])
+              end
+            end
+          end
+
+          context "is set as 'closed'" do
+            context "returns non-closed issues" do
+              let!(:issue) { Fabricate(:closed_issue, project: project) }
+
+              before do
+                Fabricate(:closed_issue)
+                Fabricate(:open_issue, project: project)
+              end
+
+              it "returns it" do
+                expect(Issue.filter(category: category, status: "closed"))
+                  .to eq([issue])
+              end
+            end
+          end
+
+          context "is set as 'all'" do
+            context "returns open and closed issues" do
+              let!(:open_issue) { Fabricate(:open_issue, project: project) }
+              let!(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+              before do
+                Fabricate(:issue)
+              end
+
+              it "returns it" do
+                issues = Issue.filter(category: category, status: "all")
+                expect(issues.count).to eq(2)
+                expect(issues).to include(open_issue)
+                expect(issues).to include(closed_issue)
+              end
+            end
+          end
+        end
+      end
+
+      context ":project" do
+        context "when no issues" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:different_project) { Fabricate(:project, category: category) }
+
+          before { Fabricate(:issue, project: different_project) }
+
+          it "returns []" do
+            expect(Issue.filter(project: project)).to eq([])
+          end
+        end
+
+        context "when the project has an issue" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:different_project) { Fabricate(:project, category: category) }
+          let!(:issue) { Fabricate(:issue, project: project) }
+
+          before { Fabricate(:issue, project: different_project) }
+
+          it "returns it" do
+            expect(Issue.filter(project: project)).to eq([issue])
+          end
+        end
+      end
+    end
+
+    context "when no filters" do
+      it "returns []" do
+        Fabricate(:issue)
+        expect(Issue.filter).to eq([])
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#tasks" do
