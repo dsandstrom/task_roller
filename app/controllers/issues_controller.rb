@@ -6,14 +6,7 @@ class IssuesController < ApplicationController
   before_action :set_form_options, only: %i[new edit]
 
   def index
-    @issues =
-      if @category && @project
-        @project.issues.order(updated_at: :desc)
-      elsif @category
-        @category.issues.order(updated_at: :desc)
-      else
-        Issue.all.order(updated_at: :desc)
-      end
+    @issues = Issue.filter(build_filters)
   end
 
   # TODO: add new task link
@@ -114,5 +107,18 @@ class IssuesController < ApplicationController
         User::VALID_EMPLOYEE_TYPES.map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
         end
+    end
+
+    def build_filters
+      filters = {}
+      %i[status].each do |param|
+        filters[param] = params[param]
+      end
+      if @project
+        filters[:project] = @project
+      else
+        filters[:category] = @category
+      end
+      filters
     end
 end
