@@ -129,52 +129,44 @@ RSpec.describe Issue, type: :model do
 
         context "and :open" do
           context "is set as 'open'" do
-            context "returns non-closed issues" do
-              let!(:issue) { Fabricate(:open_issue, project: project) }
+            let!(:issue) { Fabricate(:open_issue, project: project) }
 
-              before do
-                Fabricate(:open_issue)
-                Fabricate(:closed_issue, project: project)
-              end
+            before do
+              Fabricate(:open_issue)
+              Fabricate(:closed_issue, project: project)
+            end
 
-              it "returns it" do
-                expect(Issue.filter(category: category, status: "open"))
-                  .to eq([issue])
-              end
+            it "returns non-closed issues" do
+              expect(Issue.filter(category: category, status: "open"))
+                .to eq([issue])
             end
           end
 
           context "is set as 'closed'" do
-            context "returns non-closed issues" do
-              let!(:issue) { Fabricate(:closed_issue, project: project) }
+            let!(:issue) { Fabricate(:closed_issue, project: project) }
 
-              before do
-                Fabricate(:closed_issue)
-                Fabricate(:open_issue, project: project)
-              end
+            before do
+              Fabricate(:closed_issue)
+              Fabricate(:open_issue, project: project)
+            end
 
-              it "returns it" do
-                expect(Issue.filter(category: category, status: "closed"))
-                  .to eq([issue])
-              end
+            it "returns non-closed issues" do
+              expect(Issue.filter(category: category, status: "closed"))
+                .to eq([issue])
             end
           end
 
           context "is set as 'all'" do
-            context "returns open and closed issues" do
-              let!(:open_issue) { Fabricate(:open_issue, project: project) }
-              let!(:closed_issue) { Fabricate(:closed_issue, project: project) }
+            let!(:open_issue) { Fabricate(:open_issue, project: project) }
+            let!(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
-              before do
-                Fabricate(:issue)
-              end
+            before do
+              Fabricate(:issue)
+            end
 
-              it "returns it" do
-                issues = Issue.filter(category: category, status: "all")
-                expect(issues.count).to eq(2)
-                expect(issues).to include(open_issue)
-                expect(issues).to include(closed_issue)
-              end
+            it "returns open and closed issues" do
+              issues = Issue.filter(category: category, status: "all")
+              expect(issues).to contain_exactly(open_issue, closed_issue)
             end
           end
         end
