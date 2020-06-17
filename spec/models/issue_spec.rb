@@ -312,6 +312,114 @@ RSpec.describe Issue, type: :model do
             end
           end
         end
+
+        context "and :order" do
+          context "is unset" do
+            it "orders by updated_at desc" do
+              second_issue = Fabricate(:issue, project: project)
+              first_issue = Fabricate(:issue, project: project)
+
+              Timecop.freeze(1.day.ago) do
+                second_issue.touch
+              end
+
+              expect(Issue.filter(category: category))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'updated,desc'" do
+            it "orders by updated_at desc" do
+              second_issue = Fabricate(:issue, project: project)
+              first_issue = Fabricate(:issue, project: project)
+
+              Timecop.freeze(1.day.ago) do
+                second_issue.touch
+              end
+
+              expect(Issue.filter(category: category, order: "updated,desc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'updated,asc'" do
+            it "orders by updated_at asc" do
+              second_issue = Fabricate(:issue, project: project)
+              first_issue = Fabricate(:issue, project: project)
+
+              Timecop.freeze(1.day.ago) do
+                first_issue.touch
+              end
+
+              expect(Issue.filter(category: category, order: "updated,asc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'created,desc'" do
+            it "orders by created_at desc" do
+              first_issue = nil
+              second_issue = nil
+
+              Timecop.freeze(1.day.ago) do
+                second_issue = Fabricate(:issue, project: project)
+              end
+
+              Timecop.freeze(1.hour.ago) do
+                first_issue = Fabricate(:issue, project: project)
+              end
+
+              expect(Issue.filter(category: category, order: "created,desc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'created,asc'" do
+            it "orders by created_at asc" do
+              first_issue = nil
+              second_issue = nil
+
+              Timecop.freeze(1.hour.ago) do
+                second_issue = Fabricate(:issue, project: project)
+              end
+
+              Timecop.freeze(1.day.ago) do
+                first_issue = Fabricate(:issue, project: project)
+              end
+
+              expect(Issue.filter(category: category, order: "created,asc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'notupdated,desc'" do
+            it "orders by updated_at desc" do
+              second_issue = Fabricate(:issue, project: project)
+              first_issue = Fabricate(:issue, project: project)
+
+              Timecop.freeze(1.day.ago) do
+                second_issue.touch
+              end
+
+              expect(Issue.filter(category: category, order: "notupdated,desc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+
+          context "is set as 'updated,notdesc'" do
+            it "orders by updated_at desc" do
+              second_issue = Fabricate(:issue, project: project)
+              first_issue = Fabricate(:issue, project: project)
+
+              Timecop.freeze(1.day.ago) do
+                second_issue.touch
+              end
+
+              expect(Issue.filter(category: category, order: "updated,notdesc"))
+                .to eq([first_issue, second_issue])
+            end
+          end
+        end
       end
 
       context ":project" do
