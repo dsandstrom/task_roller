@@ -4,7 +4,7 @@
 # TODO: add visible boolean (for moderation)
 
 class Issue < ApplicationRecord
-  DEFAULT_ORDER = 'updated_at desc'
+  DEFAULT_ORDER = 'issues.updated_at desc'
 
   belongs_to :user # reporter
   belongs_to :issue_type
@@ -46,8 +46,8 @@ class Issue < ApplicationRecord
     return Issue.none unless issues&.any?
 
     issues = issues.apply_filters(filters)
-    # TODO: asc/desc ordering by: task create/assign date
-    issues.order(build_order_param(filters[:order]))
+    # TODO: asc/desc ordering by: task assign date
+    issues.order(build_order_param(filters[:order])).left_outer_joins(:tasks)
   end
 
   # used by .filter
@@ -92,11 +92,12 @@ class Issue < ApplicationRecord
   def self.build_order_param(order)
     return DEFAULT_ORDER if order.blank?
 
-    column, direction = order.split(',')
-    return DEFAULT_ORDER unless %w[created updated].include?(column) &&
+    table, column, direction = order.split(',')
+    return DEFAULT_ORDER unless direction && %w[issues tasks].include?(table) &&
+                                %w[created updated].include?(column) &&
                                 %w[asc desc].include?(direction)
 
-    "#{column}_at #{direction}"
+    "#{table}.#{column}_at #{direction}"
   end
 
   # INSTANCE
