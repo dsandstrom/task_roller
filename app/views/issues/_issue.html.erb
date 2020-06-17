@@ -7,7 +7,19 @@
     </h3>
   </header>
 
-  <p class="issue-user"><%= issue.user ? issue.user.name : User.destroyed_name %></p>
+  <main class="issue-main">
+    <p class="issue-user"><%= issue.user ? issue.user.name : User.destroyed_name %></p>
+    <p class="issue-created-at">Created: <%= format_date(issue.created_at) %></p>
+    <% if issue.updated_at != issue.created_at %>
+      <p class="issue-updated-at">Updated: <%= format_date(issue.updated_at) %></p>
+    <% end %>
+    <p class="issue-open-tasks">
+      Open Tasks: <%= issue.open_tasks.count %>
+    </p>
+    <p class="issue-closed-tasks">
+      Closed Tasks: <%= issue.closed_tasks.count %>
+    </p>
+  </main>
 
   <footer class="issue-footer">
     <%= link_to 'Edit',

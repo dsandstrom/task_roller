@@ -112,4 +112,12 @@ class Issue < ApplicationRecord
   def open?
     !closed?
   end
+
+  def open_tasks
+    @open_tasks ||= tasks.all_open
+  end
+
+  def closed_tasks
+    @closed_tasks ||= tasks.all_closed
+  end
 end
