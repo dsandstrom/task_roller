@@ -45,11 +45,18 @@ class Issue < ApplicationRecord
     issues = parent.issues
     return Issue.none unless issues&.any?
 
+    issues = issues.apply_filters(filters)
+    # TODO: asc/desc ordering by: task create/assign date
+    issues.order(build_order_param(filters[:order]))
+  end
+
+  # used by .filter
+  def self.apply_filters(filters)
+    issues = all
     issues = issues.filter_by_status(filters[:status])
     issues = issues.filter_by_user_id(filters[:reporter])
     issues = issues.filter_by_open_tasks(filters[:open_tasks])
-    # TODO: asc/desc ordering by: task create/assign date
-    issues.order(build_order_param(filters[:order]))
+    issues
   end
 
   # used by .filter
