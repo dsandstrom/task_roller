@@ -28,6 +28,14 @@ class Issue < ApplicationRecord
     where(closed: true)
   end
 
+  def self.with_open_task
+    left_outer_joins(:tasks).where('tasks.closed = ?', false).distinct
+  end
+
+  def self.without_open_task
+    left_outer_joins(:tasks).where('tasks.closed = ? OR tasks.id IS NULL', true)
+  end
+
   def self.filter(filters = {})
     parent = filters[:project] || filters[:category]
     return Issue.none unless parent
@@ -36,6 +44,9 @@ class Issue < ApplicationRecord
     return Issue.none unless issues&.any?
 
     issues = issues.filter_by_status(filters[:status])
+    issues = issues.filter_by_user_id(filters[:reporter])
+    issues = issues.filter_by_open_tasks(filters[:open_tasks])
+    # TODO: asc/desc ordering by: updated_at, created_at, task create/assign date
     issues.order(updated_at: :desc)
   end
 
@@ -47,6 +58,24 @@ class Issue < ApplicationRecord
       all_closed
     else
       all
+    end
+  end
+
+  # used by .filter
+  def self.filter_by_user_id(user_id)
+    return all if user_id.blank?
+
+    where(user_id: user_id)
+  end
+
+  # used by .filter
+  def self.filter_by_open_tasks(count)
+    return all if count.blank?
+
+    if count.to_i.positive?
+      with_open_task
+    else
+      without_open_task
     end
   end
 

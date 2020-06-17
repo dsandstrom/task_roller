@@ -170,6 +170,114 @@ RSpec.describe Issue, type: :model do
             end
           end
         end
+
+        context "and :reporter" do
+          let(:user) { Fabricate(:user_reporter) }
+
+          context "is set as user id with an issue" do
+            let!(:issue) do
+              Fabricate(:open_issue, project: project, user: user)
+            end
+
+            before do
+              Fabricate(:open_issue, project: project)
+            end
+
+            it "returns user issues" do
+              expect(Issue.filter(category: category, reporter: user.id))
+                .to eq([issue])
+            end
+          end
+
+          context "is set as user id without an issue" do
+            let!(:issue) do
+              Fabricate(:open_issue, project: project)
+            end
+
+            it "returns []" do
+              expect(Issue.filter(category: category, reporter: user.id))
+                .to eq([])
+            end
+          end
+
+          context "is blank" do
+            let!(:issue) do
+              Fabricate(:open_issue, project: project)
+            end
+
+            it "returns all user issues" do
+              expect(Issue.filter(category: category, reporter: ""))
+                .to eq([issue])
+            end
+          end
+        end
+
+        context "and :open_tasks" do
+          context "is set as '1'" do
+            let(:issue) { Fabricate(:open_issue, project: project) }
+
+            before do
+              Fabricate(:open_task, issue: issue)
+              Fabricate(:open_issue, project: project)
+
+              issue_with_closed_task = Fabricate(:open_issue, project: project)
+              Fabricate(:closed_task, issue: issue_with_closed_task)
+            end
+
+            it "returns issues with atleast 1 task" do
+              expect(Issue.filter(category: category, open_tasks: "1"))
+                .to eq([issue])
+            end
+          end
+
+          context "is set as '0'" do
+            let!(:issue_without_task) do
+              Fabricate(:open_issue, project: project, summary: "Without tasks")
+            end
+            let!(:issue_with_closed_task) do
+              Fabricate(:open_issue, project: project,
+                                     summary: "With closed tasks")
+            end
+
+            before do
+              issue_with_open_task =
+                Fabricate(:open_issue, project: project,
+                                       summary: "With open tasks")
+              Fabricate(:open_task, issue: issue_with_open_task)
+              Fabricate(:closed_task, issue: issue_with_closed_task)
+            end
+
+            it "returns issues with no tasks or only closed tasks" do
+              expect(Issue.filter(category: category, open_tasks: "0"))
+                .to contain_exactly(issue_without_task, issue_with_closed_task)
+            end
+          end
+
+          context "is blank" do
+            let!(:issue_with_task) do
+              Fabricate(:open_issue, project: project, summary: "With task")
+            end
+            let!(:issue_without_task) do
+              Fabricate(:open_issue, project: project, summary: "Without tasks")
+            end
+            let!(:issue_with_closed_task) do
+              Fabricate(:open_issue, project: project,
+                                     summary: "With closed tasks")
+            end
+
+            before do
+              Fabricate(:open_task, issue: issue_with_task)
+              Fabricate(:closed_task, issue: issue_with_closed_task)
+            end
+
+            it "returns all issues" do
+              issues =
+                [issue_with_task, issue_without_task, issue_with_closed_task]
+              expect(Issue.filter(category: category))
+                .to match_array(issues)
+            end
+          end
+        end
       end
 
       context ":project" do
