@@ -4,7 +4,8 @@ require "rails_helper"
 
 RSpec.describe Issue, type: :model do
   let(:reporter) { Fabricate(:user_reporter) }
-  let(:project) { Fabricate(:project) }
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
   let(:issue_type) { Fabricate(:issue_type) }
 
   before do
@@ -82,6 +83,44 @@ RSpec.describe Issue, type: :model do
       it "returns the closed one" do
         expect(Issue.all_closed).to eq([issue])
       end
+    end
+  end
+
+  describe ".with_open_task" do
+    let(:issue) { Fabricate(:open_issue, project: project) }
+
+    before do
+      Fabricate(:open_task, issue: issue)
+      Fabricate(:open_issue, project: project)
+
+      issue_with_closed_task = Fabricate(:open_issue, project: project)
+      Fabricate(:closed_task, issue: issue_with_closed_task)
+    end
+
+    it "returns issues with atleast 1 task" do
+      expect(Issue.with_open_task).to eq([issue])
+    end
+  end
+
+  describe ".without_open_task" do
+    let!(:issue_without_task) do
+      Fabricate(:open_issue, project: project, summary: "Without tasks")
+    end
+    let!(:issue_with_closed_task) do
+      Fabricate(:open_issue, project: project, summary: "With closed tasks")
+    end
+
+    before do
+      issue_with_open_task =
+        Fabricate(:open_issue, project: project,
+                               summary: "With open tasks")
+      Fabricate(:open_task, issue: issue_with_open_task)
+      Fabricate(:closed_task, issue: issue_with_closed_task)
+    end
+
+    it "returns issues with no tasks or only closed tasks" do
+      expect(Issue.without_open_task)
+        .to contain_exactly(issue_without_task, issue_with_closed_task)
     end
   end
 
@@ -214,9 +253,8 @@ RSpec.describe Issue, type: :model do
 
         context "and :open_tasks" do
           context "is set as '1'" do
-            let(:issue) { Fabricate(:open_issue, project: project) }
-
             before do
+              issue = Fabricate(:open_issue, project: project)
               Fabricate(:open_task, issue: issue)
               Fabricate(:open_issue, project: project)
 
@@ -226,7 +264,7 @@ RSpec.describe Issue, type: :model do
 
             it "returns issues with atleast 1 task" do
               expect(Issue.filter(category: category, open_tasks: "1"))
-                .to eq([issue])
+                .to eq(Issue.with_open_task)
             end
           end
 
@@ -249,32 +287,28 @@ RSpec.describe Issue, type: :model do
 
             it "returns issues with no tasks or only closed tasks" do
               expect(Issue.filter(category: category, open_tasks: "0"))
-                .to contain_exactly(issue_without_task, issue_with_closed_task)
+                .to eq(Issue.without_open_task)
             end
           end
 
           context "is blank" do
-            let!(:issue_with_task) do
-              Fabricate(:open_issue, project: project, summary: "With task")
-            end
-            let!(:issue_without_task) do
-              Fabricate(:open_issue, project: project, summary: "Without tasks")
-            end
-            let!(:issue_with_closed_task) do
-              Fabricate(:open_issue, project: project,
-                                     summary: "With closed tasks")
-            end
-
             before do
+              issue_with_task =
+                Fabricate(:open_issue, project: project, summary: "With task")
+              _issue_without_task =
+                Fabricate(:open_issue, project: project,
+                                       summary: "Without tasks")
+              issue_with_closed_task =
+                Fabricate(:open_issue, project: project,
+                                       summary: "With closed tasks")
+
               Fabricate(:open_task, issue: issue_with_task)
               Fabricate(:closed_task, issue: issue_with_closed_task)
             end
 
             it "returns all issues" do
-              issues =
-                [issue_with_task, issue_without_task, issue_with_closed_task]
               expect(Issue.filter(category: category))
-                .to match_array(issues)
+                .to match_array(category.issues)
             end
           end
         end
