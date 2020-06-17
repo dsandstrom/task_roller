@@ -7,6 +7,9 @@ index_path =
   else
     category_issues_path(category, project)
   end
+
+reporter_options =
+  options_from_collection_for_select(User.all, :id, :name_or_email, params[:reporter])
 %>
 
 <div class="issue">
@@ -20,6 +23,22 @@ index_path =
 
       <%= label_tag :status_closed, 'Closed' %>
       <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :open_tasks_all, 'All' %>
+      <%= radio_button_tag :open_tasks, :all, (params[:open_tasks].blank? || params[:open_tasks] == 'all') %>
+
+      <%= label_tag :open_tasks_1, 'With open tasks' %>
+      <%= radio_button_tag :open_tasks, '1', params[:open_tasks] == '1' %>
+
+      <%= label_tag :open_tasks_0, 'Without any open tasks' %>
+      <%= radio_button_tag :open_tasks, '0', params[:open_tasks] == '0' %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :reporter, 'Reporter' %>
+      <%= select_tag :reporter, reporter_options, include_blank: '- Any -' %>
     </div>
 
     <div class="actions">
