@@ -12,6 +12,7 @@ module CategoriesHelper
   def category_header(category)
     content_tag :header, class: 'category-header' do
       concat content_tag(:h1, link_to(category.name, category))
+      concat breadcrumbs
       concat category_tags(category)
     end
   end

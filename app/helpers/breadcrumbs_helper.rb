@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BreadcrumbsHelper
-  def breadcrumbs(views)
+  def breadcrumbs(views = [])
     views << ['Back', :back]
 
     content_tag :div, class: 'breadcrumbs' do
