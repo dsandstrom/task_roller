@@ -9,14 +9,17 @@ index_path =
   end
 
 reporter_options =
-  options_from_collection_for_select(User.all, :id, :name_or_email, params[:reporter])
+  options_from_collection_for_select(User.all, :id, :name_or_email,
+                                     params[:reporter])
 %>
 
 <div class="issue">
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <div class="field">
       <%= label_tag :status_all, 'All' %>
-      <%= radio_button_tag :status, :all, (params[:status].blank? || params[:status] == 'all') %>
+      <%= radio_button_tag :status, :all,
+                           (params[:status].blank? ||
+                             params[:status] == 'all') %>
 
       <%= label_tag :status_open, 'Open' %>
       <%= radio_button_tag :status, :open, params[:status] == 'open' %>
@@ -27,7 +30,9 @@ reporter_options =
 
     <div class="field">
       <%= label_tag :open_tasks_all, 'All' %>
-      <%= radio_button_tag :open_tasks, :all, (params[:open_tasks].blank? || params[:open_tasks] == 'all') %>
+      <%= radio_button_tag :open_tasks, :all,
+                           (params[:open_tasks].blank? ||
+                             params[:open_tasks] == 'all') %>
 
       <%= label_tag :open_tasks_1, 'With open tasks' %>
       <%= radio_button_tag :open_tasks, '1', params[:open_tasks] == '1' %>
@@ -39,6 +44,25 @@ reporter_options =
     <div class="field">
       <%= label_tag :reporter, 'Reporter' %>
       <%= select_tag :reporter, reporter_options, include_blank: '- Any -' %>
+    </div >
+
+    <div class="field">
+      <%= label_tag :order_updated_desc, 'Edited v' %>
+      <%= radio_button_tag :order, 'updated,desc',
+                           (params[:order].blank? ||
+                              params[:order] == 'updated,desc') %>
+
+      <%= label_tag :order_updated_asc, 'Edited ^' %>
+      <%= radio_button_tag :order, 'updated,asc',
+                           params[:order] == 'updated,asc' %>
+
+      <%= label_tag :order_created_desc, 'Added v' %>
+      <%= radio_button_tag :order, 'created,desc',
+                           params[:order] == 'created,desc' %>
+
+      <%= label_tag :order_created_asc, 'Added ^' %>
+      <%= radio_button_tag :order, 'created,asc',
+                           params[:order] == 'created,asc' %>
     </div>
 
     <div class="actions">
