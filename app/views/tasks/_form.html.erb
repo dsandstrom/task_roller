@@ -5,7 +5,7 @@
   <%# TODO: add choices, not a choice, bub %>
   <% if user_options&.any? %>
     <div class="field">
-      <%= form.label :user_id, 'Assigner' %>
+      <%= form.label :user_id, 'Reviewer' %>
       <%= form.select :user_id,
                       grouped_options_for_select(user_options, task.user_id),
                       {}, id: :task_user_id %>
