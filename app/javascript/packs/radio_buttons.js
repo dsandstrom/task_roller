@@ -58,8 +58,10 @@ class RadioButtons {
 
 document.addEventListener('turbolinks:load', function() {
   const radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
-                    'task_type_color_labels', 'task_type_icon_labels',
-                    'issue_issue_type_labels', 'task_task_type_labels'];
+                          'task_type_color_labels', 'task_type_icon_labels',
+                          'issue_issue_type_labels', 'task_task_type_labels',
+                          'issue_status_labels', 'issue_open_tasks_labels',
+                          'issue_order_labels'];
   return (() => {
     const result = [];
     for (let id of Array.from(radioButtonIds)) {

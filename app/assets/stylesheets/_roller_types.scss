@@ -3,7 +3,8 @@
 .task-type-color-options,
 .task-type-icon-options,
 .issue-issue-type-options,
-.task-task-type-options {
+.task-task-type-options,
+.issue-filter-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -28,10 +29,6 @@
         color: $gray;
       }
     }
-
-    &.active {
-      border-color: $gray;
-    }
   }
 
   i {
@@ -44,16 +41,13 @@
 
 .issue-type-color-options,
 .task-type-color-options,
-.issue-issue-type-options {
+.issue-issue-type-options,
+.issue-filter-options {
   margin-bottom: 1rem;
 
   label {
     border-width: 1px;
     border-style: solid;
-
-    &.active {
-      border-color: $black;
-    }
   }
 }
 
