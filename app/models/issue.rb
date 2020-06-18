@@ -46,8 +46,7 @@ class Issue < ApplicationRecord
     return Issue.none unless issues&.any?
 
     issues = issues.apply_filters(filters)
-    # TODO: asc/desc ordering by: task assign date
-    issues.order(build_order_param(filters[:order])).left_outer_joins(:tasks)
+    issues.order(build_order_param(filters[:order]))
   end
 
   # used by .filter
@@ -92,12 +91,12 @@ class Issue < ApplicationRecord
   def self.build_order_param(order)
     return DEFAULT_ORDER if order.blank?
 
-    table, column, direction = order.split(',')
-    return DEFAULT_ORDER unless direction && %w[issues tasks].include?(table) &&
+    column, direction = order.split(',')
+    return DEFAULT_ORDER unless direction &&
                                 %w[created updated].include?(column) &&
                                 %w[asc desc].include?(direction)
 
-    "#{table}.#{column}_at #{direction}"
+    "issues.#{column}_at #{direction}"
   end
 
   # INSTANCE

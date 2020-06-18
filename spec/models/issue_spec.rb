@@ -328,7 +328,7 @@ RSpec.describe Issue, type: :model do
             end
           end
 
-          context "is set as 'issues,updated,desc'" do
+          context "is set as 'updated,desc'" do
             it "orders by updated_at desc" do
               second_issue = Fabricate(:issue, project: project)
               first_issue = Fabricate(:issue, project: project)
@@ -337,12 +337,12 @@ RSpec.describe Issue, type: :model do
                 second_issue.touch
               end
 
-              options = { category: category, order: "issues,updated,desc" }
+              options = { category: category, order: "updated,desc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
 
-          context "is set as 'issues,updated,asc'" do
+          context "is set as 'updated,asc'" do
             it "orders by updated_at asc" do
               second_issue = Fabricate(:issue, project: project)
               first_issue = Fabricate(:issue, project: project)
@@ -351,12 +351,12 @@ RSpec.describe Issue, type: :model do
                 first_issue.touch
               end
 
-              options = { category: category, order: "issues,updated,asc" }
+              options = { category: category, order: "updated,asc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
 
-          context "is set as 'issues,created,desc'" do
+          context "is set as 'created,desc'" do
             it "orders by created_at desc" do
               first_issue = nil
               second_issue = nil
@@ -369,12 +369,12 @@ RSpec.describe Issue, type: :model do
                 first_issue = Fabricate(:issue, project: project)
               end
 
-              options = { category: category, order: "issues,created,desc" }
+              options = { category: category, order: "created,desc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
 
-          context "is set as 'issues,created,asc'" do
+          context "is set as 'created,asc'" do
             it "orders by created_at asc" do
               first_issue = nil
               second_issue = nil
@@ -387,12 +387,12 @@ RSpec.describe Issue, type: :model do
                 first_issue = Fabricate(:issue, project: project)
               end
 
-              options = { category: category, order: "issues,created,asc" }
+              options = { category: category, order: "created,asc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
 
-          context "is set as 'notissues,updated,desc'" do
+          context "is set as 'notupdated,desc'" do
             it "orders by updated_at desc" do
               second_issue = Fabricate(:issue, project: project)
               first_issue = Fabricate(:issue, project: project)
@@ -401,12 +401,12 @@ RSpec.describe Issue, type: :model do
                 second_issue.touch
               end
 
-              options = { category: category, order: "notissues,updated,desc" }
+              options = { category: category, order: "notupdated,desc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
 
-          context "is set as 'issues,notupdated,desc'" do
+          context "is set as 'updated,notdesc'" do
             it "orders by updated_at desc" do
               second_issue = Fabricate(:issue, project: project)
               first_issue = Fabricate(:issue, project: project)
@@ -415,91 +415,7 @@ RSpec.describe Issue, type: :model do
                 second_issue.touch
               end
 
-              options = { category: category, order: "issues,notupdated,desc" }
-              expect(Issue.filter(options)).to eq([first_issue, second_issue])
-            end
-          end
-
-          context "is set as 'issues,updated,notdesc'" do
-            it "orders by updated_at desc" do
-              second_issue = Fabricate(:issue, project: project)
-              first_issue = Fabricate(:issue, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                second_issue.touch
-              end
-
-              options = { category: category, order: "issues,updated,notdesc" }
-              expect(Issue.filter(options)).to eq([first_issue, second_issue])
-            end
-          end
-
-          context "is set as 'tasks,created,asc'" do
-            it "orders by oldest task created_at asc" do
-              second_issue = Fabricate(:issue, project: project)
-              first_issue = Fabricate(:issue, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                first_issue.touch
-                Fabricate(:open_task, issue: first_issue)
-              end
-
-              Fabricate(:open_task, issue: second_issue)
-
-              options = { category: category, order: "tasks,created,asc" }
-              expect(Issue.filter(options)).to eq([first_issue, second_issue])
-            end
-          end
-
-          context "is set as 'tasks,created,desc'" do
-            it "orders by oldest task created_at desc" do
-              second_issue = Fabricate(:issue, project: project)
-              first_issue = Fabricate(:issue, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                first_issue.touch
-                Fabricate(:open_task, issue: second_issue)
-              end
-
-              Fabricate(:open_task, issue: first_issue)
-
-              options = { category: category, order: "tasks,created,desc" }
-              expect(Issue.filter(options)).to eq([first_issue, second_issue])
-            end
-          end
-
-          context "is set as 'tasks,updated,asc'" do
-            it "orders by oldest task updated_at asc" do
-              second_issue = Fabricate(:issue, project: project)
-              first_issue = Fabricate(:issue, project: project)
-              first_task = Fabricate(:open_task, issue: first_issue)
-
-              Timecop.freeze(1.day.ago) do
-                first_issue.touch
-                first_task.touch
-              end
-
-              Fabricate(:open_task, issue: second_issue)
-
-              options = { category: category, order: "tasks,updated,asc" }
-              expect(Issue.filter(options)).to eq([first_issue, second_issue])
-            end
-          end
-
-          context "is set as 'tasks,updated,desc'" do
-            it "orders by oldest task updated_at desc" do
-              second_issue = Fabricate(:issue, project: project)
-              first_issue = Fabricate(:issue, project: project)
-              second_task = Fabricate(:open_task, issue: second_issue)
-
-              Timecop.freeze(1.day.ago) do
-                first_issue.touch
-                second_task.touch
-              end
-
-              Fabricate(:open_task, issue: first_issue)
-
-              options = { category: category, order: "tasks,updated,desc" }
+              options = { category: category, order: "updated,notdesc" }
               expect(Issue.filter(options)).to eq([first_issue, second_issue])
             end
           end
