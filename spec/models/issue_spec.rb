@@ -147,7 +147,7 @@ RSpec.describe Issue, type: :model do
           end
         end
 
-        context "when the category open and closed issues" do
+        context "when the category has open and closed issues" do
           let!(:open_issue) { Fabricate(:open_issue, project: project) }
           let!(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
