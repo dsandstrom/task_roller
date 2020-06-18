@@ -19,12 +19,25 @@
                     class: 'secondary-link' %>
       </p>
 
+      <h4 class="task-column-title">Reviewer</h4>
+      <p>
+        <span class="task-user">
+          <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
+        </span>
+
+        <span class="divider">|</span>
+        <%= link_to 'change',
+                    edit_category_project_task_path(@category, @task.project, @task),
+                    class: 'secondary-link' %>
+      </p>
+
       <h4 class="task-column-title">Issue</h4>
       <p class="task-issue">
         <% if @task.issue %>
           <%= issue_type_icon_tag(@task.issue.issue_type) %>
           <%= link_to @task.issue.summary,
                       category_project_issue_path(@category, @task.project, @task.issue) %>
+          (<%= @task.issue.user.name_or_email %>)
         <% else %>
           <em>none</em>
         <% end %>
