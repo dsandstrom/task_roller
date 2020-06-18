@@ -1,10 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 class RadioButtonLabel {
   constructor(elem) {
     this.elem = elem;
@@ -18,10 +11,10 @@ class RadioButtonLabel {
   toggleDisabledClass() {
     if (this.checked()) {
       this.elem.classList.remove('disabled');
-      return this.elem.classList.add('active');
+      this.elem.classList.add('active');
     } else {
       this.elem.classList.add('disabled');
-      return this.elem.classList.remove('active');
+      this.elem.classList.remove('active');
     }
   }
 }
@@ -29,30 +22,29 @@ class RadioButtonLabel {
 class RadioButtons {
   constructor(elem) {
     this.labels = [];
-    for (let label of Array.from(elem.querySelectorAll('label'))) {
+    for (var label of elem.querySelectorAll('label')) {
       this.labels.push(new RadioButtonLabel(label));
     }
-    if (!this.labels.length) { return; }
+    if (!this.labels.length) return;
+
     this.watchForChanges();
   }
 
   watchForChanges() {
-    return (() => {
-      const result = [];
-      for (let label of Array.from(this.labels)) {
-        const radio = label.elem.querySelector('input');
-        if (!radio) { next; }
-        result.push(radio.addEventListener('change', () => {
-          return this.toggleDisabledClasses();
-        }));
-      }
-      return result;
-    })();
+    for (var label of this.labels) {
+      const radio = label.elem.querySelector('input');
+      if (!radio) return;
+
+      radio.addEventListener('change', () => {
+        this.toggleDisabledClasses();
+      });
+    }
   }
 
   toggleDisabledClasses() {
-    return Array.from(this.labels).map((label) =>
-      label.toggleDisabledClass());
+    for (var label of this.labels) {
+      label.toggleDisabledClass();
+    }
   }
 }
 
@@ -62,14 +54,10 @@ document.addEventListener('turbolinks:load', function() {
                           'issue_issue_type_labels', 'task_task_type_labels',
                           'issue_status_labels', 'issue_open_tasks_labels',
                           'issue_order_labels'];
-  return (() => {
-    const result = [];
-    for (let id of Array.from(radioButtonIds)) {
-      const labels = document.getElementById(id);
-      if (labels) { result.push(new RadioButtons(labels)); } else {
-        result.push(undefined);
-      }
-    }
-    return result;
-  })();
+  for (let id of radioButtonIds) {
+    const labels = document.getElementById(id);
+    if (!labels) continue;
+
+    new RadioButtons(labels);
+  }
 });
