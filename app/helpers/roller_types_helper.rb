@@ -42,6 +42,10 @@ module RollerTypesHelper
     RollerType::COLOR_OPTIONS.map { |t| [t.titleize, t] }
   end
 
+  def roller_radio_button_label_class(color = 'default')
+    "roller-radio-button-label roller-type-color-#{color}"
+  end
+
   private
 
     def roller_type_tag(roller_type, css_class)

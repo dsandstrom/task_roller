@@ -8,7 +8,6 @@ index_path =
     category_issues_path(category, project)
   end
 
-label = "roller-radio-button-label roller-type-color"
 reporter_options =
   options_from_collection_for_select(User.all, :id, :name_or_email,
                                      params[:reporter])
@@ -16,46 +15,28 @@ reporter_options =
 
 <div class="issue">
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
-    <div class="field">
-      <%= label_tag :status %>
-
-      <div id="issue_status_labels" class="issue-filter-options">
-        <%= label_tag :status_all, class: "#{label}-blue" do %>
-          <%= radio_button_tag :status, :all,
-                               (params[:status].blank? ||
-                                 params[:status] == 'all') %>
-          All
-        <% end %>
-
-        <%= label_tag :status_open, class: "#{label}-green" do %>
-          <%= radio_button_tag :status, :open, params[:status] == 'open' %>
-          Open
-        <% end %>
-
-        <%= label_tag :status_closed, class: "#{label}-yellow" do %>
-          <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
-          Closed
-        <% end %>
-      </div>
-    </div>
+    <%= render 'shared/status_filter_field' %>
 
     <div class="field">
       <%= label_tag :open_tasks %>
 
       <div id="issue_open_tasks_labels" class="issue-filter-options">
-        <%= label_tag :open_tasks_all, class: "#{label}-blue" do %>
+        <%= label_tag :open_tasks_all,
+                      class: roller_radio_button_label_class('blue') do %>
           <%= radio_button_tag :open_tasks, :all,
                                (params[:open_tasks].blank? ||
                                  params[:open_tasks] == 'all') %>
           All
         <% end %>
 
-        <%= label_tag :open_tasks_1, class: "#{label}-green" do %>
+        <%= label_tag :open_tasks_1,
+                      class: roller_radio_button_label_class('green') do %>
           <%= radio_button_tag :open_tasks, '1', params[:open_tasks] == '1' %>
           With open tasks
         <% end %>
 
-        <%= label_tag :open_tasks_0, class: "#{label}-yellow" do %>
+        <%= label_tag :open_tasks_0,
+                      class: roller_radio_button_label_class('yellow') do %>
           <%= radio_button_tag :open_tasks, '0', params[:open_tasks] == '0' %>
           Without any open tasks
         <% end %>
@@ -67,43 +48,14 @@ reporter_options =
       <%= select_tag :reporter, reporter_options, include_blank: '- Any -' %>
     </div >
 
-    <div class="field">
-      <%= label_tag :order %>
+    <%= render 'shared/order_filter_field' %>
 
-      <div id="issue_order_labels" class="issue-filter-options">
-        <%= label_tag :order_updated_desc, class: "#{label}-brown" do %>
-          <%= radio_button_tag :order, 'updated,desc',
-                               (params[:order].blank? ||
-                                  params[:order] == 'updated,desc') %>
-          Edited v
-        <% end %>
-
-        <%= label_tag :order_updated_asc, class: "#{label}-brown" do %>
-          <%= radio_button_tag :order, 'updated,asc',
-                               params[:order] == 'updated,asc' %>
-          Edited ^
-        <% end %>
-
-        <%= label_tag :order_created_desc, class: "#{label}-brown" do %>
-          <%= radio_button_tag :order, 'created,desc',
-                               params[:order] == 'created,desc' %>
-          Added v
-        <% end %>
-
-        <%= label_tag :order_created_asc, class: "#{label}-brown" do %>
-          <%= radio_button_tag :order, 'created,asc',
-                               params[:order] == 'created,asc' %>
-          Added ^
-        <% end %>
-      </div>
-    </div>
+    <% if searching? %>
+      <p><%= link_to 'Clear filters', index_path %></p>
+    <% end %>
 
     <div class="actions">
       <%= submit_tag 'Filter' %>
     </div>
-  <% end %>
-
-  <% if searching? %>
-    <p><%= link_to 'Clear filters', index_path %></p>
   <% end %>
 </div>

@@ -1,0 +1,34 @@
+<div class="field">
+  <%= label_tag :order %>
+
+  <div id="issue_order_labels" class="issue-filter-options">
+    <%= label_tag :order_updated_desc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'updated,desc',
+                           (params[:order].blank? ||
+                              params[:order] == 'updated,desc') %>
+      Edited v
+    <% end %>
+
+    <%= label_tag :order_updated_asc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'updated,asc',
+                           params[:order] == 'updated,asc' %>
+      Edited ^
+    <% end %>
+
+    <%= label_tag :order_created_desc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'created,desc',
+                           params[:order] == 'created,desc' %>
+      Added v
+    <% end %>
+
+    <%= label_tag :order_created_asc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'created,asc',
+                           params[:order] == 'created,asc' %>
+      Added ^
+    <% end %>
+  </div>
+</div>
