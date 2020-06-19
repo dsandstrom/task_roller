@@ -4,6 +4,7 @@
 
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
+  ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 
   belongs_to :employee, dependent: :destroy, required: false
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
@@ -23,15 +24,22 @@ class User < ApplicationRecord
   # CLASS
 
   def self.employees(type = nil)
-    if type
-      return none unless VALID_EMPLOYEE_TYPES.include?(type)
-
-      return where('employees.type = ?', type).includes(:employee)
-                                              .references(:employees)
+    unless type
+      return where('employees.type IN (?)', VALID_EMPLOYEE_TYPES)
+             .includes(:employee).references(:employees)
     end
 
-    where('employees.type IN (?)', VALID_EMPLOYEE_TYPES).includes(:employee)
-                                                        .references(:employees)
+    if type.instance_of?(Array)
+      return none unless type.all? { |t| VALID_EMPLOYEE_TYPES.include?(t) }
+
+      return where('employees.type IN (?)', type).includes(:employee)
+                                                 .references(:employees)
+    end
+
+    return none unless VALID_EMPLOYEE_TYPES.include?(type)
+
+    where('employees.type = ?', type).includes(:employee)
+                                     .references(:employees)
   end
 
   def self.admins
@@ -48,6 +56,10 @@ class User < ApplicationRecord
 
   def self.workers
     employees('Worker')
+  end
+
+  def self.assignable_employees
+    employees(ASSIGNABLE_EMPLOYEE_TYPES)
   end
 
   def self.destroyed_name

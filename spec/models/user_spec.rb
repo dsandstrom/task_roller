@@ -174,6 +174,18 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".assignable_employees" do
+    it "includes Reviewers & Workers" do
+      user_reviewer = Fabricate(:user_reviewer)
+      user_worker = Fabricate(:user_worker)
+      Fabricate(:user_admin)
+      Fabricate(:user_reporter)
+
+      expect(User.assignable_employees)
+        .to contain_exactly(user_reviewer, user_worker)
+    end
+  end
+
   describe ".destroyed_name" do
     it "includes only Workers" do
       expect(User.destroyed_name).to eq("removed")
