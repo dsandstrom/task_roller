@@ -43,7 +43,7 @@ module RollerTypesHelper
   end
 
   def roller_radio_button_label_class(color = 'default')
-    "roller-radio-button-label roller-type-color-#{color}"
+    "roller-radio-button-label #{roller_type_color(color)}"
   end
 
   private
@@ -62,6 +62,13 @@ module RollerTypesHelper
     end
 
     def roller_type_color(roller_type)
-      "roller-type-color-#{roller_type.color}"
+      color =
+        if roller_type.instance_of?(String)
+          roller_type
+        else
+          roller_type.color
+        end
+
+      "roller-type-color-#{color}"
     end
 end
