@@ -3,6 +3,7 @@
 # TODO: don't allow destroying when issues
 # TODO: when destroying, add way to move issues to new type
 
+# Base class for Issue and Task types (eg. Bug, New Feature)
 class RollerType < ApplicationRecord
   ICON_OPTIONS = IconFileReader.new.options.freeze
   COLOR_OPTIONS = %w[default blue brown green purple red yellow].freeze
