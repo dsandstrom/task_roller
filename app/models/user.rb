@@ -24,22 +24,17 @@ class User < ApplicationRecord
   # CLASS
 
   def self.employees(type = nil)
-    unless type
-      return where('employees.type IN (?)', VALID_EMPLOYEE_TYPES)
-             .includes(:employee).references(:employees)
-    end
-
-    if type.instance_of?(Array)
+    if type.blank?
+      where('employees.type IN (?)', VALID_EMPLOYEE_TYPES)
+    elsif type.instance_of?(Array)
       return none unless type.all? { |t| VALID_EMPLOYEE_TYPES.include?(t) }
 
-      return where('employees.type IN (?)', type).includes(:employee)
-                                                 .references(:employees)
-    end
+      where('employees.type IN (?)', type)
+    else
+      return none unless VALID_EMPLOYEE_TYPES.include?(type)
 
-    return none unless VALID_EMPLOYEE_TYPES.include?(type)
-
-    where('employees.type = ?', type).includes(:employee)
-                                     .references(:employees)
+      where('employees.type = ?', type)
+    end.includes(:employee).references(:employees)
   end
 
   def self.admins
