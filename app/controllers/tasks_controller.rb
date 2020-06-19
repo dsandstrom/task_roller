@@ -12,12 +12,7 @@ class TasksController < ApplicationController
   before_action :set_form_options, only: %i[new edit]
 
   def index
-    @tasks =
-      if @project
-        @project.tasks
-      else
-        @category.tasks
-      end
+    @tasks = Task.filter(build_filters)
   end
 
   def show
@@ -131,6 +126,19 @@ class TasksController < ApplicationController
         @project.issues.map do |issue|
           [issue.short_summary, issue.id]
         end
+    end
+
+    def build_filters
+      filters = {}
+      %i[status reviewer assignees order].each do |param|
+        filters[param] = params[param]
+      end
+      if @project
+        filters[:project] = @project
+      else
+        filters[:category] = @category
+      end
+      filters
     end
 end
 # rubocop:enable Metrics/ClassLength

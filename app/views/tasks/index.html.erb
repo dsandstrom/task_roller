@@ -19,6 +19,10 @@
 <% end %>
 
 <div class="tasks">
+  <% if @tasks.any? || params[:order] %>
+    <%= render 'filter_form', category: @category, project: @project %>
+  <% end %>
+
   <% if @tasks.any? %>
     <%= render @tasks %>
   <% else %>

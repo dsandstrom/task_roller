@@ -1,0 +1,96 @@
+<%
+return unless category
+
+index_path =
+  if category && project
+    category_project_tasks_path(category, project)
+  else
+    category_tasks_path(category, project)
+  end
+
+label = "roller-radio-button-label roller-type-color"
+reviewer_options =
+  options_from_collection_for_select(User.reviewers, :id, :name_or_email,
+                                     params[:reviewer])
+assignees_options =
+  options_from_collection_for_select(User.assignable_employees, :id, :name_or_email,
+                                     params[:assignees])
+%>
+
+<div class="task">
+  <%= form_tag index_path, method: :get, class: "task-filter-form" do %>
+    <div class="field">
+      <%= label_tag :status %>
+
+      <%# TODO: combine with issue %>
+      <div id="task_status_labels" class="task-filter-options">
+        <%= label_tag :status_all, class: "#{label}-blue" do %>
+          <%= radio_button_tag :status, :all,
+                               (params[:status].blank? ||
+                                 params[:status] == 'all') %>
+          All
+        <% end %>
+
+        <%= label_tag :status_open, class: "#{label}-green" do %>
+          <%= radio_button_tag :status, :open, params[:status] == 'open' %>
+          Open
+        <% end %>
+
+        <%= label_tag :status_closed, class: "#{label}-yellow" do %>
+          <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
+          Closed
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= label_tag :reviewer, 'Reviewer' %>
+      <%= select_tag :reviewer, reviewer_options, include_blank: '- Any -' %>
+    </div >
+
+    <%# TODO: add unassigned option %>
+    <div class="field">
+      <%= label_tag :assignees, 'Assignees' %>
+      <%= select_tag :assignees, assignees_options, include_blank: '- Any -' %>
+    </div >
+
+    <div class="field">
+      <%= label_tag :order %>
+
+      <div id="task_order_labels" class="task-filter-options">
+        <%= label_tag :order_updated_desc, class: "#{label}-brown" do %>
+          <%= radio_button_tag :order, 'updated,desc',
+                               (params[:order].blank? ||
+                                  params[:order] == 'updated,desc') %>
+          Edited v
+        <% end %>
+
+        <%= label_tag :order_updated_asc, class: "#{label}-brown" do %>
+          <%= radio_button_tag :order, 'updated,asc',
+                               params[:order] == 'updated,asc' %>
+          Edited ^
+        <% end %>
+
+        <%= label_tag :order_created_desc, class: "#{label}-brown" do %>
+          <%= radio_button_tag :order, 'created,desc',
+                               params[:order] == 'created,desc' %>
+          Added v
+        <% end %>
+
+        <%= label_tag :order_created_asc, class: "#{label}-brown" do %>
+          <%= radio_button_tag :order, 'created,asc',
+                               params[:order] == 'created,asc' %>
+          Added ^
+        <% end %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= submit_tag 'Filter' %>
+    </div>
+  <% end %>
+
+  <p>
+    <%= link_to 'Clear filters', index_path %>
+  </p>
+</div>

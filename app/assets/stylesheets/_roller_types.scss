@@ -4,7 +4,8 @@
 .task-type-icon-options,
 .issue-issue-type-options,
 .task-task-type-options,
-.issue-filter-options {
+.issue-filter-options,
+.task-filter-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -42,7 +43,8 @@
 .issue-type-color-options,
 .task-type-color-options,
 .issue-issue-type-options,
-.issue-filter-options {
+.issue-filter-options,
+.task-filter-options {
   margin-bottom: 1rem;
 
   label {
