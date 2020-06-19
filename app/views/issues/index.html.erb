@@ -19,7 +19,7 @@
 <% end %>
 
 <div class="issues">
-  <% if @issues.any? || params[:order] %>
+  <% if @issues.any? || searching? %>
     <%= render 'filter_form', category: @category, project: @project %>
 
     <% if @issues.any? %>

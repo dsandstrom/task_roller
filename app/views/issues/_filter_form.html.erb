@@ -103,7 +103,7 @@ reporter_options =
     </div>
   <% end %>
 
-  <p>
-    <%= link_to 'Clear filters', index_path %>
-  </p>
+  <% if searching? %>
+    <p><%= link_to 'Clear filters', index_path %></p>
+  <% end %>
 </div>

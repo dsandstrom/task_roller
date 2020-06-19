@@ -47,6 +47,10 @@ module ApplicationHelper
     'Add Comment'
   end
 
+  def searching?
+    params[:order].present?
+  end
+
   private
 
     def form_errors_list(obj)
