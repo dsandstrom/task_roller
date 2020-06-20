@@ -29,6 +29,7 @@ AllCops:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - '.git/**/*'
+    - 'app/views/**/*'
 
 Layout/IndentationConsistency:
   EnforcedStyle: 'indented_internal_methods'
