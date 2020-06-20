@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_16_034647) do
+ActiveRecord::Schema.define(version: 2020_06_20_065812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 2020_06_16_034647) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "closed", default: false, null: false
+    t.string "status"
     t.index ["closed"], name: "index_issues_on_closed"
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
     t.index ["project_id"], name: "index_issues_on_project_id"
@@ -97,6 +98,7 @@ ActiveRecord::Schema.define(version: 2020_06_16_034647) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "closed", default: false, null: false
+    t.string "status"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
