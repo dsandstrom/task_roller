@@ -11,9 +11,10 @@ index_path =
 reviewer_options =
   options_from_collection_for_select(User.reviewers, :id, :name_or_email,
                                      params[:reviewer])
-assignees_options =
-  options_from_collection_for_select(User.assignable_employees, :id, :name_or_email,
-                                     params[:assignees])
+assignable_employees = [User.unassigned] + User.assignable_employees
+assigned_options =
+  options_from_collection_for_select(assignable_employees, :id, :name_or_email,
+                                     params[:assigned])
 %>
 
 <div class="task">
@@ -25,10 +26,9 @@ assignees_options =
       <%= select_tag :reviewer, reviewer_options, include_blank: '- Any -' %>
     </div >
 
-    <%# TODO: add unassigned option %>
     <div class="field">
-      <%= label_tag :assignees, 'Assignees' %>
-      <%= select_tag :assignees, assignees_options, include_blank: '- Any -' %>
+      <%= label_tag :assigned, 'Assigned' %>
+      <%= select_tag :assigned, assigned_options, include_blank: '- Any -' %>
     </div >
 
     <%= render 'shared/order_filter_field' %>

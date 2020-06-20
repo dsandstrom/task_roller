@@ -48,7 +48,7 @@ class Task < ApplicationRecord
     tasks = all
     tasks = tasks.filter_by_status(filters[:status])
     tasks = tasks.filter_by_user_id(filters[:reviewer])
-    tasks = tasks.filter_by_assignee_ids(filters[:assignees])
+    tasks = tasks.filter_by_assigned_id(filters[:assigned])
     tasks
   end
 
@@ -71,11 +71,16 @@ class Task < ApplicationRecord
   end
 
   # used by .filter
-  def self.filter_by_assignee_ids(assignee_ids)
-    return all if assignee_ids.blank?
+  def self.filter_by_assigned_id(assigned_id)
+    return all if assigned_id.blank?
 
-    where('task_assignees.assignee_id IN (?)', assignee_ids)
-      .references(:task_assignees)
+    if assigned_id == User.unassigned.id.to_s
+      where('task_assignees.assignee_id IS NULL')
+        .references(:task_assignees)
+    else
+      where('task_assignees.assignee_id = ?', assigned_id)
+        .references(:task_assignees)
+    end
   end
 
   # used by .filter

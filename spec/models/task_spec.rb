@@ -213,7 +213,7 @@ RSpec.describe Task, type: :model do
           end
         end
 
-        context "and :assignees" do
+        context "and :assigned" do
           let(:user) { Fabricate(:user_worker) }
           let(:different_user) { Fabricate(:user_worker) }
 
@@ -227,7 +227,7 @@ RSpec.describe Task, type: :model do
             end
 
             it "returns user tasks" do
-              expect(Task.filter(category: category, assignees: [user.id]))
+              expect(Task.filter(category: category, assigned: user.id.to_s))
                 .to eq([task])
             end
           end
@@ -239,7 +239,7 @@ RSpec.describe Task, type: :model do
             end
 
             it "returns []" do
-              expect(Task.filter(category: category, assignees: [user.id]))
+              expect(Task.filter(category: category, assigned: user.id.to_s))
                 .to eq([])
             end
           end
@@ -251,7 +251,7 @@ RSpec.describe Task, type: :model do
             end
 
             it "returns all user tasks" do
-              expect(Task.filter(category: category, assignees: ""))
+              expect(Task.filter(category: category, assigned: ""))
                 .to eq([task])
             end
           end

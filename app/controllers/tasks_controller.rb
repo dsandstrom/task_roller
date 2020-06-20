@@ -130,7 +130,7 @@ class TasksController < ApplicationController
 
     def build_filters
       filters = {}
-      %i[status reviewer assignees order].each do |param|
+      %i[status reviewer assigned order].each do |param|
         filters[param] = params[param]
       end
       if @project
