@@ -467,4 +467,39 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#status_state" do
+    context "when closed is true" do
+      context "and state is nil" do
+        context "and no assignees" do
+          let(:task) { Fabricate(:task) }
+
+          it "returns 'unassigned'" do
+            expect(task.status_state).to eq("unassigned")
+          end
+        end
+
+        context "and a user is assigned" do
+          let(:task) { Fabricate(:task) }
+          let(:user) { Fabricate(:user_worker) }
+
+          before { task.assignees << user }
+
+          it "returns 'assigned'" do
+            expect(task.status_state).to eq("assigned")
+          end
+        end
+      end
+
+      context "and state is set" do
+        context "as 'in review'" do
+          let(:task) { Fabricate(:task, status: "in review") }
+
+          it "returns 'in review'" do
+            expect(task.status_state).to eq("in review")
+          end
+        end
+      end
+    end
+  end
 end

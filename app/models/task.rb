@@ -108,4 +108,19 @@ class Task < ApplicationRecord
   def open?
     !closed?
   end
+
+  # open
+  # unassigned => assign
+  # assigned => start work
+  # being worked on => put in for review
+  # in review => approve
+  #   * approved
+  # in review => disapprove
+  #   * assigned
+  # closed
+
+  def status_state
+    @status_state ||=
+      (self.status ||= assignees.any? ? 'assigned' : 'unassigned')
+  end
 end
