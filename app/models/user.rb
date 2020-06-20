@@ -53,6 +53,11 @@ class User < ApplicationRecord
     employees('Worker')
   end
 
+  def self.unassigned
+    # used in task filter form to display unassigned tasks
+    new(id: 0, name: '~ Unassigned ~')
+  end
+
   def self.assignable_employees
     employees(ASSIGNABLE_EMPLOYEE_TYPES)
   end

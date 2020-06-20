@@ -192,6 +192,18 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".unassigned" do
+    let(:user) { User.unassigned }
+
+    context "id and name" do
+      it "returns 0" do
+        expect(user).not_to be_nil
+        expect(user.id).to eq(0)
+        expect(user.name).not_to be_nil
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#employee" do
