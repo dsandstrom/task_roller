@@ -8,7 +8,10 @@ module ProjectsHelper
     end
   end
 
-  def project_header(project, category)
+  def project_header(project)
+    category = project.category
+    return unless category
+
     content_tag :header, class: 'project-header' do
       concat content_tag(:h1, link_to(project.name,
                                       category_project_path(category, project)))
