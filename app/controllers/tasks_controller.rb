@@ -24,6 +24,7 @@ class TasksController < ApplicationController
   def new
     if @task_types.any?
       @task = @project.tasks.build(task_type_id: @task_types.first.id)
+      @task.issue = @issue
     else
       # TODO: redirect to /issues_types if admin signed in
       redirect_to category_project_url(@category, @project),
