@@ -118,7 +118,8 @@ class TasksController < ApplicationController
     def set_assignee_options
       @assignee_options =
         %w[Reviewer Worker].map do |type|
-          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+          employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
+          [type.pluralize, employees]
         end
     end
 

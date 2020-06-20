@@ -9,7 +9,7 @@ index_path =
   end
 
 reporter_options =
-  options_from_collection_for_select(User.all, :id, :name_or_email,
+  options_from_collection_for_select(User.all, :id, :name_and_email,
                                      params[:reporter])
 %>
 

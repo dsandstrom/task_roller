@@ -9,11 +9,11 @@ index_path =
   end
 
 reviewer_options =
-  options_from_collection_for_select(User.reviewers, :id, :name_or_email,
+  options_from_collection_for_select(User.reviewers, :id, :name_and_email,
                                      params[:reviewer])
 assignable_employees = [User.unassigned] + User.assignable_employees
 assigned_options =
-  options_from_collection_for_select(assignable_employees, :id, :name_or_email,
+  options_from_collection_for_select(assignable_employees, :id, :name_and_email,
                                      params[:assigned])
 %>
 
