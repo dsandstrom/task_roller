@@ -512,4 +512,22 @@ RSpec.describe Task, type: :model do
       expect(task.assignable).to eq(User.assignable_employees)
     end
   end
+
+  describe "#heading" do
+    let(:task) { Fabricate(:task, summary: "Foo") }
+
+    context "when a summary" do
+      it "returns 'Task: ' and short_summary" do
+        expect(task.heading).to eq("Task: #{task.summary}")
+      end
+    end
+
+    context "when summary is blank" do
+      before { task.summary = "" }
+
+      it "returns nil" do
+        expect(task.heading).to be_nil
+      end
+    end
+  end
 end

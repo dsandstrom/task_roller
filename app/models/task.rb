@@ -105,6 +105,10 @@ class Task < ApplicationRecord
     @short_summary ||= summary&.truncate(100)
   end
 
+  def heading
+    @heading ||= ("Task: #{short_summary}" if short_summary.present?)
+  end
+
   def open?
     !closed?
   end
