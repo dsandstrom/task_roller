@@ -1,0 +1,35 @@
+<%
+  url =
+    if progression.persisted?
+      task_progression_url(task, progression)
+    else
+      task_progressions_url(task)
+    end
+  user_id_options = options_from_collection_for_select(
+    task.assignable,
+    :id,
+    :name_and_email,
+    progression.user_id
+  )
+  html = { name: 'progression_form', novalidate: 'novalidate' }
+%>
+
+<%= form_with(model: progression, url: url,
+              local: true, html: html) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :user_id, 'Assigned' %>
+    <%= form.select :user_id, user_id_options, {},
+                    id: :progression_user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :finished %>
+    <%= form.check_box :finished %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Submit' %>
+  </div>
+<% end %>

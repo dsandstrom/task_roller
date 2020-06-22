@@ -1,0 +1,11 @@
+<%= task_header(@task) %>
+
+<h2>Progress</h2>
+
+<div class="progressions">
+  <% if @progressions.any? %>
+    <%= render @progressions, task: @task %>
+  <% else %>
+    <p class="no-project">not started</p>
+  <% end %>
+</div>

@@ -1,0 +1,20 @@
+<div id="progression_<%= progression.id %>" class="progression">
+  <%= content_tag :h3, progression.user.name_or_email %>
+  <p>
+    Started:
+    <%= format_date(progression.created_at) %>
+  </p>
+  <p>
+    Status:
+    <%= progression.finished? ? 'Finished' : 'In progress' %>
+  </p>
+
+  <p>
+    <%= link_to 'edit', edit_task_progression_path(task, progression) %>
+    <span class="divider">|</span>
+    <%= link_to 'delete',
+                task_progression_path(task, progression),
+                method: :delete,
+                data: { confirm: 'Are you sure?' } %>
+  </p>
+</div>

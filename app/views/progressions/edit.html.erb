@@ -1,0 +1,9 @@
+<%= task_header @task %>
+
+<h2>Edit Progression</h2>
+
+<%= render 'form', task: @task, progression: @progression %>
+
+<p>
+  <%= link_to 'Back to task progessions', task_progressions_path(@task) %>
+</p>
