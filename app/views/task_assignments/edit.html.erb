@@ -1,0 +1,8 @@
+<%= project_header @project, task: @task %>
+
+<h2>Edit Task Assignment</h2>
+
+<%= render 'form', task: @task %>
+
+<%= link_to 'Back to task',
+            category_project_task_path(@category, @project, @task) %>

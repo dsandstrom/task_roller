@@ -9,15 +9,12 @@
           <% if @task.assignees.any? %>
             <%= render partial: 'shared/assignee', collection: @task.assignees %>
           <% else %>
-            <em>undecided</em>
+            <em>none</em>
           <% end %>
         </span>
-
-        <span class="divider">|</span>
-        <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task),
-                    class: 'secondary-link' %>
       </p>
+
+      <%= render 'task_assignments/form', task: @task %>
 
       <h4 class="task-column-title">Reviewer</h4>
       <p>

@@ -1,0 +1,24 @@
+<%
+assignee_options = options_from_collection_for_select(
+  task.assignable,
+  :id,
+  :name_and_email,
+  task.assignee_ids
+)
+%>
+
+<%= form_with model: task, url: task_assignment_path(task), local: true,
+              html: { name: 'task_assignment_form' } do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%#= form.label :assignee_ids, 'Assignees' %>
+    <%= form.select :assignee_ids, assignee_options,
+                    { include_blank: '- unassigned -' },
+                    { id: :task_assignee_ids, multiple: true } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
