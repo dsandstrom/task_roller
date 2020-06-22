@@ -11,6 +11,7 @@ class User < ApplicationRecord
                             dependent: :destroy
   has_many :assignments, through: :task_assignees, class_name: 'Task',
                          source: :task
+  has_many :progressions, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
