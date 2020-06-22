@@ -9,14 +9,14 @@ module TasksHelper
     return unless category
 
     content_tag :header, class: 'task-header' do
-      concat task_title(category, project, task)
+      concat task_header_title(category, project, task)
       concat breadcrumbs(task_header_pages(category, project, task))
     end
   end
 
   private
 
-    def task_title(category, project, task)
+    def task_header_title(category, project, task)
       heading = task.heading
       unless params[:controller] == 'tasks' && params[:action] == 'show'
         heading =
