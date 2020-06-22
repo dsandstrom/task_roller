@@ -524,4 +524,22 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#heading" do
+    let(:issue) { Fabricate(:issue, summary: "Foo") }
+
+    context "when a summary" do
+      it "returns 'Issue: ' and short_summary" do
+        expect(issue.heading).to eq("Issue: #{issue.summary}")
+      end
+    end
+
+    context "when summary is blank" do
+      before { issue.summary = "" }
+
+      it "returns nil" do
+        expect(issue.heading).to be_nil
+      end
+    end
+  end
 end

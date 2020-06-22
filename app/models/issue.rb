@@ -109,6 +109,10 @@ class Issue < ApplicationRecord
     @short_summary ||= summary&.truncate(100)
   end
 
+  def heading
+    @heading ||= ("Issue: #{short_summary}" if short_summary.present?)
+  end
+
   def open?
     !closed?
   end
