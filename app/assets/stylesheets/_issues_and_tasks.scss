@@ -25,6 +25,7 @@
   .task-header {
     margin-bottom: .5rem;
 
+    .issue-summary,
     .task-summary {
       display: flex;
       align-items: baseline;
@@ -69,7 +70,8 @@
     text-transform: none;
   }
 
-  .issue-header {
+  .issue-header,
+  .task-header {
     margin-bottom: 2rem;
   }
 }
