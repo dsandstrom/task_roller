@@ -502,4 +502,14 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#assignable" do
+    let(:task) { Fabricate(:task) }
+
+    before { Fabricate(:user_worker) }
+
+    it "returns User.assignable_employees" do
+      expect(task.assignable).to eq(User.assignable_employees)
+    end
+  end
 end

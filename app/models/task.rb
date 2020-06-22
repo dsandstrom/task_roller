@@ -109,6 +109,11 @@ class Task < ApplicationRecord
     !closed?
   end
 
+  # TODO: add options to categories/projects on which users are assignable
+  def assignable
+    @assignable ||= User.assignable_employees
+  end
+
   # open
   # unassigned => assign
   # assigned => start work
