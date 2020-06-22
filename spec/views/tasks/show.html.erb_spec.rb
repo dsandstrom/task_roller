@@ -17,9 +17,9 @@ RSpec.describe "tasks/show", type: :view do
       category_project_task_task_comments_url(@category, @project, @task)
     end
 
-    it "renders task's summary" do
+    it "renders task's heading" do
       render
-      assert_select ".task-summary", @task.heading
+      assert_select ".task-heading", @task.heading
     end
 
     it "renders task's description" do
@@ -94,9 +94,9 @@ RSpec.describe "tasks/show", type: :view do
       @comment = assign(:task_comment, @task.comments.build)
     end
 
-    it "renders summary>" do
+    it "renders heading" do
       render
-      assert_select ".task-summary", @task.heading
+      assert_select ".task-heading", @task.heading
     end
   end
 
@@ -111,9 +111,9 @@ RSpec.describe "tasks/show", type: :view do
       @task.reload
     end
 
-    it "renders summary>" do
+    it "renders heading" do
       render
-      assert_select ".task-summary", @task.heading
+      assert_select ".task-heading", @task.heading
     end
   end
 

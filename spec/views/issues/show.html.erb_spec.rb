@@ -17,9 +17,9 @@ RSpec.describe "issues/show", type: :view do
       category_project_issue_issue_comments_url(@category, @project, @issue)
     end
 
-    it "renders issue's summary" do
+    it "renders issue's heading" do
       render
-      assert_select ".issue-summary", "Issue: #{@issue.summary}"
+      assert_select ".issue-heading", @issue.heading
     end
 
     it "renders issue's description" do
@@ -53,9 +53,9 @@ RSpec.describe "issues/show", type: :view do
       @comments = assign(:comments, [])
     end
 
-    it "renders summary>" do
+    it "renders heading" do
       render
-      assert_select ".issue-summary", "Issue: #{@issue.summary}"
+      assert_select ".issue-heading", @issue.heading
     end
   end
 
@@ -69,9 +69,9 @@ RSpec.describe "issues/show", type: :view do
       @issue.reload
     end
 
-    it "renders summary>" do
+    it "renders heading" do
       render
-      assert_select ".issue-summary", "Issue: #{@issue.summary}"
+      assert_select ".issue-heading", @issue.heading
     end
   end
 

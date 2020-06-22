@@ -8,13 +8,13 @@ module ProjectsHelper
     end
   end
 
-  def project_header(project, options = {})
+  def project_header(project)
     category = project.category
     return unless category
 
     content_tag :header, class: 'project-header' do
-      concat content_tag(:h1, project_header_heading(project, options))
-      concat breadcrumbs(project_header_pages(project, options))
+      concat content_tag(:h1, project_header_heading(project))
+      concat breadcrumbs([[category.name, category_path(category)]])
       concat project_tags(project)
     end
   end
@@ -49,26 +49,11 @@ module ProjectsHelper
       project_tag text, klass
     end
 
-    def project_header_heading(project, options = {})
-      task = options[:task]
-      category = project.category
-
-      if task
-        path = category_project_task_path(category, project, task)
-        return link_to(task.heading, path)
+    def project_header_heading(project)
+      if params[:controller] == 'projects' && params[:action] == 'show'
+        return project.name
       end
 
-      path = category_project_path(category, project)
-      link_to(project.name, path)
-    end
-
-    def project_header_pages(project, options)
-      task = options[:task]
-      category = project.category
-
-      pages = [[category.name, category_path(category)]]
-      return pages unless task
-
-      pages << [project.name, category_project_path(category, project)]
+      link_to(project.name, category_project_path(project.category, project))
     end
 end

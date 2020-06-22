@@ -1,11 +1,6 @@
-<%= project_header(@project) %>
+<%= task_header(@task) %>
 
-<h2 class="task-summary">
-  <%= link_to @task.heading,
-              category_project_task_path(@category, @project, @task) %>
-</h2>
-
-<h3>New Comment</h3>
+<h2>New Comment</h2>
 
 <%= render 'form', category: @category, project: @project, task: @task,
                    task_comment: @task_comment, user_options: @user_options %>

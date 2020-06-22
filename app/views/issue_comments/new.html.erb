@@ -1,11 +1,6 @@
-<%= project_header(@project) %>
+<%= issue_header(@issue) %>
 
-<h2 class="issue-summary">
-  <%= link_to "Issue: #{@issue.summary}",
-              category_project_issue_path(@category, @project, @issue) %>
-</h2>
-
-<h3>New Comment</h3>
+<h2>New Comment</h2>
 
 <%= render 'form', category: @category, project: @project, issue: @issue,
                    issue_comment: @issue_comment, user_options: @user_options %>
