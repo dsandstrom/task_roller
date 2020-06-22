@@ -31,6 +31,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  resources :tasks, only: nil do
+    resources :progressions, except: :show
+  end
+
   resources :roller_types, only: :index
   resources :issue_types, except: %i[index show]
   resources :task_types, except: %i[index show]
