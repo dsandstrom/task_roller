@@ -39,5 +39,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   patch '/reposition_task_types/:id/:sort' => 'reposition_task_types#update',
         as: :reposition_task_type
 
+  resources :task_assignments, only: %i[edit update]
+
   root to: 'static#dashboard'
 end
