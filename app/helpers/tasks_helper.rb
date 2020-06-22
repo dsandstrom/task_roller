@@ -17,7 +17,7 @@ module TasksHelper
 
     def task_title(task)
       content_tag :div, class: 'task-title' do
-        concat content_tag :h1, "Task: #{task.summary}", class: 'task-summary'
+        concat content_tag :h1, task.heading, class: 'task-summary'
         concat task_type_tag task.task_type
       end
     end

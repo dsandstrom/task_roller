@@ -1,7 +1,7 @@
 <%= project_header(@project) %>
 
 <h2 class="task-summary">
-  <%= link_to "Task: #{@task.summary}",
+  <%= link_to @task.heading,
               category_project_task_path(@category, @project, @task) %>
 </h2>
 
