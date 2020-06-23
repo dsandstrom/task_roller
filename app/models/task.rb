@@ -146,9 +146,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   #   * assigned
   # closed
 
-  def status_state
-    @status_state ||=
-      (self.status ||= assignees.any? ? 'assigned' : 'unassigned')
+  def status
+    @status ||= (assignees.any? ? 'assigned' : 'unassigned')
   end
 
   private

@@ -18,7 +18,6 @@ RSpec.describe Task, type: :model do
   it { is_expected.to respond_to(:summary) }
   it { is_expected.to respond_to(:description) }
   it { is_expected.to respond_to(:closed) }
-  it { is_expected.to respond_to(:status) }
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:task_type_id) }
   it { is_expected.to respond_to(:project_id) }
@@ -470,36 +469,24 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "#status_state" do
+  describe "#status" do
     context "when closed is true" do
-      context "and state is nil" do
-        context "and no assignees" do
-          let(:task) { Fabricate(:task) }
+      context "and no assignees" do
+        let(:task) { Fabricate(:task) }
 
-          it "returns 'unassigned'" do
-            expect(task.status_state).to eq("unassigned")
-          end
-        end
-
-        context "and a user is assigned" do
-          let(:task) { Fabricate(:task) }
-          let(:user) { Fabricate(:user_worker) }
-
-          before { task.assignees << user }
-
-          it "returns 'assigned'" do
-            expect(task.status_state).to eq("assigned")
-          end
+        it "returns 'unassigned'" do
+          expect(task.status).to eq("unassigned")
         end
       end
 
-      context "and state is set" do
-        context "as 'in review'" do
-          let(:task) { Fabricate(:task, status: "in review") }
+      context "and a user is assigned" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
 
-          it "returns 'in review'" do
-            expect(task.status_state).to eq("in review")
-          end
+        before { task.assignees << user }
+
+        it "returns 'assigned'" do
+          expect(task.status).to eq("assigned")
         end
       end
     end
