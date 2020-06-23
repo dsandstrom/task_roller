@@ -1,0 +1,48 @@
+<%
+  url =
+    if review.persisted?
+      task_review_url(task, review)
+    else
+      task_reviews_url(task)
+    end
+  user_id_options = options_from_collection_for_select(
+    task.reviewable,
+    :id,
+    :name_and_email,
+    review.user_id
+  )
+  html = { name: 'review_form', novalidate: 'novalidate' }
+%>
+
+<%= form_with(model: review, url: url,
+              local: true, html: html) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :user_id, 'Reviewer' %>
+    <%= form.select :user_id, user_id_options, {},
+                    id: :review_user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :approved %>
+    <div id="review_approved_labels" class="review-approved-options">
+      <%= form.label :approved_pending, class: "review-approved-pending" do %>
+        <%= form.radio_button :approved, "" %>
+        Pending
+      <% end %>
+      <%= form.label :approved_true, class: "review-approved-true" do %>
+        <%= form.radio_button :approved, true %>
+        Approved
+      <% end %>
+      <%= form.label :approved_false, class: "review-approved-false" do %>
+        <%= form.radio_button :approved, false %>
+        Disapproved
+      <% end %>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Submit' %>
+  </div>
+<% end %>

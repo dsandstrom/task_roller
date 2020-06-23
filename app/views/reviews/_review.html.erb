@@ -1,0 +1,22 @@
+<div id="review_<%= review.id %>" class="review">
+  <p>
+    <% if review.approved? %>
+      Approved <%= format_date(review.updated_at) %>
+    <% elsif review.disapproved? %>
+      Dispproved <%= format_date(review.updated_at) %>
+    <% else %>
+      Pending
+      <%= link_to 'Mark Approved',
+                  task_review_path(task, review, review: { approved: true }),
+                  method: :patch %>
+      <%= link_to 'Mark Disapproved',
+                  task_review_path(task, review, review: { approved: false }),
+                  method: :patch %>
+    <% end %>
+    <br>
+    <%= link_to 'Delete',
+                task_review_path(task, review),
+                method: :delete,
+                data: { confirm: 'Are you sure?' } %>
+  </p>
+</div>

@@ -1,0 +1,9 @@
+<%= task_header @task %>
+
+<h2>Edit Review</h2>
+
+<%= render 'form', task: @task, review: @review %>
+
+<p>
+  <%= link_to 'Back to task reviews', task_reviews_path(@task) %>
+</p>

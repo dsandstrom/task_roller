@@ -1,0 +1,11 @@
+<%= task_header(@task) %>
+
+<h2>Reviews</h2>
+
+<div class="reviews">
+  <% if @reviews.any? %>
+    <%= render @reviews, task: @task %>
+  <% else %>
+    <p class="no-reviews">no reviews</p>
+  <% end %>
+</div>
