@@ -39,6 +39,18 @@ RSpec.describe Review, type: :model do
 
         it { is_expected.not_to be_valid }
       end
+
+      context "when it's task has an approved review" do
+        before { Fabricate(:approved_review, task: task) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's task has a disapproved review" do
+        before { Fabricate(:disapproved_review, task: task) }
+
+        it { is_expected.to be_valid }
+      end
     end
 
     context "for a approved review" do
@@ -55,6 +67,18 @@ RSpec.describe Review, type: :model do
 
         it { is_expected.not_to be_valid }
       end
+
+      context "when it's task has a pending review" do
+        before { Fabricate(:pending_review, task: task) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's task has a disapproved review" do
+        before { Fabricate(:disapproved_review, task: task) }
+
+        it { is_expected.to be_valid }
+      end
     end
 
     context "for a disapproved review" do
@@ -70,6 +94,18 @@ RSpec.describe Review, type: :model do
         before { Fabricate(:disapproved_review, task: task) }
 
         it { is_expected.to be_valid }
+      end
+
+      context "when it's task has a pending review" do
+        before { Fabricate(:pending_review, task: task) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's task has an approved review" do
+        before { Fabricate(:approved_review, task: task) }
+
+        it { is_expected.not_to be_valid }
       end
     end
   end

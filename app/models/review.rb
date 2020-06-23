@@ -13,8 +13,8 @@ class Review < ApplicationRecord
   def task_available
     return unless task
 
-    validate_task_has_no_other_pending
-    validate_task_has_no_other_approved
+    validate_task_has_no_pending
+    validate_task_has_no_approved
   end
 
   # CLASS
@@ -31,21 +31,31 @@ class Review < ApplicationRecord
     where(approved: true)
   end
 
+  # INSTANCE
+
+  def disapproved?
+    approved == false
+  end
+
+  def pending?
+    approved.nil?
+  end
+
   private
 
-    def validate_task_has_no_other_pending
+    def validate_task_has_no_pending
       pending = task.reviews.pending
       pending = pending.where('reviews.id != ?', id) if id
       return if pending.none?
 
-      errors.add(:task_id, 'already has a pending review')
+      errors.add(:task_id, 'already waiting for a review')
     end
 
-    def validate_task_has_no_other_approved
+    def validate_task_has_no_approved
       approved = task.reviews.approved
       approved = approved.where('reviews.id != ?', id) if id
       return if approved.none?
 
-      errors.add(:task_id, 'already has a approved review')
+      errors.add(:task_id, 'already approved')
     end
 end
