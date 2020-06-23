@@ -1,0 +1,11 @@
+<span id="progression_<%= progression.id %>" class="progression">
+  <% if progression.finished? %>
+    <%= format_date(progression.created_at) %> - <%= format_date(progression.updated_at) %>
+  <% else %>
+    Started: <%= format_date(progression.created_at) %>
+    <%= link_to 'Mark Complete',
+                task_progression_path(task, progression, progression: { finished: true }),
+                method: :patch %>
+  <% end %>
+</span>
+<br>

@@ -10,7 +10,9 @@
   <main class="task-main">
     <p class="task-assignees">
       <% if task.assignees.any? %>
-        <%= render partial: 'shared/assignee', collection: task.assignees %>
+        <%= render partial: 'shared/assignee',
+                   collection: task.assignees,
+                   locals: { task: task } %>
       <% else %>
         <em>Unassigned</em>
       <% end %>

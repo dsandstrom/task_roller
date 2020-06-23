@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Task < ApplicationRecord
+class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
 
   belongs_to :user # reviewer

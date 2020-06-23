@@ -112,16 +112,6 @@
   white-space: nowrap;
 }
 
-.assignee {
-  white-space: nowrap;
-
-  &:not(:last-child) {
-    &::after {
-      content: ',';
-    }
-  }
-}
-
 .issue-column,
 .task-column {
   &.first-column {

@@ -46,6 +46,9 @@ class ProgressionsController < ApplicationController
     # TODO: authorize access
     def set_task
       @task = Task.find(params[:task_id])
+      @project = @task.project
+      @category = @task.category
+      raise ActiveRecord::RecordNotFound unless @category
     end
 
     def set_progression

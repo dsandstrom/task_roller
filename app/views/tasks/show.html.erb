@@ -1,18 +1,35 @@
+<%
+comments = @task.comments.includes(:user)
+comment = @task.comments.build
+assignees = @task.assignees.includes(:progressions)
+assigned = @task.assigned
+%>
+
 <div class="task-show-page">
   <%= task_header(@task) %>
 
   <div class="task-columns">
     <div class="task-column first-column">
       <h4 class="task-column-title">Assigned</h4>
-      <p>
-        <span class="task-assignees">
-          <% if @task.assignees.any? %>
-            <%= render partial: 'shared/assignee', collection: @task.assignees %>
-          <% else %>
-            <em>none</em>
-          <% end %>
-        </span>
-      </p>
+      <ul class="task-assignees">
+        <% if assignees.any? %>
+            <%= render partial: 'shared/assignee',
+                       collection: assignees,
+                       locals: { task: @task } %>
+        <% else %>
+          <li><em>none</em></li>
+        <% end %>
+      </ul>
+
+      <ul class="task-assignees">
+        <% if assigned.any? %>
+            <%= render partial: 'shared/assigned',
+                       collection: assigned,
+                       locals: { task: @task } %>
+        <% else %>
+          <li><em>none</em></li>
+        <% end %>
+      </ul>
 
       <%= render 'task_assignments/form', task: @task %>
 
@@ -81,12 +98,12 @@
           </footer>
         </div>
 
-        <%= render partial: 'roller_comments/comment', collection: @comments,
+        <%= render partial: 'roller_comments/comment', collection: comments,
                    locals: { category: @category, project: @task.project, object: @task } %>
 
         <%= render 'roller_comments/form',
                    category: @category, project: @task.project, object: @task,
-                   comment: @comment, user_options: @user_options %>
+                   comment: comment, user_options: @task.user_form_options %>
       </div>
     </div>
   </div>
