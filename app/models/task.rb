@@ -10,6 +10,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :task_assignees, dependent: :destroy
   has_many :assignees, through: :task_assignees
   has_many :progressions, dependent: :destroy
+  has_many :reviews, dependent: :destroy
   has_many :comments, class_name: 'TaskComment', foreign_key: :roller_id,
                       dependent: :destroy, inverse_of: :task
   delegate :category, to: :project
