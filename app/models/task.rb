@@ -120,6 +120,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @assignable ||= User.assignable_employees
   end
 
+  def reviewable
+    @reviewable ||= User.reviewers
+  end
+
   # users from progressions that aren't current assignees
   def assigned
     @assigned ||= build_assigned

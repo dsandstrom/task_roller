@@ -515,6 +515,16 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#reviewable" do
+    let(:task) { Fabricate(:task) }
+
+    before { Fabricate(:user_worker) }
+
+    it "returns User.reviewers" do
+      expect(task.reviewable).to eq(User.reviewers)
+    end
+  end
+
   describe "#heading" do
     let(:task) { Fabricate(:task, summary: "Foo") }
 
