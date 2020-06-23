@@ -39,6 +39,8 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:path) { category_project_task_path(task.category, task.project, task) }
+
     context "with valid params" do
       it "creates a new Progression" do
         expect do
@@ -47,10 +49,10 @@ RSpec.describe ProgressionsController, type: :controller do
         end.to change(Progression, :count).by(1)
       end
 
-      it "redirects to the created progression" do
+      it "redirects to the task" do
         post :create, params: { task_id: task.to_param,
                                 progression: valid_attributes }
-        expect(response).to redirect_to(task_progressions_path(task))
+        expect(response).to redirect_to(path)
       end
     end
 
@@ -65,6 +67,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
   describe "PUT #update" do
     let(:new_user) { Fabricate(:user_worker) }
+    let(:path) { category_project_task_path(task.category, task.project, task) }
 
     context "with valid params" do
       let(:new_attributes) do
@@ -81,12 +84,12 @@ RSpec.describe ProgressionsController, type: :controller do
         end.to change(progression, :user_id).to(new_user.id)
       end
 
-      it "redirects to the progression" do
+      it "redirects to the task" do
         progression = Fabricate(:progression, task: task)
         put :update, params: { task_id: task.to_param,
                                id: progression.to_param,
                                progression: valid_attributes }
-        expect(response).to redirect_to(task_progressions_path(task))
+        expect(response).to redirect_to(path)
       end
     end
 
@@ -102,6 +105,8 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:path) { category_project_task_path(task.category, task.project, task) }
+
     it "destroys the requested progression" do
       progression = Fabricate(:progression, task: task)
       expect do
@@ -110,11 +115,11 @@ RSpec.describe ProgressionsController, type: :controller do
       end.to change(Progression, :count).by(-1)
     end
 
-    it "redirects to the progressions list" do
+    it "redirects to task" do
       progression = Fabricate(:progression, task: task)
       delete :destroy, params: { task_id: task.to_param,
                                  id: progression.to_param }
-      expect(response).to redirect_to(task_progressions_path(task))
+      expect(response).to redirect_to(path)
     end
   end
 end
