@@ -531,4 +531,37 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#assigned" do
+    let(:task) { Fabricate(:task) }
+
+    context "and no progressions" do
+      it "returns none" do
+        expect(task.assigned).to eq([])
+      end
+    end
+
+    context "and a progression" do
+      let(:user) { Fabricate(:user_worker) }
+
+      before { Fabricate(:progression, task: task, user: user) }
+
+      it "returns progression users" do
+        expect(task.assigned).to eq([user])
+      end
+    end
+
+    context "and a progression is also an assignee" do
+      let(:user) { Fabricate(:user_worker) }
+
+      before do
+        task.assignees << user
+        Fabricate(:progression, task: task, user: user)
+      end
+
+      it "returns none" do
+        expect(task.assigned).to eq([])
+      end
+    end
+  end
 end

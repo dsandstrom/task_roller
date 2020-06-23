@@ -119,6 +119,11 @@ class Task < ApplicationRecord
     @assignable ||= User.assignable_employees
   end
 
+  # users from progressions that aren't current assignees
+  def assigned
+    @assigned ||= build_assigned
+  end
+
   # open
   # unassigned => assign
   # assigned => start work
@@ -133,4 +138,14 @@ class Task < ApplicationRecord
     @status_state ||=
       (self.status ||= assignees.any? ? 'assigned' : 'unassigned')
   end
+
+  private
+
+    def build_assigned
+      users = User.joins(:progressions).where('progressions.task_id = ?', id)
+      if assignee_ids.any?
+        users = users.where('users.id NOT IN (?)', assignee_ids)
+      end
+      users.distinct
+    end
 end
