@@ -19,10 +19,38 @@ RSpec.describe Progression, type: :model do
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:user) }
 
-  it { is_expected.to be_valid }
-
   it { is_expected.to validate_presence_of(:task_id) }
   it { is_expected.to validate_presence_of(:user_id) }
+
+  describe "uniqueness" do
+    context "when user has no other progressions" do
+      it { is_expected.to be_valid }
+    end
+
+    context "when user has a finished progression for the task" do
+      before { Fabricate(:finished_progression, user: worker, task: task) }
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when user has an unfinished progression for the task" do
+      before { Fabricate(:unfinished_progression, user: worker, task: task) }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when user has an unfinished progression for another task" do
+      before { Fabricate(:unfinished_progression, user: worker) }
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when progression is saved" do
+      before { subject.save }
+
+      it { is_expected.to be_valid }
+    end
+  end
 
   # CLASS
 
