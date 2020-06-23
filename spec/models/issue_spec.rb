@@ -265,7 +265,7 @@ RSpec.describe Issue, type: :model do
 
             it "returns issues with atleast 1 task" do
               expect(Issue.filter(category: category, open_tasks: "1"))
-                .to eq(Issue.with_open_task)
+                .to match_array(Issue.with_open_task)
             end
           end
 
@@ -273,22 +273,23 @@ RSpec.describe Issue, type: :model do
             let!(:issue_without_task) do
               Fabricate(:open_issue, project: project, summary: "Without tasks")
             end
-            let!(:issue_with_closed_task) do
+            let(:issue_with_closed_task) do
               Fabricate(:open_issue, project: project,
                                      summary: "With closed tasks")
             end
+            let(:issue_with_open_task) do
+              Fabricate(:open_issue, project: project,
+                                     summary: "With open tasks")
+            end
 
             before do
-              issue_with_open_task =
-                Fabricate(:open_issue, project: project,
-                                       summary: "With open tasks")
               Fabricate(:open_task, issue: issue_with_open_task)
               Fabricate(:closed_task, issue: issue_with_closed_task)
             end
 
             it "returns issues with no tasks or only closed tasks" do
               expect(Issue.filter(category: category, open_tasks: "0"))
-                .to eq(Issue.without_open_task)
+                .to match_array(Issue.without_open_task)
             end
           end
 
