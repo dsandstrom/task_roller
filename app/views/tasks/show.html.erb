@@ -21,6 +21,14 @@ assigned = @task.assigned
         <% end %>
       </ul>
 
+      <p>
+        <% if @task.reviews.any? %>
+          <%= render @task.reviews, task: @task %>
+        <% else %>
+          <%= link_to 'Mark Complete', task_reviews_path(@task, review: { user_id: @task.user_id }), method: :post %>
+        <% end %>
+      </p>
+
       <ul class="task-assignees">
         <% if assigned.any? %>
             <%= render partial: 'shared/assigned',

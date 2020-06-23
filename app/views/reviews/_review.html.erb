@@ -6,9 +6,11 @@
       Dispproved <%= format_date(review.updated_at) %>
     <% else %>
       Pending
+      <br>
       <%= link_to 'Mark Approved',
                   task_review_path(task, review, review: { approved: true }),
                   method: :patch %>
+      <br>
       <%= link_to 'Mark Disapproved',
                   task_review_path(task, review, review: { approved: false }),
                   method: :patch %>
