@@ -564,4 +564,28 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#user_form_options" do
+    let(:task) { Fabricate(:task) }
+
+    context "when no users" do
+      it "returns [['Admin', []], 'Reviewer', []]]" do
+        expect(task.user_form_options).to eq([["Admin", []], ["Reviewer", []]])
+      end
+    end
+
+    context "when users" do
+      it "returns admins and reviewers" do
+        admin = Fabricate(:user_admin)
+        reviewer = Fabricate(:user_reviewer)
+        Fabricate(:user_worker)
+        Fabricate(:user_reporter)
+        options = [
+          ["Admin", [[admin.name_and_email, admin.id]]],
+          ["Reviewer", [[reviewer.name_and_email, reviewer.id]]]
+        ]
+        expect(task.user_form_options).to eq(options)
+      end
+    end
+  end
 end

@@ -124,6 +124,13 @@ class Task < ApplicationRecord
     @assigned ||= build_assigned
   end
 
+  def user_form_options
+    @user_form_options ||=
+      %w[Admin Reviewer].map do |type|
+        [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
+      end
+  end
+
   # open
   # unassigned => assign
   # assigned => start work
