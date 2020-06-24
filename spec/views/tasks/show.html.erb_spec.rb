@@ -79,18 +79,6 @@ RSpec.describe "tasks/show", type: :view do
     end
   end
 
-  context "when no project" do
-    before do
-      project = Fabricate(:project, category: @category)
-      @task = assign(:task, Fabricate(:task, project: project))
-    end
-
-    it "renders heading" do
-      render
-      assert_select ".task-heading", @task.heading
-    end
-  end
-
   context "when no task_type" do
     before do
       @project = assign(:project, Fabricate(:project, category: @category))
@@ -125,7 +113,8 @@ RSpec.describe "tasks/show", type: :view do
     let(:user) { Fabricate(:user_worker) }
 
     before do
-      @task = assign(:task, Fabricate(:task))
+      @project = assign(:project, Fabricate(:project, category: @category))
+      @task = assign(:task, Fabricate(:task, project: @project))
       @task_comment = Fabricate(:task_comment, task: @task, user: user)
 
       @task_comment.user.destroy
@@ -143,7 +132,9 @@ RSpec.describe "tasks/show", type: :view do
     let(:user) { Fabricate(:user_worker) }
 
     before do
-      @task = assign(:task, Fabricate(:task, assignee_ids: [user.id]))
+      @project = assign(:project, Fabricate(:project, category: @category))
+      task = Fabricate(:task, project: @project, assignee_ids: [user.id])
+      @task = assign(:task, task)
 
       user.destroy
       @task.reload

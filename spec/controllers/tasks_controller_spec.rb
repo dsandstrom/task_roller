@@ -36,22 +36,12 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "GET #show" do
-    context "when category only" do
-      it "returns a success response" do
-        task = Fabricate(:task, project: project)
-        get :show, params: { category_id: category.to_param, id: task.to_param }
-        expect(response).to be_successful
-      end
-    end
-
-    context "when category and project" do
-      it "returns a success response" do
-        task = Fabricate(:task, project: project)
-        get :show, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: task.to_param }
-        expect(response).to be_successful
-      end
+    it "returns a success response" do
+      task = Fabricate(:task, project: project)
+      get :show, params: { category_id: category.to_param,
+                           project_id: project.to_param,
+                           id: task.to_param }
+      expect(response).to be_successful
     end
   end
 
