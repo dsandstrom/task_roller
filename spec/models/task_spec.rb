@@ -690,4 +690,27 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#current_review" do
+    let(:task) { Fabricate(:task) }
+
+    context "when no reviews" do
+      it "returns nil" do
+        expect(task.current_review).to eq(nil)
+      end
+    end
+
+    context "when reviews" do
+      before do
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:disapproved_review, task: task)
+        end
+      end
+
+      it "returns last created review" do
+        first_review = Fabricate(:disapproved_review, task: task)
+        expect(task.current_review).to eq(first_review)
+      end
+    end
+  end
 end
