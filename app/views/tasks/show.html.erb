@@ -10,86 +10,106 @@ assigned = @task.assigned
 
   <div class="task-columns">
     <div class="task-column first-column">
-      <h4 class="task-column-title">Status</h4>
-      <p class="task-status">
-        <%= @task.status.titleize %>
+      <section class="task-status">
+        <h4 class="task-column-title">Status</h4>
 
-        <%# TODO: admin only %>
-        <span class="divider">|</span>
-        <% if @task.open? %>
-          <%= link_to 'Close',
-                      close_category_task_path(@category, @task),
-                      method: :patch,
-                      class: 'secondary-link' %>
-        <% else %>
-          <%= link_to 'Reopen',
-                      open_category_task_path(@category, @task),
-                      method: :patch,
-                      class: 'secondary-link' %>
-        <% end %>
-      </p>
+        <p>
+          <%= @task.status %>
 
-      <h4 class="task-column-title">Issue</h4>
-      <p class="task-issue">
-        <% if @task.issue %>
-          <%= issue_type_icon_tag(@task.issue.issue_type) %>
-          <%= link_to @task.issue.summary,
-                      category_project_issue_path(@category, @task.project, @task.issue) %>
-          (<%= @task.issue.user.name_or_email %>)
-        <% else %>
-          <em>none</em>
-        <% end %>
+          <%# TODO: admin only %>
+          <span class="divider">|</span>
+          <% if @task.open? %>
+            <%= link_to 'close',
+                        close_category_task_path(@category, @task),
+                        method: :patch,
+                        class: 'secondary-link' %>
+          <% else %>
+            <%= link_to 'reopen',
+                        open_category_task_path(@category, @task),
+                        method: :patch,
+                        class: 'secondary-link' %>
+          <% end %>
+        </p>
+      </section>
 
-        <span class="divider">|</span>
-        <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task),
-                    class: 'secondary-link' %>
-      </p>
+      <section class="task-assignees">
+        <h4 class="task-column-title">Assigned</h4>
 
-      <h4 class="task-column-title">Assigned</h4>
-      <ul class="task-assignees">
         <% if assignees.any? %>
+          <ul>
             <%= render partial: 'shared/assignee',
                        collection: assignees,
                        locals: { task: @task } %>
+          </ul>
+          <p>
+            <%= link_to 'reassign',
+                        edit_category_project_task_path(@category, @project, @task),
+                        class: 'secondary-link' %>
+          </p>
         <% else %>
-          <li><em>none</em></li>
+          <p>
+            no one
+            <span class="divider">|</span>
+            <%= link_to 'assign someone',
+                        edit_category_project_task_path(@category, @project, @task),
+                        class: 'secondary-link' %>
+          </p>
         <% end %>
-      </ul>
 
-      <p>
-        <%= render @task.reviews, task: @task %>
-        <% if @task.ready_for_review? %>
-          <%= link_to 'Mark Complete (review)',
-                      task_reviews_path(@task, review: { user_id: @task.user_id }),
-                      method: :post %>
-        <% end %>
-      </p>
+        <p>
+          <%= render @task.reviews, task: @task %>
+          <% if @task.ready_for_review? %>
+            <%= link_to 'Mark Complete (review)',
+                        task_reviews_path(@task, review: { user_id: @task.user_id }),
+                        method: :post %>
+          <% end %>
+        </p>
 
-      <ul class="task-assignees">
-        <% if assigned.any? %>
-            <%= render partial: 'shared/assigned',
-                       collection: assigned,
-                       locals: { task: @task } %>
-        <% else %>
-          <li><em>none</em></li>
-        <% end %>
-      </ul>
+        <ul class="task-assignees">
+          <% if assigned.any? %>
+              <%= render partial: 'shared/assigned',
+                         collection: assigned,
+                         locals: { task: @task } %>
+          <% else %>
+            <li><em>none</em></li>
+          <% end %>
+        </ul>
 
-      <%= render 'task_assignments/form', task: @task %>
+        <%= render 'task_assignments/form', task: @task %>
+      </section>
 
-      <h4 class="task-column-title">Reviewer</h4>
-      <p>
-        <span class="task-user">
-          <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
-        </span>
+      <section class="task-reviewer">
+        <h4 class="task-column-title">Reviewer</h4>
+        <p>
+          <span class="task-user">
+            <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
+          </span>
 
-        <span class="divider">|</span>
-        <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task),
-                    class: 'secondary-link' %>
-      </p>
+          <span class="divider">|</span>
+          <%= link_to 'change',
+                      edit_category_project_task_path(@category, @task.project, @task),
+                      class: 'secondary-link' %>
+        </p>
+      </section>
 
+      <section class="task-issue">
+        <h4 class="task-column-title">Issue</h4>
+        <p>
+          <% if @task.issue %>
+            <%= issue_type_icon_tag(@task.issue.issue_type) %>
+            <%= link_to @task.issue.summary,
+                        category_project_issue_path(@category, @task.project, @task.issue) %>
+            (<%= @task.issue.user.name_or_email %>)
+          <% else %>
+            <em>none</em>
+          <% end %>
+
+          <span class="divider">|</span>
+          <%= link_to 'change',
+                      edit_category_project_task_path(@category, @task.project, @task),
+                      class: 'secondary-link' %>
+        </p>
+      </section>
     </div>
 
     <div class="task-column second-column">
