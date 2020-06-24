@@ -17,7 +17,8 @@
       <%= form.label :assignee_ids, 'Assignees' %>
       <%= form.select :assignee_ids,
                       grouped_options_for_select(assignee_options, task.assignee_ids),
-                      {}, id: :task_assignee_ids, multiple: true %>
+                      { include_blank: '- Unassigned -' },
+                      id: :task_assignee_ids, multiple: true %>
     </div>
   <% end %>
 
