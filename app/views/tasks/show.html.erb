@@ -12,16 +12,16 @@ assigned = @task.assigned
     <div class="task-column first-column">
       <h4 class="task-column-title">Status</h4>
       <p class="task-status">
+        <%= @task.status.titleize %>
+
+        <%# TODO: admin only %>
+        <span class="divider">|</span>
         <% if @task.open? %>
-          <%= @task.status.titleize %>
-          <span class="divider">|</span>
           <%= link_to 'Close',
                       close_category_task_path(@category, @task),
                       method: :patch,
                       class: 'secondary-link' %>
         <% else %>
-          Closed
-          <span class="divider">|</span>
           <%= link_to 'Reopen',
                       open_category_task_path(@category, @task),
                       method: :patch,
