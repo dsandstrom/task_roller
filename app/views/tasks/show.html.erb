@@ -16,14 +16,15 @@ assigned = @task.assigned
         <p>
           <%= @task.status %>
 
-          <%# TODO: admin only %>
           <span class="divider">|</span>
           <% if @task.open? %>
+            <%# TODO: admin only %>
             <%= link_to 'close',
                         close_category_task_path(@category, @task),
                         method: :patch,
                         class: 'secondary-link' %>
           <% else %>
+            <%# TODO: reviewer+ only %>
             <%= link_to 'reopen',
                         open_category_task_path(@category, @task),
                         method: :patch,
@@ -44,17 +45,21 @@ assigned = @task.assigned
           <p>
             <%= link_to 'reassign',
                         edit_category_project_task_path(@category, @project, @task),
-                        class: 'secondary-link' %>
+                        id: 'task_assignment_link', class: 'secondary-link' %>
           </p>
         <% else %>
           <p>
             no one
             <span class="divider">|</span>
+            <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
+            <%# TODO: add form with ajax with first click, then toggle hide class %>
             <%= link_to 'assign someone',
                         edit_category_project_task_path(@category, @project, @task),
-                        class: 'secondary-link' %>
+                        id: 'task_assignment_link', class: 'secondary-link' %>
           </p>
         <% end %>
+
+        <%= render 'task_assignments/form', task: @task %>
 
         <p>
           <%= render @task.reviews, task: @task %>
@@ -74,8 +79,6 @@ assigned = @task.assigned
             <li><em>none</em></li>
           <% end %>
         </ul>
-
-        <%= render 'task_assignments/form', task: @task %>
       </section>
 
       <section class="task-reviewer">
@@ -101,7 +104,7 @@ assigned = @task.assigned
                         category_project_issue_path(@category, @task.project, @task.issue) %>
             (<%= @task.issue.user.name_or_email %>)
           <% else %>
-            <em>none</em>
+            <em>no connection</em>
           <% end %>
 
           <span class="divider">|</span>
