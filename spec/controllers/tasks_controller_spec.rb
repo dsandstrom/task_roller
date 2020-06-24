@@ -260,15 +260,16 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    # context "with invalid params" do
-    #   it "returns a success response (i.e. to display the 'edit' template)" do
-    #     task = Fabricate(:closed_task, project: project)
-    #     put :open, params: { category_id: category.to_param,
-    #                          project_id: project.to_param,
-    #                          id: task.to_param }
-    #     expect(response).to be_successful
-    #   end
-    # end
+    context "with invalid params" do
+      it "returns a success response (i.e. to display the 'edit' template)" do
+        task = Fabricate(:closed_task, project: project)
+        task.user.destroy
+        put :open, params: { category_id: category.to_param,
+                             project_id: project.to_param,
+                             id: task.to_param }
+        expect(response).to be_successful
+      end
+    end
   end
 
   describe "PUT #close" do
@@ -296,14 +297,15 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    # context "with invalid params" do
-    #   it "returns a success response (i.e. to display the 'edit' template)" do
-    #     task = Fabricate(:open_task, project: project)
-    #     put :close, params: { category_id: category.to_param,
-    #                          project_id: project.to_param,
-    #                          id: task.to_param }
-    #     expect(response).to be_successful
-    #   end
-    # end
+    context "with invalid params" do
+      it "returns a success response (i.e. to display the 'edit' template)" do
+        task = Fabricate(:open_task, project: project)
+        task.user.destroy
+        put :close, params: { category_id: category.to_param,
+                              project_id: project.to_param,
+                              id: task.to_param }
+        expect(response).to be_successful
+      end
+    end
   end
 end

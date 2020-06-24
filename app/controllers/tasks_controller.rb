@@ -62,16 +62,28 @@ class TasksController < ApplicationController
 
   def open
     project = @task.project
-    @task.update(closed: false)
-    redirect_to category_project_task_url(@category, project, @task),
-                success: 'Task was successfully opened.'
+    if @task.update(closed: false)
+      redirect_to category_project_task_url(@category, project, @task),
+                  success: 'Task was successfully opened.'
+    else
+      @project = @task.project
+      @category = @task.category
+      set_form_options
+      render :edit
+    end
   end
 
   def close
     project = @task.project
-    @task.update(closed: true)
-    redirect_to category_project_task_url(@category, project, @task),
-                success: 'Task was successfully closed.'
+    if @task.update(closed: true)
+      redirect_to category_project_task_url(@category, project, @task),
+                  success: 'Task was successfully closed.'
+    else
+      @project = @task.project
+      @category = @task.category
+      set_form_options
+      render :edit
+    end
   end
 
   private
