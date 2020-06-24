@@ -147,7 +147,16 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # closed
 
   def status
-    @status ||= (assignees.any? ? 'assigned' : 'unassigned')
+    @status ||=
+      if reviews.pending.any?
+        'in review'
+      elsif progressions.unfinished.any?
+        'in progress'
+      elsif assignees.any?
+        'assigned'
+      else
+        'unassigned'
+      end
   end
 
   private

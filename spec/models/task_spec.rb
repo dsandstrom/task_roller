@@ -471,7 +471,7 @@ RSpec.describe Task, type: :model do
 
   describe "#status" do
     context "when closed is true" do
-      context "and no assignees" do
+      context "and no assignees, progressions, and reviews" do
         let(:task) { Fabricate(:task) }
 
         it "returns 'unassigned'" do
@@ -486,6 +486,64 @@ RSpec.describe Task, type: :model do
         before { task.assignees << user }
 
         it "returns 'assigned'" do
+          expect(task.status).to eq("assigned")
+        end
+      end
+
+      context "and has an unfinished progression" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:unfinished_progression, task: task)
+        end
+
+        it "returns 'in progress'" do
+          expect(task.status).to eq("in progress")
+        end
+      end
+
+      context "and has a finished progression" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:finished_progression, task: task)
+        end
+
+        it "falls back to 'assigned'" do
+          expect(task.status).to eq("assigned")
+        end
+      end
+
+      context "and has a pending review" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:finished_progression, task: task)
+          Fabricate(:pending_review, task: task)
+        end
+
+        it "returns 'in review'" do
+          expect(task.status).to eq("in review")
+        end
+      end
+
+      context "and has a disapproved review" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:finished_progression, task: task)
+          Fabricate(:disapproved_review, task: task)
+        end
+
+        it "falls back to 'assigned'" do
           expect(task.status).to eq("assigned")
         end
       end
