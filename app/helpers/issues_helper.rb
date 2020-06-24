@@ -37,6 +37,7 @@ module IssuesHelper
       pages = []
       pages << [category.name, category]
       pages << project_breadcrumb_item(project)
+      pages << ['All Issues', category_project_issues_path(category, project)]
 
       breadcrumbs(pages)
     end
