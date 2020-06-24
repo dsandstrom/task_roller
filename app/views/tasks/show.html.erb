@@ -10,6 +10,42 @@ assigned = @task.assigned
 
   <div class="task-columns">
     <div class="task-column first-column">
+      <h4 class="task-column-title">Status</h4>
+      <p class="task-status">
+        <% if @task.open? %>
+          <%= @task.status.titleize %>
+          <span class="divider">|</span>
+          <%= link_to 'Close',
+                      close_category_task_path(@category, @task),
+                      method: :patch,
+                      class: 'secondary-link' %>
+        <% else %>
+          Closed
+          <span class="divider">|</span>
+          <%= link_to 'Reopen',
+                      open_category_task_path(@category, @task),
+                      method: :patch,
+                      class: 'secondary-link' %>
+        <% end %>
+      </p>
+
+      <h4 class="task-column-title">Issue</h4>
+      <p class="task-issue">
+        <% if @task.issue %>
+          <%= issue_type_icon_tag(@task.issue.issue_type) %>
+          <%= link_to @task.issue.summary,
+                      category_project_issue_path(@category, @task.project, @task.issue) %>
+          (<%= @task.issue.user.name_or_email %>)
+        <% else %>
+          <em>none</em>
+        <% end %>
+
+        <span class="divider">|</span>
+        <%= link_to 'change',
+                    edit_category_project_task_path(@category, @task.project, @task),
+                    class: 'secondary-link' %>
+      </p>
+
       <h4 class="task-column-title">Assigned</h4>
       <ul class="task-assignees">
         <% if assignees.any? %>
@@ -22,10 +58,11 @@ assigned = @task.assigned
       </ul>
 
       <p>
-        <% if @task.reviews.any? %>
-          <%= render @task.reviews, task: @task %>
-        <% else %>
-          <%= link_to 'Mark Complete', task_reviews_path(@task, review: { user_id: @task.user_id }), method: :post %>
+        <%= render @task.reviews, task: @task %>
+        <% if @task.ready_for_review? %>
+          <%= link_to 'Mark Complete (review)',
+                      task_reviews_path(@task, review: { user_id: @task.user_id }),
+                      method: :post %>
         <% end %>
       </p>
 
@@ -53,41 +90,6 @@ assigned = @task.assigned
                     class: 'secondary-link' %>
       </p>
 
-      <h4 class="task-column-title">Issue</h4>
-      <p class="task-issue">
-        <% if @task.issue %>
-          <%= issue_type_icon_tag(@task.issue.issue_type) %>
-          <%= link_to @task.issue.summary,
-                      category_project_issue_path(@category, @task.project, @task.issue) %>
-          (<%= @task.issue.user.name_or_email %>)
-        <% else %>
-          <em>none</em>
-        <% end %>
-
-        <span class="divider">|</span>
-        <%= link_to 'change',
-                    edit_category_project_task_path(@category, @task.project, @task),
-                    class: 'secondary-link' %>
-      </p>
-
-      <h4 class="task-column-title">Status</h4>
-      <p class="task-status">
-        <% if @task.open? %>
-          Open
-          <span class="divider">|</span>
-          <%= link_to 'change to closed',
-                      close_category_task_path(@category, @task),
-                      method: :patch,
-                      class: 'secondary-link' %>
-        <% else %>
-          Closed
-          <span class="divider">|</span>
-          <%= link_to 'change to open',
-                      open_category_task_path(@category, @task),
-                      method: :patch,
-                      class: 'secondary-link' %>
-        <% end %>
-      </p>
     </div>
 
     <div class="task-column second-column">
