@@ -8,20 +8,19 @@
     else
       category_project_task_task_comments_url(category, project, task)
     end
+  options =
+    options_from_collection_for_select(User.all, :id, :name_or_email, task_comment.user_id)
 %>
 
 <%= form_with(model: task_comment, url: url, local: true,
               html: { name: 'task_comment_form', novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <% if user_options&.any? %>
-    <div class="field">
-      <%= form.label :user_id, 'Author' %>
-      <%= form.select :user_id,
-                      grouped_options_for_select(user_options, task_comment.user_id),
-                      {}, id: :task_comment_user_id %>
-    </div>
-  <% end %>
+  <%# TODO: remove after adding authentication, should be current user %>
+  <div class="field">
+    <%= form.label :user_id, 'Author' %>
+    <%= form.select :user_id, options, {}, id: :task_comment_user_id %>
+  </div>
 
   <div class="field">
     <%= required_field_label form, :body %>

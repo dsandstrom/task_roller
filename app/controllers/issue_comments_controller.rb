@@ -3,7 +3,6 @@
 class IssueCommentsController < ApplicationController
   before_action :set_category, :set_project, :set_issue
   before_action :set_issue_comment, only: %i[edit update destroy]
-  before_action :set_user_options, only: %i[new edit]
 
   def new
     @issue_comment = @issue.comments.build
@@ -18,7 +17,6 @@ class IssueCommentsController < ApplicationController
     if @issue_comment.save
       redirect_to redirect_url, notice: 'Comment was successfully created.'
     else
-      set_user_options
       render :new
     end
   end
@@ -27,7 +25,6 @@ class IssueCommentsController < ApplicationController
     if @issue_comment.update(issue_comment_params)
       redirect_to redirect_url, notice: 'Comment was successfully updated.'
     else
-      set_user_options
       render :edit
     end
   end
@@ -48,20 +45,13 @@ class IssueCommentsController < ApplicationController
       @issue_comment = @issue.comments.find(params[:id])
     end
 
-    def set_user_options
-      # TODO: only set for reviewers, otherwise always current_user
-      @user_options =
-        User::VALID_EMPLOYEE_TYPES.map do |type|
-          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
-        end
-    end
-
     def redirect_url
       @redirect_url ||=
         category_project_issue_url(@category, @project, @issue,
                                    anchor: "comment-#{@issue_comment.id}")
     end
 
+    # TODO: only allow body
     def issue_comment_params
       params.require(:issue_comment).permit(:user_id, :body)
     end

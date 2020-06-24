@@ -17,7 +17,6 @@ class IssuesController < ApplicationController
   def show
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build
-    set_user_options
   end
 
   def new
@@ -102,7 +101,7 @@ class IssuesController < ApplicationController
     end
 
     def set_user_options
-      # TODO: only set for reviewers, otherwise always current_user
+      # TODO: only set for admins, otherwise always current_user
       @user_options =
         User::VALID_EMPLOYEE_TYPES.map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]

@@ -3,7 +3,6 @@
 class TaskCommentsController < ApplicationController
   before_action :set_category, :set_project, :set_task
   before_action :set_task_comment, only: %i[edit update destroy]
-  before_action :set_user_options, only: %i[new edit]
 
   def new
     @task_comment = @task.comments.build
@@ -18,7 +17,6 @@ class TaskCommentsController < ApplicationController
     if @task_comment.save
       redirect_to redirect_url, notice: 'Comment was successfully created.'
     else
-      set_user_options
       render :new
     end
   end
@@ -27,7 +25,6 @@ class TaskCommentsController < ApplicationController
     if @task_comment.update(task_comment_params)
       redirect_to redirect_url, notice: 'Comment was successfully updated.'
     else
-      set_user_options
       render :edit
     end
   end
@@ -48,20 +45,13 @@ class TaskCommentsController < ApplicationController
       @task_comment = @task.comments.find(params[:id])
     end
 
-    def set_user_options
-      # TODO: only set for reviewers, otherwise always current_user
-      @user_options =
-        User::VALID_EMPLOYEE_TYPES.map do |type|
-          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
-        end
-    end
-
     def redirect_url
       @redirect_url ||=
         category_project_task_url(@category, @project, @task,
                                   anchor: "comment-#{@task_comment.id}")
     end
 
+    # TODO: only allow body
     def task_comment_params
       params.require(:task_comment).permit(:user_id, :body)
     end

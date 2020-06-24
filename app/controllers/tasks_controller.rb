@@ -107,14 +107,14 @@ class TasksController < ApplicationController
 
     def set_user_options
       @user_options =
-        %w[Admin Reviewer].map do |type|
+        %w[Reviewer Admin].map do |type|
           [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
         end
     end
 
     def set_assignee_options
       @assignee_options =
-        %w[Reviewer Worker].map do |type|
+        %w[Worker Reviewer].map do |type|
           employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
           [type.pluralize, employees]
         end
