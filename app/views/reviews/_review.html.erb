@@ -1,24 +1,21 @@
-<div id="review_<%= review.id %>" class="review">
-  <p>
-    <% if review.approved? %>
-      Approved <%= format_date(review.updated_at) %>
-    <% elsif review.disapproved? %>
-      Dispproved <%= format_date(review.updated_at) %>
-    <% else %>
-      Pending
-      <br>
-      <%= link_to 'Mark Approved',
-                  task_review_path(task, review, review: { approved: true }),
-                  method: :patch %>
-      <br>
-      <%= link_to 'Mark Disapproved',
-                  task_review_path(task, review, review: { approved: false }),
-                  method: :patch %>
-    <% end %>
-    <br>
-    <%= link_to 'Delete',
-                task_review_path(task, review),
-                method: :delete,
-                data: { confirm: 'Are you sure?' } %>
-  </p>
-</div>
+<p id="review_<%= review.id %>" class="review">
+  <% if review.approved? %>
+    approved <%= format_date(review.updated_at) %>
+  <% elsif review.disapproved? %>
+    dispproved <%= format_date(review.updated_at) %>
+  <% else %>
+    <%= link_to 'approve',
+                task_review_path(task, review, review: { approved: true }),
+                method: :patch, class: 'create-link' %>
+    <span class="divider">|</span>
+    <%= link_to 'disapprove',
+                task_review_path(task, review, review: { approved: false }),
+                method: :patch, class: 'destroy-link' %>
+  <% end %>
+
+  <%# TODO: admin only %>
+  <span class="divider">|</span>
+  <%= link_to 'delete', task_review_path(task, review),
+              method: :delete, data: { confirm: 'Are you sure?' },
+              class: 'secondary-link' %>
+</span>

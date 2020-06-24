@@ -16,21 +16,30 @@ assigned = @task.assigned
         <p>
           <%= @task.status %>
 
-          <span class="divider">|</span>
           <% if @task.open? %>
             <%# TODO: admin only %>
+            <span class="divider">|</span>
             <%= link_to 'close',
                         close_category_task_path(@category, @task),
-                        method: :patch,
-                        class: 'secondary-link' %>
+                        method: :patch, class: 'secondary-link' %>
           <% else %>
             <%# TODO: reviewer+ only %>
+            <span class="divider">|</span>
             <%= link_to 'reopen',
                         open_category_task_path(@category, @task),
-                        method: :patch,
-                        class: 'secondary-link' %>
+                        method: :patch, class: 'secondary-link' %>
           <% end %>
         </p>
+
+        <% if @task.open? && @task.ready_for_review? %>
+          <p>
+            <%= link_to 'mark complete',
+                        task_reviews_path(@task, review: { user_id: @task.user_id }),
+                        method: :post %>
+          </p>
+        <% else %>
+          <%= render @task.current_review, task: @task %>
+        <% end %>
       </section>
 
       <section class="task-assignees">
@@ -60,15 +69,6 @@ assigned = @task.assigned
         <% end %>
 
         <%= render 'task_assignments/form', task: @task %>
-
-        <p>
-          <%= render @task.reviews, task: @task %>
-          <% if @task.ready_for_review? %>
-            <%= link_to 'Mark Complete (review)',
-                        task_reviews_path(@task, review: { user_id: @task.user_id }),
-                        method: :post %>
-          <% end %>
-        </p>
 
         <ul class="task-assignees">
           <% if assigned.any? %>
