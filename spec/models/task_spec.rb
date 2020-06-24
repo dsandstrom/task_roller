@@ -469,6 +469,40 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#ready_for_review?" do
+    let(:task) { Fabricate(:task) }
+
+    context "when has no reviews" do
+      it "returns true" do
+        expect(task.ready_for_review?).to eq(true)
+      end
+    end
+
+    context "when has a pending review" do
+      before { Fabricate(:pending_review, task: task) }
+
+      it "returns false" do
+        expect(task.ready_for_review?).to eq(false)
+      end
+    end
+
+    context "when has an approved review" do
+      before { Fabricate(:approved_review, task: task) }
+
+      it "returns false" do
+        expect(task.ready_for_review?).to eq(false)
+      end
+    end
+
+    context "when has a disapproved review" do
+      before { Fabricate(:disapproved_review, task: task) }
+
+      it "returns true" do
+        expect(task.ready_for_review?).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is true" do
       context "and no assignees, progressions, and reviews" do
