@@ -504,12 +504,12 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#status" do
-    context "when closed is true" do
+    context "when closed is false" do
       context "and no assignees, progressions, and reviews" do
         let(:task) { Fabricate(:task) }
 
-        it "returns 'unassigned'" do
-          expect(task.status).to eq("unassigned")
+        it "returns 'open'" do
+          expect(task.status).to eq("open")
         end
       end
 
@@ -580,6 +580,18 @@ RSpec.describe Task, type: :model do
         it "falls back to 'assigned'" do
           expect(task.status).to eq("assigned")
         end
+      end
+    end
+
+    context "when closed is true" do
+      let(:task) { Fabricate(:closed_task) }
+
+      before do
+        Fabricate(:pending_review, task: task)
+      end
+
+      it "returns 'closed'" do
+        expect(task.status).to eq("closed")
       end
     end
   end

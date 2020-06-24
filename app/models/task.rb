@@ -152,16 +152,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # closed
 
   def status
-    @status ||=
-      if reviews.pending.any?
-        'in review'
-      elsif progressions.unfinished.any?
-        'in progress'
-      elsif assignees.any?
-        'assigned'
-      else
-        'unassigned'
-      end
+    @status ||= build_status
   end
 
   private
@@ -172,5 +163,19 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
         users = users.where('users.id NOT IN (?)', assignee_ids)
       end
       users.distinct
+    end
+
+    def build_status
+      return 'closed' if closed?
+
+      if reviews.pending.any?
+        'in review'
+      elsif progressions.unfinished.any?
+        'in progress'
+      elsif assignees.any?
+        'assigned'
+      else
+        'open'
+      end
     end
 end
