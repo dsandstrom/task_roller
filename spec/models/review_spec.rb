@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require File.expand_path("../support/task_helpers", __dir__)
 
 RSpec.describe Review, type: :model do
   let(:worker) { Fabricate(:user_worker) }
@@ -145,6 +146,114 @@ RSpec.describe Review, type: :model do
     it "returns reviews with approved as false" do
       review = Fabricate(:approved_review)
       expect(Review.approved).to eq([review])
+    end
+  end
+
+  # INSTANCE
+
+  describe "#approve" do
+    context "when pending" do
+      let(:review) { Fabricate(:pending_review) }
+
+      it "changes approved to true" do
+        expect do
+          review.approve
+          review.reload
+        end.to change(review, :approved).to(true)
+      end
+
+      it "runs task.close" do
+        task = mock_review_task(review)
+        expect(task).to receive(:close)
+        review.approve
+      end
+    end
+
+    context "when disapproved" do
+      let(:review) { Fabricate(:disapproved_review) }
+
+      it "changes approved to true" do
+        expect do
+          review.approve
+          review.reload
+        end.to change(review, :approved).to(true)
+      end
+
+      it "runs task.close" do
+        task = mock_review_task(review)
+        expect(task).to receive(:close)
+        review.approve
+      end
+    end
+
+    context "when approved" do
+      let(:review) { Fabricate(:approved_review) }
+
+      it "doesn't change review" do
+        expect do
+          review.approve
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "runs task.close" do
+        task = mock_review_task(review)
+        expect(task).to receive(:close)
+        review.approve
+      end
+    end
+  end
+
+  describe "#disapprove" do
+    context "when pending" do
+      let(:review) { Fabricate(:pending_review) }
+
+      it "changes approved to false" do
+        expect do
+          review.disapprove
+          review.reload
+        end.to change(review, :approved).to(false)
+      end
+
+      it "runs task.open" do
+        task = mock_review_task(review)
+        expect(task).to receive(:open)
+        review.disapprove
+      end
+    end
+
+    context "when approved" do
+      let(:review) { Fabricate(:approved_review) }
+
+      it "changes approved to false" do
+        expect do
+          review.disapprove
+          review.reload
+        end.to change(review, :approved).to(false)
+      end
+
+      it "runs task.open" do
+        task = mock_review_task(review)
+        expect(task).to receive(:open)
+        review.disapprove
+      end
+    end
+
+    context "when disapproved" do
+      let(:review) { Fabricate(:disapproved_review) }
+
+      it "doesn't change review" do
+        expect do
+          review.disapprove
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "runs task.open" do
+        task = mock_review_task(review)
+        expect(task).to receive(:open)
+        review.disapprove
+      end
     end
   end
 end

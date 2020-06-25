@@ -41,9 +41,23 @@ class Review < ApplicationRecord
     approved.nil?
   end
 
+  def approve
+    return false unless update(approved: true)
+
+    task.close
+  end
+
+  def disapprove
+    return false unless update(approved: false)
+
+    task.open
+  end
+
   private
 
     def validate_task_has_no_pending
+      return unless task&.reviews
+
       pending = task.reviews.pending
       pending = pending.where('reviews.id != ?', id) if id
       return if pending.none?
@@ -52,6 +66,8 @@ class Review < ApplicationRecord
     end
 
     def validate_task_has_no_approved
+      return unless task&.reviews
+
       approved = task.reviews.approved
       approved = approved.where('reviews.id != ?', id) if id
       return if approved.none?
