@@ -5,5 +5,5 @@ class TaskAssignee < ApplicationRecord
   belongs_to :assignee, class_name: 'User', inverse_of: :task_assignees
 
   validates :assignee_id, uniqueness: { scope: :task_id }
-  validates :assignee, presence: true
+  validates :assignee, presence: true, if: :assignee_id
 end

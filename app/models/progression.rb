@@ -5,9 +5,9 @@ class Progression < ApplicationRecord
   belongs_to :user
 
   validates :task_id, presence: true
-  validates :task, presence: true
+  validates :task, presence: true, if: :task_id
   validates :user_id, presence: true
-  validates :user, presence: true
+  validates :user, presence: true, if: :user_id
 
   validate :user_available
 
