@@ -5,5 +5,6 @@ def mock_review_task(review)
   allow(review).to receive(:task) { task }
   allow(task).to receive(:marked_for_destruction?)
   allow(task).to receive(:reviews)
+  allow(task).to receive(:valid?) { true }
   task
 end

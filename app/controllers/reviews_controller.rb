@@ -2,7 +2,7 @@
 
 class ReviewsController < ApplicationController
   before_action :set_task
-  before_action :set_review, only: %i[show edit update destroy]
+  before_action :set_review, except: %i[index new create]
 
   def index
     @reviews = @task.reviews
@@ -26,8 +26,17 @@ class ReviewsController < ApplicationController
     end
   end
 
-  def update
-    if @review.update(review_params)
+  def approve
+    if @review.approve
+      redirect_to category_project_task_path(@category, @project, @task),
+                  notice: 'Review was successfully updated.'
+    else
+      render :edit
+    end
+  end
+
+  def disapprove
+    if @review.disapprove
       redirect_to category_project_task_path(@category, @project, @task),
                   notice: 'Review was successfully updated.'
     else
@@ -48,7 +57,7 @@ class ReviewsController < ApplicationController
     end
 
     def review_params
-      params.require(:review).permit(:user_id, :approved)
+      params.require(:review).permit(:user_id)
     end
 
     # TODO: authorize access

@@ -65,25 +65,19 @@ RSpec.describe ReviewsController, type: :controller do
     end
   end
 
-  describe "PUT #update" do
+  describe "PUT #approve" do
     context "with valid params" do
-      let(:new_attributes) do
-        { approved: true }
-      end
-
       it "updates the requested review" do
         review = Fabricate(:review, task: task)
         expect do
-          put :update, params: { task_id: task.to_param, id: review.to_param,
-                                 review: new_attributes }
+          put :approve, params: { task_id: task.to_param, id: review.to_param }
           review.reload
         end.to change(review, :approved).to(true)
       end
 
       it "redirects to the review" do
         review = Fabricate(:review, task: task)
-        put :update, params: { task_id: task.to_param, id: review.to_param,
-                               review: new_attributes }
+        put :approve, params: { task_id: task.to_param, id: review.to_param }
         expect(response)
           .to redirect_to(category_project_task_path(category, project, task))
       end
@@ -91,9 +85,44 @@ RSpec.describe ReviewsController, type: :controller do
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
+        other_review = Fabricate(:disapproved_review, task: task)
         review = Fabricate(:review, task: task)
-        put :update, params: { task_id: task.to_param, id: review.to_param,
-                               review: invalid_attributes }
+        # make review invalid
+        other_review.update_attribute :approved, true
+
+        put :approve, params: { task_id: task.to_param, id: review.to_param }
+        expect(response).to be_successful
+      end
+    end
+  end
+
+  describe "PUT #disapprove" do
+    context "with valid params" do
+      it "updates the requested review" do
+        review = Fabricate(:review, task: task)
+        expect do
+          put :disapprove, params: { task_id: task.to_param,
+                                     id: review.to_param }
+          review.reload
+        end.to change(review, :approved).to(false)
+      end
+
+      it "redirects to the review" do
+        review = Fabricate(:review, task: task)
+        put :disapprove, params: { task_id: task.to_param, id: review.to_param }
+        expect(response)
+          .to redirect_to(category_project_task_path(category, project, task))
+      end
+    end
+
+    context "with invalid params" do
+      it "returns a success response (i.e. to display the 'edit' template)" do
+        other_review = Fabricate(:disapproved_review, task: task)
+        review = Fabricate(:review, task: task)
+        # make review invalid
+        other_review.update_attribute :approved, true
+
+        put :disapprove, params: { task_id: task.to_param, id: review.to_param }
         expect(response).to be_successful
       end
     end
