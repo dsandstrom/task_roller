@@ -5,7 +5,9 @@ class Review < ApplicationRecord
   belongs_to :user
 
   validates :task_id, presence: true
+  validates :task, presence: true
   validates :user_id, presence: true
+  validates :user, presence: true
 
   validate :task_available
 

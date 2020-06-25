@@ -17,8 +17,11 @@ class Issue < ApplicationRecord
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
   validates :user_id, presence: true
+  validates :user, presence: true
   validates :issue_type_id, presence: true
+  validates :issue_type, presence: true
   validates :project_id, presence: true
+  validates :project, presence: true
 
   # CLASS
 
