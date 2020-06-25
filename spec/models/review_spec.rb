@@ -167,6 +167,10 @@ RSpec.describe Review, type: :model do
         expect(task).to receive(:close)
         review.approve
       end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
     end
 
     context "when disapproved" do
@@ -184,6 +188,10 @@ RSpec.describe Review, type: :model do
         expect(task).to receive(:close)
         review.approve
       end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
     end
 
     context "when approved" do
@@ -200,6 +208,57 @@ RSpec.describe Review, type: :model do
         task = mock_review_task(review)
         expect(task).to receive(:close)
         review.approve
+      end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
+    end
+
+    context "when review is invalid" do
+      let(:review) { Fabricate(:pending_review) }
+
+      before { review.user_id = nil }
+
+      it "doesn't change review" do
+        expect do
+          review.approve
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "doesn't run task.close" do
+        task = mock_review_task(review)
+        expect(task).not_to receive(:close)
+        review.approve
+      end
+
+      it "returns false" do
+        expect(review.approve).to eq(false)
+      end
+    end
+
+    context "when review's task is invalid" do
+      let(:review) { Fabricate(:pending_review) }
+
+      before { review.task.user_id = nil }
+
+      it "doesn't change review" do
+        expect do
+          review.approve
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "doesn't run task.close" do
+        task = mock_review_task(review)
+        allow(task).to receive(:valid?) { false }
+        expect(task).not_to receive(:close)
+        review.approve
+      end
+
+      it "returns false" do
+        expect(review.approve).to eq(false)
       end
     end
   end
@@ -220,6 +279,10 @@ RSpec.describe Review, type: :model do
         expect(task).to receive(:open)
         review.disapprove
       end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
     end
 
     context "when approved" do
@@ -237,6 +300,10 @@ RSpec.describe Review, type: :model do
         expect(task).to receive(:open)
         review.disapprove
       end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
     end
 
     context "when disapproved" do
@@ -253,6 +320,57 @@ RSpec.describe Review, type: :model do
         task = mock_review_task(review)
         expect(task).to receive(:open)
         review.disapprove
+      end
+
+      it "returns true" do
+        expect(review.approve).to eq(true)
+      end
+    end
+
+    context "when review is invalid" do
+      let(:review) { Fabricate(:pending_review) }
+
+      before { review.user_id = nil }
+
+      it "doesn't change review" do
+        expect do
+          review.disapprove
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "doesn't run task.open" do
+        task = mock_review_task(review)
+        expect(task).not_to receive(:open)
+        review.disapprove
+      end
+
+      it "returns false" do
+        expect(review.approve).to eq(false)
+      end
+    end
+
+    context "when review's task is invalid" do
+      let(:review) { Fabricate(:pending_review) }
+
+      before { review.task.user_id = nil }
+
+      it "doesn't change review" do
+        expect do
+          review.disapprove
+          review.reload
+        end.not_to change(review, :approved)
+      end
+
+      it "doesn't run task.open" do
+        task = mock_review_task(review)
+        allow(task).to receive(:valid?) { false }
+        expect(task).not_to receive(:open)
+        review.disapprove
+      end
+
+      it "returns false" do
+        expect(review.approve).to eq(false)
       end
     end
   end

@@ -42,15 +42,15 @@ class Review < ApplicationRecord
   end
 
   def approve
-    return false unless update(approved: true)
+    return false unless task.valid?
 
-    task.close
+    update(approved: true) && task.close
   end
 
   def disapprove
-    return false unless update(approved: false)
+    return false unless task.valid?
 
-    task.open
+    update(approved: false) && task.open
   end
 
   private
