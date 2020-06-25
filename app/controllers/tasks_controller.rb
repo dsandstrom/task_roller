@@ -62,7 +62,7 @@ class TasksController < ApplicationController
 
   def open
     project = @task.project
-    if @task.update(closed: false)
+    if @task.open
       redirect_to category_project_task_url(@category, project, @task),
                   success: 'Task was successfully opened.'
     else
@@ -75,7 +75,7 @@ class TasksController < ApplicationController
 
   def close
     project = @task.project
-    if @task.update(closed: true)
+    if @task.close
       redirect_to category_project_task_url(@category, project, @task),
                   success: 'Task was successfully closed.'
     else
