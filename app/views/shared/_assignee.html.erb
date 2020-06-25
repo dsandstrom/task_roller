@@ -5,23 +5,15 @@ progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
 
 <li id="assignee-<%= assignee.id %>" class="assignee">
   <%= assignee.name_or_email %>
-  <br>
 
+  <%= divider %>
   <% if progressions.unfinished.any? %>
-    in progress
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
   <% else %>
-    <%= link_to 'Start progress',
+    <%= link_to 'start',
                 task_progressions_path(task, progression: { user_id: assignee.id }),
-                method: :post %>
-  <% end %>
-  <br>
-
-  <% if progressions.finished.any? %>
-    <%= render partial: 'shared/progression',
-               collection: progressions.finished,
-               locals: { task: task } %>
+                method: :post, class: 'create-link' %>
   <% end %>
 </li>

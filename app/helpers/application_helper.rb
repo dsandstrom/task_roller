@@ -51,6 +51,10 @@ module ApplicationHelper
     params[:order].present?
   end
 
+  def divider
+    content_tag :span, '|', class: 'divider'
+  end
+
   private
 
     def form_errors_list(obj)

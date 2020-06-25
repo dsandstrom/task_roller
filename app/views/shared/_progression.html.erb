@@ -2,10 +2,13 @@
   <% if progression.finished? %>
     <%= format_date(progression.created_at) %> - <%= format_date(progression.updated_at) %>
   <% else %>
-    Started: <%= format_date(progression.created_at) %>
-    <%= link_to 'Mark Complete',
+    <%= link_to 'pause',
                 task_progression_path(task, progression, progression: { finished: true }),
-                method: :patch %>
+                method: :patch, class: 'destroy-link' %>
   <% end %>
+  <%# TODO: admin %>
+  <%= divider %>
+  <%= link_to 'delete', task_progression_path(task, progression),
+              method: :delete, data: { confirm: 'Are you sure?' },
+              class: 'secondary-link' %>
 </span>
-<br>
