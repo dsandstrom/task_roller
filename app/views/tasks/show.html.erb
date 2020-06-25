@@ -32,6 +32,7 @@ assigned = @task.assigned
         </p>
 
         <% if @task.open? && @task.ready_for_review? %>
+          <%# TODO: reviewer+ or worker & assigned %>
           <p>
             <%= link_to 'mark complete',
                         task_reviews_path(@task, review: { user_id: @task.user_id }),

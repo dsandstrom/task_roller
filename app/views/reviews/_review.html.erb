@@ -4,12 +4,13 @@
   <% elsif review.disapproved? %>
     dispproved <%= format_date(review.updated_at) %>
   <% else %>
+    <%# TODO: reviewer+ %>
     <%= link_to 'approve',
-                task_review_path(task, review, review: { approved: true }),
+                approve_task_review_path(task, review),
                 method: :patch, class: 'create-link' %>
     <span class="divider">|</span>
     <%= link_to 'disapprove',
-                task_review_path(task, review, review: { approved: false }),
+                disapprove_task_review_path(task, review),
                 method: :patch, class: 'destroy-link' %>
   <% end %>
 

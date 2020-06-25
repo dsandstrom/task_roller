@@ -15,7 +15,6 @@ RSpec.describe "reviews/new", type: :view do
 
     assert_select "form[action=?][method=?]", url, "post" do
       assert_select "select[name=?]", "review[user_id]"
-      assert_select "input[name=?]", "review[approved]"
     end
   end
 end
