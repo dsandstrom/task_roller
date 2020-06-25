@@ -16,7 +16,8 @@
 
 <%= form_with(model: review, url: url,
               local: true, html: html) do |form| %>
-  <%= form_errors(form.object) %>
+  <%= form_errors(review) %>
+  <%= form_errors(review.task) if review.task %>
 
   <div class="field">
     <%= form.label :user_id, 'Reviewer' %>
