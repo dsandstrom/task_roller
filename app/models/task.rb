@@ -141,15 +141,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
   end
 
-  # open
-  # unassigned => assign
-  # assigned => start work
-  # being worked on => put in for review
-  # in review => approve
-  #   * approved
-  # in review => disapprove
-  #   * assigned
-  # closed
+  # - closed
+  # - open
+  #   - reviews open = 'in review'
+  #   - progressions unfinished = 'in progress'
+  #   - any assignees = 'assigned'
+  #   - unassigned = 'open'
 
   def status
     @status ||= build_status
