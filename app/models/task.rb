@@ -155,6 +155,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @status ||= build_status
   end
 
+  def close
+    update closed: true
+  end
+
+  def open
+    update closed: false
+  end
+
   def current_review
     @current_review ||= reviews.order(created_at: :desc).first
   end

@@ -713,4 +713,52 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#close" do
+    context "when open" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "changes closed to true" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :closed).to(true)
+      end
+    end
+
+    context "when closed" do
+      let(:task) { Fabricate(:closed_task) }
+
+      it "doesn't change task" do
+        expect do
+          task.close
+          task.reload
+        end.not_to change(task, :closed)
+      end
+    end
+  end
+
+  describe "#open" do
+    context "when closed" do
+      let(:task) { Fabricate(:closed_task) }
+
+      it "changes closed to false" do
+        expect do
+          task.open
+          task.reload
+        end.to change(task, :closed).to(false)
+      end
+    end
+
+    context "when open" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "doesn't change task" do
+        expect do
+          task.open
+          task.reload
+        end.not_to change(task, :closed)
+      end
+    end
+  end
 end
