@@ -173,6 +173,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @current_review ||= reviews.order(created_at: :desc).first
   end
 
+  def in_review?
+    open? && reviews.pending.any?
+  end
+
+  def in_progress?
+    open? && progressions.unfinished.any?
+  end
+
+  def assigned?
+    open? && assignees.any?
+  end
+
   private
 
     def build_assigned
@@ -186,11 +198,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def build_status
       return 'closed' if closed?
 
-      if reviews.pending.any?
+      if in_review?
         'in review'
-      elsif progressions.unfinished.any?
+      elsif in_progress?
         'in progress'
-      elsif assignees.any?
+      elsif assigned?
         'assigned'
       else
         'open'
