@@ -962,6 +962,23 @@ RSpec.describe Task, type: :model do
         end.not_to change(task, :closed)
       end
     end
+
+    context "when an unfinished progression" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "changes it's finished to true" do
+        progression = Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          task.close
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+
+      it "returns true" do
+        expect(task.finish).to eq(true)
+      end
+    end
   end
 
   describe "#open" do

@@ -150,7 +150,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   #   - progressions unfinished = 'in progress'
   #   - any assignees = 'assigned'
   #   - unassigned = 'open'
-
   def status
     @status ||= build_status
   end
@@ -161,6 +160,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def close
+    finish
     update closed: true
   end
 
