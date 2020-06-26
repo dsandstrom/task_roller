@@ -3,7 +3,7 @@
     <%= format_date(progression.created_at) %> - <%= format_date(progression.updated_at) %>
   <% else %>
     <%= link_to 'pause',
-                task_progression_path(task, progression, progression: { finished: true }),
+                finish_task_progression_path(task, progression),
                 method: :patch, class: 'destroy-link' %>
   <% end %>
   <%# TODO: admin %>

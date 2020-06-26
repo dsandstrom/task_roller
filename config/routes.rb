@@ -32,7 +32,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :tasks, only: nil do
-    resources :progressions, except: :show
+    resources :progressions, except: :show do
+      member do
+        patch :finish
+      end
+    end
     resources :reviews, except: %i[show update] do
       member do
         patch :approve
