@@ -43,38 +43,40 @@ assigned = @task.assigned
         <% end %>
       </section>
 
-      <section class="task-assignees">
-        <h4 class="task-column-title">Assigned</h4>
+      <% if @task.open? %>
+        <section class="task-assignees">
+          <h4 class="task-column-title">Assigned</h4>
 
-        <% if assignees.any? %>
-          <ul>
-            <%= render partial: 'shared/assignee',
-                       collection: assignees,
-                       locals: { task: @task, current_assignee: true } %>
-          </ul>
-          <%# TODO: show if in_progress?  %>
-          <%# but need to finish progressions when reassigning %>
-          <% if @task.assigned? %>
+          <% if assignees.any? %>
+            <ul>
+              <%= render partial: 'shared/assignee',
+                         collection: assignees,
+                         locals: { task: @task, current_assignee: true } %>
+            </ul>
+            <%# TODO: show if in_progress?  %>
+            <%# but need to finish progressions when reassigning %>
+            <% if @task.assigned? %>
+              <p>
+                <%= link_to 'reassign',
+                            edit_category_project_task_path(@category, @project, @task),
+                            id: 'task_assignment_link', class: 'secondary-link' %>
+              </p>
+            <% end %>
+          <% else %>
             <p>
-              <%= link_to 'reassign',
+              no one
+              <span class="divider">|</span>
+              <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
+              <%# TODO: add form with ajax with first click, then toggle hide class %>
+              <%= link_to 'assign someone',
                           edit_category_project_task_path(@category, @project, @task),
                           id: 'task_assignment_link', class: 'secondary-link' %>
             </p>
           <% end %>
-        <% else %>
-          <p>
-            no one
-            <span class="divider">|</span>
-            <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
-            <%# TODO: add form with ajax with first click, then toggle hide class %>
-            <%= link_to 'assign someone',
-                        edit_category_project_task_path(@category, @project, @task),
-                        id: 'task_assignment_link', class: 'secondary-link' %>
-          </p>
-        <% end %>
 
-        <%= render 'task_assignments/form', task: @task %>
-      </section>
+          <%= render 'task_assignments/form', task: @task %>
+        </section>
+      <% end %>
 
       <% if assigned.any? %>
         <section class="task-assigned">

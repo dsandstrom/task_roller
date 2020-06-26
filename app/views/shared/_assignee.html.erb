@@ -12,7 +12,7 @@ current_assignee = false if current_assignee.nil?
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
-  <% elsif current_assignee && task.assigned? %>
+  <% elsif task.assigned? %>
     <%= divider %>
     <%= link_to 'start',
                 task_progressions_path(task, progression: { user_id: assignee.id }),
