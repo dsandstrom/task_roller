@@ -48,11 +48,11 @@ assigned = @task.assigned
           <h4 class="task-column-title">Assigned</h4>
 
           <% if assignees.any? %>
-            <ul>
+            <dl>
               <%= render partial: 'shared/assignee',
                          collection: assignees,
                          locals: { task: @task, current_assignee: true } %>
-            </ul>
+            </dl>
             <%# TODO: show if in_progress?  %>
             <%# but need to finish progressions when reassigning %>
             <% if @task.assigned? %>
@@ -82,11 +82,11 @@ assigned = @task.assigned
         <section class="task-assigned">
           <h4 class="task-column-title">History</h4>
 
-          <ul class="task-assigned">
+          <dl class="task-assigned">
               <%= render partial: 'shared/assignee',
                          collection: assigned,
                          locals: { task: @task } %>
-          </ul>
+          </dl>
         </section>
       <% end %>
 

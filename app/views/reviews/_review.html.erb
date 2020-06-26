@@ -1,9 +1,5 @@
 <p id="review_<%= review.id %>" class="review">
-  <% if review.approved? %>
-    approved <%= format_date(review.updated_at) %>
-  <% elsif review.disapproved? %>
-    dispproved <%= format_date(review.updated_at) %>
-  <% else %>
+  <% if review.pending? %>
     <%# TODO: reviewer+ %>
     <%= link_to 'approve',
                 approve_task_review_path(task, review),
@@ -12,6 +8,18 @@
     <%= link_to 'disapprove',
                 disapprove_task_review_path(task, review),
                 method: :patch, class: 'destroy-link' %>
+  <% else %>
+    <%= content_tag :strong, class: 'review-status' do %>
+      <%= review.approved? ? 'approved' : 'disapproved' %>
+    <% end %>
+    <%= content_tag :span,
+                    format_date(review.updated_at),
+                    class: 'review-date' %>
+    <br>
+    by
+    <%= content_tag :span,
+                    review.user.name_or_email,
+                    class: 'review-user' %>
   <% end %>
 
   <%# TODO: admin only %>

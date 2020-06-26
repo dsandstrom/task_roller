@@ -4,23 +4,26 @@ progress = assignee.task_progress(task)
 current_assignee = false if current_assignee.nil?
 %>
 
-<li id="assignee-<%= assignee.id %>" class="assignee">
-  <%= assignee.name_or_email %>
+<dt id="assignee-<%= assignee.id %>" class="assignee">
+  <%= content_tag :strong, assignee.name_or_email, class: 'assignee-name' %>
 
   <% if progressions.unfinished.any? %>
     <%= divider %>
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
-  <% elsif task.assigned? %>
+  <% elsif current_assignee && task.assigned? %>
+    <%# TODO: current user %>
     <%= divider %>
     <%= link_to 'start',
                 task_progressions_path(task, progression: { user_id: assignee.id }),
                 method: :post, class: 'create-link' %>
   <% end %>
+</dt>
 
+<dd id="assignee-progress-<%= assignee.id %>" class="assignee-progress">
   <% if progress.present? %>
-    <br>
-    progress made: <%= progress %>
+    progress made:
+    <%= progress %>
   <% end %>
-</li>
+</dd>
