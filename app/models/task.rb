@@ -164,6 +164,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     update closed: true
   end
 
+  # TODO: remove approved reviews or make them outdated
   def open
     update closed: false
   end

@@ -86,6 +86,7 @@ assigned = @task.assigned
             <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
           </span>
 
+          <%# TODO: allow reviewers+ to self assign %>
           <span class="divider">|</span>
           <%= link_to 'change',
                       edit_category_project_task_path(@category, @task.project, @task),

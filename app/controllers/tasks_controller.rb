@@ -3,6 +3,7 @@
 # TODO: allow admins to connect task to issue, move to different issue
 # TODO: restrict to reviewers except index, show
 # TODO: when issue, auto assign summary/description
+# TODO: add history page to show all progressions, approvals
 
 # rubocop:disable Metrics/ClassLength
 

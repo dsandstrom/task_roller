@@ -27,6 +27,7 @@ class ReviewsController < ApplicationController
     end
   end
 
+  # TODO: set task.user_id as current user
   def approve
     if @review.approve
       redirect_to category_project_task_path(@category, @project, @task),
@@ -36,6 +37,7 @@ class ReviewsController < ApplicationController
     end
   end
 
+  # TODO: set task.user_id as current user
   def disapprove
     if @review.disapprove
       redirect_to category_project_task_path(@category, @project, @task),
