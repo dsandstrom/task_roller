@@ -52,11 +52,15 @@ assigned = @task.assigned
                        collection: assignees,
                        locals: { task: @task } %>
           </ul>
-          <p>
-            <%= link_to 'reassign',
-                        edit_category_project_task_path(@category, @project, @task),
-                        id: 'task_assignment_link', class: 'secondary-link' %>
-          </p>
+          <%# TODO: show if in_progress?  %>
+          <%# but need to finish progressions when reassigning %>
+          <% if @task.assigned? %>
+            <p>
+              <%= link_to 'reassign',
+                          edit_category_project_task_path(@category, @project, @task),
+                          id: 'task_assignment_link', class: 'secondary-link' %>
+            </p>
+          <% end %>
         <% else %>
           <p>
             no one
