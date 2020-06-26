@@ -32,4 +32,10 @@ class Progression < ApplicationRecord
   def self.finished
     where(finished: true)
   end
+
+  # INSTANCE
+
+  def finish
+    update finished: true
+  end
 end

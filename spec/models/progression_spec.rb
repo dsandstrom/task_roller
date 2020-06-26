@@ -71,4 +71,32 @@ RSpec.describe Progression, type: :model do
       expect(Progression.finished).to eq([progression])
     end
   end
+
+  # INSTANCE
+
+  describe "#finish" do
+    let(:task) { Fabricate(:open_task) }
+
+    context "when unfinished" do
+      it "changes it's finished to true" do
+        progression = Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          progression.finish
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+    end
+
+    context "when finished" do
+      it "doesn't change finished" do
+        progression = Fabricate(:finished_progression, task: task)
+
+        expect do
+          progression.finish
+          progression.reload
+        end.not_to change(progression, :finished)
+      end
+    end
+  end
 end
