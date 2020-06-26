@@ -15,6 +15,6 @@ module CommentsHelper
       return value.strftime("#{date_format}-#{time_format}")
     end
 
-    value.strftime("#{date_format}/%Y - #{time_format}")
+    value.strftime("#{date_format}/%Y-#{time_format}")
   end
 end
