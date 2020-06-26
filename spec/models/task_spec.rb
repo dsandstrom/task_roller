@@ -828,7 +828,7 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "and a progression is also an assignee" do
+    context "and a progression user is also an assignee" do
       let(:user) { Fabricate(:user_worker) }
 
       before do
@@ -838,6 +838,38 @@ RSpec.describe Task, type: :model do
 
       it "returns none" do
         expect(task.assigned).to eq([])
+      end
+    end
+
+    context "and two progressions" do
+      context "for the same user" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:finished_progression, task: task, user: user)
+          Fabricate(:progression, task: task, user: user)
+        end
+
+        it "returns user once" do
+          expect(task.assigned).to eq([user])
+        end
+      end
+
+      context "for the different users" do
+        let(:first_user) { Fabricate(:user_worker) }
+        let(:second_user) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:finished_progression, task: task, user: second_user)
+
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:finished_progression, task: task, user: first_user)
+          end
+        end
+
+        it "orders by created_at asc" do
+          expect(task.assigned).to eq([first_user, second_user])
+        end
       end
     end
   end
