@@ -19,6 +19,7 @@ class ReviewsController < ApplicationController
     @review = @task.reviews.build(review_params)
 
     if @review.save
+      @task.finish
       redirect_to category_project_task_path(@category, @project, @task),
                   notice: 'Review was successfully created.'
     else

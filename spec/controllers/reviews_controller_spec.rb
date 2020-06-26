@@ -48,6 +48,15 @@ RSpec.describe ReviewsController, type: :controller do
         end.to change(Review, :count).by(1)
       end
 
+      it "finishes active progressions" do
+        progression = Fabricate(:unfinished_progression, task: task)
+        expect do
+          post :create, params: { task_id: task.to_param,
+                                  review: valid_attributes }
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+
       it "redirects to the task" do
         post :create, params: { task_id: task.to_param,
                                 review: valid_attributes }
