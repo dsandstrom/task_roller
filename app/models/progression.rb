@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Progression < ApplicationRecord
+  # TODO: use current_user's time zone
+  TIME_ZONE = 'Pacific Time (US & Canada)'
+
   belongs_to :task
   belongs_to :user
 
@@ -38,4 +41,26 @@ class Progression < ApplicationRecord
   def finish
     update finished: true
   end
+
+  def start_date
+    @start_date ||=
+      created_at.in_time_zone(TIME_ZONE).strftime(date_format(created_at))
+  end
+
+  # TODO: add finished_at if need to update progressions after finishing
+  def finish_date
+    @finish_date ||=
+      if finished?
+        updated_at.in_time_zone(TIME_ZONE).strftime(date_format(updated_at))
+      end
+  end
+
+  private
+
+    def date_format(date)
+      date_format = '%-m/%-d'
+      return date_format if date.year == Time.now.year
+
+      "#{date_format}/%Y"
+    end
 end

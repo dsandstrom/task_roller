@@ -99,4 +99,76 @@ RSpec.describe Progression, type: :model do
       end
     end
   end
+
+  describe "#start_date" do
+    let(:task) { Fabricate(:open_task) }
+
+    context "when created a previous year" do
+      it "returns month/day/year" do
+        progression = nil
+        Timecop.freeze("20020506 12:00pm") do
+          progression = Fabricate(:progression)
+        end
+        expect(progression.start_date).to eq("5/6/2002")
+      end
+    end
+
+    context "when created current year" do
+      it "returns month/day" do
+        progression = nil
+        Timecop.freeze("6/5 12:00pm") do
+          progression = Fabricate(:progression)
+        end
+        expect(progression.start_date).to eq("6/5")
+      end
+    end
+  end
+
+  describe "#finish_date" do
+    let(:task) { Fabricate(:open_task) }
+
+    context "for a finished progression" do
+      context "when finished a previous year" do
+        it "returns month/day/year" do
+          progression = nil
+          Timecop.freeze("20020506 12:00pm") do
+            progression = Fabricate(:finished_progression)
+          end
+          expect(progression.finish_date).to eq("5/6/2002")
+        end
+      end
+
+      context "when finished current year" do
+        it "returns month/day" do
+          progression = nil
+          Timecop.freeze("6/5 12:00pm") do
+            progression = Fabricate(:finished_progression)
+          end
+          expect(progression.finish_date).to eq("6/5")
+        end
+      end
+    end
+
+    context "for a unfinished progression" do
+      context "when updated last a previous year" do
+        it "returns month/day/year" do
+          progression = nil
+          Timecop.freeze("20020506 12:00pm") do
+            progression = Fabricate(:unfinished_progression)
+          end
+          expect(progression.finish_date).to be_nil
+        end
+      end
+
+      context "when updated last current year" do
+        it "returns month/day" do
+          progression = nil
+          Timecop.freeze("6/5 12:00pm") do
+            progression = Fabricate(:unfinished_progression)
+          end
+          expect(progression.finish_date).to be_nil
+        end
+      end
+    end
+  end
 end
