@@ -452,4 +452,115 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#task_progress" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:task) { Fabricate(:task) }
+
+    context "when no progressions for task" do
+      before { Fabricate(:finished_progression, user: user) }
+
+      it "returns nil" do
+        expect(user.task_progress(task)).to eq("")
+      end
+    end
+
+    context "when a progression for the task" do
+      context "that starts and stops on the same day" do
+        context "a previous year" do
+          before do
+            Timecop.freeze("20060305 1200") do
+              Fabricate(:finished_progression, task: task, user: user)
+            end
+          end
+
+          it "returns one day" do
+            expect(user.task_progress(task)).to eq("3/5/2006")
+          end
+        end
+
+        context "current year" do
+          before do
+            Timecop.freeze("3/5 12:00pm") do
+              Fabricate(:finished_progression, task: task, user: user)
+            end
+          end
+
+          it "returns one day" do
+            expect(user.task_progress(task)).to eq("3/5")
+          end
+        end
+      end
+
+      context "that starts and stops on different days" do
+        context "a previous year" do
+          before do
+            progression = nil
+            Timecop.freeze("20060305 1200") do
+              progression = Fabricate(:progression, task: task, user: user)
+            end
+            Timecop.freeze("20060306 1200") do
+              progression.finish
+            end
+          end
+
+          it "returns both days" do
+            expect(user.task_progress(task)).to eq("3/5/2006-3/6/2006")
+          end
+        end
+
+        context "current year" do
+          before do
+            progression = nil
+            Timecop.freeze("3/5 12:00pm") do
+              progression = Fabricate(:progression, task: task, user: user)
+            end
+            Timecop.freeze("3/6 12:00pm") do
+              progression.finish
+            end
+          end
+
+          it "returns one day" do
+            expect(user.task_progress(task)).to eq("3/5-3/6")
+          end
+        end
+      end
+    end
+
+    context "when two progressions for the task" do
+      context "and each are on different days" do
+        before do
+          progression = nil
+          Timecop.freeze("3/8 12:00pm") do
+            progression = Fabricate(:progression, task: task, user: user)
+          end
+          Timecop.freeze("3/10 12:00pm") do
+            progression.finish
+          end
+          Timecop.freeze("3/5 12:00pm") do
+            Fabricate(:finished_progression, task: task, user: user)
+          end
+        end
+
+        it "returns one day" do
+          expect(user.task_progress(task)).to eq("3/5, 3/8-3/10")
+        end
+      end
+
+      context "and all are on the same day" do
+        before do
+          Timecop.freeze("3/5 12:00pm") do
+            Fabricate(:finished_progression, task: task, user: user)
+          end
+          Timecop.freeze("3/5 1:00pm") do
+            Fabricate(:finished_progression, task: task, user: user)
+          end
+        end
+
+        it "returns one day" do
+          expect(user.task_progress(task)).to eq("3/5")
+        end
+      end
+    end
+  end
 end

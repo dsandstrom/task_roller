@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: add active boolean
+# TODO: add active boolean (or use employee connection to disable a user)
 
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
@@ -86,6 +86,27 @@ class User < ApplicationRecord
 
   def name_or_email
     @name_or_email ||= (name || email)
+  end
+
+  def task_progressions(task)
+    progressions.where(task_id: task.id).order(created_at: :asc)
+  end
+
+  # group up progression dates to make something readable
+  # TODO: "3/5-3/6, 3/7-3/8" -> "3/5-3/8"
+  # TODO: "3/6, 3/6-3/8" -> "3/6-3/8"
+  # TODO: finished only? ("3/6-")
+  def task_progress(task)
+    task_progressions(task).map do |progression|
+      start_date = progression.start_date
+      finish_date = progression.finish_date
+
+      if start_date == finish_date
+        start_date
+      else
+        "#{start_date}-#{finish_date}"
+      end
+    end.uniq.join(', ')
   end
 
   private
