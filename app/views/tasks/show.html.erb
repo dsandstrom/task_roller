@@ -50,7 +50,7 @@ assigned = @task.assigned
           <ul>
             <%= render partial: 'shared/assignee',
                        collection: assignees,
-                       locals: { task: @task } %>
+                       locals: { task: @task, current_assignee: true } %>
           </ul>
           <%# TODO: show if in_progress?  %>
           <%# but need to finish progressions when reassigning %>
@@ -77,7 +77,8 @@ assigned = @task.assigned
 
         <% if assigned.any? %>
           <ul class="task-assignees">
-              <%= render partial: 'shared/assigned', collection: assigned,
+              <%= render partial: 'shared/assignee',
+                         collection: assigned,
                          locals: { task: @task } %>
           </ul>
         <% end %>

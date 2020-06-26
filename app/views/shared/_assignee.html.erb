@@ -1,5 +1,6 @@
 <%
 progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
+current_assignee = false if current_assignee.nil?
 %>
 
 <li id="assignee-<%= assignee.id %>" class="assignee">
@@ -10,10 +11,13 @@ progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
-  <% elsif task.assigned? %>
+  <% elsif current_assignee && task.assigned? %>
     <%= divider %>
     <%= link_to 'start',
                 task_progressions_path(task, progression: { user_id: assignee.id }),
                 method: :post, class: 'create-link' %>
   <% end %>
+
+  <br>
+  progress made: <%= assignee.task_progress(task) %>
 </li>
