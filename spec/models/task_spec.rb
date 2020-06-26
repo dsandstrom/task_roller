@@ -774,6 +774,10 @@ RSpec.describe Task, type: :model do
           progression.reload
         end.to change(progression, :finished).to(true)
       end
+
+      it "returns true" do
+        expect(task.finish).to eq(true)
+      end
     end
 
     context "when no unfinished progressions" do
@@ -783,6 +787,10 @@ RSpec.describe Task, type: :model do
         expect do
           task.finish
         end.not_to raise_error
+      end
+
+      it "returns true" do
+        expect(task.finish).to eq(true)
       end
     end
   end
