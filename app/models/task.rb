@@ -174,20 +174,28 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def in_review?
-    open? && reviews.pending.any?
+    @in_review ||= open? && reviews.pending.any?
   end
 
   def in_progress?
-    return false if in_review?
-
-    open? && progressions.unfinished.any?
+    @in_progress ||=
+      if in_review?
+        false
+      else
+        open? && progressions.unfinished.any?
+      end
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
   def assigned?
-    return false if in_review? || in_progress?
-
-    open? && assignees.any?
+    @assigned_ ||=
+      if in_review? || in_progress?
+        false
+      else
+        open? && assignees.any?
+      end
   end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   private
 
