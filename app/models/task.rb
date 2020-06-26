@@ -178,10 +178,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def in_progress?
+    return false if in_review?
+
     open? && progressions.unfinished.any?
   end
 
   def assigned?
+    return false if in_review? || in_progress?
+
     open? && assignees.any?
   end
 
