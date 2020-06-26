@@ -761,4 +761,29 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#finish" do
+    context "when an unfinished progression" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "changes it's finished to true" do
+        progression = Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          task.finish
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+    end
+
+    context "when no unfinished progressions" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "doesn't raise an error" do
+        expect do
+          task.finish
+        end.not_to raise_error
+      end
+    end
+  end
 end

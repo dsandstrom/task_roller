@@ -155,6 +155,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @status ||= build_status
   end
 
+  def finish
+    progressions&.unfinished&.each(&:finish)
+  end
+
   def close
     update closed: true
   end
