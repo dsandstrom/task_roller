@@ -1,5 +1,6 @@
 <%
 progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
+progress = assignee.task_progress(task)
 current_assignee = false if current_assignee.nil?
 %>
 
@@ -18,6 +19,8 @@ current_assignee = false if current_assignee.nil?
                 method: :post, class: 'create-link' %>
   <% end %>
 
-  <br>
-  progress made: <%= assignee.task_progress(task) %>
+  <% if progress.present? %>
+    <br>
+    progress made: <%= progress %>
+  <% end %>
 </li>

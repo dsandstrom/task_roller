@@ -74,15 +74,19 @@ assigned = @task.assigned
         <% end %>
 
         <%= render 'task_assignments/form', task: @task %>
+      </section>
 
-        <% if assigned.any? %>
-          <ul class="task-assignees">
+      <% if assigned.any? %>
+        <section class="task-assigned">
+          <h4 class="task-column-title">History</h4>
+
+          <ul class="task-assigned">
               <%= render partial: 'shared/assignee',
                          collection: assigned,
                          locals: { task: @task } %>
           </ul>
-        <% end %>
-      </section>
+        </section>
+      <% end %>
 
       <section class="task-reviewer">
         <h4 class="task-column-title">Reviewer</h4>
