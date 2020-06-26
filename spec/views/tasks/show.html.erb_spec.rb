@@ -163,4 +163,22 @@ RSpec.describe "tasks/show", type: :view do
       end.not_to raise_error
     end
   end
+
+  # TODO: add specs for assignees, progressions, reviews, open, closed
+  context "task closed" do
+    context "with no reviews" do
+      before do
+        @project = assign(:project, Fabricate(:project, category: @category))
+        @task = assign(:task, Fabricate(:closed_task, project: @project))
+
+        @task.reload
+      end
+
+      it "renders" do
+        expect do
+          render
+        end.not_to raise_error
+      end
+    end
+  end
 end

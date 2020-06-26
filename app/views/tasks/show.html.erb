@@ -38,7 +38,7 @@ assigned = @task.assigned
                         task_reviews_path(@task, review: { user_id: @task.user_id }),
                         method: :post %>
           </p>
-        <% else %>
+        <% elsif @task.current_review %>
           <%= render @task.current_review, task: @task %>
         <% end %>
       </section>
