@@ -470,35 +470,63 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#ready_for_review?" do
-    let(:task) { Fabricate(:task) }
+    context "for an open task" do
+      let(:task) { Fabricate(:open_task) }
 
-    context "when has no reviews" do
-      it "returns true" do
-        expect(task.ready_for_review?).to eq(true)
+      context "when has no reviews" do
+        it "returns true" do
+          expect(task.ready_for_review?).to eq(true)
+        end
+      end
+
+      context "when has a pending review" do
+        before { Fabricate(:pending_review, task: task) }
+
+        it "returns false" do
+          expect(task.ready_for_review?).to eq(false)
+        end
+      end
+
+      context "when has an approved review" do
+        before { Fabricate(:approved_review, task: task) }
+
+        it "returns false" do
+          expect(task.ready_for_review?).to eq(false)
+        end
+      end
+
+      context "when has a disapproved review" do
+        before { Fabricate(:disapproved_review, task: task) }
+
+        it "returns true" do
+          expect(task.ready_for_review?).to eq(true)
+        end
       end
     end
 
-    context "when has a pending review" do
-      before { Fabricate(:pending_review, task: task) }
+    context "for a closed task" do
+      let(:task) { Fabricate(:closed_task) }
 
-      it "returns false" do
-        expect(task.ready_for_review?).to eq(false)
+      context "when has no reviews" do
+        it "returns false" do
+          expect(task.ready_for_review?).to eq(false)
+        end
       end
-    end
 
-    context "when has an approved review" do
-      before { Fabricate(:approved_review, task: task) }
+      context "when has an approved review" do
+        before { Fabricate(:approved_review, task: task) }
 
-      it "returns false" do
-        expect(task.ready_for_review?).to eq(false)
+        it "returns false" do
+          expect(task.ready_for_review?).to eq(false)
+        end
       end
-    end
 
-    context "when has a disapproved review" do
-      before { Fabricate(:disapproved_review, task: task) }
+      context "when has a disapproved review" do
+        before { Fabricate(:disapproved_review, task: task) }
 
-      it "returns true" do
-        expect(task.ready_for_review?).to eq(true)
+        it "returns false" do
+          expect(task.ready_for_review?).to eq(false)
+        end
       end
     end
   end
