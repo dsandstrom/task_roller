@@ -31,14 +31,7 @@ assigned = @task.assigned
           <% end %>
         </p>
 
-        <% if @task.open? && @task.ready_for_review? %>
-          <%# TODO: reviewer+ or worker & assigned %>
-          <p>
-            <%= link_to 'mark complete',
-                        task_reviews_path(@task, review: { user_id: @task.user_id }),
-                        method: :post %>
-          </p>
-        <% elsif @task.current_review %>
+        <% if @task.current_review %>
           <%= render @task.current_review, task: @task %>
         <% end %>
       </section>

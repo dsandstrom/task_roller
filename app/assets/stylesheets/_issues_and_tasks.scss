@@ -212,7 +212,9 @@
 }
 
 .progression {
-  white-space: nowrap;
+  a {
+    white-space: nowrap;
+  }
 }
 
 dt {

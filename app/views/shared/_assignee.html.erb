@@ -12,12 +12,27 @@ current_assignee = false if current_assignee.nil?
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
-  <% elsif current_assignee && task.assigned? %>
-    <%# TODO: current user %>
-    <%= divider %>
-    <%= link_to 'start',
-                task_progressions_path(task, progression: { user_id: assignee.id }),
-                method: :post, class: 'create-link' %>
+  <% elsif current_assignee %>
+    <% if task.assigned? %>
+      <%# TODO: current user %>
+      <%= divider %>
+      <%= link_to 'start',
+                  task_progressions_path(task, progression: { user_id: assignee.id }),
+                  method: :post, class: 'create-link' %>
+    <% end %>
+
+    <% if task.current_review && task.current_review.pending? %>
+      <%= divider %>
+      <%= link_to 'cancel review',
+                  task_review_path(task, task.current_review),
+                  method: :delete, data: { confirm: 'Are you sure?' },
+                  class: 'destroy-link' %>
+    <% elsif task.ready_for_review? %>
+      <%= divider %>
+      <%= link_to 'complete',
+                  task_reviews_path(task, review: { user_id: task.user_id }),
+                  method: :post %>
+    <% end %>
   <% end %>
 </dt>
 

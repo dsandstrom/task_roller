@@ -7,6 +7,13 @@
                 finish_task_progression_path(task, progression),
                 method: :patch, class: 'destroy-link' %>
   <% end %>
+
+  <%# TODO: current user %>
+  <%= divider %>
+  <%= link_to 'complete',
+              task_reviews_path(task, review: { user_id: task.user_id }),
+              method: :post %>
+
   <%# TODO: admin %>
   <%= divider %>
   <%= link_to 'delete', task_progression_path(task, progression),
