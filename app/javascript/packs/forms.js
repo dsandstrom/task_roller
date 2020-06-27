@@ -3,12 +3,17 @@ import {Form} from 'src/form';
 import {HiddenForm} from 'src/hidden_form';
 import hljs from 'highlight.js';
 
+let currentEditors = [];
+const editorIds = ['task_description', 'issue_description',
+                   'issue_comment_body', 'task_comment_body'];
+const formNames = ['issue_type_form', 'task_type_form', 'user_form',
+                   'issue_form', 'category_form', 'project_form',
+                   'task_form', 'task_comment_form', 'issue_comment_form'];
+let hiddenForms = new Map();
+hiddenForms.set('task_assignment_link', 'task_assignment_form');
+
 document.addEventListener('turbolinks:load', function() {
   // add markdown editor to textareas
-  const editorIds = ['task_description', 'issue_description',
-                     'issue_comment_body', 'task_comment_body'];
-  const currentEditors = [];
-
   editorIds.forEach((id, i) => {
     var editorTarget = document.getElementById(id);
     if (!editorTarget || editorTarget.style.display == 'none') return;
@@ -17,10 +22,6 @@ document.addEventListener('turbolinks:load', function() {
   });
 
   // add validation to forms
-  const formNames = ['issue_type_form', 'task_type_form', 'user_form',
-                     'issue_form', 'category_form', 'project_form',
-                     'task_form', 'task_comment_form', 'issue_comment_form'];
-
   for (let form of document.querySelectorAll('form')) {
     if (!formNames.includes(form.name)) continue;
 
@@ -33,9 +34,6 @@ document.addEventListener('turbolinks:load', function() {
   }
 
   // toggle hidden sidebar forms
-  let hiddenForms = new Map();
-  hiddenForms.set('task_assignment_link', 'task_assignment_form');
-
   for (let [linkId, formId] of hiddenForms) {
     const linkElem = document.getElementById(linkId);
     const formElem = document.getElementById(formId);
