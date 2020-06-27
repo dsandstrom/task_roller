@@ -83,20 +83,22 @@ assigned = @task.assigned
         </section>
       <% end %>
 
-      <section class="task-reviewer">
-        <h4 class="task-column-title">Reviewer</h4>
-        <p>
-          <span class="task-user">
-            <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
-          </span>
+      <% if @task.open? %>
+        <section class="task-reviewer">
+          <h4 class="task-column-title">Reviewer</h4>
+          <p>
+            <span class="task-user">
+              <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
+            </span>
 
-          <%# TODO: allow reviewers+ to self assign %>
-          <span class="divider">|</span>
-          <%= link_to 'change',
-                      edit_category_project_task_path(@category, @task.project, @task),
-                      class: 'secondary-link' %>
-        </p>
-      </section>
+            <%# TODO: allow reviewers+ to self assign %>
+            <span class="divider">|</span>
+            <%= link_to 'change',
+                        edit_category_project_task_path(@category, @task.project, @task),
+                        class: 'secondary-link' %>
+          </p>
+        </section>
+      <% end %>
 
       <section class="task-issue">
         <h4 class="task-column-title">Issue</h4>
