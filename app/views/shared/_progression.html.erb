@@ -1,6 +1,6 @@
 <span id="progression_<%= progression.id %>" class="progression">
   <% if progression.finished? %>
-    <%= format_date(progression.created_at) %> - <%= format_date(progression.updated_at) %>
+    <%= "#{progression.start_date}-#{progression.finish_date}" %>
   <% else %>
     <%# TODO: current user %>
     <%= link_to 'pause',

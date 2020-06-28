@@ -2,11 +2,15 @@
   <%= content_tag :h3, progression.user.name_or_email %>
   <p>
     Started:
-    <%= format_date(progression.created_at) %>
+    <%= progression.start_date %>
   </p>
   <p>
-    Status:
-    <%= progression.finished? ? 'Finished' : 'In progress' %>
+    <% if progression.finished? %>
+      Finished:
+      <%= progression.finish_date %>
+    <% else %>
+      In Progress
+    <% end %>
   </p>
 
   <p>
