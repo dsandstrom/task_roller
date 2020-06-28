@@ -563,4 +563,31 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#finish_progressions" do
+    let(:user) { Fabricate(:user_worker) }
+
+    context "when user has an unfinished progression" do
+      let(:task) { Fabricate(:open_task) }
+
+      before { task.assignees << user }
+
+      it "changes it's finished to true" do
+        progression = Fabricate(:unfinished_progression, task: task, user: user)
+
+        expect do
+          user.finish_progressions
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+    end
+
+    context "when user has no unfinished progressions" do
+      it "doesn't raise an error" do
+        expect do
+          user.finish_progressions
+        end.not_to raise_error
+      end
+    end
+  end
 end

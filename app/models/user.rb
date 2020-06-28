@@ -109,6 +109,11 @@ class User < ApplicationRecord
     end.uniq.join(', ')
   end
 
+  # used by Task#finish_progressions
+  def finish_progressions
+    progressions.unfinished.each(&:finish)
+  end
+
   private
 
     def create_employee
