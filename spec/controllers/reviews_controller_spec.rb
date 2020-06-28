@@ -97,7 +97,7 @@ RSpec.describe ReviewsController, type: :controller do
         other_review = Fabricate(:disapproved_review, task: task)
         review = Fabricate(:review, task: task)
         # make review invalid
-        other_review.update_attribute :approved, true
+        other_review.update_column :approved, true
 
         put :approve, params: { task_id: task.to_param, id: review.to_param }
         expect(response).to be_successful
@@ -129,7 +129,7 @@ RSpec.describe ReviewsController, type: :controller do
         other_review = Fabricate(:disapproved_review, task: task)
         review = Fabricate(:review, task: task)
         # make review invalid
-        other_review.update_attribute :approved, true
+        other_review.update_column :approved, true
 
         put :disapprove, params: { task_id: task.to_param, id: review.to_param }
         expect(response).to be_successful

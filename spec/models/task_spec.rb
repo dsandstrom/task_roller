@@ -1047,9 +1047,8 @@ RSpec.describe Task, type: :model do
       before do
         # make previous progression invalid
         invalid = Fabricate(:progression, task: task)
-        invalid.update_attribute :finished, false
-        invalid.update_attribute :finished_at, nil
-        progression.update_attribute :user_id, invalid.user_id
+        invalid.update_columns finished: false, finished_at: nil
+        progression.update_column :user_id, invalid.user_id
       end
 
       it "doesn't change it's closed" do
