@@ -46,9 +46,7 @@ assigned = @task.assigned
                          collection: assignees,
                          locals: { task: @task, current_assignee: true } %>
             </dl>
-            <%# TODO: show if in_progress?  %>
-            <%# but need to finish progressions when reassigning %>
-            <% if @task.assigned? %>
+            <% unless @task.in_review? %>
               <p>
                 <%= link_to 'reassign',
                             edit_category_project_task_path(@category, @project, @task),
