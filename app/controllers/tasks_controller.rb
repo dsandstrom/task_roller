@@ -63,13 +63,12 @@ class TasksController < ApplicationController
   end
 
   def open
-    project = @task.project
+    @project = @task.project
+    @category = @task.category
     if @task.open
-      redirect_to category_project_task_url(@category, project, @task),
+      redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully opened.'
     else
-      @project = @task.project
-      @category = @task.category
       set_form_options
       render :edit
     end

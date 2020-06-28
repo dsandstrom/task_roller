@@ -251,9 +251,20 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "with invalid params" do
+      let(:task) { Fabricate(:closed_task, project: project) }
+
+      before { task.user.destroy }
+
+      it "doesn't update the requested task" do
+        expect do
+          put :open, params: { category_id: category.to_param,
+                               project_id: project.to_param,
+                               id: task.to_param }
+          task.reload
+        end.not_to change(task, :closed)
+      end
+
       it "returns a success response (i.e. to display the 'edit' template)" do
-        task = Fabricate(:closed_task, project: project)
-        task.user.destroy
         put :open, params: { category_id: category.to_param,
                              project_id: project.to_param,
                              id: task.to_param }
@@ -288,13 +299,24 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "with invalid params" do
+      let(:task) { Fabricate(:closed_task, project: project) }
+
+      before { task.user.destroy }
+
       it "returns a success response (i.e. to display the 'edit' template)" do
-        task = Fabricate(:open_task, project: project)
-        task.user.destroy
         put :close, params: { category_id: category.to_param,
                               project_id: project.to_param,
                               id: task.to_param }
         expect(response).to be_successful
+      end
+
+      it "doesn't update the requested task" do
+        expect do
+          put :close, params: { category_id: category.to_param,
+                                project_id: project.to_param,
+                                id: task.to_param }
+          task.reload
+        end.not_to change(task, :closed)
       end
     end
   end
