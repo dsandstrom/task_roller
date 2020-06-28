@@ -15,7 +15,7 @@
 
   <p>
     <%= link_to 'edit', edit_task_progression_path(task, progression) %>
-    <span class="divider">|</span>
+    <%= divider %>
     <%= link_to 'delete',
                 task_progression_path(task, progression),
                 method: :delete,

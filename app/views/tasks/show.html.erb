@@ -18,13 +18,13 @@ assigned = @task.assigned
 
           <% if @task.open? %>
             <%# TODO: admin only %>
-            <span class="divider">|</span>
+            <%= divider %>
             <%= link_to 'close',
                         close_category_task_path(@category, @task),
                         method: :patch, class: 'secondary-link' %>
           <% else %>
             <%# TODO: reviewer+ only %>
-            <span class="divider">|</span>
+            <%= divider %>
             <%= link_to 'reopen',
                         open_category_task_path(@category, @task),
                         method: :patch, class: 'secondary-link' %>
@@ -58,7 +58,7 @@ assigned = @task.assigned
           <% else %>
             <p>
               no one
-              <span class="divider">|</span>
+              <%= divider %>
               <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
               <%# TODO: add form with ajax with first click, then toggle hide class %>
               <%= link_to 'assign someone',
@@ -92,7 +92,7 @@ assigned = @task.assigned
             </span>
 
             <%# TODO: allow reviewers+ to self assign %>
-            <span class="divider">|</span>
+            <%= divider %>
             <%= link_to 'change',
                         edit_category_project_task_path(@category, @task.project, @task),
                         class: 'secondary-link' %>
@@ -112,7 +112,7 @@ assigned = @task.assigned
             <em>no connection</em>
           <% end %>
 
-          <span class="divider">|</span>
+          <%= divider %>
           <%= link_to 'change',
                       edit_category_project_task_path(@category, @task.project, @task),
                       class: 'secondary-link' %>

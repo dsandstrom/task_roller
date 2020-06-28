@@ -4,7 +4,7 @@
     <%= link_to 'approve',
                 approve_task_review_path(task, review),
                 method: :patch, class: 'create-link' %>
-    <span class="divider">|</span>
+    <%= divider %>
     <%= link_to 'disapprove',
                 disapprove_task_review_path(task, review),
                 method: :patch, class: 'destroy-link' %>
@@ -23,7 +23,7 @@
   <% end %>
 
   <%# TODO: admin only %>
-  <span class="divider">|</span>
+  <%= divider %>
   <%= link_to 'delete', task_review_path(task, review),
               method: :delete, data: { confirm: 'Are you sure?' },
               class: 'secondary-link' %>
