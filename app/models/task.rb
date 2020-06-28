@@ -8,7 +8,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :project
   belongs_to :issue, required: false
   has_many :task_assignees, dependent: :destroy
-  has_many :assignees, through: :task_assignees
+  has_many :assignees, through: :task_assignees,
+                       before_remove: :finish_assignee_progressions
   has_many :progressions, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :comments, class_name: 'TaskComment', foreign_key: :roller_id,
@@ -226,5 +227,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         'open'
       end
+    end
+
+    def finish_assignee_progressions(assignee)
+      assignee.finish_progressions
     end
 end

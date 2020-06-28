@@ -1065,4 +1065,62 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#finish" do
+    context "when an unfinished progression" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "changes it's finished to true" do
+        progression = Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          task.finish
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+
+      it "returns true" do
+        expect(task.finish).to eq(true)
+      end
+    end
+
+    context "when no unfinished progressions" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "doesn't raise an error" do
+        expect do
+          task.finish
+        end.not_to raise_error
+      end
+
+      it "returns true" do
+        expect(task.finish).to eq(true)
+      end
+    end
+  end
+
+  describe "#finish_progressions" do
+    let(:task) { Fabricate(:open_task) }
+    let(:user) { Fabricate(:user_worker) }
+
+    before { task.assignees << user }
+
+    context "when a user is unassigned" do
+      it "runs user.finish_progressions" do
+        Fabricate(:unfinished_progression, task: task, user: user)
+        expect(user).to receive(:finish_progressions)
+        task.update(assignee_ids: [])
+      end
+    end
+
+    context "when a user is not unassigned" do
+      it "doesn't change it's progressions" do
+        Fabricate(:unfinished_progression, task: task, user: user)
+        allow(task).to receive(:assignees) { [user] }
+        expect(user).not_to receive(:finish_progressions)
+        task.update(assignee_ids: [user.id])
+        task.update(summary: "New summary")
+      end
+    end
+  end
 end
