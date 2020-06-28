@@ -50,7 +50,7 @@ class Progression < ApplicationRecord
   def finish_date
     @finish_date ||=
       if finished? && finished_at
-        finished_at.in_time_zone(TIME_ZONE).strftime(date_format(updated_at))
+        finished_at.in_time_zone(TIME_ZONE).strftime(date_format(finished_at))
       end
   end
 
