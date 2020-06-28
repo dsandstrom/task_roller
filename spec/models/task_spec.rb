@@ -1075,22 +1075,44 @@ RSpec.describe Task, type: :model do
     context "when closed" do
       let(:task) { Fabricate(:closed_task) }
 
+      before do
+        task.update opened_at: 1.week.ago
+      end
+
       it "changes closed to false" do
         expect do
           task.open
           task.reload
         end.to change(task, :closed).to(false)
       end
+
+      it "changes opened_at" do
+        expect do
+          task.open
+          task.reload
+        end.to change(task, :opened_at)
+      end
     end
 
     context "when open" do
       let(:task) { Fabricate(:open_task) }
+
+      before do
+        task.update opened_at: 1.week.ago
+      end
 
       it "doesn't change task" do
         expect do
           task.open
           task.reload
         end.not_to change(task, :closed)
+      end
+
+      it "changes opened_at" do
+        expect do
+          task.open
+          task.reload
+        end.to change(task, :opened_at)
       end
     end
   end

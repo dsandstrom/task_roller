@@ -176,7 +176,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: if 'in progress' move disapproved reviews to history
   # TODO: move reviews to history
   def open
-    update closed: false
+    update closed: false, opened_at: Time.now
   end
 
   def current_review
