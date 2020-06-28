@@ -179,6 +179,19 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     update closed: false, opened_at: Time.now
   end
 
+  def current_reviews
+    if @current_reviews.instance_of?(ActiveRecord::AssociationRelation)
+      return @current_reviews
+    end
+
+    @current_reviews =
+      reviews.where(
+        'reviews.created_at > ? OR reviews.approved = ?',
+        opened_at,
+        false
+      )
+  end
+
   def current_review
     @current_review ||= reviews.order(created_at: :desc).first
   end

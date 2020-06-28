@@ -470,6 +470,56 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#current_reviews" do
+    let(:task) { Fabricate(:task) }
+
+    context "when no reviews" do
+      it "returns []" do
+        expect(task.current_reviews).to eq([])
+      end
+    end
+
+    context "when reviews" do
+      before do
+        Timecop.freeze(1.week.ago) do
+          task.open
+        end
+      end
+
+      it "returns approved reviews created after opened_at" do
+        review = Fabricate(:disapproved_review, task: task)
+        Fabricate(:approved_review)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:approved_review, task: task)
+        end
+        review.update_column :approved, true
+
+        expect(task.current_reviews).to eq([review])
+      end
+
+      it "returns pending reviews created after opened_at" do
+        review = Fabricate(:disapproved_review, task: task)
+        Fabricate(:pending_review)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:pending_review, task: task)
+        end
+        review.update_column :approved, nil
+
+        expect(task.current_reviews).to eq([review])
+      end
+
+      it "returns all disapproved reviews" do
+        review = nil
+        Fabricate(:disapproved_review)
+        Timecop.freeze(2.weeks.ago) do
+          review = Fabricate(:disapproved_review, task: task)
+        end
+
+        expect(task.current_reviews).to eq([review])
+      end
+    end
+  end
+
   describe "#ready_for_review?" do
     context "for an open task" do
       let(:task) { Fabricate(:open_task) }
