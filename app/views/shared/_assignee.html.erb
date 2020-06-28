@@ -2,6 +2,7 @@
 progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
 progress = assignee.task_progress(task)
 current_assignee = false if current_assignee.nil?
+confirm = 'Are you sure you want to cancel the review?'
 %>
 
 <dt id="assignee-<%= assignee.id %>" class="assignee">
@@ -25,7 +26,7 @@ current_assignee = false if current_assignee.nil?
       <%= divider %>
       <%= link_to 'cancel review',
                   task_review_path(task, task.current_review),
-                  method: :delete, data: { confirm: 'Are you sure?' },
+                  method: :delete, data: { confirm: confirm },
                   class: 'destroy-link' %>
     <% elsif task.ready_for_review? %>
       <%= divider %>
@@ -36,9 +37,9 @@ current_assignee = false if current_assignee.nil?
   <% end %>
 </dt>
 
-<dd id="assignee-progress-<%= assignee.id %>" class="assignee-progress">
+<dd id="assignee-progressions-<%= assignee.id %>" class="assignee-progressions">
   <% if progress.present? %>
-    progress made:
+    made progress:
     <%= progress %>
   <% end %>
 </dd>
