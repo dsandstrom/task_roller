@@ -15,6 +15,7 @@ RSpec.describe Progression, type: :model do
   it { is_expected.to respond_to(:task_id) }
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:finished) }
+  it { is_expected.to respond_to(:finished_at) }
 
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:user) }
