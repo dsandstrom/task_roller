@@ -17,6 +17,7 @@ class TasksController < ApplicationController
   end
 
   def show
+    # TODO: add feed of comments, reviews, progresssions, assignments
   end
 
   def new
