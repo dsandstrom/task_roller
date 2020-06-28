@@ -28,7 +28,7 @@ confirm = 'Are you sure you want to cancel the review?'
                   task_review_path(task, task.current_review),
                   method: :delete, data: { confirm: confirm },
                   class: 'destroy-link' %>
-    <% elsif task.ready_for_review? %>
+    <% elsif !task.in_review? %>
       <%= divider %>
       <%= link_to 'complete',
                   task_reviews_path(task, review: { user_id: task.user_id }),

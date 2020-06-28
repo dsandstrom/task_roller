@@ -121,16 +121,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     !closed?
   end
 
-  # not waiting for approval or already approved
-  def ready_for_review?
-    @ready_for_review ||=
-      if closed?
-        false
-      else
-        reviews.pending.or(reviews.approved).none?
-      end
-  end
-
   # TODO: add options to categories/projects on which users are assignable
   def assignable
     @assignable ||= User.assignable_employees

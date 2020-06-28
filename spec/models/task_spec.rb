@@ -520,68 +520,6 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "#ready_for_review?" do
-    context "for an open task" do
-      let(:task) { Fabricate(:open_task) }
-
-      context "when has no reviews" do
-        it "returns true" do
-          expect(task.ready_for_review?).to eq(true)
-        end
-      end
-
-      context "when has a pending review" do
-        before { Fabricate(:pending_review, task: task) }
-
-        it "returns false" do
-          expect(task.ready_for_review?).to eq(false)
-        end
-      end
-
-      context "when has an approved review" do
-        before { Fabricate(:approved_review, task: task) }
-
-        it "returns false" do
-          expect(task.ready_for_review?).to eq(false)
-        end
-      end
-
-      context "when has a disapproved review" do
-        before { Fabricate(:disapproved_review, task: task) }
-
-        it "returns true" do
-          expect(task.ready_for_review?).to eq(true)
-        end
-      end
-    end
-
-    context "for a closed task" do
-      let(:task) { Fabricate(:closed_task) }
-
-      context "when has no reviews" do
-        it "returns false" do
-          expect(task.ready_for_review?).to eq(false)
-        end
-      end
-
-      context "when has an approved review" do
-        before { Fabricate(:approved_review, task: task) }
-
-        it "returns false" do
-          expect(task.ready_for_review?).to eq(false)
-        end
-      end
-
-      context "when has a disapproved review" do
-        before { Fabricate(:disapproved_review, task: task) }
-
-        it "returns false" do
-          expect(task.ready_for_review?).to eq(false)
-        end
-      end
-    end
-  end
-
   describe "#in_review?" do
     context "when closed is false" do
       context "and has a pending review" do
