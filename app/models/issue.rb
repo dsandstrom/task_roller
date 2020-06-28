@@ -23,6 +23,8 @@ class Issue < ApplicationRecord
   validates :project_id, presence: true
   validates :project, presence: true, if: :project_id
 
+  after_create :set_opened_at
+
   # CLASS
 
   def self.all_open
@@ -127,4 +129,12 @@ class Issue < ApplicationRecord
   def closed_tasks
     @closed_tasks ||= tasks.all_closed
   end
+
+  private
+
+    def set_opened_at
+      return if opened_at.present? || created_at.nil?
+
+      update_column :opened_at, updated_at
+    end
 end

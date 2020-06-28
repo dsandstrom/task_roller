@@ -27,6 +27,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :project_id, presence: true
   validates :project, presence: true, if: :project_id
 
+  after_create :set_opened_at
+
   # CLASS
 
   def self.all_open
@@ -231,5 +233,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     def finish_assignee_progressions(assignee)
       assignee.finish_progressions
+    end
+
+    def set_opened_at
+      return if opened_at.present? || created_at.nil?
+
+      update_column :opened_at, created_at
     end
 end

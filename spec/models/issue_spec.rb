@@ -543,4 +543,25 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#set_opened_at" do
+    context "after creating" do
+      it "sets opened_at as created_at" do
+        subject.save
+        subject.reload
+        expect(subject.opened_at).to eq(subject.created_at)
+      end
+    end
+
+    context "after updating" do
+      it "sets opened_at as created_at" do
+        Timecop.freeze(1.week.ago) do
+          subject.save
+        end
+        subject.update summary: "New summary"
+        subject.reload
+        expect(subject.opened_at).to eq(subject.created_at)
+      end
+    end
+  end
 end
