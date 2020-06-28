@@ -87,6 +87,15 @@ RSpec.describe Progression, type: :model do
           progression.reload
         end.to change(progression, :finished).to(true)
       end
+
+      it "sets it's finished_at" do
+        progression = Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          progression.finish
+          progression.reload
+        end.to change(progression, :finished_at).from(nil)
+      end
     end
 
     context "when finished" do
@@ -135,6 +144,9 @@ RSpec.describe Progression, type: :model do
           Timecop.freeze("20020506 12:00pm") do
             progression = Fabricate(:finished_progression)
           end
+          Timecop.freeze("20020510 12:00pm") do
+            progression.touch
+          end
           expect(progression.finish_date).to eq("5/6/2002")
         end
       end
@@ -144,6 +156,9 @@ RSpec.describe Progression, type: :model do
           progression = nil
           Timecop.freeze("6/5 12:00pm") do
             progression = Fabricate(:finished_progression)
+          end
+          Timecop.freeze("6/10 12:00pm") do
+            progression.touch
           end
           expect(progression.finish_date).to eq("6/5")
         end

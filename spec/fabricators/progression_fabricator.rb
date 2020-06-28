@@ -11,4 +11,5 @@ end
 
 Fabricator(:finished_progression, from: :progression) do
   finished true
+  finished_at { Time.now }
 end

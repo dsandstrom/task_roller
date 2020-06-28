@@ -39,7 +39,7 @@ class Progression < ApplicationRecord
   # INSTANCE
 
   def finish
-    update finished: true
+    update finished: true, finished_at: Time.now
   end
 
   def start_date
@@ -47,11 +47,10 @@ class Progression < ApplicationRecord
       created_at.in_time_zone(TIME_ZONE).strftime(date_format(created_at))
   end
 
-  # TODO: add finished_at if need to update progressions after finishing
   def finish_date
     @finish_date ||=
-      if finished?
-        updated_at.in_time_zone(TIME_ZONE).strftime(date_format(updated_at))
+      if finished? && finished_at
+        finished_at.in_time_zone(TIME_ZONE).strftime(date_format(updated_at))
       end
   end
 
