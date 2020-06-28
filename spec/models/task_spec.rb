@@ -994,6 +994,13 @@ RSpec.describe Task, type: :model do
     context "when an unfinished progression" do
       let(:task) { Fabricate(:open_task) }
 
+      it "changes closed to true" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :closed).to(true)
+      end
+
       it "changes it's finished to true" do
         progression = Fabricate(:unfinished_progression, task: task)
 
@@ -1004,7 +1011,62 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns true" do
-        expect(task.finish).to eq(true)
+        expect(task.close).to eq(true)
+      end
+    end
+
+    context "when a finished progression" do
+      let(:task) { Fabricate(:open_task) }
+
+      it "changes closed to true" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :closed).to(true)
+      end
+
+      it "doesn't change it's finished" do
+        progression = Fabricate(:finished_progression, task: task)
+
+        expect do
+          task.close
+          progression.reload
+        end.not_to change(progression, :finished)
+      end
+
+      it "returns true" do
+        expect(task.close).to eq(true)
+      end
+    end
+
+    context "when an unfinished and invalid progression" do
+      let(:task) { Fabricate(:open_task) }
+      let(:progression) { Fabricate(:unfinished_progression, task: task) }
+
+      before do
+        # make previous progression invalid
+        invalid = Fabricate(:progression, task: task)
+        invalid.update_attribute :finished, false
+        invalid.update_attribute :finished_at, nil
+        progression.update_attribute :user_id, invalid.user_id
+      end
+
+      it "doesn't change it's closed" do
+        expect do
+          task.close
+          task.reload
+        end.not_to change(task, :closed).from(false)
+      end
+
+      it "doesn't change it's finished" do
+        expect do
+          task.close
+          progression.reload
+        end.not_to change(progression, :finished)
+      end
+
+      it "returns false" do
+        expect(task.close).to eq(false)
       end
     end
   end
@@ -1029,39 +1091,6 @@ RSpec.describe Task, type: :model do
           task.open
           task.reload
         end.not_to change(task, :closed)
-      end
-    end
-  end
-
-  describe "#finish" do
-    context "when an unfinished progression" do
-      let(:task) { Fabricate(:open_task) }
-
-      it "changes it's finished to true" do
-        progression = Fabricate(:unfinished_progression, task: task)
-
-        expect do
-          task.finish
-          progression.reload
-        end.to change(progression, :finished).to(true)
-      end
-
-      it "returns true" do
-        expect(task.finish).to eq(true)
-      end
-    end
-
-    context "when no unfinished progressions" do
-      let(:task) { Fabricate(:open_task) }
-
-      it "doesn't raise an error" do
-        expect do
-          task.finish
-        end.not_to raise_error
-      end
-
-      it "returns true" do
-        expect(task.finish).to eq(true)
       end
     end
   end

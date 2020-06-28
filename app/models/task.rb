@@ -161,12 +161,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def finish
-    progressions&.unfinished&.each(&:finish)
-    true
+    progressions&.unfinished&.all?(&:finish)
   end
 
   def close
-    finish
+    return false unless finish
+
     update closed: true
   end
 
