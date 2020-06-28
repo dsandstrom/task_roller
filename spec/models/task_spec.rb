@@ -1008,13 +1008,24 @@ RSpec.describe Task, type: :model do
     context "when reviews" do
       before do
         Timecop.freeze(1.day.ago) do
-          Fabricate(:disapproved_review, task: task)
+          Fabricate(:approved_review, task: task)
         end
       end
 
       it "returns last created review" do
         first_review = Fabricate(:disapproved_review, task: task)
         expect(task.current_review).to eq(first_review)
+      end
+
+      it "doesn't return approved reviews created before opened_at" do
+        Timecop.freeze(5.hours.ago) do
+          Fabricate(:approved_review, task: task)
+        end
+        Timecop.freeze(1.hour.ago) do
+          task.open
+        end
+        task.reload
+        expect(task.current_review).to be_nil
       end
     end
   end

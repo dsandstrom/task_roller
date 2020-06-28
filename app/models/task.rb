@@ -193,7 +193,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def current_review
-    @current_review ||= reviews.order(created_at: :desc).first
+    @current_review ||= current_reviews.order(created_at: :desc).first
   end
 
   def in_review?
