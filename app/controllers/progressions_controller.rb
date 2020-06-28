@@ -4,6 +4,7 @@ class ProgressionsController < ApplicationController
   before_action :set_task
   before_action :set_progression, only: %i[edit update destroy finish]
 
+  # TODO: remove action, use task show/history
   def index
     @progressions = @task.progressions.order(created_at: :asc)
   end
