@@ -70,9 +70,7 @@ RSpec.describe ProgressionsController, type: :controller do
     let(:path) { category_project_task_path(task.category, task.project, task) }
 
     context "with valid params" do
-      let(:new_attributes) do
-        { user_id: new_user.id.to_s }
-      end
+      let(:new_attributes) { { user_id: new_user.id.to_s } }
 
       it "updates the requested progression" do
         progression = Fabricate(:progression, task: task)
@@ -94,11 +92,70 @@ RSpec.describe ProgressionsController, type: :controller do
     end
 
     context "with invalid params" do
+      it "doesn't update the requested progression" do
+        progression = Fabricate(:progression, task: task)
+        expect do
+          put :update, params: { task_id: task.to_param,
+                                 id: progression.to_param,
+                                 progression: invalid_attributes }
+          progression.reload
+        end.not_to change(progression, :user_id)
+      end
+
       it "returns a success response (i.e. to display the 'edit' template)" do
         progression = Fabricate(:progression, task: task)
         put :update, params: { task_id: task.to_param,
                                id: progression.to_param,
                                progression: invalid_attributes }
+        expect(response).to be_successful
+      end
+    end
+  end
+
+  describe "PUT #finish" do
+    let(:new_user) { Fabricate(:user_worker) }
+    let(:path) { category_project_task_path(task.category, task.project, task) }
+
+    context "with valid params" do
+      it "updates the requested progression" do
+        progression = Fabricate(:progression, task: task)
+        expect do
+          patch :finish, params: { task_id: task.to_param,
+                                   id: progression.to_param }
+          progression.reload
+        end.to change(progression, :finished).to(true)
+      end
+
+      it "redirects to the task" do
+        progression = Fabricate(:progression, task: task)
+        patch :finish, params: { task_id: task.to_param,
+                                 id: progression.to_param }
+        expect(response).to redirect_to(path)
+      end
+    end
+
+    context "with invalid params" do
+      let(:progression) { Fabricate(:progression, task: task) }
+
+      before do
+        # make previous progression invalid
+        invalid = Fabricate(:progression, task: task)
+        invalid.update_attribute :finished, false
+        invalid.update_attribute :finished_at, nil
+        progression.update_attribute :user_id, invalid.user_id
+      end
+
+      it "doesn't update the requested progression" do
+        expect do
+          patch :finish, params: { task_id: task.to_param,
+                                   id: progression.to_param }
+          progression.reload
+        end.not_to change(progression, :finished)
+      end
+
+      it "returns a success response (i.e. to display the 'edit' template)" do
+        patch :finish, params: { task_id: task.to_param,
+                                 id: progression.to_param }
         expect(response).to be_successful
       end
     end

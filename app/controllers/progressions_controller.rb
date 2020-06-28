@@ -42,7 +42,7 @@ class ProgressionsController < ApplicationController
 
   # TODO: user and admin
   def finish
-    if @progression.update(finished: true)
+    if @progression.finish
       redirect_to category_project_task_path(@category, @project, @task),
                   notice: 'Progress was successfully finished.'
     else
