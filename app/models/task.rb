@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add issue/task duplicates
+
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
 
@@ -156,6 +158,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish)
   end
 
+  # TODO: add closed statuses (duplicate, rejected, won't do, addressed)
   def close
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish
