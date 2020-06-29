@@ -52,6 +52,39 @@ RSpec.describe Review, type: :model do
 
         it { is_expected.to be_valid }
       end
+
+      context "when it's task an out of date pending review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task an out of date approved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task has an out of date disapproved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
     end
 
     context "for a approved review" do
@@ -77,6 +110,39 @@ RSpec.describe Review, type: :model do
 
       context "when it's task has a disapproved review" do
         before { Fabricate(:disapproved_review, task: task) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task an out of date pending review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task an out of date approved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task has an out of date disapproved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_review, task: task)
+          end
+          task.open
+        end
 
         it { is_expected.to be_valid }
       end
@@ -107,6 +173,39 @@ RSpec.describe Review, type: :model do
         before { Fabricate(:approved_review, task: task) }
 
         it { is_expected.not_to be_valid }
+      end
+
+      context "when it's task an out of date pending review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task an out of date approved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's task has an out of date disapproved review" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_review, task: task)
+          end
+          task.open
+        end
+
+        it { is_expected.to be_valid }
       end
     end
   end

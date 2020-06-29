@@ -60,7 +60,7 @@ class Review < ApplicationRecord
     def validate_task_has_no_pending
       return unless task&.reviews
 
-      pending = task.reviews.pending
+      pending = task.current_reviews.pending
       pending = pending.where('reviews.id != ?', id) if id
       return if pending.none?
 
@@ -70,7 +70,7 @@ class Review < ApplicationRecord
     def validate_task_has_no_approved
       return unless task&.reviews
 
-      approved = task.reviews.approved
+      approved = task.current_reviews.approved
       approved = approved.where('reviews.id != ?', id) if id
       return if approved.none?
 
