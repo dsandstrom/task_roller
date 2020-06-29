@@ -1010,6 +1010,7 @@ RSpec.describe Task, type: :model do
 
     context "when an unfinished progression" do
       let(:task) { Fabricate(:open_task) }
+      let!(:progression) { Fabricate(:unfinished_progression, task: task) }
 
       it "changes closed to true" do
         expect do
@@ -1019,8 +1020,6 @@ RSpec.describe Task, type: :model do
       end
 
       it "changes it's finished to true" do
-        progression = Fabricate(:unfinished_progression, task: task)
-
         expect do
           task.close
           progression.reload
@@ -1034,6 +1033,7 @@ RSpec.describe Task, type: :model do
 
     context "when a finished progression" do
       let(:task) { Fabricate(:open_task) }
+      let!(:progression) { Fabricate(:finished_progression, task: task) }
 
       it "changes closed to true" do
         expect do
@@ -1043,8 +1043,6 @@ RSpec.describe Task, type: :model do
       end
 
       it "doesn't change it's finished" do
-        progression = Fabricate(:finished_progression, task: task)
-
         expect do
           task.close
           progression.reload
@@ -1083,6 +1081,29 @@ RSpec.describe Task, type: :model do
 
       it "returns false" do
         expect(task.close).to eq(false)
+      end
+    end
+
+    context "when an pending review" do
+      let(:task) { Fabricate(:open_task) }
+      let!(:review) { Fabricate(:pending_review, task: task) }
+
+      it "changes closed to true" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :closed).to(true)
+      end
+
+      it "changes the review's approved to false" do
+        expect do
+          task.close
+          review.reload
+        end.to change(review, :approved).to(false)
+      end
+
+      it "returns true" do
+        expect(task.close).to eq(true)
       end
     end
   end

@@ -156,8 +156,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish)
   end
 
-  # TODO: disapprove pending reviews
   def close
+    reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish
 
     update closed: true
