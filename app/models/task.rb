@@ -156,13 +156,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish)
   end
 
+  # TODO: disapprove pending reviews
   def close
     return false unless finish
 
     update closed: true
   end
 
-  # TODO: remove approved reviews or make them outdated
   # TODO: if 'in progress' move disapproved reviews to history
   # TODO: move reviews to history
   def open
@@ -187,7 +187,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def in_review?
-    @in_review ||= open? && reviews.pending.any?
+    @in_review ||= open? && current_reviews.pending.any?
   end
 
   def in_progress?

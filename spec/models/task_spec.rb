@@ -537,7 +537,7 @@ RSpec.describe Task, type: :model do
         end
       end
 
-      context "and has a approved review" do
+      context "and has an approved review" do
         let(:task) { Fabricate(:open_task) }
         let(:user) { Fabricate(:user_worker) }
 
@@ -560,6 +560,23 @@ RSpec.describe Task, type: :model do
           task.assignees << user
           Fabricate(:finished_progression, task: task)
           Fabricate(:disapproved_review, task: task)
+        end
+
+        it "returns false" do
+          expect(task.in_review?).to eq(false)
+        end
+      end
+
+      context "and has a pending review before opened_at" do
+        let(:task) { Fabricate(:open_task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:finished_progression, task: task)
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_review, task: task)
+          end
         end
 
         it "returns false" do
