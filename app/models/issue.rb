@@ -11,7 +11,7 @@
 # TODO: add resolution approval - allow user to approve issue is resolved
 # not sure if it should hold it up being closed
 
-class Issue < ApplicationRecord
+class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
 
   belongs_to :user # reporter
