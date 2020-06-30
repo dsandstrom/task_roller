@@ -20,13 +20,13 @@ assigned = @task.assigned
             <%# TODO: admin only %>
             <%= divider %>
             <%= link_to 'close',
-                        close_category_task_path(@category, @task),
+                        close_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
           <% else %>
             <%# TODO: reviewer+ only %>
             <%= divider %>
             <%= link_to 'reopen',
-                        open_category_task_path(@category, @task),
+                        open_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
           <% end %>
         </p>

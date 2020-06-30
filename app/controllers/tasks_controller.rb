@@ -8,7 +8,7 @@
 # rubocop:disable Metrics/ClassLength
 
 class TasksController < ApplicationController
-  before_action :set_category, :set_project, :set_issue
+  before_action :set_category, :set_project, :set_issue, except: %i[open close]
   before_action :set_task, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
 
@@ -63,8 +63,6 @@ class TasksController < ApplicationController
   end
 
   def open
-    @project = @task.project
-    @category = @task.category
     if @task.open
       redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully opened.'
@@ -75,13 +73,10 @@ class TasksController < ApplicationController
   end
 
   def close
-    project = @task.project
     if @task.close
-      redirect_to category_project_task_url(@category, project, @task),
+      redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully closed.'
     else
-      @project = @task.project
-      @category = @task.category
       set_form_options
       render :edit
     end
@@ -90,12 +85,13 @@ class TasksController < ApplicationController
   private
 
     def set_task
-      @task =
-        if @project
-          @project.tasks.find(params[:id])
-        else
-          @category.tasks.find(params[:id])
-        end
+      if @project
+        @task = @project.tasks.find(params[:id])
+      else
+        @task = Task.find(params[:id])
+        @category = @task.category
+        @project = @task.project
+      end
     end
 
     def set_task_types

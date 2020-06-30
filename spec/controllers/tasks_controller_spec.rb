@@ -233,18 +233,14 @@ RSpec.describe TasksController, type: :controller do
         task = Fabricate(:closed_task, project: project)
 
         expect do
-          put :open, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: task.to_param }
+          put :open, params: { id: task.to_param }
           task.reload
         end.to change(task, :closed).to(false)
       end
 
       it "redirects to the task" do
         task = Fabricate(:closed_task, project: project)
-        put :open, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: task.to_param }
+        put :open, params: { id: task.to_param }
         expect(response)
           .to redirect_to(category_project_task_url(category, project, task))
       end
@@ -257,17 +253,13 @@ RSpec.describe TasksController, type: :controller do
 
       it "doesn't update the requested task" do
         expect do
-          put :open, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: task.to_param }
+          put :open, params: { id: task.to_param }
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "returns a success response (i.e. to display the 'edit' template)" do
-        put :open, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: task.to_param }
+        put :open, params: { id: task.to_param }
         expect(response).to be_successful
       end
     end
@@ -281,18 +273,14 @@ RSpec.describe TasksController, type: :controller do
         task = Fabricate(:open_task, project: project)
 
         expect do
-          put :close, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                id: task.to_param }
+          put :close, params: { id: task.to_param }
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "redirects to the task" do
         task = Fabricate(:open_task, project: project)
-        put :close, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              id: task.to_param }
+        put :close, params: { id: task.to_param }
         expect(response)
           .to redirect_to(category_project_task_url(category, project, task))
       end
@@ -304,17 +292,13 @@ RSpec.describe TasksController, type: :controller do
       before { task.user.destroy }
 
       it "returns a success response (i.e. to display the 'edit' template)" do
-        put :close, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              id: task.to_param }
+        put :close, params: { id: task.to_param }
         expect(response).to be_successful
       end
 
       it "doesn't update the requested task" do
         expect do
-          put :close, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                id: task.to_param }
+          put :close, params: { id: task.to_param }
           task.reload
         end.not_to change(task, :closed)
       end

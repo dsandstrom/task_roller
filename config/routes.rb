@@ -5,12 +5,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :users
   resources :projects, only: :index
   resources :categories do
-    resources :tasks, only: %i[index] do
-      member do
-        patch :open
-        patch :close
-      end
-    end
+    resources :tasks, only: %i[index]
 
     resources :issues, only: %i[index show] do
       member do
@@ -32,6 +27,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :tasks, only: nil do
+    member do
+      patch :open
+      patch :close
+    end
     resources :progressions, except: :show do
       member do
         patch :finish
