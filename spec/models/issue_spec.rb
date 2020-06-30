@@ -650,4 +650,74 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#close" do
+    context "when open" do
+      let(:issue) { Fabricate(:open_issue) }
+
+      it "changes closed to true" do
+        expect do
+          issue.close
+          issue.reload
+        end.to change(issue, :closed).to(true)
+      end
+    end
+
+    context "when closed" do
+      let(:issue) { Fabricate(:closed_issue) }
+
+      it "doesn't change issue" do
+        expect do
+          issue.close
+          issue.reload
+        end.not_to change(issue, :closed)
+      end
+    end
+  end
+
+  describe "#open" do
+    context "when closed" do
+      let(:issue) { Fabricate(:closed_issue) }
+
+      before do
+        issue.update opened_at: 1.week.ago
+      end
+
+      it "changes closed to false" do
+        expect do
+          issue.open
+          issue.reload
+        end.to change(issue, :closed).to(false)
+      end
+
+      it "changes opened_at" do
+        expect do
+          issue.open
+          issue.reload
+        end.to change(issue, :opened_at)
+      end
+    end
+
+    context "when open" do
+      let(:issue) { Fabricate(:open_issue) }
+
+      before do
+        issue.update opened_at: 1.week.ago
+      end
+
+      it "doesn't change issue" do
+        expect do
+          issue.open
+          issue.reload
+        end.not_to change(issue, :closed)
+      end
+
+      it "changes opened_at" do
+        expect do
+          issue.open
+          issue.reload
+        end.to change(issue, :opened_at)
+      end
+    end
+  end
 end

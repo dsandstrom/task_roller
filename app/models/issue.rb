@@ -156,6 +156,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @working_on ||= open? && tasks.all_open.any?
   end
 
+  def close
+    update closed: true
+  end
+
+  def open
+    update closed: false, opened_at: Time.now
+  end
+
   private
 
     def set_opened_at
