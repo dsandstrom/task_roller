@@ -2,6 +2,12 @@
 
 # TODO: add CustomField/Value/Option for more issue/task attrs
 # TODO: add visible boolean (for moderation)
+# TODO: add closed statuses (duplicate, rejected, won't fix, addressed,
+# deferred, invalid)
+# Deferred/to-do: We will not fix this immediately, but will consider fixing
+# this in future
+# Won't Fix: The issue cannot be fixed
+# Invalid: This is not an issue, but was interpreted wrongly as one
 
 class Issue < ApplicationRecord
   DEFAULT_ORDER = 'issues.updated_at desc'
