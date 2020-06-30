@@ -564,4 +564,90 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#working_on?" do
+    context "for a open issue" do
+      context "and has an open task" do
+        let(:issue) { Fabricate(:open_issue) }
+
+        before { Fabricate(:open_task, issue: issue) }
+
+        it "returns true" do
+          expect(issue.working_on?).to eq(true)
+        end
+      end
+
+      context "and has a closed task" do
+        let(:issue) { Fabricate(:issue) }
+        let(:task) { Fabricate(:closed_task, issue: issue) }
+
+        it "returns false" do
+          expect(issue.working_on?).to eq(false)
+        end
+      end
+    end
+
+    context "for a closed issue" do
+      context "and has an open task" do
+        let(:issue) { Fabricate(:closed_issue) }
+
+        before { Fabricate(:open_task, issue: issue) }
+
+        it "returns true" do
+          expect(issue.working_on?).to eq(false)
+        end
+      end
+
+      context "and has a closed task" do
+        let(:issue) { Fabricate(:issue) }
+        let(:task) { Fabricate(:closed_task, issue: issue) }
+
+        before { Fabricate(:approved_review, task: task) }
+
+        it "returns false" do
+          expect(issue.working_on?).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe "#status" do
+    context "when closed is false" do
+      context "and no tasks" do
+        let(:issue) { Fabricate(:issue) }
+
+        before do
+          allow(issue).to receive(:working_on?) { false }
+        end
+
+        it "returns 'open'" do
+          expect(issue.status).to eq("open")
+        end
+      end
+
+      context "and working_on? returns true" do
+        let(:issue) { Fabricate(:issue) }
+
+        before do
+          allow(issue).to receive(:working_on?) { true }
+        end
+
+        it "returns 'being worked on'" do
+          expect(issue.status).to eq("being worked on")
+        end
+      end
+    end
+
+    context "when closed is true" do
+      let(:issue) { Fabricate(:closed_issue) }
+
+      before do
+        allow(issue).to receive(:working_on?) { true }
+      end
+
+      it "returns 'closed'" do
+        expect(issue.status).to eq("closed")
+      end
+    end
+  end
 end

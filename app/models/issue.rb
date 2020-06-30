@@ -8,6 +8,8 @@
 # this in future
 # Won't Fix: The issue cannot be fixed
 # Invalid: This is not an issue, but was interpreted wrongly as one
+# TODO: add resolution approval - allow user to approve issue is resolved
+# not sure if it should hold it up being closed
 
 class Issue < ApplicationRecord
   DEFAULT_ORDER = 'issues.updated_at desc'
@@ -136,11 +138,39 @@ class Issue < ApplicationRecord
     @closed_tasks ||= tasks.all_closed
   end
 
+  # - closed
+  #   - all tasks closed with any approved = 'addressed'
+  #   - all tasks closed but none approved = invalid, won't fix
+  #   - no tasks = invalid or won't fix
+  # - open
+  #   - no tasks or no approved tasks = 'open'
+  #   - tasks open = 'being worked on'
+  #   - resolution approval open = 'waiting approval'
+  #   - resolution approval rejected = 'open'
+  #   - resolution approved -> close
+  def status
+    @status ||= build_status
+  end
+
+  def working_on?
+    @working_on ||= open? && tasks.all_open.any?
+  end
+
   private
 
     def set_opened_at
       return if opened_at.present? || created_at.nil?
 
       update_column :opened_at, updated_at
+    end
+
+    def build_status
+      return 'closed' if closed?
+
+      if working_on?
+        'being worked on'
+      else
+        'open'
+      end
     end
 end
