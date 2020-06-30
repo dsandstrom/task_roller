@@ -6,13 +6,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :projects, only: :index
   resources :categories do
     resources :tasks, only: %i[index]
-
-    resources :issues, only: %i[index show] do
-      member do
-        patch :open
-        patch :close
-      end
-    end
+    resources :issues, only: %i[index]
 
     resources :projects, except: :index do
       resources :issues do
@@ -41,6 +35,13 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         patch :approve
         patch :disapprove
       end
+    end
+  end
+
+  resources :issues, only: nil do
+    member do
+      patch :open
+      patch :close
     end
   end
 

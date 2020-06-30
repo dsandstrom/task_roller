@@ -2,7 +2,7 @@
 
 # rubocop:disable Metrics/ClassLength
 class IssuesController < ApplicationController
-  before_action :set_category, :set_project
+  before_action :set_category, :set_project, except: %i[open close]
   before_action :set_issue, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
 
@@ -88,12 +88,13 @@ class IssuesController < ApplicationController
   private
 
     def set_issue
-      @issue =
-        if @project
-          @project.issues.find(params[:id])
-        else
-          @category.issues.find(params[:id])
-        end
+      if @project
+        @issue = @project.issues.find(params[:id])
+      else
+        @issue = Issue.find(params[:id])
+        @category = @issue.category
+        @project = @issue.project
+      end
     end
 
     def set_issue_types

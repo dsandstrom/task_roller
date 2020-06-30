@@ -32,14 +32,14 @@
             Open
             <%= divider %>
             <%= link_to 'change to closed',
-                        close_category_issue_path(@category, @issue),
+                        close_issue_path(@issue),
                         method: :patch,
                         class: 'secondary-link' %>
           <% else %>
             Closed
             <%= divider %>
             <%= link_to 'change to open',
-                        open_category_issue_path(@category, @issue),
+                        open_issue_path(@issue),
                         method: :patch,
                         class: 'secondary-link' %>
           <% end %>

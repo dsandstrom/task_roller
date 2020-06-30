@@ -188,90 +188,14 @@ RSpec.describe IssuesController, type: :controller do
         issue = Fabricate(:closed_issue, project: project)
 
         expect do
-          put :open, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: issue.to_param }
+          put :open, params: { id: issue.to_param }
           issue.reload
         end.to change(issue, :closed).to(false)
       end
 
       it "redirects to the issue" do
         issue = Fabricate(:closed_issue, project: project)
-        put :open, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: issue.to_param }
-        expect(response)
-          .to redirect_to(category_project_issue_url(category, project, issue))
-      end
-    end
-
-    # context "with invalid params" do
-    #   it "returns a success response (i.e. to display the 'edit' template)" do
-    #     issue = Fabricate(:closed_issue, project: project)
-    #     put :open, params: { category_id: category.to_param,
-    #                          project_id: project.to_param,
-    #                          id: issue.to_param }
-    #     expect(response).to be_successful
-    #   end
-    # end
-  end
-
-  describe "PUT #close" do
-    context "with valid params" do
-      let(:new_attributes) {}
-
-      it "updates the requested issue" do
-        issue = Fabricate(:open_issue, project: project)
-
-        expect do
-          put :close, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                id: issue.to_param }
-          issue.reload
-        end.to change(issue, :closed).to(true)
-      end
-
-      it "redirects to the issue" do
-        issue = Fabricate(:open_issue, project: project)
-        put :close, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              id: issue.to_param }
-        expect(response)
-          .to redirect_to(category_project_issue_url(category, project, issue))
-      end
-    end
-
-    # context "with invalid params" do
-    #   it "returns a success response (i.e. to display the 'edit' template)" do
-    #     issue = Fabricate(:open_issue, project: project)
-    #     put :close, params: { category_id: category.to_param,
-    #                          project_id: project.to_param,
-    #                          id: issue.to_param }
-    #     expect(response).to be_successful
-    #   end
-    # end
-  end
-
-  describe "PUT #open" do
-    context "with valid params" do
-      let(:new_attributes) {}
-
-      it "updates the requested issue" do
-        issue = Fabricate(:closed_issue, project: project)
-
-        expect do
-          put :open, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: issue.to_param }
-          issue.reload
-        end.to change(issue, :closed).to(false)
-      end
-
-      it "redirects to the issue" do
-        issue = Fabricate(:closed_issue, project: project)
-        put :open, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: issue.to_param }
+        put :open, params: { id: issue.to_param }
         expect(response)
           .to redirect_to(category_project_issue_url(category, project, issue))
       end
@@ -284,17 +208,13 @@ RSpec.describe IssuesController, type: :controller do
 
       it "doesn't update the requested issue" do
         expect do
-          put :open, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: issue.to_param }
+          put :open, params: { id: issue.to_param }
           issue.reload
         end.not_to change(issue, :closed)
       end
 
       it "returns a success response (i.e. to display the 'edit' template)" do
-        put :open, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: issue.to_param }
+        put :open, params: { id: issue.to_param }
         expect(response).to be_successful
       end
     end
@@ -308,18 +228,14 @@ RSpec.describe IssuesController, type: :controller do
         issue = Fabricate(:open_issue, project: project)
 
         expect do
-          put :close, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                id: issue.to_param }
+          put :close, params: { id: issue.to_param }
           issue.reload
         end.to change(issue, :closed).to(true)
       end
 
       it "redirects to the issue" do
         issue = Fabricate(:open_issue, project: project)
-        put :close, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              id: issue.to_param }
+        put :close, params: { id: issue.to_param }
         expect(response)
           .to redirect_to(category_project_issue_url(category, project, issue))
       end
@@ -331,17 +247,13 @@ RSpec.describe IssuesController, type: :controller do
       before { issue.user.destroy }
 
       it "returns a success response (i.e. to display the 'edit' template)" do
-        put :close, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              id: issue.to_param }
+        put :close, params: { id: issue.to_param }
         expect(response).to be_successful
       end
 
       it "doesn't update the requested issue" do
         expect do
-          put :close, params: { category_id: category.to_param,
-                                project_id: project.to_param,
-                                id: issue.to_param }
+          put :close, params: { id: issue.to_param }
           issue.reload
         end.not_to change(issue, :closed)
       end
