@@ -10,7 +10,7 @@ assigned = @task.assigned
 
   <div class="task-columns">
     <div class="task-column first-column">
-      <section class="task-status">
+      <section class="task-status-wrapper">
         <h4 class="task-column-title">Status</h4>
 
         <p>
@@ -37,11 +37,11 @@ assigned = @task.assigned
       </section>
 
       <% if @task.open? %>
-        <section class="task-assignees">
+        <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>
 
           <% if assignees.any? %>
-            <dl>
+            <dl class="task-assignees">
               <%= render partial: 'shared/assignee',
                          collection: assignees,
                          locals: { task: @task, current_assignee: true } %>
@@ -62,6 +62,14 @@ assigned = @task.assigned
               <%= link_to 'assign someone',
                           edit_category_project_task_path(@category, @project, @task),
                           id: 'task_assignment_link', class: 'secondary-link' %>
+
+              <%# TODO: admin %>
+              <% if !@task.in_review? %>
+                <%= divider %>
+                <%= link_to 'complete',
+                            task_reviews_path(@task, review: { user_id: @task.user_id }),
+                            method: :post %>
+              <% end %>
             </p>
           <% end %>
 
@@ -70,7 +78,7 @@ assigned = @task.assigned
       <% end %>
 
       <% if assigned.any? %>
-        <section class="task-assigned">
+        <section class="task-assigned-wrapper">
           <h4 class="task-column-title">History</h4>
 
           <dl class="task-assigned">
