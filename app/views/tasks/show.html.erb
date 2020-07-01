@@ -110,10 +110,9 @@ assigned = @task.assigned
         <h4 class="task-column-title">Issue</h4>
         <p>
           <% if @task.issue %>
-            <%= issue_type_icon_tag(@task.issue.issue_type) %>
-            <%= link_to @task.issue.summary,
-                        category_project_issue_path(@category, @task.project, @task.issue) %>
-            (<%= @task.issue.user.name_or_email %>)
+            <%= render 'shared/issue',
+                       issue: @task.issue, task: @task,
+                       category: @category, project: @project %>
           <% else %>
             <em>no connection</em>
           <% end %>
