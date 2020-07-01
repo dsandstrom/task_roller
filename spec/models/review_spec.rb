@@ -474,9 +474,64 @@ RSpec.describe Review, type: :model do
     end
   end
 
+  describe "#pending?" do
+    context "when approved is nil" do
+      let(:review) { Fabricate(:review, approved: nil) }
+
+      it "returns true" do
+        expect(review.pending?).to eq(true)
+      end
+    end
+
+    context "when approved is false" do
+      let(:review) { Fabricate(:review, approved: false) }
+
+      it "returns false" do
+        expect(review.pending?).to eq(false)
+      end
+    end
+
+    context "when approved is true" do
+      let(:review) { Fabricate(:review, approved: true) }
+
+      it "returns false" do
+        expect(review.pending?).to eq(false)
+      end
+    end
+  end
+
+  describe "#disapproved?" do
+    context "when approved is nil" do
+      let(:review) { Fabricate(:review, approved: nil) }
+
+      it "returns false" do
+        expect(review.disapproved?).to eq(false)
+      end
+    end
+
+    context "when approved is false" do
+      let(:review) { Fabricate(:review, approved: false) }
+
+      it "returns true" do
+        expect(review.disapproved?).to eq(true)
+      end
+    end
+
+    context "when approved is true" do
+      let(:review) { Fabricate(:review, approved: true) }
+
+      it "returns false" do
+        expect(review.disapproved?).to eq(false)
+      end
+    end
+  end
+
   describe "#status" do
+    let(:review) { Fabricate(:review) }
+
     context "when pending" do
-      let(:review) { Fabricate(:pending_review) }
+      before { allow(review).to receive(:pending?) { true } }
+      before { allow(review).to receive(:approved?) { false } }
 
       it "returns 'pending'" do
         expect(review.status).to eq("pending")
@@ -484,7 +539,8 @@ RSpec.describe Review, type: :model do
     end
 
     context "when approved" do
-      let(:review) { Fabricate(:approved_review) }
+      before { allow(review).to receive(:pending?) { false } }
+      before { allow(review).to receive(:approved?) { true } }
 
       it "returns 'approved'" do
         expect(review.status).to eq("approved")
@@ -492,7 +548,8 @@ RSpec.describe Review, type: :model do
     end
 
     context "when disapproved" do
-      let(:review) { Fabricate(:disapproved_review) }
+      before { allow(review).to receive(:pending?) { false } }
+      before { allow(review).to receive(:approved?) { false } }
 
       it "returns 'disapproved'" do
         expect(review.status).to eq("disapproved")
