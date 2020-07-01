@@ -169,6 +169,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish
 
+    close_issue
     update closed: true
   end
 
@@ -250,5 +251,15 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return if opened_at.present? || created_at.nil?
 
       update_column :opened_at, created_at
+    end
+
+    def last_task_for_issue?
+      issue.open_tasks.where('tasks.id != ?', id).none?
+    end
+
+    def close_issue
+      return true unless issue && last_task_for_issue?
+
+      issue.close
     end
 end

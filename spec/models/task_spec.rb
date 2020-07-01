@@ -1106,6 +1106,75 @@ RSpec.describe Task, type: :model do
         expect(task.close).to eq(true)
       end
     end
+
+    context "when an open issue" do
+      let(:issue) { Fabricate(:open_issue) }
+      let(:task) { Fabricate(:open_task, issue: issue) }
+
+      context "that has no other tasks" do
+        it "changes closed to true" do
+          expect do
+            task.close
+            task.reload
+          end.to change(task, :closed).to(true)
+        end
+
+        it "changes the issues's closed to true" do
+          expect do
+            task.close
+            issue.reload
+          end.to change(issue, :closed).to(true)
+        end
+
+        it "returns true" do
+          expect(task.close).to eq(true)
+        end
+      end
+
+      context "that has other open tasks" do
+        before { Fabricate(:open_task, issue: issue) }
+
+        it "changes closed to true" do
+          expect do
+            task.close
+            task.reload
+          end.to change(task, :closed).to(true)
+        end
+
+        it "doesn't change the issues's closed" do
+          expect do
+            task.close
+            issue.reload
+          end.not_to change(issue, :closed)
+        end
+
+        it "returns true" do
+          expect(task.close).to eq(true)
+        end
+      end
+
+      context "that has other closed tasks" do
+        before { Fabricate(:closed_task, issue: issue) }
+
+        it "changes closed to true" do
+          expect do
+            task.close
+            task.reload
+          end.to change(task, :closed).to(true)
+        end
+
+        it "changes the issues's closed to true" do
+          expect do
+            task.close
+            issue.reload
+          end.to change(issue, :closed).to(true)
+        end
+
+        it "returns true" do
+          expect(task.close).to eq(true)
+        end
+      end
+    end
   end
 
   describe "#open" do
