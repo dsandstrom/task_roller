@@ -21,6 +21,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :comments, class_name: 'IssueComment', foreign_key: :roller_id,
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
+  has_many :resolutions, dependent: :destroy
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
@@ -136,6 +137,23 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def closed_tasks
     @closed_tasks ||= tasks.all_closed
+  end
+
+  def current_resolutions
+    if @current_resolutions.instance_of?(ActiveRecord::AssociationRelation)
+      return @current_resolutions
+    end
+
+    @current_resolutions =
+      resolutions.where(
+        'resolutions.created_at > ? OR resolutions.approved = ?',
+        opened_at,
+        false
+      )
+  end
+
+  def current_resolution
+    @current_resolution ||= current_resolutions.order(created_at: :desc).first
   end
 
   # - closed

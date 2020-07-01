@@ -40,6 +40,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to belong_to(:project) }
   it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:comments).dependent(:destroy) }
+  it { is_expected.to have_many(:resolutions) }
 
   # CLASS
 
@@ -779,6 +780,91 @@ RSpec.describe Issue, type: :model do
           issue.open
           issue.reload
         end.to change(issue, :opened_at)
+      end
+    end
+  end
+
+  describe "#current_resolutions" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no resolutions" do
+      it "returns []" do
+        expect(issue.current_resolutions).to eq([])
+      end
+    end
+
+    context "when resolutions" do
+      before do
+        Timecop.freeze(1.week.ago) do
+          issue.open
+        end
+      end
+
+      it "returns approved resolutions created after opened_at" do
+        resolution = Fabricate(:disapproved_resolution, issue: issue)
+        Fabricate(:approved_resolution)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:approved_resolution, issue: issue)
+        end
+        resolution.update_column :approved, true
+
+        expect(issue.current_resolutions).to eq([resolution])
+      end
+
+      it "returns pending resolutions created after opened_at" do
+        resolution = Fabricate(:disapproved_resolution, issue: issue)
+        Fabricate(:pending_resolution)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:pending_resolution, issue: issue)
+        end
+        resolution.update_column :approved, nil
+
+        expect(issue.current_resolutions).to eq([resolution])
+      end
+
+      it "returns all disapproved resolutions" do
+        resolution = nil
+        Fabricate(:disapproved_resolution)
+        Timecop.freeze(2.weeks.ago) do
+          resolution = Fabricate(:disapproved_resolution, issue: issue)
+        end
+
+        expect(issue.current_resolutions).to eq([resolution])
+      end
+    end
+  end
+
+  describe "#current_resolution" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no resolutions" do
+      it "returns nil" do
+        expect(issue.current_resolution).to eq(nil)
+      end
+    end
+
+    context "when resolutions" do
+      it "returns last created resolution" do
+        issue = nil
+        Timecop.freeze(2.days.ago) do
+          issue = Fabricate(:issue)
+        end
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:approved_resolution, issue: issue)
+        end
+        first_resolution = Fabricate(:disapproved_resolution, issue: issue)
+        expect(issue.current_resolution).to eq(first_resolution)
+      end
+
+      it "doesn't return approved resolutions created before opened_at" do
+        Timecop.freeze(5.hours.ago) do
+          Fabricate(:approved_resolution, issue: issue)
+        end
+        Timecop.freeze(1.hour.ago) do
+          issue.open
+        end
+        issue.reload
+        expect(issue.current_resolution).to be_nil
       end
     end
   end
