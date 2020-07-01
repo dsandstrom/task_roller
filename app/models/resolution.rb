@@ -9,6 +9,16 @@ class Resolution < ApplicationRecord
   validates :user_id, presence: true
   validates :user, presence: true, if: :user_id
 
+  validate :issue_available
+
+  # one pending resolution, one approved, any disapproved
+  def issue_available
+    return unless issue
+
+    validate_issue_has_no_pending
+    validate_issue_has_no_approved
+  end
+
   # CLASS
 
   def self.pending
@@ -56,4 +66,26 @@ class Resolution < ApplicationRecord
         'disapproved'
       end
   end
+
+  private
+
+    def validate_issue_has_no_pending
+      return unless issue&.resolutions
+
+      pending = issue.current_resolutions.pending
+      pending = pending.where('resolutions.id != ?', id) if id
+      return if pending.none?
+
+      errors.add(:issue_id, 'already waiting for a resolution')
+    end
+
+    def validate_issue_has_no_approved
+      return unless issue&.resolutions
+
+      approved = issue.current_resolutions.approved
+      approved = approved.where('resolutions.id != ?', id) if id
+      return if approved.none?
+
+      errors.add(:issue_id, 'already approved')
+    end
 end

@@ -22,6 +22,193 @@ RSpec.describe Resolution, type: :model do
   it { is_expected.to validate_presence_of(:issue_id) }
   it { is_expected.to validate_presence_of(:user_id) }
 
+  describe "uniqueness" do
+    context "when issue has no other resolutions" do
+      it { is_expected.to be_valid }
+    end
+
+    context "for a pending resolution" do
+      context "when saved" do
+        before { subject.save }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue already has a pending resolution" do
+        before { Fabricate(:pending_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue has an approved resolution" do
+        before { Fabricate(:approved_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue has a disapproved resolution" do
+        before { Fabricate(:disapproved_resolution, issue: issue) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue an out of date pending resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue an out of date approved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue has an out of date disapproved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+    end
+
+    context "for a approved resolution" do
+      before { subject.approved = true }
+
+      context "when saved" do
+        before { subject.save }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue already has a approved resolution" do
+        before { Fabricate(:approved_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue has a pending resolution" do
+        before { Fabricate(:pending_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue has a disapproved resolution" do
+        before { Fabricate(:disapproved_resolution, issue: issue) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue an out of date pending resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue an out of date approved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue has an out of date disapproved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+    end
+
+    context "for a disapproved resolution" do
+      before { subject.approved = false }
+
+      context "when saved" do
+        before { subject.save }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue already has a disapproved resolution" do
+        before { Fabricate(:disapproved_resolution, issue: issue) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue has a pending resolution" do
+        before { Fabricate(:pending_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue has an approved resolution" do
+        before { Fabricate(:approved_resolution, issue: issue) }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context "when it's issue an out of date pending resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:pending_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue an out of date approved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:approved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when it's issue has an out of date disapproved resolution" do
+        before do
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:disapproved_resolution, issue: issue)
+          end
+          issue.open
+        end
+
+        it { is_expected.to be_valid }
+      end
+    end
+  end
+
   # CLASS
 
   describe ".pending" do

@@ -5,9 +5,7 @@ Fabricator(:resolution) do
   approved nil
 
   before_validation do |resolution|
-    return if resolution.issue
-
-    resolution.issue =
+    resolution.issue ||=
       if resolution.user
         Fabricate(:closed_issue, user: resolution.user)
       else
