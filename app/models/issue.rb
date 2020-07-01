@@ -139,21 +139,29 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # - closed
-  #   - all tasks closed with any approved = 'addressed'
+  #   - no resolution or resolution approval open = 'addressed'
+  #   - resolution approval rejected = 'unresolved'
+  #   - resolution approved -> 'resolved'
   #   - all tasks closed but none approved = invalid, won't fix
   #   - no tasks = invalid or won't fix
   # - open
   #   - no tasks or no approved tasks = 'open'
   #   - tasks open = 'being worked on'
-  #   - resolution approval open = 'waiting approval'
-  #   - resolution approval rejected = 'open'
-  #   - resolution approved -> close
   def status
-    @status ||= build_status
+    @status ||=
+      if closed?
+        closed_status
+      else
+        open_status
+      end
   end
 
   def working_on?
-    @working_on ||= open? && tasks.all_open.any?
+    @working_on ||= open? && open_tasks.any?
+  end
+
+  def addressed?
+    @addressed ||= open_tasks.none? && closed_tasks.any?
   end
 
   def close
@@ -172,13 +180,19 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       update_column :opened_at, updated_at
     end
 
-    def build_status
-      return 'closed' if closed?
-
+    def open_status
       if working_on?
         'being worked on'
       else
         'open'
+      end
+    end
+
+    def closed_status
+      if addressed?
+        'addressed'
+      else
+        'closed'
       end
     end
 end

@@ -15,3 +15,11 @@ end
 Fabricator(:closed_task, from: :task) do
   closed true
 end
+
+Fabricator(:approved_task, from: :task) do
+  closed true
+
+  after_create do |task|
+    Fabricate(:approved_review, task: task)
+  end
+end

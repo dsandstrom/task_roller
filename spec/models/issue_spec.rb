@@ -611,6 +611,46 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#addressed?" do
+    let(:issue) { Fabricate(:closed_issue) }
+
+    context "with no tasks" do
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
+
+    context "with closed & approved task" do
+      before { Fabricate(:approved_task, issue: issue) }
+
+      it "returns true" do
+        expect(issue.addressed?).to eq(true)
+      end
+    end
+
+    context "with approved task and closed task" do
+      before do
+        Fabricate(:approved_task, issue: issue)
+        Fabricate(:closed_task, issue: issue)
+      end
+
+      it "returns true" do
+        expect(issue.addressed?).to eq(true)
+      end
+    end
+
+    context "with approved task and open task" do
+      before do
+        Fabricate(:approved_task, issue: issue)
+        Fabricate(:open_task, issue: issue)
+      end
+
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no tasks" do
@@ -641,12 +681,24 @@ RSpec.describe Issue, type: :model do
     context "when closed is true" do
       let(:issue) { Fabricate(:closed_issue) }
 
-      before do
-        allow(issue).to receive(:working_on?) { true }
+      context "and without tasks" do
+        before do
+          allow(issue).to receive(:addressed?) { false }
+        end
+
+        it "returns 'closed'" do
+          expect(issue.status).to eq("closed")
+        end
       end
 
-      it "returns 'closed'" do
-        expect(issue.status).to eq("closed")
+      context "and addressed? returns true" do
+        before do
+          allow(issue).to receive(:addressed?) { true }
+        end
+
+        it "returns 'addressed'" do
+          expect(issue.status).to eq("addressed")
+        end
       end
     end
   end

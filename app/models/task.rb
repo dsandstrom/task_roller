@@ -8,6 +8,7 @@
 # belongs_to :duplicate, :duplicate_task
 # has_many :replacements
 # TODO: if closed with no approved review = rejected/ won't fix
+# TODO: create task reopens issue?
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
