@@ -139,7 +139,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # - closed
-  #   - no resolution or resolution approval open = 'addressed'
+  #   - all tasks closed, any approved = 'addressed'
+  #   - resolution approval open = 'addressed'
   #   - resolution approval rejected = 'unresolved'
   #   - resolution approved -> 'resolved'
   #   - all tasks closed but none approved = invalid, won't fix
@@ -161,7 +162,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def addressed?
-    @addressed ||= open_tasks.none? && closed_tasks.any?
+    @addressed ||= open_tasks.none? && tasks.any?(&:approved?)
   end
 
   def close

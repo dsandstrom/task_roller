@@ -639,6 +639,16 @@ RSpec.describe Issue, type: :model do
       end
     end
 
+    context "with a closed unreviewed task" do
+      before do
+        Fabricate(:closed_task, issue: issue)
+      end
+
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
+
     context "with approved task and open task" do
       before do
         Fabricate(:approved_task, issue: issue)
