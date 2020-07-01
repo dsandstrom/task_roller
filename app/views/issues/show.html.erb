@@ -8,6 +8,28 @@
 
   <div class="issue-columns">
     <div class="issue-column first-column">
+      <section class="issue-status">
+        <h4 class="issue-column-title">Status</h4>
+
+        <p>
+          <%= @issue.status %>
+
+          <% if @issue.open? %>
+            <%# TODO: admin only %>
+            <%= divider %>
+            <%= link_to 'close',
+                        close_issue_path(@issue),
+                        method: :patch, class: 'secondary-link' %>
+          <% else %>
+            <%# TODO: reviewer+ only %>
+            <%= divider %>
+            <%= link_to 'reopen',
+                        open_issue_path(@issue),
+                        method: :patch, class: 'secondary-link' %>
+          <% end %>
+        </p>
+      </section>
+
       <section class="issue-tasks">
         <h4 class="issue-column-title">Tasks</h4>
         <ul class="issue-tasks">
@@ -24,28 +46,7 @@
           </li>
         </ul>
       </section>
-
-      <section class="issue-status">
-        <h4 class="task-column-title">Status</h4>
-        <p class="issue-status">
-          <% if @issue.open? %>
-            Open
-            <%= divider %>
-            <%= link_to 'change to closed',
-                        close_issue_path(@issue),
-                        method: :patch,
-                        class: 'secondary-link' %>
-          <% else %>
-            Closed
-            <%= divider %>
-            <%= link_to 'change to open',
-                        open_issue_path(@issue),
-                        method: :patch,
-                        class: 'secondary-link' %>
-          <% end %>
-        </p>
-      </div>
-    </section>
+    </div>
 
     <div class="issue-column second-column">
       <div class="issue-comments comments">
