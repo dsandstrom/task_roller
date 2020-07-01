@@ -55,6 +55,17 @@ class Review < ApplicationRecord
     update(approved: false) && task.open
   end
 
+  def status
+    @status ||=
+      if pending?
+        'pending'
+      elsif approved?
+        'approved'
+      else
+        'disapproved'
+      end
+  end
+
   private
 
     def validate_task_has_no_pending
