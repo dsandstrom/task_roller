@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_28_213153) do
+ActiveRecord::Schema.define(version: 2020_07_01_205205) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,14 @@ ActiveRecord::Schema.define(version: 2020_06_28_213153) do
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
     t.index ["visible"], name: "index_projects_on_visible"
+  end
+
+  create_table "resolutions", force: :cascade do |t|
+    t.integer "issue_id", null: false
+    t.integer "user_id", null: false
+    t.boolean "approved"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "reviews", force: :cascade do |t|
