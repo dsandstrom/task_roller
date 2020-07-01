@@ -850,7 +850,7 @@ RSpec.describe Issue, type: :model do
           issue = Fabricate(:issue)
         end
         Timecop.freeze(1.day.ago) do
-          Fabricate(:approved_resolution, issue: issue)
+          Fabricate(:disapproved_resolution, issue: issue)
         end
         first_resolution = Fabricate(:disapproved_resolution, issue: issue)
         expect(issue.current_resolution).to eq(first_resolution)

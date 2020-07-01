@@ -91,6 +91,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # used by .filter
+  # TODO: change to working_on
   def self.filter_by_open_tasks(count)
     return all if count.blank?
 
