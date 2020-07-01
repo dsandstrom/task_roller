@@ -1198,6 +1198,31 @@ RSpec.describe Task, type: :model do
           task.reload
         end.to change(task, :opened_at)
       end
+
+      context "with a closed issue" do
+        let(:issue) { Fabricate(:closed_issue) }
+
+        before { task.update issue: issue }
+
+        it "runs open on the issue" do
+          expect(issue).to receive(:open)
+          task.open
+        end
+      end
+
+      context "with an open issue" do
+        let(:issue) { Fabricate(:open_issue) }
+
+        before do
+          task.update issue: issue
+          Fabricate(:open_task, issue: issue)
+        end
+
+        it "doesn't run open on the issue" do
+          expect(issue).not_to receive(:open)
+          task.open
+        end
+      end
     end
 
     context "when open" do
