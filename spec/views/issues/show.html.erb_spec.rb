@@ -40,7 +40,7 @@ RSpec.describe "issues/show", type: :view do
         task = Fabricate(:task, issue: @issue)
 
         render
-        assert_select "#issue-task-#{task.id}"
+        assert_select "#task-#{task.id}"
       end
     end
   end

@@ -32,19 +32,16 @@
 
       <section class="issue-tasks">
         <h4 class="issue-column-title">Tasks</h4>
-        <ul class="issue-tasks">
-          <% @issue.tasks.each do |task| %>
-            <li class="issue-task" id="issue-task-<%= task.id %>">
-              <%= task_type_icon_tag(task.task_type) %>
-              <%= link_to task.summary,
-                          category_project_task_path(@category, @issue.project, task) %>
-            </li>
-          <% end %>
-          <li class="new-issue-task">
+        <dl class="issue-tasks">
+          <%= render partial: 'shared/task', collection: @issue.tasks,
+                     locals: { category: @category, project: @project } %>
+
+          <%# TODO: reviewer+ %>
+          <dt class="new-issue-task">
             <%= icon('plus') %>
             <%= link_to 'Add Task', create_path, class: 'create-link' %>
-          </li>
-        </ul>
+          </dt>
+        </dl>
       </section>
     </div>
 

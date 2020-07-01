@@ -1,0 +1,11 @@
+<p id="review_<%= review.id %>" class="review">
+  <%= content_tag :span, class: 'review-status' do %>
+    <%= review.status %>
+
+    <% unless review.pending? %>
+      <%= content_tag :span,
+                      format_date(review.updated_at),
+                      class: 'review-date' %>
+    <% end %>
+  <% end %>
+</p>

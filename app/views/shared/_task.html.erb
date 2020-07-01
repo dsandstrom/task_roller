@@ -1,0 +1,16 @@
+<dt id="task-<%= task.id %>" class="task">
+  <%= task_type_icon_tag(task.task_type) %>
+  <span class="task-summary">
+    <%= link_to task.short_summary,
+                category_project_task_path(category, project, task) %>
+  </span>
+</dt>
+
+<dd id="task-status-<%= task.id %>" class="task-status">
+  status:
+  <strong class="task-status"><%= task.status %></strong>
+
+  <% if task.closed? && task.current_review %>
+    <%= render 'shared/review', review: task.current_review, task: task %>
+  <% end %>
+</dd>
