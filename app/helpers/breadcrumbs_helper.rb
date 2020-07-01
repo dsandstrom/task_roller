@@ -2,8 +2,6 @@
 
 module BreadcrumbsHelper
   def breadcrumbs(views = [])
-    views << ['Back', :back]
-
     content_tag :div, class: 'breadcrumbs' do
       views.each do |text, url, options|
         concat breadcrumb(text, url, options)
