@@ -9,6 +9,7 @@
 # has_many :replacements
 # TODO: if closed with no approved review = rejected/ won't fix
 # TODO: create task reopens issue?
+# TODO: show other tasks from issue
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
@@ -159,7 +160,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   #   - any assignees = 'assigned'
   #   - unassigned = 'open'
   def status
-    @status ||= build_status
+    @status ||=
+      if closed?
+        closed_status
+      else
+        open_status
+      end
   end
 
   def finish
@@ -223,6 +229,15 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
+  def approved?
+    @approved ||=
+      if current_review.blank?
+        false
+      else
+        current_review.approved?
+      end
+  end
+
   private
 
     def build_assigned
@@ -233,9 +248,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       users.order('progressions.created_at desc')
     end
 
-    def build_status
-      return 'closed' if closed?
-
+    def open_status
       if in_review?
         'in review'
       elsif in_progress?
@@ -244,6 +257,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
         'assigned'
       else
         'open'
+      end
+    end
+
+    def closed_status
+      if approved?
+        'approved'
+      else
+        'closed'
       end
     end
 

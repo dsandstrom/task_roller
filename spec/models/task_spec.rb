@@ -731,6 +731,32 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#approved?" do
+    let(:task) { Fabricate(:task) }
+
+    context "when no reviews" do
+      it "returns false" do
+        expect(task.approved?).to eq(false)
+      end
+    end
+
+    context "when approved review" do
+      before { Fabricate(:approved_review, task: task) }
+
+      it "returns true" do
+        expect(task.approved?).to eq(true)
+      end
+    end
+
+    context "when disapproved review" do
+      before { Fabricate(:disapproved_review, task: task) }
+
+      it "returns false" do
+        expect(task.approved?).to eq(false)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no assignees, progressions, and reviews" do
@@ -793,14 +819,24 @@ RSpec.describe Task, type: :model do
     context "when closed is true" do
       let(:task) { Fabricate(:closed_task) }
 
-      before do
-        allow(task).to receive(:in_review?) { true }
-        allow(task).to receive(:in_progress?) { true }
-        allow(task).to receive(:assigned?) { true }
+      context "and approved? returns false" do
+        before do
+          allow(task).to receive(:approved?) { false }
+        end
+
+        it "returns 'closed'" do
+          expect(task.status).to eq("closed")
+        end
       end
 
-      it "returns 'closed'" do
-        expect(task.status).to eq("closed")
+      context "and approved? returns true" do
+        before do
+          allow(task).to receive(:approved?) { true }
+        end
+
+        it "returns 'approved'" do
+          expect(task.status).to eq("approved")
+        end
       end
     end
   end
