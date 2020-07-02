@@ -529,8 +529,8 @@ RSpec.describe Resolution, type: :model do
       before { allow(resolution).to receive(:pending?) { false } }
       before { allow(resolution).to receive(:approved?) { true } }
 
-      it "returns 'approved'" do
-        expect(resolution.status).to eq("approved")
+      it "returns 'resolved'" do
+        expect(resolution.status).to eq("resolved")
       end
     end
 
@@ -538,8 +538,8 @@ RSpec.describe Resolution, type: :model do
       before { allow(resolution).to receive(:pending?) { false } }
       before { allow(resolution).to receive(:approved?) { false } }
 
-      it "returns 'disapproved'" do
-        expect(resolution.status).to eq("disapproved")
+      it "returns 'unresolved'" do
+        expect(resolution.status).to eq("unresolved")
       end
     end
   end

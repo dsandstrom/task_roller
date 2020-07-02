@@ -61,9 +61,9 @@ class Resolution < ApplicationRecord
       if pending?
         'pending'
       elsif approved?
-        'approved'
+        'resolved'
       else
-        'disapproved'
+        'unresolved'
       end
   end
 
