@@ -9,9 +9,8 @@
                 disapprove_task_review_path(task, review),
                 method: :patch, class: 'destroy-link' %>
   <% else %>
-    <%= content_tag :strong, class: 'review-status' do %>
-      <%= review.approved? ? 'approved' : 'disapproved' %>
-    <% end %>
+    <%= content_tag :strong, review.status,
+                    class: 'review-status' %>
     <%= content_tag :span,
                     format_date(review.updated_at),
                     class: 'review-date' %>

@@ -9,9 +9,8 @@
                 disapprove_issue_resolution_path(issue, resolution),
                 method: :patch, class: 'destroy-link' %>
   <% else %>
-    <%= content_tag :strong, class: 'resolution-status' do %>
-      <%= resolution.approved? ? 'approved' : 'disapproved' %>
-    <% end %>
+    <%= content_tag :strong, resolution.status,
+                    class: 'resolution-status' %>
     <%= content_tag :span,
                     format_date(resolution.updated_at),
                     class: 'resolution-date' %>
