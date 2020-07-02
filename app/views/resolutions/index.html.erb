@@ -1,0 +1,11 @@
+<%= issue_header(@issue) %>
+
+<h2>Resolutions</h2>
+
+<div class="resolutions">
+  <% if @resolutions.any? %>
+    <%= render @resolutions, issue: @issue %>
+  <% else %>
+    <p class="no-resolutions">no resolutions</p>
+  <% end %>
+</div>

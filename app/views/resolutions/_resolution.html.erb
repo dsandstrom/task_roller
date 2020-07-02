@@ -1,0 +1,30 @@
+<p id="resolution_<%= resolution.id %>" class="resolution">
+  <% if resolution.pending? %>
+    <%# TODO: resolutioner+ %>
+    <%= link_to 'approve',
+                approve_issue_resolution_path(issue, resolution),
+                method: :patch, class: 'create-link' %>
+    <%= divider %>
+    <%= link_to 'disapprove',
+                disapprove_issue_resolution_path(issue, resolution),
+                method: :patch, class: 'destroy-link' %>
+  <% else %>
+    <%= content_tag :strong, class: 'resolution-status' do %>
+      <%= resolution.approved? ? 'approved' : 'disapproved' %>
+    <% end %>
+    <%= content_tag :span,
+                    format_date(resolution.updated_at),
+                    class: 'resolution-date' %>
+    <br>
+    by
+    <%= content_tag :span,
+                    resolution.user.name_or_email,
+                    class: 'resolution-user' %>
+  <% end %>
+
+  <%# TODO: admin only %>
+  <%= divider %>
+  <%= link_to 'delete', issue_resolution_path(issue, resolution),
+              method: :delete, data: { confirm: 'Are you sure?' },
+              class: 'secondary-link' %>
+</p>

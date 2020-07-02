@@ -1,0 +1,31 @@
+<%
+  url =
+    if resolution.persisted?
+      issue_resolution_url(issue, resolution)
+    else
+      issue_resolutions_url(issue)
+    end
+  user_id_options = options_from_collection_for_select(
+    User.all,
+    :id,
+    :name_and_email,
+    resolution.user_id
+  )
+  html = { name: 'resolution_form', novalidate: 'novalidate' }
+%>
+
+<%= form_with(model: resolution, url: url,
+              local: true, html: html) do |form| %>
+  <%= form_errors(resolution) %>
+  <%= form_errors(resolution.issue) if resolution.issue %>
+
+  <div class="field">
+    <%= form.label :user_id %>
+    <%= form.select :user_id, user_id_options, {},
+                    id: :resolution_user_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Submit' %>
+  </div>
+<% end %>

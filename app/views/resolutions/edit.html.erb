@@ -1,0 +1,9 @@
+<%= issue_header @issue %>
+
+<h2>Edit Resolution</h2>
+
+<%= render 'form', issue: @issue, resolution: @resolution %>
+
+<p>
+  <%= link_to 'Back to issue resolutions', issue_resolutions_path(@issue) %>
+</p>
