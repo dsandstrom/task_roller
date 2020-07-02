@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require File.expand_path("../support/task_helpers", __dir__)
 
 RSpec.describe Review, type: :model do
   let(:worker) { Fabricate(:user_worker) }
@@ -262,8 +261,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.close" do
-        task = mock_review_task(review)
-        expect(task).to receive(:close)
+        expect(review.task).to receive(:close)
         review.approve
       end
 
@@ -283,8 +281,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.close" do
-        task = mock_review_task(review)
-        expect(task).to receive(:close)
+        expect(review.task).to receive(:close)
         review.approve
       end
 
@@ -304,8 +301,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.close" do
-        task = mock_review_task(review)
-        expect(task).to receive(:close)
+        expect(review.task).to receive(:close)
         review.approve
       end
 
@@ -327,8 +323,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "doesn't run task.close" do
-        task = mock_review_task(review)
-        expect(task).not_to receive(:close)
+        expect(review.task).not_to receive(:close)
         review.approve
       end
 
@@ -350,9 +345,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "doesn't run task.close" do
-        task = mock_review_task(review)
-        allow(task).to receive(:valid?) { false }
-        expect(task).not_to receive(:close)
+        expect(review.task).not_to receive(:close)
         review.approve
       end
 
@@ -374,8 +367,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.open" do
-        task = mock_review_task(review)
-        expect(task).to receive(:open)
+        expect(review.task).to receive(:open)
         review.disapprove
       end
 
@@ -395,8 +387,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.open" do
-        task = mock_review_task(review)
-        expect(task).to receive(:open)
+        expect(review.task).to receive(:open)
         review.disapprove
       end
 
@@ -416,8 +407,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "runs task.open" do
-        task = mock_review_task(review)
-        expect(task).to receive(:open)
+        expect(review.task).to receive(:open)
         review.disapprove
       end
 
@@ -439,8 +429,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "doesn't run task.open" do
-        task = mock_review_task(review)
-        expect(task).not_to receive(:open)
+        expect(review.task).not_to receive(:open)
         review.disapprove
       end
 
@@ -462,9 +451,7 @@ RSpec.describe Review, type: :model do
       end
 
       it "doesn't run task.open" do
-        task = mock_review_task(review)
-        allow(task).to receive(:valid?) { false }
-        expect(task).not_to receive(:open)
+        expect(review.task).not_to receive(:open)
         review.disapprove
       end
 
