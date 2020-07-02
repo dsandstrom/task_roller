@@ -69,10 +69,14 @@ class Resolution < ApplicationRecord
 
   private
 
-    def validate_issue_has_no_pending
-      return unless issue&.resolutions
+    def issue_resolutions
+      issue&.current_resolutions
+    end
 
-      pending = issue.current_resolutions.pending
+    def validate_issue_has_no_pending
+      return unless issue_resolutions
+
+      pending = issue_resolutions.pending
       pending = pending.where('resolutions.id != ?', id) if id
       return if pending.none?
 
@@ -80,9 +84,9 @@ class Resolution < ApplicationRecord
     end
 
     def validate_issue_has_no_approved
-      return unless issue&.resolutions
+      return unless issue_resolutions
 
-      approved = issue.current_resolutions.approved
+      approved = issue_resolutions.approved
       approved = approved.where('resolutions.id != ?', id) if id
       return if approved.none?
 
