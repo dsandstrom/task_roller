@@ -43,6 +43,12 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       patch :open
       patch :close
     end
+    resources :resolutions, except: %i[show update] do
+      member do
+        patch :approve
+        patch :disapprove
+      end
+    end
   end
 
   resources :roller_types, only: :index
