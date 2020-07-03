@@ -100,6 +100,8 @@ GEM
     eventmachine (1.2.7)
     execjs (2.7.0)
     fabrication (2.19.0)
+    faker (1.9.6)
+      i18n (>= 0.7)
     ffi (1.13.0)
     formatador (0.2.5)
     globalid (0.4.2)
@@ -317,6 +319,7 @@ DEPENDENCIES
   capybara (~> 3.32)
   coffee-rails (~> 5.0)
   fabrication (~> 2.19.0)
+  faker (~> 1.0)
   guard (~> 2.0)
   guard-bundler
   guard-livereload (~> 2.5)
