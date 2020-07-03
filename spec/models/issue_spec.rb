@@ -891,9 +891,7 @@ RSpec.describe Issue, type: :model do
 
     context "when resolutions" do
       before do
-        Timecop.freeze(1.week.ago) do
-          issue.open
-        end
+        issue.update_columns created_at: 3.weeks.ago, opened_at: 1.week.ago
       end
 
       it "returns approved resolutions created after opened_at" do
