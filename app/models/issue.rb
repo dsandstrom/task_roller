@@ -184,6 +184,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @addressed ||= open_tasks.none? && tasks.any?(&:approved?)
   end
 
+  def resolved?
+    @resolved ||=
+      if current_resolution
+        current_resolution.approved?
+      else
+        false
+      end
+  end
+
   def close
     update closed: true
   end

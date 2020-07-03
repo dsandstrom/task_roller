@@ -662,6 +662,90 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#resolved?" do
+    let(:issue) { Fabricate(:closed_issue) }
+
+    context "with no resolutions" do
+      it "returns false" do
+        expect(issue.resolved?).to eq(false)
+      end
+    end
+
+    context "when one resolution" do
+      context "is approved" do
+        before do
+          Fabricate(:approved_resolution, issue: issue)
+        end
+
+        it "returns true" do
+          expect(issue.resolved?).to eq(true)
+        end
+      end
+
+      context "is disapproved" do
+        before do
+          Fabricate(:disapproved_resolution, issue: issue)
+        end
+
+        it "returns false" do
+          expect(issue.resolved?).to eq(false)
+        end
+      end
+
+      context "is pending" do
+        before do
+          Fabricate(:pending_resolution, issue: issue)
+        end
+
+        it "returns false" do
+          expect(issue.resolved?).to eq(false)
+        end
+      end
+    end
+
+    context "when approved resolution is made invalid" do
+      before do
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:approved_resolution, issue: issue)
+        end
+        issue.open
+      end
+
+      it "returns false" do
+        expect(issue.resolved?).to eq(false)
+      end
+    end
+
+    context "when disapproved resolution is made invalid" do
+      before do
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:disapproved_resolution, issue: issue)
+        end
+        issue.open
+      end
+
+      it "returns false" do
+        expect(issue.resolved?).to eq(false)
+      end
+    end
+
+    context "when disapproved resolution is then approved" do
+      before do
+        Timecop.freeze(2.days.ago) do
+          Fabricate(:disapproved_resolution, issue: issue)
+        end
+        Timecop.freeze(1.day.ago) do
+          issue.open
+        end
+        Fabricate(:approved_resolution, issue: issue)
+      end
+
+      it "returns true" do
+        expect(issue.resolved?).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no tasks" do
