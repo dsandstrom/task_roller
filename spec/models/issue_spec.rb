@@ -789,10 +789,22 @@ RSpec.describe Issue, type: :model do
       context "and addressed? returns true" do
         before do
           allow(issue).to receive(:addressed?) { true }
+          allow(issue).to receive(:resolved?) { false }
         end
 
         it "returns 'addressed'" do
           expect(issue.status).to eq("addressed")
+        end
+      end
+
+      context "and resolved? returns true" do
+        before do
+          allow(issue).to receive(:addressed?) { false }
+          allow(issue).to receive(:resolved?) { true }
+        end
+
+        it "returns 'resolved'" do
+          expect(issue.status).to eq("resolved")
         end
       end
     end

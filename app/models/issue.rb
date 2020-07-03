@@ -220,6 +220,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def closed_status
       if addressed?
         'addressed'
+      elsif resolved?
+        'resolved'
       else
         'closed'
       end
