@@ -916,11 +916,11 @@ RSpec.describe Issue, type: :model do
         expect(issue.current_resolutions).to eq([resolution])
       end
 
-      it "returns all disapproved resolutions" do
-        resolution = nil
-        Fabricate(:disapproved_resolution)
+      it "returns disapproved resolutions created after opened_at" do
+        resolution = Fabricate(:disapproved_resolution, issue: issue)
+        Fabricate(:approved_resolution)
         Timecop.freeze(2.weeks.ago) do
-          resolution = Fabricate(:disapproved_resolution, issue: issue)
+          Fabricate(:disapproved_resolution, issue: issue)
         end
 
         expect(issue.current_resolutions).to eq([resolution])

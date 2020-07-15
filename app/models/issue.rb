@@ -146,11 +146,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     @current_resolutions =
-      resolutions.where(
-        'resolutions.created_at > ? OR resolutions.approved = ?',
-        opened_at,
-        false
-      )
+      resolutions.where('resolutions.created_at > ?', opened_at)
   end
 
   def current_resolution
