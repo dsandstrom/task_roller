@@ -140,6 +140,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @closed_tasks ||= tasks.all_closed
   end
 
+  def current_tasks
+    if @current_tasks.instance_of?(ActiveRecord::AssociationRelation)
+      return @current_tasks
+    end
+
+    @current_tasks = tasks.where('tasks.created_at > ?', opened_at)
+  end
+
   def current_resolutions
     if @current_resolutions.instance_of?(ActiveRecord::AssociationRelation)
       return @current_resolutions

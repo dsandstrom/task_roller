@@ -880,6 +880,52 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#current_tasks" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no tasks" do
+      it "returns []" do
+        expect(issue.current_tasks).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      before do
+        issue.update_columns created_at: 3.weeks.ago, opened_at: 1.week.ago
+      end
+
+      it "returns approved tasks created after opened_at" do
+        task = Fabricate(:approved_task, issue: issue)
+        Fabricate(:approved_task)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:approved_task, issue: issue)
+        end
+
+        expect(issue.current_tasks).to eq([task])
+      end
+
+      it "returns pending tasks created after opened_at" do
+        task = Fabricate(:pending_task, issue: issue)
+        Fabricate(:pending_task)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:pending_task, issue: issue)
+        end
+
+        expect(issue.current_tasks).to eq([task])
+      end
+
+      it "returns disapproved tasks created after opened_at" do
+        task = Fabricate(:disapproved_task, issue: issue)
+        Fabricate(:approved_task)
+        Timecop.freeze(2.weeks.ago) do
+          Fabricate(:disapproved_task, issue: issue)
+        end
+
+        expect(issue.current_tasks).to eq([task])
+      end
+    end
+  end
+
   describe "#current_resolutions" do
     let(:issue) { Fabricate(:issue) }
 
