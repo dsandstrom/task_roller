@@ -16,10 +16,22 @@ Fabricator(:closed_task, from: :task) do
   closed true
 end
 
+Fabricator(:pending_task, from: :task) do
+  closed false
+end
+
 Fabricator(:approved_task, from: :task) do
   closed true
 
   after_create do |task|
     Fabricate(:approved_review, task: task)
+  end
+end
+
+Fabricator(:disapproved_task, from: :task) do
+  closed true
+
+  after_create do |task|
+    Fabricate(:disapproved_review, task: task)
   end
 end
