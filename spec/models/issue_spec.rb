@@ -840,6 +840,17 @@ RSpec.describe Issue, type: :model do
           expect(issue.status).to eq("resolved")
         end
       end
+
+      context "and addressed?, resolved? return false" do
+        before do
+          allow(issue).to receive(:addressed?) { false }
+          allow(issue).to receive(:resolved?) { false }
+        end
+
+        it "returns 'closed'" do
+          expect(issue.status).to eq("closed")
+        end
+      end
     end
   end
 
