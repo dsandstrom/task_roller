@@ -185,7 +185,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def addressed?
-    @addressed ||= open_tasks.none? && tasks.any?(&:approved?)
+    @addressed ||=
+      !resolved? && closed && open_tasks.none? &&
+      current_tasks.any?(&:approved?)
   end
 
   def resolved?

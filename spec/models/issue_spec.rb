@@ -660,6 +660,39 @@ RSpec.describe Issue, type: :model do
         expect(issue.addressed?).to eq(false)
       end
     end
+
+    context "when issue resolved" do
+      before do
+        Fabricate(:approved_task, issue: issue)
+        allow(issue).to receive(:resolved?) { true }
+      end
+
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
+
+    context "when issue not closed" do
+      before do
+        Fabricate(:approved_task, issue: issue)
+        issue.update_column :closed, false
+      end
+
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
+
+    context "when approved task before opened_at" do
+      before do
+        Fabricate(:approved_task, issue: issue)
+        issue.update_attribute :opened_at, (Time.now + 1.week)
+      end
+
+      it "returns false" do
+        expect(issue.addressed?).to eq(false)
+      end
+    end
   end
 
   describe "#resolved?" do
