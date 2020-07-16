@@ -69,18 +69,15 @@ RSpec.describe ResolutionsController, type: :controller do
   describe "PUT #approve" do
     context "with valid params" do
       it "updates the requested resolution" do
-        resolution = Fabricate(:resolution, issue: issue)
         expect do
-          put :approve, params: { issue_id: issue.to_param,
-                                  id: resolution.to_param }
-          resolution.reload
-        end.to change(resolution, :approved).to(true)
+          post :approve, params: { issue_id: issue.to_param,
+                                   resolution: valid_attributes }
+        end.to change(issue.resolutions.approved, :count).by(1)
       end
 
       it "redirects to the resolution" do
-        resolution = Fabricate(:resolution, issue: issue)
-        put :approve, params: { issue_id: issue.to_param,
-                                id: resolution.to_param }
+        post :approve, params: { issue_id: issue.to_param,
+                                 resolution: valid_attributes }
         expect(response)
           .to redirect_to(category_project_issue_path(category, project, issue))
       end
@@ -88,13 +85,8 @@ RSpec.describe ResolutionsController, type: :controller do
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
-        other_resolution = Fabricate(:disapproved_resolution, issue: issue)
-        resolution = Fabricate(:resolution, issue: issue)
-        # make resolution invalid
-        other_resolution.update_column :approved, true
-
-        put :approve, params: { issue_id: issue.to_param,
-                                id: resolution.to_param }
+        post :approve, params: { issue_id: issue.to_param,
+                                 resolution: invalid_attributes }
         expect(response).to be_successful
       end
     end
@@ -103,18 +95,15 @@ RSpec.describe ResolutionsController, type: :controller do
   describe "PUT #disapprove" do
     context "with valid params" do
       it "updates the requested resolution" do
-        resolution = Fabricate(:resolution, issue: issue)
         expect do
-          put :disapprove, params: { issue_id: issue.to_param,
-                                     id: resolution.to_param }
-          resolution.reload
-        end.to change(resolution, :approved).to(false)
+          post :disapprove, params: { issue_id: issue.to_param,
+                                      resolution: valid_attributes }
+        end.to change(issue.resolutions.disapproved, :count).by(1)
       end
 
       it "redirects to the resolution" do
-        resolution = Fabricate(:resolution, issue: issue)
-        put :disapprove, params: { issue_id: issue.to_param,
-                                   id: resolution.to_param }
+        post :disapprove, params: { issue_id: issue.to_param,
+                                    resolution: valid_attributes }
         expect(response)
           .to redirect_to(category_project_issue_path(category, project, issue))
       end
@@ -122,13 +111,8 @@ RSpec.describe ResolutionsController, type: :controller do
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
-        other_resolution = Fabricate(:disapproved_resolution, issue: issue)
-        resolution = Fabricate(:resolution, issue: issue)
-        # make resolution invalid
-        other_resolution.update_column :approved, true
-
-        put :disapprove, params: { issue_id: issue.to_param,
-                                   id: resolution.to_param }
+        post :disapprove, params: { issue_id: issue.to_param,
+                                    resolution: invalid_attributes }
         expect(response).to be_successful
       end
     end
