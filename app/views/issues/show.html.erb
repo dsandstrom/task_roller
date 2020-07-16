@@ -28,6 +28,25 @@
                         method: :patch, class: 'secondary-link' %>
           <% end %>
         </p>
+
+        <p>
+          <% if @issue.current_resolution %>
+            <%= render @issue.current_resolution, issue: @issue %>
+          <% else %>
+            <%# TODO: issue user only %>
+            <%= link_to 'mark resolved',
+                        approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                        method: :post %>
+          <% end %>
+
+          <%# TODO: issue user only %>
+          <% if @issue.addressed? %>
+            <%= divider %>
+            <%= link_to 'mark unresolved',
+                        disapprove_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                        method: :post, class: 'destroy-link' %>
+          <% end %>
+        </p>
       </section>
 
       <section class="issue-tasks">

@@ -1,25 +1,14 @@
 <p id="resolution_<%= resolution.id %>" class="resolution">
-  <% if resolution.pending? %>
-    <%# TODO: resolutioner+ %>
-    <%= link_to 'approve',
-                approve_issue_resolution_path(issue, resolution),
-                method: :patch, class: 'create-link' %>
-    <%= divider %>
-    <%= link_to 'disapprove',
-                disapprove_issue_resolution_path(issue, resolution),
-                method: :patch, class: 'destroy-link' %>
-  <% else %>
-    <%= content_tag :strong, resolution.status,
-                    class: 'resolution-status' %>
-    <%= content_tag :span,
-                    format_date(resolution.updated_at),
-                    class: 'resolution-date' %>
-    <br>
-    by
-    <%= content_tag :span,
-                    resolution.user.name_or_email,
-                    class: 'resolution-user' %>
-  <% end %>
+  <%= content_tag :strong, resolution.status,
+                  class: 'resolution-status' %>
+  <%= content_tag :span,
+                  format_date(resolution.updated_at),
+                  class: 'resolution-date' %>
+  <br>
+  by
+  <%= content_tag :span,
+                  resolution.user.name_or_email,
+                  class: 'resolution-user' %>
 
   <%# TODO: admin only %>
   <%= divider %>
