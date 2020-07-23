@@ -12,9 +12,7 @@
         <h4 class="issue-column-title">Status</h4>
 
         <p>
-          <strong class="issue-status">
-            <%= @issue.status %>
-          </strong>
+          <%= content_tag :strong, @issue.status, class: 'issue-status' %>
 
           <% if @issue.current_resolution %>
             <%= render 'shared/resolution', resolution: @issue.current_resolution, issue: @issue %>

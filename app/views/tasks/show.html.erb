@@ -14,17 +14,17 @@ assigned = @task.assigned
         <h4 class="task-column-title">Status</h4>
 
         <p>
-          <%= @task.status %>
+          <%= content_tag :strong, @task.status, class: 'task-status' %>
+        </p>
 
+        <p>
           <% if @task.open? %>
             <%# TODO: admin only %>
-            <%= divider %>
-            <%= link_to 'close',
+            <%= link_to 'force close',
                         close_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
           <% else %>
             <%# TODO: reviewer+ only %>
-            <%= divider %>
             <%= link_to 'reopen',
                         open_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
