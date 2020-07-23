@@ -12,39 +12,44 @@
         <h4 class="issue-column-title">Status</h4>
 
         <p>
-          <%= @issue.status %>
+          <strong class="issue-status">
+            <%= @issue.status %>
+          </strong>
 
+          <% if @issue.current_resolution %>
+            <%= render 'shared/resolution', resolution: @issue.current_resolution, issue: @issue %>
+          <% end %>
+        </p>
+
+        <%# TODO: issue user only %>
+        <% if @issue.unresolved? %>
+          <p>
+            <%= link_to 'close issue and mark resolved',
+                        approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                        method: :post, class: 'create-link' %>
+          </p>
+        <% end %>
+
+        <%# TODO: issue user only %>
+        <% if @issue.addressed? %>
+          <p>
+            <%= link_to 'report issue was not fixed',
+                        disapprove_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                        method: :post, class: 'destroy-link' %>
+          </p>
+        <% end %>
+
+        <p>
           <% if @issue.open? %>
             <%# TODO: admin only %>
-            <%= divider %>
-            <%= link_to 'close',
+            <%= link_to 'force close',
                         close_issue_path(@issue),
                         method: :patch, class: 'secondary-link' %>
           <% else %>
             <%# TODO: reviewer+ only %>
-            <%= divider %>
             <%= link_to 'reopen',
                         open_issue_path(@issue),
                         method: :patch, class: 'secondary-link' %>
-          <% end %>
-        </p>
-
-        <p>
-          <% if @issue.current_resolution %>
-            <%= render @issue.current_resolution, issue: @issue %>
-          <% else %>
-            <%# TODO: issue user only %>
-            <%= link_to 'mark resolved',
-                        approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
-                        method: :post %>
-          <% end %>
-
-          <%# TODO: issue user only %>
-          <% if @issue.addressed? %>
-            <%= divider %>
-            <%= link_to 'mark unresolved',
-                        disapprove_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
-                        method: :post, class: 'destroy-link' %>
           <% end %>
         </p>
       </section>
