@@ -779,6 +779,50 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#unresolved?" do
+    context "for an open issue" do
+      let(:issue) { Fabricate(:open_issue) }
+
+      context "with no resolutions" do
+        it "returns true" do
+          expect(issue.unresolved?).to eq(true)
+        end
+      end
+
+      context "with a pending resolution" do
+        before { Fabricate(:pending_resolution, issue: issue) }
+
+        it "returns false" do
+          expect(issue.unresolved?).to eq(false)
+        end
+      end
+
+      context "with a disapproved resolution" do
+        before { Fabricate(:disapproved_resolution, issue: issue) }
+
+        it "returns false" do
+          expect(issue.unresolved?).to eq(false)
+        end
+      end
+
+      context "with an approved resolution" do
+        before { Fabricate(:approved_resolution, issue: issue) }
+
+        it "returns false" do
+          expect(issue.unresolved?).to eq(false)
+        end
+      end
+    end
+
+    context "for a closed issue" do
+      let(:issue) { Fabricate(:closed_issue) }
+
+      it "returns false" do
+        expect(issue.unresolved?).to eq(false)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no tasks" do
