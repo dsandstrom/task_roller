@@ -489,7 +489,7 @@ RSpec.describe Issue, type: :model do
   end
 
   describe "#short_summary" do
-    let(:short_summary_length) { 100 }
+    let(:short_summary_length) { 70 }
 
     context "when summary is short" do
       before { subject.summary = "short" }

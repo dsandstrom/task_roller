@@ -121,7 +121,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def short_summary
-    @short_summary ||= summary&.truncate(100)
+    @short_summary ||= summary&.truncate(70)
   end
 
   def heading
