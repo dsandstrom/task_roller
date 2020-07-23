@@ -116,11 +116,6 @@ assigned = @task.assigned
           <% else %>
             <em>no connection</em>
           <% end %>
-
-          <%= divider %>
-          <%= link_to 'change',
-                      edit_category_project_task_path(@category, @task.project, @task),
-                      class: 'secondary-link' %>
         </p>
       </section>
     </div>
