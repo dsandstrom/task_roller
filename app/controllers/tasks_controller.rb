@@ -4,6 +4,7 @@
 # TODO: restrict to reviewers except index, show
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
+# TODO: allow creating issue/task from comment
 
 # rubocop:disable Metrics/ClassLength
 
