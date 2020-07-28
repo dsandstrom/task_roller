@@ -8,8 +8,6 @@
 # this in future
 # Won't Fix: The issue cannot be fixed
 # Invalid: This is not an issue, but was interpreted wrongly as one
-# TODO: add resolution approval - allow user to approve issue is resolved
-# not sure if it should hold it up being closed
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'

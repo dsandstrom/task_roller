@@ -10,11 +10,6 @@ class IssuesController < ApplicationController
     @issues = Issue.filter(build_filters)
   end
 
-  # TODO: add new task link
-  # TODO: add status to issues/tasks
-  # issue: open, closed, being worked on, duplicate
-  # task: open, done, cancelled, being worked on, duplicate
-  # TODO: connect issue status to tasks
   def show
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build
