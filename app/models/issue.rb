@@ -140,7 +140,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @closed_tasks ||= tasks.all_closed
   end
 
-  # FIXME: when unfinished task, then issue closed, reopened -> task not current
   def current_tasks
     if @current_tasks.instance_of?(ActiveRecord::AssociationRelation)
       return @current_tasks
@@ -192,7 +191,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     @addressed =
       !resolved? && closed && open_tasks.none? &&
-      current_tasks.any?(&:approved?)
+      tasks.any?(&:approved?)
   end
 
   def resolved?

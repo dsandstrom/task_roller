@@ -689,8 +689,8 @@ RSpec.describe Issue, type: :model do
         issue.update_attribute :opened_at, (Time.now + 1.week)
       end
 
-      it "returns false" do
-        expect(issue.addressed?).to eq(false)
+      it "returns true" do
+        expect(issue.addressed?).to eq(true)
       end
     end
   end
