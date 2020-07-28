@@ -61,15 +61,15 @@ assigned = @task.assigned
           <% else %>
             <p>
               no one
-              <%= divider %>
               <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
               <%# TODO: add form with ajax with first click, then toggle hide class %>
-              <%= link_to 'assign someone',
-                          edit_category_project_task_path(@category, @project, @task),
-                          id: 'task_assignment_link', class: 'secondary-link' %>
+              <% unless @task.in_review? %>
+                <%= divider %>
+                <%= link_to 'assign someone',
+                            edit_category_project_task_path(@category, @project, @task),
+                            id: 'task_assignment_link', class: 'secondary-link' %>
 
-              <%# TODO: admin %>
-              <% if !@task.in_review? %>
+                <%# TODO: admin %>
                 <%= divider %>
                 <%= link_to 'complete',
                             task_reviews_path(@task, review: { user_id: @task.user_id }),
@@ -78,7 +78,9 @@ assigned = @task.assigned
             </p>
           <% end %>
 
-          <%= render 'task_assignments/form', task: @task %>
+          <% unless @task.in_review? %>
+            <%= render 'task_assignments/form', task: @task %>
+          <% end %>
         </section>
       <% end %>
 
