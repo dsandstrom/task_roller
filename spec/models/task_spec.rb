@@ -470,6 +470,36 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#concluded_reviews" do
+    let(:task) { Fabricate(:task) }
+
+    it "returns reviews with approved as true or false" do
+      Fabricate(:approved_review)
+      pending_review = Fabricate(:disapproved_review, task: task)
+      disapproved_review = Fabricate(:disapproved_review, task: task)
+      approved_review = Fabricate(:approved_review, task: task)
+      pending_review.update_column :approved, nil
+
+      expect(task.concluded_reviews)
+        .to contain_exactly(approved_review, disapproved_review)
+    end
+
+    it "orders by updated_at asc" do
+      first_review = nil
+      second_review = nil
+
+      Timecop.freeze(2.weeks.ago) do
+        second_review = Fabricate(:disapproved_review, task: task)
+      end
+      Timecop.freeze(1.week.ago) do
+        first_review = Fabricate(:approved_review, task: task)
+      end
+      second_review.touch
+
+      expect(task.concluded_reviews).to eq([first_review, second_review])
+    end
+  end
+
   describe "#current_reviews" do
     let(:task) { Fabricate(:task) }
 

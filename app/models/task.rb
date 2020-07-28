@@ -188,6 +188,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue.open
   end
 
+  def concluded_reviews
+    if @concluded_reviews.instance_of?(ActiveRecord::AssociationRelation)
+      return @concluded_reviews
+    end
+
+    @concluded_reviews = reviews.concluded.order('reviews.updated_at asc')
+  end
+
   def current_reviews
     if @current_reviews.instance_of?(ActiveRecord::AssociationRelation)
       return @current_reviews
