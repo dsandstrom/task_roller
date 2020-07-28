@@ -33,6 +33,10 @@ class Review < ApplicationRecord
     where(approved: true)
   end
 
+  def self.concluded
+    approved.or(disapproved)
+  end
+
   # INSTANCE
 
   def disapproved?

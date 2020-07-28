@@ -241,9 +241,20 @@ RSpec.describe Review, type: :model do
       Fabricate(:pending_review)
     end
 
-    it "returns reviews with approved as false" do
+    it "returns reviews with approved as true" do
       review = Fabricate(:approved_review)
       expect(Review.approved).to eq([review])
+    end
+  end
+
+  describe ".concluded" do
+    before { Fabricate(:pending_review) }
+
+    it "returns reviews with approved as true or false" do
+      approved_review = Fabricate(:approved_review)
+      disapproved_review = Fabricate(:disapproved_review)
+      expect(Review.concluded)
+        .to contain_exactly(approved_review, disapproved_review)
     end
   end
 
