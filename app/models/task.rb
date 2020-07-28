@@ -193,12 +193,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return @current_reviews
     end
 
-    @current_reviews =
-      reviews.where(
-        'reviews.created_at > ? OR reviews.approved = ?',
-        opened_at,
-        false
-      )
+    @current_reviews = reviews.where('reviews.created_at > ?', opened_at)
   end
 
   def current_review

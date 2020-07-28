@@ -508,11 +508,11 @@ RSpec.describe Task, type: :model do
         expect(task.current_reviews).to eq([review])
       end
 
-      it "returns all disapproved reviews" do
-        review = nil
+      it "returns disapproved reviews created after opened_at" do
+        review = Fabricate(:disapproved_review, task: task)
         Fabricate(:disapproved_review)
         Timecop.freeze(2.weeks.ago) do
-          review = Fabricate(:disapproved_review, task: task)
+          Fabricate(:disapproved_review, task: task)
         end
 
         expect(task.current_reviews).to eq([review])
