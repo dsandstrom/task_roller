@@ -15,6 +15,15 @@ assigned = @task.assigned
 
         <p>
           <%= content_tag :strong, @task.status, class: 'task-status' %>
+
+          <% if @task.current_review %>
+            <% if @task.approved? %>
+              <%= render 'shared/review', review: @task.current_review,
+                                          task: @task %>
+            <% else %>
+              <%= render @task.current_review, task: @task %>
+            <% end %>
+          <% end %>
         </p>
 
         <p>
@@ -30,10 +39,6 @@ assigned = @task.assigned
                         method: :patch, class: 'secondary-link' %>
           <% end %>
         </p>
-
-        <% if @task.current_review %>
-          <%= render @task.current_review, task: @task %>
-        <% end %>
       </section>
 
       <% if @task.open? %>
