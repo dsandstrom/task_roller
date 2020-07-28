@@ -1,27 +1,16 @@
 <dt id="review_<%= review.id %>" class="review">
-  <% if review.pending? %>
-    <%# TODO: reviewer+ %>
-    <%= link_to 'approve',
-                approve_task_review_path(task, review),
-                method: :patch, class: 'create-link' %>
-    <%= divider %>
-    <%= link_to 'disapprove',
-                disapprove_task_review_path(task, review),
-                method: :patch, class: 'destroy-link' %>
-  <% else %>
-    <%= content_tag :strong, review.status,
-                    class: 'review-status' %>
-    <%= content_tag :span,
+  <%= content_tag :strong, review.status,
+                  class: 'review-status' %>
+  <% unless review.pending? %>
+    (<%= content_tag :span,
                     format_date(review.updated_at),
-                    class: 'review-date' %>
+                    class: 'review-date' %>)
   <% end %>
 </dt>
 
 <dd>
-  <% unless review.pending? %>
-    by
-    <%= content_tag :span,
-                    review.user.name_or_email,
-                    class: 'review-user' %>
-  <% end %>
+  by
+  <%= content_tag :span,
+                  review.user.name_or_email,
+                  class: 'review-user' %>
 </dd>

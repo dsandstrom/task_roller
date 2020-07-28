@@ -1,9 +1,0 @@
-<span id="review_<%= review.id %>" class="review">
-  <% if review.pending? %>
-    (review pending)
-  <% else %>
-    (<%= content_tag :span,
-                    format_date(review.updated_at),
-                    class: 'review-date' %>)
-  <% end %>
-</span>

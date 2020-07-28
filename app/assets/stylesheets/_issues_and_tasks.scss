@@ -131,7 +131,11 @@
     ul,
     p,
     dl {
-      margin-bottom: 0;
+      margin-bottom: .5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
 
     // hidden form

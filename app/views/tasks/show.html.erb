@@ -15,18 +15,21 @@ assigned = @task.assigned
 
         <p>
           <%= content_tag :strong, @task.status, class: 'task-status' %>
-
-          <% if @task.current_review %>
-            <% if @task.approved? %>
-              <%= render 'shared/review', review: @task.current_review,
-                                          task: @task %>
-            <% else %>
-              <dl class="task-current-review">
-                <%= render @task.current_review, task: @task %>
-              </dl>
-            <% end %>
-          <% end %>
         </p>
+
+        <%# TODO: reviewer+ %>
+        <% review = @task.current_review %>
+        <% if review&.pending? %>
+          <p>
+            <%= link_to 'approve',
+                        approve_task_review_path(@task, review),
+                        method: :patch, class: 'create-link' %>
+            <%= divider %>
+            <%= link_to 'disapprove',
+                        disapprove_task_review_path(@task, review),
+                        method: :patch, class: 'destroy-link' %>
+          </p>
+        <% end %>
 
         <p>
           <% if @task.open? %>
@@ -86,21 +89,22 @@ assigned = @task.assigned
         </section>
       <% end %>
 
-      <% if assigned.any? %>
-        <section class="task-assigned-wrapper">
-          <h4 class="task-column-title">History</h4>
-
+      <h4 class="task-column-title">History</h4>
+      <section class="task-history-wrapper">
+        <% if assigned.any? %>
           <dl class="task-assigned">
               <%= render partial: 'shared/assignee',
                          collection: assigned,
                          locals: { task: @task } %>
           </dl>
+        <% end %>
 
+        <% if @task.concluded_reviews.any? %>
           <dl class="task-reviews">
             <%= render @task.concluded_reviews, task: @task %>
           </dl>
-        </section>
-      <% end %>
+        <% end %>
+      </section>
 
       <% if @task.open? %>
         <section class="task-reviewer">
