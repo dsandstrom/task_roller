@@ -21,7 +21,9 @@ assigned = @task.assigned
               <%= render 'shared/review', review: @task.current_review,
                                           task: @task %>
             <% else %>
-              <%= render @task.current_review, task: @task %>
+              <dl class="task-current-review">
+                <%= render @task.current_review, task: @task %>
+              </dl>
             <% end %>
           <% end %>
         </p>
@@ -92,6 +94,10 @@ assigned = @task.assigned
               <%= render partial: 'shared/assignee',
                          collection: assigned,
                          locals: { task: @task } %>
+          </dl>
+
+          <dl class="task-reviews">
+            <%= render @task.concluded_reviews, task: @task %>
           </dl>
         </section>
       <% end %>

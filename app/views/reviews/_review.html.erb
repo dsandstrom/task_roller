@@ -1,4 +1,4 @@
-<p id="review_<%= review.id %>" class="review">
+<dt id="review_<%= review.id %>" class="review">
   <% if review.pending? %>
     <%# TODO: reviewer+ %>
     <%= link_to 'approve',
@@ -14,16 +14,14 @@
     <%= content_tag :span,
                     format_date(review.updated_at),
                     class: 'review-date' %>
-    <br>
+  <% end %>
+</dt>
+
+<dd>
+  <% unless review.pending? %>
     by
     <%= content_tag :span,
                     review.user.name_or_email,
                     class: 'review-user' %>
   <% end %>
-
-  <%# TODO: admin only %>
-  <%= divider %>
-  <%= link_to 'delete', task_review_path(task, review),
-              method: :delete, data: { confirm: 'Are you sure?' },
-              class: 'secondary-link' %>
-</p>
+</dd>
