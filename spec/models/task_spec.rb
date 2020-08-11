@@ -131,7 +131,68 @@ RSpec.describe Task, type: :model do
           end
         end
 
-        context "and :open" do
+        context "and :status" do
+          context "is set as 'in review'" do
+            let(:task) { Fabricate(:open_task, project: project) }
+
+            before do
+              Fabricate(:pending_review, task: task)
+              Fabricate(:pending_review, task: Fabricate(:open_task))
+              reopened_task = nil
+              Timecop.freeze(1.day.ago) do
+                reopened_task = Fabricate(:task, project: project)
+                Fabricate(:pending_review, task: reopened_task)
+              end
+              reopened_task.open
+              Fabricate(:closed_task, project: project)
+            end
+
+            it "returns open tasks that have a current pending review" do
+              expect(Task.filter(category: category, status: "in review"))
+                .to eq([task])
+            end
+          end
+
+          context "is set as 'in progress'" do
+            let(:task) { Fabricate(:open_task, project: project) }
+
+            before do
+              Fabricate(:progression, task: task)
+              Fabricate(:finished_progression,
+                        task: Fabricate(:open_task, project: project))
+              Fabricate(:progression, task: Fabricate(:open_task))
+              Fabricate(:closed_task, project: project)
+            end
+
+            it "returns open tasks that have an unfinished progression" do
+              expect(Task.filter(category: category, status: "in progress"))
+                .to eq([task])
+            end
+          end
+
+          context "is set as 'assigned'" do
+            let(:worker) { Fabricate(:user_worker) }
+            let(:task) { Fabricate(:open_task, project: project) }
+
+            before do
+              task.assignees << worker
+
+              _unassigned_task = Fabricate(:open_task, project: project)
+              # in_progress_task = Fabricate(:open_task, project: project)
+              # Fabricate(:progression, task: in_progress_task)
+              # in_progress_task.assignees << worker
+              # in_review_task = Fabricate(:open_task, project: project)
+              # Fabricate(:pending_review, task: in_review_task)
+              # in_review_task.assignees << worker
+              Fabricate(:closed_task, project: project).assignees << worker
+            end
+
+            it "returns open assigned tasks" do
+              expect(Task.filter(category: category, status: "assigned"))
+                .to eq([task])
+            end
+          end
+
           context "is set as 'open'" do
             let!(:task) { Fabricate(:open_task, project: project) }
 
@@ -140,21 +201,62 @@ RSpec.describe Task, type: :model do
               Fabricate(:closed_task, project: project)
             end
 
-            it "returns non-closed tasks" do
+            it "returns open tasks" do
+              expect(Task.filter(category: category, status: "open"))
+                .to eq([task])
+            end
+
+            it "returns pending review tasks" do
+              Fabricate(:pending_review, task: task)
+
+              expect(Task.filter(category: category, status: "open"))
+                .to eq([task])
+            end
+
+            it "returns in progress tasks" do
+              Fabricate(:progression, task: task)
+
               expect(Task.filter(category: category, status: "open"))
                 .to eq([task])
             end
           end
 
-          context "is set as 'closed'" do
-            let!(:task) { Fabricate(:closed_task, project: project) }
+          context "is set as 'approved'" do
+            let!(:task) { Fabricate(:approved_task, project: project) }
 
+            before do
+              Fabricate(:approved_task)
+              Fabricate(:open_task, project: project)
+              Fabricate(:closed_task, project: project)
+              reopened_task = nil
+              Timecop.freeze(1.day.ago) do
+                reopened_task = Fabricate(:approved_task, project: project)
+              end
+              reopened_task.open
+            end
+
+            it "returns closed tasks that have an approved current review" do
+              expect(Task.filter(category: category, status: "approved"))
+                .to eq([task])
+            end
+          end
+
+          context "is set as 'closed'" do
             before do
               Fabricate(:closed_task)
               Fabricate(:open_task, project: project)
             end
 
-            it "returns non-closed tasks" do
+            it "returns closed tasks" do
+              task = Fabricate(:closed_task, project: project)
+
+              expect(Task.filter(category: category, status: "closed"))
+                .to eq([task])
+            end
+
+            it "returns approved tasks" do
+              task = Fabricate(:approved_task, project: project)
+
               expect(Task.filter(category: category, status: "closed"))
                 .to eq([task])
             end
@@ -865,7 +967,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns 'approved'" do
-          expect(task.status).to eq("approved")
+          expect(task.status).to eq("approved/closed")
         end
       end
     end

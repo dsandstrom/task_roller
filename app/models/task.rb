@@ -46,20 +46,36 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: false)
   end
 
+  def self.all_in_review
+    where('reviews.created_at > tasks.opened_at AND reviews.approved IS NULL')
+      .joins(:reviews)
+  end
+
+  def self.all_in_progress
+    where('progressions.finished = ?', false).joins(:progressions)
+  end
+
+  # TODO: should in progress/review tasks be included?
+  def self.all_assigned
+    where(closed: false).joins(:task_assignees)
+  end
+
   def self.all_closed
     where(closed: true)
   end
 
+  def self.all_approved
+    where('reviews.created_at > tasks.opened_at AND reviews.approved = ?', true)
+      .joins(:reviews)
+  end
+
   def self.filter(filters = {})
     parent = filters[:project] || filters[:category]
-    return Task.none unless parent
+    return Task.none unless parent&.tasks&.any?
 
-    tasks = parent.tasks
-    return Task.none unless tasks&.any?
-
-    tasks.includes(task_assignees: :assignee, issue: :user)
-         .apply_filters(filters)
-         .order(build_order_param(filters[:order]))
+    parent.tasks.includes(task_assignees: :assignee, issue: :user)
+          .apply_filters(filters)
+          .order(build_order_param(filters[:order]))
   end
 
   # used by .filter
@@ -72,13 +88,39 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # used by .filter
+  # 'assigned'
   def self.filter_by_status(status)
-    if status == 'open'
-      all_open
-    elsif status == 'closed'
-      all_closed
+    case status
+    when 'open', 'assigned', 'in progress', 'in review'
+      filter_by_open_status(status)
+    when 'approved', 'closed'
+      filter_by_closed_status(status)
     else
       all
+    end
+  end
+
+  # used by .filter_by_status
+  def self.filter_by_open_status(status)
+    case status
+    when 'in review'
+      all_in_review
+    when 'in progress'
+      all_in_progress
+    when 'assigned'
+      all_assigned
+    else
+      all_open
+    end
+  end
+
+  # used by .filter_by_status
+  def self.filter_by_closed_status(status)
+    case status
+    when 'approved'
+      all_approved
+    else
+      all_closed
     end
   end
 
@@ -265,7 +307,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     def closed_status
       if approved?
-        'approved'
+        'approved/closed'
       else
         'closed'
       end
