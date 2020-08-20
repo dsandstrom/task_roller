@@ -16,10 +16,34 @@
       Open
     <% end %>
 
+    <%= label_tag :status_assigned,
+                  class: roller_radio_button_label_class('purple') do %>
+      <%= radio_button_tag :status, :assigned, params[:status] == 'assigned' %>
+      Assigned
+    <% end %>
+
+    <%= label_tag :status_in_progress,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :status, :in_progress, params[:status] == 'in_progress' %>
+      In Progress
+    <% end %>
+
+    <%= label_tag :status_in_review,
+                  class: roller_radio_button_label_class('purple') do %>
+      <%= radio_button_tag :status, :in_review, params[:status] == 'in_review' %>
+      In Review
+    <% end %>
+
     <%= label_tag :status_closed,
-                  class: roller_radio_button_label_class('yellow') do %>
+                  class: roller_radio_button_label_class('red') do %>
       <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
       Closed
+    <% end %>
+
+    <%= label_tag :status_approved,
+                  class: roller_radio_button_label_class('yellow') do %>
+      <%= radio_button_tag :status, :approved, params[:status] == 'approved' %>
+      Approved/Closed
     <% end %>
   </div>
 </div>

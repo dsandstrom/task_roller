@@ -1,4 +1,3 @@
-<%# TODO: add status %>
 <div id="task-<%= task.id %>" class="task">
   <header class="task-header">
     <h3 class="task-summary">
@@ -11,12 +10,15 @@
   <main class="task-main">
     <p class="task-assignees">
       <% if task.assignees.any? %>
-        <%= render partial: 'shared/assignee',
-                   collection: task.assignees,
-                   locals: { task: task } %>
+        <%= task.assignees.map(&:name_or_email).join(', ') %>
       <% else %>
         <em>Unassigned</em>
       <% end %>
+    </p>
+
+    <p>
+      Status:
+      <%= content_tag :strong, task.status, class: 'task-status' %>
     </p>
 
     <% if task.issue %>

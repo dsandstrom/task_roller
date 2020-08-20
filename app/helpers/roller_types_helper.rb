@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# colors in roller_types.scss
+# default (gray), blue, brown, green, purple, red, yellow
+
 module RollerTypesHelper
   def issue_type_tag(issue_type)
     return unless issue_type
