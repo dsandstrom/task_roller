@@ -3,6 +3,7 @@ comments = @task.comments.includes(:user)
 comment = @task.comments.build
 assignees = @task.assignees.includes(:progressions)
 assigned = @task.assigned
+# TODO: add re-open, force close to history
 %>
 
 <div class="task-show-page">
