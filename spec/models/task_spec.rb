@@ -132,7 +132,7 @@ RSpec.describe Task, type: :model do
         end
 
         context "and :status" do
-          context "is set as 'in review'" do
+          context "is set as 'in_review'" do
             let(:task) { Fabricate(:open_task, project: project) }
 
             before do
@@ -148,12 +148,12 @@ RSpec.describe Task, type: :model do
             end
 
             it "returns open tasks that have a current pending review" do
-              expect(Task.filter(category: category, status: "in review"))
+              expect(Task.filter(category: category, status: "in_review"))
                 .to eq([task])
             end
           end
 
-          context "is set as 'in progress'" do
+          context "is set as 'in_progress'" do
             let(:task) { Fabricate(:open_task, project: project) }
 
             before do
@@ -165,7 +165,7 @@ RSpec.describe Task, type: :model do
             end
 
             it "returns open tasks that have an unfinished progression" do
-              expect(Task.filter(category: category, status: "in progress"))
+              expect(Task.filter(category: category, status: "in_progress"))
                 .to eq([task])
             end
           end

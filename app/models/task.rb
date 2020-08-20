@@ -89,9 +89,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # used by .filter
   # 'assigned'
+  # TODO: open/unassigned
+  # TODO: assigned include in progess/review? (def not review)
   def self.filter_by_status(status)
     case status
-    when 'open', 'assigned', 'in progress', 'in review'
+    when 'open', 'assigned', 'in_progress', 'in_review'
       filter_by_open_status(status)
     when 'approved', 'closed'
       filter_by_closed_status(status)
@@ -103,9 +105,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # used by .filter_by_status
   def self.filter_by_open_status(status)
     case status
-    when 'in review'
+    when 'in_review'
       all_in_review
-    when 'in progress'
+    when 'in_progress'
       all_in_progress
     when 'assigned'
       all_assigned
