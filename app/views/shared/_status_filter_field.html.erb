@@ -16,6 +16,12 @@
       Open
     <% end %>
 
+    <%= label_tag :status_unassigned,
+                  class: roller_radio_button_label_class('default') do %>
+      <%= radio_button_tag :status, :unassigned, params[:status] == 'unassigned' %>
+      Unassigned
+    <% end %>
+
     <%= label_tag :status_assigned,
                   class: roller_radio_button_label_class('purple') do %>
       <%= radio_button_tag :status, :assigned, params[:status] == 'assigned' %>
@@ -38,12 +44,6 @@
                   class: roller_radio_button_label_class('red') do %>
       <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
       Closed
-    <% end %>
-
-    <%= label_tag :status_approved,
-                  class: roller_radio_button_label_class('yellow') do %>
-      <%= radio_button_tag :status, :approved, params[:status] == 'approved' %>
-      Approved/Closed
     <% end %>
   </div>
 </div>
