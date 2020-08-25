@@ -46,6 +46,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: false)
   end
 
+  def self.all_closed
+    where(closed: true)
+  end
+
   def self.all_in_review
     where('reviews.created_at > tasks.opened_at AND reviews.approved IS NULL')
       .joins(:reviews)
@@ -58,10 +62,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: should in progress/review tasks be included? (def not review)
   def self.all_assigned
     where(closed: false).joins(:task_assignees)
-  end
-
-  def self.all_closed
-    where(closed: true)
   end
 
   def self.all_approved
