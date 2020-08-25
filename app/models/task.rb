@@ -55,7 +55,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where('progressions.finished = ?', false).joins(:progressions)
   end
 
-  # TODO: should in progress/review tasks be included?
+  # TODO: should in progress/review tasks be included? (def not review)
   def self.all_assigned
     where(closed: false).joins(:task_assignees)
   end
@@ -88,9 +88,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # used by .filter
-  # 'assigned'
   # TODO: open/unassigned
-  # TODO: assigned include in progess/review? (def not review)
   def self.filter_by_status(status)
     case status
     when 'open', 'assigned', 'in_progress', 'in_review'
