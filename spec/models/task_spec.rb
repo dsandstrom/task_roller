@@ -280,15 +280,21 @@ RSpec.describe Task, type: :model do
           let(:in_progress_task) { Fabricate(:open_task, project: project) }
           let(:assigned_task) { Fabricate(:open_task, project: project) }
           let(:approved_task) { Fabricate(:approved_task, project: project) }
+          let(:finished_task) { Fabricate(:open_task, project: project) }
+          let(:reopened_task) { Fabricate(:task, project: project) }
 
           before do
-            tasks =
-              [assigned_task, in_review_task, in_progress_task, approved_task]
+            _unassigned_task = Fabricate(:open_task, project: project)
+
+            tasks = [assigned_task, in_review_task, in_progress_task,
+                     approved_task, finished_task, reopened_task]
             tasks.each do |task|
               task.assignees << worker
             end
             Fabricate(:pending_review, task: in_review_task)
             Fabricate(:progression, task: in_progress_task)
+            Fabricate(:finished_progression, task: finished_task)
+            Fabricate(:pending_review, task: reopened_task)
 
             # different project in_review
             Fabricate(:pending_review, task: Fabricate(:open_task))
@@ -297,16 +303,14 @@ RSpec.describe Task, type: :model do
             # different project approved
             Fabricate(:approved_task)
 
-            # finished task
-            Fabricate(:finished_progression,
-                      task: Fabricate(:open_task, project: project))
-
-            reopened_task = nil
-            Timecop.freeze(1.day.ago) do
-              reopened_task = Fabricate(:task, project: project)
-              Fabricate(:pending_review, task: reopened_task)
+            # reopened & unassigned
+            # reopened_task = nil
+            # Timecop.freeze(1.day.ago) do
+            #   reopened_task = Fabricate(:task, project: project)
+            # end
+            Timecop.freeze(Time.now + 2.days) do
+              reopened_task.open
             end
-            reopened_task.open
 
             Fabricate(:closed_task, project: project).assignees << worker
           end
@@ -330,7 +334,7 @@ RSpec.describe Task, type: :model do
           context "is set as 'assigned'" do
             it "returns open assigned tasks" do
               results = Task.filter(category: category, status: "assigned")
-              expect(results.count).to eq(3)
+              expect(results.count).to eq(5)
               expect(results).to match_array(category.tasks.all_assigned)
             end
           end
@@ -338,7 +342,7 @@ RSpec.describe Task, type: :model do
           context "is set as 'open'" do
             it "returns open, reopened, pending, in review, in progress" do
               results = Task.filter(category: category, status: "open")
-              expect(results.count).to eq(5)
+              expect(results.count).to eq(6)
               expect(results).to match_array(category.tasks.all_open)
             end
           end
@@ -359,10 +363,18 @@ RSpec.describe Task, type: :model do
             end
           end
 
+          context "is set as 'unassigned'" do
+            it "returns unassigned tasks" do
+              results = Task.filter(category: category, status: "unassigned")
+              expect(results.count).to eq(1)
+              expect(results).to match_array(category.tasks.all_unassigned)
+            end
+          end
+
           context "is set as 'all'" do
             it "returns all category tasks" do
               tasks = Task.filter(category: category, status: "all")
-              expect(tasks.count).to eq(7)
+              expect(tasks.count).to eq(8)
               expect(tasks).to match_array(category.tasks)
             end
           end

@@ -65,7 +65,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.all_unassigned
-    all_open.where('id NOT IN (SELECT DISTINCT(task_id) FROM task_assignees)')
+    query = 'tasks.id NOT IN (SELECT DISTINCT(task_id) FROM task_assignees)'
+    all_open.where(query)
   end
 
   def self.all_approved
@@ -94,7 +95,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # used by .filter
   def self.filter_by_status(status)
     case status
-    when 'open', 'assigned', 'in_progress', 'in_review'
+    when 'open', 'assigned', 'in_progress', 'in_review', 'unassigned'
       filter_by_open_status(status)
     when 'approved', 'closed'
       filter_by_closed_status(status)
@@ -112,6 +113,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       all_in_progress
     when 'assigned'
       all_assigned
+    when 'unassigned'
+      all_unassigned
     else
       all_open
     end
