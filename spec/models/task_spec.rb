@@ -181,6 +181,30 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe ".all_unassigned" do
+    context "when no tasks" do
+      before { Task.destroy_all }
+
+      it "returns []" do
+        expect(Task.all_unassigned).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      let(:task) { Fabricate(:open_task) }
+
+      before do
+        assigned_task = Fabricate(:open_task)
+        assigned_task.assignees << worker
+        Fabricate(:closed_task)
+      end
+
+      it "returns unassigned" do
+        expect(Task.all_unassigned).to eq([task])
+      end
+    end
+  end
+
   describe ".all_approved" do
     context "when no tasks" do
       before { Task.destroy_all }
