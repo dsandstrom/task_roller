@@ -94,40 +94,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # used by .filter
   def self.filter_by_status(status)
-    case status
-    when 'open', 'assigned', 'in_progress', 'in_review', 'unassigned'
-      filter_by_open_status(status)
-    when 'approved', 'closed'
-      filter_by_closed_status(status)
-    else
-      all
-    end
-  end
+    options = %w[open assigned in_progress in_review unassigned approved closed]
+    return all unless options.include?(status)
 
-  # used by .filter_by_status
-  def self.filter_by_open_status(status)
-    case status
-    when 'in_review'
-      all_in_review
-    when 'in_progress'
-      all_in_progress
-    when 'assigned'
-      all_assigned
-    when 'unassigned'
-      all_unassigned
-    else
-      all_open
-    end
-  end
-
-  # used by .filter_by_status
-  def self.filter_by_closed_status(status)
-    case status
-    when 'approved'
-      all_approved
-    else
-      all_closed
-    end
+    send("all_#{status}")
   end
 
   # used by .filter
