@@ -126,6 +126,22 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_being_worked_on" do
+    let(:issue) { Fabricate(:issue) }
+
+    before do
+      Fabricate(:task, issue: issue)
+
+      Fabricate(:issue) # no tasks
+      Fabricate(:closed_task, issue: Fabricate(:issue))
+      Fabricate(:open_task, issue: Fabricate(:closed_issue))
+    end
+
+    it "returns open issues with an open task" do
+      expect(Issue.all_being_worked_on).to eq([issue])
+    end
+  end
+
   describe ".filter" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }

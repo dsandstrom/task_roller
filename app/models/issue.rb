@@ -42,6 +42,11 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
+  # with open tasks
+  def self.all_being_worked_on
+    all_open.joins(:tasks).where('tasks.closed = ?', false)
+  end
+
   def self.with_open_task
     left_outer_joins(:tasks).where('tasks.closed = ?', false).distinct
   end
