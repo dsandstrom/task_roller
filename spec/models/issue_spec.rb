@@ -177,6 +177,28 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_resolved" do
+    let(:issue) { Fabricate(:closed_issue) }
+
+    before do
+      Fabricate(:approved_resolution, issue: issue)
+      Fabricate(:pending_resolution)
+      Fabricate(:disapproved_resolution)
+
+      reopened_issue = Fabricate(:closed_issue)
+      Timecop.freeze(1.day.ago) do
+        Fabricate(:approved_resolution, issue: reopened_issue)
+      end
+
+      open_issue = Fabricate(:open_issue)
+      Fabricate(:approved_resolution, issue: open_issue)
+    end
+
+    it "returns issues with current approved resolutions" do
+      expect(Issue.all_resolved).to eq([issue])
+    end
+  end
+
   describe ".filter" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }

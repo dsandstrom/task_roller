@@ -62,6 +62,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
               .where(resolutions_query, true)
   end
 
+  # current resolution approved
+  def self.all_resolved
+    query =
+      'resolutions.approved = ? AND resolutions.created_at > issues.opened_at'
+    all_closed.joins(:resolutions).where(query, true)
+  end
+
   def self.with_open_task
     left_outer_joins(:tasks).where('tasks.closed = ?', false).distinct
   end
