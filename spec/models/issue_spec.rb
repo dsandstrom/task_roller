@@ -199,6 +199,29 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_unresolved" do
+    let!(:open_issue) { Fabricate(:open_issue) }
+    let(:reopened_issue) { Fabricate(:open_issue) }
+    let(:pending_issue) { Fabricate(:open_issue) }
+    let(:disapproved_issue) { Fabricate(:open_issue) }
+    let(:approved_issue) { Fabricate(:open_issue) }
+
+    before do
+      Fabricate(:approved_resolution, issue: approved_issue)
+      Fabricate(:pending_resolution, issue: pending_issue)
+      Fabricate(:disapproved_resolution, issue: disapproved_issue)
+
+      Timecop.freeze(1.day.ago) do
+        Fabricate(:approved_resolution, issue: reopened_issue)
+      end
+    end
+
+    it "returns open issues without a  current approved resolution" do
+      issues = [open_issue, reopened_issue, pending_issue, disapproved_issue]
+      expect(Issue.all_unresolved).to match_array(issues)
+    end
+  end
+
   describe ".filter" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }
