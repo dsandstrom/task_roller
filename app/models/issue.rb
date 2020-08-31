@@ -47,6 +47,21 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_open.joins(:tasks).where('tasks.closed = ?', false)
   end
 
+  # all tasks closed, any approved
+  # no approved resolution, but can have an open resolution
+  def self.all_addressed
+    reviews_query = 'reviews.approved = ?'
+    tasks_query =
+      'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM tasks WHERE ' \
+      'tasks.closed != ?)'
+    resolutions_query =
+      'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
+      'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
+    all_closed.joins(tasks: :reviews).includes(:resolutions)
+              .where(reviews_query, true).where(tasks_query, true)
+              .where(resolutions_query, true)
+  end
+
   def self.with_open_task
     left_outer_joins(:tasks).where('tasks.closed = ?', false).distinct
   end

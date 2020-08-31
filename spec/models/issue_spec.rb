@@ -142,6 +142,41 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_addressed" do
+    let(:issue) { Fabricate(:closed_issue) }
+    let(:pending_issue) { Fabricate(:closed_issue) }
+    let(:reopened_issue) { Fabricate(:closed_issue) }
+
+    before do
+      Fabricate(:approved_task, issue: issue)
+      Fabricate(:approved_task, issue: pending_issue)
+      Fabricate(:approved_task, issue: reopened_issue)
+      Fabricate(:closed_task, issue: issue)
+
+      Fabricate(:pending_resolution, issue: pending_issue)
+      Timecop.freeze(1.day.ago) do
+        Fabricate(:approved_resolution, issue: reopened_issue)
+      end
+
+      Fabricate(:approved_task, issue: Fabricate(:open_issue))
+      Fabricate(:open_task, issue: Fabricate(:closed_issue))
+      Fabricate(:closed_task, issue: Fabricate(:closed_issue))
+
+      open_task_issue = Fabricate(:closed_issue)
+      Fabricate(:approved_task, issue: open_task_issue)
+      Fabricate(:open_task, issue: open_task_issue)
+
+      resolved_issue = Fabricate(:closed_issue)
+      Fabricate(:approved_task, issue: resolved_issue)
+      Fabricate(:approved_resolution, issue: resolved_issue)
+    end
+
+    it "returns closed/unresolved issues with no open tasks" do
+      expect(Issue.all_addressed)
+        .to match_array([issue, pending_issue, reopened_issue])
+    end
+  end
+
   describe ".filter" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }
