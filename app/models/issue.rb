@@ -49,16 +49,23 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # all tasks closed, any approved
   # no approved resolution, but can have an open resolution
+  # TODO: use counter caches
   def self.all_addressed
     reviews_query = 'reviews.approved = ?'
+    # null works in dev, false in tests, but not together
     tasks_query =
-      'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM tasks WHERE ' \
-      'tasks.closed != ?)'
+      if Rails.env.test?
+        'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM tasks WHERE ' \
+        'closed = FALSE)'
+      else
+        'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM tasks WHERE ' \
+        'closed = NULL)'
+      end
     resolutions_query =
       'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
       'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
     all_closed.joins(tasks: :reviews).left_outer_joins(:resolutions)
-              .where(reviews_query, true).where(tasks_query, true)
+              .where(reviews_query, true).where(tasks_query)
               .where(resolutions_query, true)
   end
 
@@ -162,10 +169,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     !closed?
   end
 
+  # TODO: add open_tasks_count counter cache
   def open_tasks
     @open_tasks ||= tasks.all_open
   end
 
+  # TODO: add closed_tasks_count counter cache
   def closed_tasks
     @closed_tasks ||= tasks.all_closed
   end
