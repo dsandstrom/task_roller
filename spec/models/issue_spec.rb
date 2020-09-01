@@ -264,7 +264,7 @@ RSpec.describe Issue, type: :model do
           end
         end
 
-        context "and :open" do
+        context "and :status" do
           context "is set as 'open'" do
             let!(:issue) { Fabricate(:open_issue, project: project) }
 
@@ -290,6 +290,60 @@ RSpec.describe Issue, type: :model do
             it "returns non-closed issues" do
               expect(Issue.filter(category: category, status: "closed"))
                 .to eq([issue])
+            end
+          end
+
+          context "is set as 'being_worked_on'" do
+            let(:issue) { Fabricate(:open_issue, project: project) }
+
+            before do
+              Fabricate(:open_task, issue: issue)
+
+              Fabricate(:closed_issue)
+              Fabricate(:open_issue, project: project)
+            end
+
+            it "returns issues with open tasks" do
+              expect(
+                Issue.filter(category: category, status: "being_worked_on")
+              ).to eq([issue])
+            end
+          end
+
+          context "is set as 'addressed'" do
+            let(:issue) { Fabricate(:closed_issue, project: project) }
+
+            before do
+              Fabricate(:approved_task, issue: issue)
+
+              Fabricate(:closed_issue)
+              Fabricate(:open_issue, project: project)
+              Fabricate(:open_task, issue: Fabricate(:issue, project: project))
+            end
+
+            it "returns issues with approved tasks" do
+              expect(
+                Issue.filter(category: category, status: "addressed")
+              ).to eq([issue])
+            end
+          end
+
+          context "is set as 'resolved'" do
+            let(:issue) { Fabricate(:closed_issue, project: project) }
+
+            before do
+              Fabricate(:approved_resolution, issue: issue)
+
+              Fabricate(:closed_issue)
+              Fabricate(:open_issue, project: project)
+              Fabricate(:pending_resolution,
+                        issue: Fabricate(:issue, project: project))
+            end
+
+            it "returns issues with approved tasks" do
+              expect(
+                Issue.filter(category: category, status: "resolved")
+              ).to eq([issue])
             end
           end
 

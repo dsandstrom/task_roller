@@ -70,6 +70,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # no current approved resolution
+  # use all_addressed
   def self.all_unresolved
     resolutions_query =
       'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
@@ -105,15 +106,11 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issues
   end
 
-  # used by .filter
   def self.filter_by_status(status)
-    if status == 'open'
-      all_open
-    elsif status == 'closed'
-      all_closed
-    else
-      all
-    end
+    options = %w[open closed being_worked_on addressed resolved]
+    return all unless options.include?(status)
+
+    send("all_#{status}")
   end
 
   # used by .filter
