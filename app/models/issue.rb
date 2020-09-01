@@ -34,7 +34,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # CLASS
 
-  def self.all_open
+  def self.all_non_closed
     where(closed: false)
   end
 
@@ -42,9 +42,16 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
+  # TODO: use counter cache
+  # no tasks
+  def self.all_open
+    all_non_closed
+      .where('issues.id NOT IN (SELECT DISTINCT(issue_id) FROM tasks)')
+  end
+
   # with open tasks
   def self.all_being_worked_on
-    all_open.joins(:tasks).where('tasks.closed = ?', false)
+    all_non_closed.joins(:tasks).where('tasks.closed = ?', false)
   end
 
   # all tasks closed, any approved
@@ -82,7 +89,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     resolutions_query =
       'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
       'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
-    all_open.where(resolutions_query, true)
+    all_non_closed.where(resolutions_query, true)
   end
 
   def self.with_open_task
@@ -113,6 +120,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issues
   end
 
+  # TODO: allow filtering by multiple statuses
   def self.filter_by_status(status)
     options = %w[open closed being_worked_on addressed resolved]
     return all unless options.include?(status)

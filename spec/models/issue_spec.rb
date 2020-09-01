@@ -44,25 +44,28 @@ RSpec.describe Issue, type: :model do
 
   # CLASS
 
-  describe ".all_open" do
-    context "when no issues" do
-      before { Issue.destroy_all }
+  describe ".all_non_closed" do
+    let!(:issue) { Fabricate(:open_issue) }
 
-      it "returns []" do
-        expect(Issue.all_open).to eq([])
-      end
+    before do
+      Fabricate(:closed_issue)
     end
 
-    context "when one open, one closed issues" do
-      let!(:issue) { Fabricate(:open_issue) }
+    it "returns non-closed issues" do
+      expect(Issue.all_non_closed).to eq([issue])
+    end
+  end
 
-      before do
-        Fabricate(:closed_issue)
-      end
+  describe ".all_open" do
+    let!(:issue) { Fabricate(:open_issue) }
 
-      it "returns the open one" do
-        expect(Issue.all_open).to eq([issue])
-      end
+    before do
+      Fabricate(:closed_issue)
+      Fabricate(:task, issue: Fabricate(:issue))
+    end
+
+    it "returns non-closed issues without a task" do
+      expect(Issue.all_open).to eq([issue])
     end
   end
 
