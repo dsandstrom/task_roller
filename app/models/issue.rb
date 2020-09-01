@@ -42,6 +42,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
+  # FIXME: not working in dev
   # TODO: use counter cache
   # no tasks
   def self.all_open
