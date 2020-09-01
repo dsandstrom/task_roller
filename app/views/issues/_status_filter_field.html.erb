@@ -1,0 +1,47 @@
+<div class="field">
+  <%= label_tag :status %>
+
+  <div id="task_status_labels" class="task-filter-options">
+    <%= label_tag :status_all,
+                  class: roller_radio_button_label_class('default') do %>
+      <%= radio_button_tag :status, :all,
+                           (params[:status].blank? ||
+                             params[:status] == 'all') %>
+      All
+    <% end %>
+
+    <%= label_tag :status_open,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :status, :open, params[:status] == 'open' %>
+      Open
+    <% end %>
+
+    <%= label_tag :status_being_worked_on,
+                  class: roller_radio_button_label_class('green') do %>
+      <%= radio_button_tag :status, :being_worked_on,
+                           params[:status] == 'being_worked_on' %>
+      Being Worked On
+    <% end %>
+
+    <%= label_tag :status_addressed,
+                  class: roller_radio_button_label_class('yellow') do %>
+      <%= radio_button_tag :status, :addressed,
+                           params[:status] == 'addressed' %>
+      Addressed
+    <% end %>
+
+    <%= label_tag :status_resolved,
+                  class: roller_radio_button_label_class('blue') do %>
+      <%= radio_button_tag :status, :resolved,
+                           params[:status] == 'resolved' %>
+      Resolved
+    <% end %>
+
+    <%= label_tag :status_closed,
+                  class: roller_radio_button_label_class('purple') do %>
+      <%= radio_button_tag :status, :closed,
+                           params[:status] == 'closed' %>
+      Closed
+    <% end %>
+  </div>
+</div>

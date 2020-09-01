@@ -9,17 +9,26 @@
   </header>
 
   <main class="issue-main">
-    <p class="issue-user"><%= issue.user ? issue.user.name : User.destroyed_name %></p>
-    <p class="issue-created-at">Created: <%= format_date(issue.created_at) %></p>
+    <%= content_tag :p, (issue.user ? issue.user.name : User.destroyed_name),
+                        class: 'issue-user' %>
+    <%= content_tag :p, "Status: #{issue.status}",
+                        class: 'issue-status' %>
+
+    <%= content_tag :p, "Created: #{format_date(issue.created_at)}",
+                    class: 'issue-created-at' %>
+
     <% if issue.updated_at != issue.created_at %>
-      <p class="issue-updated-at">Updated: <%= format_date(issue.updated_at) %></p>
+      <%= content_tag :p,
+                      "Updated: #{format_date(issue.updated_at)}",
+                      class: 'issue-updated-at' %>
     <% end %>
-    <p class="issue-open-tasks">
-      Open Tasks: <%= issue.open_tasks.count %>
-    </p>
-    <p class="issue-closed-tasks">
-      Closed Tasks: <%= issue.closed_tasks.count %>
-    </p>
+
+    <%= content_tag :p, "Open Tasks: #{issue.open_tasks.count}",
+                    class: 'issue-open-tasks' %>
+
+    <%= content_tag :p, "Closed Tasks: #{issue.closed_tasks.count}",
+                    class: 'issue-closed-tasks' %>
+
   </main>
 
   <footer class="issue-footer">
