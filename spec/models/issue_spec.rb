@@ -721,6 +721,28 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#tasks_count" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no tasks" do
+      it "returns 0" do
+        expect(issue.tasks_count).to eq(0)
+      end
+    end
+
+    context "when open and closed tasks" do
+      before do
+        Fabricate(:open_task, issue: issue)
+        Fabricate(:closed_task, issue: issue)
+        issue.reload
+      end
+
+      it "returns 2" do
+        expect(issue.tasks_count).to eq(2)
+      end
+    end
+  end
+
   describe "#working_on?" do
     context "for a open issue" do
       context "and has an open task" do

@@ -17,7 +17,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :user # reviewer
   belongs_to :task_type
   belongs_to :project
-  belongs_to :issue, required: false
+  belongs_to :issue, required: false, counter_cache: true
   has_many :task_assignees, dependent: :destroy
   has_many :assignees, through: :task_assignees,
                        before_remove: :finish_assignee_progressions
