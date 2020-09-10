@@ -39,6 +39,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :project, presence: true, if: :project_id
 
   after_create :set_opened_at
+  after_save :update_issue_counts
 
   # CLASS
 
@@ -307,5 +308,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return true unless issue && last_task_for_issue?
 
       issue.close
+    end
+
+    def update_issue_counts
+      return unless issue
+
+      issue.update_column :open_tasks_count, issue.tasks.all_open.count
     end
 end

@@ -1597,4 +1597,42 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#update_issue_counts" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when creating a task without an issue" do
+      it "doesn't raise an error" do
+        expect do
+          Fabricate(:open_task, issue: nil)
+        end.not_to raise_error
+      end
+    end
+
+    context "when creating an open task for an issue" do
+      it "should change issue's open_tasks_count" do
+        expect do
+          Fabricate(:open_task, issue: issue)
+        end.to change(issue, :open_tasks_count).to(1)
+      end
+    end
+
+    context "when creating a closed task for an issue" do
+      it "should not change issue's closed_tasks_count" do
+        expect do
+          Fabricate(:closed_task, issue: issue)
+        end.not_to change(issue, :open_tasks_count).from(0)
+      end
+    end
+
+    context "when closing an open task" do
+      it "should change issue's closed_tasks_count" do
+        task = Fabricate(:open_task, issue: issue)
+        expect do
+          task.close
+          issue.reload
+        end.to change(issue, :open_tasks_count).by(-1)
+      end
+    end
+  end
 end
