@@ -80,14 +80,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_non_closed.where(resolutions_query, true)
   end
 
-  def self.with_open_task
-    left_outer_joins(:tasks).where('tasks.closed = ?', false).distinct
-  end
-
-  def self.without_open_task
-    left_outer_joins(:tasks).where('tasks.closed = ? OR tasks.id IS NULL', true)
-  end
-
   def self.filter(filters = {})
     parent = filters[:project] || filters[:category]
     return Issue.none unless parent
@@ -104,7 +96,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issues = all
     issues = issues.filter_by_status(filters[:status])
     issues = issues.filter_by_user_id(filters[:reporter])
-    issues = issues.filter_by_open_tasks(filters[:open_tasks])
     issues
   end
 
@@ -121,18 +112,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return all if user_id.blank?
 
     where(user_id: user_id)
-  end
-
-  # used by .filter
-  # TODO: change to working_on
-  def self.filter_by_open_tasks(count)
-    return all if count.blank?
-
-    if count.to_i.positive?
-      with_open_task
-    else
-      without_open_task
-    end
   end
 
   # used by .filter
@@ -165,12 +144,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     !closed?
   end
 
-  # TODO: add open_tasks_count counter cache
   def open_tasks
     @open_tasks ||= tasks.all_open
   end
 
-  # TODO: add closed_tasks_count counter cache
   def closed_tasks
     @closed_tasks ||= tasks.all_closed
   end

@@ -93,44 +93,6 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe ".with_open_task" do
-    let(:issue) { Fabricate(:open_issue, project: project) }
-
-    before do
-      Fabricate(:open_task, issue: issue)
-      Fabricate(:open_issue, project: project)
-
-      issue_with_closed_task = Fabricate(:open_issue, project: project)
-      Fabricate(:closed_task, issue: issue_with_closed_task)
-    end
-
-    it "returns issues with atleast 1 task" do
-      expect(Issue.with_open_task).to eq([issue])
-    end
-  end
-
-  describe ".without_open_task" do
-    let!(:issue_without_task) do
-      Fabricate(:open_issue, project: project, summary: "Without tasks")
-    end
-    let!(:issue_with_closed_task) do
-      Fabricate(:open_issue, project: project, summary: "With closed tasks")
-    end
-
-    before do
-      issue_with_open_task =
-        Fabricate(:open_issue, project: project,
-                               summary: "With open tasks")
-      Fabricate(:open_task, issue: issue_with_open_task)
-      Fabricate(:closed_task, issue: issue_with_closed_task)
-    end
-
-    it "returns issues with no tasks or only closed tasks" do
-      expect(Issue.without_open_task)
-        .to contain_exactly(issue_without_task, issue_with_closed_task)
-    end
-  end
-
   describe ".all_being_worked_on" do
     let(:issue) { Fabricate(:issue) }
 
@@ -404,69 +366,6 @@ RSpec.describe Issue, type: :model do
             it "returns all user issues" do
               expect(Issue.filter(category: category, reporter: ""))
                 .to eq([issue])
-            end
-          end
-        end
-
-        context "and :open_tasks" do
-          context "is set as '1'" do
-            before do
-              issue = Fabricate(:open_issue, project: project)
-              Fabricate(:open_task, issue: issue)
-              Fabricate(:open_issue, project: project)
-
-              issue_with_closed_task = Fabricate(:open_issue, project: project)
-              Fabricate(:closed_task, issue: issue_with_closed_task)
-            end
-
-            it "returns issues with atleast 1 task" do
-              expect(Issue.filter(category: category, open_tasks: "1"))
-                .to match_array(Issue.with_open_task)
-            end
-          end
-
-          context "is set as '0'" do
-            let!(:issue_without_task) do
-              Fabricate(:open_issue, project: project, summary: "Without tasks")
-            end
-            let(:issue_with_closed_task) do
-              Fabricate(:open_issue, project: project,
-                                     summary: "With closed tasks")
-            end
-            let(:issue_with_open_task) do
-              Fabricate(:open_issue, project: project,
-                                     summary: "With open tasks")
-            end
-
-            before do
-              Fabricate(:open_task, issue: issue_with_open_task)
-              Fabricate(:closed_task, issue: issue_with_closed_task)
-            end
-
-            it "returns issues with no tasks or only closed tasks" do
-              expect(Issue.filter(category: category, open_tasks: "0"))
-                .to match_array(Issue.without_open_task)
-            end
-          end
-
-          context "is blank" do
-            before do
-              issue_with_task =
-                Fabricate(:open_issue, project: project, summary: "With task")
-              _issue_without_task =
-                Fabricate(:open_issue, project: project,
-                                       summary: "Without tasks")
-              issue_with_closed_task =
-                Fabricate(:open_issue, project: project,
-                                       summary: "With closed tasks")
-
-              Fabricate(:open_task, issue: issue_with_task)
-              Fabricate(:closed_task, issue: issue_with_closed_task)
-            end
-
-            it "returns all issues" do
-              expect(Issue.filter(category: category))
-                .to match_array(category.issues)
             end
           end
         end

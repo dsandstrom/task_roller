@@ -117,7 +117,7 @@ class IssuesController < ApplicationController
 
     def build_filters
       filters = {}
-      %i[status open_tasks reporter order].each do |param|
+      %i[status reporter order].each do |param|
         filters[param] = params[param]
       end
       if @project
