@@ -40,9 +40,15 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:issue_type) }
   it { is_expected.to belong_to(:project) }
+
   it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:comments).dependent(:destroy) }
   it { is_expected.to have_many(:resolutions) }
+
+  it { is_expected.to have_many(:source_issue_connections).dependent(:destroy) }
+  it { is_expected.to have_many(:target_issue_connections).dependent(:destroy) }
+  it { is_expected.to have_many(:duplicates) }
+  it { is_expected.to have_one(:duplicatee) }
 
   # CLASS
 
