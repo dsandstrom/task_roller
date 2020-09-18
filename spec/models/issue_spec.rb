@@ -45,7 +45,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:comments).dependent(:destroy) }
   it { is_expected.to have_many(:resolutions) }
 
-  it { is_expected.to have_many(:source_issue_connections).dependent(:destroy) }
+  it { is_expected.to have_one(:source_issue_connection).dependent(:destroy) }
   it { is_expected.to have_many(:target_issue_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }

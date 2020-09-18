@@ -19,16 +19,16 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
   has_many :resolutions, dependent: :destroy
-  has_many :source_issue_connections, class_name: 'IssueConnection',
-                                      foreign_key: :source_id,
-                                      dependent: :destroy, inverse_of: :source
+  has_one :source_issue_connection, class_name: 'IssueConnection',
+                                    foreign_key: :source_id,
+                                    dependent: :destroy, inverse_of: :source
+  # TODO: add better name
+  has_one :duplicatee, through: :source_issue_connection, class_name: 'Issue',
+                       source: :target
   has_many :target_issue_connections, class_name: 'IssueConnection',
                                       foreign_key: :target_id,
                                       dependent: :destroy, inverse_of: :target
-  # FIXME: doesn't seem to quite work
   has_many :duplicates, through: :target_issue_connections, class_name: 'Issue'
-  # TODO: better name
-  has_one :duplicatee, through: :source_issue_connections, class_name: 'Issue'
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
