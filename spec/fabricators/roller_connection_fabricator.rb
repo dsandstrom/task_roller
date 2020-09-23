@@ -2,10 +2,10 @@
 
 Fabricator(:issue_connection) do
   source { Fabricate(:issue) }
-  target { Fabricate(:issue) }
+  target { |attrs| Fabricate(:issue, project: attrs[:source].project) }
 end
 
 Fabricator(:task_connection) do
   source { Fabricate(:task) }
-  target { Fabricate(:task) }
+  target { |attrs| Fabricate(:task, project: attrs[:source].project) }
 end

@@ -3,8 +3,9 @@
 require "rails_helper"
 
 RSpec.describe IssueConnectionsController, type: :controller do
-  let(:source_issue) { Fabricate(:issue) }
-  let(:target_issue) { Fabricate(:issue) }
+  let(:project) { Fabricate(:project) }
+  let(:source_issue) { Fabricate(:issue, project: project) }
+  let(:target_issue) { Fabricate(:issue, project: project) }
   let(:valid_attributes) { { target_id: target_issue.to_param } }
   let(:invalid_attributes) { { target_id: "" } }
   let(:path) do
