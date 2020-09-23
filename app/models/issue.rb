@@ -145,6 +145,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @short_summary ||= summary&.truncate(70)
   end
 
+  def id_and_summary
+    @id_and_summary ||= ("##{id} - #{short_summary}" if id && summary.present?)
+  end
+
   def heading
     @heading ||= ("Issue: #{short_summary}" if short_summary.present?)
   end

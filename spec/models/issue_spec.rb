@@ -569,6 +569,35 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#id_and_summary" do
+    context "when id is nil" do
+      let(:issue) { Fabricate.build(:issue) }
+
+      it "returns nil" do
+        expect(issue.id_and_summary).to be_nil
+      end
+    end
+
+    context "when summary nil" do
+      let(:issue) { Fabricate(:issue) }
+
+      before { issue.summary = nil }
+
+      it "returns nil" do
+        expect(issue.id_and_summary).to be_nil
+      end
+    end
+
+    context "when id is not nil" do
+      let(:issue) { Fabricate(:issue) }
+
+      it "returns id and short_summary" do
+        expect(issue.id_and_summary)
+          .to eq("\##{issue.id} - #{issue.short_summary}")
+      end
+    end
+  end
+
   describe "#open?" do
     context "closed is false" do
       before { subject.closed = false }
