@@ -18,4 +18,53 @@ RSpec.describe IssueConnection, type: :model do
 
   it { is_expected.to belong_to(:source) }
   it { is_expected.to belong_to(:target) }
+
+  describe "#target_options" do
+    context "when source has a project" do
+      context "with other issues" do
+        it "returns source project's other issues" do
+          issue = Fabricate(:issue, project: source.project)
+          expect(subject.target_options).to eq([issue])
+        end
+      end
+
+      context "with no other issues" do
+        it "returns source project's other issues" do
+          expect(subject.target_options).to eq([])
+        end
+      end
+    end
+
+    context "when source doesn't have a project" do
+      before { subject.source.project = nil }
+
+      it "returns nil" do
+        expect(subject.target_options).to be_nil
+      end
+    end
+
+    context "when source doesn't have a category" do
+      before { source.category.destroy }
+
+      it "returns nil" do
+        expect(subject.target_options).to be_nil
+      end
+    end
+
+    context "when source nil" do
+      before { subject.source = nil }
+
+      it "returns nil" do
+        expect(subject.target_options).to be_nil
+      end
+    end
+
+    context "when source id is nil" do
+      before { subject.source.id = nil }
+
+      it "returns nil" do
+        expect(subject.target_options).to be_nil
+      end
+    end
+  end
 end
