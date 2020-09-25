@@ -23,6 +23,10 @@ bundle install --without production
 ```
 
 #### Install Frontend Dependencies
+Install [yarn](https://github.com/yarnpkg/yarn) on your system. This step might
+also install NodeJS, but please see below to ensure that you use the right
+version when working on the project.
+
 I use [Node Version Manager](https://github.com/nvm-sh/nvm) to maintain a more
 consistent node version.  The version number is stored in *./.nvmrc*. Please
 use that version of NodeJS or use nvm to install it.
@@ -32,10 +36,8 @@ use that version of NodeJS or use nvm to install it.
 # cd into project directory
 nvm install
 nvm use
-```
 
-Install frontend packages with yarn
-```sh
+# finally, install packages
 yarn install
 ```
 
