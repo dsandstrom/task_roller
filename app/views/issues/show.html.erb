@@ -15,18 +15,11 @@
           <%= content_tag :strong, @issue.status, class: 'issue-status' %>
 
           <% if @issue.current_resolution %>
-            <%= render 'shared/resolution', resolution: @issue.current_resolution, issue: @issue %>
+            <%= render 'shared/resolution',
+                       resolution: @issue.current_resolution,
+                       issue: @issue %>
           <% end %>
         </p>
-
-        <%# TODO: issue user only %>
-        <% if @issue.unresolved? %>
-          <p>
-            <%= link_to 'close issue and mark resolved',
-                        approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
-                        method: :post, class: 'create-link' %>
-          </p>
-        <% end %>
 
         <%# TODO: issue user only %>
         <% if @issue.addressed? %>
@@ -34,6 +27,50 @@
             <%= link_to 'report issue was not fixed',
                         disapprove_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
                         method: :post, class: 'destroy-link' %>
+          </p>
+        <% end %>
+
+        <%# TODO: issue user only %>
+        <% if @issue.open? && (@issue.unresolved? || @issue.duplicatee.blank?) %>
+          <p>
+            close issue:
+            <br>
+            <% if @issue.unresolved? %>
+              <%= link_to 'mark resolved',
+                          approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                          method: :post, class: 'create-link' %>
+            <% end %>
+
+            <%# TODO: reviewers+ only %>
+            <% if @issue.duplicatee.blank? %>
+              |
+              <%= link_to 'mark duplicate',
+                          new_issue_connection_path(@issue),
+                          class: 'normal-link' %>
+            <% end %>
+          </p>
+        <% end %>
+
+        <% if @issue.duplicatee.present? %>
+          <%
+            confirm = "Are you sure you want to remove the connection to " \
+                      "\"#{@issue.duplicatee.short_summary}\" and reopen " \
+                      "this issue?"
+          %>
+          <p>
+            <% duplicatee = @issue.duplicatee %>
+            Duplicate of:
+            <%= link_to duplicatee.short_summary,
+                        category_project_issue_path(duplicatee.category,
+                                                    duplicatee.project,
+                                                    duplicatee) %>
+          </p>
+          <%# TODO: reviewers+ only %>
+          <p>
+            <%= link_to 'Mark not a duplicate and reopen',
+                         @issue.source_issue_connection,
+                         method: :delete, class: 'destroy-link',
+                         data: { confirm: confirm } %>
           </p>
         <% end %>
 
@@ -65,6 +102,21 @@
           </dt>
         </dl>
       </section>
+
+      <% if @issue.duplicates.any? %>
+        <section class="issue-connections">
+          <h4 class="issue-column-title">Duplicate Issues</h4>
+
+          <% @issue.duplicates.each do |duplicate| %>
+            <p>
+              <%= link_to duplicate.id_and_summary,
+                          category_project_issue_path(duplicate.category,
+                                                      duplicate.project,
+                                                      duplicate) %>
+            </p>
+          <% end %>
+        </section>
+      <% end %>
     </div>
 
     <div class="issue-column second-column">
