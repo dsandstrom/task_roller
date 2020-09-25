@@ -22,6 +22,23 @@ gem install bundler
 bundle install --without production
 ```
 
+#### Install Frontend Dependencies
+I use [Node Version Manager](https://github.com/nvm-sh/nvm) to maintain a more
+consistent node version.  The version number is stored in *./.nvmrc*. Please
+use that version of NodeJS or use nvm to install it.
+
+```sh
+# using nvm
+# cd into project directory
+nvm install
+nvm use
+```
+
+Install frontend packages with yarn
+```sh
+yarn install
+```
+
 #### Setup secrets
 
 ```sh
