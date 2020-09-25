@@ -28,7 +28,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :target_issue_connections, class_name: 'IssueConnection',
                                       foreign_key: :target_id,
                                       dependent: :destroy, inverse_of: :target
-  has_many :duplicates, through: :target_issue_connections, class_name: 'Issue'
+  has_many :duplicates, through: :target_issue_connections, class_name: 'Issue',
+                        source: :source
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
