@@ -1,0 +1,16 @@
+<% url = issue_connections_path(issue_connection.source) %>
+
+<%= form_with(model: issue_connection, url: url, local: true,
+              html: { name: :issue_connection_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= required_field_label form, :target_id %>
+    <%= form.collection_select :target_id, issue_connection.target_options,
+                               :id, :id_and_summary %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
