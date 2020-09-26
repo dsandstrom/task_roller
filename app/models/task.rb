@@ -27,6 +27,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                       dependent: :destroy, inverse_of: :task
   delegate :category, to: :project
 
+  has_one :source_task_connection, class_name: 'TaskConnection',
+                                   foreign_key: :source_id, dependent: :destroy,
+                                   inverse_of: :source
+  # TODO: add better name
+  has_one :duplicatee, through: :source_task_connection, class_name: 'Task',
+                       source: :target
+  has_many :target_task_connections, class_name: 'TaskConnection',
+                                     foreign_key: :target_id,
+                                     dependent: :destroy, inverse_of: :target
+  has_many :duplicates, through: :target_task_connections, class_name: 'Task',
+                        source: :source
+
   accepts_nested_attributes_for :assignees
 
   validates :summary, presence: true, length: { maximum: 200 }
