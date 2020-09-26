@@ -33,8 +33,6 @@
         <%# TODO: issue user only %>
         <% if @issue.open? && (@issue.unresolved? || @issue.duplicatee.blank?) %>
           <p>
-            close issue:
-            <br>
             <% if @issue.unresolved? %>
               <%= link_to 'mark resolved',
                           approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
@@ -73,20 +71,6 @@
                          data: { confirm: confirm } %>
           </p>
         <% end %>
-
-        <p>
-          <% if @issue.open? %>
-            <%# TODO: admin only %>
-            <%= link_to 'force close',
-                        close_issue_path(@issue),
-                        method: :patch, class: 'secondary-link' %>
-          <% else %>
-            <%# TODO: reviewer+ only %>
-            <%= link_to 'reopen',
-                        open_issue_path(@issue),
-                        method: :patch, class: 'secondary-link' %>
-          <% end %>
-        </p>
       </section>
 
       <section class="issue-tasks">
