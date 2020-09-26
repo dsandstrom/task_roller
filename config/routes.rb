@@ -61,12 +61,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   resources :task_assignments, only: %i[edit update]
 
-  get '/issue_connections/:source_id/new' => 'issue_connections#new',
-      as: :new_issue_connection
-  post '/issue_connections/:source_id' => 'issue_connections#create',
-       as: :issue_connections
-  delete '/issue_connections/:id' => 'issue_connections#destroy',
-         as: :issue_connection
+  %w[issue task].each do |roller|
+    get "/#{roller}_connections/:source_id/new" => "#{roller}_connections#new",
+        as: "new_#{roller}_connection"
+    post "/#{roller}_connections/:source_id" => "#{roller}_connections#create",
+         as: "#{roller}_connections"
+    delete "/#{roller}_connections/:id" => "#{roller}_connections#destroy",
+           as: "#{roller}_connection"
+  end
 
   root to: 'static#dashboard'
 end
