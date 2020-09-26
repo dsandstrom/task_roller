@@ -32,6 +32,38 @@ assigned = @task.assigned
           </p>
         <% end %>
 
+        <%# TODO: reviewers+ only %>
+        <% if @task.open? && @task.duplicatee.blank? %>
+          <p>
+            <%= link_to 'mark duplicate',
+                        new_task_connection_path(@task),
+                        class: 'normal-link' %>
+          </p>
+        <% end %>
+
+        <% if @task.duplicatee.present? %>
+          <%
+            confirm = "Are you sure you want to remove the connection to " \
+                      "\"#{@task.duplicatee.short_summary}\" and reopen " \
+                      "this task?"
+          %>
+          <p>
+            <% duplicatee = @task.duplicatee %>
+            Duplicate of:
+            <%= link_to duplicatee.short_summary,
+                        category_project_task_path(duplicatee.category,
+                                                    duplicatee.project,
+                                                    duplicatee) %>
+          </p>
+          <%# TODO: reviewers+ only %>
+          <p>
+            <%= link_to 'Mark not a duplicate and reopen',
+                         @task.source_task_connection,
+                         method: :delete, class: 'destroy-link',
+                         data: { confirm: confirm } %>
+          </p>
+        <% end %>
+
         <p>
           <% if @task.open? %>
             <%# TODO: admin only %>
@@ -136,6 +168,21 @@ assigned = @task.assigned
           <% end %>
         </p>
       </section>
+
+      <% if @task.duplicates.any? %>
+        <section class="task-connections">
+          <h4 class="task-column-title">Duplicate Tasks</h4>
+
+          <% @task.duplicates.each do |duplicate| %>
+            <p>
+              <%= link_to duplicate.id_and_summary,
+                          category_project_task_path(duplicate.category,
+                                                      duplicate.project,
+                                                      duplicate) %>
+            </p>
+          <% end %>
+        </section>
+      <% end %>
     </div>
 
     <div class="task-column second-column">
