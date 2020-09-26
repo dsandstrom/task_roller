@@ -661,6 +661,35 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#id_and_summary" do
+    context "when id is nil" do
+      let(:task) { Fabricate.build(:task) }
+
+      it "returns nil" do
+        expect(task.id_and_summary).to be_nil
+      end
+    end
+
+    context "when summary nil" do
+      let(:task) { Fabricate(:task) }
+
+      before { task.summary = nil }
+
+      it "returns nil" do
+        expect(task.id_and_summary).to be_nil
+      end
+    end
+
+    context "when id is not nil" do
+      let(:task) { Fabricate(:task) }
+
+      it "returns id and short_summary" do
+        expect(task.id_and_summary)
+          .to eq("\##{task.id} - #{task.short_summary}")
+      end
+    end
+  end
+
   describe "#open?" do
     context "closed is false" do
       before { subject.closed = false }
