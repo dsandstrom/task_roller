@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add issue/task duplicates
-# TaskConnection
-# - type, source_task_id, target_task_id
-# - type: duplicate, replacement
-# has_many :duplicates
-# belongs_to :duplicate, :duplicate_task
-# has_many :replacements
 # TODO: if closed with no approved review = rejected/ won't fix
 # TODO: create task reopens issue?
 # TODO: show other tasks from issue
