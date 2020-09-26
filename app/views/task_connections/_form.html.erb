@@ -1,0 +1,16 @@
+<% url = task_connections_path(task_connection.source) %>
+
+<%= form_with(model: task_connection, url: url, local: true,
+              html: { name: :task_connection_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= required_field_label form, :target_id %>
+    <%= form.collection_select :target_id, task_connection.target_options,
+                               :id, :id_and_summary %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
