@@ -144,7 +144,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def heading
-    @heading ||= ("Task: #{summary}" if summary.present?)
+    @heading ||= ("Task \##{id}: #{summary}" if id && summary.present?)
   end
 
   def open?

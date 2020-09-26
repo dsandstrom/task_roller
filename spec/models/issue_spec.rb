@@ -621,7 +621,7 @@ RSpec.describe Issue, type: :model do
 
     context "when a summary" do
       it "returns 'Issue: ' and short_summary" do
-        expect(issue.heading).to eq("Issue: #{issue.summary}")
+        expect(issue.heading).to eq("Issue \##{issue.id}: #{issue.summary}")
       end
     end
 

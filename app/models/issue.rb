@@ -151,7 +151,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def heading
-    @heading ||= ("Issue: #{short_summary}" if short_summary.present?)
+    @heading ||= ("Issue \##{id}: #{short_summary}" if id && summary.present?)
   end
 
   def open?

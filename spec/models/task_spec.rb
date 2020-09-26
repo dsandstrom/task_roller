@@ -1101,7 +1101,7 @@ RSpec.describe Task, type: :model do
 
     context "when a summary" do
       it "returns 'Task: ' and short_summary" do
-        expect(task.heading).to eq("Task: #{task.summary}")
+        expect(task.heading).to eq("Task \##{task.id}: #{task.summary}")
       end
     end
 
