@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # TODO: allow reporting comments to admin
+# TODO: color code comment css (op-blue, bob-pink, sally-yellow)
+# makes it easier to recognize comments from same user
 
 class RollerComment < ApplicationRecord
   belongs_to :user
