@@ -6,6 +6,8 @@ RSpec.describe RepositionTaskTypesController, type: :controller do
   let(:valid_attributes) { "up" }
   let(:invalid_attributes) { "" }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "PUT #update" do
     before { Fabricate(:task_type) }
 

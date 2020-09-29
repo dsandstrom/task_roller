@@ -5,6 +5,8 @@ require "rails_helper"
 RSpec.describe UsersController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     context "when no users" do
       it "returns a success response" do

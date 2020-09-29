@@ -1,3 +1,9 @@
+PATH
+  remote: ../gems/roller_authentication
+  specs:
+    roller_authentication (0.1.0)
+      rails (~> 6.0.3, >= 6.0.3.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -328,6 +334,7 @@ DEPENDENCIES
   puma (~> 4.3)
   rails (~> 6.0)
   redcarpet (~> 3.4.0)
+  roller_authentication!
   rspec (~> 3.7.0)
   rspec-rails (~> 3.7)
   rspec_junit_formatter (~> 0.4.1)

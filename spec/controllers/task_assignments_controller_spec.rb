@@ -15,6 +15,8 @@ RSpec.describe TaskAssignmentsController, type: :controller do
     { "assignee_ids[]" => nil }
   end
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #edit" do
     it "returns a success response" do
       task = Fabricate(:task, project: project)

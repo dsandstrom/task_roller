@@ -12,6 +12,8 @@ RSpec.describe TaskCommentsController, type: :controller do
 
   let(:invalid_attributes) { { body: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: { category_id: category.to_param,

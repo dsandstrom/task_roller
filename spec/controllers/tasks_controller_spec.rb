@@ -16,6 +16,8 @@ RSpec.describe TasksController, type: :controller do
 
   let(:invalid_attributes) { { summary: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     context "when category only" do
       it "returns a success response" do

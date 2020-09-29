@@ -70,5 +70,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
            as: "#{roller}_connection"
   end
 
+  mount RollerAuthentication::Engine => '/auth'
+
   root to: 'static#dashboard'
 end

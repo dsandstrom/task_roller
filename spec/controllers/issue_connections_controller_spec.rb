@@ -13,6 +13,8 @@ RSpec.describe IssueConnectionsController, type: :controller do
                                 source_issue.project, source_issue)
   end
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: { source_id: source_issue.to_param }

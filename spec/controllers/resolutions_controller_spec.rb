@@ -16,6 +16,8 @@ RSpec.describe ResolutionsController, type: :controller do
     { user_id: "" }
   end
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     it "returns a success response" do
       _resolution = Fabricate(:resolution, issue: issue)

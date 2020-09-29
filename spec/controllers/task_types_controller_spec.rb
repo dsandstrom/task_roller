@@ -6,6 +6,8 @@ RSpec.describe TaskTypesController, type: :controller do
   let(:valid_attributes) { { name: "Bug", icon: "bug", color: "red" } }
   let(:invalid_attributes) { { name: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: {}

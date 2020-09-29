@@ -13,6 +13,8 @@ RSpec.describe TaskConnectionsController, type: :controller do
                                source_task)
   end
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #new" do
     it "returns a success response" do
       get :new, params: { source_id: source_task.to_param }

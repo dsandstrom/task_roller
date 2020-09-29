@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe RollerTypesController, type: :controller do
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     it "returns a success response" do
       Fabricate(:issue_type)

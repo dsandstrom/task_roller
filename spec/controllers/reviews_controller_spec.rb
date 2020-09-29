@@ -16,6 +16,8 @@ RSpec.describe ReviewsController, type: :controller do
     { user_id: "" }
   end
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     it "returns a success response" do
       _review = Fabricate(:review, task: task)

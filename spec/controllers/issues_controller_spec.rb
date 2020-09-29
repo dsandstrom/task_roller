@@ -15,6 +15,8 @@ RSpec.describe IssuesController, type: :controller do
 
   let(:invalid_attributes) { { summary: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }

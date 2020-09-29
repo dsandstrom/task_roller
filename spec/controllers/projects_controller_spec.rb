@@ -6,6 +6,8 @@ RSpec.describe ProjectsController, type: :controller do
   let!(:category) { Fabricate(:category) }
   let(:invalid_attributes) { { name: "" } }
 
+  before { login(Fabricate(:user_admin)) }
+
   describe "GET #index" do
     it "returns a success response" do
       _project = Fabricate(:project, category: category)

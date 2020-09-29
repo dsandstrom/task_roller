@@ -19,4 +19,13 @@
       </p>
     </div>
   </div>
+
+  <% if current_user.present? %>
+    <div class="page">
+      <div class="user-info">
+        <%= current_user.name_or_email %> |
+        <%= link_to 'logout', roller_authentication.logout_path, method: :delete %>
+      </div>
+    </div>
+  <% end %>
 </header>
