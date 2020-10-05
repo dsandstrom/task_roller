@@ -1,13 +1,16 @@
 <header class="main-header">
   <div class="page">
-    <div class="menu">
-      <%= menu_link 'Dashboard', main_app.root_path %>
-      <%= menu_link 'Users', main_app.users_path %>
-      <%= menu_link 'Issue Types', main_app.roller_types_path %>
-      <p class="divider">|</p>
-      <%= menu_link 'Categories', main_app.categories_path %>
-      <%= menu_link 'Projects', main_app.projects_path %>
-    </div>
+
+    <% if current_user.present? %>
+      <div class="menu">
+        <%= menu_link 'Dashboard', main_app.root_path %>
+        <%= menu_link 'Users', main_app.users_path %>
+        <%= menu_link 'Issue Types', main_app.roller_types_path %>
+        <p class="divider">|</p>
+        <%= menu_link 'Categories', main_app.categories_path %>
+        <%= menu_link 'Projects', main_app.projects_path %>
+      </div>
+    <% end %>
 
     <div class="app-name-and-logo">
       <p class="app-name">
