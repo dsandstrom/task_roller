@@ -1,5 +1,6 @@
-PATH
-  remote: ../gems/roller_authentication
+GIT
+  remote: https://github.com/dsandstrom/roller_authentication.git
+  revision: 023327ba43562ddf31997409ae8e5377ab8e8d89
   specs:
     roller_authentication (0.1.0)
       rails (~> 6.0.3, >= 6.0.3.3)
