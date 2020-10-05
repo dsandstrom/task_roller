@@ -1,17 +1,17 @@
 <header class="main-header">
   <div class="page">
     <div class="menu">
-      <%= menu_link 'Dashboard', root_path %>
-      <%= menu_link 'Users', users_path %>
-      <%= menu_link 'Issue Types', roller_types_path %>
+      <%= menu_link 'Dashboard', main_app.root_path %>
+      <%= menu_link 'Users', main_app.users_path %>
+      <%= menu_link 'Issue Types', main_app.roller_types_path %>
       <p class="divider">|</p>
-      <%= menu_link 'Categories', categories_path %>
-      <%= menu_link 'Projects', projects_path %>
+      <%= menu_link 'Categories', main_app.categories_path %>
+      <%= menu_link 'Projects', main_app.projects_path %>
     </div>
 
     <div class="app-name-and-logo">
       <p class="app-name">
-        <%= link_to 'Task Roller', root_path %>
+        <%= link_to 'Task Roller', main_app.root_path %>
       </p>
 
       <p class="app-logo">
