@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
-  resources :issue_comments
   resources :users
   resources :projects, only: :index
   resources :categories do
