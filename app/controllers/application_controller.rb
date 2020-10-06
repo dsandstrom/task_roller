@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
 
     def set_issue_type
       @issue_type = IssueType.find(params[:id])
+      authorize @issue_type
     end
 
     def set_task_type
