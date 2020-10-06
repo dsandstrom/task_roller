@@ -297,6 +297,28 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#employee?" do
+    let(:user) { Fabricate(:user_worker) }
+
+    %w[Admin Reviewer Worker Reporter].each do |employee_type|
+      context "when employee_type is #{employee_type}" do
+        before { user.employee_type = employee_type }
+
+        it "returns true" do
+          expect(user.employee?).to eq(true)
+        end
+      end
+    end
+
+    context "when employee_type is something else" do
+      before { user.employee_type = "something" }
+
+      it "returns false" do
+        expect(user.employee?).to eq(false)
+      end
+    end
+  end
+
   describe "#name_and_email" do
     let(:user) { Fabricate(:user) }
 

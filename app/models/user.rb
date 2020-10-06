@@ -82,6 +82,12 @@ class User < ApplicationRecord
     employee_type == 'Reporter'
   end
 
+  def employee?
+    return false unless employee_type
+
+    VALID_EMPLOYEE_TYPES.include?(employee_type)
+  end
+
   def name_and_email
     @name_and_email ||=
       if name && email
