@@ -19,11 +19,11 @@ RSpec.describe RollerTypesController, type: :controller do
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type}")) }
 
-        it "unauthorized" do
+        it "redirects to unauthorized" do
           Fabricate(:issue_type)
           Fabricate(:task_type)
           get :index, params: {}
-          expect(response).to redirect_to :root
+          expect(response).to redirect_to :unauthorized
         end
       end
     end
