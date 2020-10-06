@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
 
     def set_task_type
       @task_type = TaskType.find(params[:id])
+      authorize @task_type
     end
 
     def set_category
