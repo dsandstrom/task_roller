@@ -66,6 +66,22 @@ class User < ApplicationRecord
 
   # INSTANCE
 
+  def admin?
+    employee_type == 'Admin'
+  end
+
+  def reviewer?
+    employee_type == 'Reviewer'
+  end
+
+  def worker?
+    employee_type == 'Worker'
+  end
+
+  def reporter?
+    employee_type == 'Reporter'
+  end
+
   def name_and_email
     @name_and_email ||=
       if name && email

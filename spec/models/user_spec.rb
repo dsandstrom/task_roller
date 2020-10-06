@@ -209,6 +209,94 @@ RSpec.describe User, type: :model do
 
   # INSTANCE
 
+  describe "#admin?" do
+    context "when employee_type is" do
+      context "Admin" do
+        before { subject.employee_type = "Admin" }
+
+        it "returns true" do
+          expect(subject.admin?).to eq(true)
+        end
+      end
+
+      %w[Reviewer Reporter Worker].each do |employee_type|
+        context employee_type.to_s do
+          before { subject.employee_type = employee_type }
+
+          it "returns false" do
+            expect(subject.admin?).to eq(false)
+          end
+        end
+      end
+    end
+  end
+
+  describe "#reviewer?" do
+    context "when employee_type is" do
+      context "Reviewer" do
+        before { subject.employee_type = "Reviewer" }
+
+        it "returns true" do
+          expect(subject.reviewer?).to eq(true)
+        end
+      end
+
+      %w[Admin Reporter Worker].each do |employee_type|
+        context employee_type.to_s do
+          before { subject.employee_type = employee_type }
+
+          it "returns false" do
+            expect(subject.reviewer?).to eq(false)
+          end
+        end
+      end
+    end
+  end
+
+  describe "#reporter?" do
+    context "when employee_type is" do
+      context "Reporter" do
+        before { subject.employee_type = "Reporter" }
+
+        it "returns true" do
+          expect(subject.reporter?).to eq(true)
+        end
+      end
+
+      %w[Admin Reviewer Worker].each do |employee_type|
+        context employee_type.to_s do
+          before { subject.employee_type = employee_type }
+
+          it "returns false" do
+            expect(subject.reporter?).to eq(false)
+          end
+        end
+      end
+    end
+  end
+
+  describe "#worker?" do
+    context "when employee_type is" do
+      context "Worker" do
+        before { subject.employee_type = "Worker" }
+
+        it "returns true" do
+          expect(subject.worker?).to eq(true)
+        end
+      end
+
+      %w[Admin Reviewer Reporter].each do |employee_type|
+        context employee_type.to_s do
+          before { subject.employee_type = employee_type }
+
+          it "returns false" do
+            expect(subject.worker?).to eq(false)
+          end
+        end
+      end
+    end
+  end
+
   describe "#name_and_email" do
     let(:user) { Fabricate(:user) }
 
