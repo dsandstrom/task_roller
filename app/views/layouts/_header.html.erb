@@ -5,7 +5,9 @@
       <div class="menu">
         <%= menu_link 'Dashboard', main_app.root_path %>
         <%= menu_link 'Users', main_app.users_path %>
-        <%= menu_link 'Issue Types', main_app.roller_types_path %>
+        <% if policy(RollerType).create? %>
+          <%= menu_link 'Issue Types', main_app.roller_types_path %>
+        <% end %>
         <p class="divider">|</p>
         <%= menu_link 'Categories', main_app.categories_path %>
         <%= menu_link 'Projects', main_app.projects_path %>

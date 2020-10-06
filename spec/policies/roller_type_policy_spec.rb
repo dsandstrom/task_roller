@@ -21,7 +21,9 @@ RSpec.describe RollerTypePolicy, type: :policy do
     end
 
     it "blocks non-employees" do
-      expect(subject).not_to permit(Fabricate(:user), issue_type)
+      user = Fabricate(:user)
+      user.employee.destroy
+      expect(subject).not_to permit(user, issue_type)
     end
   end
 
@@ -38,7 +40,9 @@ RSpec.describe RollerTypePolicy, type: :policy do
     end
 
     it "blocks non-employees" do
-      expect(subject).not_to permit(Fabricate(:user), issue_type)
+      user = Fabricate(:user)
+      user.employee.destroy
+      expect(subject).not_to permit(user, issue_type)
     end
   end
 end
