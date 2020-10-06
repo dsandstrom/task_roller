@@ -46,6 +46,7 @@ gem 'acts_as_list', '~> 0.9.10'
 
 gem 'redcarpet', '~> 3.4.0'
 
+gem 'pundit', '~> 2.1.0'
 gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
                              tag: 'v0.2.0'
 
