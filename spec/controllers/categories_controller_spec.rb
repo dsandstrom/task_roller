@@ -169,22 +169,41 @@ RSpec.describe CategoriesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:admin) { Fabricate(:user_admin) }
-
     context "for an admin" do
+      let(:admin) { Fabricate(:user_admin) }
+
       before { login(admin) }
 
-      it "destroys the requested user" do
+      it "destroys the requested category" do
         category = Fabricate(:category)
         expect do
           delete :destroy, params: { id: category.to_param }
         end.to change(Category, :count).by(-1)
       end
 
-      it "redirects to the categorys list" do
+      it "redirects to the categories list" do
         category = Fabricate(:category)
         delete :destroy, params: { id: category.to_param }
         expect(response).to redirect_to(categories_url)
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "doesn't destroy the requested category" do
+          category = Fabricate(:category)
+          expect do
+            delete :destroy, params: { id: category.to_param }
+          end.not_to change(Category, :count)
+        end
+
+        it "should be unauthorized" do
+          category = Fabricate(:category)
+          delete :destroy, params: { id: category.to_param }
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end

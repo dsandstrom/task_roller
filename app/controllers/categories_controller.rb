@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  before_action :authorize_category
+  before_action :authorize_category, only: %i[index new create]
   before_action :set_category, only: %i[show edit update destroy]
 
-  # TODO: just reviewer categories
   def index
     @categories = Category.all
   end
 
-  # TODO: restrict to category reviewers
   def show
     @projects = @category.projects
     @issues = @category.issues.order(updated_at: :desc).limit(3)
@@ -20,7 +18,6 @@ class CategoriesController < ApplicationController
     @category = Category.new
   end
 
-  # TODO: restrict to category reviewers
   def edit; end
 
   def create
@@ -33,7 +30,6 @@ class CategoriesController < ApplicationController
     end
   end
 
-  # TODO: restrict to category reviewers
   def update
     if @category.update(category_params)
       redirect_to @category, notice: 'Category was successfully updated.'
