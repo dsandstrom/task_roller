@@ -14,7 +14,7 @@ require 'rspec/rails'
 require 'roller_authentication/test_helpers'
 require 'pundit/rspec'
 
-require 'support/authorization'
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -67,6 +67,7 @@ RSpec.configure do |config|
   config.include RollerAuthentication::TestHelpers
 
   config.include TestHelpers::Authorization, type: :controller
+  config.include TestHelpers::Pundit, type: :view
 end
 
 Shoulda::Matchers.configure do |config|
