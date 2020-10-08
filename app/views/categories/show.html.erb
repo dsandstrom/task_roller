@@ -9,10 +9,12 @@
       Add Project
     <% end %>
   </p>
-  <p>
-    <%= link_to 'Edit Category', edit_category_path(@category),
-                class: 'button' %>
-  </p>
+  <% if policy(@category).edit? %>
+    <p>
+      <%= link_to 'Edit Category', edit_category_path(@category),
+                  class: 'button' %>
+    </p>
+  <% end %>
 </header>
 <div class="category-projects">
   <% if @projects.any? %>

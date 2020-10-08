@@ -1,12 +1,14 @@
 <h1>Categories</h1>
 
 <header class="categories-header">
-  <p>
-    <%= link_to new_category_path, class: 'button button-success' do %>
-      <i class="icon-plus"></i>
-      Add Category
-    <% end %>
-  </p>
+  <% if policy(Category).new? %>
+    <p>
+      <%= link_to new_category_path, class: 'button button-success' do %>
+        <i class="icon-plus"></i>
+        Add Category
+      <% end %>
+    </p>
+  <% end %>
 </header>
 
 <div class="categories">

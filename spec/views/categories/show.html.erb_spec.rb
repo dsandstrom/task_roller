@@ -5,120 +5,252 @@ require "rails_helper"
 RSpec.describe "categories/show", type: :view do
   before(:each) { @category = assign(:category, Fabricate(:category)) }
 
-  context "when it has no projects" do
-    before do
-      @projects = assign(:projects, [])
-      @issues = assign(:issues, [])
-      @tasks = assign(:issues, [])
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
+
+    before { enable_pundit(view, current_user) }
+
+    context "when it has no projects" do
+      before do
+        @projects = assign(:projects, [])
+        @issues = assign(:issues, [])
+        @tasks = assign(:issues, [])
+      end
+
+      it "renders name" do
+        render
+        assert_select "h1", @category.name
+      end
+
+      it "doesn't render a list of projects" do
+        render
+        assert_select ".project", count: 0
+      end
+
+      it "doesn't render any issues" do
+        render
+        assert_select ".issue", count: 0
+      end
+
+      it "doesn't render any tasks" do
+        render
+        assert_select ".task", count: 0
+      end
+
+      it "renders edit category link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+      end
     end
 
-    it "renders name" do
-      render
-      assert_select "h1", @category.name
+    context "when it has projects, issues, and tasks" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:task) { Fabricate(:task, project: project) }
+
+      before do
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, [issue])
+        @tasks = assign(:tasks, [task])
+      end
+
+      it "renders a list of projects" do
+        render
+        assert_select "#project-#{project.id}.project"
+      end
+
+      it "renders a list of issues" do
+        render
+        assert_select "#issue-#{issue.id}.issue"
+      end
+
+      it "renders a list of tasks" do
+        render
+        assert_select "#task-#{task.id}.task"
+      end
     end
 
-    it "doesn't render a list of projects" do
-      render
-      assert_select ".project", count: 0
+    context "when it has a task with missing type" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:task) { Fabricate(:task, project: project) }
+
+      before do
+        task.task_type.destroy
+        task.reload
+
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, [])
+        @tasks = assign(:tasks, [task])
+
+        Fabricate(:task_type)
+      end
+
+      it "renders a list of projects" do
+        render
+        assert_select "#project-#{project.id}.project"
+      end
+
+      it "doesn't render issues" do
+        render
+        assert_select ".issue", count: 0
+      end
+
+      it "renders a list of tasks" do
+        render
+        assert_select "#task-#{task.id}.task"
+      end
     end
 
-    it "doesn't render any issues" do
-      render
-      assert_select ".issue", count: 0
-    end
+    context "when it has an issue with missing type" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
 
-    it "doesn't render any tasks" do
-      render
-      assert_select ".task", count: 0
+      before do
+        issue.issue_type.destroy
+        issue.reload
+
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, [issue])
+        @tasks = assign(:tasks, [])
+
+        Fabricate(:issue_type)
+      end
+
+      it "renders a list of projects" do
+        render
+        assert_select "#project-#{project.id}.project"
+      end
+
+      it "renders a list of issues" do
+        render
+        assert_select "#issue-#{issue.id}.issue"
+      end
+
+      it "doesn't render any tasks" do
+        render
+        assert_select ".task", count: 0
+      end
     end
   end
 
-  context "when it has projects, issues, and tasks" do
-    let(:project) { Fabricate(:project, category: @category) }
-    let(:issue) { Fabricate(:issue, project: project) }
-    let(:task) { Fabricate(:task, project: project) }
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-    before do
-      @projects = assign(:projects, [project])
-      @issues = assign(:issues, [issue])
-      @tasks = assign(:tasks, [task])
-    end
+    before { enable_pundit(view, current_user) }
 
-    it "renders a list of projects" do
-      render
-      assert_select "#project-#{project.id}.project"
-    end
+    context "when category has projects, issues, and tasks" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:task) { Fabricate(:task, project: project) }
 
-    it "renders a list of issues" do
-      render
-      assert_select "#issue-#{issue.id}.issue"
-    end
+      before do
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, [issue])
+        @tasks = assign(:tasks, [task])
+      end
 
-    it "renders a list of tasks" do
-      render
-      assert_select "#task-#{task.id}.task"
-    end
-  end
+      it "renders a list of projects" do
+        render
+        assert_select "#project-#{project.id}.project"
+      end
 
-  context "when it has a task with missing type" do
-    let(:project) { Fabricate(:project, category: @category) }
-    let(:task) { Fabricate(:task, project: project) }
+      it "renders a list of issues" do
+        render
+        assert_select "#issue-#{issue.id}.issue"
+      end
 
-    before do
-      task.task_type.destroy
-      task.reload
+      it "renders a list of tasks" do
+        render
+        assert_select "#task-#{task.id}.task"
+      end
 
-      @projects = assign(:projects, [project])
-      @issues = assign(:issues, [])
-      @tasks = assign(:tasks, [task])
+      it "renders edit category link" do
+        render
 
-      Fabricate(:task_type)
-    end
-
-    it "renders a list of projects" do
-      render
-      assert_select "#project-#{project.id}.project"
-    end
-
-    it "doesn't render issues" do
-      render
-      assert_select ".issue", count: 0
-    end
-
-    it "renders a list of tasks" do
-      render
-      assert_select "#task-#{task.id}.task"
+        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+      end
     end
   end
 
-  context "when it has an issue with missing type" do
-    let(:project) { Fabricate(:project, category: @category) }
-    let(:issue) { Fabricate(:issue, project: project) }
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-    before do
-      issue.issue_type.destroy
-      issue.reload
+    before { enable_pundit(view, current_user) }
 
-      @projects = assign(:projects, [project])
-      @issues = assign(:issues, [issue])
-      @tasks = assign(:tasks, [])
+    context "when category has projects, issues, and tasks" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:task) { Fabricate(:task, project: project) }
 
-      Fabricate(:issue_type)
+      before do
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, [issue])
+        @tasks = assign(:tasks, [task])
+      end
+
+      it "renders a list of projects" do
+        render
+        assert_select "#project-#{project.id}.project"
+      end
+
+      it "renders a list of issues" do
+        render
+        assert_select "#issue-#{issue.id}.issue"
+      end
+
+      it "renders a list of tasks" do
+        render
+        assert_select "#task-#{task.id}.task"
+      end
+
+      it "renders edit category link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+      end
     end
+  end
 
-    it "renders a list of projects" do
-      render
-      assert_select "#project-#{project.id}.project"
-    end
+  %w[worker reporter].each do |employee_type|
+    context "for a #{employee_type}" do
+      let(:current_user) { Fabricate("user_#{employee_type}") }
 
-    it "renders a list of issues" do
-      render
-      assert_select "#issue-#{issue.id}.issue"
-    end
+      before { enable_pundit(view, current_user) }
 
-    it "doesn't render any tasks" do
-      render
-      assert_select ".task", count: 0
+      context "when category has projects, issues, and tasks" do
+        let(:project) { Fabricate(:project, category: @category) }
+        let(:issue) { Fabricate(:issue, project: project) }
+        let(:task) { Fabricate(:task, project: project) }
+
+        before do
+          @projects = assign(:projects, [project])
+          @issues = assign(:issues, [issue])
+          @tasks = assign(:tasks, [task])
+        end
+
+        it "renders a list of projects" do
+          render
+          assert_select "#project-#{project.id}.project"
+        end
+
+        it "renders a list of issues" do
+          render
+          assert_select "#issue-#{issue.id}.issue"
+        end
+
+        it "renders a list of tasks" do
+          render
+          assert_select "#task-#{task.id}.task"
+        end
+
+        it "doesn't render edit category link" do
+          render
+
+          expect(rendered)
+            .not_to have_link(nil, href: edit_category_path(@category))
+        end
+      end
     end
   end
 end

@@ -11,7 +11,9 @@
           <%= menu_link 'Issue Types', main_app.roller_types_path %>
         <% end %>
         <p class="divider">|</p>
-        <%= menu_link 'Categories', main_app.categories_path %>
+        <% if policy(Category).index? %>
+          <%= menu_link 'Categories', main_app.categories_path %>
+        <% end %>
         <%= menu_link 'Projects', main_app.projects_path %>
       </div>
     <% end %>

@@ -14,10 +14,14 @@
   </p>
 
   <p class="category-links">
-    <%= link_to 'Delete', category_path(category),
-                method: :delete, data: { confirm: 'Are you sure?' },
-                class: 'button button-outline button-warning' %>
-    <%= link_to 'Edit', edit_category_path(category),
-                class: 'button button-outline' %>
+    <% if policy(category).destroy? %>
+      <%= link_to 'Delete', category_path(category),
+                  method: :delete, data: { confirm: 'Are you sure?' },
+                  class: 'button button-outline button-warning' %>
+    <% end %>
+    <% if policy(category).edit? %>
+      <%= link_to 'Edit', edit_category_path(category),
+                  class: 'button button-outline' %>
+    <% end %>
   </p>
 </div>
