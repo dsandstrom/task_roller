@@ -23,7 +23,7 @@ RSpec.describe RollerTypesController, type: :controller do
           Fabricate(:issue_type)
           Fabricate(:task_type)
           get :index, params: {}
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end

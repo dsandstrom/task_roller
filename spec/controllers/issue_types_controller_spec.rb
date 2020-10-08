@@ -20,9 +20,9 @@ RSpec.describe IssueTypesController, type: :controller do
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type}")) }
 
-        it "redirects to unauthorized" do
+        it "should be unauthorized" do
           get :new, params: {}
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe IssueTypesController, type: :controller do
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)
           get :edit, params: { id: issue_type.to_param }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -83,7 +83,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
         it "redirects to unauthorized" do
           post :create, params: { issue_type: valid_attributes }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe IssueTypesController, type: :controller do
           issue_type = Fabricate(:issue_type)
           put :update, params: { id: issue_type.to_param,
                                  issue_type: new_attributes }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -162,7 +162,7 @@ RSpec.describe IssueTypesController, type: :controller do
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)
           delete :destroy, params: { id: issue_type.to_param }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end

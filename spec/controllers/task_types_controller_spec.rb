@@ -22,7 +22,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
         it "redirects to unauthorized" do
           get :new, params: {}
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe TaskTypesController, type: :controller do
         it "redirects to unauthorized" do
           task_type = Fabricate(:task_type)
           get :edit, params: { id: task_type.to_param }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -83,7 +83,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
         it "redirects to unauthorized" do
           post :create, params: { task_type: valid_attributes }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe TaskTypesController, type: :controller do
           task_type = Fabricate(:task_type)
           put :update, params: { id: task_type.to_param,
                                  task_type: new_attributes }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
@@ -162,7 +162,7 @@ RSpec.describe TaskTypesController, type: :controller do
         it "redirects to unauthorized" do
           task_type = Fabricate(:task_type)
           delete :destroy, params: { id: task_type.to_param }
-          expect(response).to redirect_to :unauthorized
+          expect_to_be_unauthorized(response)
         end
       end
     end
