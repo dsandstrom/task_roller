@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: test redirect if not logged in
+# TODO: test redirect to login if non-employee
+
 class ApplicationController < ActionController::Base
   include Pundit
 
