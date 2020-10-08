@@ -8,103 +8,184 @@ RSpec.describe CategoriesController, type: :controller do
   before { login(Fabricate(:user_admin)) }
 
   describe "GET #index" do
-    it "returns a success response" do
-      _category = Fabricate(:category)
-      get :index
-      expect(response).to be_successful
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type.downcase}")) }
+
+        it "returns a success response" do
+          _category = Fabricate(:category)
+          get :index
+          expect(response).to be_successful
+        end
+      end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      category = Fabricate(:category)
-      get :show, params: { id: category.to_param }
-      expect(response).to be_successful
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type.downcase}")) }
+
+        it "returns a success response" do
+          category = Fabricate(:category)
+          get :show, params: { id: category.to_param }
+          expect(response).to be_successful
+        end
+      end
     end
   end
 
   describe "GET #new" do
-    it "returns a success response" do
-      get :new
-      expect(response).to be_successful
+    context "for an admin" do
+      before { login(Fabricate(:user_admin)) }
+
+      it "returns a success response" do
+        get :new
+        expect(response).to be_successful
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "should be unauthorized" do
+          get :new, params: {}
+          expect_to_be_unauthorized(response)
+        end
+      end
     end
   end
 
   describe "GET #edit" do
-    it "returns a success response" do
-      category = Fabricate(:category)
-      get :edit, params: { id: category.to_param }
-      expect(response).to be_successful
+    %w[admin reviewer].each do |employee_type|
+      before { login(Fabricate("user_#{employee_type}")) }
+
+      it "returns a success response" do
+        category = Fabricate(:category)
+        get :edit, params: { id: category.to_param }
+        expect(response).to be_successful
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "should be unauthorized" do
+          category = Fabricate(:category)
+          get :edit, params: { id: category.to_param }
+          expect_to_be_unauthorized(response)
+        end
+      end
     end
   end
 
   describe "POST #create" do
     let(:valid_attributes) { { name: "Category Name" } }
 
-    context "with valid params" do
-      it "creates a new Category" do
-        expect do
+    context "for an admin" do
+      before { login(Fabricate(:user_admin)) }
+
+      context "with valid params" do
+        it "creates a new Category" do
+          expect do
+            post :create, params: { category: valid_attributes }
+          end.to change(Category, :count).by(1)
+        end
+
+        it "redirects to the created category" do
           post :create, params: { category: valid_attributes }
-        end.to change(Category, :count).by(1)
+          expect(response).to redirect_to(Category.last)
+        end
       end
 
-      it "redirects to the created category" do
-        post :create, params: { category: valid_attributes }
-        expect(response).to redirect_to(Category.last)
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: { category: invalid_attributes }
+          expect(response).to be_successful
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: { category: invalid_attributes }
-        expect(response).to be_successful
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "should be unauthorized" do
+          post :create, params: { category: valid_attributes }
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end
 
   describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) { { name: "New Name" } }
+    let(:new_attributes) { { name: "New Name" } }
 
-      it "updates the requested category" do
-        category = Fabricate(:category)
-        expect do
-          put :update, params: { id: category.to_param,
-                                 category: new_attributes }
-          category.reload
-        end.to change(category, :name).to("New Name")
-      end
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
 
-      it "redirects to the category" do
-        category = Fabricate(:category)
-        put :update, params: { id: category.to_param,
-                               category: new_attributes }
-        expect(response).to redirect_to(category)
+        context "with valid params" do
+          it "updates the requested category" do
+            category = Fabricate(:category)
+            expect do
+              put :update, params: { id: category.to_param,
+                                     category: new_attributes }
+              category.reload
+            end.to change(category, :name).to("New Name")
+          end
+
+          it "redirects to the category" do
+            category = Fabricate(:category)
+            put :update, params: { id: category.to_param,
+                                   category: new_attributes }
+            expect(response).to redirect_to(category)
+          end
+        end
+
+        context "with invalid params" do
+          it "returns a success response ('edit' template)" do
+            category = Fabricate(:category)
+            put :update, params: { id: category.to_param,
+                                   category: invalid_attributes }
+            expect(response).to be_successful
+          end
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        category = Fabricate(:category)
-        put :update, params: { id: category.to_param,
-                               category: invalid_attributes }
-        expect(response).to be_successful
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "should be unauthorized" do
+          post :create, params: { category: new_attributes }
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested category" do
-      category = Fabricate(:category)
-      expect do
-        delete :destroy, params: { id: category.to_param }
-      end.to change(Category, :count).by(-1)
-    end
+    let(:admin) { Fabricate(:user_admin) }
 
-    it "redirects to the categories list" do
-      category = Fabricate(:category)
-      delete :destroy, params: { id: category.to_param }
-      expect(response).to redirect_to(categories_url)
+    context "for an admin" do
+      before { login(admin) }
+
+      it "destroys the requested user" do
+        category = Fabricate(:category)
+        expect do
+          delete :destroy, params: { id: category.to_param }
+        end.to change(Category, :count).by(-1)
+      end
+
+      it "redirects to the categorys list" do
+        category = Fabricate(:category)
+        delete :destroy, params: { id: category.to_param }
+        expect(response).to redirect_to(categories_url)
+      end
     end
   end
 end

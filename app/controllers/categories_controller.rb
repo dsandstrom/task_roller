@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  # TODO: restrict to reviewers
+  before_action :authorize_category
   before_action :set_category, only: %i[show edit update destroy]
 
   # TODO: just reviewer categories
@@ -16,7 +16,6 @@ class CategoriesController < ApplicationController
     @tasks = @category.tasks.order(updated_at: :desc).limit(3)
   end
 
-  # TODO: restrict to admins
   def new
     @category = Category.new
   end
@@ -24,7 +23,6 @@ class CategoriesController < ApplicationController
   # TODO: restrict to category reviewers
   def edit; end
 
-  # TODO: restrict to admins
   def create
     @category = Category.new(category_params)
 
@@ -44,7 +42,6 @@ class CategoriesController < ApplicationController
     end
   end
 
-  # TODO: restrict to admins
   def destroy
     @category.destroy
     redirect_to categories_url, notice: 'Category was successfully destroyed.'
@@ -54,9 +51,14 @@ class CategoriesController < ApplicationController
 
     def set_category
       @category = Category.find(params[:id])
+      authorize @category
     end
 
     def category_params
       params.require(:category).permit(:name, :visible, :internal)
+    end
+
+    def authorize_category
+      authorize Category
     end
 end
