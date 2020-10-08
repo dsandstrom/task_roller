@@ -1,3 +1,5 @@
+<% return unless policy(User).new? %>
+
 <%= link_to  new_user_path(employee_type: employee_type),
             class: 'button button-success' do %>
   <i class="icon-person-add"></i>

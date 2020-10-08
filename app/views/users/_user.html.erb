@@ -10,11 +10,15 @@
   </div>
 
   <p class="user-links">
-    <%= link_to 'Delete',
-                user,
-                method: :delete,
-                data: { confirm: 'Are you sure?' },
-                class: 'button button-outline button-warning' %>
-    <%= link_to 'Edit', edit_user_path(user), class: 'button button-outline' %>
+    <% if policy(user).destroy? %>
+      <%= link_to 'Delete',
+                  user,
+                  method: :delete,
+                  data: { confirm: 'Are you sure?' },
+                  class: 'button button-outline button-warning' %>
+    <% end %>
+    <% if policy(user).edit? %>
+      <%= link_to 'Edit', edit_user_path(user), class: 'button button-outline' %>
+    <% end %>
   </p>
 </div>

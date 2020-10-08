@@ -19,21 +19,248 @@ RSpec.describe "users/index", type: :view do
     assign(:workers, [first_user_worker, second_user_worker])
   end
 
-  it "renders a list of user/reporters" do
-    render
-    assert_select "#user-#{first_user_reporter.id}"
-    assert_select "#user-#{second_user_reporter.id}"
+  context "for an admin" do
+    before { enable_pundit(view, first_user_admin) }
+
+    it "renders new user links" do
+      render
+
+      User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+        path = new_user_path(employee_type: employee_type)
+        expect(rendered).to have_link(nil, href: path)
+      end
+    end
+
+    it "renders a list of user/admins" do
+      render
+
+      assert_select "#user-#{first_user_admin.id}"
+      assert_select "#user-#{first_user_admin.id} a[data-method=\"delete\"]",
+                    count: 0
+      expect(rendered).to have_link(nil, href: edit_user_path(first_user_admin))
+      expect(rendered).to have_link(nil, href: user_path(first_user_admin))
+
+      assert_select "#user-#{second_user_admin.id}"
+      assert_select "#user-#{second_user_admin.id} a[data-method=\"delete\"]"
+      expect(rendered).to have_link(nil, href: user_path(second_user_admin))
+      expect(rendered)
+        .to have_link(nil, href: edit_user_path(second_user_admin))
+    end
+
+    it "renders a list of user/reporters" do
+      render
+
+      [first_user_reporter, second_user_reporter].each do |reporter|
+        assert_select "#user-#{reporter.id}"
+        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]"
+        expect(rendered).to have_link(nil, href: user_path(reporter))
+        expect(rendered).to have_link(nil, href: edit_user_path(reporter))
+      end
+    end
+
+    it "renders a list of user/reviewers" do
+      render
+
+      [first_user_reviewer, second_user_reviewer].each do |reviewer|
+        assert_select "#user-#{reviewer.id}"
+        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]"
+        expect(rendered).to have_link(nil, href: user_path(reviewer))
+        expect(rendered).to have_link(nil, href: edit_user_path(reviewer))
+      end
+    end
+
+    it "renders a list of user/workers" do
+      render
+
+      [first_user_worker, second_user_worker].each do |worker|
+        assert_select "#user-#{worker.id}"
+        assert_select "#user-#{worker.id} a[data-method=\"delete\"]"
+        expect(rendered).to have_link(nil, href: user_path(worker))
+        expect(rendered).to have_link(nil, href: edit_user_path(worker))
+      end
+    end
   end
 
-  it "renders a list of user/reviewers" do
-    render
-    assert_select "#user-#{first_user_reviewer.id}"
-    assert_select "#user-#{second_user_reviewer.id}"
+  context "for a reviewer" do
+    before { enable_pundit(view, first_user_reviewer) }
+
+    it "doesn't render new user links" do
+      render
+
+      User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+        path = new_user_path(employee_type: employee_type)
+        expect(rendered).not_to have_link(nil, href: path)
+      end
+    end
+
+    it "renders a list of user/admins" do
+      render
+
+      [first_user_admin, second_user_admin].each do |admin|
+        assert_select "#user-#{admin.id}"
+        assert_select "#user-#{admin.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(admin))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(admin))
+      end
+    end
+
+    it "renders a list of user/reporters" do
+      render
+
+      [first_user_reporter, second_user_reporter].each do |reporter|
+        assert_select "#user-#{reporter.id}"
+        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reporter))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(reporter))
+      end
+    end
+
+    it "renders a list of user/reviewers" do
+      render
+
+      [first_user_reviewer, second_user_reviewer].each do |reviewer|
+        assert_select "#user-#{reviewer.id}"
+        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reviewer))
+      end
+
+      expect(rendered)
+        .to have_link(nil, href: edit_user_path(first_user_reviewer))
+      expect(rendered)
+        .not_to have_link(nil, href: edit_user_path(second_user_reviewer))
+    end
+
+    it "renders a list of user/workers" do
+      render
+
+      [first_user_worker, second_user_worker].each do |worker|
+        assert_select "#user-#{worker.id}"
+        assert_select "#user-#{worker.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(worker))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(worker))
+      end
+    end
   end
 
-  it "renders a list of user/workers" do
-    render
-    assert_select "#user-#{first_user_worker.id}"
-    assert_select "#user-#{second_user_worker.id}"
+  context "for a reporter" do
+    before { enable_pundit(view, first_user_reporter) }
+
+    it "doesn't render new user links" do
+      render
+
+      User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+        path = new_user_path(employee_type: employee_type)
+        expect(rendered).not_to have_link(nil, href: path)
+      end
+    end
+
+    it "renders a list of user/admins" do
+      render
+
+      [first_user_admin, second_user_admin].each do |admin|
+        assert_select "#user-#{admin.id}"
+        assert_select "#user-#{admin.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(admin))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(admin))
+      end
+    end
+
+    it "renders a list of user/reporters" do
+      render
+
+      [first_user_reporter, second_user_reporter].each do |reporter|
+        assert_select "#user-#{reporter.id}"
+        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reporter))
+      end
+
+      expect(rendered)
+        .to have_link(nil, href: edit_user_path(first_user_reporter))
+      expect(rendered)
+        .not_to have_link(nil, href: edit_user_path(second_user_reporter))
+    end
+
+    it "renders a list of user/reviewers" do
+      render
+
+      [first_user_reviewer, second_user_reviewer].each do |reviewer|
+        assert_select "#user-#{reviewer.id}"
+        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reviewer))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(reviewer))
+      end
+    end
+
+    it "renders a list of user/workers" do
+      render
+
+      [first_user_worker, second_user_worker].each do |worker|
+        assert_select "#user-#{worker.id}"
+        assert_select "#user-#{worker.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(worker))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(worker))
+      end
+    end
+  end
+
+  context "for a worker" do
+    before { enable_pundit(view, first_user_worker) }
+
+    it "doesn't render new user links" do
+      render
+
+      User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+        path = new_user_path(employee_type: employee_type)
+        expect(rendered).not_to have_link(nil, href: path)
+      end
+    end
+
+    it "renders a list of user/admins" do
+      render
+
+      [first_user_admin, second_user_admin].each do |admin|
+        assert_select "#user-#{admin.id}"
+        assert_select "#user-#{admin.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(admin))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(admin))
+      end
+    end
+
+    it "renders a list of user/reporters" do
+      render
+
+      [first_user_reporter, second_user_reporter].each do |reporter|
+        assert_select "#user-#{reporter.id}"
+        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reporter))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(reporter))
+      end
+    end
+
+    it "renders a list of user/reviewers" do
+      render
+
+      [first_user_reviewer, second_user_reviewer].each do |reviewer|
+        assert_select "#user-#{reviewer.id}"
+        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(reviewer))
+        expect(rendered).not_to have_link(nil, href: edit_user_path(reviewer))
+      end
+    end
+
+    it "renders a list of user/workers" do
+      render
+
+      [first_user_worker, second_user_worker].each do |worker|
+        assert_select "#user-#{worker.id}"
+        assert_select "#user-#{worker.id} a[data-method=\"delete\"]", count: 0
+        expect(rendered).to have_link(nil, href: user_path(worker))
+      end
+
+      expect(rendered)
+        .to have_link(nil, href: edit_user_path(first_user_worker))
+      expect(rendered)
+        .not_to have_link(nil, href: edit_user_path(second_user_worker))
+    end
   end
 end

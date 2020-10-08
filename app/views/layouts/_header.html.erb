@@ -4,7 +4,9 @@
     <% if current_user.present? %>
       <div class="menu">
         <%= menu_link 'Dashboard', main_app.root_path %>
-        <%= menu_link 'Users', main_app.users_path %>
+        <% if policy(User).index? %>
+          <%= menu_link 'Users', main_app.users_path %>
+        <% end %>
         <% if policy(RollerType).create? %>
           <%= menu_link 'Issue Types', main_app.roller_types_path %>
         <% end %>
