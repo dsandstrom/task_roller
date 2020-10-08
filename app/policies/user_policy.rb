@@ -2,11 +2,11 @@
 
 class UserPolicy < ApplicationPolicy
   def index?
-    user.employee?
+    employee?
   end
 
   def show?
-    user.employee?
+    employee?
   end
 
   def create?
