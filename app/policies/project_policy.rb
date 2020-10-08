@@ -2,7 +2,7 @@
 
 class ProjectPolicy < ApplicationPolicy
   def index?
-    employee?
+    admin?
   end
 
   def show?

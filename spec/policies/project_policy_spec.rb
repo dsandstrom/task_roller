@@ -8,7 +8,29 @@ RSpec.describe ProjectPolicy, type: :policy do
 
   subject { described_class }
 
-  permissions :index?, :show? do
+  permissions :index? do
+    %i[admin].each do |employee_type|
+      it "permits #{employee_type}" do
+        user = Fabricate("user_#{employee_type}")
+        expect(subject).to permit(user, project)
+      end
+    end
+
+    %i[reviewer worker reporter].each do |employee_type|
+      it "blocks #{employee_type}" do
+        user = Fabricate("user_#{employee_type}")
+        expect(subject).not_to permit(user, project)
+      end
+    end
+
+    it "blocks non-employees" do
+      user = Fabricate(:user)
+      user.employee.destroy
+      expect(subject).not_to permit(user, project)
+    end
+  end
+
+  permissions :show? do
     %i[admin reviewer worker reporter].each do |employee_type|
       it "permits #{employee_type}" do
         user = Fabricate("user_#{employee_type}")
