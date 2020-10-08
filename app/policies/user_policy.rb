@@ -26,7 +26,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin?
+    admin? && user != record
   end
 
   class Scope < Scope

@@ -74,6 +74,10 @@ RSpec.describe UserPolicy, type: :policy do
       expect(subject).to permit(admin, record)
     end
 
+    it "blocks the current admin" do
+      expect(subject).not_to permit(admin, admin)
+    end
+
     it "blocks the current user" do
       expect(subject).not_to permit(record, record)
     end
