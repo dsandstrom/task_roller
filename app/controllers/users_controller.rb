@@ -3,6 +3,7 @@
 # TODO: build user#show view with assigned tasks
 
 class UsersController < ApplicationController
+  before_action :authorize_user, only: %i[index new create]
   before_action :set_user, only: %i[show edit update destroy]
 
   def index
@@ -51,6 +52,7 @@ class UsersController < ApplicationController
 
     def set_user
       @user = User.find(params[:id])
+      authorize @user
     end
 
     def user_params
@@ -67,5 +69,9 @@ class UsersController < ApplicationController
                     %w[Reporter Reviewer Worker].includes?(params[:type])
 
       params[:type]
+    end
+
+    def authorize_user
+      authorize User
     end
 end
