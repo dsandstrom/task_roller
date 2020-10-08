@@ -1,4 +1,6 @@
 <div id="user-detail-<%= @user.id %>" class="user-detail">
+  <%= breadcrumbs([['Users', users_path]]) %>
+
   <h1 class="user-name">
     <%= @user.name %>
   </h1>
