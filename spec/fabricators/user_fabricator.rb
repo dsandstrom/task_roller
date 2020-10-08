@@ -23,3 +23,12 @@ Fabricator(:user_reviewer, from: :user) do
   email { sequence(:users) { |n| "reviewer-email-#{n + 1}@example.com" } }
   employee_type { 'Reviewer' }
 end
+
+Fabricator(:user_unemployed, from: :user) do
+  name { sequence(:users) { |n| "Former User Name #{n + 1}" } }
+  email { sequence(:users) { |n| "former-user-email-#{n + 1}@example.com" } }
+
+  after_create do |user, _|
+    user.employee.destroy
+  end
+end
