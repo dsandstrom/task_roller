@@ -2,6 +2,7 @@
 
 class ProjectsController < ApplicationController
   # TODO: restrict to category reviewers
+  before_action :authorize_project, only: %i[index new create]
   before_action :set_category, except: :index
   before_action :set_project, only: %i[show edit update destroy]
 
@@ -50,12 +51,17 @@ class ProjectsController < ApplicationController
 
   private
 
+    def authorize_project
+      authorize Project
+    end
+
     def set_category
       @category = Category.find(params[:category_id])
     end
 
     def set_project
       @project = @category.projects.find(params[:id])
+      authorize @project
     end
 
     def project_params
