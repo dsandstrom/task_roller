@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: maybe assign reviewers/workers to categories and its projects
+# might cause too much user juggling
+
 class CategoryPolicy < ApplicationPolicy
   def index?
     employee?
