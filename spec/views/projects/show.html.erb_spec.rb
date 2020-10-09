@@ -15,65 +15,198 @@ RSpec.describe "projects/show", type: :view do
     @project = project
   end
 
-  context "when tasks and issues" do
-    before(:each) do
-      @issues = [first_issue, second_issue]
-      @tasks = [first_task, second_task]
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
+
+    before { enable_pundit(view, current_user) }
+
+    context "when tasks and issues" do
+      before(:each) do
+        @issues = [first_issue, second_issue]
+        @tasks = [first_task, second_task]
+      end
+
+      it "renders name" do
+        render
+        assert_select "h1", @project.name
+      end
+
+      it "renders edit project link" do
+        render
+
+        url = edit_category_project_path(@category, @project)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
     end
 
-    it "renders name" do
-      render
-      assert_select "h1", @project.name
+    context "when task missing type" do
+      before(:each) do
+        first_task.task_type.destroy
+        first_task.reload
+        @issues = []
+        @tasks = [first_task]
+        Fabricate(:task_type)
+      end
+
+      it "renders broken tasks" do
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+      end
     end
 
-    it "renders a list of issues" do
-      other_issue =
-        Fabricate(:issue, project: Fabricate(:project, category: category))
+    context "when issue missing type" do
+      before do
+        first_issue.issue_type.destroy
+        first_issue.reload
+        @issues = [first_issue]
+        @tasks = []
+        Fabricate(:issue_type)
+      end
 
-      render
-      assert_select "#issue-#{first_issue.id}", count: 1
-      assert_select "#issue-#{second_issue.id}", count: 1
-      assert_select "#issue-#{other_issue.id}", count: 0
-    end
-
-    it "renders a list of tasks" do
-      other_task =
-        Fabricate(:task, project: Fabricate(:project, category: category))
-
-      render
-      assert_select "#task-#{first_task.id}", count: 1
-      assert_select "#task-#{second_task.id}", count: 1
-      assert_select "#task-#{other_task.id}", count: 0
+      it "renders broken issues" do
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+      end
     end
   end
 
-  context "when task missing type" do
-    before(:each) do
-      first_task.task_type.destroy
-      first_task.reload
-      @issues = []
-      @tasks = [first_task]
-      Fabricate(:task_type)
-    end
+  context "for an reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-    it "renders broken tasks" do
-      render
-      assert_select "#task-#{first_task.id}", count: 1
+    before { enable_pundit(view, current_user) }
+
+    context "when tasks and issues" do
+      before(:each) do
+        @issues = [first_issue, second_issue]
+        @tasks = [first_task, second_task]
+      end
+
+      it "renders edit project link" do
+        render
+
+        url = edit_category_project_path(@category, @project)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
     end
   end
 
-  context "when issue missing type" do
-    before do
-      first_issue.issue_type.destroy
-      first_issue.reload
-      @issues = [first_issue]
-      @tasks = []
-      Fabricate(:issue_type)
-    end
+  context "for an worker" do
+    let(:current_user) { Fabricate(:user_worker) }
 
-    it "renders broken issues" do
-      render
-      assert_select "#issue-#{first_issue.id}", count: 1
+    before { enable_pundit(view, current_user) }
+
+    context "when tasks and issues" do
+      before(:each) do
+        @issues = [first_issue, second_issue]
+        @tasks = [first_task, second_task]
+      end
+
+      it "doesn't render the edit project link" do
+        render
+
+        url = edit_category_project_path(@category, @project)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
+    end
+  end
+
+  context "for an reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
+
+    before { enable_pundit(view, current_user) }
+
+    context "when tasks and issues" do
+      before(:each) do
+        @issues = [first_issue, second_issue]
+        @tasks = [first_task, second_task]
+      end
+
+      it "doesn't render the edit project link" do
+        render
+
+        url = edit_category_project_path(@category, @project)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
     end
   end
 end
