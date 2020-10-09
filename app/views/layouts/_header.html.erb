@@ -4,17 +4,19 @@
     <% if current_user.present? %>
       <div class="menu">
         <%= menu_link 'Dashboard', main_app.root_path %>
+        <% if policy(Category).index? %>
+          <%= menu_link 'Categories', main_app.categories_path %>
+        <% end %>
         <% if policy(User).index? %>
           <%= menu_link 'Users', main_app.users_path %>
         <% end %>
         <% if policy(RollerType).create? %>
+          <p class="divider">|</p>
           <%= menu_link 'Issue Types', main_app.roller_types_path %>
         <% end %>
-        <p class="divider">|</p>
-        <% if policy(Category).index? %>
-          <%= menu_link 'Categories', main_app.categories_path %>
+        <% if policy(Project).index? %>
+          <%= menu_link 'Projects', main_app.projects_path %>
         <% end %>
-        <%= menu_link 'Projects', main_app.projects_path %>
       </div>
     <% end %>
 
