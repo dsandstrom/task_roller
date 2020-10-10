@@ -1,0 +1,37 @@
+# frozen_string_literal: true
+
+class IssuePolicy < ApplicationPolicy
+  def index?
+    employee?
+  end
+
+  def show?
+    employee?
+  end
+
+  def create?
+    employee?
+  end
+
+  def new?
+    employee?
+  end
+
+  def edit?
+    admin? || record.user == user
+  end
+
+  def update?
+    admin? || record.user == user
+  end
+
+  def destroy?
+    admin?
+  end
+
+  class Scope < Scope
+    def resolve
+      scope.all
+    end
+  end
+end
