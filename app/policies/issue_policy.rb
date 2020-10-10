@@ -29,6 +29,14 @@ class IssuePolicy < ApplicationPolicy
     admin?
   end
 
+  def open?
+    admin?
+  end
+
+  def close?
+    admin?
+  end
+
   class Scope < Scope
     def resolve
       scope.all

@@ -85,7 +85,7 @@ RSpec.describe IssuePolicy, type: :policy do
     end
   end
 
-  permissions :destroy? do
+  permissions :destroy?, :open?, :close? do
     context "for an admin" do
       context "when someone else's issue" do
         let(:issue) { Fabricate(:issue, project: project) }
