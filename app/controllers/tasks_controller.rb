@@ -6,8 +6,6 @@
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment
 
-# rubocop:disable Metrics/ClassLength
-
 class TasksController < ApplicationController
   before_action :set_category, :set_project, :set_issue, except: %i[open close]
   before_action :set_task, only: %i[show edit update destroy open close]
@@ -150,4 +148,3 @@ class TasksController < ApplicationController
       filters
     end
 end
-# rubocop:enable Metrics/ClassLength

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class IssuesController < ApplicationController
   before_action :authorize_issue, only: %i[index new show destroy]
   before_action :set_category, :set_project, except: %i[open close]
@@ -125,4 +124,3 @@ class IssuesController < ApplicationController
       filters
     end
 end
-# rubocop:enable Metrics/ClassLength
