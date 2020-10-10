@@ -9,6 +9,7 @@ RSpec.describe "projects/show", type: :view do
   let(:second_issue) { Fabricate(:issue, project: project) }
   let(:first_task) { Fabricate(:task, project: project) }
   let(:second_task) { Fabricate(:task, project: project) }
+  let(:edit_url) { edit_category_project_path(@category, @project) }
 
   before(:each) do
     @category = category
@@ -34,8 +35,7 @@ RSpec.describe "projects/show", type: :view do
       it "renders edit project link" do
         render
 
-        url = edit_category_project_path(@category, @project)
-        expect(rendered).to have_link(nil, href: url)
+        expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders a list of issues" do
@@ -104,8 +104,7 @@ RSpec.describe "projects/show", type: :view do
       it "renders edit project link" do
         render
 
-        url = edit_category_project_path(@category, @project)
-        expect(rendered).to have_link(nil, href: url)
+        expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders a list of issues" do
@@ -144,8 +143,7 @@ RSpec.describe "projects/show", type: :view do
       it "doesn't render the edit project link" do
         render
 
-        url = edit_category_project_path(@category, @project)
-        expect(rendered).not_to have_link(nil, href: url)
+        expect(rendered).not_to have_link(nil, href: edit_url)
       end
 
       it "renders a list of issues" do
@@ -184,8 +182,7 @@ RSpec.describe "projects/show", type: :view do
       it "doesn't render the edit project link" do
         render
 
-        url = edit_category_project_path(@category, @project)
-        expect(rendered).not_to have_link(nil, href: url)
+        expect(rendered).not_to have_link(nil, href: edit_url)
       end
 
       it "renders a list of issues" do

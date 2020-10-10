@@ -5,6 +5,9 @@ require "rails_helper"
 RSpec.describe "categories/show", type: :view do
   before(:each) { @category = assign(:category, Fabricate(:category)) }
 
+  let(:edit_url) { edit_category_path(@category) }
+  let(:new_project_url) { new_category_project_path(@category) }
+
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
 
@@ -40,7 +43,13 @@ RSpec.describe "categories/show", type: :view do
       it "renders edit category link" do
         render
 
-        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
+
+      it "renders new project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: new_project_url)
       end
     end
 
@@ -168,7 +177,13 @@ RSpec.describe "categories/show", type: :view do
       it "renders edit category link" do
         render
 
-        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
+
+      it "renders new project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: new_project_url)
       end
     end
   end
@@ -207,7 +222,13 @@ RSpec.describe "categories/show", type: :view do
       it "renders edit category link" do
         render
 
-        expect(rendered).to have_link(nil, href: edit_category_path(@category))
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
+
+      it "renders new project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: new_project_url)
       end
     end
   end
@@ -247,8 +268,13 @@ RSpec.describe "categories/show", type: :view do
         it "doesn't render edit category link" do
           render
 
-          expect(rendered)
-            .not_to have_link(nil, href: edit_category_path(@category))
+          expect(rendered).not_to have_link(nil, href: edit_url)
+        end
+
+        it "doesn't render new project link" do
+          render
+
+          expect(rendered).not_to have_link(nil, href: new_project_url)
         end
       end
     end
