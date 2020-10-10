@@ -2,6 +2,7 @@
 
 # rubocop:disable Metrics/ClassLength
 class IssuesController < ApplicationController
+  before_action :authorize_issue, only: %i[index new show destroy]
   before_action :set_category, :set_project, except: %i[open close]
   before_action :set_issue, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
@@ -17,7 +18,7 @@ class IssuesController < ApplicationController
 
   def new
     # TODO: set user_id to current user
-    if @issue_types.any?
+    if @issue_types&.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
     else
       # TODO: redirect to /issues_types if admin signed in
@@ -30,6 +31,7 @@ class IssuesController < ApplicationController
 
   def create
     @issue = @project.issues.build(issue_params)
+    @issue.user = current_user
 
     if @issue.save
       redirect_to category_project_issue_url(@category, @project, @issue),
@@ -82,11 +84,17 @@ class IssuesController < ApplicationController
 
   private
 
+    def authorize_issue
+      authorize Issue
+    end
+
     def set_issue
       if @project
         @issue = @project.issues.find(params[:id])
+        authorize @issue
       else
         @issue = Issue.find(params[:id])
+        authorize @issue
         @category = @issue.category
         @project = @issue.project
       end
@@ -98,21 +106,10 @@ class IssuesController < ApplicationController
 
     def set_form_options
       set_issue_types
-      set_user_options
     end
 
     def issue_params
-      # TODO: set user_id from logged in user, but allow admin to change
-      params.require(:issue)
-            .permit(:summary, :description, :issue_type_id, :user_id)
-    end
-
-    def set_user_options
-      # TODO: only set for admins, otherwise always current_user
-      @user_options =
-        User::VALID_EMPLOYEE_TYPES.map do |type|
-          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
-        end
+      params.require(:issue).permit(:summary, :description, :issue_type_id)
     end
 
     def build_filters
