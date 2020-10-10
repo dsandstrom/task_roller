@@ -41,6 +41,9 @@ Metrics/BlockLength:
   Exclude:
     - 'Guardfile'
 
+Metrics/ClassLength:
+  Max: 120
+
 Naming/FileName:
   Exclude:
     - 'Gemfile'

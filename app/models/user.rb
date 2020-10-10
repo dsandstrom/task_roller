@@ -11,6 +11,11 @@ class User < ApplicationRecord
   has_many :assignments, through: :task_assignees, class_name: 'Task',
                          source: :task
   has_many :progressions, dependent: :destroy
+  # TODO: accomodate destroyed user issues/tasks
+  # remove employee connection instead of destroying
+  # probably add paper_trail too
+  has_many :issues
+  has_many :tasks
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }

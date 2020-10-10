@@ -25,7 +25,7 @@ RSpec.describe ProjectPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      user.employee.destroy
+      user.employee_type = nil
       expect(subject).not_to permit(user, project)
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe ProjectPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      user.employee.destroy
+      user.employee_type = nil
       expect(subject).not_to permit(user, project)
     end
   end
@@ -62,7 +62,7 @@ RSpec.describe ProjectPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      user.employee.destroy
+      user.employee_type = nil
       expect(subject).not_to permit(user, project)
     end
   end
@@ -84,7 +84,7 @@ RSpec.describe ProjectPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      user.employee.destroy
+      user.employee_type = nil
       expect(subject).not_to permit(user, project)
     end
   end
@@ -103,7 +103,7 @@ RSpec.describe ProjectPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      user.employee.destroy
+      user.employee_type = nil
       expect(subject).not_to permit(user, project)
     end
   end
