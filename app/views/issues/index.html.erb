@@ -3,11 +3,14 @@
 
   <header class="issues-header">
     <h2>Project Issues</h2>
-    <p>
-      <%= link_to 'Report Issue',
-                  new_category_project_issue_path(@category, @project),
-                  class: 'button button-success' %>
-    </p>
+
+    <% if policy(Issue).new? %>
+      <p>
+        <%= link_to 'Report Issue',
+                    new_category_project_issue_path(@category, @project),
+                    class: 'button button-success' %>
+      </p>
+    <% end %>
   </header>
 <% elsif @category %>
   <%= category_header @category %>
