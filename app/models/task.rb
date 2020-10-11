@@ -94,8 +94,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     tasks = all
     tasks = tasks.filter_by_status(filters[:status])
     tasks = tasks.filter_by_user_id(filters[:reviewer])
-    tasks = tasks.filter_by_assigned_id(filters[:assigned])
-    tasks
+    tasks.filter_by_assigned_id(filters[:assigned])
   end
 
   # used by .filter
