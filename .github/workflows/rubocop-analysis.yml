@@ -23,8 +23,19 @@ jobs:
     - name: Install Code Scanning integration
       run: bundle add code-scanning-rubocop --version 0.3.0 --skip-install
 
-    - name: Install dependencies
-      run: bundle install
+    - name: Setup Bundler cache
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: bundle-use-ruby-${{ matrix.os }}-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          bundle-use-ruby-${{ matrix.os }}-${{ matrix.ruby }}-
+
+    - name: Install gems with Bundler
+      run: |
+        bundle config deployment true
+        bundle config path vendor/bundle
+        bundle install --jobs 4
 
     - name: Rubocop run
       run: |
