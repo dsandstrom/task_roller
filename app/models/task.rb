@@ -7,7 +7,7 @@
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
 
-  belongs_to :user # reviewer
+  belongs_to :user
   belongs_to :task_type
   belongs_to :project
   belongs_to :issue, required: false, counter_cache: true

@@ -20,7 +20,7 @@ class TasksController < ApplicationController
   end
 
   def new
-    if @task_types.any?
+    if @task_types&.any?
       @task = @project.tasks.build(task_type_id: @task_types.first.id)
       @task.issue = @issue
     else
@@ -35,6 +35,7 @@ class TasksController < ApplicationController
   def create
     @task = @project.tasks.build(task_params)
     @task.issue = @issue if @issue
+    @task.user = current_user
 
     if @task.save
       redirect_to category_project_task_url(@category, @project, @task),
@@ -103,23 +104,16 @@ class TasksController < ApplicationController
 
     def task_params
       params.require(:task).permit(:summary, :description, :task_type_id,
-                                   :user_id, :issue_id, assignee_ids: [])
+                                   :issue_id, assignee_ids: [])
     end
 
     def set_form_options
       set_task_types
-      set_user_options
       set_assignee_options
       set_issue_options
     end
 
-    def set_user_options
-      @user_options =
-        %w[Reviewer Admin].map do |type|
-          [type, User.employees(type).map { |u| [u.name_and_email, u.id] }]
-        end
-    end
-
+    # TODO: if reporter, only allow self assign
     def set_assignee_options
       @assignee_options =
         %w[Worker Reviewer].map do |type|

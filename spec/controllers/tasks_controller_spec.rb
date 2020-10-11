@@ -8,15 +8,16 @@ RSpec.describe TasksController, type: :controller do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
+  let(:admin) { Fabricate(:user_admin) }
 
   let(:valid_attributes) do
-    { task_type_id: task_type.id, user_id: user.id, summary: "Summary",
+    { task_type_id: task_type.id, summary: "Summary",
       description: "Description" }
   end
 
   let(:invalid_attributes) { { summary: "" } }
 
-  before { login(Fabricate(:user_admin)) }
+  before { login(admin) }
 
   describe "GET #index" do
     context "when category only" do
@@ -96,12 +97,20 @@ RSpec.describe TasksController, type: :controller do
   describe "POST #create" do
     context "when category and project" do
       context "with valid params" do
-        it "creates a new Task" do
+        it "creates a new Project Task" do
           expect do
             post :create, params: { category_id: category.to_param,
                                     project_id: project.to_param,
                                     task: valid_attributes }
           end.to change(project.tasks, :count).by(1)
+        end
+
+        it "creates a new current_user Task" do
+          expect do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    task: valid_attributes }
+          end.to change(admin.tasks, :count).by(1)
         end
 
         it "redirects to the created task" do
