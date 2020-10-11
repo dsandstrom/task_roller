@@ -34,7 +34,8 @@
   <% if current_user.present? %>
     <div class="page">
       <div class="user-info">
-        <%= current_user.name_and_email %> |
+        <%= link_to current_user.name, current_user %>
+        (<%= current_user.email %>) |
         <%= link_to 'logout', roller_authentication.logout_path, method: :delete %>
       </div>
     </div>
