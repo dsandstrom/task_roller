@@ -3,7 +3,7 @@
 # TODO: add active boolean (or use employee connection to disable a user)
 
 class User < ApplicationRecord
-  VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
+  VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
