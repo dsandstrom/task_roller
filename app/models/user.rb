@@ -6,7 +6,6 @@ class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reporter Reviewer Worker].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 
-  belongs_to :employee, dependent: :destroy, required: false
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
                             dependent: :destroy
   has_many :assignments, through: :task_assignees, class_name: 'Task',
@@ -15,43 +14,41 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-  validates :employee, presence: true, if: :employee_id
-  validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES }, on: :create
-
-  before_create :create_employee
-
-  attr_writer :employee_type
+  validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
+                            allow_nil: false, on: :create
+  validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
+                            allow_nil: true, on: :update
 
   # CLASS
 
   def self.employees(type = nil)
     if type.blank?
-      where('employees.type IN (?)', VALID_EMPLOYEE_TYPES)
+      where('employee_type IN (?)', VALID_EMPLOYEE_TYPES)
     elsif type.instance_of?(Array)
       return none unless type.all? { |t| VALID_EMPLOYEE_TYPES.include?(t) }
 
-      where('employees.type IN (?)', type)
+      where('employee_type IN (?)', type)
     else
       return none unless VALID_EMPLOYEE_TYPES.include?(type)
 
-      where('employees.type = ?', type)
-    end.includes(:employee).references(:employees)
+      where('employee_type = ?', type)
+    end
   end
 
   def self.admins
-    employees('Admin')
+    where(employee_type: 'Admin')
   end
 
   def self.reporters
-    employees('Reporter')
+    where(employee_type: 'Reporter')
   end
 
   def self.reviewers
-    employees('Reviewer')
+    where(employee_type: 'Reviewer')
   end
 
   def self.workers
-    employees('Worker')
+    where(employee_type: 'Worker')
   end
 
   # used in task filter form to display unassigned tasks
@@ -68,10 +65,6 @@ class User < ApplicationRecord
   end
 
   # INSTANCE
-
-  def employee_type
-    @employee_type ||= employee&.type
-  end
 
   def name_and_email
     @name_and_email ||=
@@ -113,12 +106,4 @@ class User < ApplicationRecord
   def finish_progressions
     progressions.unfinished.each(&:finish)
   end
-
-  private
-
-    def create_employee
-      return if employee_type.blank?
-
-      self.employee = employee_type.constantize.create
-    end
 end

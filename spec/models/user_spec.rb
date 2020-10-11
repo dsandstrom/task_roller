@@ -12,10 +12,8 @@ RSpec.describe User, type: :model do
 
   it { is_expected.to respond_to(:name) }
   it { is_expected.to respond_to(:email) }
-  it { is_expected.to respond_to(:employee_id) }
   it { is_expected.to respond_to(:employee_type) }
 
-  it { is_expected.to belong_to(:employee) }
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignments) }
   it { is_expected.to have_many(:progressions) }
@@ -35,7 +33,7 @@ RSpec.describe User, type: :model do
     end
 
     context "for an invalid employee_type" do
-      before { subject.employee_type = "Something Else" }
+      before { subject.employee_type = "something else" }
 
       it { is_expected.not_to be_valid }
     end
@@ -44,18 +42,22 @@ RSpec.describe User, type: :model do
   describe "on update" do
     let(:user) { Fabricate(:user) }
 
-    before { user.employee_type = nil }
+    context "when employee_type is nil" do
+      before { user.employee_type = nil }
 
-    it { expect(user).to be_valid }
+      it { expect(user).to be_valid }
+    end
+
+    context "when employee_type is something else" do
+      before { user.employee_type = "something else" }
+
+      it { expect(user).not_to be_valid }
+    end
   end
 
   # CLASS
 
   describe ".employees" do
-    let(:user) { Fabricate(:user) }
-
-    before { user.employee.destroy }
-
     context "when no type specifed" do
       it "includes admins" do
         employee = Fabricate(:user_admin)
@@ -206,178 +208,6 @@ RSpec.describe User, type: :model do
   end
 
   # INSTANCE
-
-  describe "#employee" do
-    describe "destroying user" do
-      it "destroys employee" do
-        employee = Fabricate(:reviewer)
-        user = Fabricate(:user, employee: employee)
-
-        expect do
-          user.destroy
-        end.to change(Employee, :count).by(-1)
-      end
-    end
-  end
-
-  describe "#employee_type" do
-    describe "reader" do
-      context "when no employee" do
-        let(:user) { Fabricate(:user) }
-
-        before do
-          user.employee_type = nil
-          user.employee.destroy
-        end
-
-        it "returns nil" do
-          expect(user.employee_type).to be_nil
-        end
-      end
-
-      context "when employee type is 'Admin'" do
-        let(:user) { Fabricate(:user_admin) }
-
-        before { user.employee_type = nil }
-
-        it "returns it" do
-          expect(user.employee_type).to eq("Admin")
-        end
-      end
-
-      context "when employee type is 'Reporter'" do
-        let(:user) { Fabricate(:user_reporter) }
-
-        before { user.employee_type = nil }
-
-        it "returns it" do
-          expect(user.employee_type).to eq("Reporter")
-        end
-      end
-
-      context "when employee type is 'Reviewer'" do
-        let(:user) { Fabricate(:user_reviewer) }
-
-        before { user.employee_type = nil }
-
-        it "returns it" do
-          expect(user.employee_type).to eq("Reviewer")
-        end
-      end
-
-      context "when employee type is 'Worker'" do
-        let(:user) { Fabricate(:user_worker) }
-
-        before { user.employee_type = nil }
-
-        it "returns it" do
-          expect(user.employee_type).to eq("Worker")
-        end
-      end
-    end
-  end
-
-  describe "#create_employee" do
-    context "for a new User" do
-      context "for an invalid user" do
-        it "doesn't create an employee" do
-          user = User.new(email: "")
-
-          expect do
-            user.save
-          end.not_to change(Employee, :count)
-        end
-      end
-
-      context "for a valid user" do
-        context "with employee_type of 'Admin'" do
-          before { subject.employee_type = "Admin" }
-
-          it "creates a Admin" do
-            expect do
-              subject.save
-            end.to change(Admin, :count).by(1)
-          end
-
-          it "sets employee_id" do
-            expect(subject.employee_id).to be_nil
-            subject.save
-            subject.reload
-            expect(subject.employee_id).not_to be_nil
-            expect(subject.employee_id).to eq(Employee.last.id)
-          end
-        end
-
-        context "with employee_type of 'Reporter'" do
-          before { subject.employee_type = "Reporter" }
-
-          it "creates a Reporter" do
-            expect do
-              subject.save
-            end.to change(Reporter, :count).by(1)
-          end
-
-          it "sets employee_id" do
-            expect(subject.employee_id).to be_nil
-            subject.save
-            subject.reload
-            expect(subject.employee_id).to eq(Employee.last.id)
-          end
-        end
-
-        context "with employee_type of 'Reviewer'" do
-          before { subject.employee_type = "Reviewer" }
-
-          it "creates a Reviewer" do
-            expect do
-              subject.save
-            end.to change(Reviewer, :count).by(1)
-          end
-
-          it "sets employee_id" do
-            expect(subject.employee_id).to be_nil
-            subject.save
-            subject.reload
-            expect(subject.employee_id).to eq(Employee.last.id)
-          end
-        end
-
-        context "with employee_type of 'Worker'" do
-          before { subject.employee_type = "Worker" }
-
-          it "creates a Worker" do
-            expect do
-              subject.save
-            end.to change(Worker, :count).by(1)
-          end
-
-          it "sets employee_id" do
-            expect(subject.employee_id).to be_nil
-            subject.save
-            subject.reload
-            expect(subject.employee_id).to eq(Employee.last.id)
-          end
-        end
-      end
-    end
-
-    context "for an existing User" do
-      let(:user) { Fabricate(:user) }
-
-      before do
-        user.name = "New Name"
-        user.employee_type = "Reviewer"
-      end
-
-      describe "saving" do
-        it "doesn't create an Employee" do
-          expect do
-            user.save
-          end.not_to change(Employee, :count)
-        end
-      end
-    end
-  end
 
   describe "#name_and_email" do
     let(:user) { Fabricate(:user) }

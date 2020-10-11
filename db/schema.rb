@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_203906) do
+ActiveRecord::Schema.define(version: 2020_10_11_030437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,13 +23,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_203906) do
     t.datetime "updated_at", null: false
     t.index ["internal"], name: "index_categories_on_internal"
     t.index ["visible"], name: "index_categories_on_visible"
-  end
-
-  create_table "employees", force: :cascade do |t|
-    t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["type"], name: "index_employees_on_type"
   end
 
   create_table "issues", force: :cascade do |t|
@@ -145,11 +138,10 @@ ActiveRecord::Schema.define(version: 2020_09_15_203906) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.integer "employee_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "employee_type"
     t.index ["email"], name: "index_users_on_email"
-    t.index ["employee_id"], name: "index_users_on_employee_id"
   end
 
 end

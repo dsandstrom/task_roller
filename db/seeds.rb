@@ -4,25 +4,25 @@ require 'faker'
 
 class Seeds
   def create_admins
-    return if Admin.any?
+    return if User.admins.any?
 
     3.times { create_user('Admin') }
   end
 
   def create_reporters
-    return if Reporter.any?
+    return if User.reporters.any?
 
     11.times { create_user('Reporter') }
   end
 
   def create_reviewers
-    return if Reviewer.any?
+    return if User.reviewers.any?
 
     6.times { create_user('Reviewer') }
   end
 
   def create_workers
-    return if Worker.any?
+    return if User.workers.any?
 
     5.times { create_user('Worker') }
   end
@@ -94,7 +94,7 @@ class Seeds
     def create_issue(project)
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
       project.issues.create!(issue_type_id: IssueType.ids.sample,
-                             user_id: Reporter.ids.sample,
+                             user_id: User.reporters.ids.sample,
                              summary: Faker::Company.catch_phrase,
                              description: description)
     end
@@ -102,7 +102,7 @@ class Seeds
     def create_task(project)
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
       project.tasks.create!(task_type_id: TaskType.ids.sample,
-                            user_id: Reviewer.ids.sample,
+                            user_id: User.reviewers.ids.sample,
                             summary: Faker::Company.bs.capitalize,
                             description: description)
     end
