@@ -4,14 +4,17 @@
     <%= category_tags(category) %>
   </div>
 
-  <p class="category-issues-link">
+  <div class="category-issues-link">
+    <%= content_tag :p, pluralize(category.projects.size, 'Project'),
+                        class: 'category-project-count' %>
+
     <%# TODO: change to open issues %>
     <%= link_to pluralize(category.issues.count, 'Issue'),
                 category_issues_path(category) %>
     <%# TODO: change to open tasks %>
     <%= link_to pluralize(category.tasks.count, 'Task'),
                 category_tasks_path(category) %>
-  </p>
+  </div>
 
   <p class="category-links">
     <% if policy(category).destroy? %>
