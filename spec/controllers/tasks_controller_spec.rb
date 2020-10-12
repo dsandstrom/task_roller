@@ -17,301 +17,660 @@ RSpec.describe TasksController, type: :controller do
 
   let(:invalid_attributes) { { summary: "" } }
 
-  before { login(admin) }
-
   describe "GET #index" do
-    context "when category only" do
-      it "returns a success response" do
-        _task = Fabricate(:task, project: project)
-        get :index, params: { category_id: category.to_param }
-        expect(response).to be_successful
-      end
-    end
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
 
-    context "when category and project" do
-      it "returns a success response" do
-        _task = Fabricate(:task, project: project)
-        get :index, params: { category_id: category.to_param,
-                              project_id: project.to_param }
-        expect(response).to be_successful
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when category only" do
+          it "returns a success response" do
+            Fabricate(:task, project: project)
+            Fabricate(:task, project: project, user: current_user)
+            get :index, params: { category_id: category.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when category and project" do
+          it "returns a success response" do
+            Fabricate(:task, project: project)
+            Fabricate(:task, project: project, user: current_user)
+            get :index, params: { category_id: category.to_param,
+                                  project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
       end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      task = Fabricate(:task, project: project)
-      get :show, params: { category_id: category.to_param,
-                           project_id: project.to_param,
-                           id: task.to_param }
-      expect(response).to be_successful
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when someone else's task" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project)
+            get :show, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when their task" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, user: current_user)
+            get :show, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+      end
     end
   end
 
   describe "GET #new" do
     before { Fabricate(:task_type) }
 
-    context "when category and project" do
-      it "returns a success response" do
-        get :new, params: { category_id: category.to_param,
-                            project_id: project.to_param }
+    %w[admin reviewer worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        expect(response).to be_successful
+        before { login(current_user) }
+
+        context "when category and project" do
+          it "returns a success response" do
+            get :new, params: { category_id: category.to_param,
+                                project_id: project.to_param }
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when category, project, and issue" do
+          it "returns a success response" do
+            get :new, params: { category_id: category.to_param,
+                                project_id: project.to_param,
+                                issue_id: issue.to_param }
+
+            expect(response).to be_successful
+          end
+        end
       end
     end
 
-    context "when category, project, and issue" do
-      it "returns a success response" do
-        get :new, params: { category_id: category.to_param,
-                            project_id: project.to_param,
-                            issue_id: issue.to_param }
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        expect(response).to be_successful
+        before { login(current_user) }
+
+        it "should be unauthorized" do
+          get :new, params: { category_id: category.to_param,
+                              project_id: project.to_param }
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end
 
   describe "GET #edit" do
-    context "when category and project" do
-      it "returns a success response" do
-        task = Fabricate(:task, project: project)
-        get :edit, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             id: task.to_param }
-        expect(response).to be_successful
+    %w[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue,
+                                    user: current_user)
+            get :edit, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when someone else's issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue)
+            get :edit, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
       end
     end
 
-    context "when category, project, and issue" do
-      it "returns a success response" do
-        task = Fabricate(:task, project: project, issue: issue)
-        get :edit, params: { category_id: category.to_param,
-                             project_id: project.to_param,
-                             issue_id: issue.to_param,
-                             id: task.to_param }
-        expect(response).to be_successful
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue,
+                                    user: current_user)
+            get :edit, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when someone else's issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue)
+            get :edit, params: { category_id: category.to_param,
+                                 project_id: project.to_param,
+                                 id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
       end
     end
   end
 
   describe "POST #create" do
-    context "when category and project" do
-      context "with valid params" do
-        it "creates a new Project Task" do
-          expect do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    task: valid_attributes }
-          end.to change(project.tasks, :count).by(1)
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when category and project" do
+          context "with valid params" do
+            it "creates a new Project Task" do
+              expect do
+                post :create, params: { category_id: category.to_param,
+                                        project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(project.tasks, :count).by(1)
+            end
+
+            it "creates a new current_user Task" do
+              expect do
+                post :create, params: { category_id: category.to_param,
+                                        project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(current_user.tasks, :count).by(1)
+            end
+
+            it "redirects to the created task" do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      task: valid_attributes }
+              url = category_project_task_path(category, project, Task.last)
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "with invalid params" do
+            it "returns a success response ('new' template)" do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      task: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when assigning" do
+            let(:user) { Fabricate(:user_worker) }
+
+            before { valid_attributes.merge!(assignee_ids: [user.id]) }
+
+            it "creates an assignment" do
+              expect do
+                post :create, params: { category_id: category.to_param,
+                                        project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(user.assignments, :count).by(1)
+            end
+          end
         end
 
-        it "creates a new current_user Task" do
-          expect do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    task: valid_attributes }
-          end.to change(admin.tasks, :count).by(1)
-        end
+        context "when category, project, and issue" do
+          context "with valid params" do
+            it "creates a new Task" do
+              expect do
+                post :create, params: { category_id: category.to_param,
+                                        project_id: project.to_param,
+                                        issue_id: issue.to_param,
+                                        task: valid_attributes }
+              end.to change(issue.tasks, :count).by(1)
+            end
 
-        it "redirects to the created task" do
-          post :create, params: { category_id: category.to_param,
-                                  project_id: project.to_param,
-                                  task: valid_attributes }
-          url = category_project_task_path(category, project, Task.last)
-          expect(response).to redirect_to(url)
-        end
-      end
+            it "redirects to the created task" do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      issue_id: issue.to_param,
+                                      task: valid_attributes }
+              url = category_project_task_path(category, project, Task.last)
+              expect(response).to redirect_to(url)
+            end
+          end
 
-      context "with invalid params" do
-        it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: { category_id: category.to_param,
-                                  project_id: project.to_param,
-                                  task: invalid_attributes }
-          expect(response).to be_successful
-        end
-      end
-
-      context "when assigning" do
-        let(:user) { Fabricate(:user_worker) }
-
-        before { valid_attributes.merge!(assignee_ids: [user.id]) }
-
-        it "creates an assignment" do
-          expect do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    task: valid_attributes }
-          end.to change(user.assignments, :count).by(1)
+          context "with invalid params" do
+            it "returns a success response ('new' template)" do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      issue_id: issue.to_param,
+                                      task: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
         end
       end
     end
 
-    context "when category, project, and issue" do
-      context "with valid params" do
-        it "creates a new Task" do
+    %w[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "with valid params" do
+          it "creates a new Project Task" do
+            expect do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      task: valid_attributes }
+            end.to change(project.tasks, :count).by(1)
+          end
+
+          it "creates a new current_user Task" do
+            expect do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      task: valid_attributes }
+            end.to change(current_user.tasks, :count).by(1)
+          end
+
+          it "creates an assignment for them" do
+            Fabricate(:user_worker)
+
+            expect do
+              post :create, params: { category_id: category.to_param,
+                                      project_id: project.to_param,
+                                      task: valid_attributes }
+            end.to change(current_user.assignments, :count).by(1)
+          end
+
+          it "redirects to the created task" do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    task: valid_attributes }
+            url = category_project_task_path(category, project, Task.last)
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "with invalid params" do
+          it "returns a success response ('new' template)" do
+            post :create, params: { category_id: category.to_param,
+                                    project_id: project.to_param,
+                                    task: invalid_attributes }
+            expect(response).to be_successful
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        it "doesn't create a Task" do
           expect do
             post :create, params: { category_id: category.to_param,
                                     project_id: project.to_param,
-                                    issue_id: issue.to_param,
                                     task: valid_attributes }
-          end.to change(issue.tasks, :count).by(1)
+          end.not_to change(Task, :count)
         end
 
-        it "redirects to the created task" do
+        it "should be unauthorized" do
           post :create, params: { category_id: category.to_param,
                                   project_id: project.to_param,
-                                  issue_id: issue.to_param,
                                   task: valid_attributes }
-          url = category_project_task_path(category, project, Task.last)
-          expect(response).to redirect_to(url)
-        end
-      end
-
-      context "with invalid params" do
-        it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: { category_id: category.to_param,
-                                  project_id: project.to_param,
-                                  issue_id: issue.to_param,
-                                  task: invalid_attributes }
-          expect(response).to be_successful
+          expect_to_be_unauthorized(response)
         end
       end
     end
   end
 
   describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) { { summary: "New Summary" } }
+    let(:new_attributes) { { summary: "New Summary" } }
 
-      it "updates the requested task" do
-        task = Fabricate(:task, project: project)
-        expect do
-          put :update, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: task.to_param,
-                                 task: new_attributes }
-          task.reload
-        end.to change(task, :summary).to("New Summary")
-      end
+    %w[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      it "redirects to the task" do
-        task = Fabricate(:task, project: project)
-        put :update, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: task.to_param,
-                               task: new_attributes }
-        expect(response)
-          .to redirect_to(category_project_task_url(category, project, task))
+        before { login(current_user) }
+
+        context "when their task" do
+          context "with valid params" do
+            it "updates the requested task" do
+              task = Fabricate(:task, project: project, user: current_user)
+              expect do
+                put :update, params: { category_id: category.to_param,
+                                       project_id: project.to_param,
+                                       id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.to change(task, :summary).to("New Summary")
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:task, project: project, user: current_user)
+              put :update, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param,
+                                     task: new_attributes }
+              url = category_project_task_url(category, project, task)
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "with invalid params" do
+            it "returns a success response ('edit' template)" do
+              task = Fabricate(:task, project: project, user: current_user)
+              put :update, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param,
+                                     task: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when someone else's task" do
+          context "with valid params" do
+            it "updates the requested task" do
+              task = Fabricate(:task, project: project, user: current_user)
+              expect do
+                put :update, params: { category_id: category.to_param,
+                                       project_id: project.to_param,
+                                       id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.to change(task, :summary).to("New Summary")
+            end
+          end
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        task = Fabricate(:task, project: project)
-        put :update, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: task.to_param,
-                               task: invalid_attributes }
-        expect(response).to be_successful
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their task" do
+          context "with valid params" do
+            it "updates the requested task" do
+              task = Fabricate(:task, project: project, user: current_user)
+              expect do
+                put :update, params: { category_id: category.to_param,
+                                       project_id: project.to_param,
+                                       id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.to change(task, :summary).to("New Summary")
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:task, project: project, user: current_user)
+              put :update, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param,
+                                     task: new_attributes }
+              url = category_project_task_url(category, project, task)
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "with invalid params" do
+            it "returns a success response ('edit' template)" do
+              task = Fabricate(:task, project: project, user: current_user)
+              put :update, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param,
+                                     task: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when someone else's task" do
+          it "doesn't update the requested task" do
+            task = Fabricate(:task, project: project)
+            expect do
+              put :update, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param,
+                                     task: new_attributes }
+              task.reload
+            end.not_to change(task, :summary)
+          end
+
+          it "should be unauthorized" do
+            task = Fabricate(:task, project: project)
+            put :update, params: { category_id: category.to_param,
+                                   project_id: project.to_param,
+                                   id: task.to_param,
+                                   task: new_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested task" do
-      task = Fabricate(:task, project: project)
-      expect do
-        delete :destroy, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: task.to_param }
-      end.to change(Task, :count).by(-1)
+    %w[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        it "destroys the requested task" do
+          task = Fabricate(:task, project: project)
+          expect do
+            delete :destroy, params: { category_id: category.to_param,
+                                       project_id: project.to_param,
+                                       id: task.to_param }
+          end.to change(Task, :count).by(-1)
+        end
+
+        it "redirects to the tasks list" do
+          task = Fabricate(:task, project: project)
+          delete :destroy, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param }
+          url = category_project_url(category, project)
+          expect(response).to redirect_to(url)
+        end
+      end
     end
 
-    it "redirects to the tasks list" do
-      task = Fabricate(:task, project: project)
-      delete :destroy, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: task.to_param }
-      expect(response).to redirect_to(category_project_url(category, project))
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        it "doesn't destroy the requested task" do
+          task = Fabricate(:task, project: project, user: current_user)
+          expect do
+            delete :destroy, params: { category_id: category.to_param,
+                                       project_id: project.to_param,
+                                       id: task.to_param }
+          end.not_to change(Task, :count)
+        end
+
+        it "should be unauthorized" do
+          task = Fabricate(:task, project: project, user: current_user)
+          delete :destroy, params: { category_id: category.to_param,
+                                     project_id: project.to_param,
+                                     id: task.to_param }
+          expect_to_be_unauthorized(response)
+        end
+      end
     end
   end
 
   describe "PUT #open" do
-    context "with valid params" do
-      let(:new_attributes) {}
+    %w[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      it "updates the requested task" do
-        task = Fabricate(:closed_task, project: project)
+        before { login(current_user) }
 
-        expect do
-          put :open, params: { id: task.to_param }
-          task.reload
-        end.to change(task, :closed).to(false)
-      end
+        context "with valid params" do
+          let(:new_attributes) {}
 
-      it "redirects to the task" do
-        task = Fabricate(:closed_task, project: project)
-        put :open, params: { id: task.to_param }
-        expect(response)
-          .to redirect_to(category_project_task_url(category, project, task))
+          it "updates the requested task" do
+            task = Fabricate(:closed_task, project: project)
+
+            expect do
+              put :open, params: { id: task.to_param }
+              task.reload
+            end.to change(task, :closed).to(false)
+          end
+
+          it "redirects to the task" do
+            task = Fabricate(:closed_task, project: project)
+            put :open, params: { id: task.to_param }
+            url = category_project_task_url(category, project, task)
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "with invalid params" do
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          before { task.user.destroy }
+
+          it "doesn't update the requested task" do
+            expect do
+              put :open, params: { id: task.to_param }
+              task.reload
+            end.not_to change(task, :closed)
+          end
+
+          it "returns a success response ('edit' template)" do
+            put :open, params: { id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
       end
     end
 
-    context "with invalid params" do
-      let(:task) { Fabricate(:closed_task, project: project) }
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { task.user.destroy }
+        before { login(current_user) }
 
-      it "doesn't update the requested task" do
-        expect do
+        it "doesn't open the requested task" do
+          task = Fabricate(:closed_task, project: project, user: current_user)
+          expect do
+            put :open, params: { id: task.to_param }
+            task.reload
+          end.not_to change(task, :closed)
+        end
+
+        it "should be unauthorized" do
+          task = Fabricate(:closed_task, project: project, user: current_user)
           put :open, params: { id: task.to_param }
-          task.reload
-        end.not_to change(task, :closed)
-      end
-
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        put :open, params: { id: task.to_param }
-        expect(response).to be_successful
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end
 
   describe "PUT #close" do
-    context "with valid params" do
-      let(:new_attributes) {}
+    %w[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      it "updates the requested task" do
-        task = Fabricate(:open_task, project: project)
+        before { login(current_user) }
 
-        expect do
-          put :close, params: { id: task.to_param }
-          task.reload
-        end.to change(task, :closed).to(true)
-      end
+        context "with valid params" do
+          let(:new_attributes) {}
 
-      it "redirects to the task" do
-        task = Fabricate(:open_task, project: project)
-        put :close, params: { id: task.to_param }
-        expect(response)
-          .to redirect_to(category_project_task_url(category, project, task))
+          it "updates the requested task" do
+            task = Fabricate(:open_task, project: project)
+
+            expect do
+              put :close, params: { id: task.to_param }
+              task.reload
+            end.to change(task, :closed).to(true)
+          end
+
+          it "redirects to the task" do
+            task = Fabricate(:open_task, project: project)
+            put :close, params: { id: task.to_param }
+            url = category_project_task_url(category, project, task)
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "with invalid params" do
+          let(:task) { Fabricate(:open_task, project: project) }
+
+          before { task.user.destroy }
+
+          it "returns a success response ('edit' template)" do
+            put :close, params: { id: task.to_param }
+            expect(response).to be_successful
+          end
+
+          it "doesn't update the requested task" do
+            expect do
+              put :close, params: { id: task.to_param }
+              task.reload
+            end.not_to change(task, :closed)
+          end
+        end
       end
     end
 
-    context "with invalid params" do
-      let(:task) { Fabricate(:closed_task, project: project) }
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { task.user.destroy }
+        before { login(current_user) }
 
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        put :close, params: { id: task.to_param }
-        expect(response).to be_successful
-      end
+        it "doesn't open the requested task" do
+          task = Fabricate(:open_task, project: project, user: current_user)
+          expect do
+            put :close, params: { id: task.to_param }
+            task.reload
+          end.not_to change(task, :closed)
+        end
 
-      it "doesn't update the requested task" do
-        expect do
+        it "should be unauthorized" do
+          task = Fabricate(:open_task, project: project, user: current_user)
           put :close, params: { id: task.to_param }
-          task.reload
-        end.not_to change(task, :closed)
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end

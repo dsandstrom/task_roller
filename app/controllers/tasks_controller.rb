@@ -7,6 +7,7 @@
 # TODO: allow creating issue/task from comment
 
 class TasksController < ApplicationController
+  before_action :authorize_task, only: %i[index new create destroy open close]
   before_action :set_category, :set_project, :set_issue, except: %i[open close]
   before_action :set_task, only: %i[show edit update destroy open close]
   before_action :set_form_options, only: %i[new edit]
@@ -33,10 +34,7 @@ class TasksController < ApplicationController
   def edit; end
 
   def create
-    @task = @project.tasks.build(task_params)
-    @task.issue = @issue if @issue
-    @task.user = current_user
-
+    build_task
     if @task.save
       redirect_to category_project_task_url(@category, @project, @task),
                   success: 'Task was successfully created.'
@@ -84,6 +82,17 @@ class TasksController < ApplicationController
 
   private
 
+    def authorize_task
+      authorize Task
+    end
+
+    def build_task
+      @task = @project.tasks.build(task_params)
+      @task.issue = @issue if @issue
+      @task.user = current_user
+      @task.assignee_ids = [current_user.to_param] if current_user.worker?
+    end
+
     def set_task
       if @project
         @task = @project.tasks.find(params[:id])
@@ -92,6 +101,7 @@ class TasksController < ApplicationController
         @category = @task.category
         @project = @task.project
       end
+      authorize @task
     end
 
     def set_task_types
@@ -115,6 +125,8 @@ class TasksController < ApplicationController
 
     # TODO: if reporter, only allow self assign
     def set_assignee_options
+      return unless current_user.admin? || current_user.reviewer?
+
       @assignee_options =
         %w[Worker Reviewer].map do |type|
           employees = User.employees(type).map { |u| [u.name_and_email, u.id] }

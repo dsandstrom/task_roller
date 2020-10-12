@@ -42,7 +42,7 @@ Metrics/BlockLength:
     - 'Guardfile'
 
 Metrics/ClassLength:
-  Max: 120
+  Max: 150
 
 Naming/FileName:
   Exclude:
