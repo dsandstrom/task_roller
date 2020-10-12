@@ -22,5 +22,37 @@
     <% end %>
   </p>
 
+  <div class="user-tasks">
+    <header class="tasks-header">
+      <h2>Recent Tasks</h2>
+      <p>
+        <%= link_to 'View All', '#user_tasks_path(@user)', class: 'button' %>
+      </p>
+    </header>
+    <div class="tasks">
+      <% if @tasks.any? %>
+        <%= render @tasks %>
+      <% else %>
+        <p class="no-task">None yet</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="user-issues">
+    <header class="issues-header">
+      <h2>Reported Issues</h2>
+      <p>
+        <%= link_to 'View All', '#user_issues_path(@user)', class: 'button' %>
+      </p>
+    </header>
+    <div class="issues">
+      <% if @issues.any? %>
+        <%= render @issues %>
+      <% else %>
+        <p class="no-issue">None yet</p>
+      <% end %>
+    </div>
+  </div>
+
   <p><%= link_to 'Back', :back %></p>
 </div>

@@ -13,7 +13,12 @@ class UsersController < ApplicationController
     @workers = User.workers
   end
 
-  def show; end
+  def show
+    @issues = @user.issues.order(updated_at: :desc).limit(5)
+    # TODO: for reviewer+, should be created tasks
+    # TODO: for worker-, should be assigned tasks
+    @tasks = @user.tasks.order(updated_at: :desc).limit(5)
+  end
 
   def new
     employee_type =

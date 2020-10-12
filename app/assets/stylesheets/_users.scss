@@ -77,6 +77,14 @@
   }
 }
 
+.user-issues {
+  margin-bottom: 2rem;
+}
+
+.user-tasks {
+  margin-top: 2rem;
+}
+
 @include breakpoint(medium up) {
   .users {
     .user {
