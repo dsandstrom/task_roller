@@ -1,11 +1,15 @@
 <%
-return unless category
+category ||= nil
+user ||= nil
+return unless category || user
 
 index_path =
-  if category && project
+  if user
+    user_path(user)
+  elsif project
     category_project_issues_path(category, project)
   else
-    category_issues_path(category, project)
+    category_issues_path(category)
   end
 
 reporter_options =
@@ -15,7 +19,7 @@ reporter_options =
 
 <div class="issue">
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
-    <%= render 'status_filter_field' %>
+    <%= render 'issues/status_filter_field' %>
 
     <div class="field">
       <%= label_tag :reporter, 'Reporter' %>
