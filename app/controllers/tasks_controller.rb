@@ -88,8 +88,8 @@ class TasksController < ApplicationController
 
     def build_task
       @task = @project.tasks.build(task_params)
-      @task.issue = @issue if @issue
-      @task.user = current_user
+      @task.issue_id = @issue.to_param if @issue
+      @task.user_id = current_user.to_param
       @task.assignee_ids = [current_user.to_param] if current_user.worker?
     end
 

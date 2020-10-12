@@ -3,8 +3,10 @@
   <header class="issue-header">
     <h3 class="issue-summary">
       <%= issue_type_icon_tag(issue.issue_type) %>
-      <%= link_to issue.summary,
-                  category_project_issue_path(issue.category, issue.project, issue) %>
+      <%= link_to_if policy(issue).show?,  issue.summary,
+                     category_project_issue_path(issue.category,
+                                                 issue.project,
+                                                 issue) %>
     </h3>
   </header>
 

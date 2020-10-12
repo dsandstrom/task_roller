@@ -8,7 +8,8 @@
 
   <div class="project-name-and-tags">
     <h3 class="project-name">
-      <%= link_to project.name, category_project_path(category, project) %>
+      <%= link_to_if policy(project).show?, project.name,
+                     category_project_path(category, project) %>
     </h3>
 
     <%= project_tags(project) %>
@@ -16,18 +17,27 @@
 
   <% unless @category %>
     <p class="project-category">
-      <%= link_to project.category.name, project.category %>
+      <%= link_to_if policy(project.category).show?,
+                     project.category.name,
+                     project.category %>
     </p>
   <% end %>
 
-  <p class="project-issues-link">
+  <div class="project-counts">
     <%# TODO: change to open issues %>
-    <%= link_to pluralize(project.issues.count, 'Issue'),
-                category_project_issues_path(project.category, project) %>
+    <p class="project-issues-link">
+      <%= link_to_if policy(Issue).index?,
+                     pluralize(project.issues.count, 'Issue'),
+                     category_project_issues_path(project.category, project) %>
+    </p>
+
     <%# TODO: change to open tasks %>
-    <%= link_to pluralize(project.tasks.count, 'Task'),
-                category_project_tasks_path(project.category, project) %>
-  </p>
+    <p class="project-tasks-link">
+      <%= link_to_if policy(Task).index?,
+                     pluralize(project.tasks.count, 'Task'),
+                     category_project_tasks_path(project.category, project) %>
+    </p>
+  </div>
 
   <p class="project-links">
     <% if policy(project).destroy? %>

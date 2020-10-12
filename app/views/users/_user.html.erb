@@ -1,7 +1,7 @@
 <div id="user-<%= user.id %>" class="user">
   <div class="user-name-and-email">
     <h3 class="user-name">
-      <%= link_to user.name, user %>
+      <%= link_to_if policy(user).show?, user.name, user %>
     </h3>
 
     <p class="user-email">
