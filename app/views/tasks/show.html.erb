@@ -77,7 +77,8 @@ assigned = @task.assigned
         </p>
       </section>
 
-      <% if @task.open? %>
+      <%# TODO: change policy to TaskAssignment %>
+      <% if @task.open? && policy(@task).close? %>
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>
 
@@ -145,11 +146,12 @@ assigned = @task.assigned
               <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
             </span>
 
-            <%# TODO: allow reviewers+ to self assign %>
-            <%= divider %>
-            <%= link_to 'change',
-                        edit_category_project_task_path(@category, @task.project, @task),
-                        class: 'secondary-link' %>
+            <% if policy(@task).edit?  %>
+              <%= divider %>
+              <%= link_to 'change',
+                          edit_category_project_task_path(@category, @task.project, @task),
+                          class: 'secondary-link' %>
+            <% end %>
           </p>
         </section>
       <% end %>
@@ -193,14 +195,19 @@ assigned = @task.assigned
 
           <%= content_tag :main, @task.description_html.html_safe %>
 
-          <footer>
-            <%= link_to 'edit',
-                        edit_category_project_task_path(@category, @task.project, @task) %>
-          </footer>
+          <% if policy(@task).edit?  %>
+            <footer>
+              <%= link_to 'edit',
+                          edit_category_project_task_path(@category,
+                                                          @task.project,
+                                                          @task) %>
+            </footer>
+          <% end %>
         </div>
 
         <%= render partial: 'roller_comments/comment', collection: comments,
-                   locals: { category: @category, project: @task.project, object: @task } %>
+                   locals: { category: @category, project: @task.project,
+                             object: @task } %>
 
         <%= render 'roller_comments/form',
                    category: @category, project: @task.project, object: @task,

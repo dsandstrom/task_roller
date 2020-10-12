@@ -258,10 +258,6 @@ RSpec.describe "tasks/show", type: :view do
                                                  user: current_user))
         end
 
-        let(:url) do
-          category_project_task_task_comments_url(@category, @project, @task)
-        end
-
         it "renders task's heading" do
           render
           assert_select ".task-heading", @task.heading
@@ -270,6 +266,8 @@ RSpec.describe "tasks/show", type: :view do
         it "renders new task_comment form" do
           render
 
+          url = category_project_task_task_comments_url(@category, @project,
+                                                        @task)
           assert_select "form[action=?][method=?]", url, "post" do
             assert_select "textarea[name=?]", "task_comment[body]"
           end
@@ -323,6 +321,34 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render reopen link" do
           render
           expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        end
+      end
+
+      context "when someone else's Task" do
+        before do
+          @project = assign(:project, Fabricate(:project, category: @category))
+          @task = assign(:task, Fabricate(:task, project: @project))
+        end
+
+        it "renders task's heading" do
+          render
+          assert_select ".task-heading", @task.heading
+        end
+
+        it "renders new task_comment form" do
+          render
+
+          url = category_project_task_task_comments_url(@category, @project,
+                                                        @task)
+          assert_select "form[action=?][method=?]", url, "post" do
+            assert_select "textarea[name=?]", "task_comment[body]"
+          end
+        end
+
+        it "doesn't render edit link" do
+          render
+          url = edit_category_project_task_path(@category, @project, @task)
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
     end
