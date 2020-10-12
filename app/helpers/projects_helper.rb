@@ -27,7 +27,8 @@ module ProjectsHelper
     end
 
     def project_breadcrumb_pages(category, project)
-      related = [[category.name, category_path(category)]]
+      related = [['Categories', categories_path],
+                 [category.name, category_path(category)]]
       if params[:controller] == 'issues'
         related +=
           [['Project Tasks', category_project_tasks_path(category, project)]]
