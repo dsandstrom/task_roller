@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class IssueCommentsController < ApplicationController
+  before_action :authorize_issue_comment, only: %i[index new create destroy]
   before_action :set_category, :set_project, :set_issue
   before_action :set_issue_comment, only: %i[edit update destroy]
 
@@ -13,6 +14,7 @@ class IssueCommentsController < ApplicationController
 
   def create
     @issue_comment = @issue.comments.build(issue_comment_params)
+    @issue_comment.user_id = current_user.id
 
     if @issue_comment.save
       redirect_to redirect_url, notice: 'Comment was successfully created.'
@@ -37,12 +39,17 @@ class IssueCommentsController < ApplicationController
 
   private
 
+    def authorize_issue_comment
+      authorize IssueComment
+    end
+
     def set_issue
       @issue = Issue.find(params[:issue_id])
     end
 
     def set_issue_comment
       @issue_comment = @issue.comments.find(params[:id])
+      authorize @issue_comment
     end
 
     def redirect_url
@@ -51,8 +58,7 @@ class IssueCommentsController < ApplicationController
                                    anchor: "comment-#{@issue_comment.id}")
     end
 
-    # TODO: only allow body
     def issue_comment_params
-      params.require(:issue_comment).permit(:user_id, :body)
+      params.require(:issue_comment).permit(:body)
     end
 end
