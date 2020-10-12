@@ -109,7 +109,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                                     task_comment: valid_attributes }
             anchor = "comment-#{TaskComment.last.id}"
             url = category_project_task_url(category, project, task,
-                                             anchor: anchor)
+                                            anchor: anchor)
             expect(response).to redirect_to(url)
           end
         end
@@ -151,7 +151,7 @@ RSpec.describe TaskCommentsController, type: :controller do
             task_comment = Fabricate(:task_comment, task: task, user: admin)
             url =
               category_project_task_url(category, project, task,
-                                         anchor: "comment-#{task_comment.id}")
+                                        anchor: "comment-#{task_comment.id}")
             put :update, params: { category_id: category.to_param,
                                    project_id: project.to_param,
                                    task_id: task.to_param,
