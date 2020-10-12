@@ -25,8 +25,6 @@ RSpec.describe "task_comments/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "select[name=?]", "task_comment[user_id]"
-
       assert_select "textarea[name=?]", "task_comment[body]"
     end
   end

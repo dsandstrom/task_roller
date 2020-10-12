@@ -23,8 +23,6 @@ RSpec.describe "issue_comments/new", type: :view do
     render
 
     assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "select[name=?]", "issue_comment[user_id]"
-
       assert_select "textarea[name=?]", "issue_comment[body]"
     end
   end
