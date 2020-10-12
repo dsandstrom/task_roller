@@ -15,7 +15,9 @@ RSpec.describe User, type: :model do
   it { is_expected.to respond_to(:employee_type) }
 
   it { is_expected.to have_many(:issues) }
+  it { is_expected.to have_many(:issue_comments) }
   it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:task_comments) }
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignments) }
   it { is_expected.to have_many(:progressions) }

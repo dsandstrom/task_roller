@@ -16,6 +16,8 @@ class User < ApplicationRecord
   # probably add paper_trail too
   has_many :issues
   has_many :tasks
+  has_many :issue_comments
+  has_many :task_comments
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
