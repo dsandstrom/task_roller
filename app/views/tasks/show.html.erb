@@ -65,13 +65,11 @@ assigned = @task.assigned
         <% end %>
 
         <p>
-          <% if @task.open? %>
-            <%# TODO: admin only %>
+          <% if @task.open? && policy(@task).close? %>
             <%= link_to 'force close',
                         close_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
-          <% else %>
-            <%# TODO: reviewer+ only %>
+          <% elsif policy(@task).open? %>
             <%= link_to 'reopen',
                         open_task_path(@task),
                         method: :patch, class: 'secondary-link' %>
