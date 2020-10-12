@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TaskCommentsController < ApplicationController
+  before_action :authorize_task_comment, only: %i[index new create destroy]
   before_action :set_category, :set_project, :set_task
   before_action :set_task_comment, only: %i[edit update destroy]
 
@@ -13,6 +14,7 @@ class TaskCommentsController < ApplicationController
 
   def create
     @task_comment = @task.comments.build(task_comment_params)
+    @task_comment.user_id = current_user.id
 
     if @task_comment.save
       redirect_to redirect_url, notice: 'Comment was successfully created.'
@@ -37,12 +39,17 @@ class TaskCommentsController < ApplicationController
 
   private
 
+    def authorize_task_comment
+      authorize TaskComment
+    end
+
     def set_task
       @task = Task.find(params[:task_id])
     end
 
     def set_task_comment
       @task_comment = @task.comments.find(params[:id])
+      authorize @task_comment
     end
 
     def redirect_url
@@ -51,8 +58,7 @@ class TaskCommentsController < ApplicationController
                                   anchor: "comment-#{@task_comment.id}")
     end
 
-    # TODO: only allow body
     def task_comment_params
-      params.require(:task_comment).permit(:user_id, :body)
+      params.require(:task_comment).permit(:body)
     end
 end
