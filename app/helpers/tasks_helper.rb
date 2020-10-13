@@ -30,8 +30,9 @@ module TasksHelper
     end
 
     def task_header_pages(category, project, task)
-      pages = [[category.name, category], project_breadcrumb_item(project),
-               ['Project Tasks', category_project_tasks_path(category, project)]]
+      pages =
+        [[category.name, category], project_breadcrumb_item(project),
+         ['Project Tasks', category_project_tasks_path(category, project)]]
       return pages unless task.issue
 
       pages << issue_breadcrumb_item(category, project, task.issue)
