@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: authorize issue on visible
+
 class IssuePolicy < ApplicationPolicy
   def index?
     employee?

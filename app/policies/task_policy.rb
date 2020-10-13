@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: authorize task on visible
+
 class TaskPolicy < ApplicationPolicy
   def index?
     employee?
