@@ -3,7 +3,17 @@
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <% unless user.persisted? %>
+  <div class="field">
+    <%= required_field_label form, :name %>
+    <%= form.text_field :name, id: :user_name %>
+  </div>
+
+  <% if user.persisted? %>
+    <div class="field">
+      <%= form.label :email, class: 'disabled' %>
+      <%= form.email_field :email, id: :user_email, disabled: true %>
+    </div>
+  <% else %>
     <%= form.hidden_field :employee_type %>
 
     <div class="field">
@@ -11,11 +21,6 @@
       <%= form.email_field :email, id: :user_email %>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= required_field_label form, :name %>
-    <%= form.text_field :name, id: :user_name %>
-  </div>
 
   <div class="actions">
     <%= form.submit %>

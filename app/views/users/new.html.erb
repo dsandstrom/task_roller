@@ -1,3 +1,5 @@
+<%= user_header %>
+
 <h1>New <%= @user.employee_type&.present? ? @user.employee_type : 'User' %></h1>
 
 <%= render 'form', user: @user %>

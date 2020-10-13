@@ -17,6 +17,12 @@ textarea,
 select {
   border-radius: $border-radius;
   border-color: $gray;
+
+  &:disabled {
+    border-color: $light-gray;
+    background-color: $off-white;
+    color: $dark-gray;
+  }
 }
 
 button,
@@ -29,6 +35,16 @@ input[type='submit'],
 // scss-lint:enable QualifyingElement
 
 label {
+  &.disabled {
+    color: $dark-gray;
+    cursor: text;
+
+    &::after {
+      content: " (can't change)";
+      font-weight: normal;
+    }
+  }
+
   input {
     margin-bottom: 0;
   }
