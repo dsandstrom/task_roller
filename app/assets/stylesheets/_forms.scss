@@ -35,18 +35,22 @@ input[type='submit'],
 // scss-lint:enable QualifyingElement
 
 label {
-  &.disabled {
-    color: $dark-gray;
-    cursor: text;
+  input {
+    margin-bottom: 0;
+  }
+}
 
+.field {
+  &.disabled {
     &::after {
       content: " (can't change)";
       font-weight: normal;
     }
-  }
 
-  input {
-    margin-bottom: 0;
+    label {
+      color: $dark-gray;
+      cursor: text;
+    }
   }
 }
 
