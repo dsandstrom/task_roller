@@ -11,8 +11,8 @@ module CategoriesHelper
 
   def category_header(category)
     content_tag :header, class: 'category-header' do
+      concat breadcrumbs([['Categories', categories_path]])
       concat content_tag(:h1, link_to_unless_current(category.name, category))
-      concat breadcrumbs([['All Categories', categories_path]])
 
       concat category_tags(category)
     end

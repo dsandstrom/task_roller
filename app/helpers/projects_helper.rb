@@ -13,8 +13,9 @@ module ProjectsHelper
     return unless category
 
     content_tag :header, class: 'project-header' do
+      concat breadcrumbs([['Categories', categories_path],
+                          [category.name, category_path(category)]])
       concat content_tag(:h1, project_header_heading(project))
-      concat project_breadcrumbs(project)
       concat project_tags(project)
     end
   end
@@ -26,18 +27,21 @@ module ProjectsHelper
       breadcrumbs(project_breadcrumb_pages(category, project))
     end
 
-    def project_breadcrumb_pages(category, project)
-      related = [['Categories', categories_path],
-                 [category.name, category_path(category)]]
-      if params[:controller] == 'issues'
-        related +=
-          [['Project Tasks', category_project_tasks_path(category, project)]]
-      end
-      return related unless params[:controller] == 'tasks'
-
-      related +
-        [['Project Issues', category_project_issues_path(category, project)]]
-    end
+    # def project_breadcrumb_pages(category, project)
+    #   related = [['Categories', categories_path],
+    #              [category.name, category_path(category)]]
+    #   if params[:controller] != 'projects'
+    #     related += [[project.name, category_project_path(category, project)]]
+    #   end
+    #   if params[:controller] == 'issues'
+    #     related +=
+    #       [['Project Tasks', category_project_tasks_path(category, project)]]
+    #   end
+    #   return related unless params[:controller] == 'tasks'
+    #
+    #   related +
+    #     [['Project Issues', category_project_issues_path(category, project)]]
+    # end
 
     def project_tag(text, klass)
       content_tag :span, text, class: "tag tag-#{klass}"

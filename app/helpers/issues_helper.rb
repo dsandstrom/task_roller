@@ -9,8 +9,8 @@ module IssuesHelper
     return unless category
 
     content_tag :header, class: 'issue-header' do
-      concat issue_title(category, project, issue)
       concat issue_header_breadcrumbs(category, project)
+      concat issue_title(category, project, issue)
     end
   end
 
@@ -37,7 +37,7 @@ module IssuesHelper
       pages = []
       pages << [category.name, category]
       pages << project_breadcrumb_item(project)
-      pages << ['All Issues', category_project_issues_path(category, project)]
+      pages << ['Project Issues', category_project_issues_path(category, project)]
 
       breadcrumbs(pages)
     end
