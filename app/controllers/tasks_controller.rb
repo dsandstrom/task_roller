@@ -6,6 +6,7 @@
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment
 # TODO: add user/tasks action
+# TODO: add pagination
 
 class TasksController < ApplicationController
   before_action :authorize_task, only: %i[index new create destroy open close]
