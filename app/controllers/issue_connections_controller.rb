@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class IssueConnectionsController < ApplicationController
+  before_action :authorize_issue_connection
   before_action :build_issue_connection, only: :create
   before_action :set_issue_connection, only: :destroy
 
@@ -34,6 +35,10 @@ class IssueConnectionsController < ApplicationController
 
   private
 
+    def authorize_issue_connection
+      authorize IssueConnection
+    end
+
     def build_issue_connection
       @issue_connection =
         IssueConnection.new(source_id: params[:source_id],
@@ -42,6 +47,7 @@ class IssueConnectionsController < ApplicationController
 
     def set_issue_connection
       @issue_connection = IssueConnection.find(params[:id])
+      authorize @issue_connection
     end
 
     def issue_connection_params
