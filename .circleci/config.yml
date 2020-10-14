@@ -149,6 +149,17 @@ jobs:
       - install_ruby_gems
       - install_node
       - install_node_packages
+
+  lint:
+    parallelism: 2
+    docker:
+      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
+    <<: *default_environment
+    steps:
+      - checkout # pull down our git code.
+      - install_ruby_gems
+      - install_node
+      - install_node_packages
       - lint_ruby_code
       - lint_scss_code
 
@@ -185,10 +196,13 @@ jobs:
 
 # We use workflows to orchestrate the jobs that we declared above.
 workflows:
-  version: 2
+  version: 3
   build_and_test:     # The name of our workflow is "build_and_test"
     jobs:             # The list of jobs we run as part of this workflow.
       - build         # Run build first.
       - test:         # Then run test,
           requires:   # Test requires that build passes for it to run.
             - build   # Finally, run the build job.
+      - lint:
+          requires:
+            - build
