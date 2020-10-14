@@ -1,5 +1,4 @@
 <%
-  # TODO: add breadcrumb
   url =
     if @issue
       category_project_issue_tasks_path(@category, @project, @issue)
@@ -8,13 +7,7 @@
     end
   %>
 
-<h1>
-  <%= link_to @project.name, category_project_path(@category, @project) %>
-</h1>
-
-<p><%= link_to @category.name, @category %></p>
-
-<%= project_tags(@project) %>
+<%= project_header(@project) %>
 
 <h2>New Task</h2>
 
