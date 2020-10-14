@@ -41,6 +41,8 @@ label {
 }
 
 .field {
+  position: relative;
+
   &.disabled {
     &::after {
       content: " (can't change)";
@@ -52,34 +54,6 @@ label {
       cursor: text;
     }
   }
-}
-
-.error-card {
-  margin-bottom: 2rem;
-  border-radius: $border-radius;
-  background: $pearl;
-  color: $black;
-
-  .card-title {
-    margin: 0;
-    padding: 1rem;
-    border-radius: $border-radius $border-radius 0 0;
-    background: $color-warning;
-    color: $white;
-    line-height: 1.2;
-  }
-
-  .card-body {
-    padding: 2rem;
-  }
-
-  ol {
-    margin: 0 1rem;
-  }
-}
-
-.field {
-  position: relative;
 
   .field-label-and-message {
     display: flex;
@@ -124,6 +98,30 @@ label {
       color: $color-warning;
     }
     // scss-lint:enable SelectorFormat
+  }
+}
+
+.error-card {
+  margin-bottom: 2rem;
+  border-radius: $border-radius;
+  background: $pearl;
+  color: $black;
+
+  .card-title {
+    margin: 0;
+    padding: 1rem;
+    border-radius: $border-radius $border-radius 0 0;
+    background: $color-warning;
+    color: $white;
+    line-height: 1.2;
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+
+  ol {
+    margin: 0 1rem;
   }
 }
 
