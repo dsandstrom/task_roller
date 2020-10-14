@@ -175,24 +175,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    # TODO: add specs for assignees, progressions, reviews, open, closed
-    context "task closed" do
-      context "with no reviews" do
-        before do
-          @project = assign(:project, Fabricate(:project, category: @category))
-          @task = assign(:task, Fabricate(:closed_task, project: @project))
-
-          @task.reload
-        end
-
-        it "renders" do
-          expect do
-            render
-          end.not_to raise_error
-        end
-      end
-    end
-
+    # TODO: add specs for assignees, progressions, reviews
     context "when task is open" do
       before do
         @project = assign(:project, Fabricate(:project, category: @category))
@@ -241,26 +224,224 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: open_task_path(@task))
       end
     end
+
+    context "when task has a source_task_connection" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, source: @task)
+      end
+
+      it "renders link to target task" do
+        render
+        target = @task_connection.target
+        url =
+          category_project_task_path(target.category, target.project, target)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders destroy link" do
+        render
+        url = task_connection_path(@task_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+    end
+
+    context "when task has target_task_connections" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, target: @task)
+      end
+
+      it "renders link to source task" do
+        render
+        source = @task_connection.source
+        url =
+          category_project_task_path(source.category, source.project, source)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+  end
+
+  context "for an reviewer" do
+    let(:reviewer) { Fabricate(:user_reviewer) }
+
+    before do
+      enable_pundit(view, reviewer)
+      @project = assign(:project, Fabricate(:project, category: @category))
+    end
+
+    context "when task is open" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "renders task's heading" do
+        render
+        assert_select ".task-heading", @task.heading
+      end
+
+      it "renders new task_comment form" do
+        render
+
+        url = category_project_task_task_comments_url(@category, @project,
+                                                      @task)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "task_comment[body]"
+        end
+      end
+
+      it "doesn't render edit link" do
+        render
+        url = edit_category_project_task_path(@category, @project, @task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      # TODO: authorize task reviews & connections
+      # it "doesn't render approval link" do
+      #   render
+      #   url = approve_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+      #
+      # it "doesn't render disapproval link" do
+      #   render
+      #   url = disapprove_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+
+      it "renders new task connection link" do
+        render
+        url = new_task_connection_path(@task)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+    end
+
+    context "when task is closed" do
+      before do
+        @task = assign(:task, Fabricate(:closed_task, project: @project))
+      end
+
+      it "doesn't render reopen link" do
+        render
+        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+      end
+    end
+
+    context "when task has a source_task_connection" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, source: @task)
+      end
+
+      it "renders link to target task" do
+        render
+        target = @task_connection.target
+        url =
+          category_project_task_path(target.category, target.project, target)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders destroy link" do
+        render
+        url = task_connection_path(@task_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+    end
+
+    context "when task has target_task_connections" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, target: @task)
+      end
+
+      it "renders link to source task" do
+        render
+        source = @task_connection.source
+        url =
+          category_project_task_path(source.category, source.project, source)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
   end
 
   # TODO: when worker-, only allow self assign
   # TODO: reviewer, don't allow assign admins
-  %w[reviewer worker reporter].each do |employee_type|
+  %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before do
+        enable_pundit(view, current_user)
+        @project = assign(:project, Fabricate(:project, category: @category))
+      end
 
-      context "when their Task" do
+      context "when task is open" do
         before do
-          @project = assign(:project, Fabricate(:project, category: @category))
-          @task = assign(:task, Fabricate(:task, project: @project,
-                                                 user: current_user))
+          @task = assign(:task, Fabricate(:task, project: @project))
+          @review = Fabricate(:pending_review, task: @task)
         end
 
         it "renders task's heading" do
           render
           assert_select ".task-heading", @task.heading
+        end
+
+        it "renders new task_comment form" do
+          render
+
+          url = category_project_task_task_comments_url(@category, @project,
+                                                        @task)
+          assert_select "form[action=?][method=?]", url, "post" do
+            assert_select "textarea[name=?]", "task_comment[body]"
+          end
+        end
+
+        # TODO: authorize task reviews & connections
+        # it "doesn't render approval link" do
+        #   render
+        #   url = approve_task_review_path(@task, @review)
+        #   expect(rendered).not_to have_link(nil, href: url)
+        # end
+        #
+        # it "doesn't render disapproval link" do
+        #   render
+        #   url = disapprove_task_review_path(@task, @review)
+        #   expect(rendered).not_to have_link(nil, href: url)
+        # end
+
+        it "doesn't render new task connection link" do
+          render
+          url = new_task_connection_path(@task)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render close link" do
+          render
+          expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        end
+      end
+
+      context "when task is closed" do
+        before do
+          @task = assign(:task, Fabricate(:closed_task, project: @project))
+        end
+
+        it "doesn't render reopen link" do
+          render
+          expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        end
+      end
+
+      context "when their Task" do
+        before do
+          @task = assign(:task, Fabricate(:task, project: @project,
+                                                 user: current_user))
         end
 
         it "renders new task_comment form" do
@@ -280,59 +461,9 @@ RSpec.describe "tasks/show", type: :view do
         end
       end
 
-      context "when task is open" do
-        before do
-          @project = assign(:project, Fabricate(:project, category: @category))
-          @task = assign(:task, Fabricate(:task, project: @project))
-          @review = Fabricate(:pending_review, task: @task)
-        end
-
-        # TODO: authorize task reviews & connections
-        # it "doesn't render approval link" do
-        #   render
-        #   url = approve_task_review_path(@task, @review)
-        #   expect(rendered).not_to have_link(nil, href: url)
-        # end
-        #
-        # it "doesn't render disapproval link" do
-        #   render
-        #   url = disapprove_task_review_path(@task, @review)
-        #   expect(rendered).not_to have_link(nil, href: url)
-        # end
-        #
-        # it "doesn't render new task connection link" do
-        #   render
-        #   url = new_task_connection_path(@task)
-        #   expect(rendered).not_to have_link(nil, href: url)
-        # end
-
-        it "doesn't render close link" do
-          render
-          expect(rendered).not_to have_link(nil, href: close_task_path(@task))
-        end
-      end
-
-      context "when task is closed" do
-        before do
-          @project = assign(:project, Fabricate(:project, category: @category))
-          @task = assign(:task, Fabricate(:closed_task, project: @project))
-        end
-
-        it "doesn't render reopen link" do
-          render
-          expect(rendered).not_to have_link(nil, href: open_task_path(@task))
-        end
-      end
-
       context "when someone else's Task" do
         before do
-          @project = assign(:project, Fabricate(:project, category: @category))
           @task = assign(:task, Fabricate(:task, project: @project))
-        end
-
-        it "renders task's heading" do
-          render
-          assert_select ".task-heading", @task.heading
         end
 
         it "renders new task_comment form" do
@@ -349,6 +480,42 @@ RSpec.describe "tasks/show", type: :view do
           render
           url = edit_category_project_task_path(@category, @project, @task)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+      end
+
+      context "when task has a source_task_connection" do
+        before do
+          @task = assign(:task, Fabricate(:task, project: @project))
+          @task_connection = Fabricate(:task_connection, source: @task)
+        end
+
+        it "renders link to target task" do
+          render
+          target = @task_connection.target
+          url =
+            category_project_task_path(target.category, target.project, target)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render destroy link" do
+          render
+          url = task_connection_path(@task_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+      end
+
+      context "when task has target_task_connections" do
+        before do
+          @task = assign(:task, Fabricate(:task, project: @project))
+          @task_connection = Fabricate(:task_connection, target: @task)
+        end
+
+        it "renders link to source task" do
+          render
+          source = @task_connection.source
+          url =
+            category_project_task_path(source.category, source.project, source)
+          expect(rendered).to have_link(nil, href: url)
         end
       end
     end

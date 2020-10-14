@@ -32,8 +32,7 @@ assigned = @task.assigned
           </p>
         <% end %>
 
-        <%# TODO: reviewers+ only %>
-        <% if @task.open? && @task.duplicatee.blank? %>
+        <% if policy(TaskConnection).new? && @task.open? && @task.duplicatee.blank? %>
           <p>
             <%= link_to 'mark duplicate',
                         new_task_connection_path(@task),
@@ -43,25 +42,28 @@ assigned = @task.assigned
 
         <% if @task.duplicatee.present? %>
           <%
+            duplicatee = @task.duplicatee
             confirm = "Are you sure you want to remove the connection to " \
                       "\"#{@task.duplicatee.short_summary}\" and reopen " \
                       "this task?"
           %>
           <p>
-            <% duplicatee = @task.duplicatee %>
             Duplicate of:
-            <%= link_to duplicatee.short_summary,
-                        category_project_task_path(duplicatee.category,
-                                                    duplicatee.project,
-                                                    duplicatee) %>
+            <%= link_to_if policy(duplicatee).show?,
+                           duplicatee.short_summary,
+                           category_project_task_path(duplicatee.category,
+                                                      duplicatee.project,
+                                                      duplicatee) %>
           </p>
-          <%# TODO: reviewers+ only %>
-          <p>
-            <%= link_to 'Mark not a duplicate and reopen',
-                         @task.source_task_connection,
-                         method: :delete, class: 'destroy-link',
-                         data: { confirm: confirm } %>
-          </p>
+
+          <% if policy(TaskConnection).destroy? %>
+            <p>
+              <%= link_to 'Mark not a duplicate and reopen',
+                           @task.source_task_connection,
+                           method: :delete, class: 'destroy-link',
+                           data: { confirm: confirm } %>
+            </p>
+          <% end %>
         <% end %>
 
         <p>
@@ -175,10 +177,11 @@ assigned = @task.assigned
 
           <% @task.duplicates.each do |duplicate| %>
             <p>
-              <%= link_to duplicate.id_and_summary,
-                          category_project_task_path(duplicate.category,
-                                                      duplicate.project,
-                                                      duplicate) %>
+              <%= link_to_if policy(duplicate).show?,
+                             duplicate.id_and_summary,
+                             category_project_task_path(duplicate.category,
+                                                        duplicate.project,
+                                                        duplicate) %>
             </p>
           <% end %>
         </section>
