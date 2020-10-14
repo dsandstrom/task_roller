@@ -6,7 +6,7 @@ version: 2.1 # Use 2.1 to enable using orbs and other features.
 # read more about orbs: https://circleci.com/docs/2.0/using-orbs/
 orbs:
   ruby: circleci/ruby@1.1.1
-  node: circleci/node@4.1.0
+  node: circleci/node@4.0.0
 
 # Global variables
 parameters:
