@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TaskConnectionsController < ApplicationController
+  before_action :authorize_task_connection
   before_action :build_task_connection, only: :create
   before_action :set_task_connection, only: :destroy
 
@@ -34,6 +35,10 @@ class TaskConnectionsController < ApplicationController
 
   private
 
+    def authorize_task_connection
+      authorize TaskConnection
+    end
+
     def build_task_connection
       @task_connection =
         TaskConnection.new(source_id: params[:source_id],
@@ -42,6 +47,7 @@ class TaskConnectionsController < ApplicationController
 
     def set_task_connection
       @task_connection = TaskConnection.find(params[:id])
+      authorize @task_connection
     end
 
     def task_connection_params
