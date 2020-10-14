@@ -2,7 +2,7 @@
 
 Fabricator(:issue_connection) do
   source do |attrs|
-    if attrs[:target].project
+    if attrs[:target]&.project
       Fabricate(:issue, project: attrs[:target].project)
     else
       Fabricate(:issue)
@@ -19,7 +19,7 @@ end
 
 Fabricator(:task_connection) do
   source do |attrs|
-    if attrs[:target].project
+    if attrs[:target]&.project
       Fabricate(:task, project: attrs[:target].project)
     else
       Fabricate(:task)
