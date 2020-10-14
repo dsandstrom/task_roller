@@ -39,8 +39,7 @@
                           method: :post, class: 'create-link' %>
             <% end %>
 
-            <%# TODO: reviewers+ only %>
-            <% if @issue.duplicatee.blank? %>
+            <% if policy(IssueConnection).new? && @issue.duplicatee.blank? %>
               |
               <%= link_to 'mark duplicate',
                           new_issue_connection_path(@issue),
@@ -58,18 +57,20 @@
           <p>
             <% duplicatee = @issue.duplicatee %>
             Duplicate of:
-            <%= link_to duplicatee.short_summary,
-                        category_project_issue_path(duplicatee.category,
-                                                    duplicatee.project,
-                                                    duplicatee) %>
+            <%= link_to_if policy(duplicatee).show?,
+                           duplicatee.short_summary,
+                           category_project_issue_path(duplicatee.category,
+                                                       duplicatee.project,
+                                                       duplicatee) %>
           </p>
-          <%# TODO: reviewers+ only %>
-          <p>
-            <%= link_to 'Mark not a duplicate and reopen',
-                         @issue.source_issue_connection,
-                         method: :delete, class: 'destroy-link',
-                         data: { confirm: confirm } %>
-          </p>
+          <% if policy(IssueConnection).destroy? %>
+            <p>
+              <%= link_to 'Mark not a duplicate and reopen',
+                           @issue.source_issue_connection,
+                           method: :delete, class: 'destroy-link',
+                           data: { confirm: confirm } %>
+            </p>
+          <% end %>
         <% end %>
       </section>
 
@@ -79,11 +80,12 @@
           <%= render partial: 'shared/task', collection: @issue.tasks,
                      locals: { category: @category, project: @project } %>
 
-          <%# TODO: reviewer+ %>
-          <dt class="new-issue-task">
-            <%= icon('plus') %>
-            <%= link_to 'Add Task', create_path, class: 'create-link' %>
-          </dt>
+          <% if policy(Task).create? %>
+            <dt class="new-issue-task">
+              <%= icon('plus') %>
+              <%= link_to 'Add Task', create_path, class: 'create-link' %>
+            </dt>
+          <% end %>
         </dl>
       </section>
 
@@ -93,10 +95,11 @@
 
           <% @issue.duplicates.each do |duplicate| %>
             <p>
-              <%= link_to duplicate.id_and_summary,
-                          category_project_issue_path(duplicate.category,
-                                                      duplicate.project,
-                                                      duplicate) %>
+              <%= link_to_if policy(duplicate).show?,
+                             duplicate.id_and_summary,
+                             category_project_issue_path(duplicate.category,
+                                                         duplicate.project,
+                                                         duplicate) %>
             </p>
           <% end %>
         </section>

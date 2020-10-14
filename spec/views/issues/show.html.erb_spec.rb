@@ -3,7 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "issues/show", type: :view do
-  before(:each) { @category = assign(:category, Fabricate(:category)) }
+  before(:each) do
+    @category = assign(:category, Fabricate(:category))
+    @project = assign(:project, Fabricate(:project, category: @category))
+  end
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
@@ -12,7 +15,6 @@ RSpec.describe "issues/show", type: :view do
 
     context "when project" do
       before do
-        @project = assign(:project, Fabricate(:project, category: @category))
         @issue = assign(:issue, Fabricate(:issue, project: @project))
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
@@ -47,12 +49,70 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
 
+      it "renders new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task link" do
+        render
+
+        url = new_category_project_issue_task_path(@category, @project, @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
       context "with tasks" do
         it "renders a list of tasks" do
           task = Fabricate(:task, issue: @issue)
 
           render
           assert_select "#task-#{task.id}"
+        end
+      end
+
+      context "when a source_issue_connection" do
+        before do
+          @issue_connection = Fabricate(:issue_connection, source: @issue)
+        end
+
+        it "renders source_issue_connection" do
+          render
+
+          duplicatee = @issue_connection.target
+          url = category_project_issue_path(duplicatee.category,
+                                            duplicatee.project, duplicatee)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy connection link" do
+          render
+
+          url = issue_connection_path(@issue_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "when a target_issue_connection" do
+        before do
+          @issue_connection = Fabricate(:issue_connection, target: @issue)
+        end
+
+        it "renders a list of target_issue_connections" do
+          render
+
+          duplicate = @issue_connection.source
+          url = category_project_issue_path(duplicate.category,
+                                            duplicate.project, duplicate)
+          expect(rendered).to have_link(nil, href: url)
         end
       end
     end
@@ -137,7 +197,7 @@ RSpec.describe "issues/show", type: :view do
         @issue.reload
       end
 
-      it "renders" do
+      it "renders without errors" do
         expect do
           render
         end.not_to raise_error
@@ -145,89 +205,387 @@ RSpec.describe "issues/show", type: :view do
     end
   end
 
-  %w[reviewer worker reporter].each do |employee_type|
-    context "for a #{employee_type}" do
-      let(:current_user) { Fabricate("user_#{employee_type}") }
+  context "for a reviewer" do
+    let(:reviewer) { Fabricate(:user_reviewer) }
 
-      before { enable_pundit(view, current_user) }
+    before { enable_pundit(view, reviewer) }
+
+    before do
+      @project = assign(:project, Fabricate(:project, category: @category))
+    end
+
+    context "when someone else's issue" do
+      let(:url) do
+        category_project_issue_issue_comments_url(@category, @project, @issue)
+      end
 
       before do
-        @project = assign(:project, Fabricate(:project, category: @category))
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
       end
 
-      context "when their issue" do
-        let(:url) do
-          category_project_issue_issue_comments_url(@category, @project, @issue)
-        end
-        let(:issue) { Fabricate(:issue, project: @project, user: current_user) }
+      it "renders issue's heading" do
+        render
+        assert_select ".issue-heading", @issue.heading
+      end
 
-        before do
-          @issue = assign(:issue, issue)
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @comments = assign(:comments, [])
-        end
+      it "renders issue's description" do
+        render
+        assert_select ".issue-description main", @issue.description
+      end
 
-        it "renders issue's heading" do
-          render
-          assert_select ".issue-heading", @issue.heading
-        end
+      it "renders new issue_comment form" do
+        render
 
-        it "renders issue's description" do
-          render
-          assert_select ".issue-description main", @issue.description
-        end
-
-        it "renders new issue_comment form" do
-          render
-
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "issue_comment[body]"
-          end
-        end
-
-        it "renders edit link" do
-          render
-
-          url = edit_category_project_issue_path(@category, @project, @issue)
-          expect(rendered).to have_link(nil, href: url)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "issue_comment[body]"
         end
       end
 
-      context "when someone else's issue" do
-        let(:url) do
-          category_project_issue_issue_comments_url(@category, @project, @issue)
+      it "doesn't render the edit link" do
+        render
+
+        url = edit_category_project_issue_path(@category, @project, @issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task link" do
+        render
+
+        url = new_category_project_issue_task_path(@category, @project, @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when a source_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, source: @issue)
+      end
+
+      it "renders a list of issue_connections" do
+        render
+
+        duplicatee = @issue_connection.target
+        url = category_project_issue_path(duplicatee.category,
+                                          duplicatee.project, duplicatee)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders destroy connection link" do
+        render
+
+        url = issue_connection_path(@issue_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+    end
+
+    context "when a target_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, target: @issue)
+      end
+
+      it "renders a list of target_issue_connections" do
+        render
+
+        duplicate = @issue_connection.source
+        url = category_project_issue_path(duplicate.category,
+                                          duplicate.project, duplicate)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+  end
+
+  context "for a worker" do
+    let(:worker) { Fabricate(:user_worker) }
+
+    before { enable_pundit(view, worker) }
+
+    context "when their issue" do
+      let(:url) do
+        category_project_issue_issue_comments_url(@category, @project, @issue)
+      end
+
+      let(:issue) { Fabricate(:issue, project: @project, user: worker) }
+
+      before do
+        @issue = assign(:issue, issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+      end
+
+      it "renders issue's heading" do
+        render
+        assert_select ".issue-heading", @issue.heading
+      end
+
+      it "renders new issue_comment form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "issue_comment[body]"
         end
+      end
 
-        before do
-          @issue = assign(:issue, Fabricate(:issue, project: @project))
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @comments = assign(:comments, [])
+      it "renders edit link" do
+        render
+
+        url = edit_category_project_issue_path(@category, @project, @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task link" do
+        render
+
+        url = new_category_project_issue_task_path(@category, @project,
+                                                   @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when someone else's issue" do
+      let(:url) do
+        category_project_issue_issue_comments_url(@category, @project, @issue)
+      end
+
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+      end
+
+      it "renders issue's heading" do
+        render
+        assert_select ".issue-heading", @issue.heading
+      end
+
+      it "renders new issue_comment form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "issue_comment[body]"
         end
+      end
 
-        it "renders issue's heading" do
-          render
-          assert_select ".issue-heading", @issue.heading
+      it "doesn't render the edit link" do
+        render
+
+        url = edit_category_project_issue_path(@category, @project, @issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when a source_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, source: @issue)
+      end
+
+      it "renders a list of issue_connections" do
+        render
+
+        duplicatee = @issue_connection.target
+        url = category_project_issue_path(duplicatee.category,
+                                          duplicatee.project, duplicatee)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy connection link" do
+        render
+
+        url = issue_connection_path(@issue_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when a target_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, target: @issue)
+      end
+
+      it "renders a list of target_issue_connections" do
+        render
+
+        duplicate = @issue_connection.source
+        url = category_project_issue_path(duplicate.category,
+                                          duplicate.project, duplicate)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+  end
+
+  context "for a reporter" do
+    let(:reporter) { Fabricate(:user_reporter) }
+
+    before { enable_pundit(view, reporter) }
+
+    context "when their issue" do
+      let(:url) do
+        category_project_issue_issue_comments_url(@category, @project, @issue)
+      end
+
+      let(:issue) { Fabricate(:issue, project: @project, user: reporter) }
+
+      before do
+        @issue = assign(:issue, issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+      end
+
+      it "renders issue's heading" do
+        render
+        assert_select ".issue-heading", @issue.heading
+      end
+
+      it "renders new issue_comment form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "issue_comment[body]"
         end
+      end
 
-        it "renders issue's description" do
-          render
-          assert_select ".issue-description main", @issue.description
+      it "renders edit link" do
+        render
+
+        url = edit_category_project_issue_path(@category, @project, @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render the new task link" do
+        render
+
+        url = new_category_project_issue_task_path(@category, @project,
+                                                   @issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when someone else's issue" do
+      let(:url) do
+        category_project_issue_issue_comments_url(@category, @project, @issue)
+      end
+
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+      end
+
+      it "renders issue's heading" do
+        render
+        assert_select ".issue-heading", @issue.heading
+      end
+
+      it "renders new issue_comment form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "issue_comment[body]"
         end
+      end
 
-        it "renders new issue_comment form" do
-          render
+      it "doesn't render the edit link" do
+        render
 
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "issue_comment[body]"
-          end
-        end
+        url = edit_category_project_issue_path(@category, @project, @issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
 
-        it "doesn't render the edit link" do
-          render
+      it "doesn't render new connection link" do
+        render
 
-          url = edit_category_project_issue_path(@category, @project, @issue)
-          expect(rendered).not_to have_link(nil, href: url)
-        end
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when a source_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, source: @issue)
+      end
+
+      it "renders a list of issue_connections" do
+        render
+
+        duplicatee = @issue_connection.target
+        url = category_project_issue_path(duplicatee.category,
+                                          duplicatee.project, duplicatee)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy connection link" do
+        render
+
+        url = issue_connection_path(@issue_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when a target_issue_connection" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+        @issue_connection = Fabricate(:issue_connection, target: @issue)
+      end
+
+      it "renders a list of target_issue_connections" do
+        render
+
+        duplicate = @issue_connection.source
+        url = category_project_issue_path(duplicate.category,
+                                          duplicate.project, duplicate)
+        expect(rendered).to have_link(nil, href: url)
       end
     end
   end
