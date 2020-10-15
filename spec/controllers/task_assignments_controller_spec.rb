@@ -15,8 +15,6 @@ RSpec.describe TaskAssignmentsController, type: :controller do
     { "assignee_ids[]" => nil }
   end
 
-  # before { login(Fabricate(:user_admin)) }
-
   describe "GET #edit" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
