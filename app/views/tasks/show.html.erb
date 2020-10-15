@@ -66,21 +66,22 @@ assigned = @task.assigned
           <% end %>
         <% end %>
 
-        <p>
-          <% if @task.open? && policy(@task).close? %>
-            <%= link_to 'force close',
-                        close_task_path(@task),
-                        method: :patch, class: 'secondary-link' %>
-          <% elsif policy(@task).open? %>
-            <%= link_to 'reopen',
-                        open_task_path(@task),
-                        method: :patch, class: 'secondary-link' %>
-          <% end %>
-        </p>
+        <% if policy(@task).close? %>
+          <p>
+            <% if @task.open? %>
+              <%= link_to 'force close',
+                          close_task_path(@task),
+                          method: :patch, class: 'secondary-link' %>
+            <% else %>
+              <%= link_to 'reopen',
+                          open_task_path(@task),
+                          method: :patch, class: 'secondary-link' %>
+            <% end %>
+          </p>
+        <% end %>
       </section>
 
-      <%# TODO: change policy to TaskAssignment %>
-      <% if @task.open? && policy(@task).close? %>
+      <% if @task.open? %>
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>
 
@@ -90,12 +91,17 @@ assigned = @task.assigned
                          collection: assignees,
                          locals: { task: @task, current_assignee: true } %>
             </dl>
-            <% unless @task.in_review? %>
-              <p>
-                <%= link_to 'reassign',
-                            edit_category_project_task_path(@category, @project, @task),
-                            id: 'task_assignment_link', class: 'secondary-link' %>
-              </p>
+
+            <%# TODO: change policy to TaskAssignment %>
+            <% if policy(Task).create? %>
+              <% unless @task.in_review? %>
+                <p>
+                  <%= link_to 'reassign',
+                              edit_task_assignment_path(@task),
+                              id: 'task_assignment_link',
+                              class: 'secondary-link' %>
+                </p>
+              <% end %>
             <% end %>
           <% else %>
             <p>
@@ -103,10 +109,14 @@ assigned = @task.assigned
               <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
               <%# TODO: add form with ajax with first click, then toggle hide class %>
               <% unless @task.in_review? %>
-                <%= divider %>
-                <%= link_to 'assign someone',
-                            edit_category_project_task_path(@category, @project, @task),
-                            id: 'task_assignment_link', class: 'secondary-link' %>
+                <%# TODO: change policy to TaskAssignment %>
+                <% if policy(Task).create? %>
+                  <%= divider %>
+                  <%= link_to 'assign someone',
+                              edit_task_assignment_path(@task),
+                              id: 'task_assignment_link',
+                              class: 'secondary-link' %>
+                <% end %>
 
                 <%# TODO: admin %>
                 <%= divider %>
@@ -117,8 +127,11 @@ assigned = @task.assigned
             </p>
           <% end %>
 
-          <% unless @task.in_review? %>
-            <%= render 'task_assignments/form', task: @task %>
+          <%# TODO: change policy to TaskAssignment %>
+          <% if policy(Task).create? %>
+            <% unless @task.in_review? %>
+              <%= render 'task_assignments/form', task: @task %>
+            <% end %>
           <% end %>
         </section>
       <% end %>
