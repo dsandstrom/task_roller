@@ -21,7 +21,6 @@ RSpec.describe "tasks/edit", type: :view do
       assert_select "input[name=?]", "task[summary]"
       assert_select "textarea[name=?]", "task[description]"
       assert_select "input[name=?]", "task[task_type_id]"
-      assert_select "select[name=?]", "task[user_id]"
       assert_select "select[name=?]", "task[assignee_ids][]"
     end
   end
