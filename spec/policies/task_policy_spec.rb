@@ -29,16 +29,18 @@ RSpec.describe TaskPolicy, type: :policy do
   permissions :create?, :new? do
     let(:task) { Fabricate(:task, project: project) }
 
-    %i[admin reviewer worker].each do |employee_type|
+    %i[admin reviewer].each do |employee_type|
       it "permits #{employee_type}" do
         user = Fabricate("user_#{employee_type.downcase}")
         expect(subject).to permit(user, task)
       end
     end
 
-    it "blocks reporters" do
-      user = Fabricate(:user_reporter)
-      expect(subject).not_to permit(user, task)
+    %i[worker reporter].each do |employee_type|
+      it "blocks #{employee_type}" do
+        user = Fabricate("user_#{employee_type.downcase}")
+        expect(subject).not_to permit(user, task)
+      end
     end
 
     it "blocks non-employees" do

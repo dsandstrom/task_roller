@@ -12,11 +12,11 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def create?
-    employee? && (user.admin? || user.reviewer? || user.worker?)
+    employee? && (user.admin? || user.reviewer?)
   end
 
   def new?
-    employee? && (user.admin? || user.reviewer? || user.worker?)
+    employee? && (user.admin? || user.reviewer?)
   end
 
   def edit?

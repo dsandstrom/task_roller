@@ -92,7 +92,6 @@ class TasksController < ApplicationController
       @task = @project.tasks.build(task_params)
       @task.issue_id = @issue.to_param if @issue
       @task.user_id = current_user.to_param
-      @task.assignee_ids = [current_user.to_param] if current_user.worker?
     end
 
     def set_task
@@ -125,10 +124,7 @@ class TasksController < ApplicationController
       set_issue_options
     end
 
-    # TODO: if reporter, only allow self assign
     def set_assignee_options
-      return unless current_user.admin? || current_user.reviewer?
-
       @assignee_options =
         %w[Worker Reviewer].map do |type|
           employees = User.employees(type).map { |u| [u.name_and_email, u.id] }

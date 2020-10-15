@@ -370,8 +370,6 @@ RSpec.describe "tasks/show", type: :view do
     end
   end
 
-  # TODO: when worker-, only allow self assign
-  # TODO: reviewer, don't allow assign admins
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }

@@ -157,108 +157,57 @@ RSpec.describe "projects/show", type: :view do
     end
   end
 
-  context "for an worker" do
-    let(:current_user) { Fabricate(:user_worker) }
+  %w[worker reporter].each do |employee_type|
+    context "for a #{employee_type}" do
+      let(:current_user) { Fabricate("user_#{employee_type}") }
 
-    before { enable_pundit(view, current_user) }
+      before { enable_pundit(view, current_user) }
 
-    context "when tasks and issues" do
-      before(:each) do
-        @issues = [first_issue, second_issue]
-        @tasks = [first_task, second_task]
-      end
+      context "when tasks and issues" do
+        before(:each) do
+          @issues = [first_issue, second_issue]
+          @tasks = [first_task, second_task]
+        end
 
-      it "doesn't render the edit project link" do
-        render
+        it "doesn't render the edit project link" do
+          render
 
-        expect(rendered).not_to have_link(nil, href: edit_url)
-      end
+          expect(rendered).not_to have_link(nil, href: edit_url)
+        end
 
-      it "renders new issue link" do
-        render
+        it "renders new issue link" do
+          render
 
-        url = new_category_project_issue_path(@category, @project, @issue)
-        expect(rendered).to have_link(nil, href: url)
-      end
+          url = new_category_project_issue_path(@category, @project, @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
 
-      it "renders new task link" do
-        render
+        it "doesn't render new task link" do
+          render
 
-        url = new_category_project_task_path(@category, @project, @task)
-        expect(rendered).to have_link(nil, href: url)
-      end
+          url = new_category_project_task_path(@category, @project, @task)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
 
-      it "renders a list of issues" do
-        other_issue =
-          Fabricate(:issue, project: Fabricate(:project, category: category))
+        it "renders a list of issues" do
+          other_issue =
+            Fabricate(:issue, project: Fabricate(:project, category: category))
 
-        render
-        assert_select "#issue-#{first_issue.id}", count: 1
-        assert_select "#issue-#{second_issue.id}", count: 1
-        assert_select "#issue-#{other_issue.id}", count: 0
-      end
+          render
+          assert_select "#issue-#{first_issue.id}", count: 1
+          assert_select "#issue-#{second_issue.id}", count: 1
+          assert_select "#issue-#{other_issue.id}", count: 0
+        end
 
-      it "renders a list of tasks" do
-        other_task =
-          Fabricate(:task, project: Fabricate(:project, category: category))
+        it "renders a list of tasks" do
+          other_task =
+            Fabricate(:task, project: Fabricate(:project, category: category))
 
-        render
-        assert_select "#task-#{first_task.id}", count: 1
-        assert_select "#task-#{second_task.id}", count: 1
-        assert_select "#task-#{other_task.id}", count: 0
-      end
-    end
-  end
-
-  context "for an reporter" do
-    let(:current_user) { Fabricate(:user_reporter) }
-
-    before { enable_pundit(view, current_user) }
-
-    context "when tasks and issues" do
-      before(:each) do
-        @issues = [first_issue, second_issue]
-        @tasks = [first_task, second_task]
-      end
-
-      it "doesn't render the edit project link" do
-        render
-
-        expect(rendered).not_to have_link(nil, href: edit_url)
-      end
-
-      it "renders new issue link" do
-        render
-
-        url = new_category_project_issue_path(@category, @project, @issue)
-        expect(rendered).to have_link(nil, href: url)
-      end
-
-      it "doesn't render new task link" do
-        render
-
-        url = new_category_project_task_path(@category, @project, @task)
-        expect(rendered).not_to have_link(nil, href: url)
-      end
-
-      it "renders a list of issues" do
-        other_issue =
-          Fabricate(:issue, project: Fabricate(:project, category: category))
-
-        render
-        assert_select "#issue-#{first_issue.id}", count: 1
-        assert_select "#issue-#{second_issue.id}", count: 1
-        assert_select "#issue-#{other_issue.id}", count: 0
-      end
-
-      it "renders a list of tasks" do
-        other_task =
-          Fabricate(:task, project: Fabricate(:project, category: category))
-
-        render
-        assert_select "#task-#{first_task.id}", count: 1
-        assert_select "#task-#{second_task.id}", count: 1
-        assert_select "#task-#{other_task.id}", count: 0
+          render
+          assert_select "#task-#{first_task.id}", count: 1
+          assert_select "#task-#{second_task.id}", count: 1
+          assert_select "#task-#{other_task.id}", count: 0
+        end
       end
     end
   end

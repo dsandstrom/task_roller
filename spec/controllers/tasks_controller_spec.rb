@@ -82,7 +82,7 @@ RSpec.describe TasksController, type: :controller do
   describe "GET #new" do
     before { Fabricate(:task_type) }
 
-    %w[admin reviewer worker].each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -109,7 +109,7 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[reporter].each do |employee_type|
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -276,60 +276,7 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[worker].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-
-        before { login(current_user) }
-
-        context "with valid params" do
-          it "creates a new Project Task" do
-            expect do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
-                                      task: valid_attributes }
-            end.to change(project.tasks, :count).by(1)
-          end
-
-          it "creates a new current_user Task" do
-            expect do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
-                                      task: valid_attributes }
-            end.to change(current_user.tasks, :count).by(1)
-          end
-
-          it "creates an assignment for them" do
-            Fabricate(:user_worker)
-
-            expect do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
-                                      task: valid_attributes }
-            end.to change(current_user.assignments, :count).by(1)
-          end
-
-          it "redirects to the created task" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    task: valid_attributes }
-            url = category_project_task_path(category, project, Task.last)
-            expect(response).to redirect_to(url)
-          end
-        end
-
-        context "with invalid params" do
-          it "returns a success response ('new' template)" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    task: invalid_attributes }
-            expect(response).to be_successful
-          end
-        end
-      end
-    end
-
-    %w[reporter].each do |employee_type|
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
