@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: add TaskAssignmentsPolicy or TaskPolicy#assign?
 class TaskAssignmentsController < ApplicationController
   before_action :authorize_task
   before_action :set_task

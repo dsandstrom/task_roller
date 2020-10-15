@@ -19,6 +19,7 @@ class TaskPolicy < ApplicationPolicy
     employee? && (user.admin? || user.reviewer?)
   end
 
+  # maybe allow any reviewer
   def edit?
     employee? && (admin? || record.user == user)
   end
