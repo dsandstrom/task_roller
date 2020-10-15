@@ -2,36 +2,6 @@
               html: { name: 'task_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <%# TODO: add choices, not a choice, bub %>
-  <% if user_options&.any? %>
-    <div class="field">
-      <%= form.label :user_id, 'Reviewer' %>
-      <%= form.select :user_id,
-                      grouped_options_for_select(user_options, task.user_id),
-                      {}, id: :task_user_id %>
-    </div>
-  <% end %>
-
-  <% if assignee_options&.any? %>
-    <div class="field">
-      <%= form.label :assignee_ids, 'Assignees' %>
-      <%= form.select :assignee_ids,
-                      grouped_options_for_select(assignee_options, task.assignee_ids),
-                      { include_blank: '- Unassigned -' },
-                      id: :task_assignee_ids, multiple: true %>
-    </div>
-  <% end %>
-
-  <% if issue_options&.any? %>
-    <div class="field">
-      <%= form.label :issue_id, 'Linked Issue' %>
-      <%= form.select :issue_id,
-                      options_for_select(issue_options, task.issue_id),
-                      { include_blank: '- None -' },
-                      { id: :task_issue_id } %>
-    </div>
-  <% end %>
-
   <div class="field">
     <%= form.label :task_type_id, 'Type' %>
     <div id="task_task_type_labels" class="task-task-type-options">
@@ -52,6 +22,35 @@
     <%= required_field_label form, :summary %>
     <%= form.text_field :summary, id: :task_summary %>
   </div>
+
+  <%# TODO: add choices, not a choice, bub %>
+  <% if issue_options&.any? %>
+    <div class="field">
+      <%= form.label :issue_id, 'Linked Issue' %>
+      <%= form.select :issue_id,
+                      options_for_select(issue_options, task.issue_id),
+                      { include_blank: '- None -' },
+                      { id: :task_issue_id } %>
+    </div>
+  <% end %>
+
+  <% if assignee_options&.any? %>
+    <% if assignee_options.instance_of?(Hash) %>
+      <%= form.label :assignee_ids, 'Assignee' %>
+      <%= form.select :assignee_ids,
+                      options_for_select(assignee_options, task.assignee_ids),
+                      { include_blank: '- Unassigned -' },
+                      id: :task_assignee_ids %>
+    <% else %>
+      <div class="field">
+        <%= form.label :assignee_ids, 'Assignees' %>
+        <%= form.select :assignee_ids,
+                        grouped_options_for_select(assignee_options, task.assignee_ids),
+                        { include_blank: '- Unassigned -' },
+                        id: :task_assignee_ids, multiple: true %>
+      </div>
+    <% end %>
+  <% end %>
 
   <div class="field">
     <%= required_field_label form, :description %>
