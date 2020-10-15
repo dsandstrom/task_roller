@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class TaskAssignmentsController < ApplicationController
-  before_action :set_task, only: %i[show edit update destroy]
+  before_action :authorize_task
+  before_action :set_task
 
   def edit
   end
@@ -17,9 +18,13 @@ class TaskAssignmentsController < ApplicationController
 
   private
 
-    # TODO: authorize access
+    def authorize_task
+      authorize Task, :create?
+    end
+
     def set_task
       @task = Task.find(params[:id])
+
       @project = @task.project
       @category = @project.category
     end
