@@ -5,8 +5,6 @@ require "rails_helper"
 RSpec.describe CategoriesController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
-  before { login(Fabricate(:user_admin)) }
-
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
