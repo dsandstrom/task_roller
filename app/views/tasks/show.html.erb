@@ -92,8 +92,7 @@ assigned = @task.assigned
                          locals: { task: @task, current_assignee: true } %>
             </dl>
 
-            <%# TODO: change policy to TaskAssignment %>
-            <% if policy(Task).create? %>
+            <% if policy(@task).assign? %>
               <% unless @task.in_review? %>
                 <p>
                   <%= link_to 'reassign',
@@ -109,8 +108,7 @@ assigned = @task.assigned
               <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
               <%# TODO: add form with ajax with first click, then toggle hide class %>
               <% unless @task.in_review? %>
-                <%# TODO: change policy to TaskAssignment %>
-                <% if policy(Task).create? %>
+                <% if policy(@task).assign? %>
                   <%= divider %>
                   <%= link_to 'assign someone',
                               edit_task_assignment_path(@task),
@@ -127,8 +125,7 @@ assigned = @task.assigned
             </p>
           <% end %>
 
-          <%# TODO: change policy to TaskAssignment %>
-          <% if policy(Task).create? %>
+          <% if policy(@task).assign? %>
             <% unless @task.in_review? %>
               <%= render 'task_assignments/form', task: @task %>
             <% end %>
