@@ -26,7 +26,7 @@ RSpec.describe TaskPolicy, type: :policy do
     end
   end
 
-  permissions :create?, :new? do
+  permissions :create?, :new?, :assign? do
     let(:task) { Fabricate(:task, project: project) }
 
     %i[admin reviewer].each do |employee_type|

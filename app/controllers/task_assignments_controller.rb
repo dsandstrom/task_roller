@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: add TaskAssignmentsPolicy or TaskPolicy#assign?
 class TaskAssignmentsController < ApplicationController
-  before_action :authorize_task
   before_action :set_task
 
   def edit
@@ -19,12 +17,8 @@ class TaskAssignmentsController < ApplicationController
 
   private
 
-    def authorize_task
-      authorize Task, :create?
-    end
-
     def set_task
-      @task = Task.find(params[:id])
+      @task = authorize(Task.find(params[:id]), :assign?)
 
       @project = @task.project
       @category = @project.category

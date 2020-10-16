@@ -12,11 +12,11 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def create?
-    employee? && (user.admin? || user.reviewer?)
+    user.admin? || user.reviewer?
   end
 
   def new?
-    employee? && (user.admin? || user.reviewer?)
+    user.admin? || user.reviewer?
   end
 
   # maybe allow any reviewer
@@ -38,6 +38,10 @@ class TaskPolicy < ApplicationPolicy
 
   def close?
     admin?
+  end
+
+  def assign?
+    user.admin? || user.reviewer?
   end
 
   class Scope < Scope
