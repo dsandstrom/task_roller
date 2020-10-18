@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ProgressionsController < ApplicationController
+  before_action :authorize_progression, only: %i[index destroy]
   before_action :set_task
   before_action :set_progression, only: %i[edit update destroy finish]
 
@@ -9,19 +10,17 @@ class ProgressionsController < ApplicationController
     @progressions = @task.progressions.order(created_at: :asc)
   end
 
-  # TODO: assigned to task
   def new
     @progression = @task.progressions.build
+    authorize @progression
   end
 
-  # TODO: admin
   def edit
   end
 
-  # TODO: assigned to task
   def create
-    # TODO: use current_user and create without params
-    @progression = @task.progressions.build(progression_params)
+    @progression = @task.progressions.build(user_id: current_user.id)
+    authorize @progression
 
     if @progression.save
       redirect_to category_project_task_path(@category, @project, @task),
@@ -31,7 +30,6 @@ class ProgressionsController < ApplicationController
     end
   end
 
-  # TODO: admin
   def update
     if @progression.update(progression_params)
       redirect_to category_project_task_path(@category, @project, @task),
@@ -41,7 +39,6 @@ class ProgressionsController < ApplicationController
     end
   end
 
-  # TODO: user and admin
   def finish
     if @progression.finish
       redirect_to category_project_task_path(@category, @project, @task),
@@ -51,7 +48,6 @@ class ProgressionsController < ApplicationController
     end
   end
 
-  # TODO: admin
   def destroy
     @progression.destroy
     redirect_to category_project_task_path(@category, @project, @task),
@@ -60,7 +56,10 @@ class ProgressionsController < ApplicationController
 
   private
 
-    # TODO: authorize access
+    def authorize_progression
+      authorize Progression
+    end
+
     def set_task
       @task = Task.find(params[:task_id])
       @project = @task.project
@@ -70,6 +69,7 @@ class ProgressionsController < ApplicationController
 
     def set_progression
       @progression = @task.progressions.find(params[:id])
+      authorize @progression
     end
 
     def progression_params
