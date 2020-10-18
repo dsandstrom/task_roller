@@ -9,14 +9,14 @@ class ReviewsController < ApplicationController
   end
 
   def new
-    @review = @task.reviews.build
+    @review = authorize(@task.reviews.build(user_id: current_user.id))
   end
 
   def edit
   end
 
   def create
-    @review = @task.reviews.build(review_params)
+    @review = authorize(@task.reviews.build(user_id: current_user.id))
 
     if @review.save
       @task.finish
@@ -33,7 +33,6 @@ class ReviewsController < ApplicationController
                 notice: 'Review was successfully destroyed.'
   end
 
-  # TODO: set task.user_id as current user
   def approve
     if @review.approve
       redirect_to category_project_task_path(@category, @project, @task),
@@ -43,7 +42,6 @@ class ReviewsController < ApplicationController
     end
   end
 
-  # TODO: set task.user_id as current user
   def disapprove
     if @review.disapprove
       redirect_to category_project_task_path(@category, @project, @task),
@@ -56,14 +54,10 @@ class ReviewsController < ApplicationController
   private
 
     def set_review
-      @review = @task.reviews.find(params[:id])
+      @review = authorize(@task.reviews.find(params[:id]))
+      @review.user_id = current_user.id
     end
 
-    def review_params
-      params.require(:review).permit(:user_id)
-    end
-
-    # TODO: authorize access
     def set_task
       @task = Task.find(params[:task_id])
       @project = @task.project
