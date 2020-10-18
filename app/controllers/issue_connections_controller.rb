@@ -46,8 +46,7 @@ class IssueConnectionsController < ApplicationController
     end
 
     def set_issue_connection
-      @issue_connection = IssueConnection.find(params[:id])
-      authorize @issue_connection
+      @issue_connection = authorize(IssueConnection.find(params[:id]))
     end
 
     def issue_connection_params

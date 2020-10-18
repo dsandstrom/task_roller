@@ -57,8 +57,7 @@ class ProjectsController < ApplicationController
     end
 
     def set_project
-      @project = @category.projects.find(params[:id])
-      authorize @project
+      @project = authorize(@category.projects.find(params[:id]))
     end
 
     def project_params

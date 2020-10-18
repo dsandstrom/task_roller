@@ -96,13 +96,12 @@ class TasksController < ApplicationController
 
     def set_task
       if @project
-        @task = @project.tasks.find(params[:id])
+        @task = authorize(@project.tasks.find(params[:id]))
       else
-        @task = Task.find(params[:id])
+        @task = authorize(Task.find(params[:id]))
         @category = @task.category
         @project = @task.project
       end
-      authorize @task
     end
 
     def set_task_types

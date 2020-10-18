@@ -46,8 +46,7 @@ class TaskConnectionsController < ApplicationController
     end
 
     def set_task_connection
-      @task_connection = TaskConnection.find(params[:id])
-      authorize @task_connection
+      @task_connection = authorize(TaskConnection.find(params[:id]))
     end
 
     def task_connection_params

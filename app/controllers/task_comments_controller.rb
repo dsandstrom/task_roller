@@ -48,8 +48,7 @@ class TaskCommentsController < ApplicationController
     end
 
     def set_task_comment
-      @task_comment = @task.comments.find(params[:id])
-      authorize @task_comment
+      @task_comment = authorize(@task.comments.find(params[:id]))
     end
 
     def redirect_url

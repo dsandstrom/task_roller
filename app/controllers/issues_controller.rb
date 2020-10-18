@@ -91,11 +91,9 @@ class IssuesController < ApplicationController
 
     def set_issue
       if @project
-        @issue = @project.issues.find(params[:id])
-        authorize @issue
+        @issue = authorize(@project.issues.find(params[:id]))
       else
-        @issue = Issue.find(params[:id])
-        authorize @issue
+        @issue = authorize(Issue.find(params[:id]))
         @category = @issue.category
         @project = @issue.project
       end

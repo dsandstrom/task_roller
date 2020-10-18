@@ -48,8 +48,7 @@ class IssueCommentsController < ApplicationController
     end
 
     def set_issue_comment
-      @issue_comment = @issue.comments.find(params[:id])
-      authorize @issue_comment
+      @issue_comment = authorize(@issue.comments.find(params[:id]))
     end
 
     def redirect_url

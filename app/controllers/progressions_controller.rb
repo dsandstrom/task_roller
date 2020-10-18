@@ -11,16 +11,14 @@ class ProgressionsController < ApplicationController
   end
 
   def new
-    @progression = @task.progressions.build
-    authorize @progression
+    @progression = authorize(@task.progressions.build)
   end
 
   def edit
   end
 
   def create
-    @progression = @task.progressions.build(user_id: current_user.id)
-    authorize @progression
+    @progression = authorize(@task.progressions.build(user_id: current_user.id))
 
     if @progression.save
       redirect_to category_project_task_path(@category, @project, @task),
@@ -68,8 +66,7 @@ class ProgressionsController < ApplicationController
     end
 
     def set_progression
-      @progression = @task.progressions.find(params[:id])
-      authorize @progression
+      @progression = authorize(@task.progressions.find(params[:id]))
     end
 
     def progression_params

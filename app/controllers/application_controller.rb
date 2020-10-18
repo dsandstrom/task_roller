@@ -13,13 +13,11 @@ class ApplicationController < ActionController::Base
   private
 
     def set_issue_type
-      @issue_type = IssueType.find(params[:id])
-      authorize @issue_type
+      @issue_type = authorize(IssueType.find(params[:id]))
     end
 
     def set_task_type
-      @task_type = TaskType.find(params[:id])
-      authorize @task_type
+      @task_type = authorize(TaskType.find(params[:id]))
     end
 
     def set_category

@@ -5,15 +5,13 @@ class TaskTypesController < ApplicationController
   before_action :set_task_type, only: %i[edit update destroy]
 
   def new
-    @task_type = TaskType.new(color: 'default', icon: 'bulb')
-    authorize @task_type
+    @task_type = authorize(TaskType.new(color: 'default', icon: 'bulb'))
   end
 
   def edit; end
 
   def create
-    @task_type = TaskType.new(task_type_params)
-    authorize @task_type
+    @task_type = authorize(TaskType.new(task_type_params))
 
     if @task_type.save
       redirect_to roller_types_url,
