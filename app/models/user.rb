@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_many :tasks
   has_many :issue_comments
   has_many :task_comments
+  has_many :reviews
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }

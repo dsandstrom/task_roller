@@ -21,6 +21,7 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignments) }
   it { is_expected.to have_many(:progressions) }
+  it { is_expected.to have_many(:reviews) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
