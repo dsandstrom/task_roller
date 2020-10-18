@@ -27,6 +27,12 @@ class ReviewsController < ApplicationController
     end
   end
 
+  def destroy
+    @review.destroy
+    redirect_to category_project_task_path(@category, @project, @task),
+                notice: 'Review was successfully destroyed.'
+  end
+
   # TODO: set task.user_id as current user
   def approve
     if @review.approve
@@ -45,12 +51,6 @@ class ReviewsController < ApplicationController
     else
       render :edit
     end
-  end
-
-  def destroy
-    @review.destroy
-    redirect_to category_project_task_path(@category, @project, @task),
-                notice: 'Review was successfully destroyed.'
   end
 
   private

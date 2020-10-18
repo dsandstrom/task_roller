@@ -28,28 +28,6 @@ RSpec.describe ProgressionPolicy, type: :policy do
     end
   end
 
-  permissions :edit?, :update?, :destroy? do
-    %i[admin].each do |employee_type|
-      it "permits #{employee_type}" do
-        user = Fabricate("user_#{employee_type}")
-        expect(subject).to permit(user, progression)
-      end
-    end
-
-    %i[reviewer worker reporter].each do |employee_type|
-      it "blocks #{employee_type}" do
-        user = Fabricate("user_#{employee_type}")
-        expect(subject).not_to permit(user, progression)
-      end
-    end
-
-    it "blocks non-employees" do
-      user = Fabricate(:user)
-      user.employee_type = nil
-      expect(subject).not_to permit(user, progression)
-    end
-  end
-
   permissions :new?, :create? do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
@@ -77,6 +55,28 @@ RSpec.describe ProgressionPolicy, type: :policy do
       user = Fabricate(:user)
       user.employee_type = nil
       expect(subject).not_to permit(user)
+    end
+  end
+
+  permissions :edit?, :update?, :destroy? do
+    %i[admin].each do |employee_type|
+      it "permits #{employee_type}" do
+        user = Fabricate("user_#{employee_type}")
+        expect(subject).to permit(user, progression)
+      end
+    end
+
+    %i[reviewer worker reporter].each do |employee_type|
+      it "blocks #{employee_type}" do
+        user = Fabricate("user_#{employee_type}")
+        expect(subject).not_to permit(user, progression)
+      end
+    end
+
+    it "blocks non-employees" do
+      user = Fabricate(:user)
+      user.employee_type = nil
+      expect(subject).not_to permit(user, progression)
     end
   end
 
