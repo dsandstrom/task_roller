@@ -175,7 +175,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    # TODO: add specs for assignees, progressions, reviews
+    # TODO: add specs for assignees, reviews
     context "when task is open" do
       before do
         @project = assign(:project, Fabricate(:project, category: @category))
@@ -258,6 +258,86 @@ RSpec.describe "tasks/show", type: :view do
         url =
           category_project_task_path(source.category, source.project, source)
         expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when an unfinished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:unfinished_progression, task: @task)
+      end
+
+      it "renders the progression" do
+        render
+        assert_select "#progression_#{@progression.id}"
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: @task.user_id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: @task.user_id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when a finished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:finished_progression, task: @task)
+      end
+
+      it "doesn't render the progression" do
+        render
+        assert_select "#progression_#{@progression.id}", count: 0
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: @task.user_id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: @task.user_id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
     end
   end
@@ -368,153 +448,497 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
     end
+
+    context "when an unfinished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:unfinished_progression, task: @task)
+      end
+
+      it "renders the progression" do
+        render
+        assert_select "#progression_#{@progression.id}"
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: @task.user_id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: @task.user_id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when a finished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:finished_progression, task: @task)
+      end
+
+      it "doesn't render the progression" do
+        render
+        assert_select "#progression_#{@progression.id}", count: 0
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: @task.user_id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: @task.user_id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
   end
 
-  %w[worker reporter].each do |employee_type|
-    context "for a #{employee_type}" do
-      let(:current_user) { Fabricate("user_#{employee_type}") }
+  context "for a worker" do
+    let(:current_user) { Fabricate("user_worker") }
 
+    before do
+      enable_pundit(view, current_user)
+      @project = assign(:project, Fabricate(:project, category: @category))
+    end
+
+    context "when task is open" do
       before do
-        enable_pundit(view, current_user)
-        @project = assign(:project, Fabricate(:project, category: @category))
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @review = Fabricate(:pending_review, task: @task)
       end
 
-      context "when task is open" do
+      it "renders task's heading" do
+        render
+        assert_select ".task-heading", @task.heading
+      end
+
+      it "renders new task_comment form" do
+        render
+
+        url = category_project_task_task_comments_url(@category, @project,
+                                                      @task)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "task_comment[body]"
+        end
+      end
+
+      # TODO: authorize task reviews & connections
+      # it "doesn't render approval link" do
+      #   render
+      #   url = approve_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+      #
+      # it "doesn't render disapproval link" do
+      #   render
+      #   url = disapprove_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+
+      it "doesn't render new task connection link" do
+        render
+        url = new_task_connection_path(@task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+    end
+
+    context "when task is closed" do
+      before do
+        @task = assign(:task, Fabricate(:closed_task, project: @project))
+      end
+
+      it "doesn't render reopen link" do
+        render
+        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+      end
+    end
+
+    context "when Task assigned to them" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << current_user
+      end
+
+      context "and they have an unfinished progression" do
         before do
-          @task = assign(:task, Fabricate(:task, project: @project))
-          @review = Fabricate(:pending_review, task: @task)
+          @progression = Fabricate(:unfinished_progression, user: current_user,
+                                                            task: @task)
         end
 
-        it "renders task's heading" do
+        it "renders the progression" do
           render
-          assert_select ".task-heading", @task.heading
+          assert_select "#progression_#{@progression.id}"
         end
 
-        it "renders new task_comment form" do
+        it "renders the finish link" do
           render
-
-          url = category_project_task_task_comments_url(@category, @project,
-                                                        @task)
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "task_comment[body]"
-          end
+          url = finish_task_progression_path(@task, @progression)
+          expect(rendered).to have_link(nil, href: url)
         end
 
-        # TODO: authorize task reviews & connections
-        # it "doesn't render approval link" do
-        #   render
-        #   url = approve_task_review_path(@task, @review)
-        #   expect(rendered).not_to have_link(nil, href: url)
-        # end
-        #
-        # it "doesn't render disapproval link" do
-        #   render
-        #   url = disapprove_task_review_path(@task, @review)
-        #   expect(rendered).not_to have_link(nil, href: url)
-        # end
-
-        it "doesn't render new task connection link" do
+        it "doesn't render new review link" do
           render
-          url = new_task_connection_path(@task)
+          url = task_reviews_path(@task, review: { user_id: current_user.id })
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "doesn't render close link" do
+        it "doesn't render destroy progression link" do
           render
-          expect(rendered).not_to have_link(nil, href: close_task_path(@task))
-        end
-      end
-
-      context "when task is closed" do
-        before do
-          @task = assign(:task, Fabricate(:closed_task, project: @project))
+          url = task_progression_path(@task, @progression)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
-        it "doesn't render reopen link" do
+        it "doesn't render the new progression link" do
           render
-          expect(rendered).not_to have_link(nil, href: open_task_path(@task))
-        end
-      end
-
-      context "when their Task" do
-        before do
-          @task = assign(:task, Fabricate(:task, project: @project,
-                                                 user: current_user))
-        end
-
-        it "renders new task_comment form" do
-          render
-
-          url = category_project_task_task_comments_url(@category, @project,
-                                                        @task)
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "task_comment[body]"
-          end
-        end
-
-        it "renders edit link" do
-          render
-          url = edit_category_project_task_path(@category, @project, @task)
-          expect(rendered).to have_link(nil, href: url)
-        end
-      end
-
-      context "when someone else's Task" do
-        before do
-          @task = assign(:task, Fabricate(:task, project: @project))
-        end
-
-        it "renders new task_comment form" do
-          render
-
-          url = category_project_task_task_comments_url(@category, @project,
-                                                        @task)
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "task_comment[body]"
-          end
-        end
-
-        it "doesn't render edit link" do
-          render
-          url = edit_category_project_task_path(@category, @project, @task)
+          url = task_progressions_path(
+            @task,
+            progression: { user_id: current_user.id }
+          )
           expect(rendered).not_to have_link(nil, href: url)
         end
       end
 
-      context "when task has a source_task_connection" do
+      context "and they have an finished progression" do
         before do
-          @task = assign(:task, Fabricate(:task, project: @project))
-          @task_connection = Fabricate(:task_connection, source: @task)
+          @progression = Fabricate(:finished_progression, user: current_user,
+                                                          task: @task)
         end
 
-        it "renders link to target task" do
+        it "doesn't render the progression" do
           render
-          target = @task_connection.target
-          url =
-            category_project_task_path(target.category, target.project, target)
+          assert_select "#progression_#{@progression.id}", count: 0
+        end
+
+        it "renders the new progression link" do
+          render
+          url = task_progressions_path(
+            @task,
+            progression: { user_id: current_user.id }
+          )
           expect(rendered).to have_link(nil, href: url)
         end
 
-        it "doesn't render destroy link" do
+        it "doesn't render the finish link" do
           render
-          url = task_connection_path(@task_connection)
+          url = finish_task_progression_path(@task, @progression)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render new review link" do
+          render
+          url = task_reviews_path(@task, review: { user_id: current_user.id })
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render destroy progression link" do
+          render
+          url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
       end
+    end
 
-      context "when task has target_task_connections" do
-        before do
-          @task = assign(:task, Fabricate(:task, project: @project))
-          @task_connection = Fabricate(:task_connection, target: @task)
-        end
+    context "when someone else's Task" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+      end
 
-        it "renders link to source task" do
-          render
-          source = @task_connection.source
-          url =
-            category_project_task_path(source.category, source.project, source)
-          expect(rendered).to have_link(nil, href: url)
+      it "renders new task_comment form" do
+        render
+
+        url = category_project_task_task_comments_url(@category, @project,
+                                                      @task)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "task_comment[body]"
         end
+      end
+
+      it "doesn't render edit link" do
+        render
+        url = edit_category_project_task_path(@category, @project, @task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: current_user.id })
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when task has a source_task_connection" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, source: @task)
+      end
+
+      it "renders link to target task" do
+        render
+        target = @task_connection.target
+        url =
+          category_project_task_path(target.category, target.project, target)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy link" do
+        render
+        url = task_connection_path(@task_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when task has target_task_connections" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, target: @task)
+      end
+
+      it "renders link to source task" do
+        render
+        source = @task_connection.source
+        url =
+          category_project_task_path(source.category, source.project, source)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+  end
+
+  context "for a reporter" do
+    let(:current_user) { Fabricate("user_reporter") }
+
+    before do
+      enable_pundit(view, current_user)
+      @project = assign(:project, Fabricate(:project, category: @category))
+    end
+
+    context "when task is open" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "renders task's heading" do
+        render
+        assert_select ".task-heading", @task.heading
+      end
+
+      it "renders new task_comment form" do
+        render
+
+        url = category_project_task_task_comments_url(@category, @project,
+                                                      @task)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "task_comment[body]"
+        end
+      end
+
+      it "renders new task_comment form" do
+        render
+
+        url = category_project_task_task_comments_url(@category, @project,
+                                                      @task)
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "textarea[name=?]", "task_comment[body]"
+        end
+      end
+
+      # TODO: authorize task reviews & connections
+      # it "doesn't render approval link" do
+      #   render
+      #   url = approve_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+      #
+      # it "doesn't render disapproval link" do
+      #   render
+      #   url = disapprove_task_review_path(@task, @review)
+      #   expect(rendered).not_to have_link(nil, href: url)
+      # end
+
+      it "doesn't render new task connection link" do
+        render
+        url = new_task_connection_path(@task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+
+      it "doesn't render edit link" do
+        render
+        url = edit_category_project_task_path(@category, @project, @task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when task is closed" do
+      before do
+        @task = assign(:task, Fabricate(:closed_task, project: @project))
+      end
+
+      it "doesn't render reopen link" do
+        render
+        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+      end
+    end
+
+    context "when task has a source_task_connection" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, source: @task)
+      end
+
+      it "renders link to target task" do
+        render
+        target = @task_connection.target
+        url =
+          category_project_task_path(target.category, target.project, target)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy link" do
+        render
+        url = task_connection_path(@task_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when task has target_task_connections" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task_connection = Fabricate(:task_connection, target: @task)
+      end
+
+      it "renders link to source task" do
+        render
+        source = @task_connection.source
+        url =
+          category_project_task_path(source.category, source.project, source)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when an unfinished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:unfinished_progression, task: @task)
+      end
+
+      it "renders the progression" do
+        render
+        assert_select "#progression_#{@progression.id}"
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: @task.user_id })
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: current_user.id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when a finished progression" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @progression = Fabricate(:finished_progression, task: @task)
+      end
+
+      it "doesn't render the progression" do
+        render
+        assert_select "#progression_#{@progression.id}", count: 0
+      end
+
+      it "doesn't render the new progression link" do
+        render
+        url = task_progressions_path(
+          @task,
+          progression: { user_id: @task.user_id }
+        )
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render the finish link" do
+        render
+        url = finish_task_progression_path(@task, @progression)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render new review link" do
+        render
+        url = task_reviews_path(@task, review: { user_id: current_user.id })
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render destroy progression link" do
+        render
+        url = task_progression_path(@task, @progression)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
     end
   end

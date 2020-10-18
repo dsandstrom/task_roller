@@ -13,12 +13,18 @@
     <% end %>
   </p>
 
-  <p>
-    <%= link_to 'edit', edit_task_progression_path(task, progression) %>
-    <%= divider %>
-    <%= link_to 'delete',
-                task_progression_path(task, progression),
-                method: :delete,
-                data: { confirm: 'Are you sure?' } %>
-  </p>
+  <% if policy(progression).edit? || policy(progression).destroy? %>
+    <p>
+      <% if policy(progression).edit? %>
+        <%= link_to 'edit', edit_task_progression_path(task, progression) %>
+      <% end %>
+      <% if policy(progression).destroy? %>
+        <%= divider %>
+        <%= link_to 'delete',
+                    task_progression_path(task, progression),
+                    method: :delete,
+                    data: { confirm: 'Are you sure?' } %>
+      <% end %>
+    </p>
+  <% end %>
 </div>

@@ -12,10 +12,63 @@ RSpec.describe "progressions/index", type: :view do
       assign(:progressions, [first_progression, second_progression])
     end
 
-    it "renders a list of progressions" do
-      render
-      assert_select "#progression_#{first_progression.id}"
-      assert_select "#progression_#{second_progression.id}"
+    context "for an admin" do
+      let(:admin) { Fabricate(:user_admin) }
+
+      before { enable_pundit(view, admin) }
+
+      it "renders a list of progressions" do
+        render
+        assert_select "#progression_#{first_progression.id}"
+        assert_select "#progression_#{second_progression.id}"
+      end
+
+      it "renders edit links" do
+        render
+        [first_progression, second_progression].each do |progression|
+          url = edit_task_progression_path(task, progression)
+          expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      it "renders destroy links" do
+        render
+        [first_progression, second_progression].each do |progression|
+          url = task_progression_path(task, progression)
+          assert_select "a[href=\"#{url}\"][data-method=\"delete\"]"
+        end
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { enable_pundit(view, current_user) }
+
+        it "renders a list of progressions" do
+          render
+          assert_select "#progression_#{first_progression.id}"
+          assert_select "#progression_#{second_progression.id}"
+        end
+
+        it "doesn't render edit links" do
+          render
+          [first_progression, second_progression].each do |progression|
+            url = edit_task_progression_path(task, progression)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+        end
+
+        it "doesn't render destroy links" do
+          render
+          [first_progression, second_progression].each do |progression|
+            url = task_progression_path(task, progression)
+            assert_select "a[href=\"#{url}\"][data-method=\"delete\"]",
+                          count: 0
+          end
+        end
+      end
     end
   end
 end

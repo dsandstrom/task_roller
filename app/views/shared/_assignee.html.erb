@@ -1,8 +1,6 @@
 <%
 progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
 progress = assignee.task_progress(task)
-current_assignee = false if current_assignee.nil?
-confirm = 'Are you sure you want to cancel the review?'
 %>
 
 <dt id="assignee-<%= assignee.id %>" class="assignee">
@@ -13,9 +11,10 @@ confirm = 'Are you sure you want to cancel the review?'
     <%= render partial: 'shared/progression',
                collection: progressions.unfinished,
                locals: { task: task } %>
-  <% elsif current_assignee %>
-    <% if task.assigned? %>
-      <%# TODO: current user %>
+  <% else %>
+    <%# TODO: better way without building instance %>
+    <% if task.assigned? &&
+          policy(task.progressions.build(user_id: assignee.id)).create? %>
       <%= divider %>
       <%= link_to 'start',
                   task_progressions_path(task, progression: { user_id: assignee.id }),
@@ -23,12 +22,14 @@ confirm = 'Are you sure you want to cancel the review?'
     <% end %>
 
     <% if task.current_review && task.current_review.pending? %>
+      <% confirm = 'Are you sure you want to cancel the review?' %>
       <%= divider %>
       <%= link_to 'cancel review',
                   task_review_path(task, task.current_review),
                   method: :delete, data: { confirm: confirm },
                   class: 'destroy-link' %>
-    <% elsif !task.in_review? %>
+    <% elsif !task.in_review? && policy(Task).create? %>
+      <%# TODO: add review policy %>
       <%= divider %>
       <%= link_to 'complete',
                   task_reviews_path(task, review: { user_id: task.user_id }),
