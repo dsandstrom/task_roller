@@ -47,6 +47,12 @@ RSpec.describe "tasks/show", type: :view do
         end
       end
 
+      it "renders new task connection link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_task_connection_path(@task))
+      end
+
       context "task belongs to an issue" do
         let(:issue) { Fabricate(:issue, project: @project) }
 
@@ -176,7 +182,7 @@ RSpec.describe "tasks/show", type: :view do
     end
 
     # TODO: add specs for assignees, reviews
-    context "when task is open" do
+    context "when task is in review" do
       before do
         @project = assign(:project, Fabricate(:project, category: @category))
         @task = assign(:task, Fabricate(:task, project: @project))
@@ -193,12 +199,6 @@ RSpec.describe "tasks/show", type: :view do
         render
         expect(rendered)
           .to have_link(nil, href: disapprove_task_review_path(@task, @review))
-      end
-
-      it "renders new task connection link" do
-        render
-        expect(rendered)
-          .to have_link(nil, href: new_task_connection_path(@task))
       end
 
       it "renders close link" do
@@ -225,6 +225,18 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when task doesn't have a source_task_connection" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+      end
+
+      it "renders new task connection link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_task_connection_path(@task))
+      end
+    end
+
     context "when task has a source_task_connection" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
@@ -243,6 +255,12 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = task_connection_path(@task_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+
+      it "doesn't render a new task connection link" do
+        render
+        expect(rendered)
+          .not_to have_link(nil, href: new_task_connection_path(@task))
       end
     end
 
@@ -268,27 +286,15 @@ RSpec.describe "tasks/show", type: :view do
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
 
-      it "renders the progression" do
+      it "doesn't render the progression" do
         render
-        assert_select "#progression_#{@progression.id}"
+        assert_select "#progression_#{@progression.id}", count: 0
       end
 
       it "doesn't render the finish link" do
         render
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
-      end
-
-      it "renders new review link" do
-        render
-        url = task_reviews_path(@task, review: { user_id: @task.user_id })
-        expect(rendered).to have_link(nil, href: url)
-      end
-
-      it "renders destroy progression link" do
-        render
-        url = task_progression_path(@task, @progression)
-        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
 
       it "doesn't render the new progression link" do
@@ -328,16 +334,53 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).not_to have_link(nil, href: url)
       end
 
-      it "renders new review link" do
-        render
-        url = task_reviews_path(@task, review: { user_id: @task.user_id })
-        expect(rendered).to have_link(nil, href: url)
-      end
-
       it "doesn't render destroy progression link" do
         render
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when no review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+    end
+
+    context "when a pending review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+
+      it "renders approve review link" do
+        render
+        url = approve_task_review_path(@task, @review)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders disapprove review link" do
+        render
+        url = disapprove_task_review_path(@task, @review)
+        expect(rendered).to have_link(nil, href: url)
       end
     end
   end
@@ -353,7 +396,6 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is open" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
-        @review = Fabricate(:pending_review, task: @task)
       end
 
       it "renders task's heading" do
@@ -376,19 +418,6 @@ RSpec.describe "tasks/show", type: :view do
         url = edit_category_project_task_path(@category, @project, @task)
         expect(rendered).not_to have_link(nil, href: url)
       end
-
-      # TODO: authorize task reviews & connections
-      # it "doesn't render approval link" do
-      #   render
-      #   url = approve_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
-      #
-      # it "doesn't render disapproval link" do
-      #   render
-      #   url = disapprove_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
 
       it "renders new task connection link" do
         render
@@ -456,21 +485,15 @@ RSpec.describe "tasks/show", type: :view do
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
 
-      it "renders the progression" do
+      it "doesn't render the progression" do
         render
-        assert_select "#progression_#{@progression.id}"
+        assert_select "#progression_#{@progression.id}", count: 0
       end
 
       it "doesn't render the finish link" do
         render
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
-      end
-
-      it "renders new review link" do
-        render
-        url = task_reviews_path(@task, review: { user_id: @task.user_id })
-        expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
@@ -516,16 +539,53 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).not_to have_link(nil, href: url)
       end
 
-      it "renders new review link" do
-        render
-        url = task_reviews_path(@task, review: { user_id: @task.user_id })
-        expect(rendered).to have_link(nil, href: url)
-      end
-
       it "doesn't render destroy progression link" do
         render
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when no review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+    end
+
+    context "when a pending review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+
+      it "renders approve review link" do
+        render
+        url = approve_task_review_path(@task, @review)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders disapprove review link" do
+        render
+        url = disapprove_task_review_path(@task, @review)
+        expect(rendered).to have_link(nil, href: url)
       end
     end
   end
@@ -541,7 +601,6 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is open" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
-        @review = Fabricate(:pending_review, task: @task)
       end
 
       it "renders task's heading" do
@@ -558,19 +617,6 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
       end
-
-      # TODO: authorize task reviews & connections
-      # it "doesn't render approval link" do
-      #   render
-      #   url = approve_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
-      #
-      # it "doesn't render disapproval link" do
-      #   render
-      #   url = disapprove_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
 
       it "doesn't render new task connection link" do
         render
@@ -618,10 +664,10 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).to have_link(nil, href: url)
         end
 
-        it "doesn't render new review link" do
+        it "renders new review link" do
           render
-          url = task_reviews_path(@task, review: { user_id: current_user.id })
-          expect(rendered).not_to have_link(nil, href: url)
+          url = task_reviews_path(@task)
+          expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render destroy progression link" do
@@ -632,10 +678,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "doesn't render the new progression link" do
           render
-          url = task_progressions_path(
-            @task,
-            progression: { user_id: current_user.id }
-          )
+          url = task_progressions_path(@task)
           expect(rendered).not_to have_link(nil, href: url)
         end
       end
@@ -653,10 +696,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "renders the new progression link" do
           render
-          url = task_progressions_path(
-            @task,
-            progression: { user_id: current_user.id }
-          )
+          url = task_progressions_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
@@ -666,16 +706,46 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "doesn't render new review link" do
-          render
-          url = task_reviews_path(@task, review: { user_id: current_user.id })
-          expect(rendered).not_to have_link(nil, href: url)
-        end
-
         it "doesn't render destroy progression link" do
           render
           url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+      end
+
+      context "with no review" do
+        it "renders new review link" do
+          render
+          expect(rendered).to have_link(nil, href: task_reviews_path(@task))
+        end
+      end
+
+      context "with a pending review" do
+        before do
+          @review = Fabricate(:pending_review, task: @task)
+        end
+
+        it "doesn't render destroy review link" do
+          render
+          url = task_review_path(@task, @review)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+
+        it "doesn't render new review link" do
+          render
+          expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+        end
+
+        it "doesn't render approve review link" do
+          render
+          url = approve_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render disapprove review link" do
+          render
+          url = disapprove_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
     end
@@ -683,6 +753,7 @@ RSpec.describe "tasks/show", type: :view do
     context "when someone else's Task" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
       end
 
       it "renders new task_comment form" do
@@ -703,8 +774,44 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render new review link" do
         render
-        url = task_reviews_path(@task, review: { user_id: current_user.id })
+        url = task_reviews_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      context "with no review" do
+        it "doesn't render new review link" do
+          render
+          expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+        end
+      end
+
+      context "with a pending review" do
+        before do
+          @review = Fabricate(:pending_review, task: @task)
+        end
+
+        it "doesn't render destroy review link" do
+          render
+          url = task_review_path(@task, @review)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+
+        it "doesn't render new review link" do
+          render
+          expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+        end
+
+        it "doesn't render approve review link" do
+          render
+          url = approve_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render disapprove review link" do
+          render
+          url = disapprove_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
       end
     end
 
@@ -741,6 +848,37 @@ RSpec.describe "tasks/show", type: :view do
         url =
           category_project_task_path(source.category, source.project, source)
         expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when a pending review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @task.assignees << @task.user
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+
+      it "doesn't render approve review link" do
+        render
+        url = approve_task_review_path(@task, @review)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render disapprove review link" do
+        render
+        url = disapprove_task_review_path(@task, @review)
+        expect(rendered).not_to have_link(nil, href: url)
       end
     end
   end
@@ -783,19 +921,6 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
       end
-
-      # TODO: authorize task reviews & connections
-      # it "doesn't render approval link" do
-      #   render
-      #   url = approve_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
-      #
-      # it "doesn't render disapproval link" do
-      #   render
-      #   url = disapprove_task_review_path(@task, @review)
-      #   expect(rendered).not_to have_link(nil, href: url)
-      # end
 
       it "doesn't render new task connection link" do
         render
@@ -862,16 +987,16 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when an unfinished progression" do
+    context "when task has an unfinished progression" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
         @task.assignees << @task.user
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
 
-      it "renders the progression" do
+      it "doesn't render the progression" do
         render
-        assert_select "#progression_#{@progression.id}"
+        assert_select "#progression_#{@progression.id}", count: 0
       end
 
       it "doesn't render the finish link" do
@@ -894,15 +1019,12 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render the new progression link" do
         render
-        url = task_progressions_path(
-          @task,
-          progression: { user_id: current_user.id }
-        )
+        url = task_progressions_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
 
-    context "when a finished progression" do
+    context "when task has a finished progression" do
       before do
         @task = assign(:task, Fabricate(:task, project: @project))
         @task.assignees << @task.user
@@ -916,10 +1038,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render the new progression link" do
         render
-        url = task_progressions_path(
-          @task,
-          progression: { user_id: @task.user_id }
-        )
+        url = task_progressions_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -931,7 +1050,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render new review link" do
         render
-        url = task_reviews_path(@task, review: { user_id: current_user.id })
+        url = task_reviews_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -939,6 +1058,47 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when task doesn't have a review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+    end
+
+    context "when task has a pending review" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @review = Fabricate(:pending_review, task: @task)
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+
+      it "doesn't render new review link" do
+        render
+        expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+      end
+
+      it "doesn't render approve review link" do
+        render
+        url = approve_task_review_path(@task, @review)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render disapprove review link" do
+        render
+        url = disapprove_task_review_path(@task, @review)
+        expect(rendered).not_to have_link(nil, href: url)
       end
     end
   end

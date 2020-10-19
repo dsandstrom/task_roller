@@ -2,17 +2,9 @@
   <% if progression.finished? %>
     <%= "#{progression.start_date}-#{progression.finish_date}" %>
   <% elsif policy(progression).finish? %>
-    <%= link_to 'pause',
+    <%= link_to 'pause task',
                 finish_task_progression_path(task, progression),
                 method: :patch, class: 'destroy-link' %>
-  <% end %>
-
-  <%# TODO: update policy to review %>
-  <% if policy(task).edit? %>
-    <%= divider %>
-    <%= link_to 'complete',
-                task_reviews_path(task, review: { user_id: task.user_id }),
-                method: :post %>
   <% end %>
 
   <% if policy(progression).destroy? %>

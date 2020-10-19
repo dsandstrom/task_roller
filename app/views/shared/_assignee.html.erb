@@ -1,41 +1,9 @@
 <%
-progressions = assignee.progressions.where('progressions.task_id = ?', task.id)
 progress = assignee.task_progress(task)
 %>
 
 <dt id="assignee-<%= assignee.id %>" class="assignee">
   <%= content_tag :strong, assignee.name_or_email, class: 'assignee-name' %>
-
-  <% if progressions.unfinished.any? %>
-    <%= divider %>
-    <%= render partial: 'shared/progression',
-               collection: progressions.unfinished,
-               locals: { task: task } %>
-  <% else %>
-    <%# TODO: better way without building instance %>
-    <% if task.assigned? &&
-          policy(task.progressions.build(user_id: assignee.id)).create? %>
-      <%= divider %>
-      <%= link_to 'start',
-                  task_progressions_path(task, progression: { user_id: assignee.id }),
-                  method: :post, class: 'create-link' %>
-    <% end %>
-
-    <% if task.current_review && task.current_review.pending? %>
-      <% confirm = 'Are you sure you want to cancel the review?' %>
-      <%= divider %>
-      <%= link_to 'cancel review',
-                  task_review_path(task, task.current_review),
-                  method: :delete, data: { confirm: confirm },
-                  class: 'destroy-link' %>
-    <% elsif !task.in_review? && policy(Task).create? %>
-      <%# TODO: add review policy %>
-      <%= divider %>
-      <%= link_to 'complete',
-                  task_reviews_path(task, review: { user_id: task.user_id }),
-                  method: :post %>
-    <% end %>
-  <% end %>
 </dt>
 
 <dd id="assignee-progressions-<%= assignee.id %>" class="assignee-progressions">

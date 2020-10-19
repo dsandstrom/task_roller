@@ -19,22 +19,61 @@ assigned = @task.assigned
                           class: 'task-status' %>
         </p>
 
-        <%# TODO: reviewer+ %>
+        <% if @task.open? && !@task.in_review? %>
+          <p>
+            <%
+              progressions =
+                @task.progressions.unfinished
+                     .where('progressions.user_id = ?', current_user.id)
+            %>
+            <% if progressions.any? %>
+              <%= render partial: 'shared/progression',
+                         collection: progressions,
+                         locals: { task: @task } %>
+            <% elsif @task.assigned? &&
+                     policy(@task.progressions.build).create? %>
+              <%= link_to 'start task',
+                          task_progressions_path(@task),
+                          method: :post, class: 'create-link' %>
+            <% end %>
+
+            <% if policy(@task.reviews.build).create? %>
+              <%= divider %>
+              <%= link_to 'mark complete', task_reviews_path(@task),
+                          method: :post %>
+            <% end %>
+          </p>
+        <% end %>
+
         <% review = @task.current_review %>
         <% if review&.pending? %>
           <p>
-            <%= link_to 'approve',
-                        approve_task_review_path(@task, review),
-                        method: :patch, class: 'create-link' %>
-            <%= divider %>
-            <%= link_to 'disapprove',
-                        disapprove_task_review_path(@task, review),
-                        method: :patch, class: 'destroy-link' %>
+            <% if policy(review).approve? %>
+              <%= link_to 'approve',
+                          approve_task_review_path(@task, review),
+                          method: :patch, class: 'create-link' %>
+            <% end %>
+
+            <% if policy(review).disapprove? %>
+              <%= divider %>
+              <%= link_to 'disapprove',
+                          disapprove_task_review_path(@task, review),
+                          method: :patch, class: 'destroy-link' %>
+            <% end %>
+
+            <% if policy(review).destroy? %>
+              <% confirm = 'Are you sure you want to cancel the review?' %>
+              <%= divider %>
+              <%= link_to 'cancel review',
+                          task_review_path(@task, review),
+                          method: :delete, data: { confirm: confirm },
+                          class: 'destroy-link' %>
+            <% end %>
           </p>
         <% end %>
 
         <% if policy(TaskConnection).new? && @task.open? &&
-              @task.duplicatee.blank? %>
+              !@task.in_review? && @task.duplicatee.blank? %>
           <p>
             <%= link_to 'mark duplicate',
                         new_task_connection_path(@task),
@@ -89,9 +128,11 @@ assigned = @task.assigned
 
           <% if assignees.any? %>
             <dl class="task-assignees">
-              <%= render partial: 'shared/assignee',
-                         collection: assignees,
-                         locals: { task: @task } %>
+              <% assignees.each do |assignee| %>
+                <%= render 'shared/assignee',
+                           assignee: assignee, task: @task,
+                           current_assignee: assignee == current_user %>
+              <% end %>
             </dl>
 
             <% if policy(@task).assign? && !@task.in_review? %>
@@ -105,30 +146,19 @@ assigned = @task.assigned
           <% else %>
             <p>
               no one
-              <%# TODO: reviewer+ only, otherwise allow self-assigning for worker+ %>
               <%# TODO: add form with ajax with first click, then toggle hide class %>
-              <% unless @task.in_review? %>
-                <% if policy(@task).assign? %>
-                  <%= divider %>
-                  <%= link_to 'assign someone',
-                              edit_task_assignment_path(@task),
-                              id: 'task_assignment_link',
-                              class: 'secondary-link' %>
-                <% end %>
-
-                <%# TODO: admin %>
+              <% if !@task.in_review? && policy(@task).assign? %>
                 <%= divider %>
-                <%= link_to 'complete',
-                            task_reviews_path(@task, review: { user_id: @task.user_id }),
-                            method: :post %>
+                <%= link_to 'assign someone',
+                            edit_task_assignment_path(@task),
+                            id: 'task_assignment_link',
+                            class: 'secondary-link' %>
               <% end %>
             </p>
           <% end %>
 
-          <% if policy(@task).assign? %>
-            <% unless @task.in_review? %>
-              <%= render 'task_assignments/form', task: @task %>
-            <% end %>
+          <% if !@task.in_review? && policy(@task).assign? %>
+            <%= render 'task_assignments/form', task: @task %>
           <% end %>
         </section>
       <% end %>
