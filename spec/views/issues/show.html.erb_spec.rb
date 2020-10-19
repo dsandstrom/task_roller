@@ -449,9 +449,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         context "is addressed" do
-          let(:issue) do
-            Fabricate(:closed_issue, project: @project, user: current_user)
-          end
+          let(:issue) { Fabricate(:closed_issue, project: @project) }
 
           before do
             @issue = assign(:issue, issue)

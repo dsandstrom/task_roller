@@ -12,7 +12,8 @@
         <h4 class="issue-column-title">Status</h4>
 
         <p>
-          <%= content_tag :strong, @issue.status, class: 'issue-status' %>
+          <%= content_tag :strong, @issue.status,
+                          class: 'issue-status' %>
 
           <% if @issue.current_resolution %>
             <%= render 'shared/resolution',
@@ -21,7 +22,6 @@
           <% end %>
         </p>
 
-        <%# TODO: issue user only %>
         <% if @issue.addressed? &&
               policy(@issue.resolutions.build).disapprove? %>
           <p>
@@ -31,33 +31,33 @@
           </p>
         <% end %>
 
-        <%# TODO: issue user only %>
-        <% if @issue.open? && (@issue.unresolved? || @issue.duplicatee.blank?) %>
-          <p>
-            <% if @issue.unresolved? &&
-                  policy(@issue.resolutions.build).approve? %>
+        <% if @issue.open? %>
+          <% if @issue.unresolved? &&
+                policy(@issue.resolutions.build).approve? %>
+            <p>
               <%= link_to 'mark resolved',
                           approve_issue_resolutions_path(@issue),
                           method: :post, class: 'create-link' %>
-            <% end %>
+            </p>
+          <% end %>
 
-            <% if policy(IssueConnection).new? && @issue.duplicatee.blank? %>
-              |
+          <% if policy(IssueConnection).new? && @issue.duplicatee.blank? %>
+            <p>
               <%= link_to 'mark duplicate',
                           new_issue_connection_path(@issue),
                           class: 'normal-link' %>
-            <% end %>
-          </p>
+            </p>
+          <% end %>
         <% end %>
 
-        <% if @issue.duplicatee.present? %>
+        <% duplicatee = @issue.duplicatee %>
+        <% if duplicatee.present? %>
           <%
             confirm = "Are you sure you want to remove the connection to " \
-                      "\"#{@issue.duplicatee.short_summary}\" and reopen " \
+                      "\"#{duplicatee.short_summary}\" and reopen " \
                       "this issue?"
           %>
           <p>
-            <% duplicatee = @issue.duplicatee %>
             Duplicate of:
             <%= link_to_if policy(duplicatee).show?,
                            duplicatee.short_summary,
@@ -65,6 +65,7 @@
                                                        duplicatee.project,
                                                        duplicatee) %>
           </p>
+
           <% if policy(@issue.source_issue_connection).destroy? %>
             <p>
               <%= link_to 'Mark not a duplicate and reopen',
