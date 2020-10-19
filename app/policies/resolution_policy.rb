@@ -10,13 +10,13 @@ class ResolutionPolicy < ApplicationPolicy
   end
 
   def new?
-    return false unless employee? && record&.issue && user
+    return false unless employee? && user && record&.issue&.unresolved?
 
     record.issue.user == user
   end
 
   def create?
-    return false unless employee? && record&.issue && user
+    return false unless employee? && user && record&.issue&.unresolved?
 
     record.issue.user == user
   end
