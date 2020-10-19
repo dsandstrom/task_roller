@@ -10,6 +10,7 @@ module TestHelpers
         allow(view).to receive(:policy) do |record|
           ::Pundit.policy(user, record)
         end
+        allow(view).to receive(:current_user) { user }
       end
     end
   end
