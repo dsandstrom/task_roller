@@ -53,8 +53,9 @@ RSpec.describe ReviewPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
+      task.assignees << user
       user.employee_type = nil
-      expect(subject).not_to permit(user)
+      expect(subject).not_to permit(user, review)
     end
   end
 

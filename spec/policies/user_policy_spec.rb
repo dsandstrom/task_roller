@@ -65,7 +65,7 @@ RSpec.describe UserPolicy, type: :policy do
     it "blocks non-employees" do
       user = Fabricate(:user)
       user.employee_type = nil
-      expect(subject).not_to permit(user, record)
+      expect(subject).not_to permit(user, user)
     end
   end
 

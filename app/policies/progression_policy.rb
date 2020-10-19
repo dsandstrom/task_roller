@@ -10,13 +10,13 @@ class ProgressionPolicy < ApplicationPolicy
   end
 
   def new?
-    return false unless record&.task && user
+    return false unless employee? && record&.task && user
 
     record.task.assignees.include?(user)
   end
 
   def create?
-    return false unless record&.task && user
+    return false unless employee? && record&.task && user
 
     record.task.assignees.include?(user)
   end
@@ -30,7 +30,7 @@ class ProgressionPolicy < ApplicationPolicy
   end
 
   def finish?
-    return false unless record&.user
+    return false unless employee? && record&.user
 
     record.user == user
   end

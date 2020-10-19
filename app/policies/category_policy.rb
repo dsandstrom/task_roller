@@ -21,11 +21,11 @@ class CategoryPolicy < ApplicationPolicy
   end
 
   def update?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def edit?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def destroy?

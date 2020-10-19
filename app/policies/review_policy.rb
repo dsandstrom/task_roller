@@ -10,13 +10,13 @@ class ReviewPolicy < ApplicationPolicy
   end
 
   def new?
-    return false unless record&.task && user
+    return false unless employee? && record&.task && user
 
     record.task.assignees.include?(user)
   end
 
   def create?
-    return false unless record&.task && user
+    return false unless employee? && record&.task && user
 
     record.task.assignees.include?(user)
   end

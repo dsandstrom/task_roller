@@ -18,10 +18,14 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
+    return false unless employee?
+
     admin? || user == record
   end
 
   def edit?
+    return false unless employee?
+
     admin? || user == record
   end
 

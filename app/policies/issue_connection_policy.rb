@@ -10,23 +10,23 @@ class IssueConnectionPolicy < ApplicationPolicy
   end
 
   def create?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def new?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def update?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def edit?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   def destroy?
-    admin? || user.reviewer?
+    admin? || reviewer?
   end
 
   class Scope < Scope

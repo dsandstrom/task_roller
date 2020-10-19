@@ -20,10 +20,14 @@ class IssuePolicy < ApplicationPolicy
   end
 
   def edit?
+    return false unless employee?
+
     admin? || record.user == user
   end
 
   def update?
+    return false unless employee?
+
     admin? || record.user == user
   end
 

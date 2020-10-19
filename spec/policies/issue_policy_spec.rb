@@ -83,6 +83,13 @@ RSpec.describe IssuePolicy, type: :policy do
         end
       end
     end
+
+    it "blocks non-employees" do
+      user = Fabricate(:user)
+      issue = Fabricate(:issue, project: project, user: user)
+      user.employee_type = nil
+      expect(subject).not_to permit(user, issue)
+    end
   end
 
   permissions :destroy?, :open?, :close? do

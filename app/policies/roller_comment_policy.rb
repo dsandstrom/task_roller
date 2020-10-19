@@ -18,11 +18,15 @@ class RollerCommentPolicy < ApplicationPolicy
   end
 
   def edit?
-    admin? || (employee? && record.user == user)
+    return false unless employee?
+
+    admin? || record.user == user
   end
 
   def update?
-    admin? || (employee? && record.user == user)
+    return false unless employee?
+
+    admin? || record.user == user
   end
 
   def destroy?

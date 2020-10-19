@@ -21,7 +21,7 @@ class ApplicationPolicy
   end
 
   def new?
-    create?
+    false
   end
 
   def update?
@@ -29,7 +29,7 @@ class ApplicationPolicy
   end
 
   def edit?
-    update?
+    false
   end
 
   def destroy?
@@ -53,6 +53,10 @@ class ApplicationPolicy
 
     def admin?
       user.admin?
+    end
+
+    def reviewer?
+      user.reviewer?
     end
 
     def employee?
