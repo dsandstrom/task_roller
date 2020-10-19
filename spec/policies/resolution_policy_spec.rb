@@ -35,18 +35,10 @@ RSpec.describe ResolutionPolicy, type: :policy do
       end
 
       context "when their issue is closed" do
-        it "blocks #{employee_type}" do
+        it "permits #{employee_type}" do
           issue = Fabricate(:closed_issue, user: current_user)
           resolution = Fabricate.build(:resolution, issue: issue)
-          expect(subject).not_to permit(current_user, resolution)
-        end
-      end
-
-      context "when their issue is closed" do
-        it "blocks #{employee_type}" do
-          issue = Fabricate(:closed_issue, user: current_user)
-          resolution = Fabricate.build(:resolution, issue: issue)
-          expect(subject).not_to permit(current_user, resolution)
+          expect(subject).to permit(current_user, resolution)
         end
       end
 
@@ -54,7 +46,7 @@ RSpec.describe ResolutionPolicy, type: :policy do
         it "blocks #{employee_type}" do
           issue = Fabricate(:open_issue, user: current_user)
           resolution = Fabricate.build(:resolution, issue: issue)
-          Fabricate(:pending_resolution, issue: issue)
+          Fabricate(:approved_resolution, issue: issue)
           expect(subject).not_to permit(current_user, resolution)
         end
       end
