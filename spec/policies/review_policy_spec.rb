@@ -58,7 +58,74 @@ RSpec.describe ReviewPolicy, type: :policy do
     end
   end
 
-  permissions :edit?, :update?, :destroy? do
+  permissions :destroy? do
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        context "when task is open, review pending, and belongs to them" do
+          let(:task) { Fabricate(:open_task) }
+          let(:review) do
+            Fabricate(:pending_review, task: task, user: current_user)
+          end
+
+          it "permits them" do
+            expect(subject).to permit(current_user, review)
+          end
+        end
+
+        context "when task is closed" do
+          let(:task) { Fabricate(:closed_task) }
+          let(:review) do
+            Fabricate(:pending_review, task: task, user: current_user)
+          end
+
+          it "blocks them" do
+            expect(subject).not_to permit(current_user, review)
+          end
+        end
+
+        context "when review is approved" do
+          let(:task) { Fabricate(:open_task) }
+          let(:review) do
+            Fabricate(:approved_review, task: task, user: current_user)
+          end
+
+          it "blocks them" do
+            expect(subject).not_to permit(current_user, review)
+          end
+        end
+
+        context "when review is disapproved" do
+          let(:task) { Fabricate(:open_task) }
+          let(:review) do
+            Fabricate(:disapproved_review, task: task, user: current_user)
+          end
+
+          it "blocks them" do
+            expect(subject).not_to permit(current_user, review)
+          end
+        end
+
+        context "when review belongs to someone else" do
+          let(:task) { Fabricate(:open_task) }
+          let(:review) { Fabricate(:pending_review, task: task) }
+
+          it "blocks them" do
+            expect(subject).not_to permit(current_user, review)
+          end
+        end
+      end
+    end
+
+    it "blocks non-employees" do
+      user = Fabricate(:user)
+      user.employee_type = nil
+      expect(subject).not_to permit(user)
+    end
+  end
+
+  permissions :edit?, :update? do
     %i[admin].each do |employee_type|
       it "permits #{employee_type}" do
         user = Fabricate("user_#{employee_type}")

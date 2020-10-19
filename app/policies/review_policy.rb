@@ -30,7 +30,9 @@ class ReviewPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin?
+    return false unless record && user
+
+    record.pending? && record.task&.open? && record.user == user
   end
 
   def approve?
