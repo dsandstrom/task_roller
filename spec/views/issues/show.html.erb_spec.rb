@@ -355,12 +355,51 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).to have_link(nil, href: url)
         end
 
+        it "renders approve resolution link" do
+          render
+
+          url = approve_issue_resolutions_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render disapprove resolution link" do
+          render
+
+          url = disapprove_issue_resolutions_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
         it "doesn't render the new task link" do
           render
 
           url = new_category_project_issue_task_path(@category, @project,
                                                      @issue)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        context "is addressed" do
+          let(:issue) do
+            Fabricate(:closed_issue, project: @project, user: current_user)
+          end
+
+          before do
+            @issue = assign(:issue, issue)
+            Fabricate(:approved_task, issue: issue)
+          end
+
+          it "renders disapprove resolution link" do
+            render
+
+            url = disapprove_issue_resolutions_path(@issue)
+            expect(rendered).to have_link(nil, href: url)
+          end
+
+          it "doesn't render approve resolution link" do
+            render
+
+            url = approve_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
         end
       end
 
@@ -400,6 +439,31 @@ RSpec.describe "issues/show", type: :view do
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render approve resolution link" do
+          render
+
+          url = approve_issue_resolutions_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        context "is addressed" do
+          let(:issue) do
+            Fabricate(:closed_issue, project: @project, user: current_user)
+          end
+
+          before do
+            @issue = assign(:issue, issue)
+            Fabricate(:approved_task, issue: issue)
+          end
+
+          it "doesn't render disapprove resolution link" do
+            render
+
+            url = disapprove_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
         end
       end
 

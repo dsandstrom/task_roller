@@ -22,10 +22,11 @@
         </p>
 
         <%# TODO: issue user only %>
-        <% if @issue.addressed? %>
+        <% if @issue.addressed? &&
+              policy(@issue.resolutions.build).disapprove? %>
           <p>
             <%= link_to 'report issue was not fixed',
-                        disapprove_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                        disapprove_issue_resolutions_path(@issue),
                         method: :post, class: 'destroy-link' %>
           </p>
         <% end %>
@@ -33,9 +34,10 @@
         <%# TODO: issue user only %>
         <% if @issue.open? && (@issue.unresolved? || @issue.duplicatee.blank?) %>
           <p>
-            <% if @issue.unresolved? %>
+            <% if @issue.unresolved? &&
+                  policy(@issue.resolutions.build).approve? %>
               <%= link_to 'mark resolved',
-                          approve_issue_resolutions_path(@issue, resolution: { user_id: @issue.user_id }),
+                          approve_issue_resolutions_path(@issue),
                           method: :post, class: 'create-link' %>
             <% end %>
 
@@ -63,7 +65,7 @@
                                                        duplicatee.project,
                                                        duplicatee) %>
           </p>
-          <% if policy(IssueConnection).destroy? %>
+          <% if policy(@issue.source_issue_connection).destroy? %>
             <p>
               <%= link_to 'Mark not a duplicate and reopen',
                            @issue.source_issue_connection,

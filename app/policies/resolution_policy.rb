@@ -15,6 +15,7 @@ class ResolutionPolicy < ApplicationPolicy
     record.issue.user == user
   end
 
+  # TODO: change to addressed?
   def create?
     return false unless employee? && user && record&.issue&.unresolved?
 
