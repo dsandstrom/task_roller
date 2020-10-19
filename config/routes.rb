@@ -42,7 +42,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       patch :open
       patch :close
     end
-    resources :resolutions, except: %i[show update] do
+    resources :resolutions, only: %i[index new create destroy] do
       collection do
         post :approve
         post :disapprove

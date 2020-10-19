@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ResolutionsController < ApplicationController
+  before_action :authorize_resolution, only: :index
   before_action :set_issue
   before_action :set_resolution, only: %i[edit update destroy]
 
@@ -9,40 +10,24 @@ class ResolutionsController < ApplicationController
   end
 
   def new
-    @resolution = @issue.resolutions.build
+    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
   end
 
-  def edit
-  end
-
-  def create
-    @resolution = @issue.resolutions.build(resolution_params)
-
-    if @resolution.save
-      redirect_to category_project_issue_path(@category, @project, @issue),
-                  notice: 'Resolution was successfully created.'
-    else
-      render :new
-    end
-  end
-
-  # TODO: set user_id as current user
   def approve
-    @resolution = @issue.resolutions.build(resolution_params)
+    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.approve
       redirect_to category_project_issue_path(@category, @project, @issue),
-                  notice: 'Resolution was successfully updated.'
+                  notice: 'Task was successfully marked resolved.'
     else
       render :new
     end
   end
 
-  # TODO: set user_id as current user
   def disapprove
-    @resolution = @issue.resolutions.build(resolution_params)
+    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.disapprove
       redirect_to category_project_issue_path(@category, @project, @issue),
-                  notice: 'Resolution was successfully updated.'
+                  notice: 'Task was successfully marked unresolved.'
     else
       render :new
     end
@@ -56,7 +41,10 @@ class ResolutionsController < ApplicationController
 
   private
 
-    # TODO: authorize access
+    def authorize_resolution
+      authorize Resolution
+    end
+
     def set_issue
       @issue = Issue.find(params[:issue_id])
       @project = @issue.project
@@ -65,10 +53,6 @@ class ResolutionsController < ApplicationController
     end
 
     def set_resolution
-      @resolution = @issue.resolutions.find(params[:id])
-    end
-
-    def resolution_params
-      params.require(:resolution).permit(:user_id)
+      @resolution = authorize(@issue.resolutions.find(params[:id]))
     end
 end
