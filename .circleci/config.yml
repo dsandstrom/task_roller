@@ -33,7 +33,7 @@ parameters:
     default: '12.3'
   ruby_version:
     type: string
-    default: '2.7.1'
+    default: '2.7.2'
 
 commands:
   # use the node orb to install our packages
