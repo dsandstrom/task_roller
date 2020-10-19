@@ -17,6 +17,7 @@ AllCops:
     - 'config/**/*.rb'
     - 'lib/**/*.rb'
     - 'spec/**/*.rb'
+    - 'db/seeds.rb'
 
   Exclude:
     - 'bin/*'

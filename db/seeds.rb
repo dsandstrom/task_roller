@@ -67,62 +67,14 @@ class Seeds
     TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
   end
 
-  def create_issues
+  def create_issues # rubocop:disable Metrics/AbcSize
     return if Issue.all.any?
 
     User.reporters.each do |user|
-      # open, being worked on, unresolved
-      rand(3..11).times { create_issue(user_id: user.id, closed: false) }
-      # addressed
-      rand(3..11).times do
-        create_issue(user_id: user.id, closed: true)
-      end
-      # resolved
-      rand(3..11).times do
-        issue = create_issue(user_id: user.id, closed: true)
-        issue.resolutions.create!(user_id: user.id, approved: !rand(3).zero?)
-      end
-    end
-  end
-
-  def create_tasks
-    return if Task.all.any?
-
-    Issue.all.each do |issue|
-      next if rand(5).zero?
-
-      # unassigned
-      rand(2).times { create_task(issue_id: issue.id, closed: false) }
-      # in progress
-      rand(2).times do
-        worker = User.workers.ids.sample
-        task = create_task(issue_id: issue.id, closed: false,
-                           assignee_ids: [worker])
-        task.progressions.create!(user_id: worker, finished: false)
-      end
-      # in review
-      rand(2).times do
-        task = create_task(issue_id: issue.id, closed: false,
-                           assignee_ids: [User.workers.ids.sample])
-        task.reviews.create!(user_id: task.user_id, approved: nil)
-      end
-      # disapproved
-      rand(2).times do
-        task = create_task(issue_id: issue.id, closed: false,
-                           assignee_ids: [User.workers.ids.sample])
-        task.reviews.create!(user_id: task.user_id, approved: false)
-      end
-      # closed tasks
-      rand(2).times do
-        create_task(issue_id: issue.id, closed: true,
-                    assignee_ids: [User.workers.ids.sample])
-      end
-      # approved
-      rand(2).times do
-        task = create_task(issue_id: issue.id, closed: true,
-                           assignee_ids: [User.workers.ids.sample])
-        task.reviews.create!(user_id: task.user_id, approved: true)
-      end
+      rand(3..11).times { create_open_issue(user) }
+      rand(3..11).times { create_being_worked_issue(user) }
+      rand(3..11).times { create_addressed_issue(user) }
+      rand(3..11).times { create_resolved_issue(user) }
     end
   end
 
@@ -158,6 +110,73 @@ class Seeds
       Task.create!(attrs)
     end
 
+    def create_open_issue(user)
+      create_issue(user_id: user.id, closed: false)
+    end
+
+    def create_being_worked_issue(user) # rubocop:disable Metrics/AbcSize
+      issue = create_open_issue(user)
+      if rand(2).zero?
+        rand(2).times { create_open_task(issue) }
+      else
+        rand(2).times { create_unassigned_task(issue) }
+        rand(2).times { create_in_progress_task(issue) }
+        rand(2).times { create_disapproved_task(issue) }
+        rand(2).times { create_in_review_task(issue) }
+      end
+    end
+
+    def create_addressed_issue(user)
+      issue = create_issue(user_id: user.id, closed: true)
+      rand(1..3).times { create_approved_task(issue) }
+      issue
+    end
+
+    def create_resolved_issue(user)
+      issue = create_issue(user_id: user.id, closed: true)
+      issue.resolutions.create!(user_id: user.id, approved: !rand(3).zero?)
+      issue
+    end
+
+    def create_open_task(issue)
+      create_task(issue_id: issue.id, closed: false,
+                  assignee_ids: [User.workers.ids.sample])
+    end
+
+    def create_closed_task(issue)
+      create_task(issue_id: issue.id, closed: true,
+                  assignee_ids: [User.workers.ids.sample])
+    end
+
+    def create_unassigned_task(issue)
+      create_task(issue_id: issue.id, closed: false)
+    end
+
+    def create_in_progress_task(issue)
+      worker = User.workers.ids.sample
+      task = create_open_task(issue)
+      task.progressions.create!(user_id: worker, finished: false)
+      task
+    end
+
+    def create_in_review_task(issue)
+      task = create_open_task(issue)
+      task.reviews.create!(user_id: task.user_id, approved: nil)
+      task
+    end
+
+    def create_approved_task(issue)
+      task = create_closed_task(issue)
+      task.reviews.create!(user_id: task.user_id, approved: true)
+      task
+    end
+
+    def create_disapproved_task(issue)
+      task = create_closed_task(issue)
+      task.reviews.create!(user_id: task.user_id, approved: false)
+      task
+    end
+
     def random_visible
       rand(2).zero?
     end
@@ -177,4 +196,3 @@ seeds.create_projects
 seeds.create_issue_types
 seeds.create_task_types
 seeds.create_issues
-seeds.create_tasks
