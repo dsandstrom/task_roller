@@ -6,31 +6,31 @@ class Seeds
   def create_admins
     return if User.admins.any?
 
-    3.times { create_user('Admin') }
+    2.times { create_user('Admin') }
   end
 
   def create_reporters
     return if User.reporters.any?
 
-    11.times { create_user('Reporter') }
+    12.times { create_user('Reporter') }
   end
 
   def create_reviewers
     return if User.reviewers.any?
 
-    6.times { create_user('Reviewer') }
+    4.times { create_user('Reviewer') }
   end
 
   def create_workers
     return if User.workers.any?
 
-    5.times { create_user('Worker') }
+    10.times { create_user('Worker') }
   end
 
   def create_categories
     return if Category.any?
 
-    rand(11).times do
+    6.times do
       name = Faker::Commerce.unique.department
 
       Category.create!(name: name, visible: random_visible,
@@ -70,16 +70,59 @@ class Seeds
   def create_issues
     return if Issue.all.any?
 
-    Project.all.each do |project|
-      rand(11..23).times { create_issue(project) }
+    User.reporters.each do |user|
+      # open, being worked on, unresolved
+      rand(3..11).times { create_issue(user_id: user.id, closed: false) }
+      # addressed
+      rand(3..11).times do
+        create_issue(user_id: user.id, closed: true)
+      end
+      # resolved
+      rand(3..11).times do
+        issue = create_issue(user_id: user.id, closed: true)
+        issue.resolutions.create!(user_id: user.id, approved: !rand(3).zero?)
+      end
     end
   end
 
   def create_tasks
     return if Task.all.any?
 
-    Project.all.each do |project|
-      rand(11..23).times { create_task(project) }
+    Issue.all.each do |issue|
+      next if rand(5).zero?
+
+      # unassigned
+      rand(2).times { create_task(issue_id: issue.id, closed: false) }
+      # in progress
+      rand(2).times do
+        worker = User.workers.ids.sample
+        task = create_task(issue_id: issue.id, closed: false,
+                           assignee_ids: [worker])
+        task.progressions.create!(user_id: worker, finished: false)
+      end
+      # in review
+      rand(2).times do
+        task = create_task(issue_id: issue.id, closed: false,
+                           assignee_ids: [User.workers.ids.sample])
+        task.reviews.create!(user_id: task.user_id, approved: nil)
+      end
+      # disapproved
+      rand(2).times do
+        task = create_task(issue_id: issue.id, closed: false,
+                           assignee_ids: [User.workers.ids.sample])
+        task.reviews.create!(user_id: task.user_id, approved: false)
+      end
+      # closed tasks
+      rand(2).times do
+        create_task(issue_id: issue.id, closed: true,
+                    assignee_ids: [User.workers.ids.sample])
+      end
+      # approved
+      rand(2).times do
+        task = create_task(issue_id: issue.id, closed: true,
+                           assignee_ids: [User.workers.ids.sample])
+        task.reviews.create!(user_id: task.user_id, approved: true)
+      end
     end
   end
 
@@ -91,20 +134,28 @@ class Seeds
                    employee_type: employee_type)
     end
 
-    def create_issue(project)
+    def create_issue(attrs = {})
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
-      project.issues.create!(issue_type_id: IssueType.ids.sample,
-                             user_id: User.reporters.ids.sample,
-                             summary: Faker::Company.catch_phrase,
-                             description: description)
+      attrs.reverse_merge!(
+        issue_type_id: IssueType.ids.sample,
+        user_id: User.reporters.ids.sample,
+        project_id: Project.ids.sample,
+        summary: Faker::Company.catch_phrase,
+        description: description
+      )
+      Issue.create!(attrs)
     end
 
-    def create_task(project)
+    def create_task(attrs = {})
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
-      project.tasks.create!(task_type_id: TaskType.ids.sample,
-                            user_id: User.reviewers.ids.sample,
-                            summary: Faker::Company.bs.capitalize,
-                            description: description)
+      attrs.reverse_merge!(
+        task_type_id: TaskType.ids.sample,
+        user_id: User.reviewers.ids.sample,
+        project_id: Project.ids.sample,
+        summary: Faker::Company.bs.capitalize,
+        description: description
+      )
+      Task.create!(attrs)
     end
 
     def random_visible
