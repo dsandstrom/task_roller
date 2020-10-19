@@ -9,14 +9,6 @@ class UserPolicy < ApplicationPolicy
     employee?
   end
 
-  def create?
-    admin?
-  end
-
-  def new?
-    admin?
-  end
-
   def update?
     return false unless employee?
 

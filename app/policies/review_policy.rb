@@ -21,14 +21,6 @@ class ReviewPolicy < ApplicationPolicy
     record.task.assignees.include?(user)
   end
 
-  def edit?
-    admin?
-  end
-
-  def update?
-    admin?
-  end
-
   def destroy?
     return false unless record && user
 

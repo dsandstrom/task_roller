@@ -12,24 +12,12 @@ class CategoryPolicy < ApplicationPolicy
     employee?
   end
 
-  def create?
-    admin?
-  end
-
-  def new?
-    admin?
-  end
-
   def update?
     admin? || reviewer?
   end
 
   def edit?
     admin? || reviewer?
-  end
-
-  def destroy?
-    admin?
   end
 
   class Scope < Scope

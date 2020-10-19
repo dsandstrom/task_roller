@@ -29,10 +29,6 @@ class RollerCommentPolicy < ApplicationPolicy
     admin? || record.user == user
   end
 
-  def destroy?
-    admin?
-  end
-
   class Scope < Scope
     def resolve
       scope.all

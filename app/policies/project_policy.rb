@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ProjectPolicy < ApplicationPolicy
-  def index?
-    admin?
-  end
-
   def show?
     employee?
   end
@@ -23,10 +19,6 @@ class ProjectPolicy < ApplicationPolicy
 
   def edit?
     admin? || reviewer?
-  end
-
-  def destroy?
-    admin?
   end
 
   class Scope < Scope

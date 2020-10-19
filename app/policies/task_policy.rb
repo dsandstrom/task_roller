@@ -28,10 +28,6 @@ class TaskPolicy < ApplicationPolicy
     employee? && (admin? || record.user == user)
   end
 
-  def destroy?
-    admin?
-  end
-
   def open?
     admin?
   end

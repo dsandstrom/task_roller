@@ -31,10 +31,6 @@ class IssuePolicy < ApplicationPolicy
     admin? || record.user == user
   end
 
-  def destroy?
-    admin?
-  end
-
   def open?
     admin?
   end
