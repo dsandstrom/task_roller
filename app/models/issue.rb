@@ -105,8 +105,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def self.apply_filters(filters)
     issues = all
     issues = issues.filter_by_status(filters[:status])
-    issues = issues.filter_by_user_id(filters[:reporter])
-    issues
+    issues.filter_by_user_id(filters[:reporter])
   end
 
   # TODO: allow filtering by multiple statuses
