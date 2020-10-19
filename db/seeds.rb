@@ -67,7 +67,7 @@ class Seeds
     TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
   end
 
-  def create_issues # rubocop:disable Metrics/AbcSize
+  def create_issues
     return if Issue.all.any?
 
     User.reporters.each do |user|

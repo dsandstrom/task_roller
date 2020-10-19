@@ -18,7 +18,7 @@ module BreadcrumbsHelper
     def issue_breadcrumb_item(category, project, issue)
       [issue.heading,
        category_project_issue_path(category, project, issue),
-       id: "task-issue-#{issue.id}"]
+       { id: "task-issue-#{issue.id}" }]
     end
 
     def breadcrumb(text, url, options = {})
