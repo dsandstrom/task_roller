@@ -67,7 +67,7 @@ class Seeds
     TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
   end
 
-  def create_issues
+  def create_issues_and_tasks
     return if Issue.all.any?
 
     User.reporters.each do |user|
@@ -195,4 +195,4 @@ seeds.create_categories
 seeds.create_projects
 seeds.create_issue_types
 seeds.create_task_types
-seeds.create_issues
+seeds.create_issues_and_tasks
