@@ -132,49 +132,81 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    %w[admin].each do |employee_type|
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         before { login(current_user) }
 
-        it "destroys the requested review" do
-          review = Fabricate(:review, task: task)
-          expect do
+        context "when their review is pending and task open" do
+          it "destroys the requested review" do
+            review = Fabricate(:pending_review, task: task, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.to change(Review, :count).by(-1)
+          end
+
+          it "redirects to the reviews list" do
+            review = Fabricate(:pending_review, task: task, user: current_user)
             delete :destroy, params: { task_id: task.to_param,
                                        id: review.to_param }
-          end.to change(Review, :count).by(-1)
+            url = category_project_task_path(category, project, task)
+            expect(response).to redirect_to(url)
+          end
         end
 
-        it "redirects to the reviews list" do
-          review = Fabricate(:review, task: task)
-          delete :destroy, params: { task_id: task.to_param,
-                                     id: review.to_param }
-          url = category_project_task_path(category, project, task)
-          expect(response).to redirect_to(url)
-        end
-      end
-    end
+        context "when task is closed" do
+          let(:task) { Fabricate(:closed_task, project: project) }
 
-    %w[reviewer worker reporter].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+          it "doesn't destroy the requested review" do
+            review = Fabricate(:review, task: task, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.not_to change(Review, :count)
+          end
 
-        before { login(current_user) }
-
-        it "doesn't destroy the requested review" do
-          review = Fabricate(:review, task: task)
-          expect do
+          it "should be unauthorized" do
+            review = Fabricate(:review, task: task, user: current_user)
             delete :destroy, params: { task_id: task.to_param,
                                        id: review.to_param }
-          end.not_to change(Review, :count)
+            expect_to_be_unauthorized(response)
+          end
         end
 
-        it "should be unauthorized" do
-          review = Fabricate(:review, task: task)
-          delete :destroy, params: { task_id: task.to_param,
-                                     id: review.to_param }
-          expect_to_be_unauthorized(response)
+        context "when review is approved" do
+          it "doesn't destroy the requested review" do
+            review = Fabricate(:approved_review, task: task, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            review = Fabricate(:approved_review, task: task, user: current_user)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: review.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when someone else's review" do
+          it "doesn't destroy the requested review" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            review = Fabricate(:pending_review, task: task)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: review.to_param }
+            expect_to_be_unauthorized(response)
+          end
         end
       end
     end
