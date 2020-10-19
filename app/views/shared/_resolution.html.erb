@@ -8,9 +8,10 @@
                   resolution.user.name_or_email,
                   class: 'resolution-user' %>
 
-  <%# TODO: admin only %>
-  <%= divider %>
-  <%= link_to 'delete', issue_resolution_path(issue, resolution),
-              method: :delete, data: { confirm: 'Are you sure?' },
-              class: 'secondary-link' %>
+  <% if policy(resolution).destroy? %>
+    <%= divider %>
+    <%= link_to 'delete', issue_resolution_path(issue, resolution),
+                method: :delete, data: { confirm: 'Are you sure?' },
+                class: 'secondary-link' %>
+  <% end %>
 </span>
