@@ -45,7 +45,7 @@ group :frontend do
     watch(%r{app/assets/fonts/*})
   end
 
-  guard 'livereload' do
+  guard 'livereload', apply_css_live: false do
     require 'guard/rspec/dsl'
     dsl = Guard::RSpec::Dsl.new(self)
     rails_view_exts = %w[erb haml slim]
