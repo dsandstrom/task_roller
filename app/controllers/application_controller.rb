@@ -2,6 +2,7 @@
 
 # TODO: test redirect if not logged in
 # TODO: test redirect to login if non-employee
+# TODO: move `before_action authenticate` here instead of autoloading
 
 class ApplicationController < ActionController::Base
   include Pundit

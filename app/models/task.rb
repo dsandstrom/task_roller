@@ -3,6 +3,7 @@
 # TODO: if closed with no approved review = rejected/ won't fix
 # TODO: create task reopens issue?
 # TODO: show other tasks from issue
+# TODO: allow self-assigning for worker+
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
