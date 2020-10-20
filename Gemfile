@@ -48,7 +48,7 @@ gem 'redcarpet', '~> 3.4.0'
 
 gem 'pundit', '~> 2.1.0'
 gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
-                             tag: 'v0.5.0'
+                             tag: 'v0.6.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
