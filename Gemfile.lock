@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/dsandstrom/roller_authentication.git
-  revision: cf877ba8e101268f75c1923d0effb74e1876d431
-  tag: v0.6.0
+  revision: e76ba94834af9705c9d9b33384998a697d2fcf72
+  tag: v0.7.0
   specs:
-    roller_authentication (0.6.0)
+    roller_authentication (0.7.0)
       rails (~> 6.0.3, >= 6.0.3.3)
 
 GEM
