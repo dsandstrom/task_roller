@@ -46,6 +46,8 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:target_task_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
+  it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
+  it { is_expected.to have_many(:subscribers) }
 
   # CLASS
 
