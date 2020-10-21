@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
-# TODO: add active boolean (or use employee connection to disable a user)
+# TODO: allow admins to upgrade/downgrade employee connection
+# TODO: use employee connection to disable users
+# they can't log in, but allow admin to disable/enable connection
 
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
+  # OPEN_ISSUES_ORDER = { open_tasks_count: :desc, tasks_count: :desc,
+  #                       created_at: :desc }.freeze
 
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
                             dependent: :destroy
@@ -136,4 +140,58 @@ class User < ApplicationRecord
   def finish_progressions
     progressions.unfinished.each(&:finish)
   end
+
+  # auto subscribe created issues, after comment, assign task
+  # order by status, new comments
+  # allow customize when subscription created
+  # def subscribed_issues
+  # end
+
+  # user/issues will show all and allow subscring/unsub
+  # show open issues that are subscribed
+  # def associated_issues
+  # end
+
+  # link to user/tasks with all associated
+  # assigned_tasks, with progressions
+  # def subscribed_tasks
+  # end
+
+  # their tasks, assigned tasks
+  # def associated_tasks
+  # end
+
+  # for reporters/show view
+  # link to user/issues which will be filterable
+  # TODO: order by new comments (not made by user)?
+  # def open_issues
+  #   @open_issues ||= issues.all_non_closed.order(OPEN_ISSUES_ORDER)
+  # end
+
+  # for reporters/show view
+  # # TODO: tasks from a user's open issues
+  # def tasks_from_open_issues
+  #   # code
+  # end
+  #
+  # def tasks_ready_for_review
+  #   # code
+  #   open_tasks.all_in_review
+  # end
+  #
+  # # filter by in progress (show at top or separately)
+  # # priotorize by open progression
+  # def assigned_tasks
+  #   open_tasks.where('task_assignees.assignee_id = ?', id)
+  #             .joins(:task_assignees)
+  # end
+  #
+  # # TODO: no pending review
+  # def tasks_in_progress
+  #   open_tasks.where('progressions.user_id = ?', id)
+  #             .joins(:progressions)
+  # end
+  #
+  # def reviewed_tasks
+  # end
 end
