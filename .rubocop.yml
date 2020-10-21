@@ -56,3 +56,7 @@ Style/Documentation:
 
 Style/EmptyMethod:
   Enabled: false
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
