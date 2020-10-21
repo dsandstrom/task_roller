@@ -23,6 +23,9 @@ class User < ApplicationRecord
   has_many :issue_comments
   has_many :task_comments
   has_many :reviews
+  has_many :issue_subscriptions, foreign_key: :user_id, dependent: :destroy
+  has_many :subscribed_issues, through: :issue_subscriptions,
+                               foreign_key: :issue_id, class_name: 'Issue'
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }

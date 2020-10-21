@@ -22,6 +22,8 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:assignments) }
   it { is_expected.to have_many(:progressions) }
   it { is_expected.to have_many(:reviews) }
+  it { is_expected.to have_many(:issue_subscriptions).dependent(:destroy) }
+  it { is_expected.to have_many(:subscribed_issues) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }

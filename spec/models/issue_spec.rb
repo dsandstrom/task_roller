@@ -44,6 +44,8 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:comments).dependent(:destroy) }
   it { is_expected.to have_many(:resolutions) }
+  it { is_expected.to have_many(:issue_subscriptions).dependent(:destroy) }
+  it { is_expected.to have_many(:subscribers) }
 
   it { is_expected.to have_one(:source_issue_connection).dependent(:destroy) }
   it { is_expected.to have_many(:target_issue_connections).dependent(:destroy) }
