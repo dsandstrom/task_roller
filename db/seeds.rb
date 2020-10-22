@@ -138,41 +138,58 @@ class Seeds
       issue
     end
 
-    def create_open_task(issue)
+    def create_open_task(issue, worker = nil)
+      worker ||= User.workers.sample
       create_task(issue_id: issue.id, closed: false,
-                  assignee_ids: [User.workers.ids.sample])
+                  assignee_ids: [worker.id])
     end
 
-    def create_closed_task(issue)
+    def create_closed_task(issue, worker = nil)
+      worker ||= User.workers.sample
       create_task(issue_id: issue.id, closed: true,
-                  assignee_ids: [User.workers.ids.sample])
+                  assignee_ids: [worker.id])
     end
 
     def create_unassigned_task(issue)
       create_task(issue_id: issue.id, closed: false)
     end
 
+    def create_unfinished_progression(task, worker)
+      task.progressions.create!(user_id: worker.id, finished: false)
+    end
+
+    def create_finished_progression(task, worker)
+      task.progressions.create!(user_id: worker.id, finished: true,
+                                finished_at: Time.now)
+    end
+
     def create_in_progress_task(issue)
-      worker = User.workers.ids.sample
-      task = create_open_task(issue)
-      task.progressions.create!(user_id: worker, finished: false)
+      worker = User.workers.sample
+      task = create_open_task(issue, worker)
+      create_unfinished_progression(task, worker)
       task
     end
 
     def create_in_review_task(issue)
-      task = create_open_task(issue)
+      worker = User.workers.sample
+      task = create_open_task(issue, worker)
+      create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: nil)
       task
     end
 
     def create_approved_task(issue)
-      task = create_closed_task(issue)
+      worker = User.workers.sample
+      task = create_closed_task(issue, worker)
+      create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: true)
       task
     end
 
     def create_disapproved_task(issue)
-      task = create_closed_task(issue)
+      worker = User.workers.sample
+      task = create_closed_task(issue, worker)
+      create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: false)
       task
     end
