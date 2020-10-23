@@ -63,7 +63,6 @@ assigned = @task.assigned
 
             <% if policy(review).destroy? %>
               <% confirm = 'Are you sure you want to cancel the review?' %>
-              <%= divider %>
               <%= link_to 'cancel review',
                           task_review_path(@task, review),
                           method: :delete, data: { confirm: confirm },
