@@ -540,6 +540,70 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#unresolved_issues" do
+    let(:user) { Fabricate(:user_worker) }
+
+    context "when user has no issues" do
+      before { Fabricate(:issue) }
+
+      it "returns []" do
+        expect(user.unresolved_issues).to eq([])
+      end
+    end
+
+    context "when user has issues" do
+      it "returns all unresolved" do
+        open_issue = Fabricate(:open_issue, user: user)
+        being_worked_on_issue = Fabricate(:open_issue, user: user)
+        Fabricate(:open_task, issue: being_worked_on_issue)
+        addressed_issue = Fabricate(:open_issue, user: user)
+        Fabricate(:approved_task, issue: addressed_issue)
+        Fabricate(:closed_issue, user: user)
+
+        expect(user.unresolved_issues)
+          .to contain_exactly(open_issue, being_worked_on_issue,
+                              addressed_issue)
+      end
+
+      it "orders by issues.created_at desc" do
+        second_issue = nil
+        Timecop.freeze(1.day.ago) do
+          second_issue = Fabricate(:open_issue, user: user)
+        end
+        first_issue = Fabricate(:open_issue, user: user)
+
+        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+      end
+
+      it "orders by other user comments.created_at desc" do
+        second_issue = Fabricate(:open_issue, user: user)
+        first_issue = nil
+        Timecop.freeze(2.days.ago) do
+          first_issue = Fabricate(:open_issue, user: user)
+          Fabricate(:issue_comment, issue: second_issue)
+        end
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:issue_comment, issue: first_issue)
+        end
+        Fabricate(:issue_comment, issue: second_issue, user: user)
+
+        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+      end
+
+      it "orders by open_tasks_count, tasks_count" do
+        second_issue = Fabricate(:open_issue, user: user)
+        first_issue = nil
+        Timecop.freeze(1.day.ago) do
+          first_issue = Fabricate(:open_issue, user: user)
+        end
+        Fabricate(:open_task, issue: first_issue)
+        2.times { Fabricate(:closed_task, issue: second_issue) }
+
+        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+      end
+    end
+  end
+
   describe "#active_assignments" do
     let(:user) { Fabricate(:user_worker) }
     let(:closed_task) { Fabricate(:closed_task) }
@@ -626,6 +690,34 @@ RSpec.describe User, type: :model do
           Fabricate(:finished_progression, task: second_task, user: user)
         end
         Fabricate(:finished_progression, task: first_task, user: user)
+
+        expect(user.active_assignments).to eq([first_task, second_task])
+      end
+    end
+
+    context "when user has 2 tasks with a comment" do
+      before do
+      end
+
+      it "orders by task_comments.created_at desc" do
+        first_task = nil
+        second_task = nil
+        Timecop.freeze(1.week.ago) do
+          second_task = Fabricate(:open_task)
+          first_task = Fabricate(:open_task)
+        end
+
+        [second_task, first_task].each do |task|
+          task.assignees << user
+        end
+
+        Timecop.freeze(2.days.ago) do
+          Fabricate(:task_comment, task: second_task)
+        end
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:task_comment, task: first_task)
+        end
+        Fabricate(:task_comment, task: second_task, user: user)
 
         expect(user.active_assignments).to eq([first_task, second_task])
       end

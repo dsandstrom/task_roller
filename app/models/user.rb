@@ -7,8 +7,6 @@
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
-  # OPEN_ISSUES_ORDER = { open_tasks_count: :desc, tasks_count: :desc,
-  #                       created_at: :desc }.freeze
 
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
                             dependent: :destroy
@@ -177,6 +175,22 @@ class User < ApplicationRecord
       .group(:id).order(order)
   end
 
+  # for reporters/show view
+  # link to user/issues which will be filterable
+  OPEN_ISSUES_ORDER = { open_tasks_count: :desc, tasks_count: :desc,
+                        order_date: :desc }.freeze
+  UNRESOLVED_ISSUES_QUERY =
+    'issues.*, ' \
+    'COALESCE(MAX(roller_comments.created_at), issues.created_at) AS order_date'
+  def unresolved_issues
+    @unresolved_issues ||=
+      issues
+      .all_unresolved.left_joins(:comments).references(:comments)
+      .select(UNRESOLVED_ISSUES_QUERY)
+      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .group(:id).order(OPEN_ISSUES_ORDER)
+  end
+
   # auto subscribe created issues, after comment, assign task
   # order by status, new comments
   # allow customize when subscription created
@@ -195,13 +209,6 @@ class User < ApplicationRecord
 
   # their tasks, assigned tasks
   # def associated_tasks
-  # end
-
-  # for reporters/show view
-  # link to user/issues which will be filterable
-  # TODO: order by new comments (not made by user)?
-  # def open_issues
-  #   @open_issues ||= issues.all_non_closed.order(OPEN_ISSUES_ORDER)
   # end
 
   # for reporters/show view
