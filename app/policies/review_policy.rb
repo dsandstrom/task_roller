@@ -12,19 +12,19 @@ class ReviewPolicy < ApplicationPolicy
   def new?
     return false unless employee? && record&.task && user
 
-    record.task.assignees.include?(user)
+    record.task.assignee_ids.include?(user.id)
   end
 
   def create?
     return false unless employee? && record&.task && user
 
-    record.task.assignees.include?(user)
+    record.task.assignee_ids.include?(user.id)
   end
 
   def destroy?
     return false unless record && user
 
-    record.pending? && record.task&.open? && record.user == user
+    record.pending? && record.task&.open? && record.user_id == user.id
   end
 
   def approve?

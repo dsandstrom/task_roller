@@ -18,13 +18,13 @@ class ProgressionPolicy < ApplicationPolicy
   def create?
     return false unless employee? && record&.task && user
 
-    record.task.assignees.include?(user)
+    record.task.assignee_ids.include?(user.id)
   end
 
   def finish?
     return false unless employee? && record&.user
 
-    record.user == user
+    record.user_id == user.id
   end
 
   class Scope < Scope
