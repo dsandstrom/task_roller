@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: build user#show view with assigned tasks
-
 class UsersController < ApplicationController
   before_action :authorize_user, only: %i[index new create]
   before_action :set_user, only: %i[show edit update destroy]
@@ -14,10 +12,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @issues = @user.issues.order(updated_at: :desc).limit(5)
-    # TODO: for reviewer+, should be created tasks
-    # TODO: for worker-, should be assigned tasks
-    @tasks = @user.tasks.order(updated_at: :desc).limit(5)
+    # TODO: for reviewer+, show created tasks, tasks ready for review
   end
 
   def new

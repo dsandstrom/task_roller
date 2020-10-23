@@ -23,39 +23,36 @@
     <% end %>
   </p>
 
-  <div class="user-tasks">
-    <header class="tasks-header">
-      <h2>Recent Tasks</h2>
-      <p>
-        <%= link_to 'View User Tasks', '#user_tasks_path(@user)',
-                    class: 'button' %>
-      </p>
-    </header>
-    <div class="tasks">
-      <% if @tasks.any? %>
-        <%= render @tasks %>
-      <% else %>
-        <p class="no-task">None yet</p>
-      <% end %>
+  <% if @user.active_assignments.any? %>
+    <div class="user-tasks">
+      <header class="tasks-header">
+        <h2>Assigned Tasks</h2>
+        <p>
+          <%= link_to 'View All Assigned Tasks',
+                      user_tasks_path(@user, filters: { assigned: @user.id }),
+                      class: 'button' %>
+        </p>
+      </header>
+      <div class="tasks">
+        <%= render @user.active_assignments %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
-  <div class="user-issues">
-    <header class="issues-header">
-      <h2>Reported Issues</h2>
-      <p>
-        <%= link_to 'View User Issues', '#user_issues_path(@user)',
-                    class: 'button' %>
-      </p>
-    </header>
-    <div class="issues">
-      <% if @issues.any? %>
-        <%= render @issues %>
-      <% else %>
-        <p class="no-issue">None yet</p>
-      <% end %>
+  <% if @user.unresolved_issues.any? %>
+    <div class="user-issues">
+      <header class="issues-header">
+        <h2>Unresolved Issues</h2>
+        <p>
+          <%= link_to 'View All Reported Issues', user_issues_path(@user),
+                      class: 'button' %>
+        </p>
+      </header>
+      <div class="issues">
+        <%= render @user.unresolved_issues %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <p><%= link_to 'Back', :back %></p>
 </div>

@@ -7,16 +7,10 @@ RSpec.describe "users/show", type: :view do
 
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
-    let(:first_task) { Fabricate(:task) }
-    let(:second_task) { Fabricate(:task) }
-    let(:first_issue) { Fabricate(:issue) }
-    let(:second_issue) { Fabricate(:issue) }
 
-    before(:each) do
-      @user = assign(:user, user_reporter)
-      assign(:issues, [first_issue, second_issue])
-      assign(:tasks, [first_task, second_task])
+    before do
       enable_pundit(view, current_user)
+      @user = assign(:user, user_reporter)
     end
 
     it "renders attributes in #user-detail-{@user.id}" do
@@ -27,16 +21,43 @@ RSpec.describe "users/show", type: :view do
       expect(rendered).to have_selector(:css, selector)
     end
 
-    it "renders a list of tasks" do
+    it "renders a list of the requested user's issues" do
+      first_issue = Fabricate(:issue, user: user_reporter)
+      second_issue = Fabricate(:issue, user: user_reporter)
+      wrong_issue = Fabricate(:issue)
+
       render
-      assert_select "#task-#{first_task.id}"
-      assert_select "#task-#{second_task.id}"
+      assert_select "#issue-#{wrong_issue.id}", count: 0
+
+      [first_issue, second_issue].each do |issue|
+        assert_select "#issue-#{issue.id}"
+        show_url =
+          category_project_issue_path(issue.category, issue.project, issue)
+        expect(rendered).to have_link(nil, href: show_url)
+        edit_url =
+          edit_category_project_issue_path(issue.category, issue.project, issue)
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
     end
 
-    it "renders a list of issues" do
+    it "renders a list of the requested user's assigned tasks" do
+      first_task = Fabricate(:task)
+      first_task.assignees << user_reporter
+      second_task = Fabricate(:task)
+      second_task.assignees << user_reporter
+      wrong_task = Fabricate(:task)
+
       render
-      assert_select "#issue-#{first_issue.id}"
-      assert_select "#issue-#{second_issue.id}"
+      assert_select "#task-#{wrong_task.id}", count: 0
+
+      [first_task, second_task].each do |task|
+        assert_select "#task-#{task.id}"
+        show_url = category_project_task_path(task.category, task.project, task)
+        expect(rendered).to have_link(nil, href: show_url)
+        edit_url =
+          edit_category_project_task_path(task.category, task.project, task)
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
     end
   end
 
@@ -49,8 +70,6 @@ RSpec.describe "users/show", type: :view do
       context "when someone else" do
         before do
           @user = assign(:user, user_reporter)
-          assign(:issues, [])
-          assign(:tasks, [])
         end
 
         it "renders attributes in #user-detail-{@user.id}" do
@@ -63,14 +82,52 @@ RSpec.describe "users/show", type: :view do
       context "when them" do
         before do
           @user = assign(:user, current_user)
-          assign(:issues, [])
-          assign(:tasks, [])
         end
 
         it "renders attributes in #user-detail-{@user.id}" do
           render
           expect(rendered).to match(/id="user-detail-#{@user.id}"/)
           expect(rendered).to have_link(nil, href: edit_user_path(@user))
+        end
+
+        it "renders a list of the their issues" do
+          first_issue = Fabricate(:issue, user: @user)
+          second_issue = Fabricate(:issue, user: @user)
+          wrong_issue = Fabricate(:issue)
+
+          render
+          assert_select "#issue-#{wrong_issue.id}", count: 0
+
+          [first_issue, second_issue].each do |issue|
+            assert_select "#issue-#{issue.id}"
+            show_url = category_project_issue_path(issue.category,
+                                                   issue.project, issue)
+            expect(rendered).to have_link(nil, href: show_url)
+            edit_url = edit_category_project_issue_path(issue.category,
+                                                        issue.project, issue)
+            expect(rendered).to have_link(nil, href: edit_url)
+          end
+        end
+
+        it "renders a list of the their assigned tasks" do
+          first_task = Fabricate(:task)
+          first_task.assignees << @user
+          second_task = Fabricate(:task)
+          second_task.assignees << @user
+          wrong_task = Fabricate(:task)
+
+          render
+          assert_select "#task-#{wrong_task.id}", count: 0
+
+          [first_task, second_task].each do |task|
+            assert_select "#task-#{task.id}"
+            show_url =
+              category_project_task_path(task.category, task.project, task)
+            expect(rendered).to have_link(nil, href: show_url)
+            edit_url =
+              edit_category_project_task_path(task.category, task.project, task)
+            expect(rendered).not_to have_link(nil, href: edit_url)
+          end
         end
       end
     end
