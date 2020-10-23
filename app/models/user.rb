@@ -147,6 +147,36 @@ class User < ApplicationRecord
     progressions.unfinished.each(&:finish)
   end
 
+  # order by:
+  # task has open progression by user
+  # task has progressions by user
+  # no progressions or reviews
+  # pending review
+  # comment by another user
+  # should order last by tasks.created_at asc?
+  ACTIVE_ASSIGNMENTS_QUERY =
+    'tasks.*, ' \
+    'SUM(case when progressions.finished IS FALSE then 1 else 0 end) ' \
+    'AS unfinished_progressions_count, ' \
+    'COUNT(progressions.id) AS progressions_count, ' \
+    'SUM(case when reviews.id IS NOT NULL AND reviews.approved IS NULL ' \
+    'then 1 else 0 end) AS pending_reviews_count, ' \
+    'COALESCE(MAX(roller_comments.created_at), MAX(progressions.created_at), ' \
+    'tasks.created_at) AS order_date'
+
+  def active_assignments
+    order = { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
+              progressions_count: :desc, order_date: :desc }
+    @active_assignments ||=
+      assignments
+      .left_joins(:progressions, :reviews, :comments)
+      .references(:comments)
+      .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
+      .where('progressions.id IS NULL OR progressions.user_id = ?', id)
+      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .group(:id).order(order)
+  end
+
   # auto subscribe created issues, after comment, assign task
   # order by status, new comments
   # allow customize when subscription created

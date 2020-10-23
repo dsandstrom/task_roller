@@ -539,4 +539,96 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#active_assignments" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:closed_task) { Fabricate(:closed_task) }
+    let(:open_task) { Fabricate(:open_task) }
+
+    context "when user has no assignments" do
+      it "returns []" do
+        expect(user.active_assignments).to eq([])
+      end
+    end
+
+    context "when user has an assignment" do
+      before do
+        closed_task.assignees << user
+        open_task.assignees << user
+      end
+
+      it "returns open tasks" do
+        expect(user.active_assignments).to eq([open_task])
+      end
+    end
+
+    context "when user has multiple assignments" do
+      let(:in_progress_task) { Fabricate(:open_task, summary: "In Progress") }
+      let(:paused_task) { Fabricate(:open_task, summary: "Paused") }
+      let(:assigned_task) { Fabricate(:open_task, summary: "Assigned") }
+      let(:in_review_task) { Fabricate(:open_task, summary: "In Review") }
+
+      before do
+        [paused_task, in_review_task, in_progress_task,
+         assigned_task].each do |task|
+          task.assignees << user
+        end
+        Fabricate(:finished_progression, task: paused_task, user: user)
+        Fabricate(:unfinished_progression, task: in_progress_task, user: user)
+        Fabricate(:pending_review, task: in_review_task, user: user)
+
+        Fabricate(:unfinished_progression, task: paused_task)
+      end
+
+      it "orders tasks by in progress, with progressions, assigned" do
+        tasks = [in_progress_task, paused_task, assigned_task,
+                 in_review_task]
+        expect(user.active_assignments).to match_array(tasks)
+        expect(user.active_assignments).to eq(tasks)
+      end
+    end
+
+    context "when user has 2 tasks with no progressions" do
+      before do
+      end
+
+      it "orders by tasks.created_at desc" do
+        second_task = nil
+        Timecop.freeze(1.week.ago) do
+          second_task = Fabricate(:open_task)
+        end
+        first_task = Fabricate(:open_task)
+        [second_task, first_task].each do |task|
+          task.assignees << user
+        end
+
+        expect(user.active_assignments).to eq([first_task, second_task])
+      end
+    end
+
+    context "when user has 2 tasks with a progression" do
+      before do
+      end
+
+      it "orders by progressions.created_at desc" do
+        first_task = nil
+        second_task = nil
+        Timecop.freeze(1.week.ago) do
+          second_task = Fabricate(:open_task)
+          first_task = Fabricate(:open_task)
+        end
+
+        [second_task, first_task].each do |task|
+          task.assignees << user
+        end
+
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:finished_progression, task: second_task, user: user)
+        end
+        Fabricate(:finished_progression, task: first_task, user: user)
+
+        expect(user.active_assignments).to eq([first_task, second_task])
+      end
+    end
+  end
 end
