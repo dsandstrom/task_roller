@@ -9,6 +9,12 @@
     <code><%= @user.email %></code>
   </p>
 
+  <p class="user-nav">
+    <%= link_to 'Reported Issues', user_issues_path(@user) %>
+    <%= divider %>
+    <%= link_to 'User Tasks', user_tasks_path(@user) %>
+  </p>
+
   <p class=user-links>
     <% if policy(@user).edit? %>
       <%= link_to 'Edit', edit_user_path(@user),
