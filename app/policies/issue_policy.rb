@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: authorize issue on visible
+# TODO: lock users from editing? def after closed
 
 class IssuePolicy < ApplicationPolicy
   def index?

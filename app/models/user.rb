@@ -3,6 +3,7 @@
 # TODO: allow admins to upgrade/downgrade employee connection
 # TODO: use employee connection to disable users
 # they can't log in, but allow admin to disable/enable connection
+# TODO: add priority column to use for ordering
 
 class User < ApplicationRecord
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
