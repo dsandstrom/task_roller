@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
-  resources :users
+  resources :users do
+    resources :issues, only: :index
+    resources :tasks, only: :index
+  end
   resources :projects, only: :index
   resources :categories do
-    resources :tasks, only: %i[index]
-    resources :issues, only: %i[index]
+    resources :tasks, only: :index
+    resources :issues, only: :index
 
     resources :projects, except: :index do
       resources :issues do
