@@ -174,7 +174,7 @@ class Seeds
       worker = User.workers.sample
       task = create_open_task(issue, worker)
       create_finished_progression(task, worker)
-      task.reviews.create!(user_id: task.user_id, approved: nil)
+      task.reviews.create!(user_id: worker.id, approved: nil)
       task
     end
 
