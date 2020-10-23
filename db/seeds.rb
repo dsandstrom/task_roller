@@ -2,7 +2,7 @@
 
 require 'faker'
 
-class Seeds
+class Seeds # rubocop:disable Metrics/ClassLength
   def create_admins
     return if User.admins.any?
 
