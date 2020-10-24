@@ -9,6 +9,7 @@
 # when closing issue, add dialog that confirms and allows adding a comment
 # TODO: allow subscribing/following issues/tasks
 # TODO: add last_commented_at, max(issue_comments.created_at) show in partial
+# the thing is, only comments by other users matter, not static
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'

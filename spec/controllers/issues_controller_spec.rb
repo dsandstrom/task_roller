@@ -26,7 +26,7 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when category" do
           it "returns a success response" do
-            _issue = Fabricate(:issue, project: project)
+            Fabricate(:issue, project: project)
             get :index, params: { category_id: category.to_param }
             expect(response).to be_successful
           end
@@ -34,7 +34,7 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when project" do
           it "returns a success response" do
-            _issue = Fabricate(:issue, project: project)
+            Fabricate(:issue, project: project)
             get :index, params: { project_id: project.to_param }
             expect(response).to be_successful
           end
@@ -42,7 +42,7 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when user" do
           it "returns a success response" do
-            _issue = Fabricate(:issue, user: user)
+            Fabricate(:issue, user: user)
             get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
