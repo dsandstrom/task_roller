@@ -2,11 +2,12 @@
   <%= project_header @project %>
   <header class="tasks-header">
     <h2>Project Tasks</h2>
-    <p>
-      <%# TODO: authorize %>
-      <%= link_to 'Add Task', new_project_task_path(@project),
-                  class: 'button button-success' %>
-    </p>
+    <% if policy(@project.tasks.build).new? %>
+      <p>
+        <%= link_to 'Add Task', new_project_task_path(@project),
+                    class: 'button button-success' %>
+      </p>
+    <% end %>
   </header>
 <% elsif @category %>
   <%= category_header @category %>
