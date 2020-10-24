@@ -1,7 +1,7 @@
 <%
   url =
     if issue_comment.persisted?
-      issue_issue_comment_url(issue, issue_comment)
+      issue_comment_url(issue_comment)
     else
       issue_issue_comments_url(issue)
     end

@@ -2,7 +2,7 @@
 
 class IssueCommentsController < ApplicationController
   before_action :authorize_issue_comment, only: %i[index new create destroy]
-  before_action :set_issue
+  before_action :set_issue, only: %i[new create]
   before_action :set_issue_comment, only: %i[edit update destroy]
 
   def new
@@ -17,7 +17,8 @@ class IssueCommentsController < ApplicationController
     @issue_comment.user_id = current_user.id
 
     if @issue_comment.save
-      redirect_to redirect_url, notice: 'Comment was successfully created.'
+      redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}"),
+                  notice: 'Comment was successfully created.'
     else
       render :new
     end
@@ -25,7 +26,8 @@ class IssueCommentsController < ApplicationController
 
   def update
     if @issue_comment.update(issue_comment_params)
-      redirect_to redirect_url, notice: 'Comment was successfully updated.'
+      redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}"),
+                  notice: 'Comment was successfully updated.'
     else
       render :edit
     end
@@ -48,12 +50,8 @@ class IssueCommentsController < ApplicationController
     end
 
     def set_issue_comment
-      @issue_comment = authorize(@issue.comments.find(params[:id]))
-    end
-
-    def redirect_url
-      @redirect_url ||=
-        issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
+      @issue_comment = authorize(IssueComment.find(params[:id]))
+      @issue = @issue_comment.issue
     end
 
     def issue_comment_params

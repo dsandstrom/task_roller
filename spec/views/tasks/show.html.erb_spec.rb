@@ -395,10 +395,10 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = task_task_comment_path(@task, @first_comment)
-        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
-        second_url = task_task_comment_path(@task, @second_comment)
-        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        first_url = task_comment_path(@first_comment)
+        first_edit_url = edit_task_comment_path(@first_comment)
+        second_url = task_comment_path(@second_comment)
+        second_edit_url = edit_task_comment_path(@second_comment)
         expect(rendered).to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
@@ -624,10 +624,10 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = task_task_comment_path(@task, @first_comment)
-        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
-        second_url = task_task_comment_path(@task, @second_comment)
-        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        first_url = task_comment_path(@first_comment)
+        first_edit_url = edit_task_comment_path(@first_comment)
+        second_url = task_comment_path(@second_comment)
+        second_edit_url = edit_task_comment_path(@second_comment)
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
@@ -941,10 +941,10 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = task_task_comment_path(@task, @first_comment)
-        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
-        second_url = task_task_comment_path(@task, @second_comment)
-        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        first_url = task_comment_path(@first_comment)
+        first_edit_url = edit_task_comment_path(@first_comment)
+        second_url = task_comment_path(@second_comment)
+        second_edit_url = edit_task_comment_path(@second_comment)
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
@@ -1185,10 +1185,10 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = task_task_comment_path(@task, @first_comment)
-        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
-        second_url = task_task_comment_path(@task, @second_comment)
-        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        first_url = task_comment_path(@first_comment)
+        first_edit_url = edit_task_comment_path(@first_comment)
+        second_url = task_comment_path(@second_comment)
+        second_edit_url = edit_task_comment_path(@second_comment)
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 

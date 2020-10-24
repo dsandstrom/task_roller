@@ -14,24 +14,24 @@
       <% if object.is_a?(Task) %>
         <% if policy(comment).edit? %>
           <%= link_to 'edit',
-                      edit_task_task_comment_path(object, comment) %>
+                      edit_task_comment_path(comment) %>
         <% end %>
         <% if policy(comment).destroy? %>
           <%= divider %>
           <%= link_to 'delete',
-                      task_task_comment_path(object, comment),
+                      task_comment_path(comment),
                       method: :delete,
                       data: { confirm: 'Are you sure?' } %>
         <% end %>
       <% else %>
         <% if policy(comment).edit? %>
           <%= link_to 'edit',
-                      edit_issue_issue_comment_path(object, comment) %>
+                      edit_issue_comment_path(comment) %>
         <% end %>
         <% if policy(comment).destroy? %>
           <%= divider %>
           <%= link_to 'delete',
-                      issue_issue_comment_path(object, comment),
+                      issue_comment_path(comment),
                       method: :delete,
                       data: { confirm: 'Are you sure?' } %>
         <% end %>
