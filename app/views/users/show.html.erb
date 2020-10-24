@@ -1,18 +1,8 @@
 <div id="user-detail-<%= @user.id %>" class="user-detail">
-  <%= breadcrumbs([['Users', users_path]]) %>
-
-  <h1 class="user-name">
-    <%= @user.name %>
-  </h1>
+  <%= user_header @user %>
 
   <p class="user-email">
     <code><%= @user.email %></code>
-  </p>
-
-  <p class="user-nav">
-    <%= link_to 'Reported Issues', user_issues_path(@user) %>
-    <%= divider %>
-    <%= link_to 'User Tasks', user_tasks_path(@user) %>
   </p>
 
   <p class=user-links>

@@ -1,4 +1,4 @@
-<% if @category && @project %>
+<% if @project %>
   <%= project_header @project %>
 
   <header class="issues-header">
@@ -16,6 +16,11 @@
   <%= category_header @category %>
   <header class="issues-header">
     <h2>Category Issues</h2>
+  </header>
+<% elsif @user %>
+  <%= user_header @user %>
+  <header class="issues-header">
+    <h2>Reported Issues</h2>
   </header>
 <% else %>
   <h1>All Issues</h1>
