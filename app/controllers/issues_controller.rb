@@ -24,7 +24,7 @@ class IssuesController < ApplicationController
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
     else
       # TODO: redirect to /issues_types if admin signed in
-      redirect_to category_project_url(@category, @project),
+      redirect_to project_url(@project),
                   alert: 'App Error: Issue types are required'
     end
   end
@@ -54,7 +54,7 @@ class IssuesController < ApplicationController
 
   def destroy
     @issue.destroy
-    redirect_to category_project_url(@category, @project),
+    redirect_to project_url(@project),
                 success: 'Issue was successfully destroyed.'
   end
 

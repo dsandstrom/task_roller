@@ -8,8 +8,8 @@
 
   <div class="project-name-and-tags">
     <h3 class="project-name">
-      <%= link_to_if policy(project).show?, project.name,
-                     category_project_path(category, project) %>
+      <%= link_to_if policy(project).show?,
+                     project.name, project_path(project) %>
     </h3>
 
     <%= project_tags(project) %>
@@ -18,8 +18,7 @@
   <% unless @category %>
     <p class="project-category">
       <%= link_to_if policy(project.category).show?,
-                     project.category.name,
-                     project.category %>
+                     project.category.name, project.category %>
     </p>
   <% end %>
 
@@ -41,12 +40,13 @@
 
   <p class="project-links">
     <% if policy(project).destroy? %>
-      <%= link_to 'Delete', category_project_path(category, project),
-                             method: :delete, data: { confirm: 'Are you sure?' },
-                             class: 'button button-outline button-warning' %>
+      <%= link_to 'Delete',
+                  project_path(project),
+                  method: :delete, data: { confirm: 'Are you sure?' },
+                  class: 'button button-outline button-warning' %>
     <% end %>
     <% if policy(project).edit? %>
-      <%= link_to 'Edit', edit_category_project_path(category, project),
+      <%= link_to 'Edit', edit_project_path(project),
                   class: 'button button-outline' %>
     <% end %>
   </p>

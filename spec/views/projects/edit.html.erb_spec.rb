@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "projects/edit", type: :view do
   let(:category) { Fabricate(:category) }
-  let(:form_path) { category_project_path(@category, @project) }
+  let(:form_path) { project_path(@project) }
 
   before(:each) do
     @category = assign(:category, category)

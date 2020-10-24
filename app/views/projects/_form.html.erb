@@ -1,7 +1,7 @@
 <%
   url =
     if project.persisted?
-      category_project_path(category, project)
+      project_path(project)
     else
       category_projects_path(category)
     end

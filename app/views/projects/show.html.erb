@@ -2,8 +2,7 @@
 
 <% if policy(@project).edit? %>
   <p>
-    <%= link_to 'Edit Project',
-                edit_category_project_path(@category, @project),
+    <%= link_to 'Edit Project', edit_project_path(@project),
                 class: 'button' %>
   </p>
 <% end %>

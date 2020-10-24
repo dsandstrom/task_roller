@@ -10,11 +10,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :tasks, only: :index
     resources :issues, only: :index
 
-    # TODO: only new, create
-    resources :projects, except: :index
+    resources :projects, only: %i[new create]
   end
 
-  resources :projects, only: :index do
+  resources :projects, except: %i[new create] do
     resources :issues, only: %i[index new create]
     resources :tasks, only: %i[index new create]
   end

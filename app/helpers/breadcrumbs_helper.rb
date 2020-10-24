@@ -12,7 +12,7 @@ module BreadcrumbsHelper
   private
 
     def project_breadcrumb_item(project)
-      [project.name, category_project_path(project.category, project)]
+      [project.name, project_path(project)]
     end
 
     def issue_breadcrumb_item(issue)

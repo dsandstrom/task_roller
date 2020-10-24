@@ -450,7 +450,7 @@ RSpec.describe TasksController, type: :controller do
           delete :destroy, params: { category_id: category.to_param,
                                      project_id: project.to_param,
                                      id: task.to_param }
-          url = category_project_url(category, project)
+          url = project_url(project)
           expect(response).to redirect_to(url)
         end
       end

@@ -2,7 +2,7 @@
 
 class ProjectsController < ApplicationController
   before_action :authorize_project, only: %i[index new create destroy]
-  before_action :set_category, except: :index
+  before_action :set_category, only: %i[new create]
   before_action :set_project, only: %i[show edit update destroy]
 
   def index
@@ -24,7 +24,7 @@ class ProjectsController < ApplicationController
     @project = @category.projects.build(project_params)
 
     if @project.save
-      redirect_to category_project_path(@category, @project),
+      redirect_to project_path(@project),
                   notice: 'Project was successfully created.'
     else
       render :new
@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
 
   def update
     if @project.update(project_params)
-      redirect_to category_project_path(@category, @project),
+      redirect_to project_path(@project),
                   notice: 'Project was successfully updated.'
     else
       render :edit
@@ -57,7 +57,8 @@ class ProjectsController < ApplicationController
     end
 
     def set_project
-      @project = authorize(@category.projects.find(params[:id]))
+      @project = authorize(Project.find(params[:id]))
+      @category = @project.category
     end
 
     def project_params

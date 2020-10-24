@@ -18,7 +18,7 @@ RSpec.describe "projects/index", type: :view do
       [first_project, second_project].each do |project|
         assert_select "#project-#{project.id}"
         assert_select "#project-#{project.id} a[data-method=\"delete\"]"
-        edit_url = edit_category_project_path(project.category, project)
+        edit_url = edit_project_path(project)
         expect(rendered).to have_link(nil, href: edit_url)
       end
     end

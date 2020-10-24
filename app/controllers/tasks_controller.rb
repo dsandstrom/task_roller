@@ -30,7 +30,7 @@ class TasksController < ApplicationController
       @task.issue = @issue
     else
       # TODO: redirect to /issues_types if admin signed in
-      redirect_to category_project_url(@category, @project),
+      redirect_to project_url(@project),
                   alert: 'App Error: Task types are required'
     end
   end
@@ -58,7 +58,7 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
-    redirect_to category_project_url(@category, @project),
+    redirect_to project_url(@project),
                 success: 'Task was successfully destroyed.'
   end
 

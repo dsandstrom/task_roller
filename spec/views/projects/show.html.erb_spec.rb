@@ -9,7 +9,7 @@ RSpec.describe "projects/show", type: :view do
   let(:second_issue) { Fabricate(:issue, project: project) }
   let(:first_task) { Fabricate(:task, project: project) }
   let(:second_task) { Fabricate(:task, project: project) }
-  let(:edit_url) { edit_category_project_path(@category, @project) }
+  let(:edit_url) { edit_project_path(@project) }
 
   before(:each) do
     @category = category

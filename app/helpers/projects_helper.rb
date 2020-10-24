@@ -31,7 +31,7 @@ module ProjectsHelper
     #   related = [['Categories', categories_path],
     #              [category.name, category_path(category)]]
     #   if params[:controller] != 'projects'
-    #     related += [[project.name, category_project_path(category, project)]]
+    #     related += [[project.name, project_path(project)]]
     #   end
     #   if params[:controller] == 'issues'
     #     related +=
@@ -76,6 +76,6 @@ module ProjectsHelper
         return project.name
       end
 
-      link_to(project.name, category_project_path(project.category, project))
+      link_to(project.name, project_path(project))
     end
 end
