@@ -162,24 +162,23 @@ class User < ApplicationRecord
     'then 1 else 0 end) AS pending_reviews_count, ' \
     'COALESCE(MAX(roller_comments.created_at), MAX(progressions.created_at), ' \
     'tasks.created_at) AS order_date'
-
+  ACTIVE_ASSIGNMENTS_ORDER =
+    { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
+      progressions_count: :desc, order_date: :desc }.freeze
   def active_assignments
-    order = { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
-              progressions_count: :desc, order_date: :desc }
     @active_assignments ||=
       assignments
-      .left_joins(:progressions, :reviews, :comments)
-      .references(:comments)
+      .left_joins(:progressions, :reviews, :comments).references(:comments)
       .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
       .where('progressions.id IS NULL OR progressions.user_id = ?', id)
       .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
-      .group(:id).order(order)
+      .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
 
   # for reporters/show view
   # link to user/issues which will be filterable
-  OPEN_ISSUES_ORDER = { open_tasks_count: :desc, tasks_count: :desc,
-                        order_date: :desc }.freeze
+  UNRESOLVED_ISSUES_ORDER =
+    { open_tasks_count: :desc, tasks_count: :desc, order_date: :desc }.freeze
   UNRESOLVED_ISSUES_QUERY =
     'issues.*, ' \
     'COALESCE(MAX(roller_comments.created_at), issues.created_at) AS order_date'
@@ -189,53 +188,39 @@ class User < ApplicationRecord
       .all_unresolved.left_joins(:comments).references(:comments)
       .select(UNRESOLVED_ISSUES_QUERY)
       .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
-      .group(:id).order(OPEN_ISSUES_ORDER)
+      .group(:id).order(UNRESOLVED_ISSUES_ORDER)
   end
 
-  # auto subscribe created issues, after comment, assign task
-  # order by status, new comments
-  # allow customize when subscription created
-  # def subscribed_issues
-  # end
+  # priority:
+  # in review
+  # in progress
+  # assigned
+  # open
+  #
+  # order:
+  # comment by another user, progression, created_at
+  OPEN_TASKS_QUERY =
+    'tasks.*, ' \
+    'COUNT(progressions.id) AS progressions_count, ' \
+    'SUM(case when reviews.id IS NOT NULL AND reviews.approved IS NULL ' \
+    'then 1 else 0 end) AS pending_reviews_count, ' \
+    'COALESCE(MAX(roller_comments.created_at), MAX(progressions.created_at), ' \
+    'tasks.created_at) AS order_date'
+  OPENS_TASKS_ORDER =
+    { pending_reviews_count: :desc, progressions_count: :desc,
+      order_date: :desc }.freeze
+  def open_tasks
+    @open_tasks ||=
+      tasks
+      .all_open.select(OPEN_TASKS_QUERY)
+      .left_joins(:progressions, :reviews, :comments).references(:comments)
+      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .group(:id).order(OPENS_TASKS_ORDER)
+  end
 
-  # user/issues will show all and allow subscring/unsub
-  # show open issues that are subscribed
-  # def associated_issues
-  # end
-
-  # link to user/tasks with all associated
-  # assigned_tasks, with progressions
-  # def subscribed_tasks
-  # end
-
-  # their tasks, assigned tasks
-  # def associated_tasks
-  # end
-
+  # TODO: tasks from a user's open issues
   # for reporters/show view
-  # # TODO: tasks from a user's open issues
   # def tasks_from_open_issues
   #   # code
-  # end
-  #
-  # def tasks_ready_for_review
-  #   # code
-  #   open_tasks.all_in_review
-  # end
-  #
-  # # filter by in progress (show at top or separately)
-  # # priotorize by open progression
-  # def assigned_tasks
-  #   open_tasks.where('task_assignees.assignee_id = ?', id)
-  #             .joins(:task_assignees)
-  # end
-  #
-  # # TODO: no pending review
-  # def tasks_in_progress
-  #   open_tasks.where('progressions.user_id = ?', id)
-  #             .joins(:progressions)
-  # end
-  #
-  # def reviewed_tasks
   # end
 end

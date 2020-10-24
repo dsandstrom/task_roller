@@ -640,8 +640,6 @@ RSpec.describe User, type: :model do
         Fabricate(:finished_progression, task: paused_task, user: user)
         Fabricate(:unfinished_progression, task: in_progress_task, user: user)
         Fabricate(:pending_review, task: in_review_task, user: user)
-
-        Fabricate(:unfinished_progression, task: paused_task)
       end
 
       it "orders tasks by in progress, with progressions, assigned" do
@@ -720,6 +718,89 @@ RSpec.describe User, type: :model do
         Fabricate(:task_comment, task: second_task, user: user)
 
         expect(user.active_assignments).to eq([first_task, second_task])
+      end
+    end
+  end
+
+  describe "#open_tasks" do
+    let(:user) { Fabricate(:user_reviewer) }
+
+    context "when user has no tasks" do
+      it "returns []" do
+        expect(user.open_tasks).to eq([])
+      end
+    end
+
+    context "when user an open and closed task" do
+      before do
+        Fabricate(:closed_task, user: user)
+        Fabricate(:open_task)
+      end
+
+      it "returns non-closed only" do
+        task = Fabricate(:open_task, user: user)
+
+        expect(user.open_tasks).to eq([task])
+      end
+    end
+
+    context "when user has different status tasks" do
+      let(:in_progress_task) do
+        Fabricate(:open_task, user: user, summary: "In Progress")
+      end
+      let(:assigned_task) do
+        Fabricate(:open_task, user: user, summary: "Assigned")
+      end
+      let(:in_review_task) do
+        Fabricate(:open_task, user: user, summary: "In Review")
+      end
+
+      before do
+        Fabricate(:unfinished_progression, task: in_progress_task)
+        Fabricate(:pending_review, task: in_review_task)
+      end
+
+      it "orders by in_review, in_progress, assigned, open" do
+        open_task = Fabricate(:open_task, user: user, summary: "Open")
+        tasks = [in_review_task, in_progress_task, assigned_task, open_task]
+        expect(user.open_tasks).to eq(tasks)
+      end
+    end
+
+    context "when user has similar status tasks" do
+      it "orders by last comment by another user" do
+        first_task = nil
+        second_task = nil
+
+        Timecop.freeze(1.week.ago) do
+          first_task = Fabricate(:open_task, user: user)
+        end
+        Timecop.freeze(1.day.ago) do
+          second_task = Fabricate(:open_task, user: user)
+          Fabricate(:task_comment, task: second_task)
+        end
+        Fabricate(:task_comment, task: first_task)
+        Fabricate(:task_comment, task: second_task, user: user)
+
+        tasks = [first_task, second_task]
+        expect(user.open_tasks).to eq(tasks)
+      end
+
+      it "orders by last progression" do
+        first_task = nil
+        second_task = nil
+
+        Timecop.freeze(1.week.ago) do
+          first_task = Fabricate(:open_task, user: user)
+        end
+        Timecop.freeze(1.day.ago) do
+          second_task = Fabricate(:open_task, user: user)
+          Fabricate(:progression, task: second_task)
+        end
+        Fabricate(:progression, task: first_task)
+
+        tasks = [first_task, second_task]
+        expect(user.open_tasks).to eq(tasks)
       end
     end
   end
