@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: authorize task on visible
+# TODO: lock edit after closed except admin
 
 class TaskPolicy < ApplicationPolicy
   def index?

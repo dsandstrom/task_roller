@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: lock editing after record.issue/task closed except admin
+
 class RollerCommentPolicy < ApplicationPolicy
   def index?
     employee?

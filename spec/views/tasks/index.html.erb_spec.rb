@@ -2,6 +2,7 @@
 
 require "rails_helper"
 
+# TODO: spec users
 RSpec.describe "tasks/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
