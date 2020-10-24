@@ -22,11 +22,11 @@ class TaskPolicy < ApplicationPolicy
 
   # maybe allow any reviewer
   def edit?
-    employee? && (admin? || record.user == user)
+    employee? && (admin? || record.user_id == user.id)
   end
 
   def update?
-    employee? && (admin? || record.user == user)
+    employee? && (admin? || record.user_id == user.id)
   end
 
   def open?

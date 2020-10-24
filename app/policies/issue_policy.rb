@@ -23,13 +23,13 @@ class IssuePolicy < ApplicationPolicy
   def edit?
     return false unless employee?
 
-    admin? || record.user == user
+    admin? || record.user_id == user.id
   end
 
   def update?
     return false unless employee?
 
-    admin? || record.user == user
+    admin? || record.user_id == user.id
   end
 
   def open?
