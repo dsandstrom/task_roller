@@ -8,7 +8,7 @@ class TaskAssignmentsController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to category_project_task_url(@category, @project, @task),
+      redirect_to task_url(@task),
                   notice: 'Task assignment was successfully updated.'
     else
       render :edit

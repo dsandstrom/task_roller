@@ -6,7 +6,7 @@ RSpec.describe "issues/new", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue_type) { Fabricate(:issue_type) }
-  let(:url) { category_project_issues_path(category, project) }
+  let(:url) { project_issues_path(project) }
 
   before(:each) do
     assign(:category, category)

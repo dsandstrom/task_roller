@@ -58,17 +58,17 @@ RSpec.describe "issues/index", type: :view do
         render
 
         assert_select "#issue-#{first_issue.id}"
-        url = edit_category_project_issue_path(category, project, first_issue)
+        url = edit_issue_path(first_issue)
         expect(rendered).to have_link(nil, href: url)
         assert_select "#issue-#{second_issue.id}"
-        url = edit_category_project_issue_path(category, project, second_issue)
+        url = edit_issue_path(second_issue)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders new issue link" do
         render
 
-        url = new_category_project_issue_path(category, project)
+        url = new_project_issue_path(project)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -115,17 +115,17 @@ RSpec.describe "issues/index", type: :view do
         render
 
         assert_select "#issue-#{first_issue.id}"
-        url = edit_category_project_issue_path(category, project, first_issue)
+        url = edit_issue_path(first_issue)
         expect(rendered).to have_link(nil, href: url)
         assert_select "#issue-#{second_issue.id}"
-        url = edit_category_project_issue_path(category, project, second_issue)
+        url = edit_issue_path(second_issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders new issue link" do
         render
 
-        url = new_category_project_issue_path(category, project)
+        url = new_project_issue_path(project)
         expect(rendered).to have_link(nil, href: url)
       end
     end

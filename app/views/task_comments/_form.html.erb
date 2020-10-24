@@ -4,9 +4,9 @@
   # TODO: allow destroy comment with ajax
   url =
     if task_comment.persisted?
-      category_project_task_task_comment_url(category, project, task, task_comment)
+      task_task_comment_url(task, task_comment)
     else
-      category_project_task_task_comments_url(category, project, task)
+      task_task_comments_url(task)
     end
 %>
 

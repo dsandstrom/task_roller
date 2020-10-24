@@ -63,7 +63,7 @@ RSpec.describe TaskAssignmentsController, type: :controller do
 
           it "redirects to the task" do
             task = Fabricate(:task, project: project)
-            url = category_project_task_path(category, project, task)
+            url = task_path(task)
             put :update, params: { id: task.to_param, task: valid_attributes }
             expect(response).to redirect_to(url)
           end
@@ -85,7 +85,7 @@ RSpec.describe TaskAssignmentsController, type: :controller do
           end
 
           it "redirects to the task" do
-            url = category_project_task_path(category, project, task)
+            url = task_path(task)
             put :update, params: { id: task.to_param, task: blank_attributes }
             expect(response).to redirect_to(url)
           end

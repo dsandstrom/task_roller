@@ -3,8 +3,7 @@
 <dt id="task-<%= task.id %>" class="task">
   <%= task_type_icon_tag(task.task_type) %>
   <span class="task-summary">
-    <%= link_to task.short_summary,
-                category_project_task_path(category, project, task) %>
+    <%= link_to task.short_summary, task_path(task) %>
   </span>
 </dt>
 

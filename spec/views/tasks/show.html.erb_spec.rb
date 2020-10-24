@@ -20,9 +20,7 @@ RSpec.describe "tasks/show", type: :view do
         @task = assign(:task, Fabricate(:task, project: @project))
       end
 
-      let(:url) do
-        category_project_task_task_comments_url(@category, @project, @task)
-      end
+      let(:url) { task_task_comments_url(@task) }
 
       it "renders task's heading" do
         render
@@ -208,7 +206,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders edit link" do
         render
-        url = edit_category_project_task_path(@category, @project, @task)
+        url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -246,8 +244,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to target task" do
         render
         target = @task_connection.target
-        url =
-          category_project_task_path(target.category, target.project, target)
+        url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -273,8 +270,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to source task" do
         render
         source = @task_connection.source
-        url =
-          category_project_task_path(source.category, source.project, source)
+        url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -406,8 +402,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders new task_comment form" do
         render
 
-        url = category_project_task_task_comments_url(@category, @project,
-                                                      @task)
+        url = task_task_comments_url(@task)
         assert_select "form[action=?][method=?]", url, "post" do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
@@ -415,7 +410,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render edit link" do
         render
-        url = edit_category_project_task_path(@category, @project, @task)
+        url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -451,8 +446,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to target task" do
         render
         target = @task_connection.target
-        url =
-          category_project_task_path(target.category, target.project, target)
+        url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -472,8 +466,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to source task" do
         render
         source = @task_connection.source
-        url =
-          category_project_task_path(source.category, source.project, source)
+        url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -611,8 +604,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders new task_comment form" do
         render
 
-        url = category_project_task_task_comments_url(@category, @project,
-                                                      @task)
+        url = task_task_comments_url(@task)
         assert_select "form[action=?][method=?]", url, "post" do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
@@ -759,8 +751,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders new task_comment form" do
         render
 
-        url = category_project_task_task_comments_url(@category, @project,
-                                                      @task)
+        url = task_task_comments_url(@task)
         assert_select "form[action=?][method=?]", url, "post" do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
@@ -768,7 +759,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render edit link" do
         render
-        url = edit_category_project_task_path(@category, @project, @task)
+        url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -824,8 +815,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to target task" do
         render
         target = @task_connection.target
-        url =
-          category_project_task_path(target.category, target.project, target)
+        url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -845,8 +835,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to source task" do
         render
         source = @task_connection.source
-        url =
-          category_project_task_path(source.category, source.project, source)
+        url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -905,8 +894,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders new task_comment form" do
         render
 
-        url = category_project_task_task_comments_url(@category, @project,
-                                                      @task)
+        url = task_task_comments_url(@task)
         assert_select "form[action=?][method=?]", url, "post" do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
@@ -915,8 +903,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders new task_comment form" do
         render
 
-        url = category_project_task_task_comments_url(@category, @project,
-                                                      @task)
+        url = task_task_comments_url(@task)
         assert_select "form[action=?][method=?]", url, "post" do
           assert_select "textarea[name=?]", "task_comment[body]"
         end
@@ -935,7 +922,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render edit link" do
         render
-        url = edit_category_project_task_path(@category, @project, @task)
+        url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
@@ -960,8 +947,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to target task" do
         render
         target = @task_connection.target
-        url =
-          category_project_task_path(target.category, target.project, target)
+        url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -981,8 +967,7 @@ RSpec.describe "tasks/show", type: :view do
       it "renders link to source task" do
         render
         source = @task_connection.source
-        url =
-          category_project_task_path(source.category, source.project, source)
+        url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
     end

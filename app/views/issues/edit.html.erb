@@ -9,8 +9,6 @@
 <h2>Edit Issue</h2>
 
 <%= render 'form', issue: @issue, issue_types: @issue_types,
-                   url: category_project_issue_path(@category, @project, @issue),
-                   user_options: @user_options %>
+                   url: issue_path(@issue), user_options: @user_options %>
 
-<%= link_to 'Back to issue',
-            category_project_issue_path(@category, @project, @issue) %>
+<%= link_to 'Back to issue', issue_path(@issue) %>

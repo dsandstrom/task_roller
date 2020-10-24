@@ -35,12 +35,12 @@ module ProjectsHelper
     #   end
     #   if params[:controller] == 'issues'
     #     related +=
-    #       [['Project Tasks', category_project_tasks_path(category, project)]]
+    #       [['Project Tasks', project_tasks_path(project)]]
     #   end
     #   return related unless params[:controller] == 'tasks'
     #
     #   related +
-    #     [['Project Issues', category_project_issues_path(category, project)]]
+    #     [['Project Issues', project_issues_path(project)]]
     # end
 
     def project_tag(text, klass)

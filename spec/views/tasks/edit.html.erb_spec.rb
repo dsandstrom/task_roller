@@ -12,7 +12,7 @@ RSpec.describe "tasks/edit", type: :view do
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
   end
 
-  let(:url) { category_project_task_path(@category, @project, @task) }
+  let(:url) { task_path(@task) }
 
   it "renders the edit task form" do
     render

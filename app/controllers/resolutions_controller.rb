@@ -16,7 +16,7 @@ class ResolutionsController < ApplicationController
   def approve
     @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.approve
-      redirect_to category_project_issue_path(@category, @project, @issue),
+      redirect_to issue_path(@issue),
                   notice: 'Task was successfully marked resolved.'
     else
       render :new
@@ -26,7 +26,7 @@ class ResolutionsController < ApplicationController
   def disapprove
     @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.disapprove
-      redirect_to category_project_issue_path(@category, @project, @issue),
+      redirect_to issue_path(@issue),
                   notice: 'Task was successfully marked unresolved.'
     else
       render :new
@@ -35,7 +35,7 @@ class ResolutionsController < ApplicationController
 
   def destroy
     @resolution.destroy
-    redirect_to category_project_issue_path(@category, @project, @issue),
+    redirect_to issue_path(@issue),
                 notice: 'Resolution was successfully destroyed.'
   end
 

@@ -90,7 +90,7 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:path) { category_project_task_path(task.category, task.project, task) }
+    let(:path) { task_path(task) }
 
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
@@ -151,7 +151,7 @@ RSpec.describe ReviewsController, type: :controller do
             review = Fabricate(:pending_review, task: task, user: current_user)
             delete :destroy, params: { task_id: task.to_param,
                                        id: review.to_param }
-            url = category_project_task_path(category, project, task)
+            url = task_path(task)
             expect(response).to redirect_to(url)
           end
         end
@@ -242,7 +242,7 @@ RSpec.describe ReviewsController, type: :controller do
             review = Fabricate(:pending_review, task: task)
             put :approve, params: { task_id: task.to_param,
                                     id: review.to_param }
-            url = category_project_task_path(category, project, task)
+            url = task_path(task)
             expect(response).to redirect_to(url)
           end
         end
@@ -327,7 +327,7 @@ RSpec.describe ReviewsController, type: :controller do
             review = Fabricate(:pending_review, task: task)
             put :disapprove, params: { task_id: task.to_param,
                                        id: review.to_param }
-            url = category_project_task_path(category, project, task)
+            url = task_path(task)
             expect(response).to redirect_to(url)
           end
         end

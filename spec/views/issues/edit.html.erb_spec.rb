@@ -11,7 +11,7 @@ RSpec.describe "issues/edit", type: :view do
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
   end
 
-  let(:url) { category_project_issue_path(@category, @project, @issue) }
+  let(:url) { issue_path(@issue) }
 
   it "renders the edit issue form" do
     render

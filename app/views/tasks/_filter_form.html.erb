@@ -3,9 +3,9 @@ return unless category
 
 index_path =
   if category && project
-    category_project_tasks_path(category, project)
+    project_tasks_path(project)
   else
-    category_tasks_path(category, project)
+    category_tasks_path(category)
   end
 
 reviewer_options =

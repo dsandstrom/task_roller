@@ -20,9 +20,7 @@ RSpec.describe "issues/show", type: :view do
         @comments = assign(:comments, [])
       end
 
-      let(:url) do
-        category_project_issue_issue_comments_url(@category, @project, @issue)
-      end
+      let(:url) { issue_issue_comments_url(@issue) }
 
       it "renders issue's heading" do
         render
@@ -45,7 +43,7 @@ RSpec.describe "issues/show", type: :view do
       it "renders edit link" do
         render
 
-        url = edit_category_project_issue_path(@category, @project, @issue)
+        url = edit_issue_path(@issue)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -59,7 +57,7 @@ RSpec.describe "issues/show", type: :view do
       it "renders new task link" do
         render
 
-        url = new_category_project_issue_task_path(@category, @project, @issue)
+        url = new_issue_task_path(@issue)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -81,8 +79,7 @@ RSpec.describe "issues/show", type: :view do
           render
 
           duplicatee = @issue_connection.target
-          url = category_project_issue_path(duplicatee.category,
-                                            duplicatee.project, duplicatee)
+          url = issue_path(duplicatee)
           expect(rendered).to have_link(nil, href: url)
         end
 
@@ -110,8 +107,7 @@ RSpec.describe "issues/show", type: :view do
           render
 
           duplicate = @issue_connection.source
-          url = category_project_issue_path(duplicate.category,
-                                            duplicate.project, duplicate)
+          url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
         end
       end
@@ -215,9 +211,7 @@ RSpec.describe "issues/show", type: :view do
     end
 
     context "when someone else's issue" do
-      let(:url) do
-        category_project_issue_issue_comments_url(@category, @project, @issue)
-      end
+      let(:url) { issue_issue_comments_url(@issue) }
 
       before do
         @issue = assign(:issue, Fabricate(:issue, project: @project))
@@ -246,7 +240,7 @@ RSpec.describe "issues/show", type: :view do
       it "doesn't render the edit link" do
         render
 
-        url = edit_category_project_issue_path(@category, @project, @issue)
+        url = edit_issue_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -260,7 +254,7 @@ RSpec.describe "issues/show", type: :view do
       it "renders new task link" do
         render
 
-        url = new_category_project_issue_task_path(@category, @project, @issue)
+        url = new_issue_task_path(@issue)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -277,8 +271,7 @@ RSpec.describe "issues/show", type: :view do
         render
 
         duplicatee = @issue_connection.target
-        url = category_project_issue_path(duplicatee.category,
-                                          duplicatee.project, duplicatee)
+        url = issue_path(duplicatee)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -309,8 +302,7 @@ RSpec.describe "issues/show", type: :view do
         render
 
         duplicate = @issue_connection.source
-        url = category_project_issue_path(duplicate.category,
-                                          duplicate.project, duplicate)
+        url = issue_path(duplicate)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -323,9 +315,7 @@ RSpec.describe "issues/show", type: :view do
       before { enable_pundit(view, current_user) }
 
       context "when their issue" do
-        let(:url) do
-          category_project_issue_issue_comments_url(@category, @project, @issue)
-        end
+        let(:url) { issue_issue_comments_url(@issue) }
 
         let(:issue) { Fabricate(:issue, project: @project, user: current_user) }
 
@@ -351,7 +341,7 @@ RSpec.describe "issues/show", type: :view do
         it "renders edit link" do
           render
 
-          url = edit_category_project_issue_path(@category, @project, @issue)
+          url = edit_issue_path(@issue)
           expect(rendered).to have_link(nil, href: url)
         end
 
@@ -372,8 +362,7 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render the new task link" do
           render
 
-          url = new_category_project_issue_task_path(@category, @project,
-                                                     @issue)
+          url = new_issue_task_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
@@ -404,9 +393,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "when someone else's issue" do
-        let(:url) do
-          category_project_issue_issue_comments_url(@category, @project, @issue)
-        end
+        let(:url) { issue_issue_comments_url(@issue) }
 
         before do
           @issue = assign(:issue, Fabricate(:issue, project: @project))
@@ -430,7 +417,7 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render the edit link" do
           render
 
-          url = edit_category_project_issue_path(@category, @project, @issue)
+          url = edit_issue_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
@@ -477,8 +464,7 @@ RSpec.describe "issues/show", type: :view do
           render
 
           duplicatee = @issue_connection.target
-          url = category_project_issue_path(duplicatee.category,
-                                            duplicatee.project, duplicatee)
+          url = issue_path(duplicatee)
           expect(rendered).to have_link(nil, href: url)
         end
 
@@ -509,8 +495,7 @@ RSpec.describe "issues/show", type: :view do
           render
 
           duplicate = @issue_connection.source
-          url = category_project_issue_path(duplicate.category,
-                                            duplicate.project, duplicate)
+          url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
         end
       end

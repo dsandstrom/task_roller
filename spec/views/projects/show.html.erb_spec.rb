@@ -41,14 +41,14 @@ RSpec.describe "projects/show", type: :view do
       it "renders new issue link" do
         render
 
-        url = new_category_project_issue_path(@category, @project, @issue)
+        url = new_project_issue_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders new task link" do
         render
 
-        url = new_category_project_task_path(@category, @project, @task)
+        url = new_project_task_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -124,14 +124,14 @@ RSpec.describe "projects/show", type: :view do
       it "renders new issue link" do
         render
 
-        url = new_category_project_issue_path(@category, @project, @issue)
+        url = new_project_issue_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders new task link" do
         render
 
-        url = new_category_project_task_path(@category, @project, @task)
+        url = new_project_task_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -178,14 +178,14 @@ RSpec.describe "projects/show", type: :view do
         it "renders new issue link" do
           render
 
-          url = new_category_project_issue_path(@category, @project, @issue)
+          url = new_project_issue_path(@project)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render new task link" do
           render
 
-          url = new_category_project_task_path(@category, @project, @task)
+          url = new_project_task_path(@project)
           expect(rendered).not_to have_link(nil, href: url)
         end
 

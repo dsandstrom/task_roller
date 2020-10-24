@@ -73,7 +73,7 @@ RSpec.describe ResolutionsController, type: :controller do
 
             it "redirects to the resolution" do
               post :approve, params: { issue_id: issue.to_param }
-              url = category_project_issue_path(category, project, issue)
+              url = issue_path(issue)
               expect(response).to redirect_to(url)
             end
           end
@@ -126,7 +126,7 @@ RSpec.describe ResolutionsController, type: :controller do
 
             it "redirects to the resolution" do
               post :disapprove, params: { issue_id: issue.to_param }
-              url = category_project_issue_path(category, project, issue)
+              url = issue_path(issue)
               expect(response).to redirect_to(url)
             end
           end
@@ -174,8 +174,7 @@ RSpec.describe ResolutionsController, type: :controller do
         resolution = Fabricate(:resolution, issue: issue)
         delete :destroy, params: { issue_id: issue.to_param,
                                    id: resolution.to_param }
-        expect(response)
-          .to redirect_to(category_project_issue_path(category, project, issue))
+        expect(response).to redirect_to(issue_path(issue))
       end
     end
 

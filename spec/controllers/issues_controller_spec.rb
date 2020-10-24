@@ -32,11 +32,10 @@ RSpec.describe IssuesController, type: :controller do
           end
         end
 
-        context "when category and project" do
+        context "when project" do
           it "returns a success response" do
             _issue = Fabricate(:issue, project: project)
-            get :index, params: { category_id: category.to_param,
-                                  project_id: project.to_param }
+            get :index, params: { project_id: project.to_param }
             expect(response).to be_successful
           end
         end
@@ -49,23 +48,10 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type.downcase}")) }
 
-        context "when only category" do
-          it "returns a success response" do
-            issue = Fabricate(:issue, project: project)
-            get :show, params: { category_id: category.to_param,
-                                 id: issue.to_param }
-            expect(response).to be_successful
-          end
-        end
-
-        context "when category and project" do
-          it "returns a success response" do
-            issue = Fabricate(:issue, project: project)
-            get :show, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: issue.to_param }
-            expect(response).to be_successful
-          end
+        it "returns a success response" do
+          issue = Fabricate(:issue, project: project)
+          get :show, params: { id: issue.to_param }
+          expect(response).to be_successful
         end
       end
     end
@@ -110,9 +96,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for their own Issue" do
         it "returns a success response" do
           issue = Fabricate(:issue, project: project, user: admin)
-          get :edit, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: issue.to_param }
+          get :edit, params: { id: issue.to_param }
           expect(response).to be_successful
         end
       end
@@ -120,9 +104,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for someone else's Issue" do
         it "returns a success response" do
           issue = Fabricate(:issue, project: project)
-          get :edit, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               id: issue.to_param }
+          get :edit, params: { id: issue.to_param }
           expect(response).to be_successful
         end
       end
@@ -137,9 +119,7 @@ RSpec.describe IssuesController, type: :controller do
         context "for their own Issue" do
           it "returns a success response" do
             issue = Fabricate(:issue, project: project, user: current_user)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: issue.to_param }
+            get :edit, params: { id: issue.to_param }
             expect(response).to be_successful
           end
         end
@@ -147,9 +127,7 @@ RSpec.describe IssuesController, type: :controller do
         context "for someone else's Issue" do
           it "should be unauthorized" do
             issue = Fabricate(:issue, project: project)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: issue.to_param }
+            get :edit, params: { id: issue.to_param }
             expect_to_be_unauthorized(response)
           end
         end
@@ -177,7 +155,7 @@ RSpec.describe IssuesController, type: :controller do
             post :create, params: { category_id: category.to_param,
                                     project_id: project.to_param,
                                     issue: valid_attributes }
-            url = category_project_issue_path(category, project, Issue.last)
+            url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
           end
         end
@@ -206,9 +184,7 @@ RSpec.describe IssuesController, type: :controller do
             issue = Fabricate(:issue, project: project, user: admin)
 
             expect do
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param,
+              put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
               issue.reload
             end.to change(issue, :summary).to("New Summary")
@@ -216,11 +192,9 @@ RSpec.describe IssuesController, type: :controller do
 
           it "redirects to the issue" do
             issue = Fabricate(:issue, project: project, user: admin)
-            url = category_project_issue_url(category, project, issue)
+            url = issue_url(issue)
 
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param,
+            put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect(response).to redirect_to(url)
           end
@@ -229,9 +203,7 @@ RSpec.describe IssuesController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             issue = Fabricate(:issue, project: project, user: admin)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param,
+            put :update, params: { id: issue.to_param,
                                    issue: invalid_attributes }
             expect(response).to be_successful
           end
@@ -244,9 +216,7 @@ RSpec.describe IssuesController, type: :controller do
             issue = Fabricate(:issue, project: project)
 
             expect do
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param,
+              put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
               issue.reload
             end.to change(issue, :summary).to("New Summary")
@@ -254,11 +224,9 @@ RSpec.describe IssuesController, type: :controller do
 
           it "redirects to the issue" do
             issue = Fabricate(:issue, project: project)
-            url = category_project_issue_url(category, project, issue)
+            url = issue_url(issue)
 
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param,
+            put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect(response).to redirect_to(url)
           end
@@ -267,9 +235,7 @@ RSpec.describe IssuesController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             issue = Fabricate(:issue, project: project)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param,
+            put :update, params: { id: issue.to_param,
                                    issue: invalid_attributes }
             expect(response).to be_successful
           end
@@ -289,9 +255,7 @@ RSpec.describe IssuesController, type: :controller do
               issue = Fabricate(:issue, project: project, user: current_user)
 
               expect do
-                put :update, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: issue.to_param,
+                put :update, params: { id: issue.to_param,
                                        issue: new_attributes }
                 issue.reload
               end.to change(issue, :summary).to("New Summary")
@@ -299,11 +263,9 @@ RSpec.describe IssuesController, type: :controller do
 
             it "redirects to the issue" do
               issue = Fabricate(:issue, project: project, user: current_user)
-              url = category_project_issue_url(category, project, issue)
+              url = issue_url(issue)
 
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param,
+              put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
               expect(response).to redirect_to(url)
             end
@@ -312,9 +274,7 @@ RSpec.describe IssuesController, type: :controller do
           context "with invalid params" do
             it "returns a success response ('edit' template)" do
               issue = Fabricate(:issue, project: project, user: current_user)
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param,
+              put :update, params: { id: issue.to_param,
                                      issue: invalid_attributes }
               expect(response).to be_successful
             end
@@ -324,9 +284,7 @@ RSpec.describe IssuesController, type: :controller do
         context "for someone else's Issue" do
           it "should be unauthorized" do
             issue = Fabricate(:issue, project: project)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param,
+            put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect_to_be_unauthorized(response)
           end
@@ -342,17 +300,13 @@ RSpec.describe IssuesController, type: :controller do
       it "destroys the requested issue" do
         issue = Fabricate(:issue, project: project)
         expect do
-          delete :destroy, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param }
+          delete :destroy, params: { id: issue.to_param }
         end.to change(Issue, :count).by(-1)
       end
 
       it "redirects to the issues list" do
         issue = Fabricate(:issue, project: project)
-        delete :destroy, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: issue.to_param }
+        delete :destroy, params: { id: issue.to_param }
         expect(response).to redirect_to(category_project_url(category, project))
       end
     end
@@ -365,9 +319,7 @@ RSpec.describe IssuesController, type: :controller do
 
         it "should be unauthorized" do
           issue = Fabricate(:issue, project: project, user: current_user)
-          delete :destroy, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     id: issue.to_param }
+          delete :destroy, params: { id: issue.to_param }
           expect_to_be_unauthorized(response)
         end
       end
@@ -390,7 +342,7 @@ RSpec.describe IssuesController, type: :controller do
 
         it "redirects to the issue" do
           issue = Fabricate(:closed_issue, project: project)
-          url = category_project_issue_url(category, project, issue)
+          url = issue_url(issue)
           put :open, params: { id: issue.to_param }
           expect(response).to redirect_to(url)
         end
@@ -446,7 +398,7 @@ RSpec.describe IssuesController, type: :controller do
 
         it "redirects to the issue" do
           issue = Fabricate(:open_issue, project: project)
-          url = category_project_issue_url(category, project, issue)
+          url = issue_url(issue)
 
           put :close, params: { id: issue.to_param }
           expect(response).to redirect_to(url)

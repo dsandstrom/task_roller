@@ -2,7 +2,7 @@
 
 class IssueCommentsController < ApplicationController
   before_action :authorize_issue_comment, only: %i[index new create destroy]
-  before_action :set_category, :set_project, :set_issue
+  before_action :set_issue
   before_action :set_issue_comment, only: %i[edit update destroy]
 
   def new
@@ -33,7 +33,7 @@ class IssueCommentsController < ApplicationController
 
   def destroy
     @issue_comment.destroy
-    redirect_to category_project_issue_url(@category, @project, @issue),
+    redirect_to issue_url(@issue),
                 notice: 'Comment was successfully destroyed.'
   end
 
@@ -53,8 +53,7 @@ class IssueCommentsController < ApplicationController
 
     def redirect_url
       @redirect_url ||=
-        category_project_issue_url(@category, @project, @issue,
-                                   anchor: "comment-#{@issue_comment.id}")
+        issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
     end
 
     def issue_comment_params

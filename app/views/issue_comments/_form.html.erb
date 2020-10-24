@@ -1,9 +1,9 @@
 <%
   url =
     if issue_comment.persisted?
-      category_project_issue_issue_comment_url(category, project, issue, issue_comment)
+      issue_issue_comment_url(issue, issue_comment)
     else
-      category_project_issue_issue_comments_url(category, project, issue)
+      issue_issue_comments_url(issue)
     end
 %>
 

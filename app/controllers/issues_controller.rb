@@ -4,8 +4,9 @@
 
 class IssuesController < ApplicationController
   before_action :authorize_issue, only: %i[index new show destroy]
-  before_action :set_category, :set_project, except: %i[open close]
-  before_action :set_issue, only: %i[show edit update destroy open close]
+  before_action :set_category_or_project, only: :index
+  before_action :set_project, only: %i[new create]
+  before_action :set_issue, except: %i[index new create]
   before_action :set_form_options, only: %i[new edit]
 
   def index
@@ -35,8 +36,7 @@ class IssuesController < ApplicationController
     @issue.user = current_user
 
     if @issue.save
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  success: 'Issue was successfully created.'
+      redirect_to issue_url(@issue), success: 'Issue was successfully created.'
     else
       set_form_options
       render :new
@@ -45,8 +45,7 @@ class IssuesController < ApplicationController
 
   def update
     if @issue.update(issue_params)
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  success: 'Issue was successfully updated.'
+      redirect_to issue_url(@issue), success: 'Issue was successfully updated.'
     else
       set_form_options
       render :edit
@@ -63,8 +62,7 @@ class IssuesController < ApplicationController
     @project = @issue.project
     @category = @issue.category
     if @issue.open
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  success: 'Issue was successfully opened.'
+      redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
     else
       set_form_options
       render :edit
@@ -75,8 +73,7 @@ class IssuesController < ApplicationController
     @project = @issue.project
     @category = @issue.category
     if @issue.close
-      redirect_to category_project_issue_url(@category, @project, @issue),
-                  success: 'Issue was successfully closed.'
+      redirect_to issue_url(@issue), success: 'Issue was successfully closed.'
     else
       set_form_options
       render :edit
@@ -89,14 +86,21 @@ class IssuesController < ApplicationController
       authorize Issue
     end
 
+    def set_category_or_project
+      return set_project if params[:project_id].present?
+
+      @category = Category.find(params[:category_id])
+    end
+
+    def set_project
+      @project = Project.find(params[:project_id])
+      @category = @project.category
+    end
+
     def set_issue
-      if @project
-        @issue = authorize(@project.issues.find(params[:id]))
-      else
-        @issue = authorize(Issue.find(params[:id]))
-        @category = @issue.category
-        @project = @issue.project
-      end
+      @issue = authorize(Issue.find(params[:id]))
+      @category = @issue.category
+      @project = @issue.project
     end
 
     def set_issue_types
@@ -118,7 +122,7 @@ class IssuesController < ApplicationController
       end
       if @project
         filters[:project] = @project
-      else
+      elsif @category
         filters[:category] = @category
       end
       filters

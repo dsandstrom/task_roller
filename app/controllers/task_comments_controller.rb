@@ -2,7 +2,7 @@
 
 class TaskCommentsController < ApplicationController
   before_action :authorize_task_comment, only: %i[index new create destroy]
-  before_action :set_category, :set_project, :set_task
+  before_action :set_task
   before_action :set_task_comment, only: %i[edit update destroy]
 
   def new
@@ -33,7 +33,7 @@ class TaskCommentsController < ApplicationController
 
   def destroy
     @task_comment.destroy
-    redirect_to category_project_task_url(@category, @project, @task),
+    redirect_to task_url(@task),
                 notice: 'Comment was successfully destroyed.'
   end
 
@@ -52,9 +52,7 @@ class TaskCommentsController < ApplicationController
     end
 
     def redirect_url
-      @redirect_url ||=
-        category_project_task_url(@category, @project, @task,
-                                  anchor: "comment-#{@task_comment.id}")
+      @redirect_url ||= task_url(@task, anchor: "comment-#{@task_comment.id}")
     end
 
     def task_comment_params

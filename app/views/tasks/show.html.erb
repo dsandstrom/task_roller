@@ -85,10 +85,7 @@ assigned = @task.assigned
           <p>
             Duplicate of:
             <%= link_to_if policy(duplicatee).show?,
-                           duplicatee.short_summary,
-                           category_project_task_path(duplicatee.category,
-                                                      duplicatee.project,
-                                                      duplicatee) %>
+                           duplicatee.short_summary, task_path(duplicatee) %>
           </p>
 
           <% if policy(TaskConnection).destroy? %>
@@ -189,8 +186,7 @@ assigned = @task.assigned
 
             <% if policy(@task).edit?  %>
               <%= divider %>
-              <%= link_to 'change',
-                          edit_category_project_task_path(@category, @task.project, @task),
+              <%= link_to 'change', edit_task_path(@task),
                           class: 'secondary-link' %>
             <% end %>
           </p>
@@ -217,10 +213,7 @@ assigned = @task.assigned
           <% @task.duplicates.each do |duplicate| %>
             <p>
               <%= link_to_if policy(duplicate).show?,
-                             duplicate.id_and_summary,
-                             category_project_task_path(duplicate.category,
-                                                        duplicate.project,
-                                                        duplicate) %>
+                             duplicate.id_and_summary, task_path(duplicate) %>
             </p>
           <% end %>
         </section>
@@ -239,10 +232,7 @@ assigned = @task.assigned
 
           <% if policy(@task).edit?  %>
             <footer>
-              <%= link_to 'edit',
-                          edit_category_project_task_path(@category,
-                                                          @task.project,
-                                                          @task) %>
+              <%= link_to 'edit', edit_task_path(@task) %>
             </footer>
           <% end %>
         </div>

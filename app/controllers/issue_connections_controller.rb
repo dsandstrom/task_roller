@@ -14,9 +14,7 @@ class IssueConnectionsController < ApplicationController
 
     if @issue_connection.save
       @issue_connection.source.close
-      path = category_project_issue_path(@issue_connection.source.category,
-                                         @issue_connection.source.project,
-                                         @issue_connection.source)
+      path = issue_path(@issue_connection.source)
       redirect_to path, notice: notice
     else
       render :new
@@ -25,9 +23,7 @@ class IssueConnectionsController < ApplicationController
 
   def destroy
     notice = 'Issue was successfully reopened.'
-    path = category_project_issue_path(@issue_connection.source.category,
-                                       @issue_connection.source.project,
-                                       @issue_connection.source)
+    path = issue_path(@issue_connection.source)
     @issue_connection.destroy
     @issue_connection.source.open
     redirect_to path, notice: notice

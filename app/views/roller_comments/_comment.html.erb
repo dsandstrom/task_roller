@@ -13,24 +13,18 @@
     <p>
       <% if object.is_a?(Task) %>
         <%= link_to 'edit',
-                    edit_category_project_task_task_comment_path(category,
-                                                                 project, object,
-                                                                 comment) %>
+                    edit_task_task_comment_path(object, comment) %>
         <%= divider %>
         <%= link_to 'delete',
-                    category_project_task_task_comment_path(category, project,
-                                                            object, comment),
+                    task_task_comment_path(object, comment),
                     method: :delete,
                     data: { confirm: 'Are you sure?' } %>
       <% else %>
         <%= link_to 'edit',
-                    edit_category_project_issue_issue_comment_path(category,
-                                                                 project, object,
-                                                                 comment) %>
+                    edit_issue_issue_comment_path(object, comment) %>
         <%= divider %>
         <%= link_to 'delete',
-                    category_project_issue_issue_comment_path(category, project,
-                                                            object, comment),
+                    issue_issue_comment_path(object, comment),
                     method: :delete,
                     data: { confirm: 'Are you sure?' } %>
       <% end %>

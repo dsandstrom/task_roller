@@ -3,7 +3,7 @@
 <h2>Report Issue</h2>
 
 <%= render 'form', issue: @issue, issue_types: @issue_types,
-                   url: category_project_issues_path(@category, @project),
+                   url: project_issues_path(@project),
                    user_options: @user_options %>
 
 <%= link_to 'Back', :back %>

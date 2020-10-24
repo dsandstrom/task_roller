@@ -3,8 +3,8 @@
   <header class="tasks-header">
     <h2>Project Tasks</h2>
     <p>
-      <%= link_to 'Add Task',
-                  new_category_project_task_path(@category, @project),
+      <%# TODO: authorize %>
+      <%= link_to 'Add Task', new_project_task_path(@project),
                   class: 'button button-success' %>
     </p>
   </header>

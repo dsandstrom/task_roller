@@ -10,8 +10,10 @@
 
 class TasksController < ApplicationController
   before_action :authorize_task, only: %i[index new create destroy open close]
-  before_action :set_category, :set_project, :set_issue, except: %i[open close]
-  before_action :set_task, only: %i[show edit update destroy open close]
+  before_action :set_category_or_project, only: :index
+  before_action :set_project, only: %i[new create]
+  before_action :set_issue, only: %i[new create]
+  before_action :set_task, except: %i[index new create]
   before_action :set_form_options, only: %i[new edit]
 
   def index
@@ -38,8 +40,7 @@ class TasksController < ApplicationController
   def create
     build_task
     if @task.save
-      redirect_to category_project_task_url(@category, @project, @task),
-                  success: 'Task was successfully created.'
+      redirect_to task_url(@task), success: 'Task was successfully created.'
     else
       set_form_options
       render :new
@@ -48,8 +49,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to category_project_task_url(@category, @project, @task),
-                  success: 'Task was successfully updated.'
+      redirect_to task_url(@task), success: 'Task was successfully updated.'
     else
       set_form_options
       render :edit
@@ -64,8 +64,7 @@ class TasksController < ApplicationController
 
   def open
     if @task.open
-      redirect_to category_project_task_url(@category, @project, @task),
-                  success: 'Task was successfully opened.'
+      redirect_to task_url(@task), success: 'Task was successfully opened.'
     else
       set_form_options
       render :edit
@@ -74,8 +73,7 @@ class TasksController < ApplicationController
 
   def close
     if @task.close
-      redirect_to category_project_task_url(@category, @project, @task),
-                  success: 'Task was successfully closed.'
+      redirect_to task_url(@task), success: 'Task was successfully closed.'
     else
       set_form_options
       render :edit
@@ -88,10 +86,15 @@ class TasksController < ApplicationController
       authorize Task
     end
 
-    def build_task
-      @task = @project.tasks.build(task_params)
-      @task.issue_id = @issue.to_param if @issue
-      @task.user_id = current_user.to_param
+    def set_category_or_project
+      return set_project if params[:project_id].present?
+
+      @category = Category.find(params[:category_id])
+    end
+
+    def set_project
+      @project = Project.find(params[:project_id])
+      @category = @project.category
     end
 
     def set_task
@@ -102,6 +105,12 @@ class TasksController < ApplicationController
         @category = @task.category
         @project = @task.project
       end
+    end
+
+    def build_task
+      @task = @project.tasks.build(task_params)
+      @task.issue_id = @issue.to_param if @issue
+      @task.user_id = current_user.to_param
     end
 
     def set_task_types

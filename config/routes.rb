@@ -5,28 +5,38 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :issues, only: :index
     resources :tasks, only: :index
   end
-  resources :projects, only: :index
+
   resources :categories do
     resources :tasks, only: :index
     resources :issues, only: :index
 
-    resources :projects, except: :index do
-      resources :issues do
-        resources :tasks, only: %i[new create]
-        resources :issue_comments, except: %i[index show]
-      end
-
-      resources :tasks do
-        resources :task_comments, except: %i[index show]
-      end
-    end
+    # TODO: only new, create
+    resources :projects, except: :index
   end
 
-  resources :tasks, only: nil do
+  resources :projects, only: :index do
+    resources :issues, only: %i[index new create]
+    resources :tasks, only: %i[index new create]
+  end
+
+  resources :issues, only: %i[show edit update destroy] do
+    resources :tasks, only: %i[new create]
+    resources :issue_comments, except: %i[index show]
+    resources :resolutions, only: %i[index new create destroy] do
+      collection do
+        post :approve
+        post :disapprove
+      end
+    end
+
     member do
       patch :open
       patch :close
     end
+  end
+
+  resources :tasks, only: %i[show edit update destroy] do
+    resources :task_comments, except: %i[index show]
     resources :progressions, except: :show do
       member do
         patch :finish
@@ -38,18 +48,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         patch :disapprove
       end
     end
-  end
 
-  resources :issues, only: nil do
     member do
       patch :open
       patch :close
-    end
-    resources :resolutions, only: %i[index new create destroy] do
-      collection do
-        post :approve
-        post :disapprove
-      end
     end
   end
 

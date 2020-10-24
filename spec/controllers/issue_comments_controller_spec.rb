@@ -17,9 +17,7 @@ RSpec.describe IssueCommentsController, type: :controller do
         before { login(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
-          get :new, params: { category_id: category.to_param,
-                              project_id: project.to_param,
-                              issue_id: issue.to_param }
+          get :new, params: { issue_id: issue.to_param }
           expect(response).to be_successful
         end
       end
@@ -33,9 +31,7 @@ RSpec.describe IssueCommentsController, type: :controller do
       context "for their own IssueComment" do
         it "returns a success response" do
           issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
-          get :edit, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               issue_id: issue.to_param,
+          get :edit, params: { issue_id: issue.to_param,
                                id: issue_comment.to_param }
           expect(response).to be_successful
         end
@@ -44,9 +40,7 @@ RSpec.describe IssueCommentsController, type: :controller do
       context "for someone else's IssueComment" do
         it "returns a success response" do
           issue_comment = Fabricate(:issue_comment, issue: issue)
-          get :edit, params: { category_id: category.to_param,
-                               project_id: project.to_param,
-                               issue_id: issue.to_param,
+          get :edit, params: { issue_id: issue.to_param,
                                id: issue_comment.to_param }
           expect(response).to be_successful
         end
@@ -63,9 +57,7 @@ RSpec.describe IssueCommentsController, type: :controller do
           it "returns a success response" do
             issue_comment =
               Fabricate(:issue_comment, issue: issue, user: current_user)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 issue_id: issue.to_param,
+            get :edit, params: { issue_id: issue.to_param,
                                  id: issue_comment.to_param }
             expect(response).to be_successful
           end
@@ -74,9 +66,7 @@ RSpec.describe IssueCommentsController, type: :controller do
         context "for someone else's IssueComment" do
           it "should be unauthorized" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 issue_id: issue.to_param,
+            get :edit, params: { issue_id: issue.to_param,
                                  id: issue_comment.to_param }
             expect_to_be_unauthorized(response)
           end
@@ -95,30 +85,23 @@ RSpec.describe IssueCommentsController, type: :controller do
         context "with valid params" do
           it "creates a new IssueComment" do
             expect do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
-                                      issue_id: issue.to_param,
+              post :create, params: { issue_id: issue.to_param,
                                       issue_comment: valid_attributes }
             end.to change(current_user.issue_comments, :count).by(1)
           end
 
           it "redirects to the created issue_comment" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    issue_id: issue.to_param,
+            post :create, params: { issue_id: issue.to_param,
                                     issue_comment: valid_attributes }
             anchor = "comment-#{IssueComment.last.id}"
-            url = category_project_issue_url(category, project, issue,
-                                             anchor: anchor)
+            url = issue_url(issue, anchor: anchor)
             expect(response).to redirect_to(url)
           end
         end
 
         context "with invalid params" do
           it "returns a success response ('new' template)" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
-                                    issue_id: issue.to_param,
+            post :create, params: { issue_id: issue.to_param,
                                     issue_comment: invalid_attributes }
             expect(response).to be_successful
           end
@@ -138,9 +121,7 @@ RSpec.describe IssueCommentsController, type: :controller do
           it "updates the requested issue_comment" do
             issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
             expect do
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+              put :update, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param,
                                      issue_comment: new_attributes }
               issue_comment.reload
@@ -149,12 +130,8 @@ RSpec.describe IssueCommentsController, type: :controller do
 
           it "redirects to the issue_comment" do
             issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
-            url =
-              category_project_issue_url(category, project, issue,
-                                         anchor: "comment-#{issue_comment.id}")
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+            url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
+            put :update, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param,
                                    issue_comment: new_attributes }
             expect(response).to redirect_to(url)
@@ -164,9 +141,7 @@ RSpec.describe IssueCommentsController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+            put :update, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param,
                                    issue_comment: invalid_attributes }
             expect(response).to be_successful
@@ -181,9 +156,7 @@ RSpec.describe IssueCommentsController, type: :controller do
           it "updates the requested issue_comment" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
             expect do
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+              put :update, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param,
                                      issue_comment: new_attributes }
               issue_comment.reload
@@ -192,12 +165,8 @@ RSpec.describe IssueCommentsController, type: :controller do
 
           it "redirects to the issue_comment" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
-            url =
-              category_project_issue_url(category, project, issue,
-                                         anchor: "comment-#{issue_comment.id}")
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+            url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
+            put :update, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param,
                                    issue_comment: new_attributes }
             expect(response).to redirect_to(url)
@@ -207,9 +176,7 @@ RSpec.describe IssueCommentsController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+            put :update, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param,
                                    issue_comment: invalid_attributes }
             expect(response).to be_successful
@@ -230,9 +197,7 @@ RSpec.describe IssueCommentsController, type: :controller do
               issue_comment =
                 Fabricate(:issue_comment, issue: issue, user: current_user)
               expect do
-                put :update, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       issue_id: issue.to_param,
+                put :update, params: { issue_id: issue.to_param,
                                        id: issue_comment.to_param,
                                        issue_comment: new_attributes }
                 issue_comment.reload
@@ -243,11 +208,8 @@ RSpec.describe IssueCommentsController, type: :controller do
               issue_comment = Fabricate(:issue_comment, issue: issue,
                                                         user: current_user)
               anchor = "comment-#{issue_comment.id}"
-              url = category_project_issue_url(category, project, issue,
-                                               anchor: anchor)
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+              url = issue_url(issue, anchor: anchor)
+              put :update, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param,
                                      issue_comment: new_attributes }
               expect(response).to redirect_to(url)
@@ -258,9 +220,7 @@ RSpec.describe IssueCommentsController, type: :controller do
             it "returns a success response ('edit' template)" do
               issue_comment =
                 Fabricate(:issue_comment, issue: issue, user: current_user)
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+              put :update, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param,
                                      issue_comment: invalid_attributes }
               expect(response).to be_successful
@@ -272,9 +232,7 @@ RSpec.describe IssueCommentsController, type: :controller do
           it "doesn't update the requested issue_comment" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
             expect do
-              put :update, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+              put :update, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param,
                                      issue_comment: new_attributes }
               issue_comment.reload
@@ -283,9 +241,7 @@ RSpec.describe IssueCommentsController, type: :controller do
 
           it "should be unauthorized" do
             issue_comment = Fabricate(:issue_comment, issue: issue)
-            put :update, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+            put :update, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param,
                                    issue_comment: new_attributes }
             expect_to_be_unauthorized(response)
@@ -302,21 +258,16 @@ RSpec.describe IssueCommentsController, type: :controller do
       it "destroys the requested issue_comment" do
         issue_comment = Fabricate(:issue_comment, issue: issue)
         expect do
-          delete :destroy, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+          delete :destroy, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param }
         end.to change(IssueComment, :count).by(-1)
       end
 
       it "redirects to the issue_comments list" do
         issue_comment = Fabricate(:issue_comment, issue: issue)
-        delete :destroy, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   issue_id: issue.to_param,
+        delete :destroy, params: { issue_id: issue.to_param,
                                    id: issue_comment.to_param }
-        expect(response)
-          .to redirect_to(category_project_issue_url(category, project, issue))
+        expect(response).to redirect_to(issue_url(issue))
       end
     end
 
@@ -329,18 +280,14 @@ RSpec.describe IssueCommentsController, type: :controller do
         it "doesn't destroy the requested issue_comment" do
           issue_comment = Fabricate(:issue_comment, issue: issue)
           expect do
-            delete :destroy, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       issue_id: issue.to_param,
+            delete :destroy, params: { issue_id: issue.to_param,
                                        id: issue_comment.to_param }
           end.not_to change(IssueComment, :count)
         end
 
         it "should be unauthorized" do
           issue_comment = Fabricate(:issue_comment, issue: issue)
-          delete :destroy, params: { category_id: category.to_param,
-                                     project_id: project.to_param,
-                                     issue_id: issue.to_param,
+          delete :destroy, params: { issue_id: issue.to_param,
                                      id: issue_comment.to_param }
           expect_to_be_unauthorized(response)
         end

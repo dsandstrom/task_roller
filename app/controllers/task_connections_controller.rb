@@ -14,9 +14,7 @@ class TaskConnectionsController < ApplicationController
 
     if @task_connection.save
       @task_connection.source.close
-      path = category_project_task_path(@task_connection.source.category,
-                                        @task_connection.source.project,
-                                        @task_connection.source)
+      path = task_path(@task_connection.source)
       redirect_to path, notice: notice
     else
       render :new
@@ -25,9 +23,7 @@ class TaskConnectionsController < ApplicationController
 
   def destroy
     notice = 'Task was successfully reopened.'
-    path = category_project_task_path(@task_connection.source.category,
-                                      @task_connection.source.project,
-                                      @task_connection.source)
+    path = task_path(@task_connection.source)
     @task_connection.destroy
     @task_connection.source.open
     redirect_to path, notice: notice

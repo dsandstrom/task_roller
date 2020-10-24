@@ -88,7 +88,7 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:path) { category_project_task_path(task.category, task.project, task) }
+    let(:path) { task_path(task) }
 
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
@@ -133,7 +133,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
   describe "PUT #update" do
     let(:new_user) { Fabricate(:user_worker) }
-    let(:path) { category_project_task_path(task.category, task.project, task) }
+    let(:path) { task_path(task) }
     let(:new_attributes) { { user_id: new_user.id.to_s } }
 
     %w[admin].each do |employee_type|
@@ -216,7 +216,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
   describe "PUT #finish" do
     let(:new_user) { Fabricate(:user_worker) }
-    let(:path) { category_project_task_path(task.category, task.project, task) }
+    let(:path) { task_path(task) }
 
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
@@ -298,7 +298,7 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:path) { category_project_task_path(task.category, task.project, task) }
+    let(:path) { task_path(task) }
 
     %w[admin].each do |employee_type|
       context "for a #{employee_type}" do

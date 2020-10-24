@@ -213,7 +213,7 @@ RSpec.describe TasksController, type: :controller do
               post :create, params: { category_id: category.to_param,
                                       project_id: project.to_param,
                                       task: valid_attributes }
-              url = category_project_task_path(category, project, Task.last)
+              url = task_path(Task.last)
               expect(response).to redirect_to(url)
             end
           end
@@ -258,7 +258,7 @@ RSpec.describe TasksController, type: :controller do
                                       project_id: project.to_param,
                                       issue_id: issue.to_param,
                                       task: valid_attributes }
-              url = category_project_task_path(category, project, Task.last)
+              url = task_path(Task.last)
               expect(response).to redirect_to(url)
             end
           end
@@ -328,7 +328,7 @@ RSpec.describe TasksController, type: :controller do
                                      project_id: project.to_param,
                                      id: task.to_param,
                                      task: new_attributes }
-              url = category_project_task_url(category, project, task)
+              url = task_url(task)
               expect(response).to redirect_to(url)
             end
           end
@@ -387,7 +387,7 @@ RSpec.describe TasksController, type: :controller do
                                      project_id: project.to_param,
                                      id: task.to_param,
                                      task: new_attributes }
-              url = category_project_task_url(category, project, task)
+              url = task_url(task)
               expect(response).to redirect_to(url)
             end
           end
@@ -504,7 +504,7 @@ RSpec.describe TasksController, type: :controller do
           it "redirects to the task" do
             task = Fabricate(:closed_task, project: project)
             put :open, params: { id: task.to_param }
-            url = category_project_task_url(category, project, task)
+            url = task_url(task)
             expect(response).to redirect_to(url)
           end
         end
@@ -574,7 +574,7 @@ RSpec.describe TasksController, type: :controller do
           it "redirects to the task" do
             task = Fabricate(:open_task, project: project)
             put :close, params: { id: task.to_param }
-            url = category_project_task_url(category, project, task)
+            url = task_url(task)
             expect(response).to redirect_to(url)
           end
         end

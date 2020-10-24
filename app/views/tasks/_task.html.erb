@@ -2,8 +2,7 @@
   <header class="task-header">
     <h3 class="task-summary">
       <%= task_type_icon_tag(task.task_type) %>
-      <%= link_to task.summary,
-                  category_project_task_path(task.category, task.project, task) %>
+      <%= link_to task.summary, task_path(task) %>
     </h3>
   </header>
 
@@ -25,9 +24,7 @@
       <p class="task-issue">
         <small>addresses</small>
           <%= link_to_if policy(task.issue).show?, task.issue.summary,
-                         category_project_issue_path(task.issue.category,
-                                                     task.issue.project,
-                                                     task.issue) %>
+                         issue_path(task.issue) %>
           (<%= task.issue.user.name_or_email %>)
       </p>
     <% end %>
@@ -42,8 +39,7 @@
 
   <% if policy(task).edit? %>
     <footer class="task-footer">
-      <%= link_to 'Edit',
-                  edit_category_project_task_path(task.category, task.project, task) %>
+      <%= link_to 'Edit', edit_task_path(task) %>
     </footer>
   <% end %>
 </div>

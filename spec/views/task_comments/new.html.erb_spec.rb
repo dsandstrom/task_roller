@@ -8,9 +8,7 @@ RSpec.describe "task_comments/new", type: :view do
   let(:project) { Fabricate(:project, category: category) }
   let(:task) { Fabricate(:task, project: project) }
 
-  let(:url) do
-    category_project_task_task_comments_url(category, project, task)
-  end
+  let(:url) { task_task_comments_url(task) }
 
   before(:each) do
     assign(:category, category)

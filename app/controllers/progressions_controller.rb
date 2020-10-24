@@ -21,7 +21,7 @@ class ProgressionsController < ApplicationController
     @progression = authorize(@task.progressions.build(user_id: current_user.id))
 
     if @progression.save
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Progress successfully started on task.'
     else
       render :new
@@ -30,7 +30,7 @@ class ProgressionsController < ApplicationController
 
   def update
     if @progression.update(progression_params)
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Progress was successfully updated.'
     else
       render :edit
@@ -39,7 +39,7 @@ class ProgressionsController < ApplicationController
 
   def finish
     if @progression.finish
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Progress was successfully finished.'
     else
       render :edit
@@ -48,7 +48,7 @@ class ProgressionsController < ApplicationController
 
   def destroy
     @progression.destroy
-    redirect_to category_project_task_path(@category, @project, @task),
+    redirect_to task_path(@task),
                 notice: 'Progression was successfully destroyed.'
   end
 

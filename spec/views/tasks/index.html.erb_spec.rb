@@ -59,14 +59,12 @@ RSpec.describe "tasks/index", type: :view do
         render
 
         assert_select "#task-#{first_task.id}"
-        first_url =
-          edit_category_project_task_path(category, project, first_task)
+        first_url = edit_task_path(first_task)
         expect(rendered).to have_link(nil, href: first_url)
         assert_select "#task-#{second_task.id}"
-        second_url =
-          edit_category_project_task_path(category, project, second_task)
+        second_url = edit_task_path(second_task)
         expect(rendered).to have_link(nil, href: second_url)
-        show_url = category_project_issue_path(category, project, issue)
+        show_url = issue_path(issue)
         expect(rendered).to have_link(nil, href: show_url)
       end
     end
@@ -116,14 +114,12 @@ RSpec.describe "tasks/index", type: :view do
           render
 
           assert_select "#task-#{first_task.id}"
-          first_url =
-            edit_category_project_task_path(category, project, first_task)
+          first_url = edit_task_path(first_task)
           expect(rendered).to have_link(nil, href: first_url)
           assert_select "#task-#{second_task.id}"
-          second_url =
-            edit_category_project_task_path(category, project, second_task)
+          second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          show_url = category_project_issue_path(category, project, issue)
+          show_url = issue_path(issue)
           expect(rendered).to have_link(nil, href: show_url)
         end
       end

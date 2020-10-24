@@ -2,7 +2,8 @@
 
 <% if policy(@project).edit? %>
   <p>
-    <%= link_to 'Edit Project', edit_category_project_path(@category, @project),
+    <%= link_to 'Edit Project',
+                edit_category_project_path(@category, @project),
                 class: 'button' %>
   </p>
 <% end %>
@@ -10,7 +11,7 @@
 <% if policy(Task).create? %>
   <p>
     <%= link_to 'Build Task',
-                new_category_project_task_path(@category, @project),
+                new_project_task_path(@project),
                 class: 'button button-success' %>
   </p>
 <% end %>
@@ -18,7 +19,7 @@
 <% if policy(Issue).create? %>
   <p>
     <%= link_to 'Report Issue',
-                new_category_project_issue_path(@category, @project),
+                new_project_issue_path(@project),
                 class: 'button button-warning' %>
   </p>
 <% end %>
@@ -27,8 +28,7 @@
   <h2>Latest Issues</h2>
   <p>
     <%= link_to 'View Project Issues',
-                category_project_issues_path(@category, @project),
-                class: 'button' %>
+                project_issues_path(@project), class: 'button' %>
   </p>
 </header>
 <div class="issues">
@@ -43,8 +43,7 @@
   <h2>Latest Tasks</h2>
   <p>
     <%= link_to 'View Project Tasks',
-                category_project_tasks_path(@category, @project),
-                class: 'button' %>
+                project_tasks_path(@project), class: 'button' %>
   </p>
 </header>
 <div class="tasks">

@@ -31,11 +31,9 @@ RSpec.describe "users/show", type: :view do
 
       [first_issue, second_issue].each do |issue|
         assert_select "#issue-#{issue.id}"
-        show_url =
-          category_project_issue_path(issue.category, issue.project, issue)
+        show_url = issue_path(issue)
         expect(rendered).to have_link(nil, href: show_url)
-        edit_url =
-          edit_category_project_issue_path(issue.category, issue.project, issue)
+        edit_url = edit_issue_path(issue)
         expect(rendered).to have_link(nil, href: edit_url)
       end
     end
@@ -52,10 +50,9 @@ RSpec.describe "users/show", type: :view do
 
       [first_task, second_task].each do |task|
         assert_select "#task-#{task.id}"
-        show_url = category_project_task_path(task.category, task.project, task)
+        show_url = task_path(task)
         expect(rendered).to have_link(nil, href: show_url)
-        edit_url =
-          edit_category_project_task_path(task.category, task.project, task)
+        edit_url = edit_task_path(task)
         expect(rendered).to have_link(nil, href: edit_url)
       end
     end
@@ -100,11 +97,9 @@ RSpec.describe "users/show", type: :view do
 
           [first_issue, second_issue].each do |issue|
             assert_select "#issue-#{issue.id}"
-            show_url = category_project_issue_path(issue.category,
-                                                   issue.project, issue)
+            show_url = issue_path(issue)
             expect(rendered).to have_link(nil, href: show_url)
-            edit_url = edit_category_project_issue_path(issue.category,
-                                                        issue.project, issue)
+            edit_url = edit_issue_path(issue)
             expect(rendered).to have_link(nil, href: edit_url)
           end
         end
@@ -121,11 +116,9 @@ RSpec.describe "users/show", type: :view do
 
           [first_task, second_task].each do |task|
             assert_select "#task-#{task.id}"
-            show_url =
-              category_project_task_path(task.category, task.project, task)
+            show_url = task_path(task)
             expect(rendered).to have_link(nil, href: show_url)
-            edit_url =
-              edit_category_project_task_path(task.category, task.project, task)
+            edit_url = edit_task_path(task)
             expect(rendered).not_to have_link(nil, href: edit_url)
           end
         end

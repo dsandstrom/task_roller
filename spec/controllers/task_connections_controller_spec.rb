@@ -8,10 +8,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
   let(:target_task) { Fabricate(:task, project: project) }
   let(:valid_attributes) { { target_id: target_task.to_param } }
   let(:invalid_attributes) { { target_id: "" } }
-  let(:path) do
-    category_project_task_path(source_task.category, source_task.project,
-                               source_task)
-  end
+  let(:path) { task_path(source_task) }
 
   before { login(Fabricate(:user_admin)) }
 

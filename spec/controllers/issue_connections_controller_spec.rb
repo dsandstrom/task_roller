@@ -8,10 +8,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
   let(:target_issue) { Fabricate(:issue, project: project) }
   let(:valid_attributes) { { target_id: target_issue.to_param } }
   let(:invalid_attributes) { { target_id: "" } }
-  let(:path) do
-    category_project_issue_path(source_issue.category,
-                                source_issue.project, source_issue)
-  end
+  let(:path) { issue_path(source_issue) }
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|

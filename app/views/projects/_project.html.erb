@@ -28,14 +28,14 @@
     <p class="project-issues-link">
       <%= link_to_if policy(Issue).index?,
                      pluralize(project.issues.count, 'Issue'),
-                     category_project_issues_path(project.category, project) %>
+                     project_issues_path(project) %>
     </p>
 
     <%# TODO: change to open tasks %>
     <p class="project-tasks-link">
       <%= link_to_if policy(Task).index?,
                      pluralize(project.tasks.count, 'Task'),
-                     category_project_tasks_path(project.category, project) %>
+                     project_tasks_path(project) %>
     </p>
   </div>
 

@@ -20,7 +20,7 @@ class ReviewsController < ApplicationController
 
     if @review.save
       @task.finish
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Review was successfully created.'
     else
       render :new
@@ -29,13 +29,13 @@ class ReviewsController < ApplicationController
 
   def destroy
     @review.destroy
-    redirect_to category_project_task_path(@category, @project, @task),
+    redirect_to task_path(@task),
                 notice: 'Review was successfully destroyed.'
   end
 
   def approve
     if @review.approve
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Review was successfully updated.'
     else
       render :edit
@@ -44,7 +44,7 @@ class ReviewsController < ApplicationController
 
   def disapprove
     if @review.disapprove
-      redirect_to category_project_task_path(@category, @project, @task),
+      redirect_to task_path(@task),
                   notice: 'Review was successfully updated.'
     else
       render :edit
