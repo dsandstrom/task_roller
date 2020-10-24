@@ -81,6 +81,8 @@
               <%= link_to 'Add Task', new_issue_task_path(@issue),
                           class: 'create-link' %>
             </dt>
+          <% elsif @issue.tasks.none? %>
+            <dt>None assigned</dt>
           <% end %>
         </dl>
       </section>
