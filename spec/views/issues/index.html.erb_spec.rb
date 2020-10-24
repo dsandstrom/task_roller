@@ -8,20 +8,7 @@ RSpec.describe "issues/index", type: :view do
 
     before { enable_pundit(view, admin) }
 
-    context "when no category and project" do
-      let(:first_issue) { Fabricate(:issue) }
-      let(:second_issue) { Fabricate(:issue) }
-
-      before(:each) { assign(:issues, [first_issue, second_issue]) }
-
-      it "renders a list of issues" do
-        render
-        assert_select "#issue-#{first_issue.id}"
-        assert_select "#issue-#{second_issue.id}"
-      end
-    end
-
-    context "when only category" do
+    context "when category" do
       let(:category) { Fabricate(:category) }
       let(:first_issue) do
         Fabricate(:issue, project: Fabricate(:project, category: category))
