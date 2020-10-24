@@ -20,17 +20,6 @@ assigned_options =
 <div class="task">
   <%= form_tag index_path, method: :get, class: "task-filter-form" do %>
     <%= render 'shared/status_filter_field' %>
-
-    <div class="field">
-      <%= label_tag :reviewer, 'Reviewer' %>
-      <%= select_tag :reviewer, reviewer_options, include_blank: '- Any -' %>
-    </div >
-
-    <div class="field">
-      <%= label_tag :assigned, 'Assigned' %>
-      <%= select_tag :assigned, assigned_options, include_blank: '- Any -' %>
-    </div >
-
     <%= render 'shared/order_filter_field' %>
 
     <% if searching? %>

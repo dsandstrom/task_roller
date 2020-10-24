@@ -10,14 +10,22 @@
 
 class TasksController < ApplicationController
   before_action :authorize_task, only: %i[index new create destroy open close]
-  before_action :set_category_or_project, only: :index
+  before_action :set_category_or_user, only: :index
   before_action :set_project, only: %i[new create]
   before_action :set_issue, only: %i[new create]
   before_action :set_task, except: %i[index new create]
   before_action :set_form_options, only: %i[new edit]
 
   def index
-    @tasks = Task.filter(build_filters)
+    @tasks =
+      if @user
+        @user.tasks
+      elsif @project
+        @project.tasks
+      else
+        @category.tasks
+      end
+    @tasks = @tasks.filter_by(build_filters)
   end
 
   def show
@@ -86,10 +94,14 @@ class TasksController < ApplicationController
       authorize Task
     end
 
-    def set_category_or_project
+    def set_category_or_user
       return set_project if params[:project_id].present?
 
-      @category = Category.find(params[:category_id])
+      if params[:user_id]
+        @user = User.find(params[:user_id])
+      else
+        @category = Category.find(params[:category_id])
+      end
     end
 
     def set_project
@@ -149,7 +161,7 @@ class TasksController < ApplicationController
 
     def build_filters
       filters = {}
-      %i[status reviewer assigned order].each do |param|
+      %i[status order].each do |param|
         filters[param] = params[param]
       end
       if @project

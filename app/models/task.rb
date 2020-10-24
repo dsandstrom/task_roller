@@ -84,20 +84,16 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .joins(:reviews)
   end
 
-  def self.filter(filters = {})
-    parent = filters[:project] || filters[:category]
-    return Task.none unless parent&.tasks&.any?
-
-    parent.tasks.includes(task_assignees: :assignee, issue: :user)
-          .apply_filters(filters)
-          .order(build_order_param(filters[:order]))
+  def self.filter_by(filters = {})
+    includes(task_assignees: :assignee, issue: :user)
+      .apply_filters(filters)
+      .order(build_order_param(filters[:order]))
   end
 
   # used by .filter
   def self.apply_filters(filters)
     tasks = all
     tasks = tasks.filter_by_status(filters[:status])
-    tasks = tasks.filter_by_user_id(filters[:reviewer])
     tasks.filter_by_assigned_id(filters[:assigned])
   end
 
@@ -107,13 +103,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return all unless options.include?(status)
 
     send("all_#{status}")
-  end
-
-  # used by .filter
-  def self.filter_by_user_id(user_id)
-    return all if user_id.blank?
-
-    where(user_id: user_id)
   end
 
   # used by .filter

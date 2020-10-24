@@ -198,195 +198,193 @@ RSpec.describe Issue, type: :model do
   end
 
   describe ".filter_by" do
-    context "when filters" do
-      context "when no issues" do
-        it "returns []" do
-          expect(Issue.filter_by(status: "open")).to eq([])
+    context "when no issues" do
+      it "returns []" do
+        expect(Issue.filter_by(status: "open")).to eq([])
+      end
+    end
+
+    context "when :status" do
+      context "is set as 'open'" do
+        let!(:issue) { Fabricate(:open_issue) }
+
+        before do
+          Fabricate(:closed_issue)
+        end
+
+        it "returns non-closed issues" do
+          expect(Issue.filter_by(status: "open")).to eq([issue])
         end
       end
 
-      context "when :status" do
-        context "is set as 'open'" do
-          let!(:issue) { Fabricate(:open_issue) }
+      context "is set as 'closed'" do
+        let!(:issue) { Fabricate(:closed_issue) }
 
-          before do
-            Fabricate(:closed_issue)
-          end
-
-          it "returns non-closed issues" do
-            expect(Issue.filter_by(status: "open")).to eq([issue])
-          end
+        before do
+          Fabricate(:open_issue)
         end
 
-        context "is set as 'closed'" do
-          let!(:issue) { Fabricate(:closed_issue) }
-
-          before do
-            Fabricate(:open_issue)
-          end
-
-          it "returns non-closed issues" do
-            expect(Issue.filter_by(status: "closed")).to eq([issue])
-          end
-        end
-
-        context "is set as 'being_worked_on'" do
-          let(:issue) { Fabricate(:open_issue) }
-
-          before do
-            Fabricate(:open_task, issue: issue)
-            Fabricate(:open_issue)
-          end
-
-          it "returns issues with open tasks" do
-            expect(Issue.filter_by(status: "being_worked_on")).to eq([issue])
-          end
-        end
-
-        context "is set as 'addressed'" do
-          let(:issue) { Fabricate(:closed_issue) }
-
-          before do
-            Fabricate(:approved_task, issue: issue)
-            Fabricate(:open_issue)
-            Fabricate(:open_task, issue: Fabricate(:issue))
-          end
-
-          it "returns issues with approved tasks" do
-            expect(Issue.filter_by(status: "addressed")).to eq([issue])
-          end
-        end
-
-        context "is set as 'resolved'" do
-          let(:issue) { Fabricate(:closed_issue) }
-
-          before do
-            Fabricate(:approved_resolution, issue: issue)
-            Fabricate(:open_issue)
-            Fabricate(:pending_resolution, issue: Fabricate(:issue))
-          end
-
-          it "returns issues with approved tasks" do
-            expect(Issue.filter_by(status: "resolved")).to eq([issue])
-          end
-        end
-
-        context "is set as 'all'" do
-          let!(:open_issue) { Fabricate(:open_issue) }
-          let!(:closed_issue) { Fabricate(:closed_issue) }
-
-          it "returns open and closed issues" do
-            issues = Issue.filter_by(status: "all")
-            expect(issues).to contain_exactly(open_issue, closed_issue)
-          end
+        it "returns non-closed issues" do
+          expect(Issue.filter_by(status: "closed")).to eq([issue])
         end
       end
 
-      context "when :order" do
-        context "is unset" do
-          it "orders by updated_at desc" do
+      context "is set as 'being_worked_on'" do
+        let(:issue) { Fabricate(:open_issue) }
+
+        before do
+          Fabricate(:open_task, issue: issue)
+          Fabricate(:open_issue)
+        end
+
+        it "returns issues with open tasks" do
+          expect(Issue.filter_by(status: "being_worked_on")).to eq([issue])
+        end
+      end
+
+      context "is set as 'addressed'" do
+        let(:issue) { Fabricate(:closed_issue) }
+
+        before do
+          Fabricate(:approved_task, issue: issue)
+          Fabricate(:open_issue)
+          Fabricate(:open_task, issue: Fabricate(:issue))
+        end
+
+        it "returns issues with approved tasks" do
+          expect(Issue.filter_by(status: "addressed")).to eq([issue])
+        end
+      end
+
+      context "is set as 'resolved'" do
+        let(:issue) { Fabricate(:closed_issue) }
+
+        before do
+          Fabricate(:approved_resolution, issue: issue)
+          Fabricate(:open_issue)
+          Fabricate(:pending_resolution, issue: Fabricate(:issue))
+        end
+
+        it "returns issues with approved tasks" do
+          expect(Issue.filter_by(status: "resolved")).to eq([issue])
+        end
+      end
+
+      context "is set as 'all'" do
+        let!(:open_issue) { Fabricate(:open_issue) }
+        let!(:closed_issue) { Fabricate(:closed_issue) }
+
+        it "returns open and closed issues" do
+          issues = Issue.filter_by(status: "all")
+          expect(issues).to contain_exactly(open_issue, closed_issue)
+        end
+      end
+    end
+
+    context "when :order" do
+      context "is unset" do
+        it "orders by updated_at desc" do
+          second_issue = Fabricate(:issue)
+          first_issue = Fabricate(:issue)
+
+          Timecop.freeze(1.day.ago) do
+            second_issue.touch
+          end
+
+          expect(Issue.filter_by(status: "all"))
+            .to eq([first_issue, second_issue])
+        end
+      end
+
+      context "is set as 'updated,desc'" do
+        it "orders by updated_at desc" do
+          second_issue = Fabricate(:issue)
+          first_issue = Fabricate(:issue)
+
+          Timecop.freeze(1.day.ago) do
+            second_issue.touch
+          end
+
+          options = { order: "updated,desc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+        end
+      end
+
+      context "is set as 'updated,asc'" do
+        it "orders by updated_at asc" do
+          second_issue = Fabricate(:issue)
+          first_issue = Fabricate(:issue)
+
+          Timecop.freeze(1.day.ago) do
+            first_issue.touch
+          end
+
+          options = { order: "updated,asc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+        end
+      end
+
+      context "is set as 'created,desc'" do
+        it "orders by created_at desc" do
+          first_issue = nil
+          second_issue = nil
+
+          Timecop.freeze(1.day.ago) do
             second_issue = Fabricate(:issue)
-            first_issue = Fabricate(:issue)
-
-            Timecop.freeze(1.day.ago) do
-              second_issue.touch
-            end
-
-            expect(Issue.filter_by(status: "all"))
-              .to eq([first_issue, second_issue])
           end
-        end
 
-        context "is set as 'updated,desc'" do
-          it "orders by updated_at desc" do
+          Timecop.freeze(1.hour.ago) do
+            first_issue = Fabricate(:issue)
+          end
+
+          options = { order: "created,desc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+        end
+      end
+
+      context "is set as 'created,asc'" do
+        it "orders by created_at asc" do
+          first_issue = nil
+          second_issue = nil
+
+          Timecop.freeze(1.hour.ago) do
             second_issue = Fabricate(:issue)
+          end
+
+          Timecop.freeze(1.day.ago) do
             first_issue = Fabricate(:issue)
-
-            Timecop.freeze(1.day.ago) do
-              second_issue.touch
-            end
-
-            options = { order: "updated,desc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
           end
+
+          options = { order: "created,asc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
         end
+      end
 
-        context "is set as 'updated,asc'" do
-          it "orders by updated_at asc" do
-            second_issue = Fabricate(:issue)
-            first_issue = Fabricate(:issue)
+      context "is set as 'notupdated,desc'" do
+        it "orders by updated_at desc" do
+          second_issue = Fabricate(:issue)
+          first_issue = Fabricate(:issue)
 
-            Timecop.freeze(1.day.ago) do
-              first_issue.touch
-            end
-
-            options = { order: "updated,asc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+          Timecop.freeze(1.day.ago) do
+            second_issue.touch
           end
+
+          options = { order: "notupdated,desc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
         end
+      end
 
-        context "is set as 'created,desc'" do
-          it "orders by created_at desc" do
-            first_issue = nil
-            second_issue = nil
+      context "is set as 'updated,notdesc'" do
+        it "orders by updated_at desc" do
+          second_issue = Fabricate(:issue)
+          first_issue = Fabricate(:issue)
 
-            Timecop.freeze(1.day.ago) do
-              second_issue = Fabricate(:issue)
-            end
-
-            Timecop.freeze(1.hour.ago) do
-              first_issue = Fabricate(:issue)
-            end
-
-            options = { order: "created,desc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+          Timecop.freeze(1.day.ago) do
+            second_issue.touch
           end
-        end
 
-        context "is set as 'created,asc'" do
-          it "orders by created_at asc" do
-            first_issue = nil
-            second_issue = nil
-
-            Timecop.freeze(1.hour.ago) do
-              second_issue = Fabricate(:issue)
-            end
-
-            Timecop.freeze(1.day.ago) do
-              first_issue = Fabricate(:issue)
-            end
-
-            options = { order: "created,asc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
-          end
-        end
-
-        context "is set as 'notupdated,desc'" do
-          it "orders by updated_at desc" do
-            second_issue = Fabricate(:issue)
-            first_issue = Fabricate(:issue)
-
-            Timecop.freeze(1.day.ago) do
-              second_issue.touch
-            end
-
-            options = { order: "notupdated,desc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
-          end
-        end
-
-        context "is set as 'updated,notdesc'" do
-          it "orders by updated_at desc" do
-            second_issue = Fabricate(:issue)
-            first_issue = Fabricate(:issue)
-
-            Timecop.freeze(1.day.ago) do
-              second_issue.touch
-            end
-
-            options = { order: "updated,notdesc" }
-            expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
-          end
+          options = { order: "updated,notdesc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
         end
       end
     end
@@ -395,6 +393,17 @@ RSpec.describe Issue, type: :model do
       it "returns all issues" do
         issue = Fabricate(:issue)
         expect(Issue.filter_by).to eq([issue])
+      end
+    end
+
+    context "when project scope" do
+      let(:project) { Fabricate(:project) }
+
+      before { Fabricate(:issue) }
+
+      it "returns all project issues" do
+        issue = Fabricate(:issue, project: project)
+        expect(project.issues.filter_by(status: "all")).to eq([issue])
       end
     end
   end

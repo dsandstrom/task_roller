@@ -239,379 +239,262 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe ".filter" do
+  describe ".filter_by" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }
     let(:different_project) { Fabricate(:project, category: category) }
 
-    context "when filters" do
-      context ":category" do
-        context "when no issues" do
-          it "returns []" do
-            expect(Task.filter(category: category)).to eq([])
-          end
+    context "when no tasks" do
+      it "returns []" do
+        expect(Task.filter_by(status: "all")).to eq([])
+      end
+    end
+
+    context "when :status" do
+      let(:in_review_task) { Fabricate(:open_task, project: project) }
+      let(:in_progress_task) { Fabricate(:open_task, project: project) }
+      let(:assigned_task) { Fabricate(:open_task, project: project) }
+      let(:approved_task) { Fabricate(:approved_task, project: project) }
+      let(:finished_task) { Fabricate(:open_task, project: project) }
+      let(:reopened_task) { Fabricate(:task, project: project) }
+
+      before do
+        _unassigned_task = Fabricate(:open_task, project: project)
+
+        tasks = [assigned_task, in_review_task, in_progress_task,
+                 approved_task, finished_task, reopened_task]
+        tasks.each do |task|
+          task.assignees << worker
+        end
+        Fabricate(:pending_review, task: in_review_task)
+        Fabricate(:progression, task: in_progress_task)
+        Fabricate(:finished_progression, task: finished_task)
+        Fabricate(:pending_review, task: reopened_task)
+
+        Timecop.freeze(Time.now + 2.days) do
+          reopened_task.open
         end
 
-        context "when the category has a task" do
-          let!(:task) { Fabricate(:task, project: project) }
+        Fabricate(:closed_task, project: project).assignees << worker
+      end
 
-          before { Fabricate(:task) }
-
-          it "returns it" do
-            expect(Task.filter(category: category)).to eq([task])
-          end
-        end
-
-        context "when the category has open and closed tasks" do
-          let!(:open_task) { Fabricate(:open_task, project: project) }
-          let!(:closed_task) { Fabricate(:closed_task, project: project) }
-
-          before do
-            Timecop.freeze(2.weeks.ago) do
-              open_task.touch
-            end
-            Timecop.freeze(1.week.ago) do
-              closed_task.touch
-            end
-          end
-
-          it "orders by updated_at desc" do
-            expect(Task.filter(category: category))
-              .to eq([closed_task, open_task])
-          end
-        end
-
-        context "and :status" do
-          let(:in_review_task) { Fabricate(:open_task, project: project) }
-          let(:in_progress_task) { Fabricate(:open_task, project: project) }
-          let(:assigned_task) { Fabricate(:open_task, project: project) }
-          let(:approved_task) { Fabricate(:approved_task, project: project) }
-          let(:finished_task) { Fabricate(:open_task, project: project) }
-          let(:reopened_task) { Fabricate(:task, project: project) }
-
-          before do
-            _unassigned_task = Fabricate(:open_task, project: project)
-
-            tasks = [assigned_task, in_review_task, in_progress_task,
-                     approved_task, finished_task, reopened_task]
-            tasks.each do |task|
-              task.assignees << worker
-            end
-            Fabricate(:pending_review, task: in_review_task)
-            Fabricate(:progression, task: in_progress_task)
-            Fabricate(:finished_progression, task: finished_task)
-            Fabricate(:pending_review, task: reopened_task)
-
-            # different project in_review
-            Fabricate(:pending_review, task: Fabricate(:open_task))
-            # different project in_progress
-            Fabricate(:progression, task: Fabricate(:open_task))
-            # different project approved
-            Fabricate(:approved_task)
-
-            # reopened & unassigned
-            # reopened_task = nil
-            # Timecop.freeze(1.day.ago) do
-            #   reopened_task = Fabricate(:task, project: project)
-            # end
-            Timecop.freeze(Time.now + 2.days) do
-              reopened_task.open
-            end
-
-            Fabricate(:closed_task, project: project).assignees << worker
-          end
-
-          context "is set as 'in_review'" do
-            it "returns open tasks that have a current pending review" do
-              results = Task.filter(category: category, status: "in_review")
-              expect(results.count).to eq(1)
-              expect(results).to match_array(category.tasks.all_in_review)
-            end
-          end
-
-          context "is set as 'in_progress'" do
-            it "returns open tasks that have an unfinished progression" do
-              results = Task.filter(category: category, status: "in_progress")
-              expect(results.count).to eq(1)
-              expect(results).to match_array(category.tasks.all_in_progress)
-            end
-          end
-
-          context "is set as 'assigned'" do
-            it "returns open assigned tasks" do
-              results = Task.filter(category: category, status: "assigned")
-              expect(results.count).to eq(5)
-              expect(results).to match_array(category.tasks.all_assigned)
-            end
-          end
-
-          context "is set as 'open'" do
-            it "returns open, reopened, pending, in review, in progress" do
-              results = Task.filter(category: category, status: "open")
-              expect(results.count).to eq(6)
-              expect(results).to match_array(category.tasks.all_open)
-            end
-          end
-
-          context "is set as 'approved'" do
-            it "returns closed tasks that have an approved current review" do
-              results = Task.filter(category: category, status: "approved")
-              expect(results.count).to eq(1)
-              expect(results).to match_array(category.tasks.all_approved)
-            end
-          end
-
-          context "is set as 'closed'" do
-            it "returns approved/unapproved closed tasks" do
-              results = Task.filter(category: category, status: "closed")
-              expect(results.count).to eq(2)
-              expect(results).to match_array(category.tasks.all_closed)
-            end
-          end
-
-          context "is set as 'unassigned'" do
-            it "returns unassigned tasks" do
-              results = Task.filter(category: category, status: "unassigned")
-              expect(results.count).to eq(1)
-              expect(results).to match_array(category.tasks.all_unassigned)
-            end
-          end
-
-          context "is set as 'all'" do
-            it "returns all category tasks" do
-              tasks = Task.filter(category: category, status: "all")
-              expect(tasks.count).to eq(8)
-              expect(tasks).to match_array(category.tasks)
-            end
-          end
-        end
-
-        context "and :reviewer" do
-          let(:user) { Fabricate(:user_reviewer) }
-
-          context "is set as user id with a task" do
-            let!(:task) do
-              Fabricate(:open_task, project: project, user: user)
-            end
-
-            before do
-              Fabricate(:open_task, project: project)
-            end
-
-            it "returns user tasks" do
-              expect(Task.filter(category: category, reviewer: user.id.to_s))
-                .to eq([task])
-            end
-          end
-
-          context "is set as user id without a task" do
-            let!(:task) do
-              Fabricate(:open_task, project: project)
-            end
-
-            it "returns []" do
-              expect(Task.filter(category: category, reviewer: user.id.to_s))
-                .to eq([])
-            end
-          end
-
-          context "is blank" do
-            let!(:task) do
-              Fabricate(:open_task, project: project)
-            end
-
-            it "returns all user tasks" do
-              expect(Task.filter(category: category, reviewer: ""))
-                .to eq([task])
-            end
-          end
-        end
-
-        context "and :assigned" do
-          let(:user) { Fabricate(:user_worker) }
-          let(:different_user) { Fabricate(:user_worker) }
-
-          context "is assigned to a task" do
-            let!(:task) do
-              Fabricate(:open_task, project: project, assignees: [user])
-            end
-
-            before do
-              Fabricate(:open_task, project: project)
-            end
-
-            it "returns user tasks" do
-              expect(Task.filter(category: category, assigned: user.id.to_s))
-                .to eq([task])
-            end
-          end
-
-          context "is set as user id without a task" do
-            let!(:task) do
-              Fabricate(:open_task, project: project,
-                                    assignees: [different_user])
-            end
-
-            it "returns []" do
-              expect(Task.filter(category: category, assigned: user.id.to_s))
-                .to eq([])
-            end
-          end
-
-          context "is blank" do
-            let!(:task) do
-              Fabricate(:open_task, project: project,
-                                    assignees: [different_user])
-            end
-
-            it "returns all user tasks" do
-              expect(Task.filter(category: category, assigned: ""))
-                .to eq([task])
-            end
-          end
-        end
-
-        context "and :order" do
-          context "is unset" do
-            it "orders by updated_at desc" do
-              second_task = Fabricate(:task, project: project)
-              first_task = Fabricate(:task, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                second_task.touch
-              end
-
-              expect(Task.filter(category: category))
-                .to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'updated,desc'" do
-            it "orders by updated_at desc" do
-              second_task = Fabricate(:task, project: project)
-              first_task = Fabricate(:task, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                second_task.touch
-              end
-
-              options = { category: category, order: "updated,desc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'updated,asc'" do
-            it "orders by updated_at asc" do
-              second_task = Fabricate(:task, project: project)
-              first_task = Fabricate(:task, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                first_task.touch
-              end
-
-              options = { category: category, order: "updated,asc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'created,desc'" do
-            it "orders by created_at desc" do
-              first_task = nil
-              second_task = nil
-
-              Timecop.freeze(1.day.ago) do
-                second_task = Fabricate(:task, project: project)
-              end
-
-              Timecop.freeze(1.hour.ago) do
-                first_task = Fabricate(:task, project: project)
-              end
-
-              options = { category: category, order: "created,desc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'created,asc'" do
-            it "orders by created_at asc" do
-              first_task = nil
-              second_task = nil
-
-              Timecop.freeze(1.hour.ago) do
-                second_task = Fabricate(:task, project: project)
-              end
-
-              Timecop.freeze(1.day.ago) do
-                first_task = Fabricate(:task, project: project)
-              end
-
-              options = { category: category, order: "created,asc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'notupdated,desc'" do
-            it "orders by updated_at desc" do
-              second_task = Fabricate(:task, project: project)
-              first_task = Fabricate(:task, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                second_task.touch
-              end
-
-              options = { category: category, order: "notupdated,desc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
-
-          context "is set as 'updated,notdesc'" do
-            it "orders by updated_at desc" do
-              second_task = Fabricate(:task, project: project)
-              first_task = Fabricate(:task, project: project)
-
-              Timecop.freeze(1.day.ago) do
-                second_task.touch
-              end
-
-              options = { category: category, order: "updated,notdesc" }
-              expect(Task.filter(options)).to eq([first_task, second_task])
-            end
-          end
+      context "is set as 'in_review'" do
+        it "returns open tasks that have a current pending review" do
+          results = Task.filter_by(status: "in_review")
+          expect(results.count).to eq(1)
+          expect(results).to match_array(Task.all_in_review)
         end
       end
 
-      context ":project" do
-        context "when no tasks" do
-          let(:category) { Fabricate(:category) }
-          let(:project) { Fabricate(:project, category: category) }
-          let(:different_project) { Fabricate(:project, category: category) }
+      context "is set as 'in_progress'" do
+        it "returns open tasks that have an unfinished progression" do
+          results = Task.filter_by(status: "in_progress")
+          expect(results.count).to eq(1)
+          expect(results).to match_array(category.tasks.all_in_progress)
+        end
+      end
 
-          before { Fabricate(:task, project: different_project) }
+      context "is set as 'assigned'" do
+        it "returns open assigned tasks" do
+          results = Task.filter_by(status: "assigned")
+          expect(results.count).to eq(5)
+          expect(results).to match_array(category.tasks.all_assigned)
+        end
+      end
 
-          it "returns []" do
-            expect(Task.filter(project: project)).to eq([])
-          end
+      context "is set as 'open'" do
+        it "returns open, reopened, pending, in review, in progress" do
+          results = Task.filter_by(status: "open")
+          expect(results.count).to eq(6)
+          expect(results).to match_array(category.tasks.all_open)
+        end
+      end
+
+      context "is set as 'approved'" do
+        it "returns closed tasks that have an approved current review" do
+          results = Task.filter_by(status: "approved")
+          expect(results.count).to eq(1)
+          expect(results).to match_array(category.tasks.all_approved)
+        end
+      end
+
+      context "is set as 'closed'" do
+        it "returns approved/unapproved closed tasks" do
+          results = Task.filter_by(status: "closed")
+          expect(results.count).to eq(2)
+          expect(results).to match_array(category.tasks.all_closed)
+        end
+      end
+
+      context "is set as 'unassigned'" do
+        it "returns unassigned tasks" do
+          results = Task.filter_by(status: "unassigned")
+          expect(results.count).to eq(1)
+          expect(results).to match_array(category.tasks.all_unassigned)
+        end
+      end
+
+      context "is set as 'all'" do
+        it "returns all category tasks" do
+          tasks = Task.filter_by(status: "all")
+          expect(tasks.count).to eq(8)
+          expect(tasks).to match_array(category.tasks)
+        end
+      end
+    end
+
+    context "when :assigned" do
+      let(:user) { Fabricate(:user_worker) }
+      let(:different_user) { Fabricate(:user_worker) }
+
+      context "is assigned to a task" do
+        let!(:task) do
+          Fabricate(:open_task, project: project, assignees: [user])
         end
 
-        context "when the project has a task" do
-          let(:category) { Fabricate(:category) }
-          let(:project) { Fabricate(:project, category: category) }
-          let(:different_project) { Fabricate(:project, category: category) }
-          let!(:task) { Fabricate(:task, project: project) }
+        before do
+          Fabricate(:open_task, project: project)
+        end
 
-          before { Fabricate(:task, project: different_project) }
+        it "returns user tasks" do
+          expect(Task.filter_by(assigned: user.id.to_s)).to eq([task])
+        end
+      end
 
-          it "returns it" do
-            expect(Task.filter(project: project)).to eq([task])
+      context "is set as user id without a task" do
+        let!(:task) do
+          Fabricate(:open_task, project: project,
+                                assignees: [different_user])
+        end
+
+        it "returns []" do
+          expect(Task.filter_by(assigned: user.id.to_s)).to eq([])
+        end
+      end
+
+      context "is blank" do
+        let!(:task) do
+          Fabricate(:open_task, project: project, assignees: [different_user])
+        end
+
+        it "returns all user tasks" do
+          expect(Task.filter_by(assigned: "")).to eq([task])
+        end
+      end
+    end
+
+    context "when :order" do
+      context "is unset" do
+        it "orders by updated_at desc" do
+          second_task = Fabricate(:task, project: project)
+          first_task = Fabricate(:task, project: project)
+
+          Timecop.freeze(1.day.ago) do
+            second_task.touch
           end
+
+          expect(Task.filter_by(category: category))
+            .to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'updated,desc'" do
+        it "orders by updated_at desc" do
+          second_task = Fabricate(:task, project: project)
+          first_task = Fabricate(:task, project: project)
+
+          Timecop.freeze(1.day.ago) do
+            second_task.touch
+          end
+
+          options = { order: "updated,desc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'updated,asc'" do
+        it "orders by updated_at asc" do
+          second_task = Fabricate(:task, project: project)
+          first_task = Fabricate(:task, project: project)
+
+          Timecop.freeze(1.day.ago) do
+            first_task.touch
+          end
+
+          options = { order: "updated,asc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'created,desc'" do
+        it "orders by created_at desc" do
+          first_task = nil
+          second_task = nil
+
+          Timecop.freeze(1.day.ago) do
+            second_task = Fabricate(:task, project: project)
+          end
+
+          Timecop.freeze(1.hour.ago) do
+            first_task = Fabricate(:task, project: project)
+          end
+
+          options = { order: "created,desc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'created,asc'" do
+        it "orders by created_at asc" do
+          first_task = nil
+          second_task = nil
+
+          Timecop.freeze(1.hour.ago) do
+            second_task = Fabricate(:task, project: project)
+          end
+
+          Timecop.freeze(1.day.ago) do
+            first_task = Fabricate(:task, project: project)
+          end
+
+          options = { order: "created,asc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'notupdated,desc'" do
+        it "orders by updated_at desc" do
+          second_task = Fabricate(:task, project: project)
+          first_task = Fabricate(:task, project: project)
+
+          Timecop.freeze(1.day.ago) do
+            second_task.touch
+          end
+
+          options = { order: "notupdated,desc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
+      context "is set as 'updated,notdesc'" do
+        it "orders by updated_at desc" do
+          second_task = Fabricate(:task, project: project)
+          first_task = Fabricate(:task, project: project)
+
+          Timecop.freeze(1.day.ago) do
+            second_task.touch
+          end
+
+          options = { order: "updated,notdesc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
         end
       end
     end
 
     context "when no filters" do
-      it "returns []" do
-        Fabricate(:task)
-        expect(Task.filter).to eq([])
+      it "returns all" do
+        task = Fabricate(:task)
+        expect(Task.filter_by).to eq([task])
       end
     end
   end
