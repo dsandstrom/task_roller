@@ -20,13 +20,17 @@
                     method: :delete,
                     data: { confirm: 'Are you sure?' } %>
       <% else %>
-        <%= link_to 'edit',
-                    edit_issue_issue_comment_path(object, comment) %>
-        <%= divider %>
-        <%= link_to 'delete',
-                    issue_issue_comment_path(object, comment),
-                    method: :delete,
-                    data: { confirm: 'Are you sure?' } %>
+        <% if policy(comment).edit? %>
+          <%= link_to 'edit',
+                      edit_issue_issue_comment_path(object, comment) %>
+        <% end %>
+        <% if policy(comment).destroy? %>
+          <%= divider %>
+          <%= link_to 'delete',
+                      issue_issue_comment_path(object, comment),
+                      method: :delete,
+                      data: { confirm: 'Are you sure?' } %>
+        <% end %>
       <% end %>
     </p>
   </footer>

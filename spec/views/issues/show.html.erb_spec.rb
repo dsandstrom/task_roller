@@ -199,6 +199,33 @@ RSpec.describe "issues/show", type: :view do
         end.not_to raise_error
       end
     end
+
+    context "when comments" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @first_comment = Fabricate(:issue_comment, issue: @issue)
+        @second_comment = Fabricate(:issue_comment, issue: @issue, user: admin)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = issue_issue_comment_path(@issue, @first_comment)
+        first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+        second_url = issue_issue_comment_path(@issue, @second_comment)
+        second_edit_url = edit_issue_issue_comment_path(@issue, @second_comment)
+        expect(rendered).to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']"
+        assert_select "a[data-method='delete'][href='#{second_url}']"
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -304,6 +331,34 @@ RSpec.describe "issues/show", type: :view do
         duplicate = @issue_connection.source
         url = issue_path(duplicate)
         expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when comments" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @first_comment = Fabricate(:issue_comment, issue: @issue)
+        @second_comment = Fabricate(:issue_comment, issue: @issue,
+                                                    user: reviewer)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = issue_issue_comment_path(@issue, @first_comment)
+        first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+        second_url = issue_issue_comment_path(@issue, @second_comment)
+        second_edit_url = edit_issue_issue_comment_path(@issue, @second_comment)
+        expect(rendered).not_to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
+        assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
   end
@@ -497,6 +552,38 @@ RSpec.describe "issues/show", type: :view do
           duplicate = @issue_connection.source
           url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "when comments" do
+        before do
+          @issue = assign(:issue, Fabricate(:issue, project: @project))
+          @comment = assign(:issue_comment, @issue.comments.build)
+          @first_comment = Fabricate(:issue_comment, issue: @issue)
+          @second_comment = Fabricate(:issue_comment, issue: @issue,
+                                                      user: current_user)
+          @comments = assign(:comments, [@first_comment, @second_comment])
+        end
+
+        it "renders a list of comments" do
+          render
+
+          assert_select "#comment-#{@first_comment.id}"
+          assert_select "#comment-#{@second_comment.id}"
+
+          first_url = issue_issue_comment_path(@issue, @first_comment)
+          first_edit_url =
+            edit_issue_issue_comment_path(@issue, @first_comment)
+          second_url = issue_issue_comment_path(@issue, @second_comment)
+          second_edit_url =
+            edit_issue_issue_comment_path(@issue, @second_comment)
+          expect(rendered).not_to have_link(nil, href: first_edit_url)
+          expect(rendered).to have_link(nil, href: second_edit_url)
+
+          assert_select "a[data-method='delete'][href='#{first_url}']",
+                        count: 0
+          assert_select "a[data-method='delete'][href='#{second_url}']",
+                        count: 0
         end
       end
     end
