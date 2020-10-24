@@ -119,6 +119,8 @@ RSpec.describe "issues/show", type: :view do
         @issue = assign(:issue, Fabricate(:issue, project: project))
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
+        @issue.update_attribute :project_id, nil
+        @issue.reload
       end
 
       it "renders heading" do
