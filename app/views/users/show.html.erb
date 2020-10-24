@@ -5,7 +5,7 @@
     <code><%= @user.email %></code>
   </p>
 
-  <p class=user-links>
+  <p class="user-links">
     <% if policy(@user).edit? %>
       <%= link_to 'Edit', edit_user_path(@user),
                   class: 'button button' %>
@@ -20,7 +20,7 @@
   </p>
 
   <% if @user.active_assignments.any? %>
-    <div class="user-tasks">
+    <div class="user-assignments">
       <header class="tasks-header">
         <h2>Assigned Tasks</h2>
         <p>
@@ -31,6 +31,21 @@
       </header>
       <div class="tasks">
         <%= render @user.active_assignments %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @user.open_tasks.any? %>
+    <div class="user-tasks">
+      <header class="tasks-header">
+        <h2>Open Tasks</h2>
+        <p>
+          <%= link_to 'View All Created Tasks', user_tasks_path(@user),
+                      class: 'button' %>
+        </p>
+      </header>
+      <div class="tasks">
+        <%= render @user.open_tasks %>
       </div>
     </div>
   <% end %>

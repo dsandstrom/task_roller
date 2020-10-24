@@ -49,7 +49,24 @@ RSpec.describe "users/show", type: :view do
       assert_select "#task-#{wrong_task.id}", count: 0
 
       [first_task, second_task].each do |task|
-        assert_select "#task-#{task.id}"
+        assert_select ".user-assignments #task-#{task.id}"
+        show_url = task_path(task)
+        expect(rendered).to have_link(nil, href: show_url)
+        edit_url = edit_task_path(task)
+        expect(rendered).to have_link(nil, href: edit_url)
+      end
+    end
+
+    it "renders a list of the requested user's created tasks" do
+      first_task = Fabricate(:task, user: user_reporter)
+      second_task = Fabricate(:task, user: user_reporter)
+      wrong_task = Fabricate(:task)
+
+      render
+      assert_select "#task-#{wrong_task.id}", count: 0
+
+      [first_task, second_task].each do |task|
+        assert_select ".user-tasks #task-#{task.id}"
         show_url = task_path(task)
         expect(rendered).to have_link(nil, href: show_url)
         edit_url = edit_task_path(task)
@@ -73,6 +90,23 @@ RSpec.describe "users/show", type: :view do
           render
           expect(rendered).to match(/id="user-detail-#{@user.id}"/)
           expect(rendered).not_to have_link(nil, href: edit_user_path(@user))
+        end
+
+        it "renders a list of the requested user's created tasks" do
+          first_task = Fabricate(:task, user: @user)
+          second_task = Fabricate(:task, user: @user)
+          wrong_task = Fabricate(:task)
+
+          render
+          assert_select "#task-#{wrong_task.id}", count: 0
+
+          [first_task, second_task].each do |task|
+            assert_select ".user-tasks #task-#{task.id}"
+            show_url = task_path(task)
+            expect(rendered).to have_link(nil, href: show_url)
+            edit_url = edit_task_path(task)
+            expect(rendered).not_to have_link(nil, href: edit_url)
+          end
         end
       end
 
@@ -120,6 +154,23 @@ RSpec.describe "users/show", type: :view do
             expect(rendered).to have_link(nil, href: show_url)
             edit_url = edit_task_path(task)
             expect(rendered).not_to have_link(nil, href: edit_url)
+          end
+        end
+
+        it "renders a list of their created tasks" do
+          first_task = Fabricate(:task, user: @user)
+          second_task = Fabricate(:task, user: @user)
+          wrong_task = Fabricate(:task)
+
+          render
+          assert_select "#task-#{wrong_task.id}", count: 0
+
+          [first_task, second_task].each do |task|
+            assert_select ".user-tasks #task-#{task.id}"
+            show_url = task_path(task)
+            expect(rendered).to have_link(nil, href: show_url)
+            edit_url = edit_task_path(task)
+            expect(rendered).to have_link(nil, href: edit_url)
           end
         end
       end
