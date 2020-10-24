@@ -88,6 +88,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     includes(task_assignees: :assignee, issue: :user)
       .apply_filters(filters)
       .order(build_order_param(filters[:order]))
+      .distinct
   end
 
   # used by .filter

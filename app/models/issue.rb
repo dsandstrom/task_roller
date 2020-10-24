@@ -99,6 +99,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def self.filter_by(filters = {})
     filter_by_status(filters[:status])
       .order(build_order_param(filters[:order]))
+      .distinct
   end
 
   # TODO: allow filtering by multiple statuses

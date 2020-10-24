@@ -491,6 +491,16 @@ RSpec.describe Task, type: :model do
       end
     end
 
+    context "when task has 2 assignees" do
+      it "returns task once" do
+        task = Fabricate(:task)
+
+        2.times { Fabricate(:task_assignee, task: task) }
+
+        expect(Task.filter_by(status: "assigned")).to eq([task])
+      end
+    end
+
     context "when no filters" do
       it "returns all" do
         task = Fabricate(:task)

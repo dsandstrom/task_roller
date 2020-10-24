@@ -389,6 +389,18 @@ RSpec.describe Issue, type: :model do
       end
     end
 
+    context "when issue has 2 approved tasks" do
+      let(:issue) { Fabricate(:closed_issue) }
+
+      before do
+        2.times { Fabricate(:approved_task, issue: issue) }
+      end
+
+      it "returns it once" do
+        expect(Issue.filter_by(status: "addressed")).to eq([issue])
+      end
+    end
+
     context "when no filters" do
       it "returns all issues" do
         issue = Fabricate(:issue)
