@@ -60,6 +60,28 @@ RSpec.describe "issues/index", type: :view do
       end
     end
 
+    context "when user" do
+      let(:user) { Fabricate(:user_reporter) }
+      let(:first_issue) { Fabricate(:issue, user: user) }
+      let(:second_issue) { Fabricate(:issue, user: user) }
+
+      before(:each) do
+        assign(:user, user)
+        assign(:issues, [first_issue, second_issue])
+      end
+
+      it "renders a list of issues" do
+        render
+
+        assert_select "#issue-#{first_issue.id}"
+        url = edit_issue_path(first_issue)
+        expect(rendered).to have_link(nil, href: url)
+        assert_select "#issue-#{second_issue.id}"
+        url = edit_issue_path(second_issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
     context "when an issue user was destroyed" do
       let(:first_issue) { Fabricate(:issue) }
       let(:second_issue) { Fabricate(:issue) }
@@ -92,28 +114,76 @@ RSpec.describe "issues/index", type: :view do
 
       before { enable_pundit(view, current_user) }
 
-      before(:each) do
-        assign(:category, category)
-        assign(:project, project)
-        assign(:issues, [first_issue, second_issue])
+      context "when project" do
+        before(:each) do
+          assign(:category, category)
+          assign(:project, project)
+          assign(:issues, [first_issue, second_issue])
+        end
+
+        it "renders a list of issues" do
+          render
+
+          assert_select "#issue-#{first_issue.id}"
+          url = edit_issue_path(first_issue)
+          expect(rendered).to have_link(nil, href: url)
+          assert_select "#issue-#{second_issue.id}"
+          url = edit_issue_path(second_issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders new issue link" do
+          render
+
+          url = new_project_issue_path(project)
+          expect(rendered).to have_link(nil, href: url)
+        end
       end
 
-      it "renders a list of issues" do
-        render
+      context "when user" do
+        context "is them" do
+          # let(:user) { Fabricate(:user_reporter) }
+          let(:first_issue) { Fabricate(:issue, user: current_user) }
+          let(:second_issue) { Fabricate(:issue, user: current_user) }
 
-        assert_select "#issue-#{first_issue.id}"
-        url = edit_issue_path(first_issue)
-        expect(rendered).to have_link(nil, href: url)
-        assert_select "#issue-#{second_issue.id}"
-        url = edit_issue_path(second_issue)
-        expect(rendered).not_to have_link(nil, href: url)
-      end
+          before(:each) do
+            assign(:user, current_user)
+            assign(:issues, [first_issue, second_issue])
+          end
 
-      it "renders new issue link" do
-        render
+          it "renders a list of issues" do
+            render
 
-        url = new_project_issue_path(project)
-        expect(rendered).to have_link(nil, href: url)
+            assert_select "#issue-#{first_issue.id}"
+            url = edit_issue_path(first_issue)
+            expect(rendered).to have_link(nil, href: url)
+            assert_select "#issue-#{second_issue.id}"
+            url = edit_issue_path(second_issue)
+            expect(rendered).to have_link(nil, href: url)
+          end
+        end
+
+        context "someone else" do
+          let(:user) { Fabricate(:user_reporter) }
+          let(:first_issue) { Fabricate(:issue, user: user) }
+          let(:second_issue) { Fabricate(:issue, user: user) }
+
+          before(:each) do
+            assign(:user, user)
+            assign(:issues, [first_issue, second_issue])
+          end
+
+          it "renders a list of issues" do
+            render
+
+            assert_select "#issue-#{first_issue.id}"
+            url = edit_issue_path(first_issue)
+            expect(rendered).not_to have_link(nil, href: url)
+            assert_select "#issue-#{second_issue.id}"
+            url = edit_issue_path(second_issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+        end
       end
     end
   end

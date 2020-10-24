@@ -36,12 +36,20 @@ RSpec.describe TasksController, type: :controller do
           end
         end
 
-        context "when category and project" do
+        context "when project" do
           it "returns a success response" do
             Fabricate(:task, project: project)
             Fabricate(:task, project: project, user: current_user)
             get :index, params: { category_id: category.to_param,
                                   project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user" do
+          it "returns a success response" do
+            Fabricate(:task, user: user)
+            get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
         end
