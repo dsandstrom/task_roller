@@ -379,6 +379,33 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
     end
+
+    context "when comments" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @comment = assign(:task_comment, @task.comments.build)
+        @first_comment = Fabricate(:task_comment, task: @task)
+        @second_comment = Fabricate(:task_comment, task: @task, user: admin)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = task_task_comment_path(@task, @first_comment)
+        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
+        second_url = task_task_comment_path(@task, @second_comment)
+        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        expect(rendered).to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']"
+        assert_select "a[data-method='delete'][href='#{second_url}']"
+      end
+    end
   end
 
   context "for an reviewer" do
@@ -579,6 +606,33 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when comments" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @comment = assign(:task_comment, @task.comments.build)
+        @first_comment = Fabricate(:task_comment, task: @task)
+        @second_comment = Fabricate(:task_comment, task: @task, user: reviewer)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = task_task_comment_path(@task, @first_comment)
+        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
+        second_url = task_task_comment_path(@task, @second_comment)
+        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        expect(rendered).not_to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
+        assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
   end
@@ -870,6 +924,34 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
+
+    context "when comments" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @comment = assign(:task_comment, @task.comments.build)
+        @first_comment = Fabricate(:task_comment, task: @task)
+        @second_comment =
+          Fabricate(:task_comment, task: @task, user: current_user)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = task_task_comment_path(@task, @first_comment)
+        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
+        second_url = task_task_comment_path(@task, @second_comment)
+        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        expect(rendered).not_to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
+        assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
+      end
+    end
   end
 
   context "for a reporter" do
@@ -1084,6 +1166,34 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when comments" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+        @comment = assign(:task_comment, @task.comments.build)
+        @first_comment = Fabricate(:task_comment, task: @task)
+        @second_comment =
+          Fabricate(:task_comment, task: @task, user: current_user)
+        @comments = assign(:comments, [@first_comment, @second_comment])
+      end
+
+      it "renders a list of comments" do
+        render
+
+        assert_select "#comment-#{@first_comment.id}"
+        assert_select "#comment-#{@second_comment.id}"
+
+        first_url = task_task_comment_path(@task, @first_comment)
+        first_edit_url = edit_task_task_comment_path(@task, @first_comment)
+        second_url = task_task_comment_path(@task, @second_comment)
+        second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+        expect(rendered).not_to have_link(nil, href: first_edit_url)
+        expect(rendered).to have_link(nil, href: second_edit_url)
+
+        assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
+        assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
   end

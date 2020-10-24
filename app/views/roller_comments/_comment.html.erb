@@ -12,13 +12,17 @@
   <footer>
     <p>
       <% if object.is_a?(Task) %>
-        <%= link_to 'edit',
-                    edit_task_task_comment_path(object, comment) %>
-        <%= divider %>
-        <%= link_to 'delete',
-                    task_task_comment_path(object, comment),
-                    method: :delete,
-                    data: { confirm: 'Are you sure?' } %>
+        <% if policy(comment).edit? %>
+          <%= link_to 'edit',
+                      edit_task_task_comment_path(object, comment) %>
+        <% end %>
+        <% if policy(comment).destroy? %>
+          <%= divider %>
+          <%= link_to 'delete',
+                      task_task_comment_path(object, comment),
+                      method: :delete,
+                      data: { confirm: 'Are you sure?' } %>
+        <% end %>
       <% else %>
         <% if policy(comment).edit? %>
           <%= link_to 'edit',
