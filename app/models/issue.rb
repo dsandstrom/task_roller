@@ -95,22 +95,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_non_closed.where(resolutions_query, true)
   end
 
-  def self.filter(filters = {})
-    parent = filters[:project] || filters[:category]
-    return Issue.none unless parent
-
-    issues = parent.issues
-    return Issue.none unless issues&.any?
-
-    issues = issues.apply_filters(filters)
-    issues.order(build_order_param(filters[:order]))
-  end
-
-  # used by .filter
-  def self.apply_filters(filters)
-    issues = all
-    issues = issues.filter_by_status(filters[:status])
-    issues.filter_by_user_id(filters[:reporter])
+  def self.filter_by(filters = {})
+    filter_by_status(filters[:status])
+      .order(build_order_param(filters[:order]))
   end
 
   # TODO: allow filtering by multiple statuses
@@ -119,13 +106,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return all unless options.include?(status)
 
     send("all_#{status}")
-  end
-
-  # used by .filter
-  def self.filter_by_user_id(user_id)
-    return all if user_id.blank?
-
-    where(user_id: user_id)
   end
 
   # used by .filter

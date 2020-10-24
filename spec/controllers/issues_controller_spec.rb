@@ -24,7 +24,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type.downcase}")) }
 
-        context "when only category" do
+        context "when category" do
           it "returns a success response" do
             _issue = Fabricate(:issue, project: project)
             get :index, params: { category_id: category.to_param }
@@ -36,6 +36,14 @@ RSpec.describe IssuesController, type: :controller do
           it "returns a success response" do
             _issue = Fabricate(:issue, project: project)
             get :index, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user" do
+          it "returns a success response" do
+            _issue = Fabricate(:issue, user: user)
+            get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
         end

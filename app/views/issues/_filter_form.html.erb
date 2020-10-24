@@ -11,21 +11,11 @@ index_path =
   else
     category_issues_path(category)
   end
-
-reporter_options =
-  options_from_collection_for_select(User.all, :id, :name_and_email,
-                                     params[:reporter])
 %>
 
 <div class="issue">
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <%= render 'issues/status_filter_field' %>
-
-    <div class="field">
-      <%= label_tag :reporter, 'Reporter' %>
-      <%= select_tag :reporter, reporter_options, include_blank: '- Any -' %>
-    </div >
-
     <%= render 'shared/order_filter_field' %>
 
     <% if searching? %>

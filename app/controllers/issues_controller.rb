@@ -4,13 +4,21 @@
 
 class IssuesController < ApplicationController
   before_action :authorize_issue, only: %i[index new show destroy]
-  before_action :set_category_or_project, only: :index
+  before_action :set_category_or_user, only: :index
   before_action :set_project, only: %i[new create]
   before_action :set_issue, except: %i[index new create]
   before_action :set_form_options, only: %i[new edit]
 
   def index
-    @issues = Issue.filter(build_filters)
+    @issues =
+      if @user
+        @user.issues
+      elsif @project
+        @project.issues
+      else
+        @category.issues
+      end
+    @issues = @issues.filter_by(build_filters)
   end
 
   def show
@@ -86,10 +94,14 @@ class IssuesController < ApplicationController
       authorize Issue
     end
 
-    def set_category_or_project
+    def set_category_or_user
       return set_project if params[:project_id].present?
 
-      @category = Category.find(params[:category_id])
+      if params[:user_id]
+        @user = User.find(params[:user_id])
+      else
+        @category = Category.find(params[:category_id])
+      end
     end
 
     def set_project
@@ -117,13 +129,8 @@ class IssuesController < ApplicationController
 
     def build_filters
       filters = {}
-      %i[status reporter order].each do |param|
+      %i[status order].each do |param|
         filters[param] = params[param]
-      end
-      if @project
-        filters[:project] = @project
-      elsif @category
-        filters[:category] = @category
       end
       filters
     end
