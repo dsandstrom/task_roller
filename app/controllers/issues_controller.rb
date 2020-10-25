@@ -25,9 +25,9 @@ class IssuesController < ApplicationController
   end
 
   def new
-    # TODO: set user_id to current user
     if @issue_types&.any?
-      @issue = @project.issues.build(issue_type_id: @issue_types.first.id)
+      @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
+                                     user: current_user)
     else
       # TODO: redirect to /issues_types if admin signed in
       redirect_to project_url(@project),
