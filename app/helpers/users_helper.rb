@@ -17,10 +17,15 @@ module UsersHelper
     def user_nav(user)
       content_tag :p, class: 'user-nav' do
         concat link_to_unless_current('Reported Issues', user_issues_path(user))
-        concat ' '
-        concat divider
-        concat ' '
-        concat link_to_unless_current('User Tasks', user_tasks_path(user))
+        concat divider_with_spaces
+        concat link_to_unless_current('Created Tasks', user_tasks_path(user))
+        concat divider_with_spaces
+        concat link_to_unless_current('Assigned Tasks',
+                                      user_task_assignments_path(user))
       end
+    end
+
+    def divider_with_spaces
+      safe_join([' ', divider, ' '])
     end
 end
