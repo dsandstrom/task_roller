@@ -30,7 +30,7 @@
 <div class="issues">
   <% if @issues.any? || searching? %>
     <%= render 'filter_form', category: @category, project: @project,
-                              issues: @issues %>
+                              user: @user, issues: @issues %>
 
     <% if @issues.any? %>
       <%= render @issues %>
