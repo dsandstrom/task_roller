@@ -21,7 +21,8 @@ module UsersHelper
     end
 
     def user_nav_links(user)
-      [link_to_unless_current('Reported Issues', user_issues_path(user)),
+      [link_to_unless_current('Dashboard', user_path(user)),
+       link_to_unless_current('Reported Issues', user_issues_path(user)),
        link_to_unless_current('Created Tasks', user_tasks_path(user)),
        link_to_unless_current('Assigned Tasks',
                               user_task_assignments_path(user))]
