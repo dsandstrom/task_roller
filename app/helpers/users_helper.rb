@@ -20,8 +20,9 @@ module UsersHelper
       end
     end
 
+    # TODO: rename Profile to Dashboard?
     def user_nav_links(user)
-      [link_to_unless_current('Dashboard', user_path(user)),
+      [link_to_unless_current('Profile', user_path(user)),
        link_to_unless_current('Reported Issues', user_issues_path(user)),
        link_to_unless_current('Created Tasks', user_tasks_path(user)),
        link_to_unless_current('Assigned Tasks',
