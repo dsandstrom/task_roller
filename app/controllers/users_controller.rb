@@ -11,6 +11,7 @@ class UsersController < ApplicationController
     @workers = User.workers
   end
 
+  # TODO: show tasks from reviews by user
   def show
     # TODO: for reviewer+, show created tasks, tasks ready for review
   end
