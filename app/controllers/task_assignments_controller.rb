@@ -7,7 +7,7 @@ class TaskAssignmentsController < ApplicationController
   def index
     authorize Task
     @user = User.find(params[:user_id])
-    @tasks = @user.assignments.filter_by(build_filters)
+    @tasks = @user.assignments.filter_by(build_filters).page(params[:page])
   end
 
   def edit
