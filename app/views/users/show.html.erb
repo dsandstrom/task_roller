@@ -25,7 +25,7 @@
         <h2>Assigned Tasks</h2>
         <p>
           <%= link_to 'View All Assigned Tasks',
-                      user_tasks_path(@user, filters: { assigned: @user.id }),
+                      user_task_assignments_path(@user),
                       class: 'button' %>
         </p>
       </header>
@@ -64,6 +64,4 @@
       </div>
     </div>
   <% end %>
-
-  <p><%= link_to 'Back', :back %></p>
 </div>

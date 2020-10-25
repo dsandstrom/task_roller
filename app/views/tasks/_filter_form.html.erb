@@ -1,29 +1,15 @@
 <%
-return unless category
-
-index_path =
-  if category && project
-    project_tasks_path(project)
-  else
-    category_tasks_path(category)
-  end
-
-reviewer_options =
-  options_from_collection_for_select(User.reviewers, :id, :name_and_email,
-                                     params[:reviewer])
-assignable_employees = [User.unassigned] + User.assignable_employees
-assigned_options =
-  options_from_collection_for_select(assignable_employees, :id, :name_and_email,
-                                     params[:assigned])
+path ||= nil
+return unless path
 %>
 
 <div class="task">
-  <%= form_tag index_path, method: :get, class: "task-filter-form" do %>
+  <%= form_tag path, method: :get, class: "task-filter-form" do %>
     <%= render 'shared/status_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 
     <% if searching? %>
-      <p><%= link_to 'Clear filters', index_path %></p>
+      <p><%= link_to 'Clear filters', path %></p>
     <% end %>
 
     <div class="actions">
