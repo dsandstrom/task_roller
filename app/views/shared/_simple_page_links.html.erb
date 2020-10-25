@@ -1,0 +1,11 @@
+<p class="simple-page-links">
+  <span>
+    <%= link_to_if path_to_previous_page(collection),
+                   'Previous', path_to_previous_page(collection) %>
+  </span>
+  <%= divider %>
+  <span>
+    <%= link_to_if path_to_next_page(collection),
+                   'Next Page', path_to_next_page(collection) %>
+  </span>
+</p>
