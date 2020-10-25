@@ -2,7 +2,7 @@
   <header class="task-header">
     <h3 class="task-summary">
       <%= task_type_icon_tag(task.task_type) %>
-      <%= link_to task.summary, task_path(task) %>
+      <%= link_to task.id_and_summary, task_path(task) %>
     </h3>
   </header>
 
