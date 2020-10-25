@@ -19,7 +19,7 @@ RSpec.describe "issues/index", type: :view do
 
       before(:each) do
         assign(:category, category)
-        assign(:issues, [first_issue, second_issue])
+        assign(:issues, page([first_issue, second_issue]))
       end
 
       it "renders a list of issues" do
@@ -38,7 +38,7 @@ RSpec.describe "issues/index", type: :view do
       before(:each) do
         assign(:category, category)
         assign(:project, project)
-        assign(:issues, [first_issue, second_issue])
+        assign(:issues, page([first_issue, second_issue]))
       end
 
       it "renders a list of issues" do
@@ -67,7 +67,7 @@ RSpec.describe "issues/index", type: :view do
 
       before(:each) do
         assign(:user, user)
-        assign(:issues, [first_issue, second_issue])
+        assign(:issues, page([first_issue, second_issue]))
       end
 
       it "renders a list of issues" do
@@ -89,7 +89,7 @@ RSpec.describe "issues/index", type: :view do
       before(:each) do
         second_issue.user.destroy
         second_issue.reload
-        assign(:issues, [first_issue, second_issue])
+        assign(:issues, page([first_issue, second_issue]))
       end
 
       it "renders a list of issues" do
@@ -118,7 +118,7 @@ RSpec.describe "issues/index", type: :view do
         before(:each) do
           assign(:category, category)
           assign(:project, project)
-          assign(:issues, [first_issue, second_issue])
+          assign(:issues, page([first_issue, second_issue]))
         end
 
         it "renders a list of issues" do
@@ -148,7 +148,7 @@ RSpec.describe "issues/index", type: :view do
 
           before(:each) do
             assign(:user, current_user)
-            assign(:issues, [first_issue, second_issue])
+            assign(:issues, page([first_issue, second_issue]))
           end
 
           it "renders a list of issues" do
@@ -170,7 +170,7 @@ RSpec.describe "issues/index", type: :view do
 
           before(:each) do
             assign(:user, user)
-            assign(:issues, [first_issue, second_issue])
+            assign(:issues, page([first_issue, second_issue]))
           end
 
           it "renders a list of issues" do

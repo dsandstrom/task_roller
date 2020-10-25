@@ -19,7 +19,7 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         assign(:category, category)
         assign(:project, project)
-        assign(:tasks, [first_task, second_task])
+        assign(:tasks, page([first_task, second_task]))
       end
 
       it "renders new task link" do
@@ -49,7 +49,7 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         second_task.user.destroy
         second_task.reload
-        assign(:tasks, [first_task, second_task])
+        assign(:tasks, page([first_task, second_task]))
       end
 
       it "renders a list of tasks" do
@@ -80,7 +80,7 @@ RSpec.describe "tasks/index", type: :view do
         before(:each) do
           assign(:category, category)
           assign(:project, project)
-          assign(:tasks, [first_task, second_task])
+          assign(:tasks, page([first_task, second_task]))
         end
 
         it "renders new task link" do
@@ -124,7 +124,7 @@ RSpec.describe "tasks/index", type: :view do
         before(:each) do
           assign(:category, category)
           assign(:project, project)
-          assign(:tasks, [first_task, second_task])
+          assign(:tasks, page([first_task, second_task]))
         end
 
         it "doesn't render new task link" do

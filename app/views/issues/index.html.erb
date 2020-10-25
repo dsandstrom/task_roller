@@ -29,7 +29,8 @@
 
 <div class="issues">
   <% if @issues.any? || searching? %>
-    <%= render 'filter_form', category: @category, project: @project %>
+    <%= render 'filter_form', category: @category, project: @project,
+                              issues: @issues %>
 
     <% if @issues.any? %>
       <%= render @issues %>
@@ -40,3 +41,5 @@
     <p class="no-issue">None yet</p>
   <% end %>
 </div>
+
+<%= render 'shared/simple_page_links', collection: @issues %>

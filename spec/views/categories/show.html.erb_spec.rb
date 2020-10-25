@@ -16,8 +16,8 @@ RSpec.describe "categories/show", type: :view do
     context "when it has no projects" do
       before do
         @projects = assign(:projects, [])
-        @issues = assign(:issues, [])
-        @tasks = assign(:issues, [])
+        @issues = assign(:issues, page([]))
+        @tasks = assign(:tasks, page([]))
       end
 
       it "renders name" do
@@ -60,8 +60,8 @@ RSpec.describe "categories/show", type: :view do
 
       before do
         @projects = assign(:projects, [project])
-        @issues = assign(:issues, [issue])
-        @tasks = assign(:tasks, [task])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([task]))
       end
 
       it "renders a list of projects" do
@@ -89,8 +89,8 @@ RSpec.describe "categories/show", type: :view do
         task.reload
 
         @projects = assign(:projects, [project])
-        @issues = assign(:issues, [])
-        @tasks = assign(:tasks, [task])
+        @issues = assign(:issues, page([]))
+        @tasks = assign(:tasks, page([task]))
 
         Fabricate(:task_type)
       end
@@ -120,8 +120,8 @@ RSpec.describe "categories/show", type: :view do
         issue.reload
 
         @projects = assign(:projects, [project])
-        @issues = assign(:issues, [issue])
-        @tasks = assign(:tasks, [])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([]))
 
         Fabricate(:issue_type)
       end
@@ -155,8 +155,8 @@ RSpec.describe "categories/show", type: :view do
 
       before do
         @projects = assign(:projects, [project])
-        @issues = assign(:issues, [issue])
-        @tasks = assign(:tasks, [task])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([task]))
       end
 
       it "renders a list of projects" do
@@ -200,8 +200,8 @@ RSpec.describe "categories/show", type: :view do
 
       before do
         @projects = assign(:projects, [project])
-        @issues = assign(:issues, [issue])
-        @tasks = assign(:tasks, [task])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([task]))
       end
 
       it "renders a list of projects" do
@@ -246,8 +246,8 @@ RSpec.describe "categories/show", type: :view do
 
         before do
           @projects = assign(:projects, [project])
-          @issues = assign(:issues, [issue])
-          @tasks = assign(:tasks, [task])
+          @issues = assign(:issues, page([issue]))
+          @tasks = assign(:tasks, page([task]))
         end
 
         it "renders a list of projects" do

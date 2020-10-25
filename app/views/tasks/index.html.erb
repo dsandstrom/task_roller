@@ -20,11 +20,13 @@
       </p>
     <% end %>
   </header>
+
 <% elsif @category %>
   <%= category_header @category %>
   <header class="tasks-header">
     <h2>Category Tasks</h2>
   </header>
+
 <% elsif @user %>
   <%= user_header @user %>
   <header class="tasks-header">
@@ -35,4 +37,5 @@
   <header class="tasks-header"></header>
 <% end %>
 
-<%= render 'tasks/tasks', tasks: @tasks, path: filter_form_path %>
+<%= render 'tasks/tasks', tasks: @tasks,
+                          path: filter_form_path %>

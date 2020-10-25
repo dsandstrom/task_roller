@@ -1,6 +1,4 @@
 .pagination {
-  margin-bottom: 1rem;
-
   .page,
   .first,
   .prev,
@@ -25,6 +23,16 @@
 
   .last {
     margin-right: 0;
+  }
+}
+
+.page-links {
+  .page-entries-info {
+    margin-bottom: 1rem;
+  }
+
+  .pagination {
+    text-align: center;
   }
 }
 
