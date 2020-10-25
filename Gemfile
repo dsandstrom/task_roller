@@ -50,6 +50,8 @@ gem 'pundit', '~> 2.1.0'
 gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
                              tag: 'v0.7.0'
 
+gem 'kaminari', '~> 1.2.1'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console
