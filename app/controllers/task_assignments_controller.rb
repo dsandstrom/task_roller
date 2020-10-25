@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
+# TODO: rename to AssignmentsController?
 class TaskAssignmentsController < ApplicationController
-  before_action :set_task
+  before_action :set_task, except: :index
+
+  def index
+    authorize Task
+    @user = User.find(params[:user_id])
+    @tasks = @user.assignments.filter_by(build_filters)
+  end
 
   def edit
   end
@@ -26,5 +33,13 @@ class TaskAssignmentsController < ApplicationController
 
     def task_params
       params.require(:task).permit(assignee_ids: [])
+    end
+
+    def build_filters
+      filters = {}
+      %i[status order].each do |param|
+        filters[param] = params[param]
+      end
+      filters
     end
 end
