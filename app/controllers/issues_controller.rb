@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add user/issues action
-
 class IssuesController < ApplicationController
   before_action :authorize_issue, only: %i[index new show destroy]
   before_action :set_category_or_user, only: :index
