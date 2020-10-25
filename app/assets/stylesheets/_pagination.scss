@@ -1,0 +1,42 @@
+.pagination {
+  margin-bottom: 1rem;
+
+  .page,
+  .first,
+  .prev,
+  .next,
+  .last {
+    margin: .5rem;
+    padding: 0;
+    line-height: 1.4;
+
+    a {
+      padding: .25rem .5rem;
+    }
+
+    &.current {
+      color: $gray;
+    }
+  }
+
+  .first {
+    margin-left: 0;
+  }
+
+  .last {
+    margin-right: 0;
+  }
+}
+
+.simple-page-links {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-top: 2rem;
+  column-gap: 1rem;
+  color: $gray;
+
+  :first-child {
+    text-align: right;
+  }
+}
