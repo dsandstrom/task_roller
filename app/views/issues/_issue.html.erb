@@ -3,7 +3,7 @@
     <h3 class="issue-summary">
       <%= issue_type_icon_tag(issue.issue_type) %>
       <%= link_to_if policy(issue).show?,
-                     issue.summary, issue_path(issue) %>
+                     issue.id_and_summary, issue_path(issue) %>
     </h3>
   </header>
 
