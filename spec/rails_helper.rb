@@ -68,6 +68,7 @@ RSpec.configure do |config|
 
   config.include TestHelpers::Authorization, type: :controller
   config.include TestHelpers::Pundit, type: :view
+  config.include TestHelpers::Pagination, type: :view
 end
 
 Shoulda::Matchers.configure do |config|
