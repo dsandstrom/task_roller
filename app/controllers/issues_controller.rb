@@ -18,7 +18,7 @@ class IssuesController < ApplicationController
       else
         @category.issues
       end
-    @issues = @issues.filter_by(build_filters)
+    @issues = @issues.filter_by(build_filters).page(params[:page])
   end
 
   def show
