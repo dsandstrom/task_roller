@@ -44,14 +44,15 @@ label {
   position: relative;
 
   &.disabled {
-    &::after {
-      content: " (can't change)";
-      font-weight: normal;
-    }
-
     label {
       color: $dark-gray;
       cursor: text;
+
+      &::after {
+        content: " (can't change)";
+        font-size: 95%;
+        font-weight: normal;
+      }
     }
   }
 
