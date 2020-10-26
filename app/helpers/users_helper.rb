@@ -23,7 +23,7 @@ module UsersHelper
     # TODO: rename Profile to Dashboard?
     def user_nav_links(user)
       links = [link_to_unless_current('Profile', user_path(user))]
-      if user.id == current_user.id
+      if current_user && user.id == current_user.id
         links.append link_to_unless_current('Subscribed Tasks',
                                             task_subscriptions_path)
       end
