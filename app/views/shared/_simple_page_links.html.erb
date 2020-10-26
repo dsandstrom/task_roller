@@ -1,3 +1,5 @@
+<% return if collection.none?  %>
+
 <p class="simple-page-links">
   <span>
     <%= link_to_if path_to_previous_page(collection),
