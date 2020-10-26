@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class TaskSubscription < ApplicationRecord
-  validates :user_id, presence: true
+  MESSAGE = 'already subscribed to task'
+  validates :user_id, presence: true,
+                      uniqueness: { scope: :task_id, message: MESSAGE }
   validates :task_id, presence: true
 
-  belongs_to :user, class_name: 'User'
-  belongs_to :task, class_name: 'Task'
+  belongs_to :user
+  belongs_to :task
 end

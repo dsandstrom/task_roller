@@ -32,9 +32,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                      dependent: :destroy, inverse_of: :target
   has_many :duplicates, through: :target_task_connections, class_name: 'Task',
                         source: :source
-  has_many :task_subscriptions, foreign_key: :task_id, dependent: :destroy
-  has_many :subscribers, through: :task_subscriptions, foreign_key: :user_id,
-                         class_name: 'User'
+  has_many :task_subscriptions, dependent: :destroy
+  has_many :subscribers, through: :task_subscriptions, source: :user
 
   accepts_nested_attributes_for :assignees
 
