@@ -13,7 +13,7 @@ class UsersController < ApplicationController
 
   # TODO: show tasks from reviews by user
   def show
-    # TODO: for reviewer+, show created tasks, tasks ready for review
+    # TODO: for reviewer+, show tasks ready for review
   end
 
   def new
