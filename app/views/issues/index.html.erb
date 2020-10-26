@@ -31,12 +31,7 @@
   <% if @issues.any? || searching? %>
     <%= render 'filter_form', category: @category, project: @project,
                               user: @user, issues: @issues %>
-
-    <% if @issues.any? %>
-      <%= render @issues %>
-    <% else %>
-      <p class="no-issue">None found</p>
-    <% end %>
+    <%= render @issues %>
   <% else %>
     <p class="no-issue">None yet</p>
   <% end %>
