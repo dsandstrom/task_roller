@@ -34,12 +34,4 @@ class TaskAssignmentsController < ApplicationController
     def task_params
       params.require(:task).permit(assignee_ids: [])
     end
-
-    def build_filters
-      filters = {}
-      %i[status order].each do |param|
-        filters[param] = params[param]
-      end
-      filters
-    end
 end

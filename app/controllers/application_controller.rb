@@ -33,6 +33,14 @@ class ApplicationController < ActionController::Base
       @project = @category.projects.find(params[:project_id])
     end
 
+    def build_filters
+      filters = {}
+      %i[status order].each do |param|
+        filters[param] = params[param]
+      end
+      filters
+    end
+
     def user_not_authorized
       redirect_to :unauthorized
     end
