@@ -66,7 +66,34 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "GET #new" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    context "for an admin" do
+      before { login(admin) }
+
+      context "when an IssueType and a User" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:user_reporter)
+        end
+
+        it "returns a success response" do
+          get :new, params: { category_id: category.to_param,
+                              project_id: project.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when no IssueTypes" do
+        before { Fabricate(:user_reporter) }
+
+        it "redirects to roller_types_url" do
+          get :new, params: { category_id: category.to_param,
+                              project_id: project.to_param }
+          expect(response).to redirect_to(roller_types_url)
+        end
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type.downcase}")) }
 

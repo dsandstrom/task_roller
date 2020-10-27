@@ -29,11 +29,11 @@ class IssuesController < ApplicationController
   def new
     if @issue_types&.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
-                                     user: current_user)
+                                     user_id: current_user.id)
     else
-      # TODO: redirect to /issues_types if admin signed in
-      redirect_to project_url(@project),
-                  alert: 'App Error: Issue types are required'
+      redirect_url =
+        policy(IssueType).create? ? roller_types_url : project_url(@project)
+      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end
   end
 
@@ -41,7 +41,7 @@ class IssuesController < ApplicationController
 
   def create
     @issue = @project.issues.build(issue_params)
-    @issue.user = current_user
+    @issue.user_id = current_user.id
 
     if @issue.save
       redirect_to issue_url(@issue), success: 'Issue was successfully created.'

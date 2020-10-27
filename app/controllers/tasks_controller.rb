@@ -37,9 +37,9 @@ class TasksController < ApplicationController
       @task = @project.tasks.build(task_type_id: @task_types.first.id)
       @task.issue = @issue
     else
-      # TODO: redirect to /issues_types if admin signed in
-      redirect_to project_url(@project),
-                  alert: 'App Error: Task types are required'
+      redirect_url =
+        policy(TaskType).create? ? roller_types_url : project_url(@project)
+      redirect_to redirect_url, alert: 'App Error: Task Types are required'
     end
   end
 
