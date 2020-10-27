@@ -40,4 +40,20 @@
       }
     }
   }
+
+  &.button-unsubscribe {
+    &::before {
+      content: 'Subscribed';
+    }
+
+    &:hover {
+      border-color: $color-warning-hover;
+      background-color: transparent;
+      color: $color-warning-hover;
+
+      &::before {
+        content: 'Unsubscribe';
+      }
+    }
+  }
 }

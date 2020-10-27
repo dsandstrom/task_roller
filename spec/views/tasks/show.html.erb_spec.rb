@@ -635,6 +635,38 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
+
+    context "when not subscribed" do
+      before do
+        @task = assign(:task, Fabricate(:task, project: @project))
+      end
+
+      it "renders new task_subscription link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: task_task_subscriptions_path(@task))
+      end
+    end
+
+    context "when subscribed" do
+      before do
+        @task = assign(:task, Fabricate(:task))
+        @task_subscription =
+          assign(:task_subscription, Fabricate(:task_subscription))
+      end
+
+      it "doesn't render new task_subscription link" do
+        render
+        expect(rendered)
+          .not_to have_link(nil, href: task_task_subscriptions_path(@task))
+      end
+
+      it "renders destroy task_subscription link" do
+        render
+        url = task_subscription_path(@task_subscription)
+        assert_select "a[data-method='delete'][href='#{url}']"
+      end
+    end
   end
 
   context "for a worker" do

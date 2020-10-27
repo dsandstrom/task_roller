@@ -28,6 +28,8 @@ class TasksController < ApplicationController
 
   def show
     # TODO: add feed of comments, reviews, progresssions, assignments
+    @task_subscription =
+      @task.task_subscriptions.find_by(user_id: current_user.id)
   end
 
   def new
