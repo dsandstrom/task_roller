@@ -2,7 +2,7 @@
 
 class TaskCommentsController < ApplicationController
   before_action :authorize_task_comment, only: %i[index new create destroy]
-  before_action :set_task
+  before_action :set_task, only: %i[new create]
   before_action :set_task_comment, only: %i[edit update destroy]
 
   def new
@@ -48,7 +48,8 @@ class TaskCommentsController < ApplicationController
     end
 
     def set_task_comment
-      @task_comment = authorize(@task.comments.find(params[:id]))
+      @task_comment = authorize(TaskComment.find(params[:id]))
+      @task = @task_comment.task
     end
 
     def redirect_url

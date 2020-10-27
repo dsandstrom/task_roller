@@ -31,8 +31,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for their own TaskComment" do
         it "returns a success response" do
           task_comment = Fabricate(:task_comment, task: task, user: admin)
-          get :edit, params: { task_id: task.to_param,
-                               id: task_comment.to_param }
+          get :edit, params: { id: task_comment.to_param }
           expect(response).to be_successful
         end
       end
@@ -40,8 +39,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for someone else's TaskComment" do
         it "returns a success response" do
           task_comment = Fabricate(:task_comment, task: task)
-          get :edit, params: { task_id: task.to_param,
-                               id: task_comment.to_param }
+          get :edit, params: { id: task_comment.to_param }
           expect(response).to be_successful
         end
       end
@@ -57,8 +55,7 @@ RSpec.describe TaskCommentsController, type: :controller do
           it "returns a success response" do
             task_comment =
               Fabricate(:task_comment, task: task, user: current_user)
-            get :edit, params: { task_id: task.to_param,
-                                 id: task_comment.to_param }
+            get :edit, params: { id: task_comment.to_param }
             expect(response).to be_successful
           end
         end
@@ -66,8 +63,7 @@ RSpec.describe TaskCommentsController, type: :controller do
         context "for someone else's TaskComment" do
           it "should be unauthorized" do
             task_comment = Fabricate(:task_comment, task: task)
-            get :edit, params: { task_id: task.to_param,
-                                 id: task_comment.to_param }
+            get :edit, params: { id: task_comment.to_param }
             expect_to_be_unauthorized(response)
           end
         end
@@ -121,8 +117,7 @@ RSpec.describe TaskCommentsController, type: :controller do
           it "updates the requested task_comment" do
             task_comment = Fabricate(:task_comment, task: task, user: admin)
             expect do
-              put :update, params: { task_id: task.to_param,
-                                     id: task_comment.to_param,
+              put :update, params: { id: task_comment.to_param,
                                      task_comment: new_attributes }
               task_comment.reload
             end.to change(task_comment, :body).to("New body")
@@ -132,8 +127,7 @@ RSpec.describe TaskCommentsController, type: :controller do
             task_comment = Fabricate(:task_comment, task: task, user: admin)
             url =
               task_url(task, anchor: "comment-#{task_comment.id}")
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
+            put :update, params: { id: task_comment.to_param,
                                    task_comment: new_attributes }
             expect(response).to redirect_to(url)
           end
@@ -142,8 +136,7 @@ RSpec.describe TaskCommentsController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             task_comment = Fabricate(:task_comment, task: task, user: admin)
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
+            put :update, params: { id: task_comment.to_param,
                                    task_comment: invalid_attributes }
             expect(response).to be_successful
           end
@@ -157,8 +150,7 @@ RSpec.describe TaskCommentsController, type: :controller do
           it "updates the requested task_comment" do
             task_comment = Fabricate(:task_comment, task: task)
             expect do
-              put :update, params: { task_id: task.to_param,
-                                     id: task_comment.to_param,
+              put :update, params: { id: task_comment.to_param,
                                      task_comment: new_attributes }
               task_comment.reload
             end.to change(task_comment, :body).to("New body")
@@ -168,8 +160,7 @@ RSpec.describe TaskCommentsController, type: :controller do
             task_comment = Fabricate(:task_comment, task: task)
             url =
               task_url(task, anchor: "comment-#{task_comment.id}")
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
+            put :update, params: { id: task_comment.to_param,
                                    task_comment: new_attributes }
             expect(response).to redirect_to(url)
           end
@@ -178,8 +169,7 @@ RSpec.describe TaskCommentsController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
             task_comment = Fabricate(:task_comment, task: task)
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
+            put :update, params: { id: task_comment.to_param,
                                    task_comment: invalid_attributes }
             expect(response).to be_successful
           end
@@ -199,8 +189,7 @@ RSpec.describe TaskCommentsController, type: :controller do
               task_comment =
                 Fabricate(:task_comment, task: task, user: current_user)
               expect do
-                put :update, params: { task_id: task.to_param,
-                                       id: task_comment.to_param,
+                put :update, params: { id: task_comment.to_param,
                                        task_comment: new_attributes }
                 task_comment.reload
               end.to change(task_comment, :body).to("New body")
@@ -211,8 +200,7 @@ RSpec.describe TaskCommentsController, type: :controller do
                                                       user: current_user)
               anchor = "comment-#{task_comment.id}"
               url = task_url(task, anchor: anchor)
-              put :update, params: { task_id: task.to_param,
-                                     id: task_comment.to_param,
+              put :update, params: { id: task_comment.to_param,
                                      task_comment: new_attributes }
               expect(response).to redirect_to(url)
             end
@@ -222,8 +210,7 @@ RSpec.describe TaskCommentsController, type: :controller do
             it "returns a success response ('edit' template)" do
               task_comment =
                 Fabricate(:task_comment, task: task, user: current_user)
-              put :update, params: { task_id: task.to_param,
-                                     id: task_comment.to_param,
+              put :update, params: { id: task_comment.to_param,
                                      task_comment: invalid_attributes }
               expect(response).to be_successful
             end
@@ -234,8 +221,7 @@ RSpec.describe TaskCommentsController, type: :controller do
           it "doesn't update the requested task_comment" do
             task_comment = Fabricate(:task_comment, task: task)
             expect do
-              put :update, params: { task_id: task.to_param,
-                                     id: task_comment.to_param,
+              put :update, params: { id: task_comment.to_param,
                                      task_comment: new_attributes }
               task_comment.reload
             end.not_to change(task_comment, :body)
@@ -243,8 +229,7 @@ RSpec.describe TaskCommentsController, type: :controller do
 
           it "should be unauthorized" do
             task_comment = Fabricate(:task_comment, task: task)
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
+            put :update, params: { id: task_comment.to_param,
                                    task_comment: new_attributes }
             expect_to_be_unauthorized(response)
           end
@@ -260,15 +245,13 @@ RSpec.describe TaskCommentsController, type: :controller do
       it "destroys the requested task_comment" do
         task_comment = Fabricate(:task_comment, task: task)
         expect do
-          delete :destroy, params: { task_id: task.to_param,
-                                     id: task_comment.to_param }
+          delete :destroy, params: { id: task_comment.to_param }
         end.to change(TaskComment, :count).by(-1)
       end
 
       it "redirects to the task_comments list" do
         task_comment = Fabricate(:task_comment, task: task)
-        delete :destroy, params: { task_id: task.to_param,
-                                   id: task_comment.to_param }
+        delete :destroy, params: { id: task_comment.to_param }
         expect(response).to redirect_to(task_url(task))
       end
     end
@@ -282,15 +265,13 @@ RSpec.describe TaskCommentsController, type: :controller do
         it "doesn't destroy the requested task_comment" do
           task_comment = Fabricate(:task_comment, task: task)
           expect do
-            delete :destroy, params: { task_id: task.to_param,
-                                       id: task_comment.to_param }
+            delete :destroy, params: { id: task_comment.to_param }
           end.not_to change(TaskComment, :count)
         end
 
         it "should be unauthorized" do
           task_comment = Fabricate(:task_comment, task: task)
-          delete :destroy, params: { task_id: task.to_param,
-                                     id: task_comment.to_param }
+          delete :destroy, params: { id: task_comment.to_param }
           expect_to_be_unauthorized(response)
         end
       end
