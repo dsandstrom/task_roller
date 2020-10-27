@@ -5,6 +5,7 @@
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment
+# TODO: allow user to pick when subscriptions are created
 
 class TasksController < ApplicationController
   before_action :authorize_task, only: %i[index new create destroy open close]
@@ -48,6 +49,7 @@ class TasksController < ApplicationController
   def create
     build_task
     if @task.save
+      @task.task_subscriptions.create(user_id: current_user.id)
       redirect_to task_url(@task), success: 'Task was successfully created.'
     else
       set_form_options
@@ -72,6 +74,7 @@ class TasksController < ApplicationController
 
   def open
     if @task.open
+      @task.task_subscriptions.create(user_id: current_user.id)
       redirect_to task_url(@task), success: 'Task was successfully opened.'
     else
       set_form_options
@@ -81,6 +84,7 @@ class TasksController < ApplicationController
 
   def close
     if @task.close
+      @task.task_subscriptions.create(user_id: current_user.id)
       redirect_to task_url(@task), success: 'Task was successfully closed.'
     else
       set_form_options

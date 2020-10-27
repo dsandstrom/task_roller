@@ -247,23 +247,27 @@ RSpec.describe TasksController, type: :controller do
           context "with valid params" do
             it "creates a new Project Task" do
               expect do
-                post :create, params: { category_id: category.to_param,
-                                        project_id: project.to_param,
+                post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
               end.to change(project.tasks, :count).by(1)
             end
 
             it "creates a new current_user Task" do
               expect do
-                post :create, params: { category_id: category.to_param,
-                                        project_id: project.to_param,
+                post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
               end.to change(current_user.tasks, :count).by(1)
             end
 
+            it "creates a new current_user TaskSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+
             it "redirects to the created task" do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
+              post :create, params: { project_id: project.to_param,
                                       task: valid_attributes }
               url = task_path(Task.last)
               expect(response).to redirect_to(url)
@@ -271,9 +275,15 @@ RSpec.describe TasksController, type: :controller do
           end
 
           context "with invalid params" do
+            it "doesn't create a Task" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: invalid_attributes }
+              end.not_to change(Task, :count)
+            end
+
             it "returns a success response ('new' template)" do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
+              post :create, params: { project_id: project.to_param,
                                       task: invalid_attributes }
               expect(response).to be_successful
             end
@@ -286,8 +296,7 @@ RSpec.describe TasksController, type: :controller do
 
             it "creates an assignment" do
               expect do
-                post :create, params: { category_id: category.to_param,
-                                        project_id: project.to_param,
+                post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
               end.to change(user.assignments, :count).by(1)
             end
@@ -298,16 +307,14 @@ RSpec.describe TasksController, type: :controller do
           context "with valid params" do
             it "creates a new Task" do
               expect do
-                post :create, params: { category_id: category.to_param,
-                                        project_id: project.to_param,
+                post :create, params: { project_id: project.to_param,
                                         issue_id: issue.to_param,
                                         task: valid_attributes }
               end.to change(issue.tasks, :count).by(1)
             end
 
             it "redirects to the created task" do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
+              post :create, params: { project_id: project.to_param,
                                       issue_id: issue.to_param,
                                       task: valid_attributes }
               url = task_path(Task.last)
@@ -317,8 +324,7 @@ RSpec.describe TasksController, type: :controller do
 
           context "with invalid params" do
             it "returns a success response ('new' template)" do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
+              post :create, params: { project_id: project.to_param,
                                       issue_id: issue.to_param,
                                       task: invalid_attributes }
               expect(response).to be_successful
@@ -336,15 +342,13 @@ RSpec.describe TasksController, type: :controller do
 
         it "doesn't create a Task" do
           expect do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
+            post :create, params: { project_id: project.to_param,
                                     task: valid_attributes }
           end.not_to change(Task, :count)
         end
 
         it "should be unauthorized" do
-          post :create, params: { category_id: category.to_param,
-                                  project_id: project.to_param,
+          post :create, params: { project_id: project.to_param,
                                   task: valid_attributes }
           expect_to_be_unauthorized(response)
         end
@@ -559,6 +563,29 @@ RSpec.describe TasksController, type: :controller do
             url = task_url(task)
             expect(response).to redirect_to(url)
           end
+
+          context "when user is not subscribed" do
+            before { current_user.task_subscriptions.destroy_all }
+
+            it "creates a new current_user TaskSubscription" do
+              task = Fabricate(:closed_task, project: project)
+              expect do
+                put :open, params: { id: task.to_param }
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when user is already subscribed" do
+            let(:task) { Fabricate(:closed_task, project: project) }
+
+            before { current_user.task_subscriptions.create(task: task) }
+
+            it "creates a new current_user TaskSubscription" do
+              expect do
+                put :open, params: { id: task.to_param }
+              end.not_to change(TaskSubscription, :count)
+            end
+          end
         end
 
         context "with invalid params" do
@@ -628,6 +655,29 @@ RSpec.describe TasksController, type: :controller do
             put :close, params: { id: task.to_param }
             url = task_url(task)
             expect(response).to redirect_to(url)
+          end
+
+          context "when user is not subscribed" do
+            before { current_user.task_subscriptions.destroy_all }
+
+            it "creates a new current_user TaskSubscription" do
+              task = Fabricate(:open_task, project: project)
+              expect do
+                put :close, params: { id: task.to_param }
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when user is already subscribed" do
+            let(:task) { Fabricate(:open_task, project: project) }
+
+            before { current_user.task_subscriptions.create(task: task) }
+
+            it "creates a new current_user TaskSubscription" do
+              expect do
+                put :close, params: { id: task.to_param }
+              end.not_to change(TaskSubscription, :count)
+            end
           end
         end
 
