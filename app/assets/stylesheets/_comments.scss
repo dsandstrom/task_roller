@@ -26,11 +26,10 @@
   }
 
   footer {
-    padding: .5rem 1rem;
-    border-top: 1px dashed $light-gray;
-
     p {
       margin: 0;
+      padding: .5rem 1rem;
+      border-top: 1px dashed $light-gray;
     }
 
     &:empty {

@@ -4,6 +4,7 @@ comment = @task.comments.build
 assignees = @task.assignees.includes(:progressions)
 assigned = @task.assigned
 # TODO: add re-open, force close to history
+# TODO: add page titles for browsers
 %>
 
 <div class="task-show-page">
@@ -231,14 +232,14 @@ assigned = @task.assigned
         <div class="comment task-description">
           <header class="task-user-date">
             <p><span class="task-user"><%= @task.user ? @task.user.name_or_email : User.destroyed_name %></span>:</p>
-            <p class="task-date"><%= format_date @task.created_at %></p>
+            <p class="task-dates"><%= formatted_dates @task %></p>
           </header>
 
           <%= content_tag :main, @task.description_html.html_safe %>
 
           <% if policy(@task).edit?  %>
             <footer>
-              <%= link_to 'edit', edit_task_path(@task) %>
+              <p><%= link_to 'edit', edit_task_path(@task) %></p>
             </footer>
           <% end %>
         </div>

@@ -112,14 +112,14 @@
         <div class="comment issue-description">
           <header class="issue-user-date">
             <p><span class="issue-user"><%= @issue.user ? @issue.user.name_or_email : User.destroyed_name %></span>:</p>
-            <p class="issue-dates"><%= format_date @issue.created_at %></p>
+            <p class="issue-dates"><%= formatted_dates @issue %></p>
           </header>
 
           <%= content_tag :main, @issue.description_html.html_safe %>
 
           <% if policy(@issue).edit? %>
             <footer>
-              <%= link_to 'edit', edit_issue_path(@issue) %>
+              <p><%= link_to 'edit', edit_issue_path(@issue) %></p>
             </footer>
           <% end %>
         </div>

@@ -17,4 +17,11 @@ module CommentsHelper
 
     value.strftime("#{date_format}/%Y-#{time_format}")
   end
+
+  def formatted_dates(object)
+    created_date = format_date(object.created_at)
+    return created_date if object.updated_at == object.created_at
+
+    "#{created_date} (ed. #{format_date(object.updated_at)})"
+  end
 end

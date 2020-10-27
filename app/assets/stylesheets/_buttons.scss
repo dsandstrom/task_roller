@@ -47,9 +47,8 @@
     }
 
     &:hover {
-      border-color: $color-warning-hover;
       background-color: transparent;
-      color: $color-warning-hover;
+      color: $color-success-hover;
 
       &::before {
         content: 'Unsubscribe';
