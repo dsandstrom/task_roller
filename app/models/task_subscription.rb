@@ -8,4 +8,6 @@ class TaskSubscription < ApplicationRecord
 
   belongs_to :user
   belongs_to :task
+
+  delegate :heading, to: :task
 end

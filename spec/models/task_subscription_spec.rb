@@ -14,6 +14,7 @@ RSpec.describe TaskSubscription, type: :model do
   subject { @task_subscription }
 
   it { is_expected.to be_valid }
+  it { is_expected.to respond_to(:heading) }
 
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:task_id) }
