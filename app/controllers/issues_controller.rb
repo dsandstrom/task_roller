@@ -44,6 +44,7 @@ class IssuesController < ApplicationController
     @issue.user_id = current_user.id
 
     if @issue.save
+      @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully created.'
     else
       set_form_options
@@ -70,6 +71,7 @@ class IssuesController < ApplicationController
     @project = @issue.project
     @category = @issue.category
     if @issue.open
+      @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
     else
       set_form_options
@@ -81,6 +83,7 @@ class IssuesController < ApplicationController
     @project = @issue.project
     @category = @issue.category
     if @issue.close
+      @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully closed.'
     else
       set_form_options

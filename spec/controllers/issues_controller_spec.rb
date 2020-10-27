@@ -180,15 +180,20 @@ RSpec.describe IssuesController, type: :controller do
         context "with valid params" do
           it "creates a new Issue" do
             expect do
-              post :create, params: { category_id: category.to_param,
-                                      project_id: project.to_param,
+              post :create, params: { project_id: project.to_param,
                                       issue: valid_attributes }
             end.to change(current_user.issues, :count).by(1)
           end
 
+          it "creates a new IssueSubscription" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      issue: valid_attributes }
+            end.to change(current_user.issue_subscriptions, :count).by(1)
+          end
+
           it "redirects to the created issue" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
+            post :create, params: { project_id: project.to_param,
                                     issue: valid_attributes }
             url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
@@ -196,9 +201,15 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "with invalid params" do
+          it "doesn't create a new Issue" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      issue: invalid_attributes }
+            end.not_to change(Issue, :count)
+          end
+
           it "returns a success response ('new' template)" do
-            post :create, params: { category_id: category.to_param,
-                                    project_id: project.to_param,
+            post :create, params: { project_id: project.to_param,
                                     issue: invalid_attributes }
             expect(response).to be_successful
           end
@@ -381,6 +392,31 @@ RSpec.describe IssuesController, type: :controller do
           put :open, params: { id: issue.to_param }
           expect(response).to redirect_to(url)
         end
+
+        context "when user not subscribed" do
+          before { admin.issue_subscriptions.destroy_all }
+
+          it "creates a new IssueSubscription" do
+            issue = Fabricate(:closed_issue, project: project)
+            expect do
+              put :open, params: { id: issue.to_param }
+            end.to change(admin.issue_subscriptions, :count).by(1)
+          end
+        end
+
+        context "when user already subscribed" do
+          let(:issue) { Fabricate(:closed_issue, project: project) }
+
+          before do
+            Fabricate(:issue_subscription, user: admin, issue: issue)
+          end
+
+          it "doesn't create a new IssueSubscription" do
+            expect do
+              put :open, params: { id: issue.to_param }
+            end.not_to change(IssueSubscription, :count)
+          end
+        end
       end
 
       context "with invalid params" do
@@ -437,6 +473,31 @@ RSpec.describe IssuesController, type: :controller do
 
           put :close, params: { id: issue.to_param }
           expect(response).to redirect_to(url)
+        end
+
+        context "when user not subscribed" do
+          before { admin.issue_subscriptions.destroy_all }
+
+          it "creates a new IssueSubscription" do
+            issue = Fabricate(:open_issue, project: project)
+            expect do
+              put :close, params: { id: issue.to_param }
+            end.to change(admin.issue_subscriptions, :count).by(1)
+          end
+        end
+
+        context "when user already subscribed" do
+          let(:issue) { Fabricate(:open_issue, project: project) }
+
+          before do
+            Fabricate(:issue_subscription, user: admin, issue: issue)
+          end
+
+          it "doesn't create a new IssueSubscription" do
+            expect do
+              put :close, params: { id: issue.to_param }
+            end.not_to change(IssueSubscription, :count)
+          end
         end
       end
 
