@@ -2,30 +2,15 @@
 
 require "rails_helper"
 
-RSpec.describe SubscriptionPolicy, type: :policy do
+RSpec.describe IssueSubscriptionPolicy, type: :policy do
   subject { described_class }
 
-  permissions :index?, :new?, :create? do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-      it "permits #{employee_type}" do
-        user = Fabricate("user_#{employee_type.downcase}")
-        expect(subject).to permit(user)
-      end
-    end
-
-    it "blocks non-employees" do
-      user = Fabricate(:user)
-      user.employee_type = nil
-      expect(subject).not_to permit(user)
-    end
-  end
-
-  permissions :show?, :edit?, :update?, :destroy? do
+  permissions :destroy? do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "when belongs to them" do
         it "permits #{employee_type}" do
           user = Fabricate("user_#{employee_type.downcase}")
-          subscription = Fabricate(:task_subscription, user: user)
+          subscription = Fabricate(:issue_subscription, user: user)
           expect(subject).to permit(user, subscription)
         end
       end
@@ -33,7 +18,7 @@ RSpec.describe SubscriptionPolicy, type: :policy do
       context "when doesn't belong to them" do
         it "permits #{employee_type}" do
           user = Fabricate("user_#{employee_type.downcase}")
-          subscription = Fabricate(:task_subscription)
+          subscription = Fabricate(:issue_subscription)
           expect(subject).not_to permit(user, subscription)
         end
       end
@@ -41,7 +26,7 @@ RSpec.describe SubscriptionPolicy, type: :policy do
 
     it "blocks non-employees" do
       user = Fabricate(:user)
-      subscription = Fabricate(:task_subscription, user: user)
+      subscription = Fabricate(:issue_subscription, user: user)
       user.employee_type = nil
       expect(subject).not_to permit(user, subscription)
     end
