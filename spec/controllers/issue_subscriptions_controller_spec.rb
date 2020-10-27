@@ -71,11 +71,6 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             post :create, params: { issue_id: issue.to_param }
             expect(response).to be_successful
           end
-
-          # it "redirects to the requested issue" do
-          #   post :create, params: { issue_id: issue.to_param }
-          #   expect(response).to redirect_to(issue)
-          # end
         end
       end
     end

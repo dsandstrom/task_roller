@@ -71,11 +71,6 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
             post :create, params: { task_id: task.to_param }
             expect(response).to be_successful
           end
-
-          # it "redirects to the requested task" do
-          #   post :create, params: { task_id: task.to_param }
-          #   expect(response).to redirect_to(task)
-          # end
         end
       end
     end
