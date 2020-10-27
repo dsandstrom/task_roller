@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IssueSubscription < ApplicationRecord
-  MESSAGE = 'already subscribed to task'
+  MESSAGE = 'already subscribed to issue'
   validates :user_id, presence: true,
                       uniqueness: { scope: :issue_id, message: MESSAGE }
   validates :issue_id, presence: true
