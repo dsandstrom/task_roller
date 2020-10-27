@@ -88,26 +88,26 @@ class Seeds # rubocop:disable Metrics/ClassLength
 
     def create_issue(attrs = {})
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
-      attrs.reverse_merge!(
-        issue_type_id: IssueType.ids.sample,
-        user_id: User.reporters.ids.sample,
-        project_id: Project.ids.sample,
-        summary: Faker::Company.catch_phrase,
-        description: description
-      )
-      Issue.create!(attrs)
+      attrs.reverse_merge!(issue_type_id: IssueType.ids.sample,
+                           user_id: User.reporters.ids.sample,
+                           project_id: Project.ids.sample,
+                           summary: Faker::Company.catch_phrase,
+                           description: description)
+      issue = Issue.create!(attrs)
+      issue.issue_subscriptions.create!(user_id: issue.user_id)
+      issue
     end
 
     def create_task(attrs = {})
       description = Faker::Lorem.paragraphs(3, true).join("\r\n")
-      attrs.reverse_merge!(
-        task_type_id: TaskType.ids.sample,
-        user_id: User.reviewers.ids.sample,
-        project_id: Project.ids.sample,
-        summary: Faker::Company.bs.capitalize,
-        description: description
-      )
-      Task.create!(attrs)
+      attrs.reverse_merge!(task_type_id: TaskType.ids.sample,
+                           user_id: User.reviewers.ids.sample,
+                           project_id: Project.ids.sample,
+                           summary: Faker::Company.bs.capitalize,
+                           description: description)
+      task = Task.create!(attrs)
+      task.task_subscriptions.create!(user_id: task.user_id)
+      task
     end
 
     def create_open_issue(user)
