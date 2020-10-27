@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe TaskSubscriptionPolicy, type: :policy do
+RSpec.describe SubscriptionPolicy, type: :policy do
   subject { described_class }
 
   permissions :index?, :new?, :create? do
