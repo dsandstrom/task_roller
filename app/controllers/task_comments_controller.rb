@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: create subscription on create
+# TODO: create subscription when assigned
+
 class TaskCommentsController < ApplicationController
   before_action :authorize_task_comment, only: %i[index new create destroy]
   before_action :set_task, only: %i[new create]

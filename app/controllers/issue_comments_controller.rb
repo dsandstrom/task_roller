@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: create subscription on create
+
 class IssueCommentsController < ApplicationController
   before_action :authorize_issue_comment, only: %i[index new create destroy]
   before_action :set_issue, only: %i[new create]
