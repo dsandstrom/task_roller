@@ -19,16 +19,17 @@ class RollerCommentPolicy < ApplicationPolicy
     employee?
   end
 
+  # TODO: admin need to edit? maybe just destroy
   def edit?
     return false unless employee?
 
-    admin? || record.user == user
+    admin? || record.user_id == user.id
   end
 
   def update?
     return false unless employee?
 
-    admin? || record.user == user
+    admin? || record.user_id == user.id
   end
 
   class Scope < Scope
