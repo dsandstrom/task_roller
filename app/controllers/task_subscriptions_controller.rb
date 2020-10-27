@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add js create/destroy response and partials
+
 class TaskSubscriptionsController < ApplicationController
   before_action :authorize_task_subscription, only: %i[index new create]
   before_action :set_task, only: %i[new create]
