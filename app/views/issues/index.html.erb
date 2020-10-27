@@ -1,3 +1,14 @@
+<%
+index_path =
+  if @user
+    user_issues_path(@user)
+  elsif @project
+    project_issues_path(@project)
+  elsif @category
+    category_issues_path(@category)
+  end
+%>
+
 <% if @project %>
   <%= project_header @project %>
 
@@ -27,14 +38,5 @@
   <header class="issues-header"></header>
 <% end %>
 
-<div class="issues">
-  <% if @issues.any? || searching? %>
-    <%= render 'filter_form', category: @category, project: @project,
-                              user: @user, issues: @issues %>
-    <%= render @issues %>
-  <% else %>
-    <p class="no-issue">None yet</p>
-  <% end %>
-</div>
-
-<%= render 'shared/simple_page_links', collection: @issues %>
+<%= render 'issues/issues', issues: @issues,
+                            index_path: index_path %>

@@ -22,6 +22,8 @@ class IssuesController < ApplicationController
   def show
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build
+    @issue_subscription =
+      @issue.issue_subscriptions.find_by(user_id: current_user.id)
   end
 
   def new

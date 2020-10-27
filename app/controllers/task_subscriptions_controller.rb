@@ -18,7 +18,7 @@ class TaskSubscriptionsController < ApplicationController
 
   def create
     if @task_subscription.save
-      redirect_to @task, notice: 'Subscribed to task'
+      redirect_to @task, notice: 'Subscribed to Task'
     else
       render :new
     end
@@ -26,7 +26,7 @@ class TaskSubscriptionsController < ApplicationController
 
   def destroy
     @task_subscription.destroy
-    redirect_to @task, notice: 'Unsubscribed from task'
+    redirect_to @task, notice: 'Unsubscribed from Task'
   end
 
   private

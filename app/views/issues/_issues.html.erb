@@ -1,0 +1,10 @@
+<div class="issues">
+  <% if issues.any? || searching? %>
+    <%= render 'issues/filter_form', issues: issues, index_path: index_path %>
+    <%= render issues %>
+  <% else %>
+    <p class="no-issue">None yet</p>
+  <% end %>
+</div>
+
+<%= render 'shared/simple_page_links', collection: issues %>

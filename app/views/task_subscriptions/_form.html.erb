@@ -1,4 +1,5 @@
-<%= form_with(model: task_subscription, url: task_task_subscriptions_path(task),
+<%= form_with(model: task_subscription,
+              url: task_task_subscriptions_path(task),
               local: true,
               html: { name: 'task_subscription_form',
                       class: 'task-subscription-form' }) do |form| %>

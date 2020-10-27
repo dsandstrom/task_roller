@@ -228,6 +228,40 @@ RSpec.describe "issues/show", type: :view do
         assert_select "a[data-method='delete'][href='#{second_url}']"
       end
     end
+
+    context "when not subscribed" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @comment = assign(:issue_comment, @issue.comments.build)
+      end
+
+      it "renders new issue_subscription link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+      end
+    end
+
+    context "when subscribed" do
+      before do
+        @issue = assign(:issue, Fabricate(:issue))
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription =
+          assign(:issue_subscription, Fabricate(:issue_subscription))
+      end
+
+      it "doesn't render new issue_subscription link" do
+        render
+        expect(rendered)
+          .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+      end
+
+      it "renders destroy issue_subscription link" do
+        render
+        url = issue_subscription_path(@issue_subscription)
+        assert_select "a[data-method='delete'][href='#{url}']"
+      end
+    end
   end
 
   context "for a reviewer" do

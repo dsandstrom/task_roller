@@ -3,6 +3,12 @@
 
   <div class="issue-columns">
     <div class="issue-column first-column">
+      <section class="issue-subscription-wrapper">
+        <%= render 'issue_subscriptions/button',
+                   issue_subscription: @issue_subscription,
+                   issue: @issue %>
+      </section>
+
       <section class="issue-status">
         <h4 class="issue-column-title">Status</h4>
 

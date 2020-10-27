@@ -1,0 +1,11 @@
+<%= form_with(model: issue_subscription,
+              url: issue_issue_subscriptions_path(issue),
+              local: true,
+              html: { name: 'issue_subscription_form',
+                      class: 'issue-subscription-form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

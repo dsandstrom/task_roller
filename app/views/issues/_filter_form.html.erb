@@ -1,16 +1,6 @@
 <%
-category ||= nil
-user ||= nil
-return unless category || user
-
-index_path =
-  if user
-    user_issues_path(user)
-  elsif project
-    project_issues_path(project)
-  else
-    category_issues_path(category)
-  end
+index_path ||= nil
+return unless index_path
 %>
 
 <div class="issue">

@@ -26,6 +26,8 @@ module UsersHelper
       if current_user && user.id == current_user.id
         links.append link_to_unless_current('Subscribed Tasks',
                                             task_subscriptions_path)
+        links.append link_to_unless_current('Subscribed Issues',
+                                            issue_subscriptions_path)
       end
       links.append user_main_nav_links(user)
       links
