@@ -243,7 +243,7 @@ RSpec.describe TasksController, type: :controller do
 
         before { login(current_user) }
 
-        context "when category and project" do
+        context "when project" do
           context "with valid params" do
             it "creates a new Project Task" do
               expect do
@@ -303,7 +303,7 @@ RSpec.describe TasksController, type: :controller do
           end
         end
 
-        context "when category, project, and issue" do
+        context "when project and issue" do
           context "with valid params" do
             it "creates a new Task" do
               expect do
@@ -546,8 +546,6 @@ RSpec.describe TasksController, type: :controller do
         before { login(current_user) }
 
         context "with valid params" do
-          let(:new_attributes) {}
-
           it "updates the requested task" do
             task = Fabricate(:closed_task, project: project)
 
@@ -578,7 +576,9 @@ RSpec.describe TasksController, type: :controller do
           context "when user is already subscribed" do
             let(:task) { Fabricate(:closed_task, project: project) }
 
-            before { current_user.task_subscriptions.create(task: task) }
+            before do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
 
             it "creates a new current_user TaskSubscription" do
               expect do
@@ -671,7 +671,9 @@ RSpec.describe TasksController, type: :controller do
           context "when user is already subscribed" do
             let(:task) { Fabricate(:open_task, project: project) }
 
-            before { current_user.task_subscriptions.create(task: task) }
+            before do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
 
             it "creates a new current_user TaskSubscription" do
               expect do
