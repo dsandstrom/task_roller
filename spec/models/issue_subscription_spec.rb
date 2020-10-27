@@ -15,6 +15,13 @@ RSpec.describe IssueSubscription, type: :model do
 
   it { is_expected.to be_valid }
 
+  context "when a duplicate" do
+    it "shouldn't be valid" do
+      subject.dup.save
+      expect(subject).not_to be_valid
+    end
+  end
+
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:issue_id) }
 

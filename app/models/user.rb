@@ -22,9 +22,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :issue_comments
   has_many :task_comments
   has_many :reviews
-  has_many :issue_subscriptions, foreign_key: :user_id, dependent: :destroy
-  has_many :subscribed_issues, through: :issue_subscriptions,
-                               foreign_key: :issue_id, class_name: 'Issue'
+  has_many :issue_subscriptions, dependent: :destroy
+  has_many :subscribed_issues, through: :issue_subscriptions, source: :issue
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribed_tasks, through: :task_subscriptions, source: :task
 

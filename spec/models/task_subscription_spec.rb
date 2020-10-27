@@ -21,7 +21,7 @@ RSpec.describe TaskSubscription, type: :model do
 
   context "when a duplicate" do
     it "shouldn't be valid" do
-      @task_subscription.dup.save
+      subject.dup.save
       expect(subject).not_to be_valid
     end
   end
