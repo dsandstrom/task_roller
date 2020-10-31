@@ -11,6 +11,7 @@ class TaskConnectionsController < ApplicationController
 
     if @task_connection.save
       @task_connection.source.close
+      @task_connection.subscribe_user
       redirect_to @task_connection.source, notice: notice
     else
       render :new

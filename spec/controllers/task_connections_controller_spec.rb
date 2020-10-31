@@ -64,6 +64,22 @@ RSpec.describe TaskConnectionsController, type: :controller do
             end.to change(target_task.target_task_connections, :count).by(1)
           end
 
+          it "creates a new TaskSubscription for the target" do
+            expect do
+              post :create, params: { source_id: source_task.to_param,
+                                      task_connection: valid_attributes }
+              target_task.reload
+            end.to change(target_task.task_subscriptions, :count).by(1)
+          end
+
+          it "creates a new TaskSubscription for the source user" do
+            expect do
+              post :create, params: { source_id: source_task.to_param,
+                                      task_connection: valid_attributes }
+              target_task.reload
+            end.to change(source_task.user.task_subscriptions, :count).by(1)
+          end
+
           it "closes the source task" do
             expect do
               post :create, params: { source_id: source_task.to_param,
@@ -86,6 +102,14 @@ RSpec.describe TaskConnectionsController, type: :controller do
                                       task_connection: invalid_attributes }
               source_task.reload
             end.not_to change(TaskConnection, :count)
+          end
+
+          it "doesn't create a new TaskSubscription" do
+            expect do
+              post :create, params: { source_id: source_task.to_param,
+                                      task_connection: invalid_attributes }
+              source_task.reload
+            end.not_to change(TaskSubscription, :count)
           end
 
           it "returns a success response ('new' template)" do
