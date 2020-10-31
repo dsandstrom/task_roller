@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: add ProjectSubscription
 # TODO: add friendly_id/slug
 # TODO: add icon options
 # TODO: add image

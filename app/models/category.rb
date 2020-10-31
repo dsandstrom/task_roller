@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# TODO: add category_reviewers
+# TODO: add CategorySubscription
+# TODO: add friendly_id/slug
 # TODO: add icon options
 # TODO: add image
 
