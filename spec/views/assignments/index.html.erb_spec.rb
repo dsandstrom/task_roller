@@ -2,7 +2,6 @@
 
 require "rails_helper"
 
-# TODO: spec users
 RSpec.describe "assignments/index", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }

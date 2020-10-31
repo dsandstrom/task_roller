@@ -1,6 +1,5 @@
 # rubocop config files for small Rails4/Ruby2 project
 # blog post: http://joanswork.com/rubocop-rails-getting-started/
-# TODO: copy to gist
 
 # .rubocop.yml
 
