@@ -68,11 +68,9 @@ RSpec.describe IssueConnection, type: :model do
 
   describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }
-    let(:subscriber) { Fabricate(:user_reporter) }
     let(:project) { Fabricate(:project) }
 
     context "when source and target issues" do
-      # let(:source) { Fabricate(:issue, project: project) }
       let(:target) { Fabricate(:issue, project: project) }
 
       context "and source has a user" do
@@ -87,6 +85,12 @@ RSpec.describe IssueConnection, type: :model do
             expect do
               issue_connection.subscribe_user
             end.to change(user.issue_subscriptions, :count).by(1)
+          end
+
+          it "creates only 1 IssueSubscription" do
+            expect do
+              issue_connection.subscribe_user
+            end.to change(IssueSubscription, :count).by(1)
           end
         end
 

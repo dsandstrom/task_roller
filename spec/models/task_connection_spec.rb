@@ -68,11 +68,9 @@ RSpec.describe TaskConnection, type: :model do
 
   describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }
-    let(:subscriber) { Fabricate(:user_reporter) }
     let(:project) { Fabricate(:project) }
 
     context "when source and target tasks" do
-      # let(:source) { Fabricate(:task, project: project) }
       let(:target) { Fabricate(:task, project: project) }
 
       context "and source has a user" do
@@ -87,6 +85,12 @@ RSpec.describe TaskConnection, type: :model do
             expect do
               task_connection.subscribe_user
             end.to change(user.task_subscriptions, :count).by(1)
+          end
+
+          it "creates only 1 IssueSubscription" do
+            expect do
+              task_connection.subscribe_user
+            end.to change(TaskSubscription, :count).by(1)
           end
         end
 
