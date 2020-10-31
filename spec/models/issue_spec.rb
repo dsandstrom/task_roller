@@ -1106,4 +1106,63 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#subscribe_user" do
+    let(:user) { Fabricate(:user_reviewer) }
+    let(:subscriber) { Fabricate(:user_reporter) }
+
+    context "when not provided a subscriber" do
+      context "but issue has a user" do
+        let(:issue) { Fabricate(:issue, user: user) }
+
+        context "that is not subscribed" do
+          it "creates a issue_subscription for the issue user" do
+            expect do
+              issue.subscribe_user
+            end.to change(user.issue_subscriptions, :count).by(1)
+          end
+        end
+
+        context "that is already subscribed" do
+          before do
+            Fabricate(:issue_subscription, issue: issue, user: user)
+          end
+
+          it "doesn't create a issue_subscription" do
+            expect do
+              issue.subscribe_user
+            end.not_to change(IssueSubscription, :count)
+          end
+        end
+      end
+
+      context "and issue doesn't have a user" do
+        let(:issue) { Fabricate.build(:issue, user: nil) }
+
+        it "doesn't create a issue_subscription" do
+          expect do
+            issue.subscribe_user
+          end.not_to change(IssueSubscription, :count)
+        end
+      end
+    end
+
+    context "when provided a subscriber" do
+      let(:issue) { Fabricate(:issue, user: user) }
+
+      context "that is not subscribed" do
+        it "creates a issue_subscription for the subscriber" do
+          expect do
+            issue.subscribe_user(subscriber)
+          end.to change(subscriber.issue_subscriptions, :count).by(1)
+        end
+
+        it "doesn't create a issue_subscription for the issue user" do
+          expect do
+            issue.subscribe_user(subscriber)
+          end.to change(IssueSubscription, :count).by(1)
+        end
+      end
+    end
+  end
 end

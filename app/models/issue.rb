@@ -232,6 +232,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     update closed: false, opened_at: Time.now
   end
 
+  def subscribe_user(subscriber = nil)
+    subscriber ||= user
+    return unless subscriber
+
+    issue_subscriptions.create(user_id: subscriber.id)
+  end
+
   private
 
     def set_opened_at
