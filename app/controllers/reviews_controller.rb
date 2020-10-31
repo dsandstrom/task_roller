@@ -24,6 +24,7 @@ class ReviewsController < ApplicationController
 
   def approve
     if @review.approve(current_user)
+      @review.subscribe_user
       redirect_to @task, notice: 'Review was successfully updated.'
     else
       render :edit
@@ -32,6 +33,7 @@ class ReviewsController < ApplicationController
 
   def disapprove
     if @review.disapprove(current_user)
+      @review.subscribe_user
       redirect_to @task, notice: 'Review was successfully updated.'
     else
       render :edit

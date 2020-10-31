@@ -224,12 +224,19 @@ RSpec.describe ReviewsController, type: :controller do
             end.to change(review, :user_id).to(current_user.id)
           end
 
-          it "redirects to the review" do
+          it "subscribes the reviewer" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              put :approve, params: { task_id: task.to_param,
+                                      id: review.to_param }
+            end.to change(current_user.task_subscriptions, :count).by(1)
+          end
+
+          it "redirects to the task" do
             review = Fabricate(:pending_review, task: task)
             put :approve, params: { task_id: task.to_param,
                                     id: review.to_param }
-            url = task_path(task)
-            expect(response).to redirect_to(url)
+            expect(response).to redirect_to(task)
           end
         end
 
@@ -307,6 +314,14 @@ RSpec.describe ReviewsController, type: :controller do
                                          id: review.to_param }
               review.reload
             end.to change(review, :user_id).to(current_user.id)
+          end
+
+          it "subscribes the reviewer" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              put :disapprove, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.to change(current_user.task_subscriptions, :count).by(1)
           end
 
           it "redirects to the review" do
