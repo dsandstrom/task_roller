@@ -5,4 +5,13 @@ class TaskComment < RollerComment
 
   validates :roller_id, presence: true
   validates :task, presence: true, if: :roller_id
+
+  def subscribe_user(subscriber = nil)
+    return unless task
+
+    subscriber ||= user
+    return unless subscriber
+
+    task.subscribe_user(subscriber)
+  end
 end
