@@ -97,6 +97,30 @@ RSpec.describe TaskCommentsController, type: :controller do
             url = task_url(task, anchor: anchor)
             expect(response).to redirect_to(url)
           end
+
+          context "when already subscribed to the task" do
+            before do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it "doesn't create a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param,
+                                        task_comment: valid_attributes }
+              end.not_to change(TaskSubscription, :count)
+            end
+          end
+
+          context "when not already subscribed to the task" do
+            before { current_user.task_subscriptions.destroy_all }
+
+            it "creates a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param,
+                                        task_comment: valid_attributes }
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+          end
         end
 
         context "with invalid params" do

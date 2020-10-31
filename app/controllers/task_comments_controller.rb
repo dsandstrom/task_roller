@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: create subscription on create
-# TODO: create subscription when assigned
-
 class TaskCommentsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :comments
@@ -13,7 +10,7 @@ class TaskCommentsController < ApplicationController
 
   def create
     if @task_comment.save
-      # @task.task_subscriptions.create user_id: @task_comment.user_id
+      @task.task_subscriptions.create user_id: @task_comment.user_id
       redirect_to redirect_url, notice: 'Comment was successfully created.'
     else
       render :new
