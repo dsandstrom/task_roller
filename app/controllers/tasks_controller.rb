@@ -8,14 +8,17 @@
 # TODO: allow user to pick when subscriptions are created
 
 class TasksController < ApplicationController
-  before_action :authorize_task, only: %i[index new create destroy open close]
-  before_action :set_category_or_user, only: :index
-  before_action :set_project, only: %i[new create]
-  before_action :set_issue, only: %i[new create]
-  before_action :set_task, except: %i[index new create]
+  load_and_authorize_resource :project, only: %i[new create]
+  load_and_authorize_resource through: :project, only: %i[new create]
+  load_and_authorize_resource only: %i[show edit update destroy open close]
+  before_action :set_parent, only: :index
+  before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
+  before_action :check_for_task_types, only: :new
 
   def index
+    authorize! :read, Task
+
     @tasks =
       if @user
         @user.tasks
@@ -30,27 +33,19 @@ class TasksController < ApplicationController
   def show
     # TODO: add feed of comments, reviews, progresssions, assignments
     @task_subscription =
-      @task.task_subscriptions.find_by(user_id: current_user.id)
+      @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end
 
   def new
-    if @task_types&.any?
-      @task = @project.tasks.build(task_type_id: @task_types.first.id)
-      @task.issue = @issue
-    else
-      redirect_url =
-        policy(TaskType).create? ? roller_types_url : project_url(@project)
-      redirect_to redirect_url, alert: 'App Error: Task Types are required'
-    end
+    @task.task_type = @task_types.first
   end
 
   def edit; end
 
   def create
-    build_task
     if @task.save
       @task.task_subscriptions.create(user_id: current_user.id)
-      redirect_to task_url(@task), success: 'Task was successfully created.'
+      redirect_to @task, success: 'Task was successfully created.'
     else
       set_form_options
       render :new
@@ -59,7 +54,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to task_url(@task), success: 'Task was successfully updated.'
+      redirect_to @task, success: 'Task was successfully updated.'
     else
       set_form_options
       render :edit
@@ -68,14 +63,13 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
-    redirect_to project_url(@project),
-                success: 'Task was successfully destroyed.'
+    redirect_to @project, success: 'Task was successfully destroyed.'
   end
 
   def open
     if @task.open
       @task.task_subscriptions.create(user_id: current_user.id)
-      redirect_to task_url(@task), success: 'Task was successfully opened.'
+      redirect_to @task, success: 'Task was successfully opened.'
     else
       set_form_options
       render :edit
@@ -85,7 +79,7 @@ class TasksController < ApplicationController
   def close
     if @task.close
       @task.task_subscriptions.create(user_id: current_user.id)
-      redirect_to task_url(@task), success: 'Task was successfully closed.'
+      redirect_to @task, success: 'Task was successfully closed.'
     else
       set_form_options
       render :edit
@@ -94,47 +88,29 @@ class TasksController < ApplicationController
 
   private
 
-    def authorize_task
-      authorize Task
+    def check_for_task_types
+      return true if @task_types&.any?
+
+      redirect_url =
+        can?(:create, TaskType) ? roller_types_url : project_url(@project)
+      redirect_to redirect_url, alert: 'App Error: Task Types are required'
+      false
     end
 
-    def set_category_or_user
-      return set_project if params[:project_id].present?
-
+    def set_parent
       if params[:user_id]
         @user = User.find(params[:user_id])
+      elsif params[:project_id]
+        @project = Project.find(params[:project_id])
       else
         @category = Category.find(params[:category_id])
       end
     end
 
-    def set_project
-      @project = Project.find(params[:project_id])
-      @category = @project.category
-    end
-
-    def set_task
-      if @project
-        @task = authorize(@project.tasks.find(params[:id]))
-      else
-        @task = authorize(Task.find(params[:id]))
-        @category = @task.category
-        @project = @task.project
-      end
-    end
-
-    def build_task
-      @task = @project.tasks.build(task_params)
-      @task.issue_id = @issue.to_param if @issue
-      @task.user_id = current_user.to_param
-    end
-
-    def set_task_types
-      @task_types = TaskType.all
-    end
-
-    def set_issue
-      @issue = @project.issues.find(params[:issue_id]) if params[:issue_id]
+    def set_category_and_project
+      @project ||= @task.project
+      @category ||= @task.category
+      true # rubocop complains about memoization
     end
 
     def task_params
@@ -148,6 +124,10 @@ class TasksController < ApplicationController
       set_issue_options
     end
 
+    def set_task_types
+      @task_types = TaskType.all
+    end
+
     def set_assignee_options
       @assignee_options =
         %w[Worker Reviewer].map do |type|
@@ -159,7 +139,7 @@ class TasksController < ApplicationController
     def set_issue_options
       @issue_options =
         @project.issues.map do |issue|
-          [issue.short_summary, issue.id]
+          [issue.id_and_summary, issue.id]
         end
     end
 

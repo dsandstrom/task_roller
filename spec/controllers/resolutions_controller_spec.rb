@@ -11,10 +11,15 @@ RSpec.describe ResolutionsController, type: :controller do
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        let(:issue) { Fabricate(:issue, project: project, user: current_user) }
+
+        before do
+          Fabricate(:resolution, issue: issue)
+          login(current_user)
+        end
 
         it "returns a success response" do
-          _resolution = Fabricate(:resolution, issue: issue)
           get :index, params: { issue_id: issue.to_param }
           expect(response).to be_successful
         end
@@ -79,7 +84,7 @@ RSpec.describe ResolutionsController, type: :controller do
           end
 
           context "with invalid params" do
-            it "returns a success response ('edit' template)" do
+            it "returns a success response ('new' template)" do
               issue.update_column :summary, nil
               post :approve, params: { issue_id: issue.to_param }
               expect(response).to be_successful
@@ -132,7 +137,7 @@ RSpec.describe ResolutionsController, type: :controller do
           end
 
           context "with invalid params" do
-            it "returns a success response ('edit' template)" do
+            it "returns a success response ('new' template)" do
               issue.update_column :summary, nil
               post :disapprove, params: { issue_id: issue.to_param }
               expect(response).to be_successful

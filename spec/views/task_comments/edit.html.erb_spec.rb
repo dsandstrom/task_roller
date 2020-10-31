@@ -9,11 +9,9 @@ RSpec.describe "task_comments/edit", type: :view do
   let(:task) { Fabricate(:task, project: project) }
   let(:task_comment) { Fabricate(:task_comment, task: task) }
 
-  let(:url) { task_comment_url(task_comment) }
+  let(:url) { task_task_comment_url(task, task_comment) }
 
   before(:each) do
-    assign(:category, category)
-    assign(:project, project)
     assign(:task, task)
     assign(:task_comment, task_comment)
   end

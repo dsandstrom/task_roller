@@ -9,11 +9,9 @@ RSpec.describe "issue_comments/edit", type: :view do
   let(:issue) { Fabricate(:issue, project: project) }
   let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-  let(:url) { issue_comment_url(issue_comment) }
+  let(:url) { issue_issue_comment_url(issue, issue_comment) }
 
   before(:each) do
-    assign(:category, category)
-    assign(:project, project)
     assign(:issue, issue)
     assign(:issue_comment, issue_comment)
   end

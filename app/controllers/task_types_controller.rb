@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
 class TaskTypesController < ApplicationController
-  before_action :authorize_task_type
-  before_action :set_task_type, only: %i[edit update destroy]
+  load_and_authorize_resource
 
-  def new
-    @task_type = authorize(TaskType.new(color: 'default', icon: 'bulb'))
-  end
+  def new; end
 
   def edit; end
 
   def create
-    @task_type = authorize(TaskType.new(task_type_params))
-
     if @task_type.save
       redirect_to roller_types_url,
                   success: 'Task type was successfully created.'
@@ -40,9 +35,5 @@ class TaskTypesController < ApplicationController
 
     def task_type_params
       params.require(:task_type).permit(:name, :icon, :color)
-    end
-
-    def authorize_task_type
-      authorize TaskType
     end
 end

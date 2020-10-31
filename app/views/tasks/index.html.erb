@@ -13,7 +13,7 @@
   <%= project_header @project %>
   <header class="tasks-header">
     <h2>Project Tasks</h2>
-    <% if policy(@project.tasks.build).new? %>
+    <% if can?(:create, @project.tasks.build(user_id: current_user.id)) %>
       <p>
         <%= link_to 'Add Task', new_project_task_path(@project),
                     class: 'button button-success' %>

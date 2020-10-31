@@ -8,7 +8,7 @@
                   resolution.user.name_or_email,
                   class: 'resolution-user' %>
 
-  <% if policy(resolution).destroy? %>
+  <% if can?(:destroy, resolution) %>
     <%= divider %>
     <%= link_to 'delete', issue_resolution_path(issue, resolution),
                 method: :delete, data: { confirm: 'Are you sure?' },

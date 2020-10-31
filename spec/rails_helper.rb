@@ -12,7 +12,6 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 require 'roller_authentication/test_helpers'
-require 'pundit/rspec'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
@@ -66,8 +65,8 @@ RSpec.configure do |config|
 
   config.include RollerAuthentication::TestHelpers
 
+  config.include TestHelpers::Authentication, type: :view
   config.include TestHelpers::Authorization, type: :controller
-  config.include TestHelpers::Pundit, type: :view
   config.include TestHelpers::Pagination, type: :view
 end
 

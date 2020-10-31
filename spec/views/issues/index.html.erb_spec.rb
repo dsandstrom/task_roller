@@ -6,7 +6,7 @@ RSpec.describe "issues/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
 
-    before { enable_pundit(view, admin) }
+    before { enable_can(view, admin) }
 
     context "when category" do
       let(:category) { Fabricate(:category) }
@@ -112,7 +112,7 @@ RSpec.describe "issues/index", type: :view do
       end
       let(:second_issue) { Fabricate(:issue, project: project) }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       context "when project" do
         before(:each) do

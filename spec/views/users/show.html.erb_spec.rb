@@ -9,7 +9,7 @@ RSpec.describe "users/show", type: :view do
     let(:current_user) { Fabricate(:user_admin) }
 
     before do
-      enable_pundit(view, current_user)
+      enable_can(view, current_user)
       @user = assign(:user, user_reporter)
     end
 
@@ -79,7 +79,7 @@ RSpec.describe "users/show", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       context "when someone else" do
         before do

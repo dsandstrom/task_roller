@@ -1,7 +1,7 @@
 <h1>Categories</h1>
 
 <header class="categories-header">
-  <% if policy(Category).new? %>
+  <% if can?(:create, Category) %>
     <p>
       <%= link_to new_category_path, class: 'button button-success' do %>
         <i class="icon-plus"></i>

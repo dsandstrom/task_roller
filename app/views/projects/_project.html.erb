@@ -8,7 +8,7 @@
 
   <div class="project-name-and-tags">
     <h3 class="project-name">
-      <%= link_to_if policy(project).show?,
+      <%= link_to_if can?(:read, project),
                      project.name, project_path(project) %>
     </h3>
 
@@ -17,7 +17,7 @@
 
   <% unless @category %>
     <p class="project-category">
-      <%= link_to_if policy(project.category).show?,
+      <%= link_to_if can?(:read, project.category),
                      project.category.name, project.category %>
     </p>
   <% end %>
@@ -25,27 +25,27 @@
   <div class="project-counts">
     <%# TODO: change to open issues %>
     <p class="project-issues-link">
-      <%= link_to_if policy(Issue).index?,
+      <%= link_to_if can?(:read, Issue),
                      pluralize(project.issues.count, 'Issue'),
                      project_issues_path(project) %>
     </p>
 
     <%# TODO: change to open tasks %>
     <p class="project-tasks-link">
-      <%= link_to_if policy(Task).index?,
+      <%= link_to_if can?(:read, Task),
                      pluralize(project.tasks.count, 'Task'),
                      project_tasks_path(project) %>
     </p>
   </div>
 
   <p class="project-links">
-    <% if policy(project).destroy? %>
+    <% if can?(:destroy, project) %>
       <%= link_to 'Delete',
                   project_path(project),
                   method: :delete, data: { confirm: 'Are you sure?' },
                   class: 'button button-outline button-warning' %>
     <% end %>
-    <% if policy(project).edit? %>
+    <% if can?(:update, project) %>
       <%= link_to 'Edit', edit_project_path(project),
                   class: 'button button-outline' %>
     <% end %>

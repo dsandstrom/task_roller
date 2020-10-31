@@ -20,7 +20,7 @@ RSpec.describe "users/index", type: :view do
   end
 
   context "for an admin" do
-    before { enable_pundit(view, first_user_admin) }
+    before { enable_can(view, first_user_admin) }
 
     it "renders new user links" do
       render
@@ -35,14 +35,15 @@ RSpec.describe "users/index", type: :view do
       render
 
       assert_select "#user-#{first_user_admin.id}"
-      assert_select "#user-#{first_user_admin.id} a[data-method=\"delete\"]",
-                    count: 0
+      first_url = user_path(first_user_admin)
+      assert_select "a[data-method=\"delete\"][href='#{first_url}']", count: 0
       expect(rendered).to have_link(nil, href: edit_user_path(first_user_admin))
-      expect(rendered).to have_link(nil, href: user_path(first_user_admin))
+      expect(rendered).to have_link(nil, href: first_url)
 
       assert_select "#user-#{second_user_admin.id}"
-      assert_select "#user-#{second_user_admin.id} a[data-method=\"delete\"]"
-      expect(rendered).to have_link(nil, href: user_path(second_user_admin))
+      second_url = user_path(second_user_admin)
+      assert_select "a[data-method=\"delete\"][href='#{second_url}']"
+      expect(rendered).to have_link(nil, href: second_url)
       expect(rendered)
         .to have_link(nil, href: edit_user_path(second_user_admin))
     end
@@ -82,7 +83,7 @@ RSpec.describe "users/index", type: :view do
   end
 
   context "for a reviewer" do
-    before { enable_pundit(view, first_user_reviewer) }
+    before { enable_can(view, first_user_reviewer) }
 
     it "doesn't render new user links" do
       render
@@ -143,7 +144,7 @@ RSpec.describe "users/index", type: :view do
   end
 
   context "for a reporter" do
-    before { enable_pundit(view, first_user_reporter) }
+    before { enable_can(view, first_user_reporter) }
 
     it "doesn't render new user links" do
       render
@@ -204,7 +205,7 @@ RSpec.describe "users/index", type: :view do
   end
 
   context "for a worker" do
-    before { enable_pundit(view, first_user_worker) }
+    before { enable_can(view, first_user_worker) }
 
     it "doesn't render new user links" do
       render

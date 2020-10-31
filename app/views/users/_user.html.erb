@@ -1,7 +1,7 @@
 <div id="user-<%= user.id %>" class="user">
   <div class="user-name-and-email">
     <h3 class="user-name">
-      <%= link_to_if policy(user).show?, user.name, user %>
+      <%= link_to_if can?(:read, user), user.name, user %>
     </h3>
 
     <p class="user-email">
@@ -10,14 +10,14 @@
   </div>
 
   <p class="user-links">
-    <% if policy(user).destroy? %>
+    <% if can?(:destroy, user) %>
       <%= link_to 'Delete',
                   user,
                   method: :delete,
                   data: { confirm: 'Are you sure?' },
                   class: 'button button-outline button-warning' %>
     <% end %>
-    <% if policy(user).edit? %>
+    <% if can?(:update, user) %>
       <%= link_to 'Edit', edit_user_path(user), class: 'button button-outline' %>
     <% end %>
   </p>

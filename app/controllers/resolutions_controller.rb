@@ -1,33 +1,26 @@
 # frozen_string_literal: true
 
 class ResolutionsController < ApplicationController
-  before_action :authorize_resolution, only: :index
-  before_action :set_issue
-  before_action :set_resolution, only: %i[edit update destroy]
+  load_and_authorize_resource :issue
+  load_and_authorize_resource through: :issue, except: %i[approve disapprove]
+  before_action :build_and_authorize, only: %i[approve disapprove]
+  before_action :set_category_and_project, except: [:index]
 
-  def index
-    @resolutions = @issue.resolutions
-  end
+  def index; end
 
-  def new
-    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
-  end
+  def new; end
 
   def approve
-    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.approve
-      redirect_to issue_path(@issue),
-                  notice: 'Task was successfully marked resolved.'
+      redirect_to @issue, notice: 'Task was successfully marked resolved.'
     else
       render :new
     end
   end
 
   def disapprove
-    @resolution = authorize(@issue.resolutions.build(user_id: current_user.id))
     if @resolution.disapprove
-      redirect_to issue_path(@issue),
-                  notice: 'Task was successfully marked unresolved.'
+      redirect_to @issue, notice: 'Task was successfully marked unresolved.'
     else
       render :new
     end
@@ -35,24 +28,18 @@ class ResolutionsController < ApplicationController
 
   def destroy
     @resolution.destroy
-    redirect_to issue_path(@issue),
-                notice: 'Resolution was successfully destroyed.'
+    redirect_to @issue, notice: 'Resolution was successfully destroyed.'
   end
 
   private
 
-    def authorize_resolution
-      authorize Resolution
+    def build_and_authorize
+      @resolution = @issue.resolutions.build(user_id: current_user.id)
+      authorize! :create, @resolution
     end
 
-    def set_issue
-      @issue = Issue.find(params[:issue_id])
+    def set_category_and_project
       @project = @issue.project
       @category = @issue.category
-      raise ActiveRecord::RecordNotFound unless @category
-    end
-
-    def set_resolution
-      @resolution = authorize(@issue.resolutions.find(params[:id]))
     end
 end

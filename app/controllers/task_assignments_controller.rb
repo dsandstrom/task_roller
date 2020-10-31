@@ -2,21 +2,20 @@
 
 # TODO: rename to AssignmentsController?
 class TaskAssignmentsController < ApplicationController
+  load_and_authorize_resource :user, only: :index
   before_action :set_task, except: :index
 
   def index
-    authorize Task
-    @user = User.find(params[:user_id])
+    authorize! :read, Task
+
     @tasks = @user.assignments.filter_by(build_filters).page(params[:page])
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @task.update(task_params)
-      redirect_to task_url(@task),
-                  notice: 'Task assignment was successfully updated.'
+      redirect_to @task, notice: 'Task assignment was successfully updated.'
     else
       render :edit
     end
@@ -25,10 +24,8 @@ class TaskAssignmentsController < ApplicationController
   private
 
     def set_task
-      @task = authorize(Task.find(params[:id]), :assign?)
-
-      @project = @task.project
-      @category = @project.category
+      @task = Task.find(params[:id])
+      authorize! :assign, @task
     end
 
     def task_params

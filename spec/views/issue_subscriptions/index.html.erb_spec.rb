@@ -14,7 +14,7 @@ RSpec.describe "issue_subscriptions/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       it "renders a list of subscribed issues" do
         render

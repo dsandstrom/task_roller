@@ -6,7 +6,7 @@ RSpec.describe "resolutions/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
 
-    before { enable_pundit(view, admin) }
+    before { enable_can(view, admin) }
 
     context "when issue has resolutions" do
       let(:issue) { assign(:issue, Fabricate(:issue)) }
@@ -39,7 +39,7 @@ RSpec.describe "resolutions/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       context "when issue has resolutions" do
         let(:issue) { assign(:issue, Fabricate(:issue)) }

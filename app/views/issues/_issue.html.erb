@@ -2,7 +2,7 @@
   <header class="issue-header">
     <h3 class="issue-summary">
       <%= issue_type_icon_tag(issue.issue_type) %>
-      <%= link_to_if policy(issue).show?,
+      <%= link_to_if can?(:read, issue),
                      issue.id_and_summary, issue_path(issue) %>
     </h3>
   </header>
@@ -30,7 +30,7 @@
 
   </main>
 
-  <% if policy(issue).edit? %>
+  <% if can?(:update, issue) %>
     <footer class="issue-footer">
       <%= link_to 'Edit', edit_issue_path(issue) %>
     </footer>

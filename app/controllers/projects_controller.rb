@@ -1,28 +1,20 @@
 # frozen_string_literal: true
 
 class ProjectsController < ApplicationController
-  before_action :authorize_project, only: %i[index new create destroy]
-  before_action :set_category, only: %i[new create]
-  before_action :set_project, only: %i[show edit update destroy]
-
-  def index
-    @projects = Project.all
-  end
+  load_and_authorize_resource only: %i[index show edit update destroy]
+  load_and_authorize_resource :category, only: %i[new create]
+  load_and_authorize_resource through: :category, only: %i[new create]
 
   def show
     @issues = @project.issues.order(updated_at: :desc).limit(3)
     @tasks = @project.tasks.order(updated_at: :desc).limit(3)
   end
 
-  def new
-    @project = @category.projects.build
-  end
+  def new; end
 
   def edit; end
 
   def create
-    @project = @category.projects.build(project_params)
-
     if @project.save
       redirect_to project_path(@project),
                   notice: 'Project was successfully created.'
@@ -41,25 +33,13 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
+    category = @project.category
     @project.destroy
-    redirect_to category_path(@category),
+    redirect_to category_path(category),
                 notice: 'Project was successfully destroyed.'
   end
 
   private
-
-    def authorize_project
-      authorize Project
-    end
-
-    def set_category
-      @category = Category.find(params[:category_id])
-    end
-
-    def set_project
-      @project = authorize(Project.find(params[:id]))
-      @category = @project.category
-    end
 
     def project_params
       params.require(:project).permit(:name, :visible, :internal)

@@ -1,3 +1,5 @@
-<%= link_to '', issue_subscription,
+<% return unless can?(:destroy, issue_subscription) %>
+
+<%= link_to '', issue_issue_subscription_path(issue, issue_subscription),
             method: :delete,
             class: 'button button-success button-unsubscribe' %>

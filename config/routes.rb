@@ -14,15 +14,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :projects, only: %i[new create]
   end
 
-  resources :projects, except: %i[new create] do
+  resources :projects, except: %i[index new create] do
     resources :issues, only: %i[index new create]
     resources :tasks, only: %i[index new create]
   end
 
   resources :issues, except: %i[index new create] do
-    resources :tasks, only: %i[new create]
-    resources :issue_comments, only: %i[new create]
-    resources :issue_subscriptions, only: %i[new create]
+    resources :issue_comments, except: %i[index show]
+    resources :issue_subscriptions, only: %i[new create destroy]
     resources :resolutions, only: %i[index new create destroy] do
       collection do
         post :approve
@@ -37,14 +36,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :tasks, only: %i[show edit update destroy] do
-    resources :task_comments, only: %i[new create]
-    resources :task_subscriptions, only: %i[new create]
-    resources :progressions, except: :show do
+    resources :task_comments, except: %i[index show]
+    resources :task_subscriptions, only: %i[new create destroy]
+    resources :progressions, only: %i[new create destroy] do
       member do
         patch :finish
       end
     end
-    resources :reviews, except: %i[show update] do
+    resources :reviews, only: %i[new edit create update destroy] do
       member do
         patch :approve
         patch :disapprove
@@ -57,10 +56,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  resources :issue_comments, only: %i[edit update destroy]
-  resources :task_comments, only: %i[edit update destroy]
-  resources :task_subscriptions, only: %i[index new create destroy]
-  resources :issue_subscriptions, only: %i[index new create destroy]
+  resources :task_subscriptions, only: :index
+  resources :issue_subscriptions, only: :index
 
   resources :roller_types, only: :index
   resources :issue_types, except: %i[index show]

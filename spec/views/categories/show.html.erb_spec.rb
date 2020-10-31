@@ -11,7 +11,7 @@ RSpec.describe "categories/show", type: :view do
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
 
-    before { enable_pundit(view, current_user) }
+    before { enable_can(view, current_user) }
 
     context "when it has no projects" do
       before do
@@ -146,7 +146,7 @@ RSpec.describe "categories/show", type: :view do
   context "for a reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
 
-    before { enable_pundit(view, current_user) }
+    before { enable_can(view, current_user) }
 
     context "when category has projects, issues, and tasks" do
       let(:project) { Fabricate(:project, category: @category) }
@@ -191,7 +191,7 @@ RSpec.describe "categories/show", type: :view do
   context "for a reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
 
-    before { enable_pundit(view, current_user) }
+    before { enable_can(view, current_user) }
 
     context "when category has projects, issues, and tasks" do
       let(:project) { Fabricate(:project, category: @category) }
@@ -237,7 +237,7 @@ RSpec.describe "categories/show", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       context "when category has projects, issues, and tasks" do
         let(:project) { Fabricate(:project, category: @category) }

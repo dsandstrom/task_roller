@@ -24,7 +24,7 @@
         </p>
 
         <% if @issue.addressed? &&
-              policy(@issue.resolutions.build).disapprove? %>
+              can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
           <p>
             <%= link_to 'report issue was not fixed',
                         disapprove_issue_resolutions_path(@issue),
@@ -34,7 +34,7 @@
 
         <% if @issue.open? %>
           <% if @issue.unresolved? &&
-                policy(@issue.resolutions.build).approve? %>
+                can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
             <p>
               <%= link_to 'mark resolved',
                           approve_issue_resolutions_path(@issue),
@@ -42,7 +42,7 @@
             </p>
           <% end %>
 
-          <% if policy(IssueConnection).new? && @issue.duplicatee.blank? %>
+          <% if can?(:create, IssueConnection) && @issue.duplicatee.blank? %>
             <p>
               <%= link_to 'mark duplicate',
                           new_issue_connection_path(@issue),
@@ -60,11 +60,11 @@
           %>
           <p>
             Duplicate of:
-            <%= link_to_if policy(duplicatee).show?,
+            <%= link_to_if can?(:read, duplicatee),
                            duplicatee.short_summary, issue_path(duplicatee) %>
           </p>
 
-          <% if policy(@issue.source_issue_connection).destroy? %>
+          <% if can?(:destroy, @issue.source_issue_connection) %>
             <p>
               <%= link_to 'Mark not a duplicate and reopen',
                            @issue.source_issue_connection,
@@ -81,10 +81,11 @@
           <%= render partial: 'shared/task', collection: @issue.tasks,
                      locals: { category: @category, project: @project } %>
 
-          <% if policy(Task).create? %>
+          <% if can?(:create, Task) %>
             <dt class="new-issue-task">
               <%= icon('plus') %>
-              <%= link_to 'Add Task', new_issue_task_path(@issue),
+              <%= link_to 'Add Task',
+                          new_project_task_path(@project, task: { issue_id: @issue.id }),
                           class: 'create-link' %>
             </dt>
           <% elsif @issue.tasks.none? %>
@@ -99,7 +100,7 @@
 
           <% @issue.duplicates.each do |duplicate| %>
             <p>
-              <%= link_to_if policy(duplicate).show?,
+              <%= link_to_if can?(:read, duplicate),
                              duplicate.id_and_summary, issue_path(duplicate) %>
             </p>
           <% end %>
@@ -117,7 +118,7 @@
 
           <%= content_tag :main, @issue.description_html.html_safe %>
 
-          <% if policy(@issue).edit? %>
+          <% if can?(:update, @issue) %>
             <footer>
               <p><%= link_to 'edit', edit_issue_path(@issue) %></p>
             </footer>

@@ -1,13 +1,13 @@
 <%= project_header @project %>
 
-<% if policy(@project).edit? %>
+<% if can?(:update, @project) %>
   <p>
     <%= link_to 'Edit Project', edit_project_path(@project),
                 class: 'button' %>
   </p>
 <% end %>
 
-<% if policy(Task).create? %>
+<% if can?(:create, Task) %>
   <p>
     <%= link_to 'Build Task',
                 new_project_task_path(@project),
@@ -15,7 +15,7 @@
   </p>
 <% end %>
 
-<% if policy(Issue).create? %>
+<% if can?(:create, Issue) %>
   <p>
     <%= link_to 'Report Issue',
                 new_project_issue_path(@project),

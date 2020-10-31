@@ -97,6 +97,28 @@ RSpec.describe IssueCommentsController, type: :controller do
             url = issue_url(issue, anchor: anchor)
             expect(response).to redirect_to(url)
           end
+
+          context "when not subscribed to issue" do
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param,
+                                        issue_comment: valid_attributes }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when already subscribed to issue" do
+            before do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it "doesn't create a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param,
+                                        issue_comment: valid_attributes }
+              end.not_to change(IssueSubscription, :count)
+            end
+          end
         end
 
         context "with invalid params" do

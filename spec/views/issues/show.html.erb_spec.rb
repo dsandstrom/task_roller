@@ -3,19 +3,27 @@
 require "rails_helper"
 
 RSpec.describe "issues/show", type: :view do
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
+  let(:issue) { Fabricate(:issue, project: project) }
+
   before(:each) do
-    @category = assign(:category, Fabricate(:category))
-    @project = assign(:project, Fabricate(:project, category: @category))
+    @category = assign(:category, category)
+    @project = assign(:project, project)
   end
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
+    let(:issue_subscription) do
+      Fabricate(:issue_subscription, issue: issue, user: admin)
+    end
 
-    before { enable_pundit(view, admin) }
+    before { enable_can(view, admin) }
 
     context "when project" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
       end
@@ -57,7 +65,8 @@ RSpec.describe "issues/show", type: :view do
       it "renders new task link" do
         render
 
-        url = new_issue_task_path(@issue)
+        url =
+          new_project_task_path(@issue.project, task: { issue_id: @issue.id })
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -115,8 +124,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when no project" do
       before do
-        project = Fabricate(:project, category: @category)
-        @issue = assign(:issue, Fabricate(:issue, project: project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
         @issue.update_attribute :project_id, nil
@@ -131,8 +140,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when no issue_type" do
       before do
-        @project = assign(:project, Fabricate(:project, category: @category))
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
         @issue.issue_type.destroy
@@ -147,8 +156,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when issue's user destroyed" do
       before do
-        @project = assign(:project, Fabricate(:project, category: @category))
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comments = assign(:comments, [])
         @comment = assign(:issue_comment, @issue.comments.build)
 
@@ -166,7 +175,8 @@ RSpec.describe "issues/show", type: :view do
       let(:user) { Fabricate(:user_worker) }
 
       before do
-        @issue = assign(:issue, Fabricate(:issue))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @issue_comment = Fabricate(:issue_comment, issue: @issue, user: user)
         @comments = assign(:comments, [@issue_comment])
         @comment = assign(:issue_comment, @issue.comments.build)
@@ -184,8 +194,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "issues's task destroyed" do
       before do
-        @project = assign(:project, Fabricate(:project, category: @category))
-        @issue = Fabricate(:issue, project: @project)
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @task =
           assign(:task, Fabricate(:task, project: @project, issue: @issue))
         @comment = assign(:issue_comment, @issue.comments.build)
@@ -204,7 +214,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when comments" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @first_comment = Fabricate(:issue_comment, issue: @issue)
         @second_comment = Fabricate(:issue_comment, issue: @issue, user: admin)
@@ -217,10 +228,10 @@ RSpec.describe "issues/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = issue_comment_path(@first_comment)
-        first_edit_url = edit_issue_comment_path(@first_comment)
-        second_url = issue_comment_path(@second_comment)
-        second_edit_url = edit_issue_comment_path(@second_comment)
+        first_url = issue_issue_comment_path(@issue, @first_comment)
+        first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+        second_url = issue_issue_comment_path(@issue, @second_comment)
+        second_edit_url = edit_issue_issue_comment_path(@issue, @second_comment)
         expect(rendered).to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
@@ -231,7 +242,9 @@ RSpec.describe "issues/show", type: :view do
 
     context "when not subscribed" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription,
+               Fabricate.build(:issue_subscription, issue: @issue, user: admin))
         @comment = assign(:issue_comment, @issue.comments.build)
       end
 
@@ -244,10 +257,9 @@ RSpec.describe "issues/show", type: :view do
 
     context "when subscribed" do
       before do
-        @issue = assign(:issue, Fabricate(:issue))
+        @issue = assign(:issue, issue)
         @comment = assign(:issue_comment, @issue.comments.build)
-        @issue_subscription =
-          assign(:issue_subscription, Fabricate(:issue_subscription))
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
       it "doesn't render new issue_subscription link" do
@@ -258,7 +270,7 @@ RSpec.describe "issues/show", type: :view do
 
       it "renders destroy issue_subscription link" do
         render
-        url = issue_subscription_path(@issue_subscription)
+        url = issue_issue_subscription_path(@issue, @issue_subscription)
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
@@ -266,18 +278,18 @@ RSpec.describe "issues/show", type: :view do
 
   context "for a reviewer" do
     let(:reviewer) { Fabricate(:user_reviewer) }
-
-    before { enable_pundit(view, reviewer) }
-
-    before do
-      @project = assign(:project, Fabricate(:project, category: @category))
+    let(:issue_subscription) do
+      Fabricate(:issue_subscription, issue: issue, user: reviewer)
     end
+
+    before { enable_can(view, reviewer) }
 
     context "when someone else's issue" do
       let(:url) { issue_issue_comments_url(@issue) }
 
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
       end
@@ -317,14 +329,16 @@ RSpec.describe "issues/show", type: :view do
       it "renders new task link" do
         render
 
-        url = new_issue_task_path(@issue)
+        url =
+          new_project_task_path(@issue.project, task: { issue_id: @issue.id })
         expect(rendered).to have_link(nil, href: url)
       end
     end
 
     context "when a source_issue_connection" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
         @issue_connection = Fabricate(:issue_connection, source: @issue)
@@ -355,7 +369,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when a target_issue_connection" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @comments = assign(:comments, [])
         @issue_connection = Fabricate(:issue_connection, target: @issue)
@@ -372,7 +387,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when comments" do
       before do
-        @issue = assign(:issue, Fabricate(:issue, project: @project))
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
         @comment = assign(:issue_comment, @issue.comments.build)
         @first_comment = Fabricate(:issue_comment, issue: @issue)
         @second_comment = Fabricate(:issue_comment, issue: @issue,
@@ -386,10 +402,10 @@ RSpec.describe "issues/show", type: :view do
         assert_select "#comment-#{@first_comment.id}"
         assert_select "#comment-#{@second_comment.id}"
 
-        first_url = issue_comment_path(@first_comment)
-        first_edit_url = edit_issue_comment_path(@first_comment)
-        second_url = issue_comment_path(@second_comment)
-        second_edit_url = edit_issue_comment_path(@second_comment)
+        first_url = issue_issue_comment_path(@issue, @first_comment)
+        first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+        second_url = issue_issue_comment_path(@issue, @second_comment)
+        second_edit_url = edit_issue_issue_comment_path(@issue, @second_comment)
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
@@ -402,8 +418,11 @@ RSpec.describe "issues/show", type: :view do
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
+      let(:issue_subscription) do
+        Fabricate(:issue_subscription, issue: issue, user: current_user)
+      end
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       context "when their issue" do
         let(:url) { issue_issue_comments_url(@issue) }
@@ -412,6 +431,7 @@ RSpec.describe "issues/show", type: :view do
 
         before do
           @issue = assign(:issue, issue)
+          assign(:issue_subscription, issue_subscription)
           @comment = assign(:issue_comment, @issue.comments.build)
           @comments = assign(:comments, [])
         end
@@ -453,7 +473,8 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render the new task link" do
           render
 
-          url = new_issue_task_path(@issue)
+          url =
+            new_project_task_path(@issue.project, task: { issue_id: @issue.id })
           expect(rendered).not_to have_link(nil, href: url)
         end
 
@@ -487,7 +508,8 @@ RSpec.describe "issues/show", type: :view do
         let(:url) { issue_issue_comments_url(@issue) }
 
         before do
-          @issue = assign(:issue, Fabricate(:issue, project: @project))
+          @issue = assign(:issue, issue)
+          assign(:issue_subscription, issue_subscription)
           @comment = assign(:issue_comment, @issue.comments.build)
           @comments = assign(:comments, [])
         end
@@ -545,7 +567,8 @@ RSpec.describe "issues/show", type: :view do
 
       context "when a source_issue_connection" do
         before do
-          @issue = assign(:issue, Fabricate(:issue, project: @project))
+          @issue = assign(:issue, issue)
+          assign(:issue_subscription, issue_subscription)
           @comment = assign(:issue_comment, @issue.comments.build)
           @comments = assign(:comments, [])
           @issue_connection = Fabricate(:issue_connection, source: @issue)
@@ -576,7 +599,8 @@ RSpec.describe "issues/show", type: :view do
 
       context "when a target_issue_connection" do
         before do
-          @issue = assign(:issue, Fabricate(:issue, project: @project))
+          @issue = assign(:issue, issue)
+          assign(:issue_subscription, issue_subscription)
           @comment = assign(:issue_comment, @issue.comments.build)
           @comments = assign(:comments, [])
           @issue_connection = Fabricate(:issue_connection, target: @issue)
@@ -593,7 +617,8 @@ RSpec.describe "issues/show", type: :view do
 
       context "when comments" do
         before do
-          @issue = assign(:issue, Fabricate(:issue, project: @project))
+          @issue = assign(:issue, issue)
+          assign(:issue_subscription, issue_subscription)
           @comment = assign(:issue_comment, @issue.comments.build)
           @first_comment = Fabricate(:issue_comment, issue: @issue)
           @second_comment = Fabricate(:issue_comment, issue: @issue,
@@ -607,10 +632,11 @@ RSpec.describe "issues/show", type: :view do
           assert_select "#comment-#{@first_comment.id}"
           assert_select "#comment-#{@second_comment.id}"
 
-          first_url = issue_comment_path(@first_comment)
-          first_edit_url = edit_issue_comment_path(@first_comment)
-          second_url = issue_comment_path(@second_comment)
-          second_edit_url = edit_issue_comment_path(@second_comment)
+          first_url = issue_issue_comment_path(@issue, @first_comment)
+          first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+          second_url = issue_issue_comment_path(@issue, @second_comment)
+          second_edit_url =
+            edit_issue_issue_comment_path(@issue, @second_comment)
           expect(rendered).not_to have_link(nil, href: first_edit_url)
           expect(rendered).to have_link(nil, href: second_edit_url)
 

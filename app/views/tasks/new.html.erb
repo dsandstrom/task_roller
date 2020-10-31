@@ -1,17 +1,9 @@
-<%
-  url =
-    if @issue
-      issue_tasks_path(@issue)
-    else
-      project_tasks_path(@project)
-    end
-  %>
-
 <%= project_header(@project) %>
 
 <h2>New Task</h2>
 
-<%= render 'form', task: @task, task_types: @task_types, url: url,
+<%= render 'form', task: @task, task_types: @task_types,
+                   url: project_tasks_path(@project),
                    user_options: @user_options,
                    assignee_options: @assignee_options,
                    issue_options: @issue_options %>

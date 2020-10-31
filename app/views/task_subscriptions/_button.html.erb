@@ -1,6 +1,6 @@
-<% if task_subscription %>
-  <%= render task_subscription %>
-<% else %>
+<% if task_subscription.persisted? %>
+  <%= render task_subscription, task: task %>
+<% elsif can?(:create, task_subscription) %>
   <%= link_to 'Subscribe to task',
               task_task_subscriptions_path(task),
               method: :post, class: 'button button-outline' %>

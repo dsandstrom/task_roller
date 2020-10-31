@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class IssuesController < ApplicationController
-  before_action :authorize_issue, only: %i[index new show destroy]
-  before_action :set_category_or_user, only: :index
-  before_action :set_project, only: %i[new create]
-  before_action :set_issue, except: %i[index new create]
+  load_and_authorize_resource :project, only: %i[new create]
+  load_and_authorize_resource through: :project, only: %i[new create]
+  load_and_authorize_resource except: %i[index new create]
+  before_action :set_parent, only: :index
+  before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
+  before_action :check_for_issue_types, only: :new
 
   def index
+    authorize! :read, Issue
+
     @issues =
       if @user
         @user.issues
@@ -23,16 +27,18 @@ class IssuesController < ApplicationController
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build
     @issue_subscription =
-      @issue.issue_subscriptions.find_by(user_id: current_user.id)
+      @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end
 
   def new
     if @issue_types&.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
                                      user_id: current_user.id)
+      authorize! :create, @issue
     else
+      # TODO: raise error in ApplicationController and rescue/redirect
       redirect_url =
-        policy(IssueType).create? ? roller_types_url : project_url(@project)
+        can?(:create, IssueType) ? roller_types_url : project_url(@project)
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end
   end
@@ -40,9 +46,6 @@ class IssuesController < ApplicationController
   def edit; end
 
   def create
-    @issue = @project.issues.build(issue_params)
-    @issue.user_id = current_user.id
-
     if @issue.save
       @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully created.'
@@ -68,8 +71,6 @@ class IssuesController < ApplicationController
   end
 
   def open
-    @project = @issue.project
-    @category = @issue.category
     if @issue.open
       @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
@@ -80,8 +81,6 @@ class IssuesController < ApplicationController
   end
 
   def close
-    @project = @issue.project
-    @category = @issue.category
     if @issue.close
       @issue.issue_subscriptions.create(user_id: current_user.id)
       redirect_to issue_url(@issue), success: 'Issue was successfully closed.'
@@ -93,48 +92,40 @@ class IssuesController < ApplicationController
 
   private
 
-    def authorize_issue
-      authorize Issue
+    def check_for_issue_types
+      return true if @issue_types&.any?
+
+      redirect_url =
+        can?(:create, IssueType) ? roller_types_url : project_url(@project)
+      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
+      false
     end
 
-    def set_category_or_user
-      return set_project if params[:project_id].present?
-
+    def set_parent
       if params[:user_id]
         @user = User.find(params[:user_id])
+      elsif params[:project_id]
+        @project = Project.find(params[:project_id])
       else
         @category = Category.find(params[:category_id])
       end
     end
 
-    def set_project
-      @project = Project.find(params[:project_id])
-      @category = @project.category
-    end
-
-    def set_issue
-      @issue = authorize(Issue.find(params[:id]))
-      @category = @issue.category
-      @project = @issue.project
-    end
-
-    def set_issue_types
-      @issue_types = IssueType.all
+    def set_category_and_project
+      @project ||= @issue.project
+      @category ||= @issue.category
+      true # rubocop complains about memoization
     end
 
     def set_form_options
       set_issue_types
     end
 
-    def issue_params
-      params.require(:issue).permit(:summary, :description, :issue_type_id)
+    def set_issue_types
+      @issue_types = IssueType.all
     end
 
-    def build_filters
-      filters = {}
-      %i[status order].each do |param|
-        filters[param] = params[param]
-      end
-      filters
+    def issue_params
+      params.require(:issue).permit(:summary, :description, :issue_type_id)
     end
 end

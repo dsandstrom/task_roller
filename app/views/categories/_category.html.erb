@@ -10,26 +10,26 @@
 
     <%# TODO: change to open issues %>
     <p class="category-issues-link">
-      <%= link_to_if policy(Issue).index?,
+      <%= link_to_if can?(:read, Issue),
                      pluralize(category.issues.count, 'Issue'),
                      category_issues_path(category) %>
     </p>
 
     <%# TODO: change to open tasks %>
     <p class="category-tasks-link">
-      <%= link_to_if policy(Task).index?,
+      <%= link_to_if can?(:read, Task),
                      pluralize(category.tasks.count, 'Task'),
                      category_tasks_path(category) %>
     </p>
   </div>
 
   <p class="category-links">
-    <% if policy(category).destroy? %>
+    <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },
                   class: 'button button-outline button-warning' %>
     <% end %>
-    <% if policy(category).edit? %>
+    <% if can?(:update, category) %>
       <%= link_to 'Edit', edit_category_path(category),
                   class: 'button button-outline' %>
     <% end %>

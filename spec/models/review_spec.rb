@@ -279,6 +279,17 @@ RSpec.describe Review, type: :model do
       it "returns true" do
         expect(review.approve).to eq(true)
       end
+
+      context "and given a user" do
+        let(:new_user) { Fabricate(:user_reviewer) }
+
+        it "changes user_id" do
+          expect do
+            review.approve(new_user)
+            review.reload
+          end.to change(review, :user_id).to(new_user.id)
+        end
+      end
     end
 
     context "when disapproved" do
@@ -384,6 +395,17 @@ RSpec.describe Review, type: :model do
 
       it "returns true" do
         expect(review.approve).to eq(true)
+      end
+
+      context "and given a user" do
+        let(:new_user) { Fabricate(:user_reviewer) }
+
+        it "changes user_id" do
+          expect do
+            review.disapprove(new_user)
+            review.reload
+          end.to change(review, :user_id).to(new_user.id)
+        end
       end
     end
 

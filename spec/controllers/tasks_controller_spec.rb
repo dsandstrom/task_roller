@@ -36,12 +36,11 @@ RSpec.describe TasksController, type: :controller do
           end
         end
 
-        context "when project" do
+        context "when project only" do
           it "returns a success response" do
             Fabricate(:task, project: project)
             Fabricate(:task, project: project, user: current_user)
-            get :index, params: { category_id: category.to_param,
-                                  project_id: project.to_param }
+            get :index, params: { project_id: project.to_param }
             expect(response).to be_successful
           end
         end
@@ -98,7 +97,7 @@ RSpec.describe TasksController, type: :controller do
 
         context "when project" do
           it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
+            get :new, params: { project_id: project.id }
 
             expect(response).to be_successful
           end
@@ -304,18 +303,21 @@ RSpec.describe TasksController, type: :controller do
         end
 
         context "when project and issue" do
+          before do
+            valid_attributes.merge! issue_id: issue.to_param
+            invalid_attributes.merge! issue_id: issue.to_param
+          end
+
           context "with valid params" do
             it "creates a new Task" do
               expect do
                 post :create, params: { project_id: project.to_param,
-                                        issue_id: issue.to_param,
                                         task: valid_attributes }
               end.to change(issue.tasks, :count).by(1)
             end
 
             it "redirects to the created task" do
               post :create, params: { project_id: project.to_param,
-                                      issue_id: issue.to_param,
                                       task: valid_attributes }
               url = task_path(Task.last)
               expect(response).to redirect_to(url)
@@ -325,7 +327,6 @@ RSpec.describe TasksController, type: :controller do
           context "with invalid params" do
             it "returns a success response ('new' template)" do
               post :create, params: { project_id: project.to_param,
-                                      issue_id: issue.to_param,
                                       task: invalid_attributes }
               expect(response).to be_successful
             end

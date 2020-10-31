@@ -2,16 +2,14 @@
 
 # TODO: test redirect if not logged in
 # TODO: test redirect to login if non-employee
-# TODO: move `before_action authenticate` here instead of autoloading
 
 class ApplicationController < ActionController::Base
-  include Pundit
-
   protect_from_forgery with: :exception
 
+  # TODO: check_authorization
   before_action :authenticate
 
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  rescue_from CanCan::AccessDenied, with: :user_not_authorized
 
   private
 
@@ -42,6 +40,10 @@ class ApplicationController < ActionController::Base
     end
 
     def user_not_authorized
-      redirect_to :unauthorized
+      respond_to do |format|
+        format.json { head :forbidden, content_type: 'text/html' }
+        format.html { redirect_to main_app.unauthorized_url }
+        format.js   { head :forbidden, content_type: 'text/html' }
+      end
     end
 end

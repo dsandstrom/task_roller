@@ -1,13 +1,13 @@
 <span id="progression_<%= progression.id %>" class="progression">
   <% if progression.finished? %>
     <%= "#{progression.start_date}-#{progression.finish_date}" %>
-  <% elsif policy(progression).finish? %>
+  <% elsif can?(:finish, progression) %>
     <%= link_to 'pause task',
                 finish_task_progression_path(task, progression),
                 method: :patch, class: 'destroy-link' %>
   <% end %>
 
-  <% if policy(progression).destroy? %>
+  <% if can?(:destroy, progression) %>
     <%= divider %>
     <%= link_to 'delete', task_progression_path(task, progression),
                 method: :delete, data: { confirm: 'Are you sure?' },

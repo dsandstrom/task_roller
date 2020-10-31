@@ -16,20 +16,6 @@ RSpec.describe ReviewsController, type: :controller do
     { user_id: "" }
   end
 
-  describe "GET #index" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-      context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
-
-        it "returns a success response" do
-          _review = Fabricate(:review, task: task)
-          get :index, params: { task_id: task.to_param }
-          expect(response).to be_successful
-        end
-      end
-    end
-  end
-
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
@@ -81,7 +67,7 @@ RSpec.describe ReviewsController, type: :controller do
         end
 
         it "should be unauthorized" do
-          review = Fabricate(:review, task: task)
+          review = Fabricate(:review, task: task, user: current_user)
           get :edit, params: { task_id: task.to_param, id: review.to_param }
           expect_to_be_unauthorized(response)
         end

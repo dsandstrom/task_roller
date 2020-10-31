@@ -1,24 +1,16 @@
 # frozen_string_literal: true
 
-# TODO: create subscription on create
-
 class IssueCommentsController < ApplicationController
-  before_action :authorize_issue_comment, only: %i[index new create destroy]
-  before_action :set_issue, only: %i[new create]
-  before_action :set_issue_comment, only: %i[edit update destroy]
+  load_and_authorize_resource :issue
+  load_and_authorize_resource through: :issue, through_association: :comments
 
-  def new
-    @issue_comment = @issue.comments.build
-  end
+  def new; end
 
-  def edit
-  end
+  def edit; end
 
   def create
-    @issue_comment = @issue.comments.build(issue_comment_params)
-    @issue_comment.user_id = current_user.id
-
     if @issue_comment.save
+      @issue.issue_subscriptions.create user: current_user
       redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}"),
                   notice: 'Comment was successfully created.'
     else
@@ -43,16 +35,12 @@ class IssueCommentsController < ApplicationController
 
   private
 
-    def authorize_issue_comment
-      authorize IssueComment
-    end
-
     def set_issue
       @issue = Issue.find(params[:issue_id])
     end
 
     def set_issue_comment
-      @issue_comment = authorize(IssueComment.find(params[:id]))
+      @issue_comment = IssueComment.find(params[:id])
       @issue = @issue_comment.issue
     end
 

@@ -47,16 +47,20 @@ class Review < ApplicationRecord
     approved.nil?
   end
 
-  def approve
+  def approve(user = nil)
     return false unless task.valid?
 
-    update(approved: true) && task.close
+    attrs = { approved: true }
+    attrs.merge!(user_id: user.id) if user
+    update(attrs) && task.close
   end
 
-  def disapprove
+  def disapprove(user = nil)
     return false unless task.valid?
 
-    update(approved: false) && task.open
+    attrs = { approved: false }
+    attrs.merge!(user_id: user.id) if user
+    update(attrs) && task.open
   end
 
   def status

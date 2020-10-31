@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  before_action :authorize_category, only: %i[index new create]
-  before_action :set_category, only: %i[show edit update destroy]
+  load_and_authorize_resource
 
-  def index
-    @categories = Category.all
-  end
+  def index; end
 
   def show
     @projects = @category.projects
@@ -14,15 +11,11 @@ class CategoriesController < ApplicationController
     @tasks = @category.tasks.order(updated_at: :desc).limit(3)
   end
 
-  def new
-    @category = Category.new
-  end
+  def new; end
 
   def edit; end
 
   def create
-    @category = Category.new(category_params)
-
     if @category.save
       redirect_to @category, notice: 'Category was successfully created.'
     else
@@ -45,15 +38,7 @@ class CategoriesController < ApplicationController
 
   private
 
-    def set_category
-      @category = authorize(Category.find(params[:id]))
-    end
-
     def category_params
       params.require(:category).permit(:name, :visible, :internal)
-    end
-
-    def authorize_category
-      authorize Category
     end
 end

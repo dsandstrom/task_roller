@@ -88,14 +88,16 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             issue_subscription =
               Fabricate(:issue_subscription, issue: issue, user: current_user)
             expect do
-              delete :destroy, params: { id: issue_subscription.to_param }
+              delete :destroy, params: { issue_id: issue.to_param,
+                                         id: issue_subscription.to_param }
             end.to change(current_user.issue_subscriptions, :count).by(-1)
           end
 
           it "redirects to the issue_subscriptions list" do
             issue_subscription =
               Fabricate(:issue_subscription, issue: issue, user: current_user)
-            delete :destroy, params: { id: issue_subscription.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_subscription.to_param }
             expect(response).to redirect_to(issue)
           end
         end
@@ -104,13 +106,15 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           it "doesn't destroys the requested issue_subscription" do
             issue_subscription = Fabricate(:issue_subscription, issue: issue)
             expect do
-              delete :destroy, params: { id: issue_subscription.to_param }
+              delete :destroy, params: { issue_id: issue.to_param,
+                                         id: issue_subscription.to_param }
             end.not_to change(IssueSubscription, :count)
           end
 
           it "should be unauthorized" do
             issue_subscription = Fabricate(:issue_subscription, issue: issue)
-            delete :destroy, params: { id: issue_subscription.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_subscription.to_param }
             expect_to_be_unauthorized(response)
           end
         end

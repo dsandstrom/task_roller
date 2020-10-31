@@ -1,34 +1,31 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :authorize_user, only: %i[index new create]
-  before_action :set_user, only: %i[show edit update destroy]
+  load_and_authorize_resource
 
   def index
-    @admins = User.admins
-    @reporters = User.reporters
-    @reviewers = User.reviewers
-    @workers = User.workers
+    @admins = @users.admins
+    @reporters = @users.reporters
+    @reviewers = @users.reviewers
+    @workers = @users.workers
   end
 
   # TODO: show tasks from reviews by user
-  def show
-    # TODO: for reviewer+, show tasks ready for review
-  end
+  # TODO: for reviewer+, show tasks ready for review
+  def show; end
 
   def new
-    employee_type =
-      if User::VALID_EMPLOYEE_TYPES.include?(params[:employee_type])
-        params[:employee_type]
-      end
-    @user = User.new(employee_type: employee_type)
+    # TODO: disallow when no employee_type or add select to form
+    employee_type = params[:employee_type]
+    return unless employee_type &&
+                  User::VALID_EMPLOYEE_TYPES.include?(employee_type)
+
+    @user.employee_type = employee_type
   end
 
   def edit; end
 
   def create
-    @user = User.new(user_params)
-
     if @user.save
       redirect_to @user, notice: 'User was successfully created.'
     else
@@ -36,6 +33,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # TODO: allow admin to change employee_type
   def update
     if @user.update(user_params)
       redirect_to @user, notice: 'User was successfully updated.'
@@ -51,10 +49,6 @@ class UsersController < ApplicationController
 
   private
 
-    def set_user
-      @user = authorize(User.find(params[:id]))
-    end
-
     def user_params
       keys = @user&.persisted? ? %i[name] : %i[name email employee_type]
       params.require(:user).permit(keys)
@@ -69,9 +63,5 @@ class UsersController < ApplicationController
                     %w[Reporter Reviewer Worker].includes?(params[:type])
 
       params[:type]
-    end
-
-    def authorize_user
-      authorize User
     end
 end

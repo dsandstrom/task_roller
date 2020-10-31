@@ -1,4 +1,4 @@
-<% return unless policy(User).new? %>
+<% return unless can?(:create, User) %>
 
 <%= link_to  new_user_path(employee_type: employee_type),
             class: 'button button-success' do %>

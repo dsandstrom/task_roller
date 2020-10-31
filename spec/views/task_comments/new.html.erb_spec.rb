@@ -11,8 +11,6 @@ RSpec.describe "task_comments/new", type: :view do
   let(:url) { task_task_comments_url(task) }
 
   before(:each) do
-    assign(:category, category)
-    assign(:project, project)
     assign(:task, task)
     assign(:task_comment, task.comments.build)
   end

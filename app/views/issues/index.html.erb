@@ -15,7 +15,7 @@ index_path =
   <header class="issues-header">
     <h2>Project Issues</h2>
 
-    <% if policy(Issue).new? %>
+    <% if can?(:create, Issue) %>
       <p>
         <%= link_to 'Report Issue',
                     new_project_issue_path(@project),

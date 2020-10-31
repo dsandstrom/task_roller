@@ -3,7 +3,7 @@
 <header class="category-projects-header">
   <h2>Projects</h2>
 
-  <% if policy(Project).new? %>
+  <% if can?(:create, Project) %>
     <p>
       <%= link_to new_category_project_path(@category),
                   class: 'button button-success' do %>
@@ -13,7 +13,7 @@
     </p>
   <% end %>
 
-  <% if policy(@category).edit? %>
+  <% if can?(:update, @category) %>
     <p>
       <%= link_to 'Edit Category', edit_category_path(@category),
                   class: 'button' %>

@@ -1,4 +1,11 @@
-<% url = issue_connections_path(issue_connection.source) %>
+<%
+  url =
+    if issue_connection.persisted?
+      issue_connection_path(issue_connection)
+    else
+      issue_connections_path(issue_connection.source)
+    end
+%>
 
 <%= form_with(model: issue_connection, url: url, local: true,
               html: { name: :issue_connection_form }) do |form| %>

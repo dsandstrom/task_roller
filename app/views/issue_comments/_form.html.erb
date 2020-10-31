@@ -1,14 +1,15 @@
 <%
   url =
     if issue_comment.persisted?
-      issue_comment_url(issue_comment)
+      issue_issue_comment_url(issue, issue_comment)
     else
       issue_issue_comments_url(issue)
     end
 %>
 
 <%= form_with(model: issue_comment, url: url, local: true,
-              html: { name: 'issue_comment_form', novalidate: 'novalidate' }) do |form| %>
+              html: { name: 'issue_comment_form',
+                      novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">

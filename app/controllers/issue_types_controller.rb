@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
 class IssueTypesController < ApplicationController
-  before_action :authorize_issue_type
-  before_action :set_issue_type, only: %i[edit update destroy]
+  load_and_authorize_resource
 
   def new
-    @issue_type = authorize(IssueType.new(color: 'default', icon: 'bulb'))
+    @issue_type.assign_attributes(color: 'default', icon: 'bulb')
   end
 
   def edit; end
 
   def create
-    @issue_type = authorize(IssueType.new(issue_type_params))
-
     if @issue_type.save
       redirect_to roller_types_url,
                   notice: 'Issue type was successfully created.'
@@ -40,9 +37,5 @@ class IssueTypesController < ApplicationController
 
     def issue_type_params
       params.require(:issue_type).permit(:name, :icon, :color)
-    end
-
-    def authorize_issue_type
-      authorize IssueType
     end
 end

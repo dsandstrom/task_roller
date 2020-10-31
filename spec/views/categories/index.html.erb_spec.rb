@@ -11,7 +11,7 @@ RSpec.describe "categories/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
 
-    before { enable_pundit(view, admin) }
+    before { enable_can(view, admin) }
 
     it "renders a list of categories" do
       render
@@ -39,7 +39,7 @@ RSpec.describe "categories/index", type: :view do
   context "for a reviewer" do
     let(:reviewer) { Fabricate(:user_reviewer) }
 
-    before { enable_pundit(view, reviewer) }
+    before { enable_can(view, reviewer) }
 
     it "renders a list of categories" do
       render
@@ -64,7 +64,7 @@ RSpec.describe "categories/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_pundit(view, current_user) }
+      before { enable_can(view, current_user) }
 
       it "renders a list of categories" do
         render

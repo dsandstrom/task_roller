@@ -7,30 +7,30 @@
   </header>
   <%= content_tag :main, comment.body_html.html_safe %>
 
-  <% if policy(comment).edit? || policy(comment).destroy? %>
+  <% if can?(:update, comment) || can?(:destroy, comment) %>
     <footer>
       <p>
         <% if object.is_a?(Task) %>
-          <% if policy(comment).edit? %>
+          <% if can?(:update, comment) %>
             <%= link_to 'edit',
-                        edit_task_comment_path(comment) %>
+                        edit_task_task_comment_path(object, comment) %>
           <% end %>
-          <% if policy(comment).destroy? %>
+          <% if can?(:destroy, comment) %>
             <%= divider %>
             <%= link_to 'delete',
-                        task_comment_path(comment),
+                        task_task_comment_path(object, comment),
                         method: :delete,
                         data: { confirm: 'Are you sure?' } %>
           <% end %>
         <% else %>
-          <% if policy(comment).edit? %>
+          <% if can?(:update, comment) %>
             <%= link_to 'edit',
-                        edit_issue_comment_path(comment) %>
+                        edit_issue_issue_comment_path(object, comment) %>
           <% end %>
-          <% if policy(comment).destroy? %>
+          <% if can?(:destroy, comment) %>
             <%= divider %>
             <%= link_to 'delete',
-                        issue_comment_path(comment),
+                        issue_issue_comment_path(object, comment),
                         method: :delete,
                         data: { confirm: 'Are you sure?' } %>
           <% end %>

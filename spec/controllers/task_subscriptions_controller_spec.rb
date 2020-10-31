@@ -88,14 +88,16 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
             task_subscription =
               Fabricate(:task_subscription, task: task, user: current_user)
             expect do
-              delete :destroy, params: { id: task_subscription.to_param }
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_subscription.to_param }
             end.to change(current_user.task_subscriptions, :count).by(-1)
           end
 
           it "redirects to the task_subscriptions list" do
             task_subscription =
               Fabricate(:task_subscription, task: task, user: current_user)
-            delete :destroy, params: { id: task_subscription.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_subscription.to_param }
             expect(response).to redirect_to(task)
           end
         end
@@ -104,13 +106,15 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
           it "doesn't destroys the requested task_subscription" do
             task_subscription = Fabricate(:task_subscription, task: task)
             expect do
-              delete :destroy, params: { id: task_subscription.to_param }
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_subscription.to_param }
             end.not_to change(TaskSubscription, :count)
           end
 
           it "should be unauthorized" do
             task_subscription = Fabricate(:task_subscription, task: task)
-            delete :destroy, params: { id: task_subscription.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_subscription.to_param }
             expect_to_be_unauthorized(response)
           end
         end

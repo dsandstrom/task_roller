@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
 class TaskConnectionsController < ApplicationController
-  before_action :authorize_task_connection
-  before_action :build_task_connection, only: :create
+  before_action :build_task_connection, only: %i[new create]
   before_action :set_task_connection, only: :destroy
 
-  def new
-    @task_connection = TaskConnection.new(source_id: params[:source_id])
-  end
+  def new; end
 
   def create
     notice = 'Task was successfully closed and marked as a duplicate.'
 
     if @task_connection.save
       @task_connection.source.close
-      path = task_path(@task_connection.source)
-      redirect_to path, notice: notice
+      redirect_to @task_connection.source, notice: notice
     else
       render :new
     end
@@ -23,26 +19,24 @@ class TaskConnectionsController < ApplicationController
 
   def destroy
     notice = 'Task was successfully reopened.'
-    path = task_path(@task_connection.source)
+    task = @task_connection.source
     @task_connection.destroy
-    @task_connection.source.open
-    redirect_to path, notice: notice
+    task.open
+    redirect_to task, notice: notice
   end
 
   private
 
-    def authorize_task_connection
-      authorize TaskConnection
-    end
-
     def build_task_connection
+      target_id = task_connection_params[:target_id] if params[:task_connection]
       @task_connection =
-        TaskConnection.new(source_id: params[:source_id],
-                           target_id: task_connection_params[:target_id])
+        TaskConnection.new(source_id: params[:source_id], target_id: target_id)
+      authorize! :create, @task_connection
     end
 
     def set_task_connection
-      @task_connection = authorize(TaskConnection.find(params[:id]))
+      @task_connection = TaskConnection.find(params[:id])
+      authorize! :destroy, @task_connection
     end
 
     def task_connection_params

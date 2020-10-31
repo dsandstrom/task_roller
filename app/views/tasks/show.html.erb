@@ -38,13 +38,13 @@ assigned = @task.assigned
                          collection: progressions,
                          locals: { task: @task } %>
             <% elsif @task.assigned? &&
-                     policy(@task.progressions.build).create? %>
+                     can?(:create, @task.progressions.build(user_id: current_user.id)) %>
               <%= link_to 'start task',
                           task_progressions_path(@task),
                           method: :post, class: 'create-link' %>
             <% end %>
 
-            <% if policy(@task.reviews.build).create? %>
+            <% if can?(:create, @task.reviews.build(user_id: current_user.id)) %>
               <%= divider %>
               <%= link_to 'mark complete', task_reviews_path(@task),
                           method: :post %>
@@ -55,20 +55,20 @@ assigned = @task.assigned
         <% review = @task.current_review %>
         <% if review&.pending? %>
           <p>
-            <% if policy(review).approve? %>
+            <% if can?(:approve, review) %>
               <%= link_to 'approve',
                           approve_task_review_path(@task, review),
                           method: :patch, class: 'create-link' %>
             <% end %>
 
-            <% if policy(review).disapprove? %>
+            <% if can?(:disapprove, review) %>
               <%= divider %>
               <%= link_to 'disapprove',
                           disapprove_task_review_path(@task, review),
                           method: :patch, class: 'destroy-link' %>
             <% end %>
 
-            <% if policy(review).destroy? %>
+            <% if can?(:destroy, review) %>
               <% confirm = 'Are you sure you want to cancel the review?' %>
               <%= link_to 'cancel review',
                           task_review_path(@task, review),
@@ -78,7 +78,7 @@ assigned = @task.assigned
           </p>
         <% end %>
 
-        <% if policy(TaskConnection).new? && @task.open? &&
+        <% if can?(:create, TaskConnection) && @task.open? &&
               !@task.in_review? && @task.duplicatee.blank? %>
           <p>
             <%= link_to 'mark duplicate',
@@ -91,11 +91,11 @@ assigned = @task.assigned
           <% duplicatee = @task.duplicatee %>
           <p>
             Duplicate of:
-            <%= link_to_if policy(duplicatee).show?,
+            <%= link_to_if can?(:read, duplicatee),
                            duplicatee.short_summary, task_path(duplicatee) %>
           </p>
 
-          <% if policy(TaskConnection).destroy? %>
+          <% if can?(:destroy, TaskConnection) %>
             <%
               confirm = "Are you sure you want to remove the connection to " \
                         "\"#{duplicatee.short_summary}\" and reopen " \
@@ -110,7 +110,7 @@ assigned = @task.assigned
           <% end %>
         <% end %>
 
-        <% if policy(@task).close? %>
+        <% if can?(:close, @task) %>
           <p>
             <% if @task.open? %>
               <%= link_to 'force close',
@@ -138,7 +138,7 @@ assigned = @task.assigned
               <% end %>
             </dl>
 
-            <% if policy(@task).assign? && !@task.in_review? %>
+            <% if can?(:assign, @task) && !@task.in_review? %>
               <p>
                 <%= link_to 'reassign',
                             edit_task_assignment_path(@task),
@@ -150,7 +150,7 @@ assigned = @task.assigned
             <p>
               no one
               <%# TODO: add form with ajax with first click, then toggle hide class %>
-              <% if !@task.in_review? && policy(@task).assign? %>
+              <% if !@task.in_review? && can?(:assign, @task) %>
                 <%= divider %>
                 <%= link_to 'assign someone',
                             edit_task_assignment_path(@task),
@@ -160,7 +160,7 @@ assigned = @task.assigned
             </p>
           <% end %>
 
-          <% if !@task.in_review? && policy(@task).assign? %>
+          <% if !@task.in_review? && can?(:assign, @task) %>
             <%= render 'task_assignments/form', task: @task %>
           <% end %>
         </section>
@@ -191,7 +191,7 @@ assigned = @task.assigned
               <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
             </span>
 
-            <% if policy(@task).edit?  %>
+            <% if can?(:update, @task)  %>
               <%= divider %>
               <%= link_to 'change', edit_task_path(@task),
                           class: 'secondary-link' %>
@@ -219,7 +219,7 @@ assigned = @task.assigned
 
           <% @task.duplicates.each do |duplicate| %>
             <p>
-              <%= link_to_if policy(duplicate).show?,
+              <%= link_to_if can?(:read, duplicate),
                              duplicate.id_and_summary, task_path(duplicate) %>
             </p>
           <% end %>
@@ -237,7 +237,7 @@ assigned = @task.assigned
 
           <%= content_tag :main, @task.description_html.html_safe %>
 
-          <% if policy(@task).edit?  %>
+          <% if can?(:update, @task)  %>
             <footer>
               <p><%= link_to 'edit', edit_task_path(@task) %></p>
             </footer>
