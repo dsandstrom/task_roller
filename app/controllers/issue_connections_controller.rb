@@ -11,6 +11,7 @@ class IssueConnectionsController < ApplicationController
 
     if @issue_connection.save
       @issue_connection.source.close
+      @issue_connection.subscribe_user
       redirect_to @issue_connection.source, notice: notice
     else
       render :new
