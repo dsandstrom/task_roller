@@ -576,4 +576,60 @@ RSpec.describe Review, type: :model do
       end
     end
   end
+
+  describe "#subscribe_user" do
+    let(:user) { Fabricate(:user_reviewer) }
+
+    context "when task and user" do
+      let(:task) { Fabricate(:task) }
+      let(:review) { Fabricate(:review, task: task, user: user) }
+
+      context "that is not subscribed" do
+        it "creates a task_subscription for the task user" do
+          expect do
+            review.subscribe_user
+          end.to change(user.task_subscriptions, :count).by(1)
+        end
+
+        it "creates only 1 TaskSubscription" do
+          expect do
+            review.subscribe_user
+          end.to change(TaskSubscription, :count).by(1)
+        end
+      end
+
+      context "that is already subscribed" do
+        before do
+          Fabricate(:task_subscription, task: task, user: user)
+        end
+
+        it "doesn't create a task_subscription" do
+          expect do
+            review.subscribe_user
+          end.not_to change(TaskSubscription, :count)
+        end
+      end
+    end
+
+    context "when no user" do
+      let(:task) { Fabricate(:task) }
+      let(:review) { Fabricate.build(:review, task: task, user: nil) }
+
+      it "doesn't create a task_subscription" do
+        expect do
+          review.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+
+    context "when no task" do
+      let(:review) { Fabricate.build(:review, task: nil, user: user) }
+
+      it "doesn't create a task_subscription for the task user" do
+        expect do
+          review.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+  end
 end

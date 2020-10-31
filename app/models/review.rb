@@ -74,6 +74,12 @@ class Review < ApplicationRecord
       end
   end
 
+  def subscribe_user
+    return unless task && user
+
+    task.task_subscriptions.create(user_id: user.id)
+  end
+
   private
 
     def task_reviews
