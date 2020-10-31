@@ -1566,22 +1566,35 @@ RSpec.describe Task, type: :model do
 
   describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }
+    let(:subscriber) { Fabricate(:user_reporter) }
 
-    context "when user" do
-      let(:task) { Fabricate(:task, user: user) }
+    context "when not provided a subscriber" do
+      context "but task has a user" do
+        let(:task) { Fabricate(:task, user: user) }
 
-      context "not subscribed" do
-        it "creates a task_subscription for the user" do
-          expect do
-            task.subscribe_user
-          end.to change(user.task_subscriptions, :count).by(1)
+        context "that is not subscribed" do
+          it "creates a task_subscription for the task user" do
+            expect do
+              task.subscribe_user
+            end.to change(user.task_subscriptions, :count).by(1)
+          end
+        end
+
+        context "that is already subscribed" do
+          before do
+            Fabricate(:task_subscription, task: task, user: user)
+          end
+
+          it "doesn't create a task_subscription" do
+            expect do
+              task.subscribe_user
+            end.not_to change(TaskSubscription, :count)
+          end
         end
       end
 
-      context "already subscribed" do
-        before do
-          Fabricate(:task_subscription, task: task, user: user)
-        end
+      context "and task doesn't have a user" do
+        let(:task) { Fabricate.build(:task, user: nil) }
 
         it "doesn't create a task_subscription" do
           expect do
@@ -1591,13 +1604,21 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "when no user" do
-      let(:task) { Fabricate.build(:task, user: nil) }
+    context "when provided a subscriber" do
+      let(:task) { Fabricate(:task, user: user) }
 
-      it "doesn't create a task_subscription" do
-        expect do
-          task.subscribe_user
-        end.not_to change(TaskSubscription, :count)
+      context "that is not subscribed" do
+        it "creates a task_subscription for the subscriber" do
+          expect do
+            task.subscribe_user(subscriber)
+          end.to change(subscriber.task_subscriptions, :count).by(1)
+        end
+
+        it "doesn't create a task_subscription for the task user" do
+          expect do
+            task.subscribe_user(subscriber)
+          end.to change(TaskSubscription, :count).by(1)
+        end
       end
     end
   end
