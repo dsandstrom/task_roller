@@ -6,12 +6,9 @@ class IssueComment < RollerComment
   validates :roller_id, presence: true
   validates :issue, presence: true, if: :roller_id
 
-  def subscribe_user(subscriber = nil)
-    return unless issue
+  def subscribe_user
+    return unless issue && user
 
-    subscriber ||= user
-    return unless subscriber
-
-    issue.subscribe_user(subscriber)
+    issue.subscribe_user(user)
   end
 end
