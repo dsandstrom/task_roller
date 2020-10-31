@@ -9,7 +9,7 @@ class Ability
   def initialize(user)
     return unless user
 
-    global_abilities(user)
+    basic_abilities(user)
     return unless user.reviewer? || user.admin?
 
     reviewer_abilities(user)
@@ -20,10 +20,10 @@ class Ability
 
   private
 
-    def global_abilities(user)
-      issue_abilities(user)
-      task_abilities(user)
-      task_review_abilities(user)
+    def basic_abilities(user)
+      basic_issue_abilities(user)
+      basic_task_abilities(user)
+      basic_assigned_task_abilities(user)
       can :read, Category
       can :read, Issue
       can :read, Project
@@ -31,7 +31,7 @@ class Ability
       can :update, User, id: user.id
     end
 
-    def issue_abilities(user)
+    def basic_issue_abilities(user)
       can %i[create update], Issue, user_id: user.id
       can :read, IssueComment
       can %i[create update], IssueComment, user_id: user.id
@@ -41,7 +41,7 @@ class Ability
       can :read, Resolution
     end
 
-    def task_abilities(user)
+    def basic_task_abilities(user)
       can :read, Task
       can :update, Task, user_id: user.id
       can :read, TaskComment
@@ -50,7 +50,7 @@ class Ability
       can :manage, TaskSubscription, user_id: user.id
     end
 
-    def task_review_abilities(user)
+    def basic_assigned_task_abilities(user)
       task_params = { task_assignees: { assignee_id: user.id } }
       can :create, Progression, user_id: user.id, task: task_params
       can :read, Progression
