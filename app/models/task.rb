@@ -268,6 +268,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     task_subscriptions.create(user_id: user.id)
   end
 
+  def subscribe_assignees
+    return unless assignees
+
+    assignees.each { |u| task_subscriptions.create(user_id: u.id) }
+  end
+
   private
 
     def build_assigned
