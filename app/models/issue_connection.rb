@@ -10,4 +10,10 @@ class IssueConnection < RollerConnection
     @target_options ||=
       (source.project&.issues&.where&.not(id: source.id) if source&.id)
   end
+
+  def subscribe_user
+    return unless target && source&.user
+
+    target.issue_subscriptions.create(user_id: source.user_id)
+  end
 end

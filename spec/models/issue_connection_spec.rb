@@ -65,4 +65,81 @@ RSpec.describe IssueConnection, type: :model do
       end
     end
   end
+
+  describe "#subscribe_user" do
+    let(:user) { Fabricate(:user_reviewer) }
+    let(:subscriber) { Fabricate(:user_reporter) }
+    let(:project) { Fabricate(:project) }
+
+    context "when source and target issues" do
+      # let(:source) { Fabricate(:issue, project: project) }
+      let(:target) { Fabricate(:issue, project: project) }
+
+      context "and source has a user" do
+        let(:source) { Fabricate(:issue, project: project, user: user) }
+
+        let(:issue_connection) do
+          Fabricate(:issue_connection, source: source, target: target)
+        end
+
+        context "that is not subscribed" do
+          it "creates a issue_subscription for the issue user" do
+            expect do
+              issue_connection.subscribe_user
+            end.to change(user.issue_subscriptions, :count).by(1)
+          end
+        end
+
+        context "that is already subscribed" do
+          before do
+            Fabricate(:issue_subscription, issue: target, user: user)
+          end
+
+          it "doesn't create a issue_subscription" do
+            expect do
+              issue_connection.subscribe_user
+            end.not_to change(TaskSubscription, :count)
+          end
+        end
+      end
+
+      context "and source doesn't have a user" do
+        let(:source) { Fabricate.build(:issue, project: project) }
+
+        let(:issue_connection) do
+          Fabricate.build(:issue_connection, source: source, target: target)
+        end
+
+        it "doesn't create a issue_subscription" do
+          expect do
+            issue_connection.subscribe_user
+          end.not_to change(TaskSubscription, :count)
+        end
+      end
+    end
+
+    context "when no target issue" do
+      let(:issue_connection) do
+        Fabricate.build(:issue_connection, source: source, target: nil)
+      end
+
+      it "doesn't create a issue_subscription for the issue user" do
+        expect do
+          issue_connection.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+
+    context "when no source issue" do
+      let(:issue_connection) do
+        Fabricate.build(:issue_connection, source: nil, target: target)
+      end
+
+      it "doesn't create a issue_subscription for the issue user" do
+        expect do
+          issue_connection.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+  end
 end
