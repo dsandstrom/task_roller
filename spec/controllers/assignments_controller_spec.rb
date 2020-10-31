@@ -123,6 +123,12 @@ RSpec.describe AssignmentsController, type: :controller do
             end.to change(task, :assignee_ids).to([])
           end
 
+          it "doesn't change task_subscriptions" do
+            expect do
+              put :update, params: { id: task.to_param, task: blank_attributes }
+            end.not_to change(TaskSubscription, :count)
+          end
+
           it "redirects to the task" do
             url = task_path(task)
             put :update, params: { id: task.to_param, task: blank_attributes }
@@ -144,6 +150,13 @@ RSpec.describe AssignmentsController, type: :controller do
             put :update, params: { id: task.to_param, task: valid_attributes }
             task.reload
           end.not_to change(task, :assignee_ids)
+        end
+
+        it "doesn't create any task_subscriptions" do
+          task = Fabricate(:task, project: project)
+          expect do
+            put :update, params: { id: task.to_param, task: valid_attributes }
+          end.not_to change(TaskSubscription, :count)
         end
 
         it "should be unauthorized" do
