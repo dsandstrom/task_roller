@@ -44,7 +44,8 @@ class TasksController < ApplicationController
 
   def create
     if @task.save
-      @task.task_subscriptions.create(user_id: current_user.id)
+      @task.subscribe_user
+      @task.subscribe_assignees
       redirect_to @task, success: 'Task was successfully created.'
     else
       set_form_options
@@ -54,6 +55,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
+      @task.subscribe_assignees
       redirect_to @task, success: 'Task was successfully updated.'
     else
       set_form_options
