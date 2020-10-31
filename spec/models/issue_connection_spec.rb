@@ -98,7 +98,7 @@ RSpec.describe IssueConnection, type: :model do
           it "doesn't create a issue_subscription" do
             expect do
               issue_connection.subscribe_user
-            end.not_to change(TaskSubscription, :count)
+            end.not_to change(IssueSubscription, :count)
           end
         end
       end
@@ -113,7 +113,7 @@ RSpec.describe IssueConnection, type: :model do
         it "doesn't create a issue_subscription" do
           expect do
             issue_connection.subscribe_user
-          end.not_to change(TaskSubscription, :count)
+          end.not_to change(IssueSubscription, :count)
         end
       end
     end
@@ -126,7 +126,7 @@ RSpec.describe IssueConnection, type: :model do
       it "doesn't create a issue_subscription for the issue user" do
         expect do
           issue_connection.subscribe_user
-        end.not_to change(TaskSubscription, :count)
+        end.not_to change(IssueSubscription, :count)
       end
     end
 
@@ -138,7 +138,7 @@ RSpec.describe IssueConnection, type: :model do
       it "doesn't create a issue_subscription for the issue user" do
         expect do
           issue_connection.subscribe_user
-        end.not_to change(TaskSubscription, :count)
+        end.not_to change(IssueSubscription, :count)
       end
     end
   end

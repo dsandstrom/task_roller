@@ -10,4 +10,10 @@ class TaskConnection < RollerConnection
     @target_options ||=
       (source.project&.tasks&.where&.not(id: source.id) if source&.id)
   end
+
+  def subscribe_user
+    return unless target && source&.user
+
+    target.task_subscriptions.create(user_id: source.user_id)
+  end
 end

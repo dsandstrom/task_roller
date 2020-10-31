@@ -65,4 +65,81 @@ RSpec.describe TaskConnection, type: :model do
       end
     end
   end
+
+  describe "#subscribe_user" do
+    let(:user) { Fabricate(:user_reviewer) }
+    let(:subscriber) { Fabricate(:user_reporter) }
+    let(:project) { Fabricate(:project) }
+
+    context "when source and target tasks" do
+      # let(:source) { Fabricate(:task, project: project) }
+      let(:target) { Fabricate(:task, project: project) }
+
+      context "and source has a user" do
+        let(:source) { Fabricate(:task, project: project, user: user) }
+
+        let(:task_connection) do
+          Fabricate(:task_connection, source: source, target: target)
+        end
+
+        context "that is not subscribed" do
+          it "creates a task_subscription for the task user" do
+            expect do
+              task_connection.subscribe_user
+            end.to change(user.task_subscriptions, :count).by(1)
+          end
+        end
+
+        context "that is already subscribed" do
+          before do
+            Fabricate(:task_subscription, task: target, user: user)
+          end
+
+          it "doesn't create a task_subscription" do
+            expect do
+              task_connection.subscribe_user
+            end.not_to change(TaskSubscription, :count)
+          end
+        end
+      end
+
+      context "and source doesn't have a user" do
+        let(:source) { Fabricate.build(:task, project: project) }
+
+        let(:task_connection) do
+          Fabricate.build(:task_connection, source: source, target: target)
+        end
+
+        it "doesn't create a task_subscription" do
+          expect do
+            task_connection.subscribe_user
+          end.not_to change(TaskSubscription, :count)
+        end
+      end
+    end
+
+    context "when no target task" do
+      let(:task_connection) do
+        Fabricate.build(:task_connection, source: source, target: nil)
+      end
+
+      it "doesn't create a task_subscription for the task user" do
+        expect do
+          task_connection.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+
+    context "when no source task" do
+      let(:task_connection) do
+        Fabricate.build(:task_connection, source: nil, target: target)
+      end
+
+      it "doesn't create a task_subscription for the task user" do
+        expect do
+          task_connection.subscribe_user
+        end.not_to change(TaskSubscription, :count)
+      end
+    end
+  end
 end
