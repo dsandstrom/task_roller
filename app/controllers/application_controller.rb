@@ -6,8 +6,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
-  # TODO: check_authorization
   before_action :authenticate
+  check_authorization
 
   rescue_from CanCan::AccessDenied, with: :user_not_authorized
 
