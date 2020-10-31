@@ -22,7 +22,7 @@ RSpec.describe TaskComment, type: :model do
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:roller_id) }
 
-  describe "#subscribe_user", focus: true do
+  describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }
     let(:subscriber) { Fabricate(:user_reporter) }
 
