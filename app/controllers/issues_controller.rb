@@ -47,7 +47,7 @@ class IssuesController < ApplicationController
 
   def create
     if @issue.save
-      @issue.issue_subscriptions.create(user_id: current_user.id)
+      @issue.subscribe_user
       redirect_to issue_url(@issue), success: 'Issue was successfully created.'
     else
       set_form_options
@@ -72,7 +72,7 @@ class IssuesController < ApplicationController
 
   def open
     if @issue.open
-      @issue.issue_subscriptions.create(user_id: current_user.id)
+      @issue.subscribe_user(current_user)
       redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
     else
       set_form_options
@@ -82,7 +82,7 @@ class IssuesController < ApplicationController
 
   def close
     if @issue.close
-      @issue.issue_subscriptions.create(user_id: current_user.id)
+      @issue.subscribe_user(current_user)
       redirect_to issue_url(@issue), success: 'Issue was successfully closed.'
     else
       set_form_options
