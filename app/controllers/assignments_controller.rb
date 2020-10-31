@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-# TODO: rename to AssignmentsController?
-class TaskAssignmentsController < ApplicationController
+class AssignmentsController < ApplicationController
   load_and_authorize_resource :user, only: :index
-  before_action :set_task, except: :index
+  load_and_authorize_resource through: :user, only: :index, class: 'Task'
+  before_action :load_and_authorize_task, except: :index
 
   def index
-    authorize! :read, Task
-
-    @tasks = @user.assignments.filter_by(build_filters).page(params[:page])
+    @assignments = @assignments.filter_by(build_filters).page(params[:page])
   end
 
   def edit; end
@@ -23,7 +21,7 @@ class TaskAssignmentsController < ApplicationController
 
   private
 
-    def set_task
+    def load_and_authorize_task
       @task = Task.find(params[:id])
       authorize! :assign, @task
     end

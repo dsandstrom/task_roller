@@ -141,7 +141,7 @@ assigned = @task.assigned
             <% if can?(:assign, @task) && !@task.in_review? %>
               <p>
                 <%= link_to 'reassign',
-                            edit_task_assignment_path(@task),
+                            edit_assignment_path(@task),
                             id: 'task_assignment_link',
                             class: 'secondary-link' %>
               </p>
@@ -153,7 +153,7 @@ assigned = @task.assigned
               <% if !@task.in_review? && can?(:assign, @task) %>
                 <%= divider %>
                 <%= link_to 'assign someone',
-                            edit_task_assignment_path(@task),
+                            edit_assignment_path(@task),
                             id: 'task_assignment_link',
                             class: 'secondary-link' %>
               <% end %>
@@ -161,7 +161,7 @@ assigned = @task.assigned
           <% end %>
 
           <% if !@task.in_review? && can?(:assign, @task) %>
-            <%= render 'task_assignments/form', task: @task %>
+            <%= render 'assignments/form', task: @task %>
           <% end %>
         </section>
       <% end %>

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe TaskAssignmentsController, type: :controller do
+RSpec.describe AssignmentsController, type: :controller do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:user_worker) { Fabricate(:user_worker) }

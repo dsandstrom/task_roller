@@ -2,14 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe "task_assignments/edit", type: :view do
+RSpec.describe "assignments/edit", type: :view do
   before(:each) do
     @category = assign(:category, Fabricate(:category))
     @project = assign(:project, Fabricate(:project, category: @category))
     @task = assign(:task, Fabricate(:task, project: @project))
   end
 
-  let(:url) { task_assignment_path(@task) }
+  let(:url) { assignment_path(@task) }
 
   it "renders the edit task form" do
     render

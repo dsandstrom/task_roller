@@ -4,7 +4,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :users do
     resources :issues, only: :index
     resources :tasks, only: :index
-    resources :task_assignments, only: :index
+    resources :assignments, only: :index
   end
 
   resources :categories do
@@ -67,7 +67,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   patch '/reposition_task_types/:id/:sort' => 'reposition_task_types#update',
         as: :reposition_task_type
 
-  resources :task_assignments, only: %i[edit update]
+  resources :assignments, only: %i[edit update]
 
   %w[issue task].each do |roller|
     get "/#{roller}_connections/:source_id/new" => "#{roller}_connections#new",

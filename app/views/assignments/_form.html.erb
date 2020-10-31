@@ -7,8 +7,10 @@ assignee_options = options_from_collection_for_select(
 )
 %>
 
-<%= form_with model: task, url: task_assignment_path(task), local: true,
-              html: { id: 'task_assignment_form', name: 'task_assignment_form',
+<%= form_with model: task, url: assignment_path(task),
+              local: true,
+              html: { id: 'task_assignment_form',
+                      name: 'task_assignment_form',
                       class: 'hidden-form' } do |form| %>
   <%= form_errors(form.object) %>
 

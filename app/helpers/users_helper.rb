@@ -36,8 +36,7 @@ module UsersHelper
     def user_main_nav_links(user)
       [link_to_unless_current('Reported Issues', user_issues_path(user)),
        link_to_unless_current('Created Tasks', user_tasks_path(user)),
-       link_to_unless_current('Assigned Tasks',
-                              user_task_assignments_path(user))]
+       link_to_unless_current('Assigned Tasks', user_assignments_path(user))]
     end
 
     def divider_with_spaces
