@@ -70,7 +70,7 @@ class TasksController < ApplicationController
 
   def open
     if @task.open
-      @task.task_subscriptions.create(user_id: current_user.id)
+      @task.subscribe_user(current_user)
       redirect_to @task, success: 'Task was successfully opened.'
     else
       set_form_options
@@ -80,7 +80,7 @@ class TasksController < ApplicationController
 
   def close
     if @task.close
-      @task.task_subscriptions.create(user_id: current_user.id)
+      @task.subscribe_user(current_user)
       redirect_to @task, success: 'Task was successfully closed.'
     else
       set_form_options
