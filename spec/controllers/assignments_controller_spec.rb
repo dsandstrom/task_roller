@@ -92,6 +92,14 @@ RSpec.describe AssignmentsController, type: :controller do
             end.to change(task, :assignee_ids)
           end
 
+          it "subscribes the assignees" do
+            task = Fabricate(:task, project: project)
+            expect do
+              put :update, params: { id: task.to_param, task: valid_attributes }
+              task.reload
+            end.to change(user_worker.task_subscriptions, :count).by(1)
+          end
+
           it "redirects to the task" do
             task = Fabricate(:task, project: project)
             url = task_path(task)
