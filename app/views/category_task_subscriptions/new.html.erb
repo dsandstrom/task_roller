@@ -1,0 +1,9 @@
+<%= category_header @category %>
+
+<h2>Subscribe to Category Tasks</h2>
+
+<%= render 'form',
+           category_task_subscription: @category_task_subscription,
+           category: @category %>
+
+<%= link_to 'Back', :back %>

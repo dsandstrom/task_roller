@@ -1,0 +1,17 @@
+<%
+  url =
+    if category_task_subscription.persisted?
+      category_task_subscription_path(category, category_task_subscription)
+    else
+      category_task_subscriptions_path(category)
+    end
+%>
+<%= form_with(model: category_task_subscription, url: url, local: true,
+              html: { name: 'task_subscription_form',
+                      class: 'task-subscription-form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
