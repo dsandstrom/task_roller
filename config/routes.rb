@@ -10,6 +10,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :categories do
     resources :tasks, only: :index
     resources :issues, only: :index
+    resources :category_issue_subscriptions, only: %i[new create destroy]
 
     resources :projects, only: %i[new create]
   end
