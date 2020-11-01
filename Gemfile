@@ -48,7 +48,7 @@ gem 'redcarpet', '~> 3.4.0'
 
 gem 'cancancan', '~> 3.1.0'
 gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
-                             tag: 'v0.7.0'
+                             tag: 'v0.8.0'
 
 gem 'kaminari', '~> 1.2.1'
 
