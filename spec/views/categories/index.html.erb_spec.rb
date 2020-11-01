@@ -53,10 +53,10 @@ RSpec.describe "categories/index", type: :view do
       end
     end
 
-    it "doesn't render new category link" do
+    it "render new category link" do
       render
 
-      expect(rendered).not_to have_link(nil, href: new_category_path)
+      expect(rendered).to have_link(nil, href: new_category_path)
     end
   end
 
