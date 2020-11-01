@@ -32,6 +32,8 @@ class Ability
     end
 
     def basic_issue_abilities(user)
+      can :manage, CategoryIssueSubscription, user_id: user.id
+      can :manage, CategoryTaskSubscription, user_id: user.id
       can %i[create update], Issue, user_id: user.id
       can :read, IssueComment
       can %i[create update], IssueComment, user_id: user.id
