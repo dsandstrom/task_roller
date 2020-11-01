@@ -22,7 +22,7 @@ RSpec.describe Ability do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.not_to be_able_to(:create, category) }
+        it { is_expected.to be_able_to(:create, category) }
         it { is_expected.to be_able_to(:read, category) }
         it { is_expected.to be_able_to(:update, category) }
         it { is_expected.not_to be_able_to(:destroy, category) }

@@ -34,16 +34,18 @@ RSpec.describe CategoriesController, type: :controller do
   end
 
   describe "GET #new" do
-    context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
 
-      it "returns a success response" do
-        get :new
-        expect(response).to be_successful
+        it "returns a success response" do
+          get :new
+          expect(response).to be_successful
+        end
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type}")) }
 
@@ -82,31 +84,33 @@ RSpec.describe CategoriesController, type: :controller do
   describe "POST #create" do
     let(:valid_attributes) { { name: "Category Name" } }
 
-    context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
 
-      context "with valid params" do
-        it "creates a new Category" do
-          expect do
+        context "with valid params" do
+          it "creates a new Category" do
+            expect do
+              post :create, params: { category: valid_attributes }
+            end.to change(Category, :count).by(1)
+          end
+
+          it "redirects to the created category" do
             post :create, params: { category: valid_attributes }
-          end.to change(Category, :count).by(1)
+            expect(response).to redirect_to(Category.last)
+          end
         end
 
-        it "redirects to the created category" do
-          post :create, params: { category: valid_attributes }
-          expect(response).to redirect_to(Category.last)
-        end
-      end
-
-      context "with invalid params" do
-        it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: { category: invalid_attributes }
-          expect(response).to be_successful
+        context "with invalid params" do
+          it "returns a success response ('new' template)" do
+            post :create, params: { category: invalid_attributes }
+            expect(response).to be_successful
+          end
         end
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type}")) }
 

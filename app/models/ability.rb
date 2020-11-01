@@ -62,7 +62,7 @@ class Ability
     end
 
     def reviewer_abilities(user)
-      can :update, Category
+      can %i[create update], Category
       can :manage, IssueConnection
       can %i[create update], Project
       can %i[approve disapprove], Review, approved: nil
@@ -74,7 +74,7 @@ class Ability
     def admin_abilities(user)
       admin_issue_abilities(user)
       admin_task_abilities(user)
-      can %i[create destroy], Category
+      can :destroy, Category
       can :destroy, Project
       can :manage, IssueType
       can :read, RollerType
