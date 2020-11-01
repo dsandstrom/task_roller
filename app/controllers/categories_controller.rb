@@ -9,6 +9,12 @@ class CategoriesController < ApplicationController
     @projects = @category.projects
     @issues = @category.issues.order(updated_at: :desc).limit(3)
     @tasks = @category.tasks.order(updated_at: :desc).limit(3)
+    @issue_subscription =
+      @category.category_issue_subscriptions
+               .find_or_initialize_by(user_id: current_user.id)
+    @task_subscription =
+      @category.category_task_subscriptions
+               .find_or_initialize_by(user_id: current_user.id)
   end
 
   def new; end

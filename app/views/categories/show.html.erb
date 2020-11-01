@@ -1,5 +1,10 @@
 <%= category_header @category %>
 
+<p>
+  <%= render @issue_subscription, category: @category %>
+  <%= render @task_subscription, category: @category %>
+</p>
+
 <header class="category-projects-header">
   <h2>Projects</h2>
 
