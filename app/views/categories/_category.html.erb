@@ -1,3 +1,12 @@
+<%
+issue_subscription =
+  category.category_issue_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
+task_subscription =
+  category.category_task_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
+%>
+
 <div id="category-<%= category.id %>" class="category">
   <div class="category-name-and-tags">
     <h3 class="category-name"><%= link_to category.name, category %></h3>
@@ -24,6 +33,9 @@
   </div>
 
   <p class="category-links">
+    <%= render issue_subscription, category: category %>
+    <%= render task_subscription, category: category %>
+
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },

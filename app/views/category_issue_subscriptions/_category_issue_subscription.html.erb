@@ -6,7 +6,7 @@
               method: :delete,
               class: 'button button-success button-unsubscribe' %>
 <% elsif can?(:create, category_issue_subscription) %>
-  <%= link_to 'Subscribe to Category Issues',
+  <%= link_to 'Subscribe to Issues',
               category_issue_subscriptions_path(category),
               method: :post, class: 'button button-outline' %>
 <% end %>
