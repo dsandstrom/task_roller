@@ -10,7 +10,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :categories do
     resources :tasks, only: :index
     resources :issues, only: :index
-    resources :category_issue_subscriptions, only: %i[new create destroy]
 
     resources :projects, only: %i[new create]
   end
@@ -77,6 +76,16 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
          as: "#{roller}_connections"
     delete "/#{roller}_connections/:id" => "#{roller}_connections#destroy",
            as: "#{roller}_connection"
+
+    get "/categories/:category_id/#{roller}_subscriptions/new" =>
+      "category_#{roller}_subscriptions#new",
+        as: "new_category_#{roller}_subscription"
+    post "/categories/:category_id/#{roller}_subscriptions" =>
+      "category_#{roller}_subscriptions#create",
+         as: "category_#{roller}_subscriptions"
+    delete "/categories/:category_id/#{roller}_subscriptions/:id" =>
+      "category_#{roller}_subscriptions#destroy",
+           as: "category_#{roller}_subscription"
   end
 
   mount RollerAuthentication::Engine => '/auth'

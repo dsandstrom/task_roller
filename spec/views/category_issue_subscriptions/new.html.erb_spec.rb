@@ -12,7 +12,7 @@ RSpec.describe "category_issue_subscriptions/new", type: :view do
   it "renders new category_issue_subscription form" do
     render
 
-    url = category_category_issue_subscriptions_path(@category)
+    url = category_issue_subscriptions_path(@category)
     assert_select "form[action=?][method=?]", url, "post" do
     end
   end

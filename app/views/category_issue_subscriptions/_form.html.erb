@@ -1,10 +1,9 @@
 <%
   url =
     if category_issue_subscription.persisted?
-      category_category_issue_subscription_path(category,
-                                                category_issue_subscription)
+      category_issue_subscription_path(category, category_issue_subscription)
     else
-      category_category_issue_subscriptions_path(category)
+      category_issue_subscriptions_path(category)
     end
 %>
 <%= form_with(model: category_issue_subscription, url: url, local: true,
