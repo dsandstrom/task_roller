@@ -4,6 +4,7 @@
 # TODO: add friendly_id/slug
 # TODO: add icon options
 # TODO: add image
+# TODO: force moving issues/tasks before destroying
 
 class Project < ApplicationRecord
   belongs_to :category

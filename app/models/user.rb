@@ -26,6 +26,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :subscribed_issues, through: :issue_subscriptions, source: :issue
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribed_tasks, through: :task_subscriptions, source: :task
+  has_many :category_issue_subscriptions, dependent: :destroy
+  has_many :category_task_subscriptions, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
