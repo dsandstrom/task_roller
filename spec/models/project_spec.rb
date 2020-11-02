@@ -20,6 +20,8 @@ RSpec.describe Project, type: :model do
 
   it { is_expected.to have_many(:issues) }
   it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:project_issue_subscriptions) }
+  it { is_expected.to have_many(:project_task_subscriptions) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
