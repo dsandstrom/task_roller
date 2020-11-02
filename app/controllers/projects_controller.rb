@@ -16,8 +16,7 @@ class ProjectsController < ApplicationController
 
   def create
     if @project.save
-      redirect_to project_path(@project),
-                  notice: 'Project was successfully created.'
+      redirect_to @project, notice: 'Project was successfully created.'
     else
       render :new
     end
@@ -25,8 +24,7 @@ class ProjectsController < ApplicationController
 
   def update
     if @project.update(project_params)
-      redirect_to project_path(@project),
-                  notice: 'Project was successfully updated.'
+      redirect_to @project, notice: 'Project was successfully updated.'
     else
       render :edit
     end
@@ -35,8 +33,7 @@ class ProjectsController < ApplicationController
   def destroy
     category = @project.category
     @project.destroy
-    redirect_to category_path(category),
-                notice: 'Project was successfully destroyed.'
+    redirect_to category, notice: 'Project was successfully destroyed.'
   end
 
   private
