@@ -11,7 +11,8 @@ class ReviewsController < ApplicationController
   def create
     if @review.save
       @task.finish
-      redirect_to @task, notice: 'Review was successfully created.'
+      redirect_back fallback_location: @task,
+                    notice: 'Review was successfully created.'
     else
       render :new
     end
@@ -19,13 +20,15 @@ class ReviewsController < ApplicationController
 
   def destroy
     @review.destroy
-    redirect_to @task, notice: 'Review was successfully destroyed.'
+    redirect_back fallback_location: @task,
+                  notice: 'Review was successfully destroyed.'
   end
 
   def approve
     if @review.approve(current_user)
       @review.subscribe_user
-      redirect_to @task, notice: 'Review was successfully updated.'
+      redirect_back fallback_location: @task,
+                    notice: 'Review was successfully updated.'
     else
       render :edit
     end
@@ -34,7 +37,8 @@ class ReviewsController < ApplicationController
   def disapprove
     if @review.disapprove(current_user)
       @review.subscribe_user
-      redirect_to @task, notice: 'Review was successfully updated.'
+      redirect_back fallback_location: @task,
+                    notice: 'Review was successfully updated.'
     else
       render :edit
     end

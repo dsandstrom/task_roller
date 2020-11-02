@@ -8,8 +8,8 @@ class ProgressionsController < ApplicationController
 
   def create
     if @progression.save
-      redirect_to task_path(@task),
-                  notice: 'Progress successfully started on task.'
+      redirect_back fallback_location: @task,
+                    notice: 'Progress successfully started on task.'
     else
       render :new
     end
@@ -17,14 +17,13 @@ class ProgressionsController < ApplicationController
 
   def destroy
     @progression.destroy
-    redirect_to task_path(@task),
-                notice: 'Progression was successfully destroyed.'
+    redirect_to @task, notice: 'Progression was successfully destroyed.'
   end
 
   def finish
     if @progression.finish
-      redirect_to task_path(@task),
-                  notice: 'Progress was successfully finished.'
+      redirect_back fallback_location: @task,
+                    notice: 'Progress was successfully finished.'
     else
       render :edit
     end

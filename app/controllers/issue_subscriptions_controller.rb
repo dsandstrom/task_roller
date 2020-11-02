@@ -16,7 +16,7 @@ class IssueSubscriptionsController < ApplicationController
 
   def create
     if @issue_subscription.save
-      redirect_to @issue, notice: 'Subscribed to Issue'
+      redirect_back fallback_location: @issue, notice: 'Subscribed to Issue'
     else
       render :new
     end
@@ -24,6 +24,6 @@ class IssueSubscriptionsController < ApplicationController
 
   def destroy
     @issue_subscription.destroy
-    redirect_to @issue, notice: 'Unsubscribed from Issue'
+    redirect_back fallback_location: @issue, notice: 'Unsubscribed from Issue'
   end
 end
