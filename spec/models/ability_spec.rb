@@ -436,6 +436,35 @@ RSpec.describe Ability do
     end
   end
 
+  describe "ProjectTaskSubscription model" do
+    %i[admin reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when belongs to them" do
+          let(:subscription) do
+            Fabricate(:project_task_subscription, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, subscription) }
+          it { is_expected.to be_able_to(:read, subscription) }
+          it { is_expected.to be_able_to(:update, subscription) }
+          it { is_expected.to be_able_to(:destroy, subscription) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:subscription) { Fabricate(:project_task_subscription) }
+
+          it { is_expected.not_to be_able_to(:create, subscription) }
+          it { is_expected.not_to be_able_to(:read, subscription) }
+          it { is_expected.not_to be_able_to(:update, subscription) }
+          it { is_expected.not_to be_able_to(:destroy, subscription) }
+        end
+      end
+    end
+  end
+
   describe "Resolution model" do
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
