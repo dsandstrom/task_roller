@@ -816,4 +816,166 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#category_issue_subscription" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:category) { Fabricate(:category) }
+
+    before do
+      Fabricate(:category_issue_subscription, user: user)
+      Fabricate(:category_issue_subscription, category: category)
+    end
+
+    context "when no options" do
+      context "when no subscription for the category" do
+        it "returns nil" do
+          expect(user.category_issue_subscription(category)).to be_nil
+        end
+      end
+
+      context "when subscription for the category" do
+        let(:subscription) do
+          Fabricate(:category_issue_subscription, user: user,
+                                                  category: category)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(user.category_issue_subscription(category)).to eq(subscription)
+        end
+      end
+    end
+
+    context "when init is true" do
+      context "when no subscription for the category" do
+        it "returns a new one" do
+          expect(user.category_issue_subscription(category, init: true))
+            .to be_a_new(CategoryIssueSubscription)
+        end
+      end
+
+      context "when subscription for the category" do
+        let(:subscription) do
+          Fabricate(:category_issue_subscription, user: user,
+                                                  category: category)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(user.category_issue_subscription(category, init: true))
+            .to eq(subscription)
+        end
+      end
+    end
+  end
+
+  describe "#subscribed_to_category_issues?" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:category) { Fabricate(:category) }
+
+    before do
+      Fabricate(:category_issue_subscription, user: user)
+      Fabricate(:category_issue_subscription, category: category)
+    end
+
+    context "when no subscription for the category" do
+      it "returns false" do
+        expect(user.subscribed_to_category_issues?(category)).to eq(false)
+      end
+    end
+
+    context "when subscription for the category" do
+      let(:subscription) do
+        Fabricate(:category_issue_subscription, user: user, category: category)
+      end
+
+      before { subscription }
+
+      it "returns true" do
+        expect(user.subscribed_to_category_issues?(category)).to eq(true)
+      end
+    end
+  end
+
+  describe "#category_task_subscription" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:category) { Fabricate(:category) }
+
+    before do
+      Fabricate(:category_task_subscription, user: user)
+      Fabricate(:category_task_subscription, category: category)
+    end
+
+    context "when no options" do
+      context "when no subscription for the category" do
+        it "returns nil" do
+          expect(user.category_task_subscription(category)).to be_nil
+        end
+      end
+
+      context "when subscription for the category" do
+        let(:subscription) do
+          Fabricate(:category_task_subscription, user: user, category: category)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(user.category_task_subscription(category)).to eq(subscription)
+        end
+      end
+    end
+
+    context "when init is true" do
+      context "when no subscription for the category" do
+        it "returns a new one" do
+          expect(user.category_task_subscription(category, init: true))
+            .to be_a_new(CategoryTaskSubscription)
+        end
+      end
+
+      context "when subscription for the category" do
+        let(:subscription) do
+          Fabricate(:category_task_subscription, user: user, category: category)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(user.category_task_subscription(category, init: true))
+            .to eq(subscription)
+        end
+      end
+    end
+  end
+
+  describe "#subscribed_to_category_tasks?" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:category) { Fabricate(:category) }
+
+    before do
+      Fabricate(:category_task_subscription, user: user)
+      Fabricate(:category_task_subscription, category: category)
+    end
+
+    context "when no subscription for the category" do
+      it "returns false" do
+        expect(user.subscribed_to_category_tasks?(category)).to eq(false)
+      end
+    end
+
+    context "when subscription for the category" do
+      let(:subscription) do
+        Fabricate(:category_task_subscription, user: user, category: category)
+      end
+
+      before { subscription }
+
+      it "returns true" do
+        expect(user.subscribed_to_category_tasks?(category)).to eq(true)
+      end
+    end
+  end
 end
