@@ -17,6 +17,7 @@ module ProjectsHelper
                           [category.name, category_path(category)]])
       concat content_tag(:h1, project_header_heading(project))
       concat project_tags(project)
+      concat project_nav(project)
     end
   end
 
@@ -77,5 +78,32 @@ module ProjectsHelper
       end
 
       link_to(project.name, project_path(project))
+    end
+
+    def project_nav(project)
+      content_tag :p, class: 'project-nav' do
+        safe_join(project_nav_links(project), divider_with_spaces)
+      end
+    end
+
+    def project_nav_links(project)
+      links = []
+      links.append(new_project_issue_link(project)) if can?(:create, Issue)
+      links.append(new_project_task_link(project)) if can?(:create, Task)
+      return links unless can?(:update, project)
+
+      links.append(edit_project_link(project))
+    end
+
+    def new_project_issue_link(project)
+      link_to_unless_current('Report Issue', new_project_issue_path(project))
+    end
+
+    def new_project_task_link(project)
+      link_to_unless_current('Plan Task', new_project_task_path(project))
+    end
+
+    def edit_project_link(project)
+      link_to_unless_current('Edit Project', edit_project_path(project))
     end
 end

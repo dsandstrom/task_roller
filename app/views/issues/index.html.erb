@@ -11,17 +11,8 @@ index_path =
 
 <% if @project %>
   <%= project_header @project %>
-
   <header class="issues-header">
     <h2>Project Issues</h2>
-
-    <% if can?(:create, Issue) %>
-      <p>
-        <%= link_to 'Report Issue',
-                    new_project_issue_path(@project),
-                    class: 'button button-success' %>
-      </p>
-    <% end %>
   </header>
 <% elsif @category %>
   <%= category_header @category %>

@@ -55,6 +55,10 @@ module ApplicationHelper
     content_tag :span, '|', class: 'divider'
   end
 
+  def divider_with_spaces
+    safe_join([' ', divider, ' '])
+  end
+
   private
 
     def form_errors_list(obj)

@@ -38,8 +38,4 @@ module UsersHelper
        link_to_unless_current('Created Tasks', user_tasks_path(user)),
        link_to_unless_current('Assigned Tasks', user_assignments_path(user))]
     end
-
-    def divider_with_spaces
-      safe_join([' ', divider, ' '])
-    end
 end
