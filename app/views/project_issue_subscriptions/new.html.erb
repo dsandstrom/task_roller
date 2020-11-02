@@ -1,0 +1,9 @@
+<%= project_header @project %>
+
+<h2>Subscribe to Project Issues</h2>
+
+<%= render 'form',
+           project_issue_subscription: @project_issue_subscription,
+           project: @project %>
+
+<%= link_to 'Back', :back %>

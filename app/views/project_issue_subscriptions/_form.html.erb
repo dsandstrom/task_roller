@@ -1,0 +1,17 @@
+<%
+  url =
+    if project_issue_subscription.persisted?
+      project_issue_subscription_path(project, project_issue_subscription)
+    else
+      project_issue_subscriptions_path(project)
+    end
+%>
+<%= form_with(model: project_issue_subscription, url: url, local: true,
+              html: { name: 'issue_subscription_form',
+                      class: 'issue-subscription-form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
