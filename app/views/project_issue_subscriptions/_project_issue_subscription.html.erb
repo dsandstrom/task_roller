@@ -5,6 +5,9 @@
               project_issue_subscription_path(project, project_issue_subscription),
               method: :delete,
               class: 'button button-success button-unsubscribe' %>
+<% elsif current_user.subscribed_to_category_issues?(project.category) %>
+  <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
+              class: 'button button-success button-disabled' %>
 <% elsif can?(:create, project_issue_subscription) %>
   <%= link_to 'Subscribe to Issues',
               project_issue_subscriptions_path(project),

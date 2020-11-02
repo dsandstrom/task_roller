@@ -8,6 +8,12 @@ class ProjectsController < ApplicationController
   def show
     @issues = @project.issues.order(updated_at: :desc).limit(3)
     @tasks = @project.tasks.order(updated_at: :desc).limit(3)
+    @issue_subscription =
+      @project.project_issue_subscriptions
+              .find_or_initialize_by(user_id: current_user.id)
+    @task_subscription =
+      @project.project_task_subscriptions
+              .find_or_initialize_by(user_id: current_user.id)
   end
 
   def new; end

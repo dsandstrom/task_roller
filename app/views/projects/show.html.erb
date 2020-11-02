@@ -26,6 +26,7 @@
 <header class="issues-header">
   <h2>Latest Issues</h2>
   <p>
+    <%= render @issue_subscription, project: @project %>
     <%= link_to 'View Project Issues',
                 project_issues_path(@project), class: 'button' %>
   </p>
@@ -41,6 +42,7 @@
 <header class="tasks-header">
   <h2>Latest Tasks</h2>
   <p>
+    <%= render @task_subscription, project: @project %>
     <%= link_to 'View Project Tasks',
                 project_tasks_path(@project), class: 'button' %>
   </p>
