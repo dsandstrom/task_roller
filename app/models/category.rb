@@ -11,6 +11,10 @@ class Category < ApplicationRecord
   has_many :tasks, through: :projects
   has_many :category_issue_subscriptions, dependent: :destroy
   has_many :category_task_subscriptions, dependent: :destroy
+  has_many :issue_subscribers, through: :category_issue_subscriptions,
+                               foreign_key: :user_id, source: :user
+  has_many :task_subscribers, through: :category_task_subscriptions,
+                              foreign_key: :user_id, source: :user
 
   validates :name, presence: true, length: { maximum: 200 }
 end

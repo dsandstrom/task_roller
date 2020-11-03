@@ -12,6 +12,10 @@ class Project < ApplicationRecord
   has_many :tasks, dependent: :destroy
   has_many :project_issue_subscriptions, dependent: :destroy
   has_many :project_task_subscriptions, dependent: :destroy
+  has_many :issue_subscribers, through: :project_issue_subscriptions,
+                               foreign_key: :user_id, source: :user
+  has_many :task_subscribers, through: :project_task_subscriptions,
+                              foreign_key: :user_id, source: :user
 
   validates :name, presence: true, length: { maximum: 250 },
                    uniqueness: { scope: :category_id, case_sensitive: false }

@@ -27,6 +27,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribed_tasks, through: :task_subscriptions, source: :task
   has_many :category_issue_subscriptions, dependent: :destroy
+  has_many :subscribed_issue_categories, through: :category_issue_subscriptions,
+                                         source: :category
+  has_many :subscribed_task_categories, through: :category_task_subscriptions,
+                                        source: :category
   has_many :category_task_subscriptions, dependent: :destroy
   has_many :project_issue_subscriptions, dependent: :destroy
   has_many :project_task_subscriptions, dependent: :destroy

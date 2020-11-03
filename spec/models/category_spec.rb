@@ -20,6 +20,8 @@ RSpec.describe Category, type: :model do
   it do
     is_expected.to have_many(:category_task_subscriptions).dependent(:destroy)
   end
+  it { is_expected.to have_many(:issue_subscribers) }
+  it { is_expected.to have_many(:task_subscribers) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }

@@ -38,6 +38,8 @@ RSpec.describe User, type: :model do
   it do
     is_expected.to have_many(:project_task_subscriptions).dependent(:destroy)
   end
+  it { is_expected.to have_many(:subscribed_issue_categories) }
+  it { is_expected.to have_many(:subscribed_task_categories) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }
