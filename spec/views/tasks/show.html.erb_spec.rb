@@ -185,7 +185,6 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    # TODO: add specs for assignees, reviews
     context "when task is in review" do
       before do
         @task = assign(:task, task)
