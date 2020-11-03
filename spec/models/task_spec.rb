@@ -1671,6 +1671,11 @@ RSpec.describe Task, type: :model do
       task.subscribe_users
     end
 
+    it "runs subscribe_assignees" do
+      expect(task).to receive(:subscribe_assignees)
+      task.subscribe_users
+    end
+
     context "when task category has a subscriber" do
       let(:subscriber) { Fabricate(:user_reporter) }
 

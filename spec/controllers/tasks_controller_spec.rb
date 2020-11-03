@@ -361,6 +361,38 @@ RSpec.describe TasksController, type: :controller do
             end
           end
         end
+
+        context "when someone subscribed to category" do
+          let(:user) { Fabricate(:user_reviewer) }
+
+          before do
+            Fabricate(:category_task_subscription, user: user,
+                                                   category: category)
+          end
+
+          it "creates a new IssueSubscription" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+            end.to change(user.task_subscriptions, :count).by(1)
+          end
+        end
+
+        context "when someone subscribed to project" do
+          let(:user) { Fabricate(:user_reviewer) }
+
+          before do
+            Fabricate(:project_task_subscription, user: user,
+                                                  project: project)
+          end
+
+          it "creates a new IssueSubscription" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+            end.to change(user.task_subscriptions, :count).by(1)
+          end
+        end
       end
     end
 

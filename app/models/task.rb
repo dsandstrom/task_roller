@@ -278,6 +278,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: use ActiveJob
   def subscribe_users
     subscribe_user
+    subscribe_assignees
     category.task_subscribers.each { |u| subscribe_user(u) }
     project.task_subscribers.each { |u| subscribe_user(u) }
   end
