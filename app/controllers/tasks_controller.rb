@@ -154,7 +154,7 @@ class TasksController < ApplicationController
         if @project
           @project.tasks_subscription(current_user, init: true)
         elsif @category
-          current_user.category_tasks_subscription(@category, init: true)
+          @category.tasks_subscription(current_user, init: true)
         end
     end
 

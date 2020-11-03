@@ -5,7 +5,7 @@
               project_tasks_subscription_path(project, project_tasks_subscription),
               method: :delete,
               class: 'button button-success button-unsubscribe' %>
-<% elsif current_user.subscribed_to_category_tasks?(project.category) %>
+<% elsif project&.category&.subscribed_to_tasks?(current_user) %>
   <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
               class: 'button button-success button-disabled' %>
 <% elsif can?(:create, project_tasks_subscription) %>

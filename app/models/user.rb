@@ -232,32 +232,4 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # def tasks_from_open_issues
   #   # code
   # end
-
-  def category_issues_subscription(category, options = {})
-    method =
-      if options[:init] == true
-        :find_or_initialize_by
-      else
-        :find_by
-      end
-    category_issues_subscriptions.send(method, category_id: category.id)
-  end
-
-  def subscribed_to_category_issues?(category)
-    category_issues_subscription(category).present?
-  end
-
-  def category_tasks_subscription(category, options = {})
-    method =
-      if options[:init] == true
-        :find_or_initialize_by
-      else
-        :find_by
-      end
-    category_tasks_subscriptions.send(method, category_id: category.id)
-  end
-
-  def subscribed_to_category_tasks?(category)
-    category_tasks_subscription(category).present?
-  end
 end

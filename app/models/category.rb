@@ -17,4 +17,32 @@ class Category < ApplicationRecord
                               foreign_key: :user_id, source: :user
 
   validates :name, presence: true, length: { maximum: 200 }
+
+  def issues_subscription(user, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    category_issues_subscriptions.send(method, user_id: user.id)
+  end
+
+  def tasks_subscription(user, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    category_tasks_subscriptions.send(method, user_id: user.id)
+  end
+
+  def subscribed_to_issues?(user)
+    issues_subscription(user).present?
+  end
+
+  def subscribed_to_tasks?(user)
+    tasks_subscription(user).present?
+  end
 end
