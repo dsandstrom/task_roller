@@ -18,6 +18,7 @@ module ProjectsHelper
       concat content_tag(:h1, project_header_heading(project))
       concat project_tags(project)
       concat project_nav(project)
+      concat project_page_title(project)
     end
   end
 
@@ -27,22 +28,6 @@ module ProjectsHelper
       category = project.category
       breadcrumbs(project_breadcrumb_pages(category, project))
     end
-
-    # def project_breadcrumb_pages(category, project)
-    #   related = [['Categories', categories_path],
-    #              [category.name, category_path(category)]]
-    #   if params[:controller] != 'projects'
-    #     related += [[project.name, project_path(project)]]
-    #   end
-    #   if params[:controller] == 'issues'
-    #     related +=
-    #       [['Project Tasks', project_tasks_path(project)]]
-    #   end
-    #   return related unless params[:controller] == 'tasks'
-    #
-    #   related +
-    #     [['Project Issues', project_issues_path(project)]]
-    # end
 
     def project_tag(text, klass)
       content_tag :span, text, class: "tag tag-#{klass}"
@@ -104,9 +89,9 @@ module ProjectsHelper
                              class: options[:class])
     end
 
-    def new_project_issue_button(project)
-      new_project_issue_link(project, class: 'button button-success')
-    end
+    # def new_project_issue_button(project)
+    #   new_project_issue_link(project, class: 'button button-success')
+    # end
 
     def new_project_task_link(project, options = {})
       return unless can?(:create, Task)
@@ -115,12 +100,33 @@ module ProjectsHelper
                              class: options[:class])
     end
 
-    def new_project_task_button(project)
-      new_project_task_link(project, class: 'button button-success')
-    end
+    # def new_project_task_button(project)
+    #   new_project_task_link(project, class: 'button button-success')
+    # end
 
     def edit_project_link(project)
       link_to_unless_current('Settings', edit_project_path(project),
                              class: 'warning-link')
+    end
+
+    def project_page_title(project)
+      title =
+        case params[:controller]
+        when 'issues'
+          issues_page_title(project.name)
+        when 'tasks'
+          tasks_page_title(project.name)
+        else
+          projects_page_title(project)
+        end
+      enable_page_title title
+    end
+
+    def projects_page_title(project)
+      if params[:action] == 'edit'
+        "Edit Project: #{project.name}"
+      else
+        "Project: #{project.name} (#{project.category&.name})"
+      end
     end
 end

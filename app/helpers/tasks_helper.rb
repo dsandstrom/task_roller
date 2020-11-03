@@ -11,6 +11,7 @@ module TasksHelper
     content_tag :header, class: 'task-header' do
       concat breadcrumbs(task_header_pages(category, project, task))
       concat task_header_title(task)
+      concat task_page_title(task)
     end
   end
 
@@ -35,5 +36,25 @@ module TasksHelper
       return pages unless task.issue
 
       pages << issue_breadcrumb_item(task.issue)
+    end
+
+    def task_page_title(task)
+      title =
+        if params[:controller] == 'task_comments'
+          "Comment for #{task.heading}"
+        elsif params[:action] == 'edit'
+          "Edit #{task.heading}"
+        else
+          task.heading
+        end
+      enable_page_title title
+    end
+
+    def tasks_page_title(title)
+      if params[:action] == 'new'
+        "New Task for #{title}"
+      else
+        "Tasks for #{title}"
+      end
     end
 end

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TaskRoller</title>
+    <title><%= content_for?(:title) ? content_for(:title) : 'TaskRoller' %></title>
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag 'application', media: 'all',
