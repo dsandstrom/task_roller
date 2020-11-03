@@ -75,7 +75,7 @@ RSpec.describe "tasks/index", type: :view do
       let(:current_user) { Fabricate("user_#{employee_type}") }
       let(:category_task_subscription) do
         Fabricate(:category_task_subscription, category: category,
-                                                user: current_user)
+                                               user: current_user)
       end
       let(:project_task_subscription) do
         Fabricate(:project_task_subscription, project: project,
@@ -126,7 +126,7 @@ RSpec.describe "tasks/index", type: :view do
       let(:current_user) { Fabricate("user_#{employee_type}") }
       let(:category_task_subscription) do
         Fabricate(:category_task_subscription, category: category,
-                                                user: current_user)
+                                               user: current_user)
       end
       let(:project_task_subscription) do
         Fabricate(:project_task_subscription, project: project,

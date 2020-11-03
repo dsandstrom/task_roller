@@ -12,18 +12,8 @@ class IssuesController < ApplicationController
   def index
     authorize! :read, Issue
 
-    if @user
-      @issues = @user.issues
-    elsif @project
-      @issues = @project.issues
-      @subscription =
-        current_user.project_issue_subscription(@project, init: true)
-    else
-      @issues = @category.issues
-      @subscription =
-        current_user.category_issue_subscription(@category, init: true)
-    end
-    @issues = @issues.filter_by(build_filters).page(params[:page])
+    set_issues
+    set_subscription
   end
 
   def show
@@ -126,6 +116,27 @@ class IssuesController < ApplicationController
 
     def set_issue_types
       @issue_types = IssueType.all
+    end
+
+    def set_issues
+      @issues =
+        if @user
+          @issues = @user.issues
+        elsif @project
+          @project.issues
+        else
+          @category.issues
+        end
+      @issues = @issues.filter_by(build_filters).page(params[:page])
+    end
+
+    def set_subscription
+      @subscription =
+        if @project
+          current_user.project_issue_subscription(@project, init: true)
+        elsif @category
+          current_user.category_issue_subscription(@category, init: true)
+        end
     end
 
     def issue_params

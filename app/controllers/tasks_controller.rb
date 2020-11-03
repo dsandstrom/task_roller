@@ -19,18 +19,8 @@ class TasksController < ApplicationController
   def index
     authorize! :read, Task
 
-    if @user
-      @tasks = @user.tasks
-    elsif @project
-      @tasks = @project.tasks
-      @subscription =
-        current_user.project_task_subscription(@project, init: true)
-    else
-      @tasks = @category.tasks
-      @subscription =
-        current_user.category_task_subscription(@category, init: true)
-    end
-    @tasks = @tasks.filter_by(build_filters).page(params[:page])
+    set_tasks
+    set_subscription
   end
 
   def show
@@ -144,6 +134,27 @@ class TasksController < ApplicationController
       @issue_options =
         @project.issues.map do |issue|
           [issue.id_and_summary, issue.id]
+        end
+    end
+
+    def set_tasks
+      @tasks =
+        if @user
+          @user.tasks
+        elsif @project
+          @project.tasks
+        else
+          @category.tasks
+        end
+      @tasks = @tasks.filter_by(build_filters).page(params[:page])
+    end
+
+    def set_subscription
+      @subscription =
+        if @project
+          current_user.project_task_subscription(@project, init: true)
+        elsif @category
+          current_user.category_task_subscription(@category, init: true)
         end
     end
 
