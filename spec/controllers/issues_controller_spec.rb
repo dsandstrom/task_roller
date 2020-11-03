@@ -203,8 +203,8 @@ RSpec.describe IssuesController, type: :controller do
             let(:user) { Fabricate(:user_reviewer) }
 
             before do
-              Fabricate(:category_issue_subscription, user: user,
-                                                      category: category)
+              Fabricate(:category_issues_subscription, user: user,
+                                                       category: category)
             end
 
             it "creates a new IssueSubscription" do

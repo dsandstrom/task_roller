@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_02_205919) do
+ActiveRecord::Schema.define(version: 2020_11_03_195431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,10 +25,16 @@ ActiveRecord::Schema.define(version: 2020_11_02_205919) do
     t.index ["visible"], name: "index_categories_on_visible"
   end
 
-  create_table "category_subscriptions", force: :cascade do |t|
+  create_table "category_issues_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
     t.integer "user_id", null: false
-    t.string "type", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "category_tasks_subscriptions", force: :cascade do |t|
+    t.integer "category_id", null: false
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

@@ -10,10 +10,10 @@ class CategoriesController < ApplicationController
     @issues = @category.issues.order(updated_at: :desc).limit(3)
     @tasks = @category.tasks.order(updated_at: :desc).limit(3)
     @issue_subscription =
-      @category.category_issue_subscriptions
+      @category.category_issues_subscriptions
                .find_or_initialize_by(user_id: current_user.id)
     @task_subscription =
-      @category.category_task_subscriptions
+      @category.category_tasks_subscriptions
                .find_or_initialize_by(user_id: current_user.id)
   end
 

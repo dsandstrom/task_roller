@@ -1,8 +1,8 @@
 <%
 issue_subscription =
-  current_user.category_issue_subscription(category, init: true)
+  current_user.category_issues_subscription(category, init: true)
 task_subscription =
-  current_user.category_task_subscription(category, init: true)
+  current_user.category_tasks_subscription(category, init: true)
 %>
 
 <div id="category-<%= category.id %>" class="category">

@@ -8,8 +8,8 @@ RSpec.describe "issues/index", type: :view do
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
-    let(:category_issue_subscription) do
-      Fabricate(:category_issue_subscription, category: category, user: admin)
+    let(:category_issues_subscription) do
+      Fabricate(:category_issues_subscription, category: category, user: admin)
     end
     let(:project_issue_subscription) do
       Fabricate(:project_issue_subscription, project: project, user: admin)
@@ -28,7 +28,7 @@ RSpec.describe "issues/index", type: :view do
       before(:each) do
         assign(:category, category)
         assign(:issues, page([first_issue, second_issue]))
-        assign(:subscription, category_issue_subscription)
+        assign(:subscription, category_issues_subscription)
       end
 
       it "renders a list of issues" do
@@ -41,33 +41,33 @@ RSpec.describe "issues/index", type: :view do
         it "renders unsubscribe link" do
           render
 
-          url = category_issue_subscription_path(category,
-                                                 category_issue_subscription)
+          url = category_issues_subscription_path(category,
+                                                  category_issues_subscription)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
 
         it "doesn't render subscribe link" do
           render
 
-          url = category_issue_subscriptions_path(category)
+          url = category_issues_subscriptions_path(category)
           expect(rendered).not_to have_link(url)
         end
       end
 
       context "and not subscribed to issues" do
-        let(:category_issue_subscription) do
-          Fabricate.build(:category_issue_subscription, category: category,
-                                                        user: admin)
+        let(:category_issues_subscription) do
+          Fabricate.build(:category_issues_subscription, category: category,
+                                                         user: admin)
         end
 
         before do
-          admin.category_issue_subscriptions.destroy_all
+          admin.category_issues_subscriptions.destroy_all
         end
 
         it "renders subscribe link" do
           render
 
-          url = category_issue_subscriptions_path(category)
+          url = category_issues_subscriptions_path(category)
           assert_select "a[data-method='post'][href='#{url}']"
         end
       end
@@ -187,9 +187,9 @@ RSpec.describe "issues/index", type: :view do
         Fabricate(:issue, project: project, user: current_user)
       end
       let(:second_issue) { Fabricate(:issue, project: project) }
-      let(:category_issue_subscription) do
-        Fabricate(:category_issue_subscription, category: category,
-                                                user: current_user)
+      let(:category_issues_subscription) do
+        Fabricate(:category_issues_subscription, category: category,
+                                                 user: current_user)
       end
       let(:project_issue_subscription) do
         Fabricate(:project_issue_subscription, project: project,

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CategoryIssueSubscriptionsController, type: :controller do
+RSpec.describe CategoryTasksSubscriptionsController, type: :controller do
   let(:category) { Fabricate(:category) }
   let(:user) { Fabricate(:user_worker) }
 
@@ -29,10 +29,10 @@ RSpec.describe CategoryIssueSubscriptionsController, type: :controller do
         before { login(current_user) }
 
         context "with valid params" do
-          it "creates a new CategoryIssueSubscription" do
+          it "creates a new CategoryTasksSubscription" do
             expect do
               post :create, params: { category_id: category.to_param }
-            end.to change(current_user.category_issue_subscriptions, :count)
+            end.to change(current_user.category_tasks_subscriptions, :count)
               .by(1)
           end
 
@@ -44,14 +44,14 @@ RSpec.describe CategoryIssueSubscriptionsController, type: :controller do
 
         context "with invalid params" do
           before do
-            Fabricate(:category_issue_subscription, category: category,
+            Fabricate(:category_tasks_subscription, category: category,
                                                     user: current_user)
           end
 
-          it "doesn't create a new CategoryIssueSubscription" do
+          it "doesn't create a new CategoryTasksSubscription" do
             expect do
               post :create, params: { category_id: category.to_param }
-            end.not_to change(CategoryIssueSubscription, :count)
+            end.not_to change(CategoryTasksSubscription, :count)
           end
 
           it "renders new" do
@@ -70,21 +70,21 @@ RSpec.describe CategoryIssueSubscriptionsController, type: :controller do
 
         before { login(current_user) }
 
-        context "when their category_issue_subscription" do
-          it "destroys the requested category_issue_subscription" do
+        context "when their category_tasks_subscription" do
+          it "destroys the requested category_tasks_subscription" do
             subscription =
-              Fabricate(:category_issue_subscription, category: category,
+              Fabricate(:category_tasks_subscription, category: category,
                                                       user: current_user)
             expect do
               delete :destroy, params: { category_id: category.to_param,
                                          id: subscription.to_param }
-            end.to change(current_user.category_issue_subscriptions, :count)
+            end.to change(current_user.category_tasks_subscriptions, :count)
               .by(-1)
           end
 
           it "redirects to the requested category" do
             subscription =
-              Fabricate(:category_issue_subscription, category: category,
+              Fabricate(:category_tasks_subscription, category: category,
                                                       user: current_user)
             delete :destroy, params: { category_id: category.to_param,
                                        id: subscription.to_param }
@@ -92,19 +92,19 @@ RSpec.describe CategoryIssueSubscriptionsController, type: :controller do
           end
         end
 
-        context "when someone else's category_issue_subscription" do
-          it "doesn't destroys the requested category_issue_subscription" do
+        context "when someone else's category_tasks_subscription" do
+          it "doesn't destroys the requested category_tasks_subscription" do
             subscription =
-              Fabricate(:category_issue_subscription, category: category)
+              Fabricate(:category_tasks_subscription, category: category)
             expect do
               delete :destroy, params: { category_id: category.to_param,
                                          id: subscription.to_param }
-            end.not_to change(IssueSubscription, :count)
+            end.not_to change(TaskSubscription, :count)
           end
 
           it "should be unauthorized" do
             subscription =
-              Fabricate(:category_issue_subscription, category: category)
+              Fabricate(:category_tasks_subscription, category: category)
             delete :destroy, params: { category_id: category.to_param,
                                        id: subscription.to_param }
             expect_to_be_unauthorized(response)

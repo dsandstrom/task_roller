@@ -27,12 +27,14 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :subscribed_issues, through: :issue_subscriptions, source: :issue
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribed_tasks, through: :task_subscriptions, source: :task
-  has_many :category_issue_subscriptions, dependent: :destroy
-  has_many :subscribed_issue_categories, through: :category_issue_subscriptions,
-                                         source: :category
-  has_many :subscribed_task_categories, through: :category_task_subscriptions,
-                                        source: :category
-  has_many :category_task_subscriptions, dependent: :destroy
+  has_many :category_issues_subscriptions, dependent: :destroy
+  has_many :subscribed_issue_categories,
+           through: :category_issues_subscriptions,
+           source: :category
+  has_many :subscribed_task_categories,
+           through: :category_tasks_subscriptions,
+           source: :category
+  has_many :category_tasks_subscriptions, dependent: :destroy
   has_many :project_issue_subscriptions, dependent: :destroy
   has_many :project_task_subscriptions, dependent: :destroy
 
@@ -231,27 +233,32 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   #   # code
   # end
 
-  def category_issue_subscription(category, options = {})
-    subscription =
-      category_issue_subscriptions.find_by(category_id: category.id)
-    return subscription unless options[:init] == true
-
-    subscription || category_issue_subscriptions.build(category_id: category.id)
+  def category_issues_subscription(category, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    category_issues_subscriptions.send(method, category_id: category.id)
   end
 
   def subscribed_to_category_issues?(category)
-    category_issue_subscription(category).present?
+    category_issues_subscription(category).present?
   end
 
-  def category_task_subscription(category, options = {})
-    subscription = category_task_subscriptions.find_by(category_id: category.id)
-    return subscription unless options[:init] == true
-
-    subscription || category_task_subscriptions.build(category_id: category.id)
+  def category_tasks_subscription(category, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    category_tasks_subscriptions.send(method, category_id: category.id)
   end
 
   def subscribed_to_category_tasks?(category)
-    category_task_subscription(category).present?
+    category_tasks_subscription(category).present?
   end
 
   def project_issue_subscription(project, options = {})

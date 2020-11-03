@@ -14,20 +14,20 @@ RSpec.describe "categories/show", type: :view do
 
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
-    let(:category_issue_subscription) do
-      Fabricate(:category_issue_subscription, category: @category,
-                                              user: current_user)
+    let(:category_issues_subscription) do
+      Fabricate(:category_issues_subscription, category: @category,
+                                               user: current_user)
     end
-    let(:category_task_subscription) do
-      Fabricate(:category_task_subscription, category: @category,
-                                             user: current_user)
+    let(:category_tasks_subscription) do
+      Fabricate(:category_tasks_subscription, category: @category,
+                                              user: current_user)
     end
 
     before do
       enable_can(view, current_user)
 
-      assign(:issue_subscription, category_issue_subscription)
-      assign(:task_subscription, category_task_subscription)
+      assign(:issue_subscription, category_issues_subscription)
+      assign(:task_subscription, category_tasks_subscription)
     end
 
     context "when it has no projects" do
@@ -162,13 +162,13 @@ RSpec.describe "categories/show", type: :view do
 
   context "for a reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
-    let(:category_issue_subscription) do
-      Fabricate(:category_issue_subscription, category: @category,
-                                              user: current_user)
+    let(:category_issues_subscription) do
+      Fabricate(:category_issues_subscription, category: @category,
+                                               user: current_user)
     end
-    let(:category_task_subscription) do
-      Fabricate(:category_task_subscription, category: @category,
-                                             user: current_user)
+    let(:category_tasks_subscription) do
+      Fabricate(:category_tasks_subscription, category: @category,
+                                              user: current_user)
     end
 
     before { enable_can(view, current_user) }
@@ -182,8 +182,8 @@ RSpec.describe "categories/show", type: :view do
         @projects = assign(:projects, [project])
         @issues = assign(:issues, page([issue]))
         @tasks = assign(:tasks, page([task]))
-        assign(:issue_subscription, category_issue_subscription)
-        assign(:task_subscription, category_task_subscription)
+        assign(:issue_subscription, category_issues_subscription)
+        assign(:task_subscription, category_tasks_subscription)
       end
 
       it "renders a list of projects" do
@@ -220,13 +220,13 @@ RSpec.describe "categories/show", type: :view do
     let(:project) { Fabricate(:project, category: category) }
     let(:issue) { Fabricate(:issue, project: project) }
     let(:task) { Fabricate(:task, project: project) }
-    let(:category_issue_subscription) do
-      Fabricate(:category_issue_subscription, category: @category,
-                                              user: current_user)
+    let(:category_issues_subscription) do
+      Fabricate(:category_issues_subscription, category: @category,
+                                               user: current_user)
     end
-    let(:category_task_subscription) do
-      Fabricate(:category_task_subscription, category: @category,
-                                             user: current_user)
+    let(:category_tasks_subscription) do
+      Fabricate(:category_tasks_subscription, category: @category,
+                                              user: current_user)
     end
 
     before do
@@ -235,8 +235,8 @@ RSpec.describe "categories/show", type: :view do
       @projects = assign(:projects, [project])
       @issues = assign(:issues, page([issue]))
       @tasks = assign(:tasks, page([task]))
-      assign(:issue_subscription, category_issue_subscription)
-      assign(:task_subscription, category_task_subscription)
+      assign(:issue_subscription, category_issues_subscription)
+      assign(:task_subscription, category_tasks_subscription)
     end
 
     context "when category has projects, issues, and tasks" do
@@ -272,34 +272,34 @@ RSpec.describe "categories/show", type: :view do
       it "doesn't render new issue subscription link" do
         render
 
-        url = category_issue_subscriptions_path(@category)
+        url = category_issues_subscriptions_path(@category)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy issue subscription link" do
         render
 
-        url = category_issue_subscription_path(@category,
-                                               category_issue_subscription)
+        url = category_issues_subscription_path(@category,
+                                                category_issues_subscription)
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
 
     context "when not subscribed to category issues" do
-      let(:category_issue_subscription) do
-        Fabricate.build(:category_issue_subscription, category: @category,
-                                                      user: current_user)
+      let(:category_issues_subscription) do
+        Fabricate.build(:category_issues_subscription, category: @category,
+                                                       user: current_user)
       end
 
       before do
-        current_user.category_issue_subscriptions.destroy_all
-        assign(:issue_subscription, category_issue_subscription)
+        current_user.category_issues_subscriptions.destroy_all
+        assign(:issue_subscription, category_issues_subscription)
       end
 
       it "renders new issue subscription link" do
         render
 
-        url = category_issue_subscriptions_path(@category)
+        url = category_issues_subscriptions_path(@category)
         assert_select "a[href='#{url}'][data-method='post']"
       end
     end
@@ -308,34 +308,34 @@ RSpec.describe "categories/show", type: :view do
       it "doesn't render new task subscription link" do
         render
 
-        url = category_task_subscriptions_path(@category)
+        url = category_tasks_subscriptions_path(@category)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy task subscription link" do
         render
 
-        url = category_task_subscription_path(@category,
-                                              category_task_subscription)
+        url = category_tasks_subscription_path(@category,
+                                               category_tasks_subscription)
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
 
     context "when not subscribed to category tasks" do
-      let(:category_task_subscription) do
-        Fabricate.build(:category_task_subscription, category: @category,
-                                                     user: current_user)
+      let(:category_tasks_subscription) do
+        Fabricate.build(:category_tasks_subscription, category: @category,
+                                                      user: current_user)
       end
 
       before do
-        current_user.category_task_subscriptions.destroy_all
-        assign(:task_subscription, category_task_subscription)
+        current_user.category_tasks_subscriptions.destroy_all
+        assign(:task_subscription, category_tasks_subscription)
       end
 
       it "renders new task subscription link" do
         render
 
-        url = category_task_subscriptions_path(@category)
+        url = category_tasks_subscriptions_path(@category)
         assert_select "a[href='#{url}'][data-method='post']"
       end
     end
@@ -344,13 +344,13 @@ RSpec.describe "categories/show", type: :view do
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
-      let(:category_issue_subscription) do
-        Fabricate(:category_issue_subscription, category: @category,
-                                                user: current_user)
+      let(:category_issues_subscription) do
+        Fabricate(:category_issues_subscription, category: @category,
+                                                 user: current_user)
       end
-      let(:category_task_subscription) do
-        Fabricate(:category_task_subscription, category: @category,
-                                               user: current_user)
+      let(:category_tasks_subscription) do
+        Fabricate(:category_tasks_subscription, category: @category,
+                                                user: current_user)
       end
 
       before { enable_can(view, current_user) }
@@ -364,8 +364,8 @@ RSpec.describe "categories/show", type: :view do
           @projects = assign(:projects, [project])
           @issues = assign(:issues, page([issue]))
           @tasks = assign(:tasks, page([task]))
-          assign(:issue_subscription, category_issue_subscription)
-          assign(:task_subscription, category_task_subscription)
+          assign(:issue_subscription, category_issues_subscription)
+          assign(:task_subscription, category_tasks_subscription)
         end
 
         it "renders a list of projects" do

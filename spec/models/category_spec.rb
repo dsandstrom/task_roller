@@ -15,10 +15,10 @@ RSpec.describe Category, type: :model do
   it { is_expected.to have_many(:issues).through(:projects) }
   it { is_expected.to have_many(:tasks).through(:projects) }
   it do
-    is_expected.to have_many(:category_issue_subscriptions).dependent(:destroy)
+    is_expected.to have_many(:category_issues_subscriptions).dependent(:destroy)
   end
   it do
-    is_expected.to have_many(:category_task_subscriptions).dependent(:destroy)
+    is_expected.to have_many(:category_tasks_subscriptions).dependent(:destroy)
   end
   it { is_expected.to have_many(:issue_subscribers) }
   it { is_expected.to have_many(:task_subscribers) }

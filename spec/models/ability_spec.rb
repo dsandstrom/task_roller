@@ -42,7 +42,7 @@ RSpec.describe Ability do
     end
   end
 
-  describe "CategoryIssueSubscription model" do
+  describe "CategoryIssuesSubscription model" do
     %i[admin reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -50,7 +50,7 @@ RSpec.describe Ability do
 
         context "when belongs to them" do
           let(:subscription) do
-            Fabricate(:category_issue_subscription, user: current_user)
+            Fabricate(:category_issues_subscription, user: current_user)
           end
 
           it { is_expected.to be_able_to(:create, subscription) }
@@ -60,7 +60,7 @@ RSpec.describe Ability do
         end
 
         context "when doesn't belong to them" do
-          let(:subscription) { Fabricate(:category_issue_subscription) }
+          let(:subscription) { Fabricate(:category_issues_subscription) }
 
           it { is_expected.not_to be_able_to(:create, subscription) }
           it { is_expected.not_to be_able_to(:read, subscription) }
@@ -71,7 +71,7 @@ RSpec.describe Ability do
     end
   end
 
-  describe "CategoryTaskSubscription model" do
+  describe "CategoryTasksSubscription model" do
     %i[admin reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -79,7 +79,7 @@ RSpec.describe Ability do
 
         context "when belongs to them" do
           let(:subscription) do
-            Fabricate(:category_task_subscription, user: current_user)
+            Fabricate(:category_tasks_subscription, user: current_user)
           end
 
           it { is_expected.to be_able_to(:create, subscription) }
@@ -89,7 +89,7 @@ RSpec.describe Ability do
         end
 
         context "when doesn't belong to them" do
-          let(:subscription) { Fabricate(:category_task_subscription) }
+          let(:subscription) { Fabricate(:category_tasks_subscription) }
 
           it { is_expected.not_to be_able_to(:create, subscription) }
           it { is_expected.not_to be_able_to(:read, subscription) }

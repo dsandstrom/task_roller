@@ -366,8 +366,8 @@ RSpec.describe TasksController, type: :controller do
           let(:user) { Fabricate(:user_reviewer) }
 
           before do
-            Fabricate(:category_task_subscription, user: user,
-                                                   category: category)
+            Fabricate(:category_tasks_subscription, user: user,
+                                                    category: category)
           end
 
           it "creates a new IssueSubscription" do

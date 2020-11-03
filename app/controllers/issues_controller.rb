@@ -135,7 +135,7 @@ class IssuesController < ApplicationController
         if @project
           current_user.project_issue_subscription(@project, init: true)
         elsif @category
-          current_user.category_issue_subscription(@category, init: true)
+          current_user.category_issues_subscription(@category, init: true)
         end
     end
 

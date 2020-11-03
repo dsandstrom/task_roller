@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class CategoryIssueSubscriptionsController < ApplicationController
+class CategoryIssuesSubscriptionsController < ApplicationController
   load_and_authorize_resource :category
   load_and_authorize_resource through: :category
 
   def new; end
 
   def create
-    if @category_issue_subscription.save
+    if @category_issues_subscription.save
       redirect_back fallback_location: @category,
                     notice: 'Subscribed to Category Issues'
     else
@@ -16,7 +16,7 @@ class CategoryIssueSubscriptionsController < ApplicationController
   end
 
   def destroy
-    @category_issue_subscription.destroy
+    @category_issues_subscription.destroy
     redirect_back fallback_location: @category,
                   notice: 'Unsubscribed from Category Issues'
   end

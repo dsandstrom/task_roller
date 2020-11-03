@@ -2,35 +2,26 @@
 
 require "rails_helper"
 
-RSpec.describe CategoryIssueSubscription, type: :model do
+RSpec.describe CategoryTasksSubscription, type: :model do
   let(:category) { Fabricate(:category) }
   let(:user) { Fabricate(:user_reporter) }
 
   before do
-    @category_issue_subscription =
-      CategoryIssueSubscription.new(user_id: user.id, category_id: category.id)
+    @category_tasks_subscription =
+      CategoryTasksSubscription.new(user_id: user.id, category_id: category.id)
   end
 
-  subject { @category_issue_subscription }
+  subject { @category_tasks_subscription }
 
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:category_id) }
-  it { is_expected.to validate_presence_of(:type) }
 
   context "when a duplicate" do
     it "shouldn't be valid" do
       subject.dup.save
       expect(subject).not_to be_valid
-    end
-  end
-
-  context "when similar, but different type" do
-    it "should be valid" do
-      subject.dup.save
-      subject.type = "Foo"
-      expect(subject).to be_valid
     end
   end
 

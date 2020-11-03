@@ -32,7 +32,7 @@ class Ability
     end
 
     def basic_issue_abilities(user)
-      can :manage, CategoryIssueSubscription, user_id: user.id
+      can :manage, CategoryIssuesSubscription, user_id: user.id
       can :manage, ProjectIssueSubscription, user_id: user.id
       can %i[create update], Issue, user_id: user.id
       can :read, IssueComment
@@ -44,7 +44,7 @@ class Ability
     end
 
     def basic_task_abilities(user)
-      can :manage, CategoryTaskSubscription, user_id: user.id
+      can :manage, CategoryTasksSubscription, user_id: user.id
       can :manage, ProjectTaskSubscription, user_id: user.id
       can :read, Task
       can :update, Task, user_id: user.id

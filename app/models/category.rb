@@ -9,11 +9,11 @@ class Category < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :issues, through: :projects
   has_many :tasks, through: :projects
-  has_many :category_issue_subscriptions, dependent: :destroy
-  has_many :category_task_subscriptions, dependent: :destroy
-  has_many :issue_subscribers, through: :category_issue_subscriptions,
+  has_many :category_issues_subscriptions, dependent: :destroy
+  has_many :category_tasks_subscriptions, dependent: :destroy
+  has_many :issue_subscribers, through: :category_issues_subscriptions,
                                foreign_key: :user_id, source: :user
-  has_many :task_subscribers, through: :category_task_subscriptions,
+  has_many :task_subscribers, through: :category_tasks_subscriptions,
                               foreign_key: :user_id, source: :user
 
   validates :name, presence: true, length: { maximum: 200 }

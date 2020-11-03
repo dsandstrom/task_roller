@@ -215,8 +215,8 @@ RSpec.describe "projects/show", type: :view do
 
       context "when subscribed to the category issues" do
         before do
-          Fabricate(:category_issue_subscription, user: current_user,
-                                                  category: category)
+          Fabricate(:category_issues_subscription, user: current_user,
+                                                   category: category)
         end
 
         context "and subscribed to the project issues" do
@@ -294,8 +294,8 @@ RSpec.describe "projects/show", type: :view do
 
       context "when subscribed to the category tasks" do
         before do
-          Fabricate(:category_task_subscription, user: current_user,
-                                                 category: category)
+          Fabricate(:category_tasks_subscription, user: current_user,
+                                                  category: category)
         end
 
         context "and subscribed to the project tasks" do

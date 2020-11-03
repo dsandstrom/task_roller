@@ -9,8 +9,8 @@ RSpec.describe "tasks/index", type: :view do
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
-    let(:category_task_subscription) do
-      Fabricate(:category_task_subscription, category: category, user: admin)
+    let(:category_tasks_subscription) do
+      Fabricate(:category_tasks_subscription, category: category, user: admin)
     end
     let(:project_task_subscription) do
       Fabricate(:project_task_subscription, project: project, user: admin)
@@ -32,7 +32,7 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         assign(:category, category)
         assign(:tasks, page([first_task, second_task]))
-        assign(:subscription, category_task_subscription)
+        assign(:subscription, category_tasks_subscription)
       end
 
       it "renders a list of tasks" do
@@ -52,33 +52,33 @@ RSpec.describe "tasks/index", type: :view do
         it "renders unsubscribe link" do
           render
 
-          url = category_task_subscription_path(category,
-                                                category_task_subscription)
+          url = category_tasks_subscription_path(category,
+                                                 category_tasks_subscription)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
 
         it "doesn't render subscribe link" do
           render
 
-          url = category_task_subscriptions_path(category)
+          url = category_tasks_subscriptions_path(category)
           expect(rendered).not_to have_link(url)
         end
       end
 
       context "and not subscribed to tasks" do
-        let(:category_task_subscription) do
-          Fabricate.build(:category_task_subscription, category: category,
-                                                       user: admin)
+        let(:category_tasks_subscription) do
+          Fabricate.build(:category_tasks_subscription, category: category,
+                                                        user: admin)
         end
 
         before do
-          admin.category_task_subscriptions.destroy_all
+          admin.category_tasks_subscriptions.destroy_all
         end
 
         it "renders subscribe link" do
           render
 
-          url = category_task_subscriptions_path(category)
+          url = category_tasks_subscriptions_path(category)
           assert_select "a[data-method='post'][href='#{url}']"
         end
       end
@@ -174,9 +174,9 @@ RSpec.describe "tasks/index", type: :view do
   %w[reviewer].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
-      let(:category_task_subscription) do
-        Fabricate(:category_task_subscription, category: category,
-                                               user: current_user)
+      let(:category_tasks_subscription) do
+        Fabricate(:category_tasks_subscription, category: category,
+                                                user: current_user)
       end
       let(:project_task_subscription) do
         Fabricate(:project_task_subscription, project: project,
@@ -225,9 +225,9 @@ RSpec.describe "tasks/index", type: :view do
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
-      let(:category_task_subscription) do
-        Fabricate(:category_task_subscription, category: category,
-                                               user: current_user)
+      let(:category_tasks_subscription) do
+        Fabricate(:category_tasks_subscription, category: category,
+                                                user: current_user)
       end
       let(:project_task_subscription) do
         Fabricate(:project_task_subscription, project: project,

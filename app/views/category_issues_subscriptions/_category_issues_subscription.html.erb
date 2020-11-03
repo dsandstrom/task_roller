@@ -1,0 +1,12 @@
+<% if category_issues_subscription.persisted? %>
+  <% return unless can?(:destroy, category_issues_subscription) %>
+
+  <%= link_to ' Issues',
+              category_issues_subscription_path(category, category_issues_subscription),
+              method: :delete,
+              class: 'button button-success button-unsubscribe' %>
+<% elsif can?(:create, category_issues_subscription) %>
+  <%= link_to 'Subscribe to Issues',
+              category_issues_subscriptions_path(category),
+              method: :post, class: 'button button-outline' %>
+<% end %>
