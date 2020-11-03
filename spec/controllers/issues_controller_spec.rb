@@ -198,6 +198,38 @@ RSpec.describe IssuesController, type: :controller do
             url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
           end
+
+          context "when someone subscribed to category" do
+            let(:user) { Fabricate(:user_reviewer) }
+
+            before do
+              Fabricate(:category_issue_subscription, user: user,
+                                                      category: category)
+            end
+
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        issue: valid_attributes }
+              end.to change(user.issue_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when someone subscribed to project" do
+            let(:user) { Fabricate(:user_reviewer) }
+
+            before do
+              Fabricate(:project_issue_subscription, user: user,
+                                                     project: project)
+            end
+
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        issue: valid_attributes }
+              end.to change(user.issue_subscriptions, :count).by(1)
+            end
+          end
         end
 
         context "with invalid params" do

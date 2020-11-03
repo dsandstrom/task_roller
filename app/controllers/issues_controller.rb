@@ -47,7 +47,7 @@ class IssuesController < ApplicationController
 
   def create
     if @issue.save
-      @issue.subscribe_user
+      @issue.subscribe_users
       redirect_to issue_url(@issue), success: 'Issue was successfully created.'
     else
       set_form_options
