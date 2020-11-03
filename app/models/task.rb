@@ -275,6 +275,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     assignees.each { |u| task_subscriptions.create(user_id: u.id) }
   end
 
+  # TODO: use ActiveJob
+  def subscribe_users
+    subscribe_user
+    category.task_subscribers.each { |u| subscribe_user(u) }
+    project.task_subscribers.each { |u| subscribe_user(u) }
+  end
+
   private
 
     def build_assigned

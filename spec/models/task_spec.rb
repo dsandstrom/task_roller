@@ -4,7 +4,8 @@ require "rails_helper"
 
 RSpec.describe Task, type: :model do
   let(:worker) { Fabricate(:user_worker) }
-  let(:project) { Fabricate(:project) }
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
   let(:task_type) { Fabricate(:task_type) }
 
   before do
@@ -1657,6 +1658,81 @@ RSpec.describe Task, type: :model do
         expect do
           task.subscribe_assignees
         end.not_to change(TaskSubscription, :count)
+      end
+    end
+  end
+
+  describe "#subscribe_users" do
+    let(:user) { Fabricate(:user_reviewer) }
+    let(:task) { Fabricate(:task, user: user, project: project) }
+
+    it "runs subscribe_user" do
+      expect(task).to receive(:subscribe_user)
+      task.subscribe_users
+    end
+
+    context "when task category has a subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:category_task_subscription, category: category,
+                                               user: subscriber)
+      end
+
+      it "creates a task_subscription for the subscriber" do
+        expect do
+          task.subscribe_users
+        end.to change(subscriber.task_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 task_subscriptions" do
+        expect do
+          task.subscribe_users
+        end.to change(TaskSubscription, :count).by(2)
+      end
+    end
+
+    context "when task project has a subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:project_task_subscription, project: project,
+                                              user: subscriber)
+      end
+
+      it "creates a task_subscription for the subscriber" do
+        expect do
+          task.subscribe_users
+        end.to change(subscriber.task_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 task_subscriptions" do
+        expect do
+          task.subscribe_users
+        end.to change(TaskSubscription, :count).by(2)
+      end
+    end
+
+    context "when task category/project subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:project_task_subscription, project: project,
+                                              user: subscriber)
+        Fabricate(:category_task_subscription, category: category,
+                                               user: subscriber)
+      end
+
+      it "creates a task_subscription for the subscriber" do
+        expect do
+          task.subscribe_users
+        end.to change(subscriber.task_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 task_subscriptions" do
+        expect do
+          task.subscribe_users
+        end.to change(TaskSubscription, :count).by(2)
       end
     end
   end
