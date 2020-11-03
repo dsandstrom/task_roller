@@ -120,7 +120,7 @@ module ProjectsHelper
     end
 
     def edit_project_link(project)
-      link_to_unless_current('Edit Project', edit_project_path(project),
+      link_to_unless_current('Settings', edit_project_path(project),
                              class: 'warning-link')
     end
 end
