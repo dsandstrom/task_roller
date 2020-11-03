@@ -13,11 +13,13 @@
   <%= project_header @project %>
   <header class="tasks-header">
     <h2>Project Tasks</h2>
+    <p><%= render @subscription, project: @project %></p>
   </header>
 <% elsif @category %>
   <%= category_header @category %>
   <header class="tasks-header">
     <h2>Category Tasks</h2>
+    <p><%= render @subscription, category: @category %></p>
   </header>
 <% elsif @user %>
   <%= user_header @user %>

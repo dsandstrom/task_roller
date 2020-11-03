@@ -18,7 +18,6 @@ RSpec.describe "issues/index", type: :view do
     before { enable_can(view, admin) }
 
     context "when category" do
-      let(:category) { Fabricate(:category) }
       let(:first_issue) do
         Fabricate(:issue, project: Fabricate(:project, category: category))
       end
@@ -38,9 +37,38 @@ RSpec.describe "issues/index", type: :view do
         assert_select "#issue-#{second_issue.id}"
       end
 
-      # TODO:
-      context "when subscribed to issues" do
+      context "and subscribed to issues" do
         it "renders unsubscribe link" do
+          render
+
+          url = category_issue_subscription_path(category,
+                                                 category_issue_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+
+        it "doesn't render subscribe link" do
+          render
+
+          url = category_issue_subscriptions_path(category)
+          expect(rendered).not_to have_link(url)
+        end
+      end
+
+      context "and not subscribed to issues" do
+        let(:category_issue_subscription) do
+          Fabricate.build(:category_issue_subscription, category: category,
+                                                        user: admin)
+        end
+
+        before do
+          admin.category_issue_subscriptions.destroy_all
+        end
+
+        it "renders subscribe link" do
+          render
+
+          url = category_issue_subscriptions_path(category)
+          assert_select "a[data-method='post'][href='#{url}']"
         end
       end
     end
@@ -72,6 +100,41 @@ RSpec.describe "issues/index", type: :view do
 
         url = new_project_issue_path(project)
         expect(rendered).to have_link(nil, href: url)
+      end
+
+      context "and subscribed to issues" do
+        it "renders unsubscribe link" do
+          render
+
+          url = project_issue_subscription_path(project,
+                                                project_issue_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+
+        it "doesn't render subscribe link" do
+          render
+
+          url = project_issue_subscriptions_path(project)
+          expect(rendered).not_to have_link(url)
+        end
+      end
+
+      context "and not subscribed to issues" do
+        let(:project_issue_subscription) do
+          Fabricate.build(:project_issue_subscription, project: project,
+                                                       user: admin)
+        end
+
+        before do
+          admin.project_issue_subscriptions.destroy_all
+        end
+
+        it "renders subscribe link" do
+          render
+
+          url = project_issue_subscriptions_path(project)
+          assert_select "a[data-method='post'][href='#{url}']"
+        end
       end
     end
 

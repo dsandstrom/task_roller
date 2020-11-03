@@ -13,11 +13,13 @@ index_path =
   <%= project_header @project %>
   <header class="issues-header">
     <h2>Project Issues</h2>
+    <p><%= render @subscription, project: @project %></p>
   </header>
 <% elsif @category %>
   <%= category_header @category %>
   <header class="issues-header">
     <h2>Category Issues</h2>
+    <p><%= render @subscription, category: @category %></p>
   </header>
 <% elsif @user %>
   <%= user_header @user %>

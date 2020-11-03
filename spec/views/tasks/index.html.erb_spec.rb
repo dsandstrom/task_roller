@@ -18,6 +18,72 @@ RSpec.describe "tasks/index", type: :view do
 
     before { enable_can(view, admin) }
 
+    context "when category" do
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:first_project) { Fabricate(:project, category: category) }
+      let(:second_project) { Fabricate(:project, category: category) }
+      let(:first_task) do
+        Fabricate(:task, project: first_project)
+      end
+      let(:second_task) do
+        Fabricate(:task, issue: issue, project: second_project)
+      end
+
+      before(:each) do
+        assign(:category, category)
+        assign(:tasks, page([first_task, second_task]))
+        assign(:subscription, category_task_subscription)
+      end
+
+      it "renders a list of tasks" do
+        render
+
+        assert_select "#task-#{first_task.id}"
+        first_url = edit_task_path(first_task)
+        expect(rendered).to have_link(nil, href: first_url)
+        assert_select "#task-#{second_task.id}"
+        second_url = edit_task_path(second_task)
+        expect(rendered).to have_link(nil, href: second_url)
+        show_url = issue_path(issue)
+        expect(rendered).to have_link(nil, href: show_url)
+      end
+
+      context "and subscribed to tasks" do
+        it "renders unsubscribe link" do
+          render
+
+          url = category_task_subscription_path(category,
+                                                category_task_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+
+        it "doesn't render subscribe link" do
+          render
+
+          url = category_task_subscriptions_path(category)
+          expect(rendered).not_to have_link(url)
+        end
+      end
+
+      context "and not subscribed to tasks" do
+        let(:category_task_subscription) do
+          Fabricate.build(:category_task_subscription, category: category,
+                                                       user: admin)
+        end
+
+        before do
+          admin.category_task_subscriptions.destroy_all
+        end
+
+        it "renders subscribe link" do
+          render
+
+          url = category_task_subscriptions_path(category)
+          assert_select "a[data-method='post'][href='#{url}']"
+        end
+      end
+    end
+
     context "when project" do
       let(:first_task) { Fabricate(:task, project: project) }
       let(:issue) { Fabricate(:issue, project: project) }
@@ -47,6 +113,41 @@ RSpec.describe "tasks/index", type: :view do
         expect(rendered).to have_link(nil, href: second_url)
         show_url = issue_path(issue)
         expect(rendered).to have_link(nil, href: show_url)
+      end
+
+      context "and subscribed to tasks" do
+        it "renders unsubscribe link" do
+          render
+
+          url = project_task_subscription_path(project,
+                                               project_task_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+
+        it "doesn't render subscribe link" do
+          render
+
+          url = project_task_subscriptions_path(project)
+          expect(rendered).not_to have_link(url)
+        end
+      end
+
+      context "and not subscribed to tasks" do
+        let(:project_task_subscription) do
+          Fabricate.build(:project_task_subscription, project: project,
+                                                      user: admin)
+        end
+
+        before do
+          admin.project_task_subscriptions.destroy_all
+        end
+
+        it "renders subscribe link" do
+          render
+
+          url = project_task_subscriptions_path(project)
+          assert_select "a[data-method='post'][href='#{url}']"
+        end
       end
     end
 
