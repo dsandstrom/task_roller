@@ -76,16 +76,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
          as: "#{roller}_connections"
     delete "/#{roller}_connections/:id" => "#{roller}_connections#destroy",
            as: "#{roller}_connection"
-
-    get "/projects/:project_id/#{roller}_subscriptions/new" =>
-      "project_#{roller}_subscriptions#new",
-        as: "new_project_#{roller}_subscription"
-    post "/projects/:project_id/#{roller}_subscriptions" =>
-      "project_#{roller}_subscriptions#create",
-         as: "project_#{roller}_subscriptions"
-    delete "/projects/:project_id/#{roller}_subscriptions/:id" =>
-      "project_#{roller}_subscriptions#destroy",
-           as: "project_#{roller}_subscription"
   end
 
   %w[issues tasks].each do |roller|
@@ -98,6 +88,16 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     delete "/categories/:category_id/#{roller}_subscriptions/:id" =>
       "category_#{roller}_subscriptions#destroy",
            as: "category_#{roller}_subscription"
+
+    get "/projects/:project_id/#{roller}_subscriptions/new" =>
+      "project_#{roller}_subscriptions#new",
+        as: "new_project_#{roller}_subscription"
+    post "/projects/:project_id/#{roller}_subscriptions" =>
+      "project_#{roller}_subscriptions#create",
+         as: "project_#{roller}_subscriptions"
+    delete "/projects/:project_id/#{roller}_subscriptions/:id" =>
+      "project_#{roller}_subscriptions#destroy",
+           as: "project_#{roller}_subscription"
   end
 
   mount RollerAuthentication::Engine => '/auth'

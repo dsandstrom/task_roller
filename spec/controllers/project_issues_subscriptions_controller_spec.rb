@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
+RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
   let(:project) { Fabricate(:project) }
   let(:user) { Fabricate(:user_worker) }
 
@@ -29,10 +29,10 @@ RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
         before { login(current_user) }
 
         context "with valid params" do
-          it "creates a new ProjectIssueSubscription" do
+          it "creates a new ProjectIssuesSubscription" do
             expect do
               post :create, params: { project_id: project.to_param }
-            end.to change(current_user.project_issue_subscriptions, :count)
+            end.to change(current_user.project_issues_subscriptions, :count)
               .by(1)
           end
 
@@ -44,14 +44,14 @@ RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
 
         context "with invalid params" do
           before do
-            Fabricate(:project_issue_subscription, project: project,
+            Fabricate(:project_issues_subscription, project: project,
                                                    user: current_user)
           end
 
-          it "doesn't create a new ProjectIssueSubscription" do
+          it "doesn't create a new ProjectIssuesSubscription" do
             expect do
               post :create, params: { project_id: project.to_param }
-            end.not_to change(ProjectIssueSubscription, :count)
+            end.not_to change(ProjectIssuesSubscription, :count)
           end
 
           it "renders new" do
@@ -70,21 +70,21 @@ RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
 
         before { login(current_user) }
 
-        context "when their project_issue_subscription" do
-          it "destroys the requested project_issue_subscription" do
+        context "when their project_issues_subscription" do
+          it "destroys the requested project_issues_subscription" do
             subscription =
-              Fabricate(:project_issue_subscription, project: project,
+              Fabricate(:project_issues_subscription, project: project,
                                                      user: current_user)
             expect do
               delete :destroy, params: { project_id: project.to_param,
                                          id: subscription.to_param }
-            end.to change(current_user.project_issue_subscriptions, :count)
+            end.to change(current_user.project_issues_subscriptions, :count)
               .by(-1)
           end
 
           it "redirects to the requested project" do
             subscription =
-              Fabricate(:project_issue_subscription, project: project,
+              Fabricate(:project_issues_subscription, project: project,
                                                      user: current_user)
             delete :destroy, params: { project_id: project.to_param,
                                        id: subscription.to_param }
@@ -92,10 +92,10 @@ RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
           end
         end
 
-        context "when someone else's project_issue_subscription" do
-          it "doesn't destroys the requested project_issue_subscription" do
+        context "when someone else's project_issues_subscription" do
+          it "doesn't destroys the requested project_issues_subscription" do
             subscription =
-              Fabricate(:project_issue_subscription, project: project)
+              Fabricate(:project_issues_subscription, project: project)
             expect do
               delete :destroy, params: { project_id: project.to_param,
                                          id: subscription.to_param }
@@ -104,7 +104,7 @@ RSpec.describe ProjectIssueSubscriptionsController, type: :controller do
 
           it "should be unauthorized" do
             subscription =
-              Fabricate(:project_issue_subscription, project: project)
+              Fabricate(:project_issues_subscription, project: project)
             delete :destroy, params: { project_id: project.to_param,
                                        id: subscription.to_param }
             expect_to_be_unauthorized(response)

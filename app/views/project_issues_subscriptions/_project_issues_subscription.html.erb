@@ -1,15 +1,15 @@
-<% if project_issue_subscription.persisted? %>
-  <% return unless can?(:destroy, project_issue_subscription) %>
+<% if project_issues_subscription.persisted? %>
+  <% return unless can?(:destroy, project_issues_subscription) %>
 
   <%= link_to ' Issues',
-              project_issue_subscription_path(project, project_issue_subscription),
+              project_issues_subscription_path(project, project_issues_subscription),
               method: :delete,
               class: 'button button-success button-unsubscribe' %>
 <% elsif current_user.subscribed_to_category_issues?(project.category) %>
   <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
               class: 'button button-success button-disabled' %>
-<% elsif can?(:create, project_issue_subscription) %>
+<% elsif can?(:create, project_issues_subscription) %>
   <%= link_to 'Subscribe to Issues',
-              project_issue_subscriptions_path(project),
+              project_issues_subscriptions_path(project),
               method: :post, class: 'button button-outline' %>
 <% end %>

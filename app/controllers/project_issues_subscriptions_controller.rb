@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class ProjectIssueSubscriptionsController < ApplicationController
+class ProjectIssuesSubscriptionsController < ApplicationController
   load_and_authorize_resource :project
   load_and_authorize_resource through: :project
 
   def new; end
 
   def create
-    if @project_issue_subscription.save
+    if @project_issues_subscription.save
       redirect_back fallback_location: @project,
                     notice: 'Subscribed to Project Issues'
     else
@@ -16,7 +16,7 @@ class ProjectIssueSubscriptionsController < ApplicationController
   end
 
   def destroy
-    @project_issue_subscription.destroy
+    @project_issues_subscription.destroy
     redirect_back fallback_location: @project,
                   notice: 'Unsubscribed from Project Issues'
   end

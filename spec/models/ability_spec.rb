@@ -436,7 +436,7 @@ RSpec.describe Ability do
     end
   end
 
-  describe "ProjectTaskSubscription model" do
+  describe "ProjectIssuesSubscription model" do
     %i[admin reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -444,7 +444,7 @@ RSpec.describe Ability do
 
         context "when belongs to them" do
           let(:subscription) do
-            Fabricate(:project_task_subscription, user: current_user)
+            Fabricate(:project_issues_subscription, user: current_user)
           end
 
           it { is_expected.to be_able_to(:create, subscription) }
@@ -454,7 +454,36 @@ RSpec.describe Ability do
         end
 
         context "when doesn't belong to them" do
-          let(:subscription) { Fabricate(:project_task_subscription) }
+          let(:subscription) { Fabricate(:project_issues_subscription) }
+
+          it { is_expected.not_to be_able_to(:create, subscription) }
+          it { is_expected.not_to be_able_to(:read, subscription) }
+          it { is_expected.not_to be_able_to(:update, subscription) }
+          it { is_expected.not_to be_able_to(:destroy, subscription) }
+        end
+      end
+    end
+  end
+
+  describe "ProjectTasksSubscription model" do
+    %i[admin reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when belongs to them" do
+          let(:subscription) do
+            Fabricate(:project_tasks_subscription, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, subscription) }
+          it { is_expected.to be_able_to(:read, subscription) }
+          it { is_expected.to be_able_to(:update, subscription) }
+          it { is_expected.to be_able_to(:destroy, subscription) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:subscription) { Fabricate(:project_tasks_subscription) }
 
           it { is_expected.not_to be_able_to(:create, subscription) }
           it { is_expected.not_to be_able_to(:read, subscription) }

@@ -1200,7 +1200,7 @@ RSpec.describe Issue, type: :model do
       let(:subscriber) { Fabricate(:user_reporter) }
 
       before do
-        Fabricate(:project_issue_subscription, project: project,
+        Fabricate(:project_issues_subscription, project: project,
                                                user: subscriber)
       end
 
@@ -1221,7 +1221,7 @@ RSpec.describe Issue, type: :model do
       let(:subscriber) { Fabricate(:user_reporter) }
 
       before do
-        Fabricate(:project_issue_subscription, project: project,
+        Fabricate(:project_issues_subscription, project: project,
                                                user: subscriber)
         Fabricate(:category_issues_subscription, category: category,
                                                  user: subscriber)

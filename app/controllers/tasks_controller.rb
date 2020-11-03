@@ -152,7 +152,7 @@ class TasksController < ApplicationController
     def set_subscription
       @subscription =
         if @project
-          current_user.project_task_subscription(@project, init: true)
+          current_user.project_tasks_subscription(@project, init: true)
         elsif @category
           current_user.category_tasks_subscription(@category, init: true)
         end

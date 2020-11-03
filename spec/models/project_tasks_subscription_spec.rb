@@ -2,35 +2,26 @@
 
 require "rails_helper"
 
-RSpec.describe ProjectTaskSubscription, type: :model do
+RSpec.describe ProjectTasksSubscription, type: :model do
   let(:project) { Fabricate(:project) }
   let(:user) { Fabricate(:user_reporter) }
 
   before do
-    @project_task_subscription =
-      ProjectTaskSubscription.new(user_id: user.id, project_id: project.id)
+    @project_tasks_subscription =
+      ProjectTasksSubscription.new(user_id: user.id, project_id: project.id)
   end
 
-  subject { @project_task_subscription }
+  subject { @project_tasks_subscription }
 
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:project_id) }
-  it { is_expected.to validate_presence_of(:type) }
 
   context "when a duplicate" do
     it "shouldn't be valid" do
       subject.dup.save
       expect(subject).not_to be_valid
-    end
-  end
-
-  context "when similar, but different type" do
-    it "should be valid" do
-      subject.dup.save
-      subject.type = "Foo"
-      expect(subject).to be_valid
     end
   end
 

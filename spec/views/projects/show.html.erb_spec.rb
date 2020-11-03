@@ -19,10 +19,10 @@ RSpec.describe "projects/show", type: :view do
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
     let(:issue_subscription) do
-      Fabricate(:project_issue_subscription, user: current_user)
+      Fabricate(:project_issues_subscription, user: current_user)
     end
     let(:task_subscription) do
-      Fabricate(:project_task_subscription, user: current_user)
+      Fabricate(:project_tasks_subscription, user: current_user)
     end
 
     before do
@@ -117,10 +117,10 @@ RSpec.describe "projects/show", type: :view do
   context "for an reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
     let(:issue_subscription) do
-      Fabricate(:project_issue_subscription, user: current_user)
+      Fabricate(:project_issues_subscription, user: current_user)
     end
     let(:task_subscription) do
-      Fabricate(:project_task_subscription, user: current_user)
+      Fabricate(:project_tasks_subscription, user: current_user)
     end
 
     before do
@@ -182,32 +182,32 @@ RSpec.describe "projects/show", type: :view do
           it "renders unsubscribe link" do
             render
 
-            url = project_issue_subscription_path(project, issue_subscription)
+            url = project_issues_subscription_path(project, issue_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_issue_subscriptions_path(project)
+            url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
 
         context "and not subscribed to the project issues" do
           let(:issue_subscription) do
-            Fabricate.build(:project_issue_subscription, user: current_user)
+            Fabricate.build(:project_issues_subscription, user: current_user)
           end
 
           before do
-            current_user.project_issue_subscriptions.destroy_all
+            current_user.project_issues_subscriptions.destroy_all
             assign(:issue_subscription, issue_subscription)
           end
 
           it "renders subscribe link" do
             render
 
-            url = project_issue_subscriptions_path(project)
+            url = project_issues_subscriptions_path(project)
             assert_select "a[data-method='post'][href='#{url}']"
           end
         end
@@ -223,32 +223,32 @@ RSpec.describe "projects/show", type: :view do
           it "renders unsubscribe link" do
             render
 
-            url = project_issue_subscription_path(project, issue_subscription)
+            url = project_issues_subscription_path(project, issue_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_issue_subscriptions_path(project)
+            url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
 
         context "and not subscribed to the project issues" do
           let(:issue_subscription) do
-            Fabricate.build(:project_issue_subscription, user: current_user)
+            Fabricate.build(:project_issues_subscription, user: current_user)
           end
 
           before do
-            current_user.project_issue_subscriptions.destroy_all
+            current_user.project_issues_subscriptions.destroy_all
             assign(:issue_subscription, issue_subscription)
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_issue_subscriptions_path(project)
+            url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
@@ -261,32 +261,32 @@ RSpec.describe "projects/show", type: :view do
           it "renders unsubscribe link" do
             render
 
-            url = project_task_subscription_path(project, task_subscription)
+            url = project_tasks_subscription_path(project, task_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_task_subscriptions_path(project)
+            url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
 
         context "and not subscribed to the project tasks" do
           let(:task_subscription) do
-            Fabricate.build(:project_task_subscription, user: current_user)
+            Fabricate.build(:project_tasks_subscription, user: current_user)
           end
 
           before do
-            current_user.project_task_subscriptions.destroy_all
+            current_user.project_tasks_subscriptions.destroy_all
             assign(:task_subscription, task_subscription)
           end
 
           it "renders subscribe link" do
             render
 
-            url = project_task_subscriptions_path(project)
+            url = project_tasks_subscriptions_path(project)
             assert_select "a[data-method='post'][href='#{url}']"
           end
         end
@@ -302,32 +302,32 @@ RSpec.describe "projects/show", type: :view do
           it "renders unsubscribe link" do
             render
 
-            url = project_task_subscription_path(project, task_subscription)
+            url = project_tasks_subscription_path(project, task_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_task_subscriptions_path(project)
+            url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
 
         context "and not subscribed to the project tasks" do
           let(:task_subscription) do
-            Fabricate.build(:project_task_subscription, user: current_user)
+            Fabricate.build(:project_tasks_subscription, user: current_user)
           end
 
           before do
-            current_user.project_task_subscriptions.destroy_all
+            current_user.project_tasks_subscriptions.destroy_all
             assign(:task_subscription, task_subscription)
           end
 
           it "doesn't render subscribe link" do
             render
 
-            url = project_task_subscriptions_path(project)
+            url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
@@ -339,10 +339,10 @@ RSpec.describe "projects/show", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
       let(:issue_subscription) do
-        Fabricate(:project_issue_subscription, user: current_user)
+        Fabricate(:project_issues_subscription, user: current_user)
       end
       let(:task_subscription) do
-        Fabricate(:project_task_subscription, user: current_user)
+        Fabricate(:project_tasks_subscription, user: current_user)
       end
 
       before do

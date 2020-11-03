@@ -219,7 +219,7 @@ RSpec.describe IssuesController, type: :controller do
             let(:user) { Fabricate(:user_reviewer) }
 
             before do
-              Fabricate(:project_issue_subscription, user: user,
+              Fabricate(:project_issues_subscription, user: user,
                                                      project: project)
             end
 

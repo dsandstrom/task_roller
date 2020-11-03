@@ -12,8 +12,8 @@ RSpec.describe "tasks/index", type: :view do
     let(:category_tasks_subscription) do
       Fabricate(:category_tasks_subscription, category: category, user: admin)
     end
-    let(:project_task_subscription) do
-      Fabricate(:project_task_subscription, project: project, user: admin)
+    let(:project_tasks_subscription) do
+      Fabricate(:project_tasks_subscription, project: project, user: admin)
     end
 
     before { enable_can(view, admin) }
@@ -93,7 +93,7 @@ RSpec.describe "tasks/index", type: :view do
         assign(:category, category)
         assign(:project, project)
         assign(:tasks, page([first_task, second_task]))
-        assign(:subscription, project_task_subscription)
+        assign(:subscription, project_tasks_subscription)
       end
 
       it "renders new task link" do
@@ -119,33 +119,33 @@ RSpec.describe "tasks/index", type: :view do
         it "renders unsubscribe link" do
           render
 
-          url = project_task_subscription_path(project,
-                                               project_task_subscription)
+          url = project_tasks_subscription_path(project,
+                                               project_tasks_subscription)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
 
         it "doesn't render subscribe link" do
           render
 
-          url = project_task_subscriptions_path(project)
+          url = project_tasks_subscriptions_path(project)
           expect(rendered).not_to have_link(url)
         end
       end
 
       context "and not subscribed to tasks" do
-        let(:project_task_subscription) do
-          Fabricate.build(:project_task_subscription, project: project,
+        let(:project_tasks_subscription) do
+          Fabricate.build(:project_tasks_subscription, project: project,
                                                       user: admin)
         end
 
         before do
-          admin.project_task_subscriptions.destroy_all
+          admin.project_tasks_subscriptions.destroy_all
         end
 
         it "renders subscribe link" do
           render
 
-          url = project_task_subscriptions_path(project)
+          url = project_tasks_subscriptions_path(project)
           assert_select "a[data-method='post'][href='#{url}']"
         end
       end
@@ -178,8 +178,8 @@ RSpec.describe "tasks/index", type: :view do
         Fabricate(:category_tasks_subscription, category: category,
                                                 user: current_user)
       end
-      let(:project_task_subscription) do
-        Fabricate(:project_task_subscription, project: project,
+      let(:project_tasks_subscription) do
+        Fabricate(:project_tasks_subscription, project: project,
                                               user: current_user)
       end
 
@@ -196,7 +196,7 @@ RSpec.describe "tasks/index", type: :view do
           assign(:category, category)
           assign(:project, project)
           assign(:tasks, page([first_task, second_task]))
-          assign(:subscription, project_task_subscription)
+          assign(:subscription, project_tasks_subscription)
         end
 
         it "renders new task link" do
@@ -229,8 +229,8 @@ RSpec.describe "tasks/index", type: :view do
         Fabricate(:category_tasks_subscription, category: category,
                                                 user: current_user)
       end
-      let(:project_task_subscription) do
-        Fabricate(:project_task_subscription, project: project,
+      let(:project_tasks_subscription) do
+        Fabricate(:project_tasks_subscription, project: project,
                                               user: current_user)
       end
 
@@ -247,7 +247,7 @@ RSpec.describe "tasks/index", type: :view do
           assign(:category, category)
           assign(:project, project)
           assign(:tasks, page([first_task, second_task]))
-          assign(:subscription, project_task_subscription)
+          assign(:subscription, project_tasks_subscription)
         end
 
         it "doesn't render new task link" do

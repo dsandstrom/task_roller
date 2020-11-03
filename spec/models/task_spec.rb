@@ -1701,7 +1701,7 @@ RSpec.describe Task, type: :model do
       let(:subscriber) { Fabricate(:user_reporter) }
 
       before do
-        Fabricate(:project_task_subscription, project: project,
+        Fabricate(:project_tasks_subscription, project: project,
                                               user: subscriber)
       end
 
@@ -1722,7 +1722,7 @@ RSpec.describe Task, type: :model do
       let(:subscriber) { Fabricate(:user_reporter) }
 
       before do
-        Fabricate(:project_task_subscription, project: project,
+        Fabricate(:project_tasks_subscription, project: project,
                                               user: subscriber)
         Fabricate(:category_tasks_subscription, category: category,
                                                 user: subscriber)

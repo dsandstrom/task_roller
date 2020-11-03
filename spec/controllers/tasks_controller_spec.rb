@@ -382,7 +382,7 @@ RSpec.describe TasksController, type: :controller do
           let(:user) { Fabricate(:user_reviewer) }
 
           before do
-            Fabricate(:project_task_subscription, user: user,
+            Fabricate(:project_tasks_subscription, user: user,
                                                   project: project)
           end
 

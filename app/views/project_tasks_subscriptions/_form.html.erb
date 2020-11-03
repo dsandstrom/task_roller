@@ -1,12 +1,12 @@
 <%
   url =
-    if project_task_subscription.persisted?
-      project_task_subscription_path(project, project_task_subscription)
+    if project_tasks_subscription.persisted?
+      project_tasks_subscription_path(project, project_tasks_subscription)
     else
-      project_task_subscriptions_path(project)
+      project_tasks_subscriptions_path(project)
     end
 %>
-<%= form_with(model: project_task_subscription, url: url, local: true,
+<%= form_with(model: project_tasks_subscription, url: url, local: true,
               html: { name: 'task_subscription_form',
                       class: 'task-subscription-form' }) do |form| %>
   <%= form_errors(form.object) %>

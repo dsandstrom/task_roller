@@ -10,11 +10,11 @@ class Project < ApplicationRecord
   belongs_to :category
   has_many :issues, dependent: :destroy
   has_many :tasks, dependent: :destroy
-  has_many :project_issue_subscriptions, dependent: :destroy
-  has_many :project_task_subscriptions, dependent: :destroy
-  has_many :issue_subscribers, through: :project_issue_subscriptions,
+  has_many :project_issues_subscriptions, dependent: :destroy
+  has_many :project_tasks_subscriptions, dependent: :destroy
+  has_many :issue_subscribers, through: :project_issues_subscriptions,
                                foreign_key: :user_id, source: :user
-  has_many :task_subscribers, through: :project_task_subscriptions,
+  has_many :task_subscribers, through: :project_tasks_subscriptions,
                               foreign_key: :user_id, source: :user
 
   validates :name, presence: true, length: { maximum: 250 },

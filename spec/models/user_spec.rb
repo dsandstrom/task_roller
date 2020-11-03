@@ -33,10 +33,10 @@ RSpec.describe User, type: :model do
     is_expected.to have_many(:category_tasks_subscriptions).dependent(:destroy)
   end
   it do
-    is_expected.to have_many(:project_issue_subscriptions).dependent(:destroy)
+    is_expected.to have_many(:project_issues_subscriptions).dependent(:destroy)
   end
   it do
-    is_expected.to have_many(:project_task_subscriptions).dependent(:destroy)
+    is_expected.to have_many(:project_tasks_subscriptions).dependent(:destroy)
   end
   it { is_expected.to have_many(:subscribed_issue_categories) }
   it { is_expected.to have_many(:subscribed_task_categories) }
@@ -984,31 +984,31 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "#project_task_subscription" do
+  describe "#project_tasks_subscription" do
     let(:user) { Fabricate(:user_worker) }
     let(:project) { Fabricate(:project) }
 
     before do
-      Fabricate(:project_task_subscription, user: user)
-      Fabricate(:project_task_subscription, project: project)
+      Fabricate(:project_tasks_subscription, user: user)
+      Fabricate(:project_tasks_subscription, project: project)
     end
 
     context "when no options" do
       context "when no subscription for the project" do
         it "returns nil" do
-          expect(user.project_task_subscription(project)).to be_nil
+          expect(user.project_tasks_subscription(project)).to be_nil
         end
       end
 
       context "when subscription for the project" do
         let(:subscription) do
-          Fabricate(:project_task_subscription, user: user, project: project)
+          Fabricate(:project_tasks_subscription, user: user, project: project)
         end
 
         before { subscription }
 
         it "returns it" do
-          expect(user.project_task_subscription(project)).to eq(subscription)
+          expect(user.project_tasks_subscription(project)).to eq(subscription)
         end
       end
     end
@@ -1016,51 +1016,51 @@ RSpec.describe User, type: :model do
     context "when init is true" do
       context "when no subscription for the project" do
         it "returns a new one" do
-          expect(user.project_task_subscription(project, init: true))
-            .to be_a_new(ProjectTaskSubscription)
+          expect(user.project_tasks_subscription(project, init: true))
+            .to be_a_new(ProjectTasksSubscription)
         end
       end
 
       context "when subscription for the project" do
         let(:subscription) do
-          Fabricate(:project_task_subscription, user: user, project: project)
+          Fabricate(:project_tasks_subscription, user: user, project: project)
         end
 
         before { subscription }
 
         it "returns it" do
-          expect(user.project_task_subscription(project, init: true))
+          expect(user.project_tasks_subscription(project, init: true))
             .to eq(subscription)
         end
       end
     end
   end
 
-  describe "#project_issue_subscription" do
+  describe "#project_issues_subscription" do
     let(:user) { Fabricate(:user_worker) }
     let(:project) { Fabricate(:project) }
 
     before do
-      Fabricate(:project_issue_subscription, user: user)
-      Fabricate(:project_issue_subscription, project: project)
+      Fabricate(:project_issues_subscription, user: user)
+      Fabricate(:project_issues_subscription, project: project)
     end
 
     context "when no options" do
       context "when no subscription for the project" do
         it "returns nil" do
-          expect(user.project_issue_subscription(project)).to be_nil
+          expect(user.project_issues_subscription(project)).to be_nil
         end
       end
 
       context "when subscription for the project" do
         let(:subscription) do
-          Fabricate(:project_issue_subscription, user: user, project: project)
+          Fabricate(:project_issues_subscription, user: user, project: project)
         end
 
         before { subscription }
 
         it "returns it" do
-          expect(user.project_issue_subscription(project)).to eq(subscription)
+          expect(user.project_issues_subscription(project)).to eq(subscription)
         end
       end
     end
@@ -1068,20 +1068,20 @@ RSpec.describe User, type: :model do
     context "when init is true" do
       context "when no subscription for the project" do
         it "returns a new one" do
-          expect(user.project_issue_subscription(project, init: true))
-            .to be_a_new(ProjectIssueSubscription)
+          expect(user.project_issues_subscription(project, init: true))
+            .to be_a_new(ProjectIssuesSubscription)
         end
       end
 
       context "when subscription for the project" do
         let(:subscription) do
-          Fabricate(:project_issue_subscription, user: user, project: project)
+          Fabricate(:project_issues_subscription, user: user, project: project)
         end
 
         before { subscription }
 
         it "returns it" do
-          expect(user.project_issue_subscription(project, init: true))
+          expect(user.project_issues_subscription(project, init: true))
             .to eq(subscription)
         end
       end
@@ -1093,8 +1093,8 @@ RSpec.describe User, type: :model do
     let(:project) { Fabricate(:project) }
 
     before do
-      Fabricate(:project_issue_subscription, user: user)
-      Fabricate(:project_issue_subscription, project: project)
+      Fabricate(:project_issues_subscription, user: user)
+      Fabricate(:project_issues_subscription, project: project)
     end
 
     context "when no subscription for the project" do
@@ -1105,7 +1105,7 @@ RSpec.describe User, type: :model do
 
     context "when subscription for the project" do
       let(:subscription) do
-        Fabricate(:project_issue_subscription, user: user, project: project)
+        Fabricate(:project_issues_subscription, user: user, project: project)
       end
 
       before { subscription }
@@ -1121,8 +1121,8 @@ RSpec.describe User, type: :model do
     let(:project) { Fabricate(:project) }
 
     before do
-      Fabricate(:project_task_subscription, user: user)
-      Fabricate(:project_task_subscription, project: project)
+      Fabricate(:project_tasks_subscription, user: user)
+      Fabricate(:project_tasks_subscription, project: project)
     end
 
     context "when no subscription for the project" do
@@ -1133,7 +1133,7 @@ RSpec.describe User, type: :model do
 
     context "when subscription for the project" do
       let(:subscription) do
-        Fabricate(:project_task_subscription, user: user, project: project)
+        Fabricate(:project_tasks_subscription, user: user, project: project)
       end
 
       before { subscription }

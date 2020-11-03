@@ -9,10 +9,10 @@ class ProjectsController < ApplicationController
     @issues = @project.issues.order(updated_at: :desc).limit(3)
     @tasks = @project.tasks.order(updated_at: :desc).limit(3)
     @issue_subscription =
-      @project.project_issue_subscriptions
+      @project.project_issues_subscriptions
               .find_or_initialize_by(user_id: current_user.id)
     @task_subscription =
-      @project.project_task_subscriptions
+      @project.project_tasks_subscriptions
               .find_or_initialize_by(user_id: current_user.id)
   end
 
