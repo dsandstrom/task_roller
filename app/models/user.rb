@@ -253,4 +253,28 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def subscribed_to_category_tasks?(category)
     category_task_subscription(category).present?
   end
+
+  def project_issue_subscription(project, options = {})
+    subscription =
+      project_issue_subscriptions.find_by(project_id: project.id)
+    return subscription unless options[:init] == true
+
+    subscription || project_issue_subscriptions.build(project_id: project.id)
+  end
+
+  def subscribed_to_project_issues?(project)
+    project_issue_subscription(project).present?
+  end
+
+  def project_task_subscription(project, options = {})
+    subscription =
+      project_task_subscriptions.find_by(project_id: project.id)
+    return subscription unless options[:init] == true
+
+    subscription || project_task_subscriptions.build(project_id: project.id)
+  end
+
+  def subscribed_to_project_tasks?(project)
+    project_task_subscription(project).present?
+  end
 end
