@@ -87,7 +87,9 @@ module ProjectsHelper
     end
 
     def project_nav_links(project)
-      links = []
+      links = [link_to_unless_current('Project', project),
+               link_to_unless_current('Issues', project_issues_path(project)),
+               link_to_unless_current('Tasks', project_tasks_path(project))]
       links.append(new_project_issue_link(project)) if can?(:create, Issue)
       links.append(new_project_task_link(project)) if can?(:create, Task)
       return links unless can?(:update, project)
@@ -95,15 +97,30 @@ module ProjectsHelper
       links.append(edit_project_link(project))
     end
 
-    def new_project_issue_link(project)
-      link_to_unless_current('Report Issue', new_project_issue_path(project))
+    def new_project_issue_link(project, options = {})
+      return unless can?(:create, Issue)
+
+      link_to_unless_current('Report Issue', new_project_issue_path(project),
+                             class: options[:class])
     end
 
-    def new_project_task_link(project)
-      link_to_unless_current('Plan Task', new_project_task_path(project))
+    def new_project_issue_button(project)
+      new_project_issue_link(project, class: 'button button-success')
+    end
+
+    def new_project_task_link(project, options = {})
+      return unless can?(:create, Task)
+
+      link_to_unless_current('Plan Task', new_project_task_path(project),
+                             class: options[:class])
+    end
+
+    def new_project_task_button(project)
+      new_project_task_link(project, class: 'button button-success')
     end
 
     def edit_project_link(project)
-      link_to_unless_current('Edit Project', edit_project_path(project))
+      link_to_unless_current('Edit Project', edit_project_path(project),
+                             class: 'warning-link')
     end
 end
