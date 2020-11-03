@@ -1,5 +1,19 @@
-<% return unless can?(:destroy, task_subscription) %>
+<% return unless task  %>
 
-<%= link_to '', task_task_subscription_path(task, task_subscription),
-            method: :delete,
-            class: 'button button-success button-unsubscribe' %>
+<% if task_subscription.persisted? %>
+  <% return unless can?(:destroy, task_subscription) %>
+
+  <%= link_to '', task_task_subscription_path(task, task_subscription),
+              method: :delete,
+              class: 'button button-success button-unsubscribe' %>
+<% elsif task.project&.category&.subscribed_to_tasks?(current_user) %>
+  <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
+              class: 'button button-success button-disabled' %>
+<% elsif task.project&.subscribed_to_tasks?(current_user) %>
+  <%= link_to 'Subscribed Thru Project', 'javascript:void(0)',
+              class: 'button button-success button-disabled' %>
+<% elsif can?(:create, task_subscription) %>
+  <%= link_to 'Subscribe to task',
+              task_task_subscriptions_path(task),
+              method: :post, class: 'button button-outline' %>
+<% end %>

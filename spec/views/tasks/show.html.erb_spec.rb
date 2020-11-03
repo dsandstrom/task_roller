@@ -663,20 +663,12 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when not subscribed" do
-      let(:task) { Fabricate(:task) }
-      let(:task_subscription) do
-        Fabricate.build(:task_subscription, task: task, user: reviewer)
-      end
-
-      before do
-        reviewer.task_subscriptions.destroy_all
-        @task = assign(:task, task)
-        @task_subscription = assign(:task_subscription, task_subscription)
-      end
-
+    context "when not subscribed to category, project, and task" do
       before do
         @task = assign(:task, task)
+        assign(:task_subscription,
+               Fabricate.build(:task_subscription, task: @task, user: reviewer))
+        @comment = assign(:task_comment, @task.comments.build)
       end
 
       it "renders new task_subscription link" do
@@ -686,14 +678,99 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when subscribed" do
-      let(:task) { Fabricate(:task) }
-      let(:task_subscription) do
-        Fabricate(:task_subscription, task: task, user: reviewer)
+    context "when subscribed to the category tasks" do
+      before do
+        Fabricate(:category_tasks_subscription, category: category,
+                                                user: reviewer)
       end
 
+      context "and subscribed to the task" do
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        it "doesn't render new task_subscription link" do
+          render
+          url = task_task_subscriptions_path(@task)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy task_subscription link" do
+          render
+          url = task_task_subscription_path(@task, @task_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+      end
+
+      context "and not subscribed to the task" do
+        let(:task_subscription) do
+          Fabricate.build(:task_subscription, task: task, user: reviewer)
+        end
+
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        it "doesn't render new task_subscription link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_task_subscriptions_path(@task))
+        end
+      end
+    end
+
+    context "when subscribed to the project tasks" do
+      before do
+        Fabricate(:project_tasks_subscription, project: project, user: reviewer)
+      end
+
+      context "and subscribed to the task" do
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        it "doesn't render new task_subscription link" do
+          render
+          url = task_task_subscriptions_path(@task)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy task_subscription link" do
+          render
+          url = task_task_subscription_path(@task, @task_subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+      end
+
+      context "and not subscribed to the task" do
+        let(:task_subscription) do
+          Fabricate.build(:task_subscription, task: task, user: reviewer)
+        end
+
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        it "doesn't render new task_subscription link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_task_subscriptions_path(@task))
+        end
+      end
+    end
+
+    context "when subscribed to the category tasks" do
       before do
         @task = assign(:task, task)
+        @comment = assign(:task_comment, @task.comments.build)
         @task_subscription = assign(:task_subscription, task_subscription)
       end
 

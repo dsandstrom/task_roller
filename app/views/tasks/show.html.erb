@@ -13,9 +13,7 @@ assigned = @task.assigned
   <div class="task-columns">
     <div class="task-column first-column">
       <section class="task-subscription-wrapper">
-        <%= render 'task_subscriptions/button',
-                   task_subscription: @task_subscription,
-                   task: @task %>
+        <%= render @task_subscription, task: @task %>
       </section>
 
       <section class="task-status-wrapper">
