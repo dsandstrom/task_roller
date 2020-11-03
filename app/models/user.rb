@@ -4,6 +4,7 @@
 # TODO: use employee connection to disable users
 # they can't log in, but allow admin to disable/enable connection
 # TODO: add priority column to use for ordering
+# TODO: user subscription?
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze

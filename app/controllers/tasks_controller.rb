@@ -5,7 +5,7 @@
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment
-# TODO: allow user to pick when subscriptions are created
+# TODO: allow user to customize subscription notifications
 
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
