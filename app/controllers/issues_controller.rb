@@ -12,14 +12,17 @@ class IssuesController < ApplicationController
   def index
     authorize! :read, Issue
 
-    @issues =
-      if @user
-        @user.issues
-      elsif @project
-        @project.issues
-      else
-        @category.issues
-      end
+    if @user
+      @issues = @user.issues
+    elsif @project
+      @issues = @project.issues
+      @subscription =
+        current_user.project_issue_subscription(@project, init: true)
+    else
+      @issues = @category.issues
+      @subscription =
+        current_user.category_issue_subscription(@category, init: true)
+    end
     @issues = @issues.filter_by(build_filters).page(params[:page])
   end
 

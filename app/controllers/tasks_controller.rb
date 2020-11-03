@@ -19,14 +19,17 @@ class TasksController < ApplicationController
   def index
     authorize! :read, Task
 
-    @tasks =
-      if @user
-        @user.tasks
-      elsif @project
-        @project.tasks
-      else
-        @category.tasks
-      end
+    if @user
+      @tasks = @user.tasks
+    elsif @project
+      @tasks = @project.tasks
+      @subscription =
+        current_user.project_task_subscription(@project, init: true)
+    else
+      @tasks = @category.tasks
+      @subscription =
+        current_user.category_task_subscription(@category, init: true)
+    end
     @tasks = @tasks.filter_by(build_filters).page(params[:page])
   end
 

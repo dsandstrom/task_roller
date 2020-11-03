@@ -4,14 +4,21 @@ require "rails_helper"
 
 # TODO: spec users
 RSpec.describe "tasks/index", type: :view do
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
+
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
+    let(:category_task_subscription) do
+      Fabricate(:category_task_subscription, category: category, user: admin)
+    end
+    let(:project_task_subscription) do
+      Fabricate(:project_task_subscription, project: project, user: admin)
+    end
 
     before { enable_can(view, admin) }
 
     context "when project" do
-      let(:category) { Fabricate(:category) }
-      let(:project) { Fabricate(:project, category: category) }
       let(:first_task) { Fabricate(:task, project: project) }
       let(:issue) { Fabricate(:issue, project: project) }
       let(:second_task) { Fabricate(:task, project: project, issue: issue) }
@@ -20,6 +27,7 @@ RSpec.describe "tasks/index", type: :view do
         assign(:category, category)
         assign(:project, project)
         assign(:tasks, page([first_task, second_task]))
+        assign(:subscription, project_task_subscription)
       end
 
       it "renders new task link" do
@@ -65,12 +73,18 @@ RSpec.describe "tasks/index", type: :view do
   %w[reviewer].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
+      let(:category_task_subscription) do
+        Fabricate(:category_task_subscription, category: category,
+                                                user: current_user)
+      end
+      let(:project_task_subscription) do
+        Fabricate(:project_task_subscription, project: project,
+                                              user: current_user)
+      end
 
       before { enable_can(view, current_user) }
 
       context "when project" do
-        let(:category) { Fabricate(:category) }
-        let(:project) { Fabricate(:project, category: category) }
         let(:first_task) do
           Fabricate(:task, project: project, user: current_user)
         end
@@ -81,6 +95,7 @@ RSpec.describe "tasks/index", type: :view do
           assign(:category, category)
           assign(:project, project)
           assign(:tasks, page([first_task, second_task]))
+          assign(:subscription, project_task_subscription)
         end
 
         it "renders new task link" do
@@ -109,12 +124,18 @@ RSpec.describe "tasks/index", type: :view do
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
+      let(:category_task_subscription) do
+        Fabricate(:category_task_subscription, category: category,
+                                                user: current_user)
+      end
+      let(:project_task_subscription) do
+        Fabricate(:project_task_subscription, project: project,
+                                              user: current_user)
+      end
 
       before { enable_can(view, current_user) }
 
       context "when project" do
-        let(:category) { Fabricate(:category) }
-        let(:project) { Fabricate(:project, category: category) }
         let(:first_task) do
           Fabricate(:task, project: project, user: current_user)
         end
@@ -125,6 +146,7 @@ RSpec.describe "tasks/index", type: :view do
           assign(:category, category)
           assign(:project, project)
           assign(:tasks, page([first_task, second_task]))
+          assign(:subscription, project_task_subscription)
         end
 
         it "doesn't render new task link" do
