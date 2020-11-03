@@ -1165,4 +1165,79 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#subscribe_users" do
+    let(:user) { Fabricate(:user_reviewer) }
+    let(:issue) { Fabricate(:issue, user: user, project: project) }
+
+    it "runs subscribe_user" do
+      expect(issue).to receive(:subscribe_user)
+      issue.subscribe_users
+    end
+
+    context "when issue category has a subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:category_issue_subscription, category: category,
+                                                user: subscriber)
+      end
+
+      it "creates a issue_subscription for the subscriber" do
+        expect do
+          issue.subscribe_users
+        end.to change(subscriber.issue_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 issue_subscriptions" do
+        expect do
+          issue.subscribe_users
+        end.to change(IssueSubscription, :count).by(2)
+      end
+    end
+
+    context "when issue project has a subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:project_issue_subscription, project: project,
+                                               user: subscriber)
+      end
+
+      it "creates a issue_subscription for the subscriber" do
+        expect do
+          issue.subscribe_users
+        end.to change(subscriber.issue_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 issue_subscriptions" do
+        expect do
+          issue.subscribe_users
+        end.to change(IssueSubscription, :count).by(2)
+      end
+    end
+
+    context "when issue category/project subscriber" do
+      let(:subscriber) { Fabricate(:user_reporter) }
+
+      before do
+        Fabricate(:project_issue_subscription, project: project,
+                                               user: subscriber)
+        Fabricate(:category_issue_subscription, category: category,
+                                                user: subscriber)
+      end
+
+      it "creates a issue_subscription for the subscriber" do
+        expect do
+          issue.subscribe_users
+        end.to change(subscriber.issue_subscriptions, :count).by(1)
+      end
+
+      it "creates 2 issue_subscriptions" do
+        expect do
+          issue.subscribe_users
+        end.to change(IssueSubscription, :count).by(2)
+      end
+    end
+  end
 end

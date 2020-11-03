@@ -239,6 +239,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue_subscriptions.create(user_id: subscriber.id)
   end
 
+  # TODO: use ActiveJob
+  def subscribe_users
+    subscribe_user
+    category.issue_subscribers.each { |u| subscribe_user(u) }
+    project.issue_subscribers.each { |u| subscribe_user(u) }
+  end
+
   private
 
     def set_opened_at
