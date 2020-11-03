@@ -1201,7 +1201,7 @@ RSpec.describe Issue, type: :model do
 
       before do
         Fabricate(:project_issues_subscription, project: project,
-                                               user: subscriber)
+                                                user: subscriber)
       end
 
       it "creates a issue_subscription for the subscriber" do
@@ -1222,7 +1222,7 @@ RSpec.describe Issue, type: :model do
 
       before do
         Fabricate(:project_issues_subscription, project: project,
-                                               user: subscriber)
+                                                user: subscriber)
         Fabricate(:category_issues_subscription, category: category,
                                                  user: subscriber)
       end

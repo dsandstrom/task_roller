@@ -1702,7 +1702,7 @@ RSpec.describe Task, type: :model do
 
       before do
         Fabricate(:project_tasks_subscription, project: project,
-                                              user: subscriber)
+                                               user: subscriber)
       end
 
       it "creates a task_subscription for the subscriber" do
@@ -1723,7 +1723,7 @@ RSpec.describe Task, type: :model do
 
       before do
         Fabricate(:project_tasks_subscription, project: project,
-                                              user: subscriber)
+                                               user: subscriber)
         Fabricate(:category_tasks_subscription, category: category,
                                                 user: subscriber)
       end

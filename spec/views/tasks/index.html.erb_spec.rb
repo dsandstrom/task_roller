@@ -120,7 +120,7 @@ RSpec.describe "tasks/index", type: :view do
           render
 
           url = project_tasks_subscription_path(project,
-                                               project_tasks_subscription)
+                                                project_tasks_subscription)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
 
@@ -135,7 +135,7 @@ RSpec.describe "tasks/index", type: :view do
       context "and not subscribed to tasks" do
         let(:project_tasks_subscription) do
           Fabricate.build(:project_tasks_subscription, project: project,
-                                                      user: admin)
+                                                       user: admin)
         end
 
         before do
@@ -180,7 +180,7 @@ RSpec.describe "tasks/index", type: :view do
       end
       let(:project_tasks_subscription) do
         Fabricate(:project_tasks_subscription, project: project,
-                                              user: current_user)
+                                               user: current_user)
       end
 
       before { enable_can(view, current_user) }
@@ -231,7 +231,7 @@ RSpec.describe "tasks/index", type: :view do
       end
       let(:project_tasks_subscription) do
         Fabricate(:project_tasks_subscription, project: project,
-                                              user: current_user)
+                                               user: current_user)
       end
 
       before { enable_can(view, current_user) }

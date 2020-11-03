@@ -45,7 +45,7 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
         context "with invalid params" do
           before do
             Fabricate(:project_issues_subscription, project: project,
-                                                   user: current_user)
+                                                    user: current_user)
           end
 
           it "doesn't create a new ProjectIssuesSubscription" do
@@ -74,7 +74,7 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
           it "destroys the requested project_issues_subscription" do
             subscription =
               Fabricate(:project_issues_subscription, project: project,
-                                                     user: current_user)
+                                                      user: current_user)
             expect do
               delete :destroy, params: { project_id: project.to_param,
                                          id: subscription.to_param }
@@ -85,7 +85,7 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
           it "redirects to the requested project" do
             subscription =
               Fabricate(:project_issues_subscription, project: project,
-                                                     user: current_user)
+                                                      user: current_user)
             delete :destroy, params: { project_id: project.to_param,
                                        id: subscription.to_param }
             expect(response).to redirect_to(project)

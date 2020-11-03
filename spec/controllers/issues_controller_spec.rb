@@ -220,7 +220,7 @@ RSpec.describe IssuesController, type: :controller do
 
             before do
               Fabricate(:project_issues_subscription, user: user,
-                                                     project: project)
+                                                      project: project)
             end
 
             it "creates a new IssueSubscription" do

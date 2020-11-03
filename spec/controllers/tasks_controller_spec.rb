@@ -383,7 +383,7 @@ RSpec.describe TasksController, type: :controller do
 
           before do
             Fabricate(:project_tasks_subscription, user: user,
-                                                  project: project)
+                                                   project: project)
           end
 
           it "creates a new IssueSubscription" do
