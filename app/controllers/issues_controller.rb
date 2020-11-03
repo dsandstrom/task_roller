@@ -133,7 +133,7 @@ class IssuesController < ApplicationController
     def set_subscription
       @subscription =
         if @project
-          current_user.project_issues_subscription(@project, init: true)
+          @project.issues_subscription(current_user, init: true)
         elsif @category
           current_user.category_issues_subscription(@category, init: true)
         end

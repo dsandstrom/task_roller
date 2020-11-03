@@ -21,4 +21,32 @@ class Project < ApplicationRecord
                    uniqueness: { scope: :category_id, case_sensitive: false }
   validates :category_id, presence: true
   validates :category, presence: true, if: :category_id
+
+  def issues_subscription(user, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    project_issues_subscriptions.send(method, user_id: user.id)
+  end
+
+  def tasks_subscription(user, options = {})
+    method =
+      if options[:init] == true
+        :find_or_initialize_by
+      else
+        :find_by
+      end
+    project_tasks_subscriptions.send(method, user_id: user.id)
+  end
+
+  def subscribed_to_issues?(user)
+    issues_subscription(user).present?
+  end
+
+  def subscribed_to_tasks?(user)
+    tasks_subscription(user).present?
+  end
 end

@@ -63,4 +63,164 @@ RSpec.describe Project, type: :model do
       end
     end
   end
+
+  describe "#issues_subscription" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:project) { Fabricate(:project) }
+
+    before do
+      Fabricate(:project_issues_subscription, user: user)
+      Fabricate(:project_issues_subscription, project: project)
+    end
+
+    context "when no options" do
+      context "when no subscription for the project" do
+        it "returns nil" do
+          expect(project.issues_subscription(user)).to be_nil
+        end
+      end
+
+      context "when subscription for the project" do
+        let(:subscription) do
+          Fabricate(:project_issues_subscription, user: user, project: project)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(project.issues_subscription(user)).to eq(subscription)
+        end
+      end
+    end
+
+    context "when init is true" do
+      context "when no subscription for the project" do
+        it "returns a new one" do
+          expect(project.issues_subscription(user, init: true))
+            .to be_a_new(ProjectIssuesSubscription)
+        end
+      end
+
+      context "when subscription for the project" do
+        let(:subscription) do
+          Fabricate(:project_issues_subscription, user: user, project: project)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(project.issues_subscription(user, init: true))
+            .to eq(subscription)
+        end
+      end
+    end
+  end
+
+  describe "#tasks_subscription" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:project) { Fabricate(:project) }
+
+    before do
+      Fabricate(:project_tasks_subscription, user: user)
+      Fabricate(:project_tasks_subscription, project: project)
+    end
+
+    context "when no options" do
+      context "when no subscription for the project" do
+        it "returns nil" do
+          expect(project.tasks_subscription(user)).to be_nil
+        end
+      end
+
+      context "when subscription for the project" do
+        let(:subscription) do
+          Fabricate(:project_tasks_subscription, user: user, project: project)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(project.tasks_subscription(user)).to eq(subscription)
+        end
+      end
+    end
+
+    context "when init is true" do
+      context "when no subscription for the project" do
+        it "returns a new one" do
+          expect(project.tasks_subscription(user, init: true))
+            .to be_a_new(ProjectTasksSubscription)
+        end
+      end
+
+      context "when subscription for the project" do
+        let(:subscription) do
+          Fabricate(:project_tasks_subscription, user: user, project: project)
+        end
+
+        before { subscription }
+
+        it "returns it" do
+          expect(project.tasks_subscription(user, init: true))
+            .to eq(subscription)
+        end
+      end
+    end
+  end
+
+  describe "#subscribed_to_issues?" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:project) { Fabricate(:project) }
+
+    before do
+      Fabricate(:project_issues_subscription, user: user)
+      Fabricate(:project_issues_subscription, project: project)
+    end
+
+    context "when no subscription for the project" do
+      it "returns false" do
+        expect(project.subscribed_to_issues?(user)).to eq(false)
+      end
+    end
+
+    context "when subscription for the project" do
+      let(:subscription) do
+        Fabricate(:project_issues_subscription, user: user, project: project)
+      end
+
+      before { subscription }
+
+      it "returns true" do
+        expect(project.subscribed_to_issues?(user)).to eq(true)
+      end
+    end
+  end
+
+  describe "#subscribed_to_tasks?" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:project) { Fabricate(:project) }
+
+    before do
+      Fabricate(:project_tasks_subscription, user: user)
+      Fabricate(:project_tasks_subscription, project: project)
+    end
+
+    context "when no subscription for the project" do
+      it "returns false" do
+        expect(project.subscribed_to_tasks?(user)).to eq(false)
+      end
+    end
+
+    context "when subscription for the project" do
+      let(:subscription) do
+        Fabricate(:project_tasks_subscription, user: user, project: project)
+      end
+
+      before { subscription }
+
+      it "returns true" do
+        expect(project.subscribed_to_tasks?(user)).to eq(true)
+      end
+    end
+  end
 end
