@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: create category/project subscriptions
-
 require 'faker'
 
 class Seeds # rubocop:disable Metrics/ClassLength
@@ -35,21 +33,10 @@ class Seeds # rubocop:disable Metrics/ClassLength
     6.times do
       name = Faker::Commerce.unique.department
 
-      Category.create!(name: name, visible: random_visible,
-                       internal: random_internal)
-    end
-  end
-
-  def create_projects
-    Category.all.each do |category|
-      next if category.projects.any?
-
-      rand(11).times do
-        name = Faker::App.unique.name
-
-        category.projects.create!(name: name, visible: random_visible,
+      category = Category.create!(name: name, visible: random_visible,
                                   internal: random_internal)
-      end
+      create_category_subscriptions(category)
+      create_projects(category)
     end
   end
 
@@ -196,12 +183,51 @@ class Seeds # rubocop:disable Metrics/ClassLength
       task
     end
 
+    # TODO: don't allow user to have multiple subscriptions of same type
+    def create_category_subscriptions(category)
+      rand(5..15).times do
+        category.category_issues_subscriptions.create(user_id: random_user_id)
+      end
+      rand(5..15).times do
+        category.category_tasks_subscriptions.create(user_id: random_user_id)
+      end
+    end
+
+    def create_projects(category)
+      return if category.projects.any?
+
+      rand(11).times do
+        name = Faker::App.unique.name
+
+        project = category.projects.create!(name: name, visible: random_visible,
+                                            internal: random_internal)
+        create_project_subscriptions(project)
+      end
+    end
+
+    def create_project_subscriptions(project)
+      rand(5..15).times do
+        project.project_issues_subscriptions.create(user_id: random_user_id)
+      end
+      rand(5..15).times do
+        project.project_tasks_subscriptions.create(user_id: random_user_id)
+      end
+    end
+
     def random_visible
       rand(2).zero?
     end
 
     def random_internal
       rand(4).zero?
+    end
+
+    def user_ids
+      @user_ids ||= User.ids
+    end
+
+    def random_user_id
+      user_ids.sample
     end
 end
 
@@ -211,7 +237,6 @@ seeds.create_reporters
 seeds.create_reviewers
 seeds.create_workers
 seeds.create_categories
-seeds.create_projects
 seeds.create_issue_types
 seeds.create_task_types
 seeds.create_issues_and_tasks
