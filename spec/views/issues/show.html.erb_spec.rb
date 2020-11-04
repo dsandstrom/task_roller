@@ -17,12 +17,6 @@ RSpec.describe "issues/show", type: :view do
     let(:issue_subscription) do
       Fabricate(:issue_subscription, issue: issue, user: admin)
     end
-    let(:category_issues_subscription) do
-      Fabricate(:category_issues_subscription, category: category, user: admin)
-    end
-    let(:project_issues_subscription) do
-      Fabricate(:project_issues_subscription, project: project, user: admin)
-    end
 
     before { enable_can(view, admin) }
 
@@ -246,7 +240,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when not subscribed to category, project, and issue" do
+    context "when not subscribed to the issue" do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription,
@@ -261,96 +255,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when subscribed to the category issues" do
-      before do
-        Fabricate(:category_issues_subscription, category: category,
-                                                 user: admin)
-      end
-
-      context "and subscribed to the issue" do
-        before do
-          @issue = assign(:issue, issue)
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @issue_subscription = assign(:issue_subscription, issue_subscription)
-        end
-
-        it "doesn't render new issue_subscription link" do
-          render
-          url = issue_issue_subscriptions_path(@issue)
-          expect(rendered).not_to have_link(nil, href: url)
-        end
-
-        it "renders destroy issue_subscription link" do
-          render
-          url = issue_issue_subscription_path(@issue, @issue_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-      end
-
-      context "and not subscribed to the issue" do
-        let(:issue_subscription) do
-          Fabricate.build(:issue_subscription, issue: issue, user: admin)
-        end
-
-        before do
-          @issue = assign(:issue, issue)
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @issue_subscription = assign(:issue_subscription, issue_subscription)
-        end
-
-        it "doesn't render new issue_subscription link" do
-          render
-          expect(rendered)
-            .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
-        end
-      end
-    end
-
-    context "when subscribed to the project issues" do
-      before do
-        Fabricate(:project_issues_subscription, project: project, user: admin)
-      end
-
-      context "and subscribed to the issue" do
-        before do
-          @issue = assign(:issue, issue)
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @issue_subscription = assign(:issue_subscription, issue_subscription)
-        end
-
-        it "doesn't render new issue_subscription link" do
-          render
-          url = issue_issue_subscriptions_path(@issue)
-          expect(rendered).not_to have_link(nil, href: url)
-        end
-
-        it "renders destroy issue_subscription link" do
-          render
-          url = issue_issue_subscription_path(@issue, @issue_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-      end
-
-      context "and not subscribed to the issue" do
-        let(:issue_subscription) do
-          Fabricate.build(:issue_subscription, issue: issue, user: admin)
-        end
-
-        before do
-          @issue = assign(:issue, issue)
-          @comment = assign(:issue_comment, @issue.comments.build)
-          @issue_subscription = assign(:issue_subscription, issue_subscription)
-        end
-
-        it "doesn't render new issue_subscription link" do
-          render
-          expect(rendered)
-            .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
-        end
-      end
-    end
-
-    context "when subscribed to the category issues" do
+    context "when subscribed to the issue" do
       before do
         @issue = assign(:issue, issue)
         @comment = assign(:issue_comment, @issue.comments.build)
@@ -359,8 +264,8 @@ RSpec.describe "issues/show", type: :view do
 
       it "doesn't render new issue_subscription link" do
         render
-        expect(rendered)
-          .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+        url = issue_issue_subscriptions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy issue_subscription link" do
