@@ -26,7 +26,7 @@ RSpec.describe RepositionTaskTypesController, type: :controller do
           task_type = Fabricate(:task_type)
           put :update, params: { id: task_type.to_param,
                                  sort: valid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -44,7 +44,7 @@ RSpec.describe RepositionTaskTypesController, type: :controller do
           task_type = Fabricate(:task_type)
           put :update, params: { id: task_type.to_param,
                                  sort: invalid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
     end

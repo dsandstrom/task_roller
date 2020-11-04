@@ -65,7 +65,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
         it "redirects to the task_type list" do
           post :create, params: { task_type: valid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -109,7 +109,7 @@ RSpec.describe TaskTypesController, type: :controller do
           task_type = Fabricate(:task_type)
           put :update, params: { id: task_type.to_param,
                                  task_type: new_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -151,7 +151,7 @@ RSpec.describe TaskTypesController, type: :controller do
       it "redirects to the task_types list" do
         task_type = Fabricate(:task_type)
         delete :destroy, params: { id: task_type.to_param }
-        expect(response).to redirect_to(roller_types_url)
+        expect(response).to redirect_to(issue_types_url)
       end
     end
 

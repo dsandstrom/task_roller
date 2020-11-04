@@ -3,6 +3,10 @@
 class IssueTypesController < ApplicationController
   load_and_authorize_resource
 
+  def index
+    @task_types = TaskType.all
+  end
+
   def new
     @issue_type.assign_attributes(color: 'default', icon: 'bulb')
   end
@@ -11,7 +15,7 @@ class IssueTypesController < ApplicationController
 
   def create
     if @issue_type.save
-      redirect_to roller_types_url,
+      redirect_to issue_types_url,
                   notice: 'Issue type was successfully created.'
     else
       render :new
@@ -20,7 +24,7 @@ class IssueTypesController < ApplicationController
 
   def update
     if @issue_type.update(issue_type_params)
-      redirect_to roller_types_url,
+      redirect_to issue_types_url,
                   notice: 'Issue type was successfully updated.'
     else
       render :edit
@@ -29,7 +33,7 @@ class IssueTypesController < ApplicationController
 
   def destroy
     @issue_type.destroy
-    redirect_to roller_types_url,
+    redirect_to issue_types_url,
                 notice: 'Issue type was successfully destroyed.'
   end
 

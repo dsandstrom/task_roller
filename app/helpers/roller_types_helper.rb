@@ -37,12 +37,20 @@ module RollerTypesHelper
     content_tag :i, '', class: "icon-#{roller_type.icon}"
   end
 
-  def roller_type_icon_options
-    RollerType::ICON_OPTIONS.map { |t| [t.titleize, t] }
+  def issue_type_icon_options
+    IssueType::ICON_OPTIONS.map { |t| [t.titleize, t] }
   end
 
-  def roller_type_color_options
-    RollerType::COLOR_OPTIONS.map { |t| [t.titleize, t] }
+  def task_type_icon_options
+    TaskType::ICON_OPTIONS.map { |t| [t.titleize, t] }
+  end
+
+  def issue_type_color_options
+    IssueType::COLOR_OPTIONS.map { |t| [t.titleize, t] }
+  end
+
+  def task_type_color_options
+    TaskType::COLOR_OPTIONS.map { |t| [t.titleize, t] }
   end
 
   def roller_radio_button_label_class(color = 'default')

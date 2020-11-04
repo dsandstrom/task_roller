@@ -9,7 +9,7 @@ class TaskTypesController < ApplicationController
 
   def create
     if @task_type.save
-      redirect_to roller_types_url,
+      redirect_to issue_types_url,
                   success: 'Task type was successfully created.'
     else
       render :new
@@ -18,7 +18,7 @@ class TaskTypesController < ApplicationController
 
   def update
     if @task_type.update(task_type_params)
-      redirect_to roller_types_url,
+      redirect_to issue_types_url,
                   success: 'Task type was successfully updated.'
     else
       render :edit
@@ -27,7 +27,7 @@ class TaskTypesController < ApplicationController
 
   def destroy
     @task_type.destroy
-    redirect_to roller_types_url,
+    redirect_to issue_types_url,
                 success: 'Task type was successfully destroyed.'
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_03_202959) do
+ActiveRecord::Schema.define(version: 2020_11_04_014128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(version: 2020_11_03_202959) do
   create_table "issue_subscriptions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "issue_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "issue_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "icon", null: false
+    t.string "color", null: false
+    t.integer "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -133,18 +142,6 @@ ActiveRecord::Schema.define(version: 2020_11_03_202959) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "roller_types", force: :cascade do |t|
-    t.string "name"
-    t.string "icon"
-    t.string "color"
-    t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "position"
-    t.index ["name"], name: "index_roller_types_on_name"
-    t.index ["type"], name: "index_roller_types_on_type"
-  end
-
   create_table "task_assignees", force: :cascade do |t|
     t.integer "task_id"
     t.integer "assignee_id"
@@ -155,6 +152,15 @@ ActiveRecord::Schema.define(version: 2020_11_03_202959) do
   create_table "task_subscriptions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "task_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "task_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "icon", null: false
+    t.string "color", null: false
+    t.integer "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

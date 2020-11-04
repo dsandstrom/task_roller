@@ -86,7 +86,7 @@ class TasksController < ApplicationController
       return true if @task_types&.any?
 
       redirect_url =
-        can?(:create, TaskType) ? roller_types_url : project_url(@project)
+        can?(:create, TaskType) ? issue_types_url : project_url(@project)
       redirect_to redirect_url, alert: 'App Error: Task Types are required'
       false
     end

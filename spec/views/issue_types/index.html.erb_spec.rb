@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "roller_types/index", type: :view do
+RSpec.describe "issue_types/index", type: :view do
   let(:first_issue_type) { Fabricate(:issue_type) }
   let(:second_issue_type) { Fabricate(:issue_type) }
   let(:first_task_type) { Fabricate(:task_type) }

@@ -59,8 +59,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :task_subscriptions, only: :index
   resources :issue_subscriptions, only: :index
 
-  resources :roller_types, only: :index
-  resources :issue_types, except: %i[index show]
+  resources :issue_types, except: %i[show]
   resources :task_types, except: %i[index show]
   patch '/reposition_issue_types/:id/:sort' => 'reposition_issue_types#update',
         as: :reposition_issue_type

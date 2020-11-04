@@ -6,6 +6,32 @@ RSpec.describe IssueTypesController, type: :controller do
   let(:valid_attributes) { { name: "Bug", icon: "bug", color: "red" } }
   let(:invalid_attributes) { { name: "" } }
 
+  describe "GET #index" do
+    context "for an admin" do
+      before { login(Fabricate(:user_admin)) }
+
+      it "returns a success response" do
+        Fabricate(:issue_type)
+        Fabricate(:task_type)
+        get :index, params: {}
+        expect(response).to be_successful
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "redirects to unauthorized" do
+          Fabricate(:issue_type)
+          Fabricate(:task_type)
+          get :index, params: {}
+          expect_to_be_unauthorized(response)
+        end
+      end
+    end
+  end
+
   describe "GET #new" do
     context "for an admin" do
       before { login(Fabricate(:user_admin)) }
@@ -65,7 +91,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
         it "redirects to the issue_type list" do
           post :create, params: { issue_type: valid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -109,7 +135,7 @@ RSpec.describe IssueTypesController, type: :controller do
           issue_type = Fabricate(:issue_type)
           put :update, params: { id: issue_type.to_param,
                                  issue_type: new_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -151,7 +177,7 @@ RSpec.describe IssueTypesController, type: :controller do
       it "redirects to the issue_types list" do
         issue_type = Fabricate(:issue_type)
         delete :destroy, params: { id: issue_type.to_param }
-        expect(response).to redirect_to(roller_types_url)
+        expect(response).to redirect_to(issue_types_url)
       end
     end
 

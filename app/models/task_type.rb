@@ -1,8 +1,16 @@
 # frozen_string_literal: true
 
-class TaskType < RollerType
-  acts_as_list scope: [:type]
+class TaskType < ApplicationRecord
+  ICON_OPTIONS = IconFileReader.new.options.freeze
+  COLOR_OPTIONS = %w[default blue brown green purple red yellow].freeze
+
+  acts_as_list
   default_scope { order(position: :asc) }
+
+  validates :icon, presence: true, inclusion: { in: ICON_OPTIONS }
+  validates :name, presence: true, length: { maximum: 100 },
+                   uniqueness: { case_sensitive: false }
+  validates :color, presence: true, inclusion: { in: COLOR_OPTIONS }
 
   def reposition(direction)
     case direction

@@ -1,0 +1,94 @@
+<h1>App Setup</h1>
+
+Add and customize issue and task types below:
+<h2>Issue Types</h2>
+
+<div class="issue-types">
+  <% @issue_types&.each do |issue_type| %>
+    <div id="issue-type-<%= issue_type.id %>" class="issue-type">
+      <p>
+        <%= link_to_if can?(:edit, issue_type),
+                       issue_type_tag(issue_type),
+                       edit_issue_type_path(issue_type) %>
+      </p>
+
+      <% if can?(:edit, issue_type) %>
+        <p>
+          <% unless issue_type.first?  %>
+            <%= link_to reposition_issue_type_path(issue_type, sort: 'up'),
+                        class: 'issue-type-sort-up', title: 'Move Up',
+                        method: :patch do %>
+              <i class="icon-arrow-up"></i>
+            <% end %>
+          <% end %>
+          <% unless issue_type.last?  %>
+            <%= link_to reposition_issue_type_path(issue_type, sort: 'down'),
+                        class: 'issue-type-sort-down', title: 'Move Down',
+                        method: :patch do %>
+              <i class="icon-arrow-down"></i>
+            <% end %>
+          <% end %>
+        </p>
+      <% end %>
+
+      <% if can?(:destroy, issue_type) %>
+        <p>
+          <%= link_to 'Remove', issue_type,
+                      method: :delete, class: 'link-warning',
+                      data: { confirm: 'Are you sure?' } %>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<% if can?(:create, IssueType) %>
+  <p><%= link_to 'New Issue Type', new_issue_type_path %></p>
+<% end %>
+
+<hr>
+
+<h2>Task Types</h2>
+
+<div class="task-types">
+  <% @task_types&.each do |task_type| %>
+    <div id="task-type-<%= task_type.id %>" class="task-type">
+      <p>
+        <%= link_to_if can?(:edit, task_type),
+                       task_type_tag(task_type),
+                       edit_task_type_path(task_type) %>
+      </p>
+
+      <% if can?(:edit, task_type) %>
+        <p>
+          <% unless task_type.first?  %>
+            <%= link_to reposition_task_type_path(task_type, sort: 'up'),
+                        class: 'task-type-sort-up', title: 'Move Up',
+                        method: :patch do %>
+              <i class="icon-arrow-up"></i>
+            <% end %>
+          <% end %>
+          <% unless task_type.last?  %>
+            <%= link_to reposition_task_type_path(task_type, sort: 'down'),
+                        class: 'task-type-sort-down', title: 'Move Down',
+                        method: :patch do %>
+              <i class="icon-arrow-down"></i>
+            <% end %>
+          <% end %>
+        </p>
+      <% end %>
+
+      <% if can?(:destroy, task_type) %>
+        <p>
+          <%= link_to 'Remove', task_type,
+                      method: :delete, class: 'link-warning',
+                      data: { confirm: 'Are you sure?' } %>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<% if can?(:create, TaskType) %>
+  <p><%= link_to 'New Task Type', new_task_type_path %></p>
+<% end %>

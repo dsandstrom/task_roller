@@ -119,9 +119,9 @@ RSpec.describe TasksController, type: :controller do
             Fabricate(:user_reporter)
           end
 
-          it "redirects to roller_types_url" do
+          it "redirects to issue_types_url" do
             get :new, params: { project_id: project.to_param }
-            expect(response).to redirect_to(roller_types_url)
+            expect(response).to redirect_to(issue_types_url)
           end
         end
       end

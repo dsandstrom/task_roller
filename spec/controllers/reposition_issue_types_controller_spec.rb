@@ -26,7 +26,7 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
           issue_type = Fabricate(:issue_type)
           put :update, params: { id: issue_type.to_param,
                                  sort: valid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
 
@@ -44,7 +44,7 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
           issue_type = Fabricate(:issue_type)
           put :update, params: { id: issue_type.to_param,
                                  sort: invalid_attributes }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
     end

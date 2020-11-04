@@ -10,7 +10,7 @@
   <div class="field">
     <%= form.label :color %>
     <div id="issue_type_color_labels" class="issue-type-color-options">
-      <% roller_type_color_options.each do |title, name| %>
+      <% issue_type_color_options.each do |title, name| %>
         <% id = "issue_type_color_#{name.parameterize}" %>
 
         <%= form.label :color, for: id, class: "roller-type-color-#{name}" do %>
@@ -24,7 +24,7 @@
   <div class="field">
     <%= form.label :icon %>
     <div id="issue_type_icon_labels" class="issue-type-icon-options">
-      <% roller_type_icon_options.each do |title, name| %>
+      <% issue_type_icon_options.each do |title, name| %>
         <% id = "issue_type_icon_#{name.parameterize}" %>
 
         <%= form.label :icon, for: id do %>

@@ -780,34 +780,6 @@ RSpec.describe Ability do
     end
   end
 
-  describe "RollerType model" do
-    let(:roller_type) { RollerType }
-
-    %i[admin].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        subject(:ability) { Ability.new(current_user) }
-
-        it { is_expected.not_to be_able_to(:create, roller_type) }
-        it { is_expected.to be_able_to(:read, roller_type) }
-        it { is_expected.not_to be_able_to(:update, roller_type) }
-        it { is_expected.not_to be_able_to(:destroy, roller_type) }
-      end
-    end
-
-    %i[reviewer worker reporter].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        subject(:ability) { Ability.new(current_user) }
-
-        it { is_expected.not_to be_able_to(:create, roller_type) }
-        it { is_expected.not_to be_able_to(:read, roller_type) }
-        it { is_expected.not_to be_able_to(:update, roller_type) }
-        it { is_expected.not_to be_able_to(:destroy, roller_type) }
-      end
-    end
-  end
-
   describe "Task model" do
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }

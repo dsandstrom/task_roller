@@ -10,9 +10,9 @@
         <% if can?(:read, User) %>
           <%= menu_link 'Users', main_app.users_path %>
         <% end %>
-        <% if can?(:read, RollerType) %>
+        <% if can?(:read, IssueType) %>
           <p class="divider">|</p>
-          <%= menu_link 'App Setup', main_app.roller_types_path %>
+          <%= menu_link 'App Setup', main_app.issue_types_path %>
         <% end %>
       </div>
     <% end %>

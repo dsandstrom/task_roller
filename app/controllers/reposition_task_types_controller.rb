@@ -4,7 +4,7 @@ class RepositionTaskTypesController < ApplicationController
   load_and_authorize_resource class: 'TaskType', instance_name: :task_type
 
   def update
-    redirect_to roller_types_url, notice: notice
+    redirect_to issue_types_url, notice: notice
   end
 
   private

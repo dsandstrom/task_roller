@@ -31,7 +31,7 @@ class IssuesController < ApplicationController
     else
       # TODO: raise error in ApplicationController and rescue/redirect
       redirect_url =
-        can?(:create, IssueType) ? roller_types_url : project_url(@project)
+        can?(:create, IssueType) ? issue_types_url : project_url(@project)
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end
   end
@@ -89,7 +89,7 @@ class IssuesController < ApplicationController
       return true if @issue_types&.any?
 
       redirect_url =
-        can?(:create, IssueType) ? roller_types_url : project_url(@project)
+        can?(:create, IssueType) ? issue_types_url : project_url(@project)
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
       false
     end

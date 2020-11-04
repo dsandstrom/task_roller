@@ -81,7 +81,6 @@ class Ability
       can :destroy, Category
       can :destroy, Project
       can :manage, IssueType
-      can :read, RollerType
       can :manage, TaskType
       can %i[create update destroy], User
       cannot :destroy, User, id: user.id

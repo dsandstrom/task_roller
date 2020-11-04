@@ -4,7 +4,7 @@ class RepositionIssueTypesController < ApplicationController
   load_and_authorize_resource class: 'IssueType', instance_name: :issue_type
 
   def update
-    redirect_to roller_types_url, notice: notice
+    redirect_to issue_types_url, notice: notice
   end
 
   private

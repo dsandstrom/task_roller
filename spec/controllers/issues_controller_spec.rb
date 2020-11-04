@@ -85,10 +85,10 @@ RSpec.describe IssuesController, type: :controller do
       context "when no IssueTypes" do
         before { Fabricate(:user_reporter) }
 
-        it "redirects to roller_types_url" do
+        it "redirects to issue_types_url" do
           get :new, params: { category_id: category.to_param,
                               project_id: project.to_param }
-          expect(response).to redirect_to(roller_types_url)
+          expect(response).to redirect_to(issue_types_url)
         end
       end
     end
