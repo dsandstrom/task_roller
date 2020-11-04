@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: create category/project subscriptions
+
 require 'faker'
 
 class Seeds # rubocop:disable Metrics/ClassLength
@@ -94,7 +96,7 @@ class Seeds # rubocop:disable Metrics/ClassLength
                            summary: Faker::Company.catch_phrase,
                            description: description)
       issue = Issue.create!(attrs)
-      issue.issue_subscriptions.create!(user_id: issue.user_id)
+      issue.subscribe_users
       issue
     end
 
@@ -106,7 +108,7 @@ class Seeds # rubocop:disable Metrics/ClassLength
                            summary: Faker::Company.bs.capitalize,
                            description: description)
       task = Task.create!(attrs)
-      task.task_subscriptions.create!(user_id: task.user_id)
+      task.subscribe_users
       task
     end
 
