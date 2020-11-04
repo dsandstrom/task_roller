@@ -11,7 +11,7 @@ class TaskCommentsController < ApplicationController
   def create
     if @task_comment.save
       @task_comment.subscribe_user
-      redirect_to redirect_url, notice: 'Comment was successfully created.'
+      redirect_to redirect_url
     else
       render :new
     end
