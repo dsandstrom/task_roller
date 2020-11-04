@@ -640,6 +640,18 @@ RSpec.describe User, type: :model do
       end
     end
 
+    context "when user has a shared assignment" do
+      before do
+        Fabricate(:task_assignee, task: open_task, assignee: user)
+        Fabricate(:task_assignee, task: open_task)
+        Fabricate(:progression, task: open_task)
+      end
+
+      it "returns open tasks" do
+        expect(user.active_assignments).to eq([open_task])
+      end
+    end
+
     context "when user has multiple assignments" do
       let(:in_progress_task) { Fabricate(:open_task, summary: "In Progress") }
       let(:paused_task) { Fabricate(:open_task, summary: "Paused") }

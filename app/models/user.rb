@@ -179,7 +179,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       assignments
       .left_joins(:progressions, :reviews, :comments).references(:comments)
       .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
-      .where('progressions.id IS NULL OR progressions.user_id = ?', id)
       .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
