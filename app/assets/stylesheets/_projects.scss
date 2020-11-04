@@ -132,14 +132,14 @@
 
   .category-projects {
     .project {
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr auto;
     }
   }
 
   .category-projects-header {
     display: grid;
     grid-column-gap: 2rem;
-    grid-template-columns: 5fr 1fr 1fr;
+    grid-template-columns: 1fr auto;
     align-items: center;
 
     h2 {

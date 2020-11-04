@@ -1,10 +1,5 @@
 <%= category_header @category %>
 
-<p>
-  <%= render @issue_subscription, category: @category %>
-  <%= render @task_subscription, category: @category %>
-</p>
-
 <header class="category-projects-header">
   <h2>Projects</h2>
 
@@ -15,13 +10,6 @@
         <i class="icon-plus"></i>
         Add Project
       <% end %>
-    </p>
-  <% end %>
-
-  <% if can?(:update, @category) %>
-    <p>
-      <%= link_to 'Edit Category', edit_category_path(@category),
-                  class: 'button' %>
     </p>
   <% end %>
 </header>
@@ -36,6 +24,7 @@
 <header class="issues-header">
   <h2>Latest Issues</h2>
   <p>
+    <%= render @issue_subscription, category: @category %>
     <%= link_to 'View Category Issues', category_issues_path(@category),
                 class: 'button' %>
   </p>
@@ -51,6 +40,7 @@
 <header class="tasks-header">
   <h2>Latest Tasks</h2>
   <p>
+    <%= render @task_subscription, category: @category %>
     <%= link_to 'View Category Tasks', category_tasks_path(@category),
                 class: 'button' %>
   </p>
