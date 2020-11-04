@@ -14,7 +14,12 @@ RSpec.describe "task_subscriptions/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_can(view, current_user) }
+      before do
+        enable_can(view, current_user)
+        assign(:user, current_user)
+        Fabricate(:task_subscription, task: first_task, user: current_user)
+        Fabricate(:task_subscription, task: second_task, user: current_user)
+      end
 
       it "renders a list of subscribed tasks" do
         render

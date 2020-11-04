@@ -2,10 +2,6 @@
   <%= user_header @user %>
 
   <p class="user-links">
-    <% if can?(:update, @user) %>
-      <%= link_to 'Edit', edit_user_path(@user),
-                  class: 'button button' %>
-    <% end %>
     <% if can?(:destroy, @user) %>
       <%= link_to 'Delete',
                   @user,

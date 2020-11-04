@@ -8,6 +8,7 @@ class IssueSubscriptionsController < ApplicationController
   load_and_authorize_resource through: :issue, except: :index
 
   def index
+    @user = User.find(current_user.id)
     @issues = current_user.subscribed_issues.filter_by(build_filters)
                           .page(params[:page])
   end

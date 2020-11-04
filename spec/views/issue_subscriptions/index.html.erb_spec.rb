@@ -14,7 +14,12 @@ RSpec.describe "issue_subscriptions/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_can(view, current_user) }
+      before do
+        enable_can(view, current_user)
+        assign(:user, current_user)
+        Fabricate(:issue_subscription, issue: first_issue, user: current_user)
+        Fabricate(:issue_subscription, issue: second_issue, user: current_user)
+      end
 
       it "renders a list of subscribed issues" do
         render
