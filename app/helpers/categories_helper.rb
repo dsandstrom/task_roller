@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add category nav
+
 module CategoriesHelper
   # TODO: combine with project_tags
   def category_tags(category)
