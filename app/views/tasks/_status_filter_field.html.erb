@@ -3,7 +3,7 @@
 
   <div id="task_status_labels" class="task-filter-options">
     <%= label_tag :status_all,
-                  class: roller_radio_button_label_class('blue') do %>
+                  class: roller_radio_button_label_class('brown') do %>
       <%= radio_button_tag :status, :all,
                            (params[:status].blank? ||
                              params[:status] == 'all') %>
@@ -17,7 +17,7 @@
     <% end %>
 
     <%= label_tag :status_unassigned,
-                  class: roller_radio_button_label_class('default') do %>
+                  class: roller_radio_button_label_class('blue') do %>
       <%= radio_button_tag :status, :unassigned, params[:status] == 'unassigned' %>
       Unassigned
     <% end %>
@@ -29,13 +29,13 @@
     <% end %>
 
     <%= label_tag :status_in_progress,
-                  class: roller_radio_button_label_class('brown') do %>
+                  class: roller_radio_button_label_class('yellow') do %>
       <%= radio_button_tag :status, :in_progress, params[:status] == 'in_progress' %>
       In Progress
     <% end %>
 
     <%= label_tag :status_in_review,
-                  class: roller_radio_button_label_class('purple') do %>
+                  class: roller_radio_button_label_class('blue') do %>
       <%= radio_button_tag :status, :in_review, params[:status] == 'in_review' %>
       In Review
     <% end %>
