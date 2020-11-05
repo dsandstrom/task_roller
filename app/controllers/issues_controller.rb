@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: allow searching by text (to see if reported)
+# TODO: when closed, lock updating description
+
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]

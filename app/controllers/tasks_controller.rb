@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 # TODO: allow admins to connect task to issue, move to different issue
-# TODO: restrict to reviewers except index, show
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment
 # TODO: allow user to customize subscription notifications
+# TODO: when closed, lock description & assignees
 
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]

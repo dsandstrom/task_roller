@@ -183,6 +183,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
 
+  # TODO: add recently addressed issues?
   # for reporters/show view
   # link to user/issues which will be filterable
   UNRESOLVED_ISSUES_ORDER =
