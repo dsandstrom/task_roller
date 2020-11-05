@@ -2,8 +2,7 @@
   <header class="issue-header">
     <h3 class="issue-summary">
       <%= issue_type_icon_tag(issue.issue_type) %>
-      <%= link_to_if can?(:read, issue),
-                     issue.id_and_summary, issue_path(issue) %>
+      <%= link_to issue.id_and_summary, issue_path(issue) %>
     </h3>
   </header>
 
