@@ -11,26 +11,13 @@
                         class: 'issue-user' %>
     <%= issue_status_tags(issue) %>
 
-    <%= content_tag :p, "Created: #{format_date(issue.created_at)}",
-                    class: 'issue-created-at' %>
+    <p>
+      <%= content_tag :span, formatted_dates(issue), class: 'issue-dates' %>
 
-    <% if issue.updated_at != issue.created_at %>
-      <%= content_tag :p,
-                      "Updated: #{format_date(issue.updated_at)}",
-                      class: 'issue-updated-at' %>
-    <% end %>
-
-    <%= content_tag :p, "Open Tasks: #{issue.open_tasks.count}",
-                    class: 'issue-open-tasks' %>
-
-    <%= content_tag :p, "Closed Tasks: #{issue.closed_tasks.count}",
-                    class: 'issue-closed-tasks' %>
-
+      <% if can?(:update, issue) %>
+        <%= divider %>
+        <%= link_to 'Edit', edit_issue_path(issue) %>
+      <% end %>
+    </p>
   </main>
-
-  <% if can?(:update, issue) %>
-    <footer class="issue-footer">
-      <%= link_to 'Edit', edit_issue_path(issue) %>
-    </footer>
-  <% end %>
 </div>

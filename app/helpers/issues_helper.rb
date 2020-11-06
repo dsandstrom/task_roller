@@ -8,10 +8,24 @@ module IssuesHelper
     category = project.category
     return unless category
 
+    items = [issue_header_breadcrumbs(category, project), issue_title(issue),
+             issue_tags(issue), issue_page_title(issue)]
     content_tag :header, class: 'issue-header' do
-      concat issue_header_breadcrumbs(category, project)
-      concat issue_title(issue)
-      concat issue_page_title(issue)
+      safe_join(items)
+    end
+  end
+
+  def issue_tags(issue)
+    value = issue.status
+    tags =
+      if issue.closed?
+        [issue_type_tag(issue.issue_type), issue_closed_status_tags(value)]
+      else
+        [issue_type_tag(issue.issue_type), issue_open_status_tags(value)]
+      end
+
+    content_tag :div, class: 'issue-tags' do
+      safe_join(tags, ' ')
     end
   end
 
@@ -44,7 +58,6 @@ module IssuesHelper
       content_tag :div, class: 'issue-title' do
         concat content_tag :h1, issue_title_heading(issue),
                            class: 'issue-heading'
-        concat issue_type_tag issue.issue_type
       end
     end
 

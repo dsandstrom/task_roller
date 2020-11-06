@@ -61,8 +61,13 @@
   }
 
   .issue-user,
-  .task-assignees {
+  .task-assignees,
+  .issue-status-tags {
     margin-bottom: 1rem;
+  }
+
+  .issue-user,
+  .task-assignees {
     font-size: 1.5rem;
     font-weight: bold;
   }
