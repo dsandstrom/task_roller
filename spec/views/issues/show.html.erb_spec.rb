@@ -79,12 +79,12 @@ RSpec.describe "issues/show", type: :view do
         end
       end
 
-      context "when a source_issue_connection" do
+      context "when a source_connection" do
         before do
           @issue_connection = Fabricate(:issue_connection, source: @issue)
         end
 
-        it "renders source_issue_connection" do
+        it "renders source_connection" do
           render
 
           duplicatee = @issue_connection.target
@@ -112,7 +112,7 @@ RSpec.describe "issues/show", type: :view do
           @issue_connection = Fabricate(:issue_connection, target: @issue)
         end
 
-        it "renders a list of target_issue_connections" do
+        it "renders a list of target_connections" do
           render
 
           duplicate = @issue_connection.source
@@ -335,7 +335,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when a source_issue_connection" do
+    context "when a source_connection" do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
@@ -376,7 +376,7 @@ RSpec.describe "issues/show", type: :view do
         @issue_connection = Fabricate(:issue_connection, target: @issue)
       end
 
-      it "renders a list of target_issue_connections" do
+      it "renders a list of target_connections" do
         render
 
         duplicate = @issue_connection.source
@@ -565,7 +565,7 @@ RSpec.describe "issues/show", type: :view do
         end
       end
 
-      context "when a source_issue_connection" do
+      context "when a source_connection" do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
@@ -606,7 +606,7 @@ RSpec.describe "issues/show", type: :view do
           @issue_connection = Fabricate(:issue_connection, target: @issue)
         end
 
-        it "renders a list of target_issue_connections" do
+        it "renders a list of target_connections" do
           render
 
           duplicate = @issue_connection.source

@@ -51,7 +51,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
               post :create, params: { source_id: source_issue.to_param,
                                       issue_connection: valid_attributes }
               source_issue.reload
-            end.to change(source_issue, :source_issue_connection).from(nil)
+            end.to change(source_issue, :source_connection).from(nil)
           end
 
           it "creates a new IssueConnection for the target" do
@@ -59,7 +59,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
               post :create, params: { source_id: source_issue.to_param,
                                       issue_connection: valid_attributes }
               target_issue.reload
-            end.to change(target_issue.target_issue_connections, :count).by(1)
+            end.to change(target_issue.target_connections, :count).by(1)
           end
 
           it "creates a new IssueSubscription for the source user" do

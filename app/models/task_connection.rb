@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-class TaskConnection < RollerConnection
+class TaskConnection < ApplicationRecord
+  validates :source_id, presence: true
+  validates :target_id, presence: true
+
+  validate :target_has_options
+  validate :matching_projects
+
   # current task
   belongs_to :source, class_name: 'Task'
   # task current task duplicates
@@ -16,4 +22,19 @@ class TaskConnection < RollerConnection
 
     target.task_subscriptions.create(user_id: source.user_id)
   end
+
+  private
+
+    def target_has_options
+      return if source.blank? || target_options&.any?
+
+      errors.add(:target_id, 'has no options')
+    end
+
+    def matching_projects
+      return unless source && target
+      return if source.project.present? && source.project == target.project
+
+      errors.add(:target_id, 'wrong project')
+    end
 end

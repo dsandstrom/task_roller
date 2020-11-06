@@ -23,16 +23,16 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
   has_many :resolutions, dependent: :destroy
-  has_one :source_issue_connection, class_name: 'IssueConnection',
-                                    foreign_key: :source_id,
-                                    dependent: :destroy, inverse_of: :source
+  has_one :source_connection, class_name: 'IssueConnection',
+                              foreign_key: :source_id, dependent: :destroy,
+                              inverse_of: :source
   # TODO: add better name
-  has_one :duplicatee, through: :source_issue_connection, class_name: 'Issue',
+  has_one :duplicatee, through: :source_connection, class_name: 'Issue',
                        source: :target
-  has_many :target_issue_connections, class_name: 'IssueConnection',
-                                      foreign_key: :target_id,
-                                      dependent: :destroy, inverse_of: :target
-  has_many :duplicates, through: :target_issue_connections, class_name: 'Issue',
+  has_many :target_connections, class_name: 'IssueConnection',
+                                foreign_key: :target_id, dependent: :destroy,
+                                inverse_of: :target
+  has_many :duplicates, through: :target_connections, class_name: 'Issue',
                         source: :source
   has_many :issue_subscriptions, dependent: :destroy, foreign_key: :issue_id
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,

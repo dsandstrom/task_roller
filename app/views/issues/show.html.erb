@@ -62,10 +62,10 @@
                            duplicatee.short_summary, issue_path(duplicatee) %>
           </p>
 
-          <% if can?(:destroy, @issue.source_issue_connection) %>
+          <% if can?(:destroy, @issue.source_connection) %>
             <p>
               <%= link_to 'Mark not a duplicate and reopen',
-                           @issue.source_issue_connection,
+                           @issue.source_connection,
                            method: :delete, class: 'destroy-link',
                            data: { confirm: confirm } %>
             </p>

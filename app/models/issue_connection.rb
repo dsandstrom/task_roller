@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
-class IssueConnection < RollerConnection
+class IssueConnection < ApplicationRecord
+  validates :source_id, presence: true
+  validates :target_id, presence: true
+
   # current issue
-  belongs_to :source, class_name: 'Issue', inverse_of: :source_issue_connection
+  belongs_to :source, class_name: 'Issue', inverse_of: :source_connection
   # issue current issue duplicates
-  belongs_to :target, class_name: 'Issue', inverse_of: :target_issue_connections
+  belongs_to :target, class_name: 'Issue', inverse_of: :target_connections
+
+  validate :target_has_options
+  validate :matching_projects
 
   def target_options
     @target_options ||=
@@ -16,4 +22,19 @@ class IssueConnection < RollerConnection
 
     target.issue_subscriptions.create(user_id: source.user_id)
   end
+
+  private
+
+    def target_has_options
+      return if source.blank? || target_options&.any?
+
+      errors.add(:target_id, 'has no options')
+    end
+
+    def matching_projects
+      return unless source && target
+      return if source.project.present? && source.project == target.project
+
+      errors.add(:target_id, 'wrong project')
+    end
 end
