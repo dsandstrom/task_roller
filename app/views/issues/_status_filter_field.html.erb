@@ -11,20 +11,20 @@
     <% end %>
 
     <%= label_tag :status_open,
-                  class: roller_radio_button_label_class('blue') do %>
+                  class: roller_radio_button_label_class('green') do %>
       <%= radio_button_tag :status, :open, params[:status] == 'open' %>
       Open
     <% end %>
 
     <%= label_tag :status_being_worked_on,
-                  class: roller_radio_button_label_class('green') do %>
+                  class: roller_radio_button_label_class('yellow') do %>
       <%= radio_button_tag :status, :being_worked_on,
                            params[:status] == 'being_worked_on' %>
       Being Worked On
     <% end %>
 
     <%= label_tag :status_addressed,
-                  class: roller_radio_button_label_class('yellow') do %>
+                  class: roller_radio_button_label_class('blue') do %>
       <%= radio_button_tag :status, :addressed,
                            params[:status] == 'addressed' %>
       Addressed

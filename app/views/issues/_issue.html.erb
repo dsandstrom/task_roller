@@ -9,8 +9,7 @@
   <main class="issue-main">
     <%= content_tag :p, (issue.user ? issue.user.name : User.destroyed_name),
                         class: 'issue-user' %>
-    <%= content_tag :p, "Status: #{issue.status}",
-                        class: 'issue-status' %>
+    <%= issue_status_tags(issue) %>
 
     <%= content_tag :p, "Created: #{format_date(issue.created_at)}",
                     class: 'issue-created-at' %>

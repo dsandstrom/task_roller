@@ -15,6 +15,20 @@ module IssuesHelper
     end
   end
 
+  def issue_status_tags(issue)
+    value = issue.status
+    tags =
+      if issue.closed?
+        issue_closed_status_tags(value)
+      else
+        issue_open_status_tags(value)
+      end
+
+    content_tag :p, class: 'issue-status-tags' do
+      safe_join(tags, ' ')
+    end
+  end
+
   private
 
     def issue_title_heading(issue)
@@ -61,5 +75,39 @@ module IssuesHelper
       else
         "Issues from #{title}"
       end
+    end
+
+    def issue_closed_status_tags(value)
+      tags = [issue_closed_status_tag]
+      return tags if value == 'closed'
+
+      tags.append(issue_closed_status_modifier_tag(value))
+    end
+
+    def issue_open_status_tags(value)
+      tags = [issue_open_status_tag]
+      return tags if value == 'open'
+
+      tags.append(issue_open_status_modifier_tag(value))
+    end
+
+    def issue_open_status_tag
+      content_tag :span, 'open',
+                  class: 'issue-status-tag roller-type-color-green'
+    end
+
+    def issue_closed_status_tag
+      content_tag :span, 'closed',
+                  class: 'issue-status-tag roller-type-color-red'
+    end
+
+    def issue_open_status_modifier_tag(modifier)
+      content_tag :span, modifier,
+                  class: 'issue-status-tag roller-type-color-yellow'
+    end
+
+    def issue_closed_status_modifier_tag(modifier)
+      content_tag :span, modifier,
+                  class: 'issue-status-tag roller-type-color-blue'
     end
 end

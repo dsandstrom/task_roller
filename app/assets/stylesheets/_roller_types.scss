@@ -68,23 +68,24 @@
   }
 }
 
+.issue-status-tag,
 .issue-type-tag,
 .task-type-tag,
 .issue-type-icon-option,
 .task-type-icon-option {
-  padding: .2rem .3rem .2rem .1rem;
+  padding: .2rem .3rem;
   border: 1px solid $light-gray;
   border-radius: $border-radius;
   color: $color-quaternary;
   line-height: 1.2;
 
-  i {
-    color: $color-quinary;
-  }
-
   span {
     margin-left: .3rem;
     white-space: nowrap;
+  }
+
+  i {
+    color: $color-quinary;
   }
 
   [class^="icon-"],
@@ -104,6 +105,7 @@
   }
 }
 
+.issue-status-tag,
 .issue-type-tag,
 .task-type-tag,
 .roller-radio-button-label {
@@ -196,6 +198,7 @@
     margin-bottom: 1.5rem;
 
     p,
+    .issue-status-tag,
     .issue-type-tag {
       margin-bottom: 0;
     }
