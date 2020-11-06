@@ -14,6 +14,13 @@
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
+  STATUS_OPTIONS = {
+    open: { color: 'green' },
+    being_worked_on: { color: 'yellow' },
+    addressed: { color: 'red' },
+    resolved: { color: 'blue' },
+    closed: { color: 'purple' }
+  }.freeze
 
   belongs_to :user # reporter
   belongs_to :issue_type
@@ -105,8 +112,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # TODO: allow filtering by multiple statuses
   def self.filter_by_status(status)
-    options = %w[open closed being_worked_on addressed resolved]
-    return all unless options.include?(status)
+    return all unless status
+
+    options = STATUS_OPTIONS.keys
+    return all unless options.include?(status.to_sym)
 
     send("all_#{status}")
   end
