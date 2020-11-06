@@ -16,16 +16,10 @@ module TasksHelper
   end
 
   def task_tags(task)
-    value = task.status
-    tags =
-      if task.closed?
-        [task_type_tag(task.task_type), closed_status_tags(value)]
-      else
-        [task_type_tag(task.task_type), open_status_tags(value)]
-      end
+    tags = [task_type_tag(task.task_type), task_status_tag(task)]
 
     content_tag :p, class: 'task-tags' do
-      safe_join(tags, ' ')
+      safe_join(tags)
     end
   end
 
@@ -40,6 +34,7 @@ module TasksHelper
       content_tag :div, class: 'task-title' do
         concat content_tag :h1, heading, class: 'task-heading'
         concat task_type_tag task.task_type
+        concat task_status_tag task
       end
     end
 
@@ -72,37 +67,16 @@ module TasksHelper
       end
     end
 
-    def closed_status_tags(value)
-      tags = [closed_status_tag]
-      return tags if value == 'closed'
+    def task_status_tag(task)
+      value = task.status
+      return unless value
 
-      tags.append(closed_status_modifier_tag(value))
-    end
+      option = Task::STATUS_OPTIONS[value.parameterize.underscore.to_sym]
+      return unless option
 
-    def open_status_tags(value)
-      tags = [open_status_tag]
-      return tags if value == 'open'
+      color = option[:color]
+      return unless color
 
-      tags.append(open_status_modifier_tag(value))
-    end
-
-    def open_status_tag
-      content_tag :span, 'open',
-                  class: 'status-tag roller-type-color-green'
-    end
-
-    def closed_status_tag
-      content_tag :span, 'closed',
-                  class: 'status-tag roller-type-color-red'
-    end
-
-    def open_status_modifier_tag(modifier)
-      content_tag :span, modifier,
-                  class: 'status-tag roller-type-color-yellow'
-    end
-
-    def closed_status_modifier_tag(modifier)
-      content_tag :span, modifier,
-                  class: 'status-tag roller-type-color-blue'
+      content_tag :span, value, class: "status-tag roller-type-color-#{color}"
     end
 end

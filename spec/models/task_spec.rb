@@ -999,7 +999,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns 'approved'" do
-          expect(task.status).to eq("approved/closed")
+          expect(task.status).to eq("approved")
         end
       end
     end

@@ -10,40 +10,18 @@
       All
     <% end %>
 
-    <%= label_tag :status_open,
-                  class: roller_radio_button_label_class('green') do %>
-      <%= radio_button_tag :status, :open, params[:status] == 'open' %>
-      Open
-    <% end %>
+    <% %i[open unassigned assigned in_progress in_review approved
+          closed].each do |status| %>
+      <%
+        color = Task::STATUS_OPTIONS[status][:color]
+        klass = roller_radio_button_label_class(color)
+      %>
 
-    <%= label_tag :status_unassigned,
-                  class: roller_radio_button_label_class('blue') do %>
-      <%= radio_button_tag :status, :unassigned, params[:status] == 'unassigned' %>
-      Unassigned
-    <% end %>
-
-    <%= label_tag :status_assigned,
-                  class: roller_radio_button_label_class('purple') do %>
-      <%= radio_button_tag :status, :assigned, params[:status] == 'assigned' %>
-      Assigned
-    <% end %>
-
-    <%= label_tag :status_in_progress,
-                  class: roller_radio_button_label_class('yellow') do %>
-      <%= radio_button_tag :status, :in_progress, params[:status] == 'in_progress' %>
-      In Progress
-    <% end %>
-
-    <%= label_tag :status_in_review,
-                  class: roller_radio_button_label_class('blue') do %>
-      <%= radio_button_tag :status, :in_review, params[:status] == 'in_review' %>
-      In Review
-    <% end %>
-
-    <%= label_tag :status_closed,
-                  class: roller_radio_button_label_class('red') do %>
-      <%= radio_button_tag :status, :closed, params[:status] == 'closed' %>
-      Closed
+      <%= label_tag "status_#{status}", class: klass do %>
+        <%= radio_button_tag :status, status,
+                             params[:status] == status.to_s %>
+        <%= status.to_s.titleize %>
+      <% end %>
     <% end %>
   </div>
 </div>

@@ -88,6 +88,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_open.where(query)
   end
 
+  # TODO: change to all_completed
   def self.all_approved
     where('reviews.created_at > tasks.opened_at AND reviews.approved = ?', true)
       .joins(:reviews)
@@ -319,7 +320,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     def closed_status
       if approved?
-        'approved/closed'
+        'approved'
       else
         'closed'
       end
