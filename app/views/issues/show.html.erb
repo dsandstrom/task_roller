@@ -124,11 +124,11 @@
         </div>
 
         <%# TODO: link to new task from comment, auto assign %>
-        <%= render partial: 'roller_comments/comment', collection: @comments,
+        <%= render partial: 'shared/comment', collection: @comments,
                    locals: { category: @category, project: @issue.project,
                              object: @issue } %>
 
-        <%= render 'roller_comments/form',
+        <%= render 'shared/new_comment',
                    category: @category, project: @issue.project, object: @issue,
                    comment: @comment, user_options: @comment_user_options %>
       </div>

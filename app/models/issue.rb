@@ -19,7 +19,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :issue_type
   belongs_to :project
   has_many :tasks, dependent: :nullify
-  has_many :comments, class_name: 'IssueComment', foreign_key: :roller_id,
+  has_many :comments, class_name: 'IssueComment', foreign_key: :issue_id,
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
   has_many :resolutions, dependent: :destroy

@@ -242,11 +242,11 @@ assigned = @task.assigned
           <% end %>
         </div>
 
-        <%= render partial: 'roller_comments/comment', collection: comments,
+        <%= render partial: 'shared/comment', collection: comments,
                    locals: { category: @category, project: @task.project,
                              object: @task } %>
 
-        <%= render 'roller_comments/form',
+        <%= render 'shared/new_comment',
                    category: @category, project: @task.project, object: @task,
                    comment: comment, user_options: @comment_user_options %>
       </div>

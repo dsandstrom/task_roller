@@ -1,14 +1,24 @@
 # frozen_string_literal: true
 
-class TaskComment < RollerComment
-  belongs_to :task, foreign_key: :roller_id, inverse_of: :comments
+class TaskComment < ApplicationRecord
+  validates :task_id, presence: true
+  validates :task, presence: true, if: :task_id
+  validates :user_id, presence: true
+  validates :user, presence: true, if: :user_id
+  validates :body, presence: true
 
-  validates :roller_id, presence: true
-  validates :task, presence: true, if: :roller_id
+  belongs_to :task, foreign_key: :task_id, inverse_of: :comments
+  belongs_to :user
+
+  default_scope { order(created_at: :asc) }
 
   def subscribe_user
     return unless task && user
 
     task.subscribe_user(user)
+  end
+
+  def body_html
+    @body_html ||= (RollerMarkdown.new.render(body) || '')
   end
 end

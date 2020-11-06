@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_04_014128) do
+ActiveRecord::Schema.define(version: 2020_11_06_000705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,14 @@ ActiveRecord::Schema.define(version: 2020_11_04_014128) do
   create_table "category_tasks_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
     t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "issue_comments", force: :cascade do |t|
+    t.integer "issue_id", null: false
+    t.integer "user_id", null: false
+    t.text "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -124,15 +132,6 @@ ActiveRecord::Schema.define(version: 2020_11_04_014128) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "roller_comments", force: :cascade do |t|
-    t.string "type"
-    t.integer "roller_id"
-    t.integer "user_id"
-    t.text "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "roller_connections", force: :cascade do |t|
     t.string "type", null: false
     t.integer "source_id", null: false
@@ -147,6 +146,14 @@ ActiveRecord::Schema.define(version: 2020_11_04_014128) do
     t.integer "assignee_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "task_comments", force: :cascade do |t|
+    t.integer "task_id", null: false
+    t.integer "user_id", null: false
+    t.text "body"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "task_subscriptions", force: :cascade do |t|

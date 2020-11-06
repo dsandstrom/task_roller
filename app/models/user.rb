@@ -169,7 +169,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     'COUNT(progressions.id) AS progressions_count, ' \
     'SUM(case when reviews.id IS NOT NULL AND reviews.approved IS NULL ' \
     'then 1 else 0 end) AS pending_reviews_count, ' \
-    'COALESCE(MAX(roller_comments.created_at), MAX(progressions.created_at), ' \
+    'COALESCE(MAX(task_comments.created_at), MAX(progressions.created_at), ' \
     'tasks.created_at) AS order_date'
   ACTIVE_ASSIGNMENTS_ORDER =
     { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
@@ -179,7 +179,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       assignments
       .left_joins(:progressions, :reviews, :comments).references(:comments)
       .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
-      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .where('task_comments.id IS NULL OR task_comments.user_id != ?', id)
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
 
@@ -190,13 +190,13 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     { open_tasks_count: :desc, tasks_count: :desc, order_date: :desc }.freeze
   UNRESOLVED_ISSUES_QUERY =
     'issues.*, ' \
-    'COALESCE(MAX(roller_comments.created_at), issues.created_at) AS order_date'
+    'COALESCE(MAX(issue_comments.created_at), issues.created_at) AS order_date'
   def unresolved_issues
     @unresolved_issues ||=
       issues
       .all_unresolved.left_joins(:comments).references(:comments)
       .select(UNRESOLVED_ISSUES_QUERY)
-      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .where('issue_comments.id IS NULL OR issue_comments.user_id != ?', id)
       .group(:id).order(UNRESOLVED_ISSUES_ORDER)
   end
 
@@ -213,7 +213,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     'COUNT(progressions.id) AS progressions_count, ' \
     'SUM(case when reviews.id IS NOT NULL AND reviews.approved IS NULL ' \
     'then 1 else 0 end) AS pending_reviews_count, ' \
-    'COALESCE(MAX(roller_comments.created_at), MAX(progressions.created_at), ' \
+    'COALESCE(MAX(task_comments.created_at), MAX(progressions.created_at), ' \
     'tasks.created_at) AS order_date'
   OPENS_TASKS_ORDER =
     { pending_reviews_count: :desc, progressions_count: :desc,
@@ -223,7 +223,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       tasks
       .all_open.select(OPEN_TASKS_QUERY)
       .left_joins(:progressions, :reviews, :comments).references(:comments)
-      .where('roller_comments.id IS NULL OR roller_comments.user_id != ?', id)
+      .where('task_comments.id IS NULL OR task_comments.user_id != ?', id)
       .group(:id).order(OPENS_TASKS_ORDER)
   end
 

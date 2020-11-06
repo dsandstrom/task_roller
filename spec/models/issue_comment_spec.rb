@@ -8,19 +8,57 @@ RSpec.describe IssueComment, type: :model do
 
   before do
     @issue_comment =
-      IssueComment.new(roller_id: issue.id, user_id: user.id, body: "Comment")
+      IssueComment.new(issue_id: issue.id, user_id: user.id, body: "Comment")
   end
 
   subject { @issue_comment }
 
-  it { is_expected.to be_a(RollerComment) }
-
-  it { expect(subject.type).to eq("IssueComment") }
-
-  it { is_expected.to belong_to(:issue) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:issue_id) }
+  it { is_expected.to respond_to(:body) }
 
   it { is_expected.to be_valid }
-  it { is_expected.to validate_presence_of(:roller_id) }
+  it { is_expected.to validate_presence_of(:issue_id) }
+  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to validate_presence_of(:body) }
+
+  it { is_expected.to belong_to(:issue) }
+  it { is_expected.to belong_to(:user) }
+
+  describe "#default_scope" do
+    it "orders by created_at asc" do
+      second_comment = Fabricate(:issue_comment)
+      first_comment = Fabricate(:issue_comment, created_at: 1.day.ago)
+
+      expect(IssueComment.all).to eq([first_comment, second_comment])
+    end
+  end
+
+  describe "#body_html" do
+    context "when body is **foo**" do
+      before { subject.body = "**foo**" }
+
+      it "adds strong tags" do
+        expect(subject.body_html).to eq("<p><strong>foo</strong></p>\n")
+      end
+    end
+
+    context "when body is nil" do
+      before { subject.body = nil }
+
+      it "returns empty string" do
+        expect(subject.body_html).to eq("")
+      end
+    end
+
+    context "when body is blank" do
+      before { subject.body = "" }
+
+      it "returns empty string" do
+        expect(subject.body_html).to eq("")
+      end
+    end
+  end
 
   describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }
