@@ -10,38 +10,17 @@
       All
     <% end %>
 
-    <%= label_tag :status_open,
-                  class: roller_radio_button_label_class('green') do %>
-      <%= radio_button_tag :status, :open, params[:status] == 'open' %>
-      Open
-    <% end %>
+    <% %i[open being_worked_on addressed resolved closed].each do |status| %>
+      <%
+        color = Issue::STATUS_OPTIONS[status][:color]
+        klass = roller_radio_button_label_class(color)
+      %>
 
-    <%= label_tag :status_being_worked_on,
-                  class: roller_radio_button_label_class('yellow') do %>
-      <%= radio_button_tag :status, :being_worked_on,
-                           params[:status] == 'being_worked_on' %>
-      Being Worked On
-    <% end %>
-
-    <%= label_tag :status_addressed,
-                  class: roller_radio_button_label_class('blue') do %>
-      <%= radio_button_tag :status, :addressed,
-                           params[:status] == 'addressed' %>
-      Addressed
-    <% end %>
-
-    <%= label_tag :status_resolved,
-                  class: roller_radio_button_label_class('purple') do %>
-      <%= radio_button_tag :status, :resolved,
-                           params[:status] == 'resolved' %>
-      Resolved
-    <% end %>
-
-    <%= label_tag :status_closed,
-                  class: roller_radio_button_label_class('red') do %>
-      <%= radio_button_tag :status, :closed,
-                           params[:status] == 'closed' %>
-      Closed
+      <%= label_tag "status_#{status}", class: klass do %>
+        <%= radio_button_tag :status, status,
+                             params[:status] == status.to_s %>
+        <%= status.to_s.titleize %>
+      <% end %>
     <% end %>
   </div>
 </div>

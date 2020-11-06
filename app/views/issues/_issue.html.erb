@@ -1,13 +1,12 @@
 <div id="issue-<%= issue.id %>" class="issue">
   <header class="issue-header">
     <h3 class="issue-summary">
-      <%= issue_type_icon_tag(issue.issue_type) %>
       <%= link_to issue.id_and_summary, issue_path(issue) %>
     </h3>
   </header>
 
   <main class="issue-main">
-    <%= issue_status_tags(issue) %>
+    <%= issue_tags(issue) %>
 
     <p>
       Opened

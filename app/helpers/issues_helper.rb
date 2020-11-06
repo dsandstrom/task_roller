@@ -16,13 +16,7 @@ module IssuesHelper
   end
 
   def issue_tags(issue)
-    value = issue.status
-    tags =
-      if issue.closed?
-        [issue_type_tag(issue.issue_type), issue_closed_status_tags(value)]
-      else
-        [issue_type_tag(issue.issue_type), issue_open_status_tags(value)]
-      end
+    tags = [issue_type_tag(issue.issue_type), issue_status_tag(issue)]
 
     content_tag :div, class: 'issue-tags' do
       safe_join(tags, ' ')
@@ -30,16 +24,8 @@ module IssuesHelper
   end
 
   def issue_status_tags(issue)
-    value = issue.status
-    tags =
-      if issue.closed?
-        issue_closed_status_tags(value)
-      else
-        issue_open_status_tags(value)
-      end
-
     content_tag :p, class: 'issue-tags' do
-      safe_join(tags, ' ')
+      issue_status_tag(issue)
     end
   end
 
@@ -90,37 +76,16 @@ module IssuesHelper
       end
     end
 
-    def issue_closed_status_tags(value)
-      tags = [issue_closed_status_tag]
-      return tags if value == 'closed'
+    def issue_status_tag(issue)
+      value = issue.status
+      return unless value
 
-      tags.append(issue_closed_status_modifier_tag(value))
-    end
+      option = Issue::STATUS_OPTIONS[value.parameterize.underscore.to_sym]
+      return unless option
 
-    def issue_open_status_tags(value)
-      tags = [issue_open_status_tag]
-      return tags if value == 'open'
+      color = option[:color]
+      return unless color
 
-      tags.append(issue_open_status_modifier_tag(value))
-    end
-
-    def issue_open_status_tag
-      content_tag :span, 'open',
-                  class: 'status-tag roller-type-color-green'
-    end
-
-    def issue_closed_status_tag
-      content_tag :span, 'closed',
-                  class: 'status-tag roller-type-color-red'
-    end
-
-    def issue_open_status_modifier_tag(modifier)
-      content_tag :span, modifier,
-                  class: 'status-tag roller-type-color-yellow'
-    end
-
-    def issue_closed_status_modifier_tag(modifier)
-      content_tag :span, modifier,
-                  class: 'status-tag roller-type-color-blue'
+      content_tag :span, value, class: "status-tag roller-type-color-#{color}"
     end
 end
