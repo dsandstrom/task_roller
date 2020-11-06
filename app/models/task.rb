@@ -8,6 +8,15 @@
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
+  STATUS_OPTIONS = {
+    open: { color: 'green' },
+    unassigned: { color: 'purple' },
+    assigned: { color: 'blue' },
+    in_progress: { color: 'yellow' },
+    in_review: { color: 'brown' },
+    approved: { color: 'blue' },
+    closed: { color: 'red' }
+  }.freeze
 
   belongs_to :user
   belongs_to :task_type
@@ -100,8 +109,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # used by .filter
   def self.filter_by_status(status)
-    options = %w[open assigned in_progress in_review unassigned approved closed]
-    return all unless options.include?(status)
+    return all unless status
+
+    options = STATUS_OPTIONS.keys
+    return all unless options.include?(status.to_sym)
 
     send("all_#{status}")
   end
