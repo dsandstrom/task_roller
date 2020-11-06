@@ -164,6 +164,8 @@ RSpec.describe ResolutionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:issue) { Fabricate(:closed_issue, project: project) }
+
     context "for an admin" do
       before { login(admin) }
 
@@ -180,6 +182,31 @@ RSpec.describe ResolutionsController, type: :controller do
         delete :destroy, params: { issue_id: issue.to_param,
                                    id: resolution.to_param }
         expect(response).to redirect_to(issue_path(issue))
+      end
+
+      context "when issue still has a current resolution" do
+        it "doesn't reopen the requested issue" do
+          resolution = Fabricate(:resolution, issue: issue)
+          issue.open
+          Fabricate(:approved_resolution, issue: issue)
+          issue.close
+          expect do
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: resolution.to_param }
+            issue.reload
+          end.not_to change(issue, :closed)
+        end
+      end
+
+      context "when it's the current resolution" do
+        it "reopens the requested issue" do
+          resolution = Fabricate(:resolution, issue: issue)
+          expect do
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: resolution.to_param }
+            issue.reload
+          end.to change(issue, :closed).to(false)
+        end
       end
     end
 
