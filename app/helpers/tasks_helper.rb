@@ -15,6 +15,20 @@ module TasksHelper
     end
   end
 
+  def task_tags(task)
+    value = task.status
+    tags =
+      if task.closed?
+        [task_type_tag(task.task_type), closed_status_tags(value)]
+      else
+        [task_type_tag(task.task_type), open_status_tags(value)]
+      end
+
+    content_tag :p, class: 'task-tags' do
+      safe_join(tags, ' ')
+    end
+  end
+
   private
 
     def task_header_title(task)
@@ -56,5 +70,39 @@ module TasksHelper
       else
         "Tasks for #{title}"
       end
+    end
+
+    def closed_status_tags(value)
+      tags = [closed_status_tag]
+      return tags if value == 'closed'
+
+      tags.append(closed_status_modifier_tag(value))
+    end
+
+    def open_status_tags(value)
+      tags = [open_status_tag]
+      return tags if value == 'open'
+
+      tags.append(open_status_modifier_tag(value))
+    end
+
+    def open_status_tag
+      content_tag :span, 'open',
+                  class: 'status-tag roller-type-color-green'
+    end
+
+    def closed_status_tag
+      content_tag :span, 'closed',
+                  class: 'status-tag roller-type-color-red'
+    end
+
+    def open_status_modifier_tag(modifier)
+      content_tag :span, modifier,
+                  class: 'status-tag roller-type-color-yellow'
+    end
+
+    def closed_status_modifier_tag(modifier)
+      content_tag :span, modifier,
+                  class: 'status-tag roller-type-color-blue'
     end
 end

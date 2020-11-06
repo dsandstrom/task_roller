@@ -1,23 +1,19 @@
 <div id="task-<%= task.id %>" class="task">
   <header class="task-header">
     <h3 class="task-summary">
-      <%= task_type_icon_tag(task.task_type) %>
       <%= link_to task.id_and_summary, task_path(task) %>
     </h3>
   </header>
 
   <main class="task-main">
+    <%= task_tags(task) %>
+
     <p class="task-assignees">
       <% if task.assignees.any? %>
         <%= task.assignees.map(&:name_or_email).join(', ') %>
       <% else %>
         <em>Unassigned</em>
       <% end %>
-    </p>
-
-    <p>
-      Status:
-      <%= content_tag :strong, task.status, class: 'task-status' %>
     </p>
 
     <% if task.issue %>
@@ -29,17 +25,20 @@
       </p>
     <% end %>
 
-    <p class="task-user">Reviewer: <%= task.user ? task.user.name_or_email : User.destroyed_name %></p>
-    <p class="task-created-at">Created: <%= format_date(task.created_at) %></p>
-    <% if task.updated_at != task.created_at %>
-      <p class="task-updated-at">Updated: <%= format_date(task.updated_at) %></p>
-    <% end %>
+
+    <p>
+      Opened
+      <%= content_tag :strong, format_date(task.created_at), class: 'task-dates' %>
+      by
+      <strong class="task-user"><%= task.user ? task.user.name_or_email : User.destroyed_name %></strong>
+      <% if task.created_at != task.updated_at %>
+        <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
+      <% end %>
+
+      <% if can?(:update, task) %>
+        <%= divider %>
+        <%= link_to 'Edit', edit_task_path(task) %>
+      <% end %>
+    </p>
   </main>
-
-
-  <% if can?(:update, task) %>
-    <footer class="task-footer">
-      <%= link_to 'Edit', edit_task_path(task) %>
-    </footer>
-  <% end %>
 </div>

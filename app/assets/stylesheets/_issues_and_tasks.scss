@@ -34,25 +34,6 @@
       display: flex;
       align-items: baseline;
     }
-
-    .issue-type-icon,
-    .task-type-icon {
-      margin-right: .5rem;
-      font-size: 2rem;
-    }
-  }
-
-  .issue-type-tag,
-  .task-type-tag {
-    margin: .3rem 1rem 0 0;
-    float: left;
-
-    i {
-      &::before {
-        display: block;
-        line-height: 1.4;
-      }
-    }
   }
 
   .issue-summary,

@@ -106,21 +106,21 @@ module IssuesHelper
 
     def issue_open_status_tag
       content_tag :span, 'open',
-                  class: 'issue-status-tag roller-type-color-green'
+                  class: 'status-tag roller-type-color-green'
     end
 
     def issue_closed_status_tag
       content_tag :span, 'closed',
-                  class: 'issue-status-tag roller-type-color-red'
+                  class: 'status-tag roller-type-color-red'
     end
 
     def issue_open_status_modifier_tag(modifier)
       content_tag :span, modifier,
-                  class: 'issue-status-tag roller-type-color-yellow'
+                  class: 'status-tag roller-type-color-yellow'
     end
 
     def issue_closed_status_modifier_tag(modifier)
       content_tag :span, modifier,
-                  class: 'issue-status-tag roller-type-color-blue'
+                  class: 'status-tag roller-type-color-blue'
     end
 end
