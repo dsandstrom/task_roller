@@ -43,14 +43,15 @@
 
   .issue-user,
   .task-assignees,
-  .issue-status-tags {
+  .issue-tags,
+  .task-tags,
+  .task-dates {
     margin-bottom: 1rem;
   }
 
   .issue-user,
   .task-assignees {
     font-size: 1.5rem;
-    font-weight: bold;
   }
 }
 

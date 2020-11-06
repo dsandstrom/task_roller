@@ -38,7 +38,7 @@ module IssuesHelper
         issue_open_status_tags(value)
       end
 
-    content_tag :p, class: 'issue-status-tags' do
+    content_tag :p, class: 'issue-tags' do
       safe_join(tags, ' ')
     end
   end

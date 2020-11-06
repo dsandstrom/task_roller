@@ -8,25 +8,7 @@
   <main class="task-main">
     <%= task_tags(task) %>
 
-    <p class="task-assignees">
-      <% if task.assignees.any? %>
-        <%= task.assignees.map(&:name_or_email).join(', ') %>
-      <% else %>
-        <em>Unassigned</em>
-      <% end %>
-    </p>
-
-    <% if task.issue %>
-      <p class="task-issue">
-        <small>addresses</small>
-          <%= link_to_if can?(:read, task.issue), task.issue.summary,
-                         issue_path(task.issue) %>
-          (<%= task.issue.user.name_or_email %>)
-      </p>
-    <% end %>
-
-
-    <p>
+    <p class="task-dates">
       Opened
       <%= content_tag :strong, format_date(task.created_at), class: 'task-dates' %>
       by
@@ -40,5 +22,21 @@
         <%= link_to 'Edit', edit_task_path(task) %>
       <% end %>
     </p>
+
+    <p class="task-assignees">
+      <% if task.assignees.any? %>
+        Assigned to
+        <strong><%= task.assignees.map(&:name_or_email).join(', ') %></strong>
+      <% else %>
+        <em>Unassigned</em>
+      <% end %>
+    </p>
+
+    <% if task.issue %>
+      <p class="task-issue">
+        Addresses
+        <%= link_to task.issue.summary, issue_path(task.issue) %>
+      </p>
+    <% end %>
   </main>
 </div>
