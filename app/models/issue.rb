@@ -228,7 +228,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     update closed: true
   end
 
-  def open
+  def reopen
     update closed: false, opened_at: Time.now
   end
 

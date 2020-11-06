@@ -67,7 +67,7 @@ class IssuesController < ApplicationController
   end
 
   def open
-    if @issue.open
+    if @issue.reopen
       @issue.subscribe_user(current_user)
       redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
     else

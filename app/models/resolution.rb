@@ -53,7 +53,7 @@ class Resolution < ApplicationRecord
   def disapprove
     return false unless issue.valid?
 
-    update(approved: false) && issue.open
+    update(approved: false) && issue.reopen
   end
 
   def status

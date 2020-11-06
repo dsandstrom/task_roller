@@ -187,7 +187,7 @@ RSpec.describe ResolutionsController, type: :controller do
       context "when issue still has a current resolution" do
         it "doesn't reopen the requested issue" do
           resolution = Fabricate(:resolution, issue: issue)
-          issue.open
+          issue.reopen
           Fabricate(:approved_resolution, issue: issue)
           issue.close
           expect do

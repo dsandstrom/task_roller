@@ -31,7 +31,7 @@ class ResolutionsController < ApplicationController
 
   def destroy
     @resolution.destroy
-    @issue.open if @issue.current_resolutions.none?
+    @issue.reopen if @issue.current_resolutions.none?
     redirect_back fallback_location: @issue,
                   notice: 'Resolution was successfully destroyed.'
   end

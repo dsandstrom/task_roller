@@ -206,7 +206,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return false unless update(closed: false, opened_at: Time.now)
     return true unless issue&.closed?
 
-    issue.open
+    issue.reopen
   end
 
   def concluded_reviews

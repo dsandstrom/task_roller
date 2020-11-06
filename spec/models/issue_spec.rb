@@ -751,7 +751,7 @@ RSpec.describe Issue, type: :model do
         Timecop.freeze(1.day.ago) do
           Fabricate(:approved_resolution, issue: issue)
         end
-        issue.open
+        issue.reopen
       end
 
       it "returns false" do
@@ -764,7 +764,7 @@ RSpec.describe Issue, type: :model do
         Timecop.freeze(1.day.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
-        issue.open
+        issue.reopen
       end
 
       it "returns false" do
@@ -778,7 +778,7 @@ RSpec.describe Issue, type: :model do
           Fabricate(:disapproved_resolution, issue: issue)
         end
         Timecop.freeze(1.day.ago) do
-          issue.open
+          issue.reopen
         end
         Fabricate(:approved_resolution, issue: issue)
       end
@@ -942,14 +942,14 @@ RSpec.describe Issue, type: :model do
 
       it "changes closed to false" do
         expect do
-          issue.open
+          issue.reopen
           issue.reload
         end.to change(issue, :closed).to(false)
       end
 
       it "changes opened_at" do
         expect do
-          issue.open
+          issue.reopen
           issue.reload
         end.to change(issue, :opened_at)
       end
@@ -964,14 +964,14 @@ RSpec.describe Issue, type: :model do
 
       it "doesn't change issue" do
         expect do
-          issue.open
+          issue.reopen
           issue.reload
         end.not_to change(issue, :closed)
       end
 
       it "changes opened_at" do
         expect do
-          issue.open
+          issue.reopen
           issue.reload
         end.to change(issue, :opened_at)
       end
@@ -1099,7 +1099,7 @@ RSpec.describe Issue, type: :model do
           Fabricate(:approved_resolution, issue: issue)
         end
         Timecop.freeze(1.hour.ago) do
-          issue.open
+          issue.reopen
         end
         issue.reload
         expect(issue.current_resolution).to be_nil

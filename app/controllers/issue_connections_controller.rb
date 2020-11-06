@@ -22,7 +22,7 @@ class IssueConnectionsController < ApplicationController
     notice = 'Issue was successfully reopened.'
     issue = @issue_connection.source
     @issue_connection.destroy
-    issue.open
+    issue.reopen
     redirect_to issue, notice: notice
   end
 

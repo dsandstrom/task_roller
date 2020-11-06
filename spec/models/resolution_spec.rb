@@ -57,7 +57,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -68,7 +68,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -79,7 +79,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -118,7 +118,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -129,7 +129,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -140,7 +140,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -179,7 +179,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -190,7 +190,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -201,7 +201,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.open
+          issue.reopen
         end
 
         it { is_expected.to be_valid }
@@ -366,8 +366,8 @@ RSpec.describe Resolution, type: :model do
         end.to change(resolution, :approved).to(false)
       end
 
-      it "runs issue.open" do
-        expect(resolution.issue).to receive(:open)
+      it "runs issue.reopen" do
+        expect(resolution.issue).to receive(:reopen)
         resolution.disapprove
       end
 
@@ -386,8 +386,8 @@ RSpec.describe Resolution, type: :model do
         end.to change(resolution, :approved).to(false)
       end
 
-      it "runs issue.open" do
-        expect(resolution.issue).to receive(:open)
+      it "runs issue.reopen" do
+        expect(resolution.issue).to receive(:reopen)
         resolution.disapprove
       end
 
@@ -406,8 +406,8 @@ RSpec.describe Resolution, type: :model do
         end.not_to change(resolution, :approved)
       end
 
-      it "runs issue.open" do
-        expect(resolution.issue).to receive(:open)
+      it "runs issue.reopen" do
+        expect(resolution.issue).to receive(:reopen)
         resolution.disapprove
       end
 
@@ -428,8 +428,8 @@ RSpec.describe Resolution, type: :model do
         end.not_to change(resolution, :approved)
       end
 
-      it "doesn't run issue.open" do
-        expect(resolution.issue).not_to receive(:open)
+      it "doesn't run issue.reopen" do
+        expect(resolution.issue).not_to receive(:reopen)
         resolution.disapprove
       end
 
@@ -450,8 +450,8 @@ RSpec.describe Resolution, type: :model do
         end.not_to change(resolution, :approved)
       end
 
-      it "doesn't run issue.open" do
-        expect(resolution.issue).not_to receive(:open)
+      it "doesn't run issue.reopen" do
+        expect(resolution.issue).not_to receive(:reopen)
         resolution.disapprove
       end
 

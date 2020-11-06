@@ -1405,7 +1405,7 @@ RSpec.describe Task, type: :model do
         before { task.update issue: issue }
 
         it "runs open on the issue" do
-          expect(issue).to receive(:open)
+          expect(issue).to receive(:reopen)
           task.open
         end
       end
@@ -1419,7 +1419,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "doesn't run open on the issue" do
-          expect(issue).not_to receive(:open)
+          expect(issue).not_to receive(:reopen)
           task.open
         end
       end
