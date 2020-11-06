@@ -15,10 +15,6 @@ module BreadcrumbsHelper
       [project.name, project_path(project)]
     end
 
-    def issue_breadcrumb_item(issue)
-      [issue.heading, issue_path(issue), { id: "task-issue-#{issue.id}" }]
-    end
-
     def breadcrumb(text, url, options = {})
       content_tag :span, class: 'breadcrumb' do
         link_to text, url, options

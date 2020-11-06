@@ -67,7 +67,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "renders issue" do
           render
-          assert_select "#task-issue-#{issue.id}"
+          assert_select "#issue-#{issue.id}"
         end
       end
 

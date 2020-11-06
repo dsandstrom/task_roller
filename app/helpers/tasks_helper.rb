@@ -9,7 +9,7 @@ module TasksHelper
     return unless category
 
     content_tag :header, class: 'task-header' do
-      concat breadcrumbs(task_header_pages(category, project, task))
+      concat breadcrumbs(task_header_pages(task))
       concat task_header_title(task)
       concat task_page_title(task)
     end
@@ -43,13 +43,13 @@ module TasksHelper
       end
     end
 
-    def task_header_pages(category, project, task)
-      pages =
-        [[category.name, category], project_breadcrumb_item(project),
-         ['Project Tasks', project_tasks_path(project)]]
-      return pages unless task.issue
+    def task_header_pages(task)
+      project = task.project
+      category = task.category
+      return unless category
 
-      pages << issue_breadcrumb_item(task.issue)
+      [[category.name, category], project_breadcrumb_item(project),
+       ['Project Tasks', project_tasks_path(project)]]
     end
 
     def task_page_title(task)
