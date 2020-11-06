@@ -19,7 +19,7 @@ module IssuesHelper
     tags = [issue_type_tag(issue.issue_type), issue_status_tag(issue)]
 
     content_tag :div, class: 'issue-tags' do
-      safe_join(tags, ' ')
+      safe_join(tags)
     end
   end
 

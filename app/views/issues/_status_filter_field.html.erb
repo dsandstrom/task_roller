@@ -10,7 +10,8 @@
       All
     <% end %>
 
-    <% %i[open being_worked_on addressed resolved closed].each do |status| %>
+    <% %i[open being_worked_on addressed resolved
+          closed].each do |status| %>
       <%
         color = Issue::STATUS_OPTIONS[status][:color]
         klass = roller_radio_button_label_class(color)
