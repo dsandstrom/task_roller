@@ -174,6 +174,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
   end
 
+  # TODO: add unassigned status
   # - closed
   # - open
   #   - reviews open = 'in review'

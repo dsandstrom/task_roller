@@ -2,6 +2,7 @@
 
 # TODO: allow searching by text (to see if reported)
 # TODO: when closed, lock updating description
+# TODO: add issue type filter
 
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
