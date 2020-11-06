@@ -22,7 +22,7 @@ class TaskConnectionsController < ApplicationController
     notice = 'Task was successfully reopened.'
     task = @task_connection.source
     @task_connection.destroy
-    task.open
+    task.reopen
     redirect_to task, notice: notice
   end
 

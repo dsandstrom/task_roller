@@ -932,7 +932,7 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe "#open" do
+  describe "#reopen" do
     context "when closed" do
       let(:issue) { Fabricate(:closed_issue) }
 

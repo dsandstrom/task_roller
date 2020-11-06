@@ -60,7 +60,7 @@ class Review < ApplicationRecord
 
     attrs = { approved: false }
     attrs.merge!(user_id: user.id) if user
-    update(attrs) && task.open
+    update(attrs) && task.reopen
   end
 
   def status

@@ -61,7 +61,7 @@ class TasksController < ApplicationController
   end
 
   def open
-    if @task.open
+    if @task.reopen
       @task.subscribe_user(current_user)
       redirect_to @task, success: 'Task was successfully opened.'
     else

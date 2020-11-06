@@ -57,7 +57,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -68,7 +68,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -79,7 +79,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -118,7 +118,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -129,7 +129,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -140,7 +140,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -179,7 +179,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -190,7 +190,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -201,7 +201,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.open
+          task.reopen
         end
 
         it { is_expected.to be_valid }
@@ -388,8 +388,8 @@ RSpec.describe Review, type: :model do
         end.to change(review, :approved).to(false)
       end
 
-      it "runs task.open" do
-        expect(review.task).to receive(:open)
+      it "runs task.reopen" do
+        expect(review.task).to receive(:reopen)
         review.disapprove
       end
 
@@ -419,8 +419,8 @@ RSpec.describe Review, type: :model do
         end.to change(review, :approved).to(false)
       end
 
-      it "runs task.open" do
-        expect(review.task).to receive(:open)
+      it "runs task.reopen" do
+        expect(review.task).to receive(:reopen)
         review.disapprove
       end
 
@@ -439,8 +439,8 @@ RSpec.describe Review, type: :model do
         end.not_to change(review, :approved)
       end
 
-      it "runs task.open" do
-        expect(review.task).to receive(:open)
+      it "runs task.reopen" do
+        expect(review.task).to receive(:reopen)
         review.disapprove
       end
 
@@ -461,8 +461,8 @@ RSpec.describe Review, type: :model do
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.open" do
-        expect(review.task).not_to receive(:open)
+      it "doesn't run task.reopen" do
+        expect(review.task).not_to receive(:reopen)
         review.disapprove
       end
 
@@ -483,8 +483,8 @@ RSpec.describe Review, type: :model do
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.open" do
-        expect(review.task).not_to receive(:open)
+      it "doesn't run task.reopen" do
+        expect(review.task).not_to receive(:reopen)
         review.disapprove
       end
 

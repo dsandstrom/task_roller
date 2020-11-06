@@ -202,7 +202,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # TODO: show outdated reviews in history
-  def open
+  def reopen
     return false unless update(closed: false, opened_at: Time.now)
     return true unless issue&.closed?
 

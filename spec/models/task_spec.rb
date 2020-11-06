@@ -116,7 +116,7 @@ RSpec.describe Task, type: :model do
           reopened_task = Fabricate(:task)
           Fabricate(:pending_review, task: reopened_task)
         end
-        reopened_task.open
+        reopened_task.reopen
 
         Fabricate(:closed_task)
       end
@@ -231,7 +231,7 @@ RSpec.describe Task, type: :model do
         Timecop.freeze(1.day.ago) do
           reopened_task = Fabricate(:approved_task)
         end
-        reopened_task.open
+        reopened_task.reopen
       end
 
       it "returns closed tasks that have an approved current review" do
@@ -273,7 +273,7 @@ RSpec.describe Task, type: :model do
         Fabricate(:pending_review, task: reopened_task)
 
         Timecop.freeze(Time.now + 2.days) do
-          reopened_task.open
+          reopened_task.reopen
         end
 
         Fabricate(:closed_task, project: project).assignees << worker
@@ -646,7 +646,7 @@ RSpec.describe Task, type: :model do
     context "when reviews" do
       before do
         Timecop.freeze(1.week.ago) do
-          task.open
+          task.reopen
         end
       end
 
@@ -1177,7 +1177,7 @@ RSpec.describe Task, type: :model do
           Fabricate(:approved_review, task: task)
         end
         Timecop.freeze(1.hour.ago) do
-          task.open
+          task.reopen
         end
         task.reload
         expect(task.current_review).to be_nil
@@ -1377,7 +1377,7 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "#open" do
+  describe "#reopen" do
     context "when closed" do
       let(:task) { Fabricate(:closed_task) }
 
@@ -1387,14 +1387,14 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to false" do
         expect do
-          task.open
+          task.reopen
           task.reload
         end.to change(task, :closed).to(false)
       end
 
       it "changes opened_at" do
         expect do
-          task.open
+          task.reopen
           task.reload
         end.to change(task, :opened_at)
       end
@@ -1406,7 +1406,7 @@ RSpec.describe Task, type: :model do
 
         it "runs open on the issue" do
           expect(issue).to receive(:reopen)
-          task.open
+          task.reopen
         end
       end
 
@@ -1420,7 +1420,7 @@ RSpec.describe Task, type: :model do
 
         it "doesn't run open on the issue" do
           expect(issue).not_to receive(:reopen)
-          task.open
+          task.reopen
         end
       end
     end
@@ -1434,14 +1434,14 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change task" do
         expect do
-          task.open
+          task.reopen
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "changes opened_at" do
         expect do
-          task.open
+          task.reopen
           task.reload
         end.to change(task, :opened_at)
       end
