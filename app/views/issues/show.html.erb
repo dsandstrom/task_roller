@@ -24,7 +24,7 @@
         <% if @issue.addressed? &&
               can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
           <p>
-            <%= link_to 'report issue was not fixed',
+            <%= link_to 'report issue was not fixed and reopen',
                         disapprove_issue_resolutions_path(@issue),
                         method: :post, class: 'destroy-link' %>
           </p>
@@ -34,15 +34,15 @@
           <% if @issue.unresolved? &&
                 can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
             <p>
-              <%= link_to 'mark resolved',
+              <%= link_to 'mark resolved and close',
                           approve_issue_resolutions_path(@issue),
-                          method: :post, class: 'create-link' %>
+                          method: :post, class: 'normal-link' %>
             </p>
           <% end %>
 
           <% if can?(:create, IssueConnection) && @issue.duplicatee.blank? %>
             <p>
-              <%= link_to 'mark duplicate',
+              <%= link_to 'mark duplicate and close',
                           new_issue_connection_path(@issue),
                           class: 'normal-link' %>
             </p>
