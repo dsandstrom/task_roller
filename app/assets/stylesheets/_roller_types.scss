@@ -74,10 +74,9 @@
 .issue-type-icon-option,
 .task-type-icon-option {
   margin-right: .5rem;
-  padding: .2rem .3rem;
-  border: 1px solid $light-gray;
-  border-radius: $border-radius;
+  padding: .3rem .4rem;
   color: $color-quaternary;
+  font-weight: bold;
   line-height: 1.2;
 
   span {
@@ -123,37 +122,37 @@
 
   &.roller-type-color-default {
     border-color: $gray;
-    background: $light-gray;
+    background-color: $light-gray;
   }
 
   &.roller-type-color-blue {
     border-color: $dark-blue;
-    background: $light-blue;
+    background-color: $light-blue;
   }
 
   &.roller-type-color-brown {
     border-color: $dark-gray;
-    background: $light-brown;
+    background-color: $light-brown;
   }
 
   &.roller-type-color-green {
     border-color: $dark-green;
-    background: $green;
+    background-color: $green;
   }
 
   &.roller-type-color-purple {
     border-color: $dark-gray;
-    background: $lavender;
+    background-color: $lavender;
   }
 
   &.roller-type-color-red {
     border-color: $dark-red;
-    background: $red;
+    background-color: $red;
   }
 
   &.roller-type-color-yellow {
     border-color: $dark-yellow;
-    background: $yellow;
+    background-color: $yellow;
   }
 }
 
