@@ -100,6 +100,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .joins(:reviews)
   end
 
+  # TODO: order open issues first by default
   def self.filter_by(filters = {})
     includes(task_assignees: :assignee, issue: :user)
       .apply_filters(filters)

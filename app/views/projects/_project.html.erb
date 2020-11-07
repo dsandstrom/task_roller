@@ -30,14 +30,12 @@ task_subscription =
   <% end %>
 
   <div class="project-counts">
-    <%# TODO: change to open issues %>
     <p class="project-issues-link">
       <%= link_to_if can?(:read, Issue),
                      pluralize(project.issues.count, 'Issue'),
                      project_issues_path(project) %>
     </p>
 
-    <%# TODO: change to open tasks %>
     <p class="project-tasks-link">
       <%= link_to_if can?(:read, Task),
                      pluralize(project.tasks.count, 'Task'),
