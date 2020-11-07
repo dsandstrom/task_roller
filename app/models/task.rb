@@ -192,13 +192,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
   end
 
-  # TODO: add unassigned status
   # - closed
   # - open
   #   - reviews open = 'in review'
   #   - progressions unfinished = 'in progress'
   #   - any assignees = 'assigned'
-  #   - unassigned = 'open'
+  #   - unassigned
   def status
     @status ||=
       if closed?
@@ -272,6 +271,15 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
+  def unassigned?
+    @unassigned ||=
+      if assigned? || in_review? || in_progress?
+        false
+      else
+        open?
+      end
+  end
+
   def approved?
     @approved ||=
       if current_review.blank?
@@ -320,7 +328,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       elsif assigned?
         'assigned'
       else
-        'open'
+        'unassigned'
       end
     end
 

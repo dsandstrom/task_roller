@@ -829,6 +829,69 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#unassigned?" do
+    context "for a open task" do
+      context "and a user is not assigned" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        it "returns true" do
+          expect(task.unassigned?).to eq(true)
+        end
+      end
+
+      context "and a user is assigned" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before { task.assignees << user }
+
+        it "returns false" do
+          expect(task.unassigned?).to eq(false)
+        end
+      end
+
+      context "and task has a pending review" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:pending_review, task: task)
+        end
+
+        it "returns false" do
+          expect(task.unassigned?).to eq(false)
+        end
+      end
+
+      context "and task has a unfinished progression" do
+        let(:task) { Fabricate(:task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:unfinished_progression, task: task)
+        end
+
+        it "returns false" do
+          expect(task.unassigned?).to eq(false)
+        end
+      end
+    end
+
+    context "when closed is true" do
+      context "and has a pending review" do
+        let(:task) { Fabricate(:closed_task) }
+        let(:user) { Fabricate(:user_worker) }
+
+        it "returns false" do
+          expect(task.unassigned?).to eq(false)
+        end
+      end
+    end
+  end
+
   describe "#assigned?" do
     context "for a open task" do
       context "and a user is not assigned" do
@@ -931,8 +994,8 @@ RSpec.describe Task, type: :model do
           allow(task).to receive(:assigned?) { false }
         end
 
-        it "returns 'open'" do
-          expect(task.status).to eq("open")
+        it "returns 'unassigned'" do
+          expect(task.status).to eq("unassigned")
         end
       end
 
@@ -999,6 +1062,12 @@ RSpec.describe Task, type: :model do
 
         it "returns 'approved'" do
           expect(task.status).to eq("approved")
+        end
+      end
+
+      context "and unassigned" do
+        it "returns 'closed'" do
+          expect(task.status).to eq("closed")
         end
       end
     end
