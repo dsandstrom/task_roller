@@ -163,21 +163,20 @@ RSpec.describe Task, type: :model do
 
     context "when tasks" do
       let(:worker) { Fabricate(:user_worker) }
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:open_task, summary: "Open") }
 
       before do
         task.assignees << worker
 
-        # assigned include in progress?
-        # _unassigned_task = Fabricate(:open_task)
-        # in_progress_task = Fabricate(:open_task)
-        # in_progress_task.assignees << worker
-        # Fabricate(:progression, task: in_progress_task)
+        _unassigned_task = Fabricate(:open_task, summary: "Unassigned")
 
-        # assigned include in review?
-        # in_review_task = Fabricate(:open_task)
-        # in_review_task.assignees << worker
-        # Fabricate(:pending_review, task: in_review_task)
+        in_progress_task = Fabricate(:open_task, summary: "In Progress")
+        in_progress_task.assignees << worker
+        Fabricate(:progression, task: in_progress_task)
+
+        in_review_task = Fabricate(:open_task, summary: "In Review")
+        in_review_task.assignees << worker
+        Fabricate(:pending_review, task: in_review_task)
 
         Fabricate(:closed_task).assignees << worker
       end
@@ -298,7 +297,7 @@ RSpec.describe Task, type: :model do
       context "is set as 'assigned'" do
         it "returns open assigned tasks" do
           results = Task.filter_by(status: "assigned")
-          expect(results.count).to eq(5)
+          expect(results.count).to eq(2)
           expect(results).to match_array(category.tasks.all_assigned)
         end
       end

@@ -78,9 +78,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where('progressions.finished = ?', false).joins(:progressions)
   end
 
-  # TODO: should in progress/review tasks be included? (def not review)
   def self.all_assigned
-    all_open.joins(:task_assignees)
+    no_reviews = 'reviews.id IS NULL OR reviews.created_at < tasks.opened_at'
+    no_progresions =
+      'progressions.id IS NULL OR progressions.finished_at < tasks.opened_at'
+
+    all_open
+      .joins(:task_assignees).left_joins(:reviews, :progressions)
+      .where(no_reviews).where(no_progresions)
   end
 
   def self.all_unassigned
