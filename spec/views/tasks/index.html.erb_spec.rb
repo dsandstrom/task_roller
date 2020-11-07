@@ -2,7 +2,6 @@
 
 require "rails_helper"
 
-# TODO: spec users
 RSpec.describe "tasks/index", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
@@ -148,6 +147,26 @@ RSpec.describe "tasks/index", type: :view do
           url = project_tasks_subscriptions_path(project)
           assert_select "a[data-method='post'][href='#{url}']"
         end
+      end
+    end
+
+    context "when user" do
+      let(:user) { Fabricate(:user_reviewer) }
+      let(:first_task) { Fabricate(:task, user: user) }
+      let(:issue) { Fabricate(:issue, user: user) }
+      let(:second_task) { Fabricate(:task, user: user, issue: issue) }
+
+      before(:each) do
+        assign(:user, user)
+        assign(:tasks, page([first_task, second_task]))
+        assign(:subscription, project_tasks_subscription)
+      end
+
+      it "renders a list of tasks" do
+        render
+
+        assert_select "#task-#{first_task.id}"
+        assert_select "#task-#{second_task.id}"
       end
     end
 
