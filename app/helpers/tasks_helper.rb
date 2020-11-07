@@ -18,7 +18,7 @@ module TasksHelper
   def task_tags(task)
     tags = [task_type_tag(task.task_type), task_status_tag(task)]
 
-    content_tag :p, class: 'task-tags' do
+    content_tag :div, class: 'task-tags' do
       safe_join(tags)
     end
   end

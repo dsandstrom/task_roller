@@ -24,7 +24,7 @@ module IssuesHelper
   end
 
   def issue_status_tags(issue)
-    content_tag :p, class: 'issue-tags' do
+    content_tag :div, class: 'issue-tags' do
       issue_status_tag(issue)
     end
   end

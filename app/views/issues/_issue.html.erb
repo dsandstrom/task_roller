@@ -1,3 +1,5 @@
+<% user = issue.user %>
+
 <div id="issue-<%= issue.id %>" class="issue">
   <header class="issue-header">
     <h3 class="issue-summary">
@@ -13,14 +15,20 @@
       <%= content_tag :strong, format_date(issue.created_at),
                       class: 'issue-dates' %>
       by
-      <strong class="issue-user"><%= issue.user ? issue.user.name_or_email : User.destroyed_name %></strong>
+      <% if user %>
+        <%= link_to user.name_or_email,
+                    user_issues_path(user),
+                    class: 'issue-user' %>
+      <% end %>
       <% if issue.created_at != issue.updated_at %>
-        <%= content_tag :span, " (ed. #{format_date(issue.updated_at)})" %>
+        <%= content_tag :span,
+                        " (ed. #{format_date(issue.updated_at)})" %>
       <% end %>
 
       <% if can?(:update, issue) %>
         <%= divider %>
-        <%= link_to 'Edit', edit_issue_path(issue) %>
+        <%= link_to 'Edit', edit_issue_path(issue),
+                    class: 'secondary-link' %>
       <% end %>
     </p>
   </main>

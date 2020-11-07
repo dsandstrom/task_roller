@@ -87,7 +87,8 @@ RSpec.describe "assignments/index", type: :view do
       it "renders a list of tasks" do
         render
         assert_select "#task-#{first_task.id} .task-user", first_task.user.name
-        assert_select "#task-#{second_task.id} .task-user", User.destroyed_name
+        assert_select "#task-#{second_task.id}"
+        assert_select "#task-#{second_task.id} .task-user", count: 0
       end
     end
   end

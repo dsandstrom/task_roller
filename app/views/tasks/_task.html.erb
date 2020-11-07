@@ -1,3 +1,13 @@
+<%
+  user = task.user
+  issue = task.issue
+  assignees = task.assignees.map do |assignee|
+    link_to_unless_current assignee.name_or_email,
+                           user_assignments_path(assignee),
+                          class: 'task-assignee'
+  end
+%>
+
 <div id="task-<%= task.id %>" class="task">
   <header class="task-header">
     <h3 class="task-summary">
@@ -8,35 +18,38 @@
   <main class="task-main">
     <%= task_tags(task) %>
 
+    <% if issue %>
+      <p class="task-issue">
+        Addresses
+        <%= link_to issue.heading, issue_path(issue) %>
+      </p>
+    <% end %>
+
+    <% if assignees.any? %>
+      <p class="task-assignees">
+        Assigned to <%= safe_join(assignees, ', ') %>
+      </p>
+    <% end %>
+
     <p class="task-dates">
       Opened
-      <%= content_tag :strong, format_date(task.created_at), class: 'task-dates' %>
+      <%= content_tag :strong, format_date(task.created_at),
+                      class: 'task-dates' %>
       by
-      <strong class="task-user"><%= task.user ? task.user.name_or_email : User.destroyed_name %></strong>
+      <% if user %>
+        <%= link_to_unless_current user.name_or_email,
+                                   user_tasks_path(user),
+                                   class: 'task-user' %>
+      <% end %>
       <% if task.created_at != task.updated_at %>
         <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
       <% end %>
 
       <% if can?(:update, task) %>
         <%= divider %>
-        <%= link_to 'Edit', edit_task_path(task) %>
+        <%= link_to 'Edit', edit_task_path(task),
+                    class: 'secondary-link' %>
       <% end %>
     </p>
-
-    <p class="task-assignees">
-      <% if task.assignees.any? %>
-        Assigned to
-        <strong><%= task.assignees.map(&:name_or_email).join(', ') %></strong>
-      <% else %>
-        <em>Unassigned</em>
-      <% end %>
-    </p>
-
-    <% if task.issue %>
-      <p class="task-issue">
-        Addresses
-        <%= link_to task.issue.summary, issue_path(task.issue) %>
-      </p>
-    <% end %>
   </main>
 </div>

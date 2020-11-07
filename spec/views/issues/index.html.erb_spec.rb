@@ -174,8 +174,8 @@ RSpec.describe "issues/index", type: :view do
         render
         assert_select "#issue-#{first_issue.id} .issue-user",
                       first_issue.user.name
-        assert_select "#issue-#{second_issue.id} .issue-user",
-                      User.destroyed_name
+        assert_select "#issue-#{second_issue.id}"
+        assert_select "#issue-#{second_issue.id} .issue-user", count: 0
       end
     end
   end

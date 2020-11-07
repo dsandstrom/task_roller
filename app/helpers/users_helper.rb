@@ -37,10 +37,17 @@ module UsersHelper
     end
 
     def user_main_nav_links(user)
-      [link_to_unless_current('Profile', user_path(user)),
-       link_to_unless_current('Reported Issues', user_issues_path(user)),
-       link_to_unless_current('Created Tasks', user_tasks_path(user)),
-       link_to_unless_current('Assigned Tasks', user_assignments_path(user))]
+      links =
+        [link_to_unless_current('Profile', user_path(user)),
+         link_to_unless_current('Reported Issues', user_issues_path(user))]
+      if user.tasks.any?
+        links << link_to_unless_current('Created Tasks', user_tasks_path(user))
+      end
+      return links if user.assignments.none?
+
+      links <<
+        link_to_unless_current('Assigned Tasks', user_assignments_path(user))
+      links
     end
 
     def user_page_title(user)
