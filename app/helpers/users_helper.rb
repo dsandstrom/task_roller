@@ -32,7 +32,8 @@ module UsersHelper
       end
       return links unless can?(:update, user)
 
-      links.append link_to_unless_current('Options', edit_user_path(user))
+      links.append link_to_unless_current('Options', edit_user_path(user),
+                                          class: 'destroy-link')
     end
 
     def user_main_nav_links(user)
