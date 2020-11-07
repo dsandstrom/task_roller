@@ -85,13 +85,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                      'progressions.finished_at < tasks.opened_at'
 
     all_open
-      .joins(:task_assignees).left_outer_joins(:reviews, :progressions)
+      .joins(:task_assignees).left_joins(:reviews, :progressions)
       .where(no_reviews).where(no_progresions)
   end
 
   def self.all_unassigned
     no_assignees = 'task_assignees.task_id IS NULL'
-    all_open.left_outer_joins(:task_assignees).where(no_assignees)
+    all_open.left_joins(:task_assignees).where(no_assignees)
   end
 
   # TODO: change to all_completed

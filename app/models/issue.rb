@@ -83,7 +83,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     resolutions_query =
       'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
       'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
-    all_closed.joins(tasks: :reviews).left_outer_joins(:resolutions)
+    all_closed.joins(tasks: :reviews).left_joins(:resolutions)
               .where('reviews.approved = ?', true).where(open_tasks_count: 0)
               .where(resolutions_query, true)
   end
