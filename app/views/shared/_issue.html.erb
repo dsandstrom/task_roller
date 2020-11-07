@@ -1,7 +1,8 @@
-<span class="issue" id="issue-<%= issue.id %>">
+<p class="issue" id="issue-<%= issue.id %>">
   <%= issue_type_icon_tag(issue.issue_type) %>
   <%= link_to issue.short_summary, issue_path(issue) %>
 
   <%= divider %>
-  <%= content_tag :strong, issue.status %>
-</span>
+  <%= content_tag :strong, issue.status,
+                  class: 'issue-status' %>
+</p>

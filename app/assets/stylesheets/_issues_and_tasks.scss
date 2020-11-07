@@ -85,6 +85,10 @@
   i {
     font-size: 1.4rem;
   }
+
+  .issue-status {
+    white-space: nowrap;
+  }
 }
 
 .new-issue-task {
@@ -100,6 +104,10 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  .task-status {
+    white-space: nowrap;
   }
 }
 

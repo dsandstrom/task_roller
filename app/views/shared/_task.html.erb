@@ -1,19 +1,8 @@
-<% current_review = task.current_review %>
-
-<dt id="task-<%= task.id %>" class="task">
+<p class="task" id="task-<%= task.id %>">
   <%= task_type_icon_tag(task.task_type) %>
-  <span class="task-summary">
-    <%= link_to task.short_summary, task_path(task) %>
-  </span>
-</dt>
+  <%= link_to task.id_and_summary, task_path(task) %>
 
-<dd id="task-status-<%= task.id %>" class="task-status">
-  status:
-  <%= content_tag :strong, task.status, class: 'task-status' %>
-
-  <% if task.closed? && current_review && !current_review.pending? %>
-    (<%= content_tag :span,
-                    format_date(current_review.updated_at),
-                    class: 'review-date' %>)
-  <% end %>
-</dd>
+  <%= divider %>
+  <%= content_tag :strong, task.status,
+                  class: 'task-status' %>
+</p>

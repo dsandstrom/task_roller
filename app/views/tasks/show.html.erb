@@ -3,6 +3,7 @@ comments = @task.comments.includes(:user)
 comment = @task.comments.build
 assignees = @task.assignees.includes(:progressions)
 assigned = @task.assigned
+review = @task.current_review
 # TODO: add re-open, force close to history
 # TODO: add page titles for browsers
 # TODO: add way to share the url (copy to the clipboard, expandable)
@@ -17,123 +18,26 @@ assigned = @task.assigned
         <%= render @task_subscription, task: @task %>
       </section>
 
-      <section class="task-status-wrapper">
-        <h4 class="task-column-title">Status</h4>
+      <section class="task-assignees-wrapper">
+        <h4 class="task-column-title">Assigned</h4>
 
-        <p>
-          <%= content_tag :strong, @task.status,
-                          class: 'task-status' %>
-        </p>
-
-        <% if @task.open? && !@task.in_review? %>
-          <p>
-            <%
-              progressions =
-                @task.progressions.unfinished
-                     .where('progressions.user_id = ?', current_user.id)
-            %>
-            <% if progressions.any? %>
-              <%= render partial: 'shared/progression',
-                         collection: progressions,
-                         locals: { task: @task } %>
-            <% elsif @task.assigned? &&
-                     can?(:create, @task.progressions.build(user_id: current_user.id)) %>
-              <%= link_to 'start task',
-                          task_progressions_path(@task),
-                          method: :post, class: 'create-link' %>
-            <% end %>
-
-            <% if can?(:create, @task.reviews.build(user_id: current_user.id)) %>
-              <%= divider %>
-              <%= link_to 'mark complete', task_reviews_path(@task),
-                          method: :post %>
-            <% end %>
-          </p>
-        <% end %>
-
-        <% review = @task.current_review %>
-        <% if review&.pending? %>
-          <p>
-            <% if can?(:approve, review) %>
-              <%= link_to 'approve',
-                          approve_task_review_path(@task, review),
-                          method: :patch, class: 'create-link' %>
-            <% end %>
-
-            <% if can?(:disapprove, review) %>
-              <%= divider %>
-              <%= link_to 'disapprove',
-                          disapprove_task_review_path(@task, review),
-                          method: :patch, class: 'destroy-link' %>
-            <% end %>
-
-            <% if can?(:destroy, review) %>
-              <% confirm = 'Are you sure you want to cancel the review?' %>
-              <%= link_to 'cancel review',
-                          task_review_path(@task, review),
-                          method: :delete, data: { confirm: confirm },
-                          class: 'destroy-link' %>
-            <% end %>
-          </p>
-        <% end %>
-
-        <% if can?(:create, TaskConnection) && @task.open? &&
-              !@task.in_review? && @task.duplicatee.blank? %>
-          <p>
-            <%= link_to 'mark duplicate',
-                        new_task_connection_path(@task),
-                        class: 'normal-link' %>
-          </p>
-        <% end %>
-
-        <% if @task.duplicatee.present? %>
-          <% duplicatee = @task.duplicatee %>
-          <p>
-            Duplicate of:
-            <%= link_to_if can?(:read, duplicatee),
-                           duplicatee.short_summary, task_path(duplicatee) %>
-          </p>
-
-          <% if can?(:destroy, TaskConnection) %>
-            <%
-              confirm = "Are you sure you want to remove the connection to " \
-                        "\"#{duplicatee.short_summary}\" and reopen " \
-                        "this task?"
-            %>
-            <p>
-              <%= link_to 'Mark not a duplicate and reopen',
-                           @task.source_task_connection,
-                           method: :delete, class: 'destroy-link',
-                           data: { confirm: confirm } %>
-            </p>
-          <% end %>
-        <% end %>
-
-        <% if can?(:close, @task) %>
-          <p>
-            <% if @task.open? %>
-              <%= link_to 'force close',
-                          close_task_path(@task),
-                          method: :patch, class: 'secondary-link' %>
-            <% else %>
-              <%= link_to 'reopen',
-                          open_task_path(@task),
-                          method: :patch, class: 'secondary-link' %>
-            <% end %>
-          </p>
-        <% end %>
-      </section>
-
-      <% if @task.open? %>
-        <section class="task-assignees-wrapper">
-          <h4 class="task-column-title">Assigned</h4>
-
+        <% if @task.closed? %>
           <% if assignees.any? %>
             <dl class="task-assignees">
               <% assignees.each do |assignee| %>
                 <%= render 'shared/assignee',
-                           assignee: assignee, task: @task,
-                           current_assignee: assignee == current_user %>
+                           assignee: assignee, task: @task %>
+              <% end %>
+            </dl>
+          <% else %>
+            <p>no one</p>
+          <% end %>
+        <% else %>
+          <% if assignees.any? %>
+            <dl class="task-assignees">
+              <% assignees.each do |assignee| %>
+                <%= render 'shared/assignee',
+                           assignee: assignee, task: @task %>
               <% end %>
             </dl>
 
@@ -162,11 +66,137 @@ assigned = @task.assigned
           <% if !@task.in_review? && can?(:assign, @task) %>
             <%= render 'assignments/form', task: @task %>
           <% end %>
+
+          <% unless @task.in_review? %>
+            <p>
+              <%
+                progressions =
+                  @task.progressions.unfinished
+                       .where('progressions.user_id = ?', current_user.id)
+              %>
+              <% if progressions.any? %>
+                <%= render partial: 'shared/progression',
+                           collection: progressions,
+                           locals: { task: @task } %>
+              <% elsif @task.assigned? &&
+                       can?(:create, @task.progressions.build(user_id: current_user.id)) %>
+                <%= link_to 'start task',
+                            task_progressions_path(@task),
+                            method: :post, class: 'create-link' %>
+              <% end %>
+
+              <% if can?(:create, @task.reviews.build(user_id: current_user.id)) %>
+                <%= divider %>
+                <%= link_to 'mark complete', task_reviews_path(@task),
+                            method: :post %>
+              <% end %>
+            </p>
+          <% end %>
+
+          <% if review&.pending? %>
+            <dl class="task-pending-review">
+              <% unless assignees.size == 1 && assignees.first == review.user %>
+                <dt>
+                  <%= content_tag :strong, review.user.name_or_email %>
+                </dt>
+              <% end %>
+
+              <dd>
+                marked ready for review:
+                <%= format_date review.created_at %>
+              </dd>
+
+              <dd>
+                <% if can?(:approve, review) %>
+                  <%= link_to 'approve',
+                              approve_task_review_path(@task, review),
+                              method: :patch, class: 'create-link' %>
+                <% end %>
+
+                <% if can?(:disapprove, review) %>
+                  <%= divider %>
+                  <%= link_to 'disapprove',
+                              disapprove_task_review_path(@task, review),
+                              method: :patch, class: 'destroy-link' %>
+                <% end %>
+
+                <% if can?(:destroy, review) %>
+                  <% confirm = 'Are you sure you want to cancel the review?' %>
+                  <%= link_to 'cancel review',
+                              task_review_path(@task, review),
+                              method: :delete, data: { confirm: confirm },
+                              class: 'destroy-link' %>
+                <% end %>
+              </dd>
+            </dl>
+          <% end %>
+        <% end %>
+      </section>
+
+      <% if @task.duplicates.any? %>
+        <section class="task-duplicates">
+          <h4 class="task-column-title">Duplicate Tasks</h4>
+
+          <%= render partial: 'shared/task', collection: @task.duplicates %>
         </section>
       <% end %>
 
+      <% if @task.duplicatee.present? %>
+        <section class="task-duplicatee">
+          <h4 class="task-column-title">Duplicate Of</h4>
+          <% duplicatee = @task.duplicatee %>
+
+          <%= render 'shared/task', task: duplicatee %>
+
+          <% if can?(:destroy, TaskConnection) %>
+            <%
+              confirm = "Are you sure you want to remove the connection to " \
+                        "\"#{duplicatee.short_summary}\" and reopen " \
+                        "this task?"
+            %>
+            <p>
+              <%= link_to 'Mark not a duplicate and reopen',
+                           @task.source_task_connection,
+                           method: :delete, class: 'destroy-link',
+                           data: { confirm: confirm } %>
+            </p>
+          <% end %>
+        </section>
+      <% elsif @task.open? && !@task.in_review? &&
+               can?(:create, TaskConnection) %>
+        <section class="task-connections">
+          <h4 class="task-column-title">Task Connections</h4>
+          <p>
+            <%= link_to 'mark duplicate',
+                        new_task_connection_path(@task),
+                        class: 'normal-link' %>
+          </p>
+        </section>
+      <% end %>
+
+      <section class="task-issue">
+        <h4 class="task-column-title">Source Issue</h4>
+        <p>
+          <% if @task.issue %>
+            <%= render 'shared/issue',
+                       issue: @task.issue, task: @task,
+                       category: @category, project: @project %>
+          <% else %>
+            no connection
+          <% end %>
+        </p>
+      </section>
+
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
+        <p>
+          Opened <%= format_date @task.created_at %>
+        </p>
+        <% if @task.created_at != @task.updated_at %>
+          <p>
+            Last Updated <%= format_date @task.updated_at %>
+          </p>
+        <% end %>
         <% if assigned.any? %>
           <dl class="task-assigned">
               <%= render partial: 'shared/assignee',
@@ -181,50 +211,7 @@ assigned = @task.assigned
           </dl>
         <% end %>
       </section>
-
-      <% if @task.open? %>
-        <section class="task-reviewer">
-          <h4 class="task-column-title">Reviewer</h4>
-          <p>
-            <span class="task-user">
-              <%= @task.user ? @task.user.name_or_email : User.destroyed_name %>
-            </span>
-
-            <% if can?(:update, @task)  %>
-              <%= divider %>
-              <%= link_to 'change', edit_task_path(@task),
-                          class: 'secondary-link' %>
-            <% end %>
-          </p>
-        </section>
-      <% end %>
-
-      <section class="task-issue">
-        <h4 class="task-column-title">Source Issue</h4>
-        <p>
-          <% if @task.issue %>
-            <%= render 'shared/issue',
-                       issue: @task.issue, task: @task,
-                       category: @category, project: @project %>
-          <% else %>
-            <em>no connection</em>
-          <% end %>
-        </p>
-      </section>
-
-      <% if @task.duplicates.any? %>
-        <section class="task-connections">
-          <h4 class="task-column-title">Duplicate Tasks</h4>
-
-          <% @task.duplicates.each do |duplicate| %>
-            <p>
-              <%= link_to_if can?(:read, duplicate),
-                             duplicate.id_and_summary, task_path(duplicate) %>
-            </p>
-          <% end %>
-        </section>
-      <% end %>
-    </div>
+    </div><!-- first column  -->
 
     <div class="task-column second-column">
       <div class="task-comments comments">
