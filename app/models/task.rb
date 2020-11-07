@@ -79,18 +79,19 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.all_assigned
-    no_reviews = 'reviews.id IS NULL OR reviews.created_at < tasks.opened_at'
-    no_progresions =
-      'progressions.id IS NULL OR progressions.finished_at < tasks.opened_at'
+    no_reviews = 'reviews.task_id IS NULL OR '\
+                 'reviews.created_at < tasks.opened_at'
+    no_progresions = 'progressions.task_id IS NULL OR '\
+                     'progressions.finished_at < tasks.opened_at'
 
     all_open
-      .joins(:task_assignees).left_joins(:reviews, :progressions)
+      .joins(:task_assignees).left_outer_joins(:reviews, :progressions)
       .where(no_reviews).where(no_progresions)
   end
 
   def self.all_unassigned
-    query = 'tasks.id NOT IN (SELECT DISTINCT(task_id) FROM task_assignees)'
-    all_open.where(query)
+    no_assignees = 'task_assignees.task_id IS NULL'
+    all_open.left_outer_joins(:task_assignees).where(no_assignees)
   end
 
   # TODO: change to all_completed
