@@ -2,13 +2,13 @@
 
 require "rails_helper"
 
-RSpec.describe "issue_subscriptions/index", type: :view do
+RSpec.describe "subscribed_issues/index", type: :view do
   %w[worker reporter].each do |employee_type|
     let(:first_issue) { Fabricate(:issue) }
     let(:second_issue) { Fabricate(:issue) }
 
     before(:each) do
-      assign(:issues, page([first_issue, second_issue]))
+      assign(:subscribed_issues, page([first_issue, second_issue]))
     end
 
     context "for a #{employee_type}" do

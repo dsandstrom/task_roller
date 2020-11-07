@@ -7,6 +7,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :assignments, only: :index
   end
 
+  resources :subscribed_tasks, only: :index
+  resources :subscribed_issues, only: :index
+
   resources :categories do
     resources :tasks, only: :index
     resources :issues, only: :index
@@ -55,9 +58,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       patch :close
     end
   end
-
-  resources :task_subscriptions, only: :index
-  resources :issue_subscriptions, only: :index
 
   resources :issue_types, except: %i[show]
   resources :task_types, except: %i[index show]

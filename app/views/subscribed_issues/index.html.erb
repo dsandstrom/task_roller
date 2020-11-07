@@ -1,0 +1,9 @@
+<%= user_header current_user %>
+
+<header class="issues-header">
+  <h2>Subscribed Issues</h2>
+</header>
+
+<%= render 'issues/issues',
+           issues: @subscribed_issues,
+           index_path: subscribed_issues_path %>

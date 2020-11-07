@@ -1,0 +1,9 @@
+<%= user_header current_user %>
+
+<header class="tasks-header">
+  <h2>Subscribed Tasks</h2>
+</header>
+
+<%= render 'tasks/tasks',
+           tasks: @subscribed_tasks,
+           path: subscribed_tasks_path %>

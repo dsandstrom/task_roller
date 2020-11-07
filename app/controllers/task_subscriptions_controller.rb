@@ -3,15 +3,8 @@
 # TODO: add js create/destroy response and partials
 
 class TaskSubscriptionsController < ApplicationController
-  load_and_authorize_resource only: :index
-  load_and_authorize_resource :task, except: :index
-  load_and_authorize_resource through: :task, except: :index
-
-  def index
-    @user = User.find(current_user.id)
-    @tasks = current_user.subscribed_tasks.apply_filters(build_filters)
-                         .page(params[:page])
-  end
+  load_and_authorize_resource :task
+  load_and_authorize_resource through: :task
 
   def new; end
 
