@@ -106,7 +106,7 @@ module ProjectsHelper
 
     def edit_project_link(project)
       link_to_unless_current('Settings', edit_project_path(project),
-                             class: 'warning-link')
+                             class: 'destroy-link')
     end
 
     def project_page_title(project)

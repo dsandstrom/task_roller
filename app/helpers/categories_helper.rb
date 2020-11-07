@@ -89,6 +89,6 @@ module CategoriesHelper
 
     def edit_category_link(category)
       link_to_unless_current('Settings', edit_category_path(category),
-                             class: 'warning-link')
+                             class: 'destroy-link')
     end
 end
