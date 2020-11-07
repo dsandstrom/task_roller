@@ -1,6 +1,8 @@
 <%
   user = task.user
   issue = task.issue
+  project = task.project
+  category = task.category
   assignees = task.assignees.map do |assignee|
     link_to_unless_current assignee.name_or_email,
                            user_assignments_path(assignee),
@@ -17,6 +19,15 @@
 
   <main class="task-main">
     <%= task_tags(task) %>
+
+    <% if project && category %>
+      <p>
+        Project: <%= link_to_unless_current project.name,
+                                            project_tasks_path(project) %>
+        (<%= link_to_unless_current category.name,
+                                    category_tasks_path(category) %>)
+      </p>
+    <% end %>
 
     <% if issue %>
       <p class="task-issue">

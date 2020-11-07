@@ -1,4 +1,8 @@
-<% user = issue.user %>
+<%
+  user = issue.user
+  project = issue.project
+  category = issue.category
+%>
 
 <div id="issue-<%= issue.id %>" class="issue">
   <header class="issue-header">
@@ -10,15 +14,24 @@
   <main class="issue-main">
     <%= issue_tags(issue) %>
 
+    <% if project && category %>
+      <p>
+        Project: <%= link_to_unless_current project.name,
+                                            project_issues_path(project) %>
+        (<%= link_to_unless_current category.name,
+                                    category_issues_path(category) %>)
+      </p>
+    <% end %>
+
     <p>
       Opened
       <%= content_tag :strong, format_date(issue.created_at),
                       class: 'issue-dates' %>
       by
       <% if user %>
-        <%= link_to user.name_or_email,
-                    user_issues_path(user),
-                    class: 'issue-user' %>
+        <%= link_to_unless_current user.name_or_email,
+                                   user_issues_path(user),
+                                   class: 'issue-user' %>
       <% end %>
       <% if issue.created_at != issue.updated_at %>
         <%= content_tag :span,
