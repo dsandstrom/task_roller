@@ -13,6 +13,16 @@ module UsersHelper
     end
   end
 
+  def dashboard_nav
+    links =
+      [link_to_unless_current('Dashboard', root_path),
+       link_to_unless_current('Subscribed Issues', issue_subscriptions_path),
+       link_to_unless_current('Subscribed Tasks', task_subscriptions_path)]
+    content_tag :p, class: 'user-nav' do
+      safe_join(links, divider_with_spaces)
+    end
+  end
+
   private
 
     def user_nav(user)
@@ -24,12 +34,6 @@ module UsersHelper
     # TODO: rename Profile to Dashboard?
     def user_nav_links(user)
       links = user_main_nav_links(user)
-      if current_user && user.id == current_user.id
-        links <<
-          link_to_unless_current('Subscribed Issues', subscribed_issues_path)
-        links <<
-          link_to_unless_current('Subscribed Tasks', subscribed_tasks_path)
-      end
       return links unless can?(:update, user)
 
       links.append link_to_unless_current('Options', edit_user_path(user),

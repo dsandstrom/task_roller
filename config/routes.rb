@@ -101,5 +101,5 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   mount RollerAuthentication::Engine => '/auth'
 
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
-  root to: 'static#dashboard'
+  root to: 'subscriptions#index'
 end
