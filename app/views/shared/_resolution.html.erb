@@ -4,7 +4,7 @@
 %>
 
 <%= content_tag :dt, resolution.user&.name_or_email %>
-<%= content_tag :dd, "resolved: #{format_date resolution.updated_at}" %>
+<%= content_tag :dd, "marked resolved: #{format_date resolution.updated_at}" %>
 
 <% if can?(:destroy, resolution) %>
   <dd>
