@@ -18,21 +18,10 @@ review = @task.current_review
         <%= render @task_subscription, task: @task %>
       </section>
 
-      <section class="task-assignees-wrapper">
-        <h4 class="task-column-title">Assigned</h4>
+      <% if @task.open? %>
+        <section class="task-assignees-wrapper">
+          <h4 class="task-column-title">Assigned</h4>
 
-        <% if @task.closed? %>
-          <% if assignees.any? %>
-            <dl class="task-assignees">
-              <% assignees.each do |assignee| %>
-                <%= render 'shared/assignee',
-                           assignee: assignee, task: @task %>
-              <% end %>
-            </dl>
-          <% else %>
-            <p>no one</p>
-          <% end %>
-        <% else %>
           <% if assignees.any? %>
             <dl class="task-assignees">
               <% assignees.each do |assignee| %>
@@ -88,7 +77,7 @@ review = @task.current_review
               <% if can?(:create, @task.reviews.build(user_id: current_user.id)) %>
                 <%= divider %>
                 <%= link_to 'mark complete', task_reviews_path(@task),
-                            method: :post %>
+                            method: :post, class: 'secondary-link' %>
               <% end %>
             </p>
           <% end %>
@@ -130,8 +119,8 @@ review = @task.current_review
               </dd>
             </dl>
           <% end %>
-        <% end %>
-      </section>
+        </section>
+      <% end %>
 
       <% if @task.duplicates.any? %>
         <section class="task-duplicates">
@@ -189,27 +178,25 @@ review = @task.current_review
 
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
-        <p>
-          Opened <%= format_date @task.created_at %>
-        </p>
-        <% if @task.created_at != @task.updated_at %>
-          <p>
-            Last Updated <%= format_date @task.updated_at %>
-          </p>
-        <% end %>
-        <% if assigned.any? %>
-          <dl class="task-assigned">
-              <%= render partial: 'shared/assignee',
-                         collection: assigned,
-                         locals: { task: @task } %>
-          </dl>
-        <% end %>
+        <dl class="task-history">
+          <%= content_tag :dt, @task.user&.name_or_email %>
+          <%= content_tag :dd, "opened: #{format_date @task.created_at}",
+                          class: 'task-created-at' %>
+          <% if @task.created_at != @task.updated_at %>
+            <%= content_tag :dd, "updated: #{format_date @task.updated_at}",
+                            class: 'task-updated-at' %>
+          <% end %>
 
-        <% if @task.concluded_reviews.any? %>
-          <dl class="task-reviews">
+          <% if assigned.any? %>
+            <%= render partial: 'shared/assignee',
+                       collection: assigned,
+                       locals: { task: @task } %>
+          <% end %>
+
+          <% if @task.concluded_reviews.any? %>
             <%= render @task.concluded_reviews, task: @task %>
-          </dl>
-        <% end %>
+          <% end %>
+        </dl>
       </section>
     </div><!-- first column  -->
 

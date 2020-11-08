@@ -1,16 +1,11 @@
-<dt id="review_<%= review.id %>" class="review">
-  <%= content_tag :strong, review.status,
-                  class: 'review-status' %>
-  <% unless review.pending? %>
-    (<%= content_tag :span,
-                    format_date(review.updated_at),
-                    class: 'review-date' %>)
-  <% end %>
-</dt>
+<%= content_tag :dt, review.user.name_or_email, class: 'review-user' %>
 
-<dd>
-  by
-  <%= content_tag :span,
-                  review.user.name_or_email,
-                  class: 'review-user' %>
+<dd id="review_<%= review.id %>" class="review">
+  <%= content_tag :span, review.status,
+                  class: 'review-status' %>:
+  <% unless review.pending? %>
+    <%= content_tag :span,
+                    format_date(review.updated_at),
+                    class: 'review-date' %>
+  <% end %>
 </dd>
