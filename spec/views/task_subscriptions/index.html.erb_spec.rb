@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe "subscribed_tasks/index", type: :view do
-  %w[worker reporter].each do |employee_type|
+RSpec.describe "task_subscriptions/index", type: :view do
+  User::VALID_EMPLOYEE_TYPES.each do |employee_type|
     let(:first_task) { Fabricate(:task) }
     let(:second_task) { Fabricate(:task) }
 
@@ -12,11 +12,10 @@ RSpec.describe "subscribed_tasks/index", type: :view do
     end
 
     context "for a #{employee_type}" do
-      let(:current_user) { Fabricate("user_#{employee_type}") }
+      let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
       before do
         enable_can(view, current_user)
-        assign(:user, current_user)
         Fabricate(:task_subscription, task: first_task, user: current_user)
         Fabricate(:task_subscription, task: second_task, user: current_user)
       end

@@ -1,4 +1,6 @@
-<%= user_header current_user %>
+<h1>Subscriptions</h1>
+
+<%= dashboard_nav %>
 
 <header class="issues-header">
   <h2>Subscribed Issues</h2>
@@ -6,4 +8,4 @@
 
 <%= render 'issues/issues',
            issues: @subscribed_issues,
-           index_path: subscribed_issues_path %>
+           index_path: issue_subscriptions_path %>

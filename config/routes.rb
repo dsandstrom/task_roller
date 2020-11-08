@@ -7,9 +7,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :assignments, only: :index
   end
 
-  resources :subscribed_tasks, only: :index
-  resources :subscribed_issues, only: :index
-
   resources :categories do
     resources :tasks, only: :index
     resources :issues, only: :index
@@ -67,6 +64,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         as: :reposition_task_type
 
   resources :assignments, only: %i[edit update]
+  resources :task_subscriptions, only: :index
+  resources :issue_subscriptions, only: :index
 
   %w[issue task].each do |roller|
     get "/#{roller}_connections/:source_id/new" => "#{roller}_connections#new",
