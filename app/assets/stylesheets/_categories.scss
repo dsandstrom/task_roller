@@ -31,10 +31,6 @@
     margin-bottom: .3rem;
   }
 
-  .category-tags {
-    margin-bottom: 0;
-  }
-
   .category-links {
     display: flex;
     margin: 0 -.5rem;
@@ -51,12 +47,6 @@
     .button {
       margin: .5rem auto;
     }
-  }
-}
-
-.category-tags {
-  .tag {
-    @include tag;
   }
 }
 

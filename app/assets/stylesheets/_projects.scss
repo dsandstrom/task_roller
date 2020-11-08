@@ -38,10 +38,6 @@
     margin-bottom: .3rem;
   }
 
-  .project-tags {
-    margin-bottom: 0;
-  }
-
   .project-links {
     display: flex;
     margin: 0 -.5rem;
@@ -61,15 +57,18 @@
   }
 }
 
+
+.category-tags,
 .project-tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
+  margin-bottom: 0;
 
   .tag {
     @include tag;
-    margin-bottom: .5rem;
+    margin-bottom: 1rem;
   }
 }
 
