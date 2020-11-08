@@ -66,6 +66,12 @@
   input {
     display: none;
   }
+
+  &.disabled {
+    &:hover {
+      opacity: .75;
+    }
+  }
 }
 
 .status-tag,
@@ -74,10 +80,11 @@
 .issue-type-icon-option,
 .task-type-icon-option {
   margin-right: .5rem;
-  padding: .3rem .4rem;
+  padding: .2rem .4rem;
+  border-radius: $border-radius;
   color: $color-quaternary;
+  font-size: 1.4rem;
   font-weight: bold;
-  line-height: 1.2;
 
   span {
     margin-left: .3rem;
@@ -201,6 +208,19 @@
     .status-tag,
     .issue-type-tag {
       margin-bottom: 0;
+    }
+  }
+}
+
+a {
+  &:hover,
+  &:focus {
+    .status-tag,
+    .issue-type-tag,
+    .task-type-tag,
+    .issue-type-icon-option,
+    .task-type-icon-option {
+      opacity: .75;
     }
   }
 }
