@@ -1,6 +1,7 @@
 <%
 comments = @task.comments.includes(:user)
 comment = @task.comments.build
+user = @task.user
 assignees = @task.assignees.includes(:progressions)
 assigned = @task.assigned
 review = @task.current_review
@@ -179,7 +180,10 @@ review = @task.current_review
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
         <dl class="task-history">
-          <%= content_tag :dt, @task.user&.name_or_email %>
+          <% if user %>
+            <%= content_tag :dt, link_to(user.name_or_email,
+                                         user_tasks_path(user)) %>
+          <% end %>
           <%= content_tag :dd, "opened: #{format_date @task.created_at}",
                           class: 'task-created-at' %>
           <% if @task.created_at != @task.updated_at %>

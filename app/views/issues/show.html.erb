@@ -1,3 +1,8 @@
+<%
+  user = @issue.user
+  duplicatee = @issue.duplicatee
+%>
+
 <div class="issue-show-page">
   <%= issue_header(@issue) %>
 
@@ -7,60 +12,73 @@
         <%= render @issue_subscription, issue: @issue %>
       </section>
 
-      <section class="issue-status">
-        <h4 class="issue-column-title">Status</h4>
+      <section class="issue-tasks">
+        <h4 class="issue-column-title">Tasks</h4>
+        <%= render partial: 'shared/task', collection: @issue.tasks %>
 
-        <p>
-          <%= content_tag :strong, @issue.status,
-                          class: 'issue-status' %>
+        <% if @issue.open? && can?(:create, Task) %>
+          <p class="new-issue-task">
+            <%= icon('plus') %>
+            <%= link_to 'Add Task',
+                        new_project_task_path(@project, task: { issue_id: @issue.id }),
+                        class: 'create-link' %>
+          </p>
+        <% elsif @issue.tasks.none? %>
+          <p>None assigned</p>
+        <% end %>
+      </section>
+
+      <section class="issue-history">
+        <h4 class="issue-column-title">History</h4>
+
+        <dl class="issue-history">
+          <% if user %>
+            <%= content_tag :dt, link_to(user.name_or_email,
+                                         user_issues_path(user)) %>
+          <% end %>
+          <%= content_tag :dd, "opened: #{format_date @issue.created_at}",
+                          class: 'issue-created-at' %>
+          <% if @issue.created_at != @issue.updated_at %>
+            <%= content_tag :dd, "updated: #{format_date @issue.updated_at}",
+                            class: 'issue-updated-at' %>
+          <% end %>
 
           <% if @issue.current_resolution %>
             <%= render 'shared/resolution',
                        resolution: @issue.current_resolution,
                        issue: @issue %>
           <% end %>
-        </p>
 
-        <% if @issue.addressed? &&
-              can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
-          <p>
-            <%= link_to 'report issue was not fixed and reopen',
-                        disapprove_issue_resolutions_path(@issue),
-                        method: :post, class: 'destroy-link' %>
-          </p>
-        <% end %>
+          <% if @issue.addressed? &&
+                can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+            <dd>
+              <%= link_to 'report issue was not fixed and reopen',
+                          disapprove_issue_resolutions_path(@issue),
+                          method: :post, class: 'destroy-link' %>
+            </dd>
+          <% end %>
 
-        <% if @issue.open? %>
           <% if @issue.unresolved? &&
                 can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
-            <p>
+            <dd>
               <%= link_to 'mark resolved and close',
                           approve_issue_resolutions_path(@issue),
-                          method: :post, class: 'normal-link' %>
-            </p>
+                          method: :post, class: 'destroy-link' %>
+            </dd>
           <% end %>
+        </dl>
+      </section>
 
-          <% if can?(:create, IssueConnection) && @issue.duplicatee.blank? %>
-            <p>
-              <%= link_to 'mark duplicate and close',
-                          new_issue_connection_path(@issue),
-                          class: 'normal-link' %>
-            </p>
-          <% end %>
-        <% end %>
+      <% if duplicatee.present? %>
+        <%
+          confirm = "Are you sure you want to remove the connection to " \
+                    "\"#{duplicatee.short_summary}\" and reopen " \
+                    "this issue?"
+        %>
 
-        <% duplicatee = @issue.duplicatee %>
-        <% if duplicatee.present? %>
-          <%
-            confirm = "Are you sure you want to remove the connection to " \
-                      "\"#{duplicatee.short_summary}\" and reopen " \
-                      "this issue?"
-          %>
-          <p>
-            Duplicate of:
-            <%= link_to_if can?(:read, duplicatee),
-                           duplicatee.short_summary, issue_path(duplicatee) %>
-          </p>
+        <section class="issue-duplicatee">
+          <h4 class="issue-column-title">Duplicate Of</h4>
+          <%= render 'shared/issue', issue: duplicatee %>
 
           <% if can?(:destroy, @issue.source_connection) %>
             <p>
@@ -70,38 +88,25 @@
                            data: { confirm: confirm } %>
             </p>
           <% end %>
-        <% end %>
-      </section>
+        </section>
+      <% elsif @issue.open? && can?(:create, IssueConnection) %>
+        <section class="issue-connections">
+          <h4 class="issue-column-title">Connections</h4>
 
-      <section class="issue-tasks">
-        <h4 class="issue-column-title">Tasks</h4>
-        <dl class="issue-tasks">
-          <%= render partial: 'shared/task', collection: @issue.tasks,
-                     locals: { category: @category, project: @project } %>
-
-          <% if can?(:create, Task) %>
-            <dt class="new-issue-task">
-              <%= icon('plus') %>
-              <%= link_to 'Add Task',
-                          new_project_task_path(@project, task: { issue_id: @issue.id }),
-                          class: 'create-link' %>
-            </dt>
-          <% elsif @issue.tasks.none? %>
-            <dt>None assigned</dt>
-          <% end %>
-        </dl>
-      </section>
+          <p>
+            <%= link_to 'mark duplicate and close',
+                        new_issue_connection_path(@issue),
+                        class: 'destroy-link' %>
+          </p>
+        </section>
+      <% end %>
 
       <% if @issue.duplicates.any? %>
         <section class="issue-connections">
           <h4 class="issue-column-title">Duplicate Issues</h4>
 
-          <% @issue.duplicates.each do |duplicate| %>
-            <p>
-              <%= link_to_if can?(:read, duplicate),
-                             duplicate.id_and_summary, issue_path(duplicate) %>
-            </p>
-          <% end %>
+          <%= render partial: 'shared/issue',
+                     collection: @issue.duplicates %>
         </section>
       <% end %>
     </div>

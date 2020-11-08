@@ -3,23 +3,14 @@
     'Are you sure you want to delete the resolution and reopen the issue'
 %>
 
-<p>
-  (<%= content_tag :span,
-                  format_date(resolution.updated_at),
-                  class: 'resolution-date' %>)
-  <br>
-  by
-  <%= content_tag :span,
-                  resolution.user.name_or_email,
-                  class: 'resolution-user' %>
+<%= content_tag :dt, resolution.user&.name_or_email %>
+<%= content_tag :dd, "resolved: #{format_date resolution.updated_at}" %>
 
-</p>
-
-<p>
-  <% if can?(:destroy, resolution) %>
+<% if can?(:destroy, resolution) %>
+  <dd>
     <%= link_to 'delete resolution and reopen',
                 issue_resolution_path(issue, resolution),
                 method: :delete, data: { confirm: confirm },
                 class: 'destroy-link' %>
-  <% end %>
-</p>
+  </dd>
+<% end %>
