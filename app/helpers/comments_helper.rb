@@ -18,6 +18,18 @@ module CommentsHelper
     value.strftime("#{date_format}/%Y-#{time_format}")
   end
 
+  def format_day(value)
+    date_format = '%-m/%-d'
+
+    zone = 'Pacific Time (US & Canada)'
+    now = Time.now.in_time_zone(zone)
+    value = value.in_time_zone(zone)
+
+    return value.strftime(date_format) if value.year == now.year
+
+    value.strftime("#{date_format}/%Y")
+  end
+
   def formatted_dates(object)
     created_date = format_date(object.created_at)
     return created_date if object.updated_at == object.created_at
