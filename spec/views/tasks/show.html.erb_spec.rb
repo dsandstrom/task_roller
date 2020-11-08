@@ -204,27 +204,10 @@ RSpec.describe "tasks/show", type: :view do
           .to have_link(nil, href: disapprove_task_review_path(@task, @review))
       end
 
-      it "renders close link" do
-        render
-        expect(rendered).to have_link(nil, href: close_task_path(@task))
-      end
-
       it "renders edit link" do
         render
         url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
-      end
-    end
-
-    context "when task is closed" do
-      before do
-        @task = assign(:task, Fabricate(:closed_task, project: @project))
-        assign(:task_subscription, task_subscription)
-      end
-
-      it "renders reopen link" do
-        render
-        expect(rendered).to have_link(nil, href: open_task_path(@task))
       end
     end
 
