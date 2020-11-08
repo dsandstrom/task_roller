@@ -56,6 +56,23 @@
             </dd>
           <% end %>
 
+          <% @issue.tasks.each do |task| %>
+            <% next unless task.user %>
+
+            <% if task.current_review %>
+              <% review = task.current_review  %>
+              <% next unless review.user %>
+
+              <% if review.pending? %>
+                <%= content_tag :dt, review.user.name_or_email %>
+                <%= content_tag :dd, "submitted for review task (##{task.id}): #{format_date review.created_at}" %>
+              <% else %>
+                <%= content_tag :dt, review.user.name_or_email %>
+                <%= content_tag :dd, "#{review.status} task (##{task.id}): #{format_date review.updated_at}" %>
+              <% end %>
+            <% end %>
+          <% end %>
+
           <% if @issue.addressed? &&
                 can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
             <dd>
