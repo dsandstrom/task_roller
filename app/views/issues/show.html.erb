@@ -47,6 +47,13 @@
             <%= render 'shared/resolution',
                        resolution: @issue.current_resolution,
                        issue: @issue %>
+          <% elsif @issue.unresolved? &&
+                can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+            <dd>
+              <%= link_to 'mark resolved and close',
+                          approve_issue_resolutions_path(@issue),
+                          method: :post, class: 'destroy-link' %>
+            </dd>
           <% end %>
 
           <% if @issue.addressed? &&
@@ -54,15 +61,6 @@
             <dd>
               <%= link_to 'report issue was not fixed and reopen',
                           disapprove_issue_resolutions_path(@issue),
-                          method: :post, class: 'destroy-link' %>
-            </dd>
-          <% end %>
-
-          <% if @issue.unresolved? &&
-                can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
-            <dd>
-              <%= link_to 'mark resolved and close',
-                          approve_issue_resolutions_path(@issue),
                           method: :post, class: 'destroy-link' %>
             </dd>
           <% end %>
