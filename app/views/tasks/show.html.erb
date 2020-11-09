@@ -89,6 +89,19 @@ review = @task.current_review
         </section>
       <% end %>
 
+      <section class="task-issue">
+        <h4 class="task-column-title">Source Issue</h4>
+        <p>
+          <% if @task.issue %>
+            <%= render 'shared/issue',
+                       issue: @task.issue, task: @task,
+                       category: @category, project: @project %>
+          <% else %>
+            no connection
+          <% end %>
+        </p>
+      </section>
+
       <% if @task.duplicates.any? %>
         <section class="task-duplicates">
           <h4 class="task-column-title">Duplicate Tasks</h4>
@@ -129,19 +142,6 @@ review = @task.current_review
           </p>
         </section>
       <% end %>
-
-      <section class="task-issue">
-        <h4 class="task-column-title">Source Issue</h4>
-        <p>
-          <% if @task.issue %>
-            <%= render 'shared/issue',
-                       issue: @task.issue, task: @task,
-                       category: @category, project: @project %>
-          <% else %>
-            no connection
-          <% end %>
-        </p>
-      </section>
 
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
