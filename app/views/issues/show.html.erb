@@ -116,29 +116,15 @@
 
     <div class="issue-column second-column">
       <div class="issue-comments comments">
-        <div class="comment issue-description">
-          <header class="issue-user-date">
-            <p><span class="issue-user"><%= @issue.user ? @issue.user.name_or_email : User.destroyed_name %></span>:</p>
-            <p class="issue-dates"><%= formatted_dates @issue %></p>
-          </header>
-
-          <%= content_tag :main, @issue.description_html.html_safe %>
-
-          <% if can?(:update, @issue) %>
-            <footer>
-              <p><%= link_to 'edit', edit_issue_path(@issue) %></p>
-            </footer>
-          <% end %>
-        </div>
+        <%= render 'issues/description', issue: @issue %>
 
         <%# TODO: link to new task from comment, auto assign %>
         <%= render partial: 'shared/comment', collection: @comments,
-                   locals: { category: @category, project: @issue.project,
-                             object: @issue } %>
+                   locals: { object: @issue } %>
 
         <%= render 'shared/new_comment',
-                   category: @category, project: @issue.project, object: @issue,
-                   comment: @comment, user_options: @comment_user_options %>
+                   object: @issue, comment: @comment,
+                   user_options: @comment_user_options %>
       </div>
     </div>
   </div>

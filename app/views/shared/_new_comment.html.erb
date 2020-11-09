@@ -4,12 +4,10 @@
   </header>
 
   <% if object.is_a?(Task) %>
-    <%= render 'task_comments/form', category: category, project: project,
-                                     task: object, task_comment: comment,
+    <%= render 'task_comments/form', task: object, task_comment: comment,
                                      user_options: user_options %>
   <% else %>
-    <%= render 'issue_comments/form', category: category, project: project,
-                                     issue: object, issue_comment: comment,
+    <%= render 'issue_comments/form', issue: object, issue_comment: comment,
                                      user_options: user_options %>
   <% end %>
 </div>
