@@ -3,6 +3,13 @@
 
   <%= dashboard_nav %>
 
+  <%# TODO: show active subscriptions %>
+  <% if @active_assignments.none? && @open_tasks.none? && @unresolved_issues.none? %>
+      <p>
+        No active issues/tasks
+      </p>
+  <% end %>
+
   <% if @active_assignments&.any? %>
     <div class="user-assignments">
       <header class="tasks-header">
