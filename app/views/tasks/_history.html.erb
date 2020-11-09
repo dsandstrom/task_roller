@@ -10,6 +10,8 @@
     <%= content_tag :dt, user.name_or_email %>
     <%= content_tag :dd, "#{review.status} task (##{history.id}): #{format_date review.updated_at}" %>
   <% end %>
+<% elsif history.closed? %>
+  <%= render 'tasks/closed_history', task: history %>
 <% else %>
   <% user = history.user %>
   <% return unless user %>
