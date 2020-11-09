@@ -85,24 +85,12 @@
       </section>
 
       <% if duplicatee.present? %>
-        <%
-          confirm = "Are you sure you want to remove the connection to " \
-                    "\"#{duplicatee.short_summary}\" and reopen " \
-                    "this issue?"
-        %>
-
         <section class="issue-duplicatee">
           <h4 class="issue-column-title">Duplicate Of</h4>
           <%= render 'shared/issue', issue: duplicatee %>
 
-          <% if can?(:destroy, @issue.source_connection) %>
-            <p>
-              <%= link_to 'Mark not a duplicate and reopen',
-                           @issue.source_connection,
-                           method: :delete, class: 'destroy-link',
-                           data: { confirm: confirm } %>
-            </p>
-          <% end %>
+          <%= render @issue.source_connection %>
+
         </section>
       <% elsif @issue.open? && can?(:create, IssueConnection) %>
         <section class="issue-connections">
