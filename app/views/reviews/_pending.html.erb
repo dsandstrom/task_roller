@@ -1,0 +1,42 @@
+<%
+  task = review.task
+  return unless task
+
+  assignees = task.assignees
+%>
+
+<dl class="task-pending-review">
+  <% unless assignees.size == 1 && assignees.first == review.user %>
+    <dt>
+      <%= content_tag :strong, review.user.name_or_email %>
+    </dt>
+  <% end %>
+
+  <dd>
+    marked ready for review:
+    <%= format_date review.created_at %>
+  </dd>
+
+  <dd>
+    <% if can?(:approve, review) %>
+      <%= link_to 'approve',
+                  approve_task_review_path(task, review),
+                  method: :patch, class: 'create-link' %>
+    <% end %>
+
+    <% if can?(:disapprove, review) %>
+      <%= divider %>
+      <%= link_to 'disapprove',
+                  disapprove_task_review_path(task, review),
+                  method: :patch, class: 'destroy-link' %>
+    <% end %>
+
+    <% if can?(:destroy, review) %>
+      <% confirm = 'Are you sure you want to cancel the review?' %>
+      <%= link_to 'cancel review',
+                  task_review_path(task, review),
+                  method: :delete, data: { confirm: confirm },
+                  class: 'destroy-link' %>
+    <% end %>
+  </dd>
+</dl>
