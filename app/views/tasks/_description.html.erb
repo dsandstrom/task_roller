@@ -1,0 +1,13 @@
+<div class="comment task-description">
+  <header class="task-user-date">
+    <p><span class="task-user"><%= task.user ? task.user.name_or_email : User.destroyed_name %></span>:</p>
+  </header>
+
+  <%= content_tag :main, task.description_html.html_safe %>
+
+  <% if can?(:update, task)  %>
+    <footer>
+      <p><%= link_to 'edit', edit_task_path(task) %></p>
+    </footer>
+  <% end %>
+</div>
