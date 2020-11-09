@@ -14,13 +14,15 @@
 
       <section class="issue-tasks">
         <h4 class="issue-column-title">Tasks</h4>
-        <%= render partial: 'shared/task', collection: @issue.tasks %>
+        <%= render partial: 'shared/task',
+                   collection: @issue.tasks %>
 
         <% if @issue.open? && can?(:create, Task) %>
           <p class="new-issue-task">
             <%= icon('plus') %>
             <%= link_to 'Add Task',
-                        new_project_task_path(@project, task: { issue_id: @issue.id }),
+                        new_project_task_path(@project,
+                                              task: { issue_id: @issue.id }),
                         class: 'create-link' %>
           </p>
         <% elsif @issue.tasks.none? %>
@@ -56,22 +58,7 @@
             </dd>
           <% end %>
 
-          <% @issue.tasks.each do |task| %>
-            <% next unless task.user %>
-
-            <% if task.current_review %>
-              <% review = task.current_review  %>
-              <% next unless review.user %>
-
-              <% if review.pending? %>
-                <%= content_tag :dt, review.user.name_or_email %>
-                <%= content_tag :dd, "submitted for review task (##{task.id}): #{format_date review.created_at}" %>
-              <% else %>
-                <%= content_tag :dt, review.user.name_or_email %>
-                <%= content_tag :dd, "#{review.status} task (##{task.id}): #{format_date review.updated_at}" %>
-              <% end %>
-            <% end %>
-          <% end %>
+          <%= render partial: 'tasks/history', collection: @issue.tasks %>
 
           <% if @issue.addressed? &&
                 can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>

@@ -1,0 +1,19 @@
+<% if history.current_review %>
+  <% review = history.current_review  %>
+  <% user = review.user %>
+  <% return unless user %>
+
+  <% if review.pending? %>
+    <%= content_tag :dt, user.name_or_email %>
+    <%= content_tag :dd, "submitted for review task (##{history.id}): #{format_date review.created_at}" %>
+  <% else %>
+    <%= content_tag :dt, user.name_or_email %>
+    <%= content_tag :dd, "#{review.status} task (##{history.id}): #{format_date review.updated_at}" %>
+  <% end %>
+<% else %>
+  <% user = history.user %>
+  <% return unless user %>
+
+  <%= content_tag :dt, link_to(user.name_or_email, user_tasks_path(user)) %>
+  <%= content_tag :dd, "opened task (##{history.id}): #{format_date history.created_at}" %>
+<% end %>
