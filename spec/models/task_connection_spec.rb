@@ -6,25 +6,30 @@ RSpec.describe TaskConnection, type: :model do
   let(:project) { Fabricate(:project) }
   let(:source) { Fabricate(:task, project: project) }
   let(:target) { Fabricate(:task, project: project) }
+  let(:user) { Fabricate(:user_reviewer) }
 
   before do
     @task_connection =
-      TaskConnection.new(source_id: source.id, target_id: target.id)
+      TaskConnection.new(source_id: source.id, target_id: target.id,
+                         user_id: user.id)
   end
 
   subject { @task_connection }
 
   it { is_expected.to respond_to(:source_id) }
   it { is_expected.to respond_to(:target_id) }
+  it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:scheme) }
 
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_presence_of(:source_id) }
   it { is_expected.to validate_presence_of(:target_id) }
+  it { is_expected.to validate_presence_of(:user_id) }
 
   it { is_expected.to belong_to(:source) }
   it { is_expected.to belong_to(:target) }
+  it { is_expected.to respond_to(:user) }
 
   describe "#target_options" do
     let(:source) { Fabricate(:task) }

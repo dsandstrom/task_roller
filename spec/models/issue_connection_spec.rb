@@ -6,25 +6,30 @@ RSpec.describe IssueConnection, type: :model do
   let(:project) { Fabricate(:project) }
   let(:source) { Fabricate(:issue, project: project) }
   let(:target) { Fabricate(:issue, project: project) }
+  let(:user) { Fabricate(:user_reviewer) }
 
   before do
     @issue_connection =
-      IssueConnection.new(source_id: source.id, target_id: target.id)
+      IssueConnection.new(source_id: source.id, target_id: target.id,
+                          user_id: user.id)
   end
 
   subject { @issue_connection }
 
   it { is_expected.to respond_to(:source_id) }
   it { is_expected.to respond_to(:target_id) }
+  it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:scheme) }
 
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_presence_of(:source_id) }
   it { is_expected.to validate_presence_of(:target_id) }
+  it { is_expected.to validate_presence_of(:user_id) }
 
   it { is_expected.to belong_to(:source) }
   it { is_expected.to belong_to(:target) }
+  it { is_expected.to respond_to(:user) }
 
   describe "#target_options" do
     let(:source) { Fabricate(:issue) }

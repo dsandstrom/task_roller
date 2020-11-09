@@ -34,7 +34,8 @@ class IssueConnectionsController < ApplicationController
         target_id = issue_connection_params[:target_id]
       end
       @issue_connection =
-        IssueConnection.new(source_id: params[:source_id], target_id: target_id)
+        IssueConnection.new(source_id: params[:source_id], target_id: target_id,
+                            user_id: current_user.id)
       authorize! :create, @issue_connection
     end
 

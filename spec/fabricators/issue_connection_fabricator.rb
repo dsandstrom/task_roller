@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Fabricator(:issue_connection) do
+  user
   source do |attrs|
     if attrs[:target]&.project
       Fabricate(:issue, project: attrs[:target].project)

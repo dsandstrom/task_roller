@@ -31,7 +31,8 @@ class TaskConnectionsController < ApplicationController
     def build_task_connection
       target_id = task_connection_params[:target_id] if params[:task_connection]
       @task_connection =
-        TaskConnection.new(source_id: params[:source_id], target_id: target_id)
+        TaskConnection.new(source_id: params[:source_id], target_id: target_id,
+                           user_id: current_user.id)
       authorize! :create, @task_connection
     end
 

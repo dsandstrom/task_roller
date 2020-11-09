@@ -158,6 +158,52 @@ RSpec.describe Ability do
     end
   end
 
+  describe "IssueConnection model" do
+    %i[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their connection" do
+          let(:issue_connection) do
+            Fabricate(:issue_connection, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_connection) }
+          it { is_expected.to be_able_to(:read, issue_connection) }
+          it { is_expected.to be_able_to(:update, issue_connection) }
+          it { is_expected.to be_able_to(:destroy, issue_connection) }
+        end
+
+        context "when someone else's connection" do
+          let(:issue_connection) { Fabricate(:issue_connection) }
+
+          it { is_expected.not_to be_able_to(:create, issue_connection) }
+          it { is_expected.to be_able_to(:read, issue_connection) }
+          it { is_expected.not_to be_able_to(:update, issue_connection) }
+          it { is_expected.to be_able_to(:destroy, issue_connection) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:issue_connection) do
+          Fabricate(:issue_connection, user: current_user)
+        end
+
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.not_to be_able_to(:create, issue_connection) }
+        it { is_expected.to be_able_to(:read, issue_connection) }
+        it { is_expected.not_to be_able_to(:update, issue_connection) }
+        it { is_expected.not_to be_able_to(:destroy, issue_connection) }
+      end
+    end
+  end
+
   describe "IssueSubscription model" do
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
@@ -924,23 +970,41 @@ RSpec.describe Ability do
   end
 
   describe "TaskConnection model" do
-    let(:task_connection) { Fabricate(:task_connection) }
-
     %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
+
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.to be_able_to(:create, task_connection) }
-        it { is_expected.to be_able_to(:read, task_connection) }
-        it { is_expected.to be_able_to(:update, task_connection) }
-        it { is_expected.to be_able_to(:destroy, task_connection) }
+        context "when their connection" do
+          let(:task_connection) do
+            Fabricate(:task_connection, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, task_connection) }
+          it { is_expected.to be_able_to(:read, task_connection) }
+          it { is_expected.to be_able_to(:update, task_connection) }
+          it { is_expected.to be_able_to(:destroy, task_connection) }
+        end
+
+        context "when someone else's connection" do
+          let(:task_connection) { Fabricate(:task_connection) }
+
+          it { is_expected.not_to be_able_to(:create, task_connection) }
+          it { is_expected.to be_able_to(:read, task_connection) }
+          it { is_expected.not_to be_able_to(:update, task_connection) }
+          it { is_expected.to be_able_to(:destroy, task_connection) }
+        end
       end
     end
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:task_connection) do
+          Fabricate(:task_connection, user: current_user)
+        end
+
         subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.not_to be_able_to(:create, task_connection) }

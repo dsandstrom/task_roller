@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Fabricator(:task_connection) do
+  user
   source do |attrs|
     if attrs[:target]&.project
       Fabricate(:task, project: attrs[:target].project)
