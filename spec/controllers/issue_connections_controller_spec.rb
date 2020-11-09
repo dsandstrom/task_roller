@@ -62,6 +62,14 @@ RSpec.describe IssueConnectionsController, type: :controller do
             end.to change(target_issue.target_connections, :count).by(1)
           end
 
+          it "creates a new IssueSubscription for the current_user" do
+            expect do
+              post :create, params: { source_id: source_issue.to_param,
+                                      issue_connection: valid_attributes }
+              target_issue.reload
+            end.to change(current_user.issue_subscriptions, :count).by(2)
+          end
+
           it "creates a new IssueSubscription for the source user" do
             expect do
               post :create, params: { source_id: source_issue.to_param,
@@ -70,12 +78,12 @@ RSpec.describe IssueConnectionsController, type: :controller do
             end.to change(source_issue.user.issue_subscriptions, :count).by(1)
           end
 
-          it "creates a new IssueSubscription for the target issue" do
+          it "creates 2 IssueSubscriptions for the target issue" do
             expect do
               post :create, params: { source_id: source_issue.to_param,
                                       issue_connection: valid_attributes }
               target_issue.reload
-            end.to change(target_issue.issue_subscriptions, :count).by(1)
+            end.to change(target_issue.issue_subscriptions, :count).by(2)
           end
 
           it "closes the source issue" do

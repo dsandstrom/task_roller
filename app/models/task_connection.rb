@@ -22,8 +22,9 @@ class TaskConnection < ApplicationRecord
   end
 
   def subscribe_user
-    return unless target && source&.user
+    return unless user && target && source&.user
 
+    [source, target].each { |t| t&.subscribe_user(user) }
     target.task_subscriptions.create(user_id: source.user_id)
   end
 

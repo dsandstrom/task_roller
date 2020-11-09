@@ -20,9 +20,10 @@ class IssueConnection < ApplicationRecord
   end
 
   def subscribe_user
-    return unless target && source&.user
+    return unless user && target && source&.user
 
-    target.issue_subscriptions.create(user_id: source.user_id)
+    [source, target].each { |i| i&.subscribe_user(user) }
+    target.subscribe_user(source.user)
   end
 
   private

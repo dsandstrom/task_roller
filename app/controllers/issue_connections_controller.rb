@@ -6,7 +6,6 @@ class IssueConnectionsController < ApplicationController
 
   def new; end
 
-  # TODO: subscribe current_user too
   def create
     notice = 'Issue was successfully closed and marked as a duplicate.'
 

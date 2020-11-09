@@ -84,6 +84,23 @@ RSpec.describe IssueConnection, type: :model do
     context "when source and target issues" do
       let(:target) { Fabricate(:issue, project: project) }
 
+      context "and issue_connection has a user" do
+        let(:source) { Fabricate(:issue, project: project) }
+
+        let(:issue_connection) do
+          Fabricate(:issue_connection, source: source, target: target,
+                                       user: user)
+        end
+
+        context "that is not subscribed" do
+          it "creates 2 issue_subscriptions for the user" do
+            expect do
+              issue_connection.subscribe_user
+            end.to change(user.issue_subscriptions, :count).by(2)
+          end
+        end
+      end
+
       context "and source has a user" do
         let(:source) { Fabricate(:issue, project: project, user: user) }
 
@@ -97,12 +114,6 @@ RSpec.describe IssueConnection, type: :model do
               issue_connection.subscribe_user
             end.to change(user.issue_subscriptions, :count).by(1)
           end
-
-          it "creates only 1 IssueSubscription" do
-            expect do
-              issue_connection.subscribe_user
-            end.to change(IssueSubscription, :count).by(1)
-          end
         end
 
         context "that is already subscribed" do
@@ -113,22 +124,24 @@ RSpec.describe IssueConnection, type: :model do
           it "doesn't create a issue_subscription" do
             expect do
               issue_connection.subscribe_user
-            end.not_to change(IssueSubscription, :count)
+            end.not_to change(user.issue_subscriptions, :count)
           end
         end
       end
 
       context "and source doesn't have a user" do
-        let(:source) { Fabricate.build(:issue, project: project) }
+        let(:source) { Fabricate(:issue, project: project) }
 
         let(:issue_connection) do
-          Fabricate.build(:issue_connection, source: source, target: target)
+          Fabricate(:issue_connection, source: source, target: target)
         end
+
+        before { source.update_attribute :user_id, nil }
 
         it "doesn't create a issue_subscription" do
           expect do
             issue_connection.subscribe_user
-          end.not_to change(IssueSubscription, :count)
+          end.not_to change(user.issue_subscriptions, :count)
         end
       end
     end
