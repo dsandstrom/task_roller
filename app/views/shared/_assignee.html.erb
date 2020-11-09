@@ -5,10 +5,10 @@
                   class: 'assignee-name' %>
 </dt>
 
-<dd id="assignee-progressions-<%= assignee.id %>"
-    class="assignee-progressions">
-  <% if progress.present? %>
+<% if progress.present? %>
+  <dd id="assignee-progressions-<%= assignee.id %>"
+      class="assignee-progressions">
     made progress:
     <%= progress %>
-  <% end %>
-</dd>
+  </dd>
+<% end %>
