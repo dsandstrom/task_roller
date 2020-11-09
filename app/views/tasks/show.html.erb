@@ -169,6 +169,13 @@ review = @task.current_review
 
           <% if @task.concluded_reviews.any? %>
             <%= render @task.concluded_reviews, task: @task %>
+          <% elsif @task.closed? %>
+            <%= content_tag :dt, "Reviewer" %>
+            <% if @task.source_task_connection %>
+              <%= content_tag :dd, "marked as duplicate (##{@task.duplicatee.id}): #{format_date @task.source_task_connection.created_at}", class: 'task-closed' %>
+            <% else %>
+              <%= content_tag :dd, "closed task", class: 'task-closed' %>
+            <% end %>
           <% end %>
         </dl>
       </section>
