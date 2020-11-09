@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add user_id for history
-
 class TaskConnection < ApplicationRecord
   validates :source_id, presence: true
   validates :target_id, presence: true

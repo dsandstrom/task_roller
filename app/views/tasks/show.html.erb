@@ -163,8 +163,8 @@ review = @task.current_review
                        locals: { task: @task } %>
           <% end %>
 
-          <dt>Reviewer</dt>
           <% if @task.opened_at != @task.created_at %>
+            <dt>Reviewer</dt>
             <%= content_tag :dd, "reopened: #{format_date @task.opened_at}",
                             class: 'task-opened-at' %>
           <% end %>
