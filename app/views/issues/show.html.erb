@@ -40,9 +40,13 @@
           <% end %>
           <%= content_tag :dd, "opened: #{format_date @issue.created_at}",
                           class: 'issue-created-at' %>
-          <% if @issue.created_at != @issue.updated_at %>
+          <% if @issue.updated_at != @issue.created_at %>
             <%= content_tag :dd, "updated: #{format_date @issue.updated_at}",
                             class: 'issue-updated-at' %>
+          <% end %>
+          <% if @issue.opened_at != @issue.created_at %>
+            <%= content_tag :dd, "reopened: #{format_date @issue.opened_at}",
+                            class: 'issue-opened-at' %>
           <% end %>
 
           <% if @issue.current_resolution %>

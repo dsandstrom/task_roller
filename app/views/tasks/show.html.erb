@@ -152,9 +152,13 @@ review = @task.current_review
           <% end %>
           <%= content_tag :dd, "opened: #{format_date @task.created_at}",
                           class: 'task-created-at' %>
-          <% if @task.created_at != @task.updated_at %>
+          <% if @task.updated_at != @task.created_at %>
             <%= content_tag :dd, "updated: #{format_date @task.updated_at}",
                             class: 'task-updated-at' %>
+          <% end %>
+          <% if @task.opened_at != @task.created_at %>
+            <%= content_tag :dd, "reopened: #{format_date @task.opened_at}",
+                            class: 'task-opened-at' %>
           <% end %>
 
           <% if assigned.any? %>
