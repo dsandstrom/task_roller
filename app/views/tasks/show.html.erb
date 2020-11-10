@@ -106,39 +106,28 @@ review = @task.current_review
         <section class="task-duplicates">
           <h4 class="task-column-title">Duplicate Tasks</h4>
 
-          <%= render partial: 'shared/task', collection: @task.duplicates %>
+          <%= render partial: 'shared/task',
+                     collection: @task.duplicates %>
         </section>
       <% end %>
 
-      <% if @task.duplicatee.present? %>
+      <%
+        task_connection = @task.source_task_connection
+        if task_connection.present?
+      %>
         <section class="task-duplicatee">
           <h4 class="task-column-title">Duplicate Of</h4>
-          <% duplicatee = @task.duplicatee %>
 
-          <%= render 'shared/task', task: duplicatee %>
-
-          <% if can?(:destroy, TaskConnection) %>
-            <%
-              confirm = "Are you sure you want to remove the connection to " \
-                        "\"#{duplicatee.short_summary}\" and reopen " \
-                        "this task?"
-            %>
-            <p>
-              <%= link_to 'Mark not a duplicate and reopen',
-                           @task.source_task_connection,
-                           method: :delete, class: 'destroy-link',
-                           data: { confirm: confirm } %>
-            </p>
-          <% end %>
+          <%= render task_connection %>
         </section>
       <% elsif @task.open? && !@task.in_review? &&
                can?(:create, TaskConnection) %>
         <section class="task-connections">
           <h4 class="task-column-title">Task Connections</h4>
           <p>
-            <%= link_to 'mark duplicate',
+            <%= link_to 'mark as duplicate and close',
                         new_task_connection_path(@task),
-                        class: 'normal-link' %>
+                        class: 'destroy-link' %>
           </p>
         </section>
       <% end %>

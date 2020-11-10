@@ -11,56 +11,61 @@
 %>
 
 <div id="task-<%= task.id %>" class="task">
-  <header class="task-header">
-    <h3 class="task-summary">
-      <%= link_to task.id_and_summary, task_path(task) %>
-    </h3>
-  </header>
-
-  <main class="task-main">
-    <%= task_tags(task) %>
-
-    <% if project && category %>
-      <p>
-        Project: <%= link_to_unless_current project.name,
-                                            project_tasks_path(project) %>
-        (<%= link_to_unless_current category.name,
-                                    category_tasks_path(category) %>)
-      </p>
-    <% end %>
-
-    <% if issue %>
-      <p class="task-issue">
-        Addresses
-        <%= link_to issue.heading, issue_path(issue) %>
-      </p>
-    <% end %>
-
-    <% if assignees.any? %>
-      <p class="task-assignees">
-        Assigned to <%= safe_join(assignees, ', ') %>
-      </p>
-    <% end %>
-
-    <p class="task-dates">
-      Opened
-      <%= content_tag :strong, format_date(task.created_at),
-                      class: 'task-dates' %>
-      by
-      <% if user %>
-        <%= link_to_unless_current user.name_or_email,
-                                   user_tasks_path(user),
-                                   class: 'task-user' %>
-      <% end %>
-      <% if task.created_at != task.updated_at %>
-        <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
+  <% if project && category %>
+    <header class="task-header">
+      <% unless project_page?(project) %>
+        <%
+          breadcrumb_pages =
+            if category_page?(category)
+              [[project.name, project]]
+            else
+              [[category.name, category], [project.name, project]]
+            end
+        %>
+        <%= breadcrumbs breadcrumb_pages %>
       <% end %>
 
-      <% if can?(:update, task) %>
-        <%= divider %>
-        <%= link_to 'Edit', edit_task_path(task),
-                    class: 'secondary-link' %>
+      <h3 class="task-summary">
+        <%= link_to task.id_and_summary, task_path(task) %>
+      </h3>
+    </header>
+
+    <main class="task-main">
+      <%= task_tags(task) %>
+
+      <% if issue %>
+        <p class="task-issue">
+          Addresses
+          <%= link_to issue.heading, issue_path(issue) %>
+        </p>
       <% end %>
-    </p>
-  </main>
+
+      <% if assignees.any? %>
+        <p class="task-assignees">
+          Assigned to <%= safe_join(assignees, ', ') %>
+        </p>
+      <% end %>
+
+      <p class="task-dates">
+        Opened
+        <%= content_tag :strong, format_date(task.created_at),
+                        class: 'task-dates' %>
+        by
+        <% if user %>
+          <%= link_to_unless_current user.name_or_email,
+                                     user_tasks_path(user),
+                                     class: 'task-user' %>
+        <% end %>
+        <% if task.created_at != task.updated_at %>
+          <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
+        <% end %>
+
+        <% if can?(:update, task) %>
+          <%= divider %>
+          <%= link_to 'Edit', edit_task_path(task),
+                      class: 'secondary-link' %>
+        <% end %>
+      </p>
+    </main>
+  <% end %>
 </div>

@@ -1,16 +1,14 @@
+<% issue = resolution.issue %>
+<% return unless issue && can?(:destroy, resolution) %>
+
 <%
   confirm =
     'Are you sure you want to delete the resolution and reopen the issue'
 %>
 
-<%= content_tag :dt, resolution.user&.name_or_email %>
-<%= content_tag :dd, "marked resolved: #{format_date resolution.updated_at}" %>
-
-<% if can?(:destroy, resolution) %>
-  <dd>
-    <%= link_to 'delete resolution and reopen',
-                issue_resolution_path(issue, resolution),
-                method: :delete, data: { confirm: confirm },
-                class: 'destroy-link' %>
-  </dd>
-<% end %>
+<p>
+  <%= link_to 'delete resolution and reopen',
+              issue_resolution_path(issue, resolution),
+              method: :delete, data: { confirm: confirm },
+              class: 'destroy-link' %>
+</p>

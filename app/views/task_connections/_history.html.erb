@@ -1,0 +1,9 @@
+<%
+  value = "marked as duplicate (##{task_connection.target_id}): "\
+          "#{format_date task_connection.created_at}"
+%>
+
+<%= content_tag :dt, task_connection.user&.name_or_email,
+                class: 'task-connection-user' %>
+<%= content_tag :dd, value,
+                class: "task-connection-#{task_connection.id}" %>

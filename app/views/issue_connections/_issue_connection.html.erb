@@ -1,3 +1,5 @@
+<%= render 'shared/issue', issue: issue_connection.target %>
+
 <% if can?(:destroy, issue_connection) %>
   <%
     confirm = "Are you sure you want to remove the connection to "\

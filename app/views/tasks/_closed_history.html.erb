@@ -1,5 +1,6 @@
 <% if task.source_task_connection %>
-  <%= render task.source_task_connection %>
+  <%= render 'task_connections/history',
+             task_connection: task.source_task_connection %>
 <% else %>
   <dt>Reviewer</dt>
   <%= content_tag :dd, "closed task", class: 'task-closed' %>

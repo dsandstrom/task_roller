@@ -5,7 +5,7 @@
 
   <% if review.pending? %>
     <%= content_tag :dt, user.name_or_email %>
-    <%= content_tag :dd, "submitted for review task (##{history.id}): #{format_date review.created_at}" %>
+    <%= content_tag :dd, "submitted task for review (##{history.id}): #{format_date review.created_at}" %>
   <% else %>
     <%= content_tag :dt, user.name_or_email %>
     <%= content_tag :dd, "#{review.status} task (##{history.id}): #{format_date review.updated_at}" %>

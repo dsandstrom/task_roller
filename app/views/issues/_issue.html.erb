@@ -6,6 +6,18 @@
 
 <div id="issue-<%= issue.id %>" class="issue">
   <header class="issue-header">
+    <% unless project_page?(project) %>
+      <%
+        breadcrumb_pages =
+          if category_page?(category)
+            [[project.name, project]]
+          else
+            [[category.name, category], [project.name, project]]
+          end
+      %>
+      <%= breadcrumbs breadcrumb_pages %>
+    <% end %>
+
     <h3 class="issue-summary">
       <%= link_to issue.id_and_summary, issue_path(issue) %>
     </h3>
