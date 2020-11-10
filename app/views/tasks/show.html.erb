@@ -121,21 +121,33 @@ review = @task.current_review
           <%= render task_connection %>
         </section>
       <% elsif @task.open? && !@task.in_review? &&
-               can?(:create, TaskConnection) %>
+              (can?(:create, TaskConnection) || can?(:close, @task)) %>
         <section class="task-connections">
           <h4 class="task-column-title">Task Actions</h4>
-          <p>
-            <%= link_to 'mark as duplicate and close',
-                        new_task_connection_path(@task),
-                        class: 'normal-link' %>
-          </p>
+          <% if can?(:create, TaskConnection) %>
+            <p>
+              <%= link_to 'mark as duplicate and close',
+                          new_task_connection_path(@task),
+                          class: 'normal-link' %>
+            </p>
+          <% end %>
           <% if can?(:close, @task) %>
             <p>
               <%= link_to 'mark invalid and close',
-                          close_task_path(@task),
+                          close_task_path(@task), method: :patch,
                           class: 'destroy-link' %>
             </p>
           <% end %>
+        </section>
+      <% elsif @task.closed? && !@task.source_connection &&
+            can?(:open, @task) %>
+        <section class="task-connections">
+          <h4 class="task-column-title">Task Actions</h4>
+          <p>
+            <%= link_to 'reopen task',
+                        open_task_path(@task), method: :patch,
+                        class: 'destroy-link' %>
+          </p>
         </section>
       <% end %>
 

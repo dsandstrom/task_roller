@@ -6,6 +6,7 @@ RSpec.describe "tasks/show", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:task) { Fabricate(:task, project: project) }
+  let(:closed_task) { Fabricate(:closed_task, project: project) }
 
   before(:each) { @category = assign(:category, category) }
 
@@ -97,10 +98,20 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "#comment-#{@task_comment.id}"
         end
       end
+    end
 
-      it "render close link" do
+    context "when task is open" do
+      let(:task) { Fabricate(:task) }
+
+      before do
+        @task = assign(:task, task)
+        @task_subscription = assign(:task_subscription, task_subscription)
+      end
+
+      it "renders close link" do
         render
-        expect(rendered).to have_link(nil, href: close_task_path(@task))
+        url = close_task_path(@task)
+        assert_select "a[href='#{url}'][data-method='patch']"
       end
     end
 
@@ -214,6 +225,11 @@ RSpec.describe "tasks/show", type: :view do
         url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
     end
 
     context "when task doesn't have a source_connection" do
@@ -229,9 +245,24 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has a source_connection" do
+    context "when task is closed without approved review or duplicate" do
+      let(:task) { Fabricate(:closed_task) }
+
       before do
         @task = assign(:task, task)
+        @task_subscription = assign(:task_subscription, task_subscription)
+      end
+
+      it "renders reopen link" do
+        render
+        url = open_task_path(@task)
+        assert_select "a[href='#{url}'][data-method='patch']"
+      end
+    end
+
+    context "when task is closed with source_connection" do
+      before do
+        @task = assign(:task, closed_task)
         assign(:task_subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, source: @task)
       end
@@ -253,6 +284,89 @@ RSpec.describe "tasks/show", type: :view do
         render
         expect(rendered)
           .not_to have_link(nil, href: new_task_connection_path(@task))
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+
+      it "doesn't render reopen link" do
+        render
+        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+      end
+    end
+
+    context "when task is closed with approved review" do
+      before do
+        @task = assign(:task, closed_task)
+        assign(:task_subscription, task_subscription)
+        @review = Fabricate(:approved_review, task: @task)
+      end
+
+      it "doesn't render a new task connection link" do
+        render
+        expect(rendered)
+          .not_to have_link(nil, href: new_task_connection_path(@task))
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+
+      it "renders reopen link" do
+        render
+        expect(rendered).to have_link(nil, href: open_task_path(@task))
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when task is closed with disapproved review" do
+      before do
+        @task = assign(:task, closed_task)
+        assign(:task_subscription, task_subscription)
+        @review = Fabricate(:disapproved_review, task: @task)
+      end
+
+      it "renders reopen link" do
+        render
+        expect(rendered).to have_link(nil, href: open_task_path(@task))
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+      end
+    end
+
+    context "when task is open with disapproved review" do
+      before do
+        @task = assign(:task, task)
+        assign(:task_subscription, task_subscription)
+        @review = Fabricate(:disapproved_review, task: @task)
+      end
+
+      it "renders close link" do
+        render
+        expect(rendered).to have_link(nil, href: close_task_path(@task))
+      end
+
+      it "doesn't render reopen link" do
+        render
+        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+      end
+
+      it "doesn't render destroy review link" do
+        render
+        url = task_review_path(@task, @review)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
     end
 
@@ -377,6 +491,11 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
       end
     end
 
@@ -698,6 +817,42 @@ RSpec.describe "tasks/show", type: :view do
         it "renders close link" do
           render
           expect(rendered).to have_link(nil, href: close_task_path(@task))
+        end
+      end
+
+      context "is closed" do
+        let(:task) { Fabricate(:closed_task, user: reviewer) }
+
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        context "without a duplicate" do
+          it "doesn't render close link" do
+            render
+            expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+          end
+
+          it "renders open link" do
+            render
+            expect(rendered).to have_link(nil, href: open_task_path(@task))
+          end
+        end
+
+        context "with a duplicate" do
+          before { Fabricate(:task_connection, source: task) }
+
+          it "doesn't render close link" do
+            render
+            expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+          end
+
+          it "doesn't render open link" do
+            render
+            expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+          end
         end
       end
     end
