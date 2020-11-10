@@ -255,6 +255,19 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     project.issue_subscribers.each { |u| subscribe_user(u) }
   end
 
+  def approved_tasks
+    @approved_tasks ||= tasks.all_approved
+  end
+
+  def addressed_at
+    return if approved_tasks.none?
+
+    @addressed_at ||=
+      approved_tasks
+      .select('tasks.id, MAX(reviews.updated_at) AS addressed_at')
+      .group(:id).order(addressed_at: :desc).first&.addressed_at
+  end
+
   private
 
     def set_opened_at

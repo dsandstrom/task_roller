@@ -1240,4 +1240,117 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#approved_tasks" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no tasks" do
+      it "returns []" do
+        expect(issue.approved_tasks).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      it "returns all approved" do
+        task = Fabricate(:approved_task, issue: issue)
+        Fabricate(:pending_task, issue: issue)
+
+        expect(issue.approved_tasks).to eq([task])
+      end
+    end
+  end
+
+  describe "#addressed_at" do
+    let(:issue) { Fabricate(:closed_issue) }
+
+    context "when no tasks" do
+      it "returns nil" do
+        expect(issue.addressed_at).to be_nil
+      end
+    end
+
+    context "when 1 open task" do
+      before { Fabricate(:open_task, issue: issue) }
+
+      it "returns nil" do
+        expect(issue.addressed_at).to be_nil
+      end
+    end
+
+    context "when a disapproved task" do
+      before { Fabricate(:disapproved_task, issue: issue) }
+
+      it "returns nil" do
+        expect(issue.addressed_at).to be_nil
+      end
+    end
+
+    context "when 1 approved task" do
+      it "returns it's review date" do
+        task = Fabricate(:closed_task, issue: issue)
+        review = Fabricate(:approved_review, task: task)
+
+        expect(issue.addressed_at).to eq(review.updated_at)
+      end
+    end
+
+    context "when previously approved task" do
+      before do
+        task = nil
+        Timecop.freeze(1.day.ago) do
+          task = Fabricate(:approved_task, issue: issue)
+        end
+        Fabricate(:disapproved_review, task: task)
+      end
+
+      it "returns nil" do
+        expect(issue.addressed_at).to be_nil
+      end
+    end
+
+    context "when previously disapproved task" do
+      it "returns it's approved review date" do
+        task = nil
+        Timecop.freeze(1.day.ago) do
+          task = Fabricate(:disapproved_task, issue: issue)
+        end
+        review = Fabricate(:approved_review, task: task)
+
+        expect(issue.addressed_at).to eq(review.updated_at)
+      end
+    end
+
+    context "when approved and pending tasks" do
+      it "returns approved's review date" do
+        task = nil
+        review = nil
+        Timecop.freeze(2.days.ago) do
+          task = Fabricate(:closed_task, issue: issue)
+          Fabricate(:pending_task, issue: issue)
+        end
+        Timecop.freeze(1.day.ago) do
+          review = Fabricate(:approved_review, task: task)
+        end
+        Fabricate(:pending_task, issue: issue)
+
+        expect(issue.addressed_at).to eq(review.updated_at)
+      end
+    end
+
+    context "when 2 approved tasks" do
+      it "returns latest review date" do
+        first_task = nil
+        Timecop.freeze(2.days.ago) do
+          first_task = Fabricate(:closed_task, issue: issue)
+        end
+        Timecop.freeze(1.day.ago) do
+          Fabricate(:approved_review, task: first_task)
+        end
+        second_task = Fabricate(:closed_task, issue: issue)
+        review = Fabricate(:approved_review, task: second_task)
+
+        expect(issue.addressed_at).to eq(review.updated_at)
+      end
+    end
+  end
 end
