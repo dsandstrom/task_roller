@@ -211,7 +211,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task doesn't have a source_task_connection" do
+    context "when task doesn't have a source_connection" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -224,7 +224,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has a source_task_connection" do
+    context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -251,7 +251,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has target_task_connections" do
+    context "when task has target_connections" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -466,7 +466,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has a source_task_connection" do
+    context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -487,7 +487,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has target_task_connections" do
+    context "when task has target_connections" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -912,7 +912,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has a source_task_connection" do
+    context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -933,7 +933,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has target_task_connections" do
+    context "when task has target_connections" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -1082,7 +1082,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has a source_task_connection" do
+    context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)
@@ -1103,7 +1103,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task has target_task_connections" do
+    context "when task has target_connections" do
       before do
         @task = assign(:task, task)
         assign(:task_subscription, task_subscription)

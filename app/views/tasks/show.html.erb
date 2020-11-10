@@ -112,7 +112,7 @@ review = @task.current_review
       <% end %>
 
       <%
-        task_connection = @task.source_task_connection
+        task_connection = @task.source_connection
         if task_connection.present?
       %>
         <section class="task-duplicatee">

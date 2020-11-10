@@ -43,8 +43,8 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:comments).dependent(:destroy) }
   it { is_expected.to have_many(:progressions) }
   it { is_expected.to have_many(:reviews) }
-  it { is_expected.to have_one(:source_task_connection).dependent(:destroy) }
-  it { is_expected.to have_many(:target_task_connections).dependent(:destroy) }
+  it { is_expected.to have_one(:source_connection).dependent(:destroy) }
+  it { is_expected.to have_many(:target_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
   it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
@@ -994,7 +994,7 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "when source_task_connection" do
+    context "when source_connection" do
       before { Fabricate(:task_connection, source: task) }
 
       it "returns true" do

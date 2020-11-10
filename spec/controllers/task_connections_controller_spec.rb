@@ -53,14 +53,14 @@ RSpec.describe TaskConnectionsController, type: :controller do
               post :create, params: { source_id: source_task.to_param,
                                       task_connection: valid_attributes }
               source_task.reload
-            end.to change(source_task, :source_task_connection).from(nil)
+            end.to change(source_task, :source_connection).from(nil)
           end
 
           it "creates a new TaskConnection for the target" do
             expect do
               post :create, params: { source_id: source_task.to_param,
                                       task_connection: valid_attributes }
-            end.to change(target_task.target_task_connections, :count).by(1)
+            end.to change(target_task.target_connections, :count).by(1)
           end
 
           it "creates 2 TaskSubscriptions for the target" do
