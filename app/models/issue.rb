@@ -268,6 +268,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(addressed_at: :desc).first&.addressed_at
   end
 
+  def duplicate?
+    @duplicate ||= source_connection.present?
+  end
+
   private
 
     def set_opened_at
@@ -289,6 +293,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
         'resolved'
       elsif addressed?
         'addressed'
+      elsif duplicate?
+        'duplicate'
       else
         'closed'
       end

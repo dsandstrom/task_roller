@@ -833,6 +833,26 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe "#duplicate?" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when target_issue_connection" do
+      before { Fabricate(:issue_connection, target: issue) }
+
+      it "returns false" do
+        expect(issue.duplicate?).to eq(false)
+      end
+    end
+
+    context "when source_issue_connection" do
+      before { Fabricate(:issue_connection, source: issue) }
+
+      it "returns true" do
+        expect(issue.duplicate?).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no tasks" do
@@ -903,6 +923,16 @@ RSpec.describe Issue, type: :model do
 
         it "returns 'closed'" do
           expect(issue.status).to eq("closed")
+        end
+      end
+
+      context "and duplicate? returns true" do
+        before do
+          allow(issue).to receive(:duplicate?) { true }
+        end
+
+        it "returns 'duplicate'" do
+          expect(issue.status).to eq("duplicate")
         end
       end
     end
