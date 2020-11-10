@@ -13,34 +13,38 @@
       </section>
 
 
-      <% if @issue.addressed? &&
-            can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
-        <section class="issue-resolution">
-          <h4 class="issue-column-title">Resolution</h4>
+      <% if @issue.addressed? %>
+        <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+          <section class="issue-resolution">
+            <h4 class="issue-column-title">Resolution</h4>
 
-          <p>
-            <%= link_to 'report issue was not fixed and reopen',
-                        disapprove_issue_resolutions_path(@issue),
-                        method: :post, class: 'destroy-link' %>
-          </p>
-        </section>
+            <p>
+              <%= link_to 'report issue was not fixed and reopen',
+                          disapprove_issue_resolutions_path(@issue),
+                          method: :post, class: 'destroy-link' %>
+            </p>
+          </section>
+        <% end %>
       <% elsif @issue.current_resolution %>
-        <section class="issue-resolution">
-          <h4 class="issue-column-title">Resolution</h4>
-          <%= render 'shared/resolution',
-                     resolution: @issue.current_resolution,
-                     issue: @issue %>
-        </section>
-      <% elsif @issue.unresolved? &&
-            can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
-        <section class="issue-resolution">
-          <h4 class="issue-column-title">Resolution</h4>
-          <p>
-            <%= link_to 'mark resolved and close',
-                        approve_issue_resolutions_path(@issue),
-                        method: :post, class: 'destroy-link' %>
-          </p>
-        </section>
+        <% if can?(:destroy, @issue.current_resolution) %>
+          <section class="issue-resolution">
+            <h4 class="issue-column-title">Resolution</h4>
+            <%= render 'shared/resolution',
+                       resolution: @issue.current_resolution,
+                       issue: @issue %>
+          </section>
+        <% end %>
+      <% elsif @issue.unresolved? %>
+        <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+          <section class="issue-resolution">
+            <h4 class="issue-column-title">Resolution</h4>
+            <p>
+              <%= link_to 'mark resolved and close',
+                          approve_issue_resolutions_path(@issue),
+                          method: :post, class: 'destroy-link' %>
+            </p>
+          </section>
+        <% end %>
       <% end %>
 
       <section class="issue-tasks">
