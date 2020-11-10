@@ -74,6 +74,12 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
          as: "#{roller}_connections"
     delete "/#{roller}_connections/:id" => "#{roller}_connections#destroy",
            as: "#{roller}_connection"
+    get "/#{roller}_closures/:#{roller}_id/new" => "#{roller}_closures#new",
+        as: "new_#{roller}_closure"
+    post "/#{roller}_closures/:#{roller}_id" => "#{roller}_closures#create",
+         as: "#{roller}_closures"
+    delete "/#{roller}_closures/:id" => "#{roller}_closures#destroy",
+           as: "#{roller}_closure"
   end
 
   %w[issues tasks].each do |roller|

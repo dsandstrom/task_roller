@@ -1,0 +1,13 @@
+<% if can?(:destroy, task_closure) %>
+  <%
+    confirm = "Are you sure you want to remove the closure for "\
+              task_closure.task.heading
+  %>
+
+  <p>
+    <%= link_to 'remove closure',
+                 task_closure,
+                 method: :delete, class: 'destroy-link',
+                 data: { confirm: confirm } %>
+  </p>
+<% end %>

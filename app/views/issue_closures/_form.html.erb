@@ -1,0 +1,17 @@
+<%
+  url =
+    if issue_closure.persisted?
+      issue_closure_path(issue_closure)
+    else
+      issue_closures_path(issue_closure.issue)
+    end
+%>
+
+<%= form_with(model: issue_closure, url: url, local: true,
+              html: { name: :issue_closure_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

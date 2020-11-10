@@ -1,0 +1,17 @@
+<%
+  url =
+    if task_closure.persisted?
+      task_closure_path(task_closure)
+    else
+      task_closures_path(task_closure.task)
+    end
+%>
+
+<%= form_with(model: task_closure, url: url, local: true,
+              html: { name: :task_closure_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
