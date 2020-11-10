@@ -301,6 +301,80 @@ RSpec.describe Ability do
     end
   end
 
+  describe "IssueReopening model" do
+    %i[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:issue_reopening) do
+            Fabricate(:issue_reopening, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "when someone else's reopening" do
+          let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.to be_able_to(:destroy, issue_reopening) }
+        end
+      end
+    end
+
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their reopening" do
+          let(:issue_reopening) do
+            Fabricate(:issue_reopening, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "when someone else's reopening" do
+          let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:issue_reopening) do
+          Fabricate(:issue_reopening, user: current_user)
+        end
+
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.not_to be_able_to(:create, issue_reopening) }
+        it { is_expected.to be_able_to(:read, issue_reopening) }
+        it { is_expected.not_to be_able_to(:update, issue_reopening) }
+        it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+      end
+    end
+  end
+
   describe "IssueSubscription model" do
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
@@ -348,58 +422,6 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, issue_subscription) }
           it { is_expected.not_to be_able_to(:update, issue_subscription) }
           it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
-        end
-      end
-    end
-  end
-
-  describe "TaskSubscription model" do
-    describe "for an admin" do
-      let(:admin) { Fabricate(:user_admin) }
-      subject(:ability) { Ability.new(admin) }
-
-      context "when belongs to them" do
-        let(:task_subscription) { Fabricate(:task_subscription, user: admin) }
-
-        it { is_expected.to be_able_to(:create, task_subscription) }
-        it { is_expected.to be_able_to(:read, task_subscription) }
-        it { is_expected.to be_able_to(:update, task_subscription) }
-        it { is_expected.to be_able_to(:destroy, task_subscription) }
-      end
-
-      context "when doesn't belong to them" do
-        let(:task_subscription) { Fabricate(:task_subscription) }
-
-        it { is_expected.not_to be_able_to(:create, task_subscription) }
-        it { is_expected.not_to be_able_to(:read, task_subscription) }
-        it { is_expected.not_to be_able_to(:update, task_subscription) }
-        it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-      end
-    end
-
-    %i[reviewer worker reporter].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        subject(:ability) { Ability.new(current_user) }
-
-        context "when belongs to them" do
-          let(:task_subscription) do
-            Fabricate(:task_subscription, user: current_user)
-          end
-
-          it { is_expected.to be_able_to(:create, task_subscription) }
-          it { is_expected.to be_able_to(:read, task_subscription) }
-          it { is_expected.to be_able_to(:update, task_subscription) }
-          it { is_expected.to be_able_to(:destroy, task_subscription) }
-        end
-
-        context "when doesn't belong to them" do
-          let(:task_subscription) { Fabricate(:task_subscription) }
-
-          it { is_expected.not_to be_able_to(:create, task_subscription) }
-          it { is_expected.not_to be_able_to(:read, task_subscription) }
-          it { is_expected.not_to be_able_to(:update, task_subscription) }
-          it { is_expected.not_to be_able_to(:destroy, task_subscription) }
         end
       end
     end
@@ -1180,6 +1202,80 @@ RSpec.describe Ability do
     end
   end
 
+  describe "TaskReopening model" do
+    %i[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:task_reopening) do
+            Fabricate(:task_reopening, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.to be_able_to(:destroy, task_reopening) }
+        end
+
+        context "when someone else's reopening" do
+          let(:task_reopening) { Fabricate(:task_reopening) }
+
+          it { is_expected.not_to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.to be_able_to(:destroy, task_reopening) }
+        end
+      end
+    end
+
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their reopening" do
+          let(:task_reopening) do
+            Fabricate(:task_reopening, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+        end
+
+        context "when someone else's reopening" do
+          let(:task_reopening) { Fabricate(:task_reopening) }
+
+          it { is_expected.not_to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:task_reopening) do
+          Fabricate(:task_reopening, user: current_user)
+        end
+
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.not_to be_able_to(:create, task_reopening) }
+        it { is_expected.to be_able_to(:read, task_reopening) }
+        it { is_expected.not_to be_able_to(:update, task_reopening) }
+        it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+      end
+    end
+  end
+
   describe "TaskType model" do
     let(:task_type) { Fabricate(:task_type) }
 
@@ -1204,6 +1300,58 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, task_type) }
         it { is_expected.not_to be_able_to(:update, task_type) }
         it { is_expected.not_to be_able_to(:destroy, task_type) }
+      end
+    end
+  end
+
+  describe "TaskSubscription model" do
+    describe "for an admin" do
+      let(:admin) { Fabricate(:user_admin) }
+      subject(:ability) { Ability.new(admin) }
+
+      context "when belongs to them" do
+        let(:task_subscription) { Fabricate(:task_subscription, user: admin) }
+
+        it { is_expected.to be_able_to(:create, task_subscription) }
+        it { is_expected.to be_able_to(:read, task_subscription) }
+        it { is_expected.to be_able_to(:update, task_subscription) }
+        it { is_expected.to be_able_to(:destroy, task_subscription) }
+      end
+
+      context "when doesn't belong to them" do
+        let(:task_subscription) { Fabricate(:task_subscription) }
+
+        it { is_expected.not_to be_able_to(:create, task_subscription) }
+        it { is_expected.not_to be_able_to(:read, task_subscription) }
+        it { is_expected.not_to be_able_to(:update, task_subscription) }
+        it { is_expected.not_to be_able_to(:destroy, task_subscription) }
+      end
+    end
+
+    %i[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when belongs to them" do
+          let(:task_subscription) do
+            Fabricate(:task_subscription, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, task_subscription) }
+          it { is_expected.to be_able_to(:read, task_subscription) }
+          it { is_expected.to be_able_to(:update, task_subscription) }
+          it { is_expected.to be_able_to(:destroy, task_subscription) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:task_subscription) { Fabricate(:task_subscription) }
+
+          it { is_expected.not_to be_able_to(:create, task_subscription) }
+          it { is_expected.not_to be_able_to(:read, task_subscription) }
+          it { is_expected.not_to be_able_to(:update, task_subscription) }
+          it { is_expected.not_to be_able_to(:destroy, task_subscription) }
+        end
       end
     end
   end
