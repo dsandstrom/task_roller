@@ -38,6 +38,8 @@ class Ability
       can :read, IssueComment
       can %i[create update], IssueComment, user_id: user.id
       can :read, IssueConnection
+      can :read, IssueClosure
+      can :read, TaskClosure
       can :manage, IssueSubscription, user_id: user.id
       can :create, Resolution, user_id: user.id, issue: { user_id: user.id }
       can :read, Resolution
@@ -67,11 +69,21 @@ class Ability
 
     def reviewer_abilities(user)
       can %i[create update], Category
+      can %i[create update], Project
+      reviewer_issue_abilities(user)
+      reviewer_task_abilities(user)
+    end
+
+    def reviewer_issue_abilities(user)
       can %i[open close], Issue
+      can :create, IssueClosure, user_id: user.id
+      can :create, TaskClosure, user_id: user.id
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
-      can %i[create update], Project
       can %i[approve disapprove], Review, approved: nil
+    end
+
+    def reviewer_task_abilities(user)
       can %i[create open close], Task, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
@@ -83,6 +95,8 @@ class Ability
       admin_task_abilities(user)
       can :destroy, Category
       can :destroy, Project
+      can :destroy, IssueClosure
+      can :destroy, TaskClosure
       can :manage, IssueType
       can :manage, TaskType
       can %i[create update destroy], User

@@ -187,6 +187,74 @@ RSpec.describe Ability do
     end
   end
 
+  describe "IssueClosure model" do
+    %i[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
+
+          it { is_expected.to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.to be_able_to(:destroy, issue_closure) }
+        end
+
+        context "when someone else's closure" do
+          let(:issue_closure) { Fabricate(:issue_closure) }
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.to be_able_to(:destroy, issue_closure) }
+        end
+      end
+    end
+
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
+
+          it { is_expected.to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
+
+        context "when someone else's closure" do
+          let(:issue_closure) { Fabricate(:issue_closure) }
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.not_to be_able_to(:create, issue_closure) }
+        it { is_expected.to be_able_to(:read, issue_closure) }
+        it { is_expected.not_to be_able_to(:update, issue_closure) }
+        it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+      end
+    end
+  end
+
   describe "IssueConnection model" do
     %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
@@ -994,6 +1062,74 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:update, task_comment) }
           it { is_expected.not_to be_able_to(:destroy, task_comment) }
         end
+      end
+    end
+  end
+
+  describe "TaskClosure model" do
+    %i[admin].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+
+          it { is_expected.to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.to be_able_to(:destroy, task_closure) }
+        end
+
+        context "when someone else's closure" do
+          let(:task_closure) { Fabricate(:task_closure) }
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.to be_able_to(:destroy, task_closure) }
+        end
+      end
+    end
+
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when their closure" do
+          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+
+          it { is_expected.to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "when someone else's closure" do
+          let(:task_closure) { Fabricate(:task_closure) }
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.not_to be_able_to(:create, task_closure) }
+        it { is_expected.to be_able_to(:read, task_closure) }
+        it { is_expected.not_to be_able_to(:update, task_closure) }
+        it { is_expected.not_to be_able_to(:destroy, task_closure) }
       end
     end
   end
