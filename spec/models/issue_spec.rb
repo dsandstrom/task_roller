@@ -844,7 +844,7 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context "when source_issue_connection" do
+    context "when source_connection" do
       before { Fabricate(:issue_connection, source: issue) }
 
       it "returns true" do
