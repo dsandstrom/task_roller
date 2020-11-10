@@ -290,6 +290,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
   end
 
+  def duplicate?
+    @duplicate ||= source_task_connection.present?
+  end
+
   def subscribe_user(subscriber = nil)
     subscriber ||= user
     return unless subscriber
@@ -336,6 +340,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def closed_status
       if approved?
         'approved'
+      elsif duplicate?
+        'duplicate'
       else
         'closed'
       end

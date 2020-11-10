@@ -983,6 +983,26 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe "#duplicate?" do
+    let(:task) { Fabricate(:task) }
+
+    context "when target_task_connection" do
+      before { Fabricate(:task_connection, target: task) }
+
+      it "returns false" do
+        expect(task.duplicate?).to eq(false)
+      end
+    end
+
+    context "when source_task_connection" do
+      before { Fabricate(:task_connection, source: task) }
+
+      it "returns true" do
+        expect(task.duplicate?).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     context "when closed is false" do
       context "and no assignees, progressions, and reviews" do
@@ -1062,6 +1082,16 @@ RSpec.describe Task, type: :model do
 
         it "returns 'approved'" do
           expect(task.status).to eq("approved")
+        end
+      end
+
+      context "and duplicate? returns true" do
+        before do
+          allow(task).to receive(:duplicate?) { true }
+        end
+
+        it "returns 'duplicate'" do
+          expect(task.status).to eq("duplicate")
         end
       end
 
