@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Fabricator(:issue_closure) do
-  issue
+Fabricator(:task_closure) do
+  task
   user { Fabricate(:user_reviewer) }
 end
