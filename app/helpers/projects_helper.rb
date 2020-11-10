@@ -3,8 +3,8 @@
 module ProjectsHelper
   def project_tags(project)
     content_tag :p, class: 'project-tags' do
-      concat project_visible_tag(project)
-      concat project_internal_tag(project)
+      concat visible_tag(project)
+      concat internal_tag(project)
     end
   end
 
@@ -22,40 +22,13 @@ module ProjectsHelper
     end
   end
 
+  def project_page?(project)
+    pages = [project_path(project), project_tasks_path(project),
+             project_issues_path(project)]
+    pages.any? { |path| current_page?(path) }
+  end
+
   private
-
-    def project_breadcrumbs(project)
-      category = project.category
-      breadcrumbs(project_breadcrumb_pages(category, project))
-    end
-
-    def project_tag(text, klass)
-      content_tag :span, text, class: "tag tag-#{klass}"
-    end
-
-    def project_visible_tag(project)
-      if project.visible?
-        text = 'Visible'
-        klass = 'visible'
-      else
-        text = 'Invisible'
-        klass = 'invisible'
-      end
-
-      project_tag text, klass
-    end
-
-    def project_internal_tag(project)
-      if project.internal?
-        text = 'Internal'
-        klass = 'internal'
-      else
-        text = 'External'
-        klass = 'external'
-      end
-
-      project_tag text, klass
-    end
 
     def project_header_heading(project)
       if params[:controller] == 'projects' && params[:action] == 'show'
@@ -89,20 +62,12 @@ module ProjectsHelper
                              class: options[:class])
     end
 
-    # def new_project_issue_button(project)
-    #   new_project_issue_link(project, class: 'button button-success')
-    # end
-
     def new_project_task_link(project, options = {})
       return unless can?(:create, Task)
 
       link_to_unless_current('Plan Task', new_project_task_path(project),
                              class: options[:class])
     end
-
-    # def new_project_task_button(project)
-    #   new_project_task_link(project, class: 'button button-success')
-    # end
 
     def edit_project_link(project)
       link_to_unless_current('Settings', edit_project_path(project),

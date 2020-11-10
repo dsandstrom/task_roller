@@ -98,4 +98,32 @@ module ApplicationHelper
       title = "Task Roller | #{title}"
       content_for(:title, truncate(title, length: 70, omission: ''))
     end
+
+    def roller_tag(text, klass)
+      content_tag :span, text, class: "tag tag-#{klass}"
+    end
+
+    def visible_tag(object)
+      if object.visible?
+        text = 'Visible'
+        klass = 'visible'
+      else
+        text = 'Invisible'
+        klass = 'invisible'
+      end
+
+      roller_tag text, klass
+    end
+
+    def internal_tag(object)
+      if object.internal?
+        text = 'Internal'
+        klass = 'internal'
+      else
+        text = 'External'
+        klass = 'external'
+      end
+
+      roller_tag text, klass
+    end
 end

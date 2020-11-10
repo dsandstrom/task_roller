@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BreadcrumbsHelper
-  def breadcrumbs(views = [])
+  def breadcrumbs(views = nil)
+    return unless views
+
     content_tag :div, class: 'breadcrumbs' do
       views.each do |text, url, options|
         concat breadcrumb(text, url, options)
