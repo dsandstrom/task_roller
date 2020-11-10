@@ -11,6 +11,7 @@
 # TODO: add last_commented_at, max(issue_comments.created_at) show in partial
 # the thing is, only comments by other users matter, not static
 # TODO: allow reviewer+ to change project (any category)
+# TODO: add all_duplicates method and to filters
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
