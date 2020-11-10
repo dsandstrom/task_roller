@@ -50,6 +50,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribers) }
   it { is_expected.to have_many(:closures) }
+  it { is_expected.to have_many(:reopenings) }
 
   # CLASS
 

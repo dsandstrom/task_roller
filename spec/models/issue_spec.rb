@@ -47,6 +47,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:issue_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribers) }
   it { is_expected.to have_many(:closures) }
+  it { is_expected.to have_many(:reopenings) }
 
   it { is_expected.to have_one(:source_connection).dependent(:destroy) }
   it { is_expected.to have_many(:target_connections).dependent(:destroy) }

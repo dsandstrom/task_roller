@@ -42,6 +42,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user
   has_many :closures, class_name: 'IssueClosure'
+  has_many :reopenings, class_name: 'IssueReopening'
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
