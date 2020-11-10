@@ -1,7 +1,9 @@
 <% progress = assignee.task_progress(task) %>
 
 <dt id="assignee-<%= assignee.id %>" class="assignee">
-  <%= content_tag :strong, assignee.name_or_email,
+  <%= content_tag :strong,
+                  link_to(assignee.name_or_email,
+                          user_assignments_path(assignee)),
                   class: 'assignee-name' %>
 </dt>
 

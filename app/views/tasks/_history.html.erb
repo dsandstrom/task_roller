@@ -4,7 +4,7 @@
   <% return unless user %>
 
   <% if review.pending? %>
-    <%= content_tag :dt, user.name_or_email %>
+    <%= content_tag :dt, link_to(user.name_or_email, user_assignments_path(user)) %>
     <%= content_tag :dd, "submitted task for review (##{history.id}): #{format_date review.created_at}" %>
   <% else %>
     <%= content_tag :dt, user.name_or_email %>

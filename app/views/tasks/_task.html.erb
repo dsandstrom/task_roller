@@ -33,16 +33,16 @@
     <main class="task-main">
       <%= task_tags(task) %>
 
+      <% if assignees.any? %>
+        <p class="task-assignees">
+          Assigned to <%= safe_join(assignees, ', ') %>
+        </p>
+      <% end %>
+
       <% if issue %>
         <p class="task-issue">
           Addresses
           <%= link_to issue.heading, issue_path(issue) %>
-        </p>
-      <% end %>
-
-      <% if assignees.any? %>
-        <p class="task-assignees">
-          Assigned to <%= safe_join(assignees, ', ') %>
         </p>
       <% end %>
 
