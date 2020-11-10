@@ -3,12 +3,10 @@
 require "rails_helper"
 
 RSpec.describe IssueConnectionsController, type: :controller do
-  let(:project) { Fabricate(:project) }
-  let(:source_issue) { Fabricate(:issue, project: project) }
-  let(:target_issue) { Fabricate(:issue, project: project) }
+  let(:source_issue) { Fabricate(:issue) }
+  let(:target_issue) { Fabricate(:issue, project: source_issue.project) }
   let(:valid_attributes) { { target_id: target_issue.to_param } }
   let(:invalid_attributes) { { target_id: "" } }
-  let(:path) { issue_path(source_issue) }
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
@@ -62,7 +60,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
             end.to change(target_issue.target_connections, :count).by(1)
           end
 
-          it "creates a new IssueSubscription for the current_user" do
+          it "creates 2 IssueSubscriptions for the current_user" do
             expect do
               post :create, params: { source_id: source_issue.to_param,
                                       issue_connection: valid_attributes }
@@ -97,7 +95,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
           it "redirects to the created issue_connection" do
             post :create, params: { source_id: source_issue.to_param,
                                     issue_connection: valid_attributes }
-            expect(response).to redirect_to(path)
+            expect(response).to redirect_to(source_issue)
           end
         end
 
@@ -157,6 +155,11 @@ RSpec.describe IssueConnectionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    before do
+      source_issue.close
+      target_issue.close
+    end
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -170,10 +173,27 @@ RSpec.describe IssueConnectionsController, type: :controller do
           end.to change(IssueConnection, :count).by(-1)
         end
 
+        it "reopens the source issue" do
+          issue_connection = Fabricate(:issue_connection, source: source_issue)
+          expect do
+            delete :destroy, params: { id: issue_connection.to_param }
+            source_issue.reload
+          end.to change(source_issue, :closed).to(false)
+        end
+
+        it "doesn't change the target issue" do
+          issue_connection = Fabricate(:issue_connection, source: source_issue,
+                                                          target: target_issue)
+          expect do
+            delete :destroy, params: { id: issue_connection.to_param }
+            target_issue.reload
+          end.not_to change(target_issue, :closed)
+        end
+
         it "redirects to the issue_connections list" do
           issue_connection = Fabricate(:issue_connection, source: source_issue)
           delete :destroy, params: { id: issue_connection.to_param }
-          expect(response).to redirect_to(path)
+          expect(response).to redirect_to(source_issue)
         end
       end
     end
@@ -189,6 +209,14 @@ RSpec.describe IssueConnectionsController, type: :controller do
           expect do
             delete :destroy, params: { id: issue_connection.to_param }
           end.not_to change(IssueConnection, :count)
+        end
+
+        it "doesn't change the source issue" do
+          issue_connection = Fabricate(:issue_connection, source: source_issue)
+          expect do
+            delete :destroy, params: { id: issue_connection.to_param }
+            source_issue.reload
+          end.not_to change(source_issue, :closed)
         end
 
         it "should be unauthorized" do
