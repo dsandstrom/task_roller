@@ -70,13 +70,34 @@
           <h4 class="issue-column-title">Duplicate Of</h4>
           <%= render @issue.source_connection %>
         </section>
-      <% elsif @issue.open? && can?(:create, IssueConnection) %>
-        <section class="issue-connections">
-          <h4 class="issue-column-title">Connections</h4>
+      <% elsif @issue.open? %>
+        <% if can?(:create, IssueConnection) || can?(:close, @issue) %>
+          <section class="issue-connections">
+            <h4 class="issue-column-title">Issue Actions</h4>
 
+            <% if can?(:create, IssueConnection) %>
+              <p>
+                <%= link_to 'mark as duplicate and close',
+                            new_issue_connection_path(@issue),
+                            class: 'normal-link' %>
+              </p>
+            <% end %>
+
+            <% if can?(:close, @issue) %>
+              <p>
+                <%= link_to 'mark invalid and close',
+                            close_issue_path(@issue), method: :patch,
+                            class: 'destroy-link' %>
+              </p>
+            <% end %>
+          </section>
+        <% end %>
+      <% elsif can?(:open, @issue) %>
+        <section class="issue-connections">
+          <h4 class="issue-column-title">Task Actions</h4>
           <p>
-            <%= link_to 'mark as duplicate and close',
-                        new_issue_connection_path(@issue),
+            <%= link_to 'reopen issue',
+                        open_issue_path(@issue), method: :patch,
                         class: 'destroy-link' %>
           </p>
         </section>

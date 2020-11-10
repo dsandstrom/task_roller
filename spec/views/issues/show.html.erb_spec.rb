@@ -6,6 +6,7 @@ RSpec.describe "issues/show", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
+  let(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
   before(:each) do
     @category = assign(:category, category)
@@ -274,6 +275,73 @@ RSpec.describe "issues/show", type: :view do
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
+
+    context "when issue open" do
+      before do
+        @issue = assign(:issue, issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+      end
+
+      it "renders close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        assert_select "a[href='#{url}'][data-method='patch']"
+      end
+
+      it "doesn't render open issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue closed with a duplicate" do
+      before do
+        @issue = assign(:issue, closed_issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        Fabricate(:issue_connection, source: @issue)
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render open issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue closed without a duplicate" do
+      before do
+        @issue = assign(:issue, closed_issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders reopen issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        assert_select "a[href='#{url}'][data-method='patch']"
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -413,6 +481,73 @@ RSpec.describe "issues/show", type: :view do
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
+
+    context "when issue open" do
+      before do
+        @issue = assign(:issue, issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+      end
+
+      it "renders close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        assert_select "a[href='#{url}'][data-method='patch']"
+      end
+
+      it "doesn't render open issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue closed with a duplicate" do
+      before do
+        @issue = assign(:issue, closed_issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        Fabricate(:issue_connection, source: @issue)
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render open issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue closed without a duplicate" do
+      before do
+        @issue = assign(:issue, closed_issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = close_issue_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders reopen issue link" do
+        render
+
+        url = open_issue_path(@issue)
+        assert_select "a[href='#{url}'][data-method='patch']"
+      end
+    end
   end
 
   %w[worker reporter].each do |employee_type|
@@ -478,6 +613,13 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
+        it "doesn't render close issue link" do
+          render
+
+          url = close_issue_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
         context "is addressed" do
           let(:issue) do
             Fabricate(:closed_issue, project: @project, user: current_user)
@@ -499,6 +641,13 @@ RSpec.describe "issues/show", type: :view do
             render
 
             url = approve_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render open issue link" do
+            render
+
+            url = open_issue_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
@@ -548,6 +697,13 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
+        it "doesn't render close issue link" do
+          render
+
+          url = close_issue_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
         context "is addressed" do
           let(:issue) { Fabricate(:closed_issue, project: @project) }
 
@@ -560,6 +716,13 @@ RSpec.describe "issues/show", type: :view do
             render
 
             url = disapprove_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render open issue link" do
+            render
+
+            url = open_issue_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
