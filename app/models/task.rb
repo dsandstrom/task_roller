@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: if closed with no approved review = rejected/ won't fix
 # TODO: create task reopens issue?
 # TODO: show other tasks from issue
 # TODO: allow self-assigning for worker+

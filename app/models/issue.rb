@@ -2,16 +2,11 @@
 
 # TODO: add CustomField/Value/Option for more issue/task attrs
 # TODO: add visible boolean (for moderation)
-# TODO: add closed statuses (duplicate, rejected/invalid)
-# Deferred/to-do: We will not fix this immediately, but will consider fixing
-# this in future
-# Invalid: This is not an issue, but was interpreted wrongly as one
-# when closing issue, add dialog that confirms and allows adding a comment
-# TODO: allow subscribing/following issues/tasks
-# TODO: add last_commented_at, max(issue_comments.created_at) show in partial
-# the thing is, only comments by other users matter, not static
+# TODO: add closed statuses (rejected/invalid)
+# TODO: when closing issue, add dialog that confirms and allows adding a comment
 # TODO: allow reviewer+ to change project (any category)
 # TODO: add all_duplicates method and to filters
+# TODO: add closed_by (user), closed_at (date) & reopened_by for history
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
