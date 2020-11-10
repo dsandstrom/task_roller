@@ -97,6 +97,11 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "#comment-#{@task_comment.id}"
         end
       end
+
+      it "render close link" do
+        render
+        expect(rendered).to have_link(nil, href: close_task_path(@task))
+      end
     end
 
     context "when no task_type" do
@@ -679,6 +684,23 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
+
+    context "when their task" do
+      context "is open" do
+        let(:task) { Fabricate(:task, user: reviewer) }
+
+        before do
+          @task = assign(:task, task)
+          @comment = assign(:task_comment, @task.comments.build)
+          @task_subscription = assign(:task_subscription, task_subscription)
+        end
+
+        it "renders close link" do
+          render
+          expect(rendered).to have_link(nil, href: close_task_path(@task))
+        end
+      end
+    end
   end
 
   context "for a worker" do
@@ -718,7 +740,7 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).not_to have_link(nil, href: url)
       end
 
-      it "doesn't render close link" do
+      it "renders close link" do
         render
         expect(rendered).not_to have_link(nil, href: close_task_path(@task))
       end
@@ -1008,6 +1030,21 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
     end
+
+    context "when their task" do
+      let(:task) { Fabricate(:task, user: current_user) }
+
+      before do
+        @task = assign(:task, task)
+        @comment = assign(:task_comment, @task.comments.build)
+        @task_subscription = assign(:task_subscription, task_subscription)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+      end
+    end
   end
 
   context "for a reporter" do
@@ -1263,6 +1300,21 @@ RSpec.describe "tasks/show", type: :view do
 
         assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
+      end
+    end
+
+    context "when their task" do
+      let(:task) { Fabricate(:task, user: current_user) }
+
+      before do
+        @task = assign(:task, task)
+        @comment = assign(:task_comment, @task.comments.build)
+        @task_subscription = assign(:task_subscription, task_subscription)
+      end
+
+      it "doesn't render close link" do
+        render
+        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
       end
     end
   end

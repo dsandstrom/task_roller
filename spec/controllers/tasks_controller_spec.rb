@@ -697,7 +697,72 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their task" do
+          context "with valid params" do
+            it "opens the requested task" do
+              task = Fabricate(:closed_task, project: project,
+                                             user: current_user)
+              expect do
+                put :open, params: { id: task.to_param }
+                task.reload
+              end.to change(task, :closed).to(false)
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:closed_task, project: project,
+                                             user: current_user)
+              put :open, params: { id: task.to_param }
+              url = task_url(task)
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "with invalid params" do
+            let(:task) do
+              Fabricate(:closed_task, project: project, user: current_user)
+            end
+
+            before { task.task_type.destroy }
+
+            it "doesn't update the requested task" do
+              expect do
+                put :open, params: { id: task.to_param }
+                task.reload
+              end.not_to change(task, :closed)
+            end
+
+            it "returns a success response ('edit' template)" do
+              put :open, params: { id: task.to_param }
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when someone else's task" do
+          it "doesn't open the requested task" do
+            task = Fabricate(:closed_task, project: project)
+            expect do
+              put :open, params: { id: task.to_param }
+              task.reload
+            end.not_to change(task, :closed)
+          end
+
+          it "should be unauthorized" do
+            task = Fabricate(:closed_task, project: project)
+            put :open, params: { id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -782,7 +847,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response).to be_successful
           end
 
-          it "doesn't update the requested task" do
+          it "doesn't close the requested task" do
             expect do
               put :close, params: { id: task.to_param }
               task.reload
@@ -792,13 +857,76 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
         before { login(current_user) }
 
-        it "doesn't open the requested task" do
+        context "when their task" do
+          context "with valid params" do
+            it "closes the requested task" do
+              task = Fabricate(:open_task, project: project, user: current_user)
+              expect do
+                put :close, params: { id: task.to_param }
+                task.reload
+              end.to change(task, :closed).to(true)
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:open_task, project: project, user: current_user)
+              put :close, params: { id: task.to_param }
+              url = task_url(task)
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "with invalid params" do
+            let(:task) do
+              Fabricate(:open_task, project: project, user: current_user)
+            end
+
+            before { task.task_type.destroy }
+
+            it "returns a success response ('edit' template)" do
+              put :close, params: { id: task.to_param }
+              expect(response).to be_successful
+            end
+
+            it "doesn't close the requested task" do
+              expect do
+                put :close, params: { id: task.to_param }
+                task.reload
+              end.not_to change(task, :closed)
+            end
+          end
+        end
+
+        context "when someone else's task" do
+          it "doesn't close the requested task" do
+            task = Fabricate(:open_task, project: project)
+            expect do
+              put :close, params: { id: task.to_param }
+              task.reload
+            end.not_to change(task, :closed)
+          end
+
+          it "should be unauthorized" do
+            task = Fabricate(:open_task, project: project)
+            put :close, params: { id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        it "doesn't close the requested task" do
           task = Fabricate(:open_task, project: project, user: current_user)
           expect do
             put :close, params: { id: task.to_param }

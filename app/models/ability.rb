@@ -67,11 +67,12 @@ class Ability
 
     def reviewer_abilities(user)
       can %i[create update], Category
+      can %i[open close], Issue
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
       can %i[create update], Project
       can %i[approve disapprove], Review, approved: nil
-      can :create, Task, user_id: user.id
+      can %i[create open close], Task, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection

@@ -128,7 +128,36 @@ RSpec.describe Ability do
       end
     end
 
-    %i[reviewer worker reporter].each do |employee_type|
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when belongs to them" do
+          let(:issue) { Fabricate(:issue, user: current_user) }
+
+          it { is_expected.to be_able_to(:create, issue) }
+          it { is_expected.to be_able_to(:read, issue) }
+          it { is_expected.to be_able_to(:update, issue) }
+          it { is_expected.not_to be_able_to(:destroy, issue) }
+          it { is_expected.to be_able_to(:open, issue) }
+          it { is_expected.to be_able_to(:close, issue) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:issue) { Fabricate(:issue) }
+
+          it { is_expected.not_to be_able_to(:create, issue) }
+          it { is_expected.to be_able_to(:read, issue) }
+          it { is_expected.not_to be_able_to(:update, issue) }
+          it { is_expected.not_to be_able_to(:destroy, issue) }
+          it { is_expected.to be_able_to(:open, issue) }
+          it { is_expected.to be_able_to(:close, issue) }
+        end
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
@@ -869,8 +898,8 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:update, task) }
           it { is_expected.not_to be_able_to(:destroy, task) }
           it { is_expected.to be_able_to(:assign, task) }
-          it { is_expected.not_to be_able_to(:open, task) }
-          it { is_expected.not_to be_able_to(:close, task) }
+          it { is_expected.to be_able_to(:open, task) }
+          it { is_expected.to be_able_to(:close, task) }
         end
 
         context "when doesn't belong to them" do
