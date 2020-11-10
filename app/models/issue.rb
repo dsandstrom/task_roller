@@ -19,7 +19,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     being_worked_on: { color: 'yellow' },
     addressed: { color: 'red' },
     resolved: { color: 'blue' },
-    closed: { color: 'purple' }
+    duplicate: { color: 'purple' },
+    closed: { color: 'red' }
   }.freeze
 
   belongs_to :user # reporter

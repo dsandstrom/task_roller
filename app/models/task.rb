@@ -15,6 +15,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     in_progress: { color: 'yellow' },
     in_review: { color: 'brown' },
     approved: { color: 'blue' },
+    duplicate: { color: 'purple' },
     closed: { color: 'red' }
   }.freeze
 
