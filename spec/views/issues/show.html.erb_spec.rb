@@ -286,14 +286,14 @@ RSpec.describe "issues/show", type: :view do
       it "renders close issue link" do
         render
 
-        url = close_issue_path(@issue)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = issue_closures_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render open issue link" do
         render
 
-        url = open_issue_path(@issue)
+        url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
@@ -309,14 +309,14 @@ RSpec.describe "issues/show", type: :view do
       it "doesn't render close issue link" do
         render
 
-        url = close_issue_path(@issue)
+        url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render open issue link" do
         render
 
-        url = open_issue_path(@issue)
+        url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
@@ -331,15 +331,15 @@ RSpec.describe "issues/show", type: :view do
       it "doesn't render close issue link" do
         render
 
-        url = close_issue_path(@issue)
+        url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
         render
 
-        url = open_issue_path(@issue)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = issue_reopenings_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
     end
   end
@@ -492,14 +492,14 @@ RSpec.describe "issues/show", type: :view do
       it "renders close issue link" do
         render
 
-        url = close_issue_path(@issue)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = issue_closures_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render open issue link" do
         render
 
-        url = open_issue_path(@issue)
+        url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
@@ -515,14 +515,14 @@ RSpec.describe "issues/show", type: :view do
       it "doesn't render close issue link" do
         render
 
-        url = close_issue_path(@issue)
+        url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render open issue link" do
         render
 
-        url = open_issue_path(@issue)
+        url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
@@ -537,15 +537,15 @@ RSpec.describe "issues/show", type: :view do
       it "doesn't render close issue link" do
         render
 
-        url = close_issue_path(@issue)
+        url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
         render
 
-        url = open_issue_path(@issue)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = issue_reopenings_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
     end
   end
@@ -616,7 +616,7 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render close issue link" do
           render
 
-          url = close_issue_path(@issue)
+          url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
@@ -647,7 +647,7 @@ RSpec.describe "issues/show", type: :view do
           it "doesn't render open issue link" do
             render
 
-            url = open_issue_path(@issue)
+            url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
@@ -700,7 +700,7 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render close issue link" do
           render
 
-          url = close_issue_path(@issue)
+          url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
@@ -722,7 +722,7 @@ RSpec.describe "issues/show", type: :view do
           it "doesn't render open issue link" do
             render
 
-            url = open_issue_path(@issue)
+            url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end

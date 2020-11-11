@@ -579,20 +579,6 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task is closed" do
-      before do
-        @task = assign(:task, Fabricate(:closed_task, project: @project))
-        assign(:task_subscription,
-               Fabricate(:task_subscription, task: @task, user: reviewer))
-      end
-
-      it "doesn't render reopen link" do
-        render
-        expect(rendered)
-          .not_to have_link(nil, href: task_reopenings_path(@task))
-      end
-    end
-
     context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
@@ -804,6 +790,47 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = task_task_subscription_path(@task, @task_subscription)
         assert_select "a[data-method='delete'][href='#{url}']"
+      end
+    end
+
+    context "when someone else's task" do
+      context "is open" do
+        before do
+          @task = assign(:task, Fabricate(:open_task, project: @project))
+          assign(:task_subscription,
+                 Fabricate(:task_subscription, task: @task, user: reviewer))
+        end
+
+        it "doesn't render reopen link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_reopenings_path(@task))
+        end
+
+        it "doesn't render close link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_closures_path(@task))
+        end
+      end
+
+      context "when task is closed" do
+        before do
+          @task = assign(:task, Fabricate(:closed_task, project: @project))
+          assign(:task_subscription,
+                 Fabricate(:task_subscription, task: @task, user: reviewer))
+        end
+
+        it "renders reopen link" do
+          render
+          expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
+        end
+
+        it "doesn't render close link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_closures_path(@task))
+        end
       end
     end
 

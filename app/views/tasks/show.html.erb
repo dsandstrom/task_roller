@@ -131,7 +131,7 @@ review = @task.current_review
                           class: 'normal-link' %>
             </p>
           <% end %>
-          <% if can?(:close, @task) %>
+          <% if can?(:create, @task.closures.build(user_id: current_user.id)) %>
             <p>
               <%= link_to 'mark invalid and close',
                           task_closures_path(@task), method: :post,
@@ -140,7 +140,7 @@ review = @task.current_review
           <% end %>
         </section>
       <% elsif @task.closed? && !@task.source_connection &&
-            can?(:open, @task) %>
+               can?(:create, @task.reopenings.build(user_id: current_user.id)) %>
         <section class="task-connections">
           <h4 class="task-column-title">Task Actions</h4>
           <p>
