@@ -6,7 +6,6 @@
 # TODO: when closing issue, add dialog that confirms and allows adding a comment
 # TODO: allow reviewer+ to change project (any category)
 # TODO: add all_duplicates method and to filters
-# TODO: add closed_by (user), closed_at (date) & reopened_by for history
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'

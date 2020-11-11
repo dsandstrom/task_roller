@@ -83,7 +83,7 @@
               </p>
             <% end %>
 
-            <% if can?(:create, @issue.closures.build(user_id: current_user.id)) %>
+            <% if can?(:create, IssueClosure.new(issue_id: @issue.id, user_id: current_user.id)) %>
               <p>
                 <%= link_to 'mark invalid and close',
                             issue_closures_path(@issue), method: :post,
@@ -92,7 +92,7 @@
             <% end %>
           </section>
         <% end %>
-      <% elsif can?(:create, @issue.reopenings.build(user_id: current_user.id)) %>
+      <% elsif can?(:create, IssueReopening.new(issue_id: @issue.id, user_id: current_user.id)) %>
         <section class="issue-connections">
           <h4 class="issue-column-title">Task Actions</h4>
           <p>
@@ -126,12 +126,16 @@
             <%= content_tag :dd, "updated issue: #{format_date @issue.updated_at}",
                             class: 'issue-updated-at' %>
           <% end %>
-          <% if @issue.opened_at != @issue.created_at %>
-            <%= content_tag :dd, "reopened issue: #{format_date @issue.opened_at}",
-                            class: 'issue-opened-at' %>
-          <% end %>
 
-          <%= render partial: 'tasks/history', collection: @issue.tasks %>
+          <%= render partial: 'tasks/history',
+                     collection: @issue.tasks %>
+
+          <%# TODO: combine closures/reopenings and order %>
+          <%= render partial: 'issue_reopenings/history',
+                     collection: @issue.reopenings %>
+
+          <%= render partial: 'issue_closures/history',
+                     collection: @issue.closures %>
 
           <%= render 'issues/closed_history', issue: @issue %>
         </dl>

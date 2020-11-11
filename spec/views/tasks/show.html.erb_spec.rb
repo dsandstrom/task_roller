@@ -758,6 +758,38 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when closures" do
+      before do
+        @task = assign(:task, task)
+        assign(:task_subscription, task_subscription)
+        @comment = assign(:task_comment, @task.comments.build)
+        @comments = assign(:comments, [])
+
+        @closure = Fabricate(:task_closure, task: task)
+      end
+
+      it "renders list of closures" do
+        render
+        assert_select "#task-closure-#{@closure.id}"
+      end
+    end
+
+    context "when reopenings" do
+      before do
+        @task = assign(:task, task)
+        assign(:task_subscription, task_subscription)
+        @comment = assign(:task_comment, @task.comments.build)
+        @comments = assign(:comments, [])
+
+        @reopening = Fabricate(:task_reopening, task: task)
+      end
+
+      it "renders list of reopenings" do
+        render
+        assert_select "#task-reopening-#{@reopening.id}"
+      end
+    end
+
     context "when not subscribed to the task" do
       before do
         @task = assign(:task, task)

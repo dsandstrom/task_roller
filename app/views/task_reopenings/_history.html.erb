@@ -1,9 +1,10 @@
 <%
-  value = "reopened (##{task_reopening.task_id}): "\
-          "#{format_date task_reopening.created_at}"
+  value = "reopened (##{history.task_id}): "\
+          "#{format_date history.created_at}"
 %>
 
-<%= content_tag :dt, task_reopening.user&.name_or_email,
+<%= content_tag :dt, history.user&.name_or_email,
                 class: 'task-reopening-user' %>
 <%= content_tag :dd, value,
-                class: "task-reopening-#{task_closure.id}" %>
+                class: "task-reopening",
+                id: "task-reopening-#{history.id}" %>

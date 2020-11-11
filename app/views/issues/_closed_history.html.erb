@@ -11,8 +11,4 @@
 <% elsif issue.source_connection %>
   <%= render 'issue_connections/history',
              issue_connection: issue.source_connection %>
-<% else %>
-  <dt>Reviewer</dt>
-  <%= content_tag :dd, "closed issue",
-                  class: 'issue-closed' %>
 <% end %>

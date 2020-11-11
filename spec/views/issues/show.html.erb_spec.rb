@@ -548,6 +548,38 @@ RSpec.describe "issues/show", type: :view do
         assert_select "a[href='#{url}'][data-method='post']"
       end
     end
+
+    context "when closures" do
+      before do
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+
+        @closure = Fabricate(:issue_closure, issue: issue)
+      end
+
+      it "renders list of closures" do
+        render
+        assert_select "#issue-closure-#{@closure.id}"
+      end
+    end
+
+    context "when reopenings" do
+      before do
+        @issue = assign(:issue, issue)
+        assign(:issue_subscription, issue_subscription)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @comments = assign(:comments, [])
+
+        @reopening = Fabricate(:issue_reopening, issue: issue)
+      end
+
+      it "renders list of reopenings" do
+        render
+        assert_select "#issue-reopening-#{@reopening.id}"
+      end
+    end
   end
 
   %w[worker reporter].each do |employee_type|

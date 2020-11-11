@@ -131,7 +131,7 @@ review = @task.current_review
                           class: 'normal-link' %>
             </p>
           <% end %>
-          <% if can?(:create, @task.closures.build(user_id: current_user.id)) %>
+          <% if can?(:create, TaskClosure.new(task_id: @task.id, user_id: current_user.id)) %>
             <p>
               <%= link_to 'mark invalid and close',
                           task_closures_path(@task), method: :post,
@@ -140,7 +140,7 @@ review = @task.current_review
           <% end %>
         </section>
       <% elsif @task.closed? && !@task.source_connection &&
-               can?(:create, @task.reopenings.build(user_id: current_user.id)) %>
+               can?(:create, TaskReopening.new(task_id: @task.id, user_id: current_user.id)) %>
         <section class="task-connections">
           <h4 class="task-column-title">Task Actions</h4>
           <p>
@@ -171,16 +171,19 @@ review = @task.current_review
                        locals: { task: @task } %>
           <% end %>
 
-          <% if @task.opened_at != @task.created_at %>
-            <dt>Reviewer</dt>
-            <%= content_tag :dd, "reopened: #{format_date @task.opened_at}",
-                            class: 'task-opened-at' %>
-          <% end %>
+          <%# TODO: combine closures/reopenings and order %>
+          <%= render partial: 'task_reopenings/history',
+                     collection: @task.reopenings %>
+
+          <%= render partial: 'task_closures/history',
+                     collection: @task.closures %>
 
           <% if @task.concluded_reviews.any? %>
             <%= render @task.concluded_reviews, task: @task %>
-          <% elsif @task.closed? %>
-            <%= render 'tasks/closed_history', task: @task %>
+          <% end %>
+          <% if @task.closed? && @task.source_connection %>
+            <%= render 'task_connections/history',
+                       task_connection: @task.source_connection %>
           <% end %>
         </dl>
       </section>
