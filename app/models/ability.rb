@@ -76,7 +76,7 @@ class Ability
     end
 
     def reviewer_task_abilities(user)
-      can %i[create], Task, user_id: user.id
+      can :create, Task, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
