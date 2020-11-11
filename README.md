@@ -5,6 +5,21 @@
 
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
+## Workflows
+
+### Issue Status Workflow
+Anyone can create issues, however Reviewers are responsible for opening tasks
+to address them. Here is the basic status workflow:
+
+![Issue Workflow](./readme_svgs/issue-workflow.svg)
+
+### Task Status Workflow
+Reviewers can create tasks, either to address an issue or completely separate.
+Here is the basic status workflow:
+
+![Task Workflow](./readme_svgs/task-workflow.svg)
+
+
 ## Local Setup
 
 ### System dependencies
