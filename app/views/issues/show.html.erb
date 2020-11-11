@@ -16,7 +16,7 @@
       <% if @issue.addressed? %>
         <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
           <section class="issue-resolution">
-            <h4 class="issue-column-title">Resolution</h4>
+            <h4 class="issue-column-title">Actions</h4>
 
             <p>
               <%= link_to 'report issue was not fixed and reopen',
@@ -37,7 +37,7 @@
       <% elsif @issue.unresolved? %>
         <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
           <section class="issue-resolution">
-            <h4 class="issue-column-title">Resolution</h4>
+            <h4 class="issue-column-title">Actions</h4>
             <p>
               <%= link_to 'mark resolved and close',
                           approve_issue_resolutions_path(@issue),
@@ -48,7 +48,7 @@
       <% end %>
 
       <section class="issue-tasks">
-        <h4 class="issue-column-title">Tasks</h4>
+        <h4 class="issue-column-title">Assigned Tasks</h4>
         <%= render partial: 'shared/task',
                    collection: @issue.tasks %>
 
@@ -61,7 +61,7 @@
                         class: 'create-link' %>
           </p>
         <% elsif @issue.tasks.none? %>
-          <p>None assigned</p>
+          <p>no tasks</p>
         <% end %>
       </section>
 
