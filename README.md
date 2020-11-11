@@ -25,6 +25,12 @@ tasks.
 Everyone else can open issues and see activity.
 
 ## Issue & Task Types
+This part is up to you and must be added initially by an Admin.  However,
+it's easy, just enter a name and pick one of the available colors and icons.
+For issues, I suggest: "Bug", "Suggestion", and "Question". For tasks: "Bug",
+"Improvement", and "Feature Request".
+
+![Issue Type Form](https://user-images.githubusercontent.com/1400414/98871055-23558b80-2429-11eb-86b3-8ab7c61f5364.png)
 
 ## Workflows
 
