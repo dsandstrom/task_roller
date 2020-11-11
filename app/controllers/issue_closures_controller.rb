@@ -14,7 +14,7 @@ class IssueClosuresController < ApplicationController
     if @issue_closure.save
       @issue.close
       @issue_closure.subscribe_user
-      redirect_to @issue_closure.issue, notice: notice
+      redirect_to @issue, notice: notice
     else
       render :new
     end

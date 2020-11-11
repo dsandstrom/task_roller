@@ -14,7 +14,7 @@ class TaskClosuresController < ApplicationController
     if @task_closure.save
       @task.close
       @task_closure.subscribe_user
-      redirect_to @task_closure.task, notice: notice
+      redirect_to @task, notice: notice
     else
       render :new
     end
