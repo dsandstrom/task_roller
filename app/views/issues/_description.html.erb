@@ -1,7 +1,6 @@
 <div class="comment issue-description">
   <header class="issue-user-date">
     <p><span class="issue-user"><%= issue.user ? issue.user.name_or_email : User.destroyed_name %></span>:</p>
-    <p class="issue-dates"><%= formatted_dates issue %></p>
   </header>
 
   <%= content_tag :main, issue.description_html.html_safe %>
