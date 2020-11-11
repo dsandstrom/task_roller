@@ -6,6 +6,7 @@
 # TODO: when closing issue, add dialog that confirms and allows adding a comment
 # TODO: allow reviewer+ to change project (any category)
 # TODO: add all_duplicates method and to filters
+# TODO: allow reopening issue by adding task
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
