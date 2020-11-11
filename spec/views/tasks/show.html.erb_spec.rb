@@ -110,8 +110,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders close link" do
         render
-        url = close_task_path(@task)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = task_closures_path(@task)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
     end
 
@@ -228,7 +228,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
 
@@ -255,8 +255,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders reopen link" do
         render
-        url = open_task_path(@task)
-        assert_select "a[href='#{url}'][data-method='patch']"
+        url = task_reopenings_path(@task)
+        assert_select "a[href='#{url}'][data-method='post']"
       end
     end
 
@@ -288,12 +288,13 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render reopen link" do
         render
-        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        expect(rendered)
+          .not_to have_link(nil, href: task_reopenings_path(@task))
       end
     end
 
@@ -312,12 +313,12 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "renders reopen link" do
         render
-        expect(rendered).to have_link(nil, href: open_task_path(@task))
+        expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
@@ -336,7 +337,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders reopen link" do
         render
-        expect(rendered).to have_link(nil, href: open_task_path(@task))
+        expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
@@ -355,12 +356,13 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders close link" do
         render
-        expect(rendered).to have_link(nil, href: close_task_path(@task))
+        expect(rendered).to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render reopen link" do
         render
-        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        expect(rendered)
+          .not_to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
@@ -495,7 +497,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
 
@@ -573,7 +575,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
 
@@ -586,7 +588,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render reopen link" do
         render
-        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        expect(rendered)
+          .not_to have_link(nil, href: task_reopenings_path(@task))
       end
     end
 
@@ -816,7 +819,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "renders close link" do
           render
-          expect(rendered).to have_link(nil, href: close_task_path(@task))
+          expect(rendered).to have_link(nil, href: task_closures_path(@task))
         end
       end
 
@@ -832,12 +835,14 @@ RSpec.describe "tasks/show", type: :view do
         context "without a duplicate" do
           it "doesn't render close link" do
             render
-            expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+            expect(rendered)
+              .not_to have_link(nil, href: task_closures_path(@task))
           end
 
           it "renders open link" do
             render
-            expect(rendered).to have_link(nil, href: open_task_path(@task))
+            expect(rendered)
+              .to have_link(nil, href: task_reopenings_path(@task))
           end
         end
 
@@ -846,12 +851,14 @@ RSpec.describe "tasks/show", type: :view do
 
           it "doesn't render close link" do
             render
-            expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+            expect(rendered)
+              .not_to have_link(nil, href: task_closures_path(@task))
           end
 
           it "doesn't render open link" do
             render
-            expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+            expect(rendered)
+              .not_to have_link(nil, href: task_reopenings_path(@task))
           end
         end
       end
@@ -897,7 +904,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
 
@@ -910,7 +917,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render reopen link" do
         render
-        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        expect(rendered)
+          .not_to have_link(nil, href: task_reopenings_path(@task))
       end
     end
 
@@ -1197,7 +1205,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
   end
@@ -1251,7 +1259,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render edit link" do
@@ -1270,7 +1278,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render reopen link" do
         render
-        expect(rendered).not_to have_link(nil, href: open_task_path(@task))
+        expect(rendered)
+          .not_to have_link(nil, href: task_reopenings_path(@task))
       end
     end
 
@@ -1469,7 +1478,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render close link" do
         render
-        expect(rendered).not_to have_link(nil, href: close_task_path(@task))
+        expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
   end

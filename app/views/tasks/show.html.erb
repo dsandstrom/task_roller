@@ -134,7 +134,7 @@ review = @task.current_review
           <% if can?(:close, @task) %>
             <p>
               <%= link_to 'mark invalid and close',
-                          close_task_path(@task), method: :patch,
+                          task_closures_path(@task), method: :post,
                           class: 'destroy-link' %>
             </p>
           <% end %>
@@ -145,8 +145,8 @@ review = @task.current_review
           <h4 class="task-column-title">Task Actions</h4>
           <p>
             <%= link_to 'reopen task',
-                        open_task_path(@task), method: :patch,
-                        class: 'destroy-link' %>
+                        task_reopenings_path(@task), method: :post,
+                        class: 'create-link' %>
           </p>
         </section>
       <% end %>
