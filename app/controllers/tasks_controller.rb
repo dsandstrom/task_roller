@@ -10,7 +10,7 @@
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
-  load_and_authorize_resource only: %i[show edit update destroy open close]
+  load_and_authorize_resource only: %i[show edit update destroy]
   before_action :set_parent, only: :index
   before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
@@ -58,26 +58,6 @@ class TasksController < ApplicationController
   def destroy
     @task.destroy
     redirect_to @project, success: 'Task was successfully destroyed.'
-  end
-
-  def open
-    if @task.reopen
-      @task.subscribe_user(current_user)
-      redirect_to @task, success: 'Task was successfully opened.'
-    else
-      set_form_options
-      render :edit
-    end
-  end
-
-  def close
-    if @task.close
-      @task.subscribe_user(current_user)
-      redirect_to @task, success: 'Task was successfully closed.'
-    else
-      set_form_options
-      render :edit
-    end
   end
 
   private
@@ -156,18 +136,5 @@ class TasksController < ApplicationController
         elsif @category
           @category.tasks_subscription(current_user, init: true)
         end
-    end
-
-    def build_filters
-      filters = {}
-      %i[status order].each do |param|
-        filters[param] = params[param]
-      end
-      if @project
-        filters[:project] = @project
-      else
-        filters[:category] = @category
-      end
-      filters
     end
 end

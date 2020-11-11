@@ -66,7 +66,6 @@ class Ability
     end
 
     def reviewer_issue_abilities(user)
-      can %i[open close], Issue
       can :create, IssueClosure, user_id: user.id
       can :create, IssueReopening, user_id: user.id
       can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
@@ -77,7 +76,7 @@ class Ability
     end
 
     def reviewer_task_abilities(user)
-      can %i[create open close], Task, user_id: user.id
+      can %i[create], Task, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection

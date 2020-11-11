@@ -67,26 +67,6 @@ class IssuesController < ApplicationController
                 success: 'Issue was successfully destroyed.'
   end
 
-  def open
-    if @issue.reopen
-      @issue.subscribe_user(current_user)
-      redirect_to issue_url(@issue), success: 'Issue was successfully opened.'
-    else
-      set_form_options
-      render :edit
-    end
-  end
-
-  def close
-    if @issue.close
-      @issue.subscribe_user(current_user)
-      redirect_to issue_url(@issue), success: 'Issue was successfully closed.'
-    else
-      set_form_options
-      render :edit
-    end
-  end
-
   private
 
     def check_for_issue_types

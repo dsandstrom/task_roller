@@ -28,11 +28,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         post :disapprove
       end
     end
-
-    member do
-      patch :open
-      patch :close
-    end
   end
 
   resources :tasks, only: %i[show edit update destroy] do
@@ -48,11 +43,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         patch :approve
         patch :disapprove
       end
-    end
-
-    member do
-      patch :open
-      patch :close
     end
   end
 
