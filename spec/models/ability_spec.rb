@@ -1121,8 +1121,11 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their closure" do
-          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+        context "when their task and closure" do
+          let(:task) { Fabricate(:task, user: current_user) }
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
 
           it { is_expected.to be_able_to(:create, task_closure) }
           it { is_expected.to be_able_to(:read, task_closure) }
@@ -1130,7 +1133,26 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end
 
-        context "when someone else's closure" do
+        context "when their closure, someone else's task" do
+          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "when their task, someone else's closure" do
+          let(:task) { Fabricate(:task, user: current_user) }
+          let(:task_closure) { Fabricate(:task_closure, task: task) }
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "when someone else's task and closure" do
           let(:task_closure) { Fabricate(:task_closure) }
 
           it { is_expected.not_to be_able_to(:create, task_closure) }
@@ -1144,7 +1166,10 @@ RSpec.describe Ability do
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
-        let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+        let(:task) { Fabricate(:task, user: current_user) }
+        let(:task_closure) do
+          Fabricate(:task_closure, task: task, user: current_user)
+        end
 
         subject(:ability) { Ability.new(current_user) }
 

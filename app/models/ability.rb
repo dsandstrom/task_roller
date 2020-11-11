@@ -69,7 +69,7 @@ class Ability
       can %i[open close], Issue
       can :create, IssueClosure, user_id: user.id
       can :create, IssueReopening, user_id: user.id
-      can :create, TaskClosure, user_id: user.id
+      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
       can :create, TaskReopening, user_id: user.id
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
@@ -90,6 +90,7 @@ class Ability
       admin_destroy_abilities
       can %i[create update destroy], User
       cannot :destroy, User, id: user.id
+      can :create, TaskClosure, user_id: user.id
     end
 
     def admin_destroy_abilities
