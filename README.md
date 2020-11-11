@@ -28,29 +28,28 @@ Everyone else can open issues and see activity.
 
 ## Workflows
 
-### Issue Status Workflow
+#### Issue Status Workflow
 Anyone can create issues, however Reviewers are responsible for opening tasks
 to address them. Here is the basic status workflow:
 
 ![Issue Workflow](./readme_svgs/issue-workflow.svg)
 
-### Task Status Workflow
+#### Task Status Workflow
 Reviewers can create tasks, either to address an issue or completely separate.
 Here is the basic status workflow:
 
 ![Task Workflow](./readme_svgs/task-workflow.svg)
 
-
 ## Local Setup
 
-### System dependencies
+#### System dependencies
 * Ruby
 * rbenv, rvm, or similar
 * PostgreSQL
 
-### Configuration
+#### Configuration
 
-#### Install Ruby, Rails, and gems
+##### Install Ruby, Rails, and gems
 
 Clone from GitHub and `cd` into project directory
 
@@ -67,7 +66,7 @@ also install Node.js, but please see below to ensure that you use the right
 version when working on the project.
 
 I use [Node Version Manager](https://github.com/nvm-sh/nvm) to maintain a more
-consistent Node.js version.  The version number is stored in *./.nvmrc*. Please
+consistent Node.js version. The version number is stored in *./.nvmrc*. Please
 use that version of node or use **nvm** to install it.
 
 ```sh
@@ -90,19 +89,19 @@ bin/rails secrets:edit
 * Add secret key bases (Use `bin/rails secret` to generate them)
 * Set db username and password to match your PostgreSQL database
 
-### Database creation/initialization
+#### Database creation/initialization
 
 ```sh
 bin/rails db:setup
 ```
 
-### How to run the test suite
+#### How to run the test suite
 
 ```sh
 bin/rails rspec spec/
 ```
 
-### Services (job queues, cache servers, search engines, etc.)
+#### Services (job queues, cache servers, search engines, etc.)
 
 I use guard to automate local development
 ```sh
@@ -110,6 +109,6 @@ bundle exec guard -g backend # start rspec and bundler watchers
 bundle exec guard -g frontend # start server (port 3000) and livereload watcher
 ```
 
-### Deployment instructions
+#### Deployment instructions
 
 WIP
