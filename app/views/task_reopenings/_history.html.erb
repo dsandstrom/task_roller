@@ -1,0 +1,9 @@
+<%
+  value = "reopened (##{task_reopening.task_id}): "\
+          "#{format_date task_reopening.created_at}"
+%>
+
+<%= content_tag :dt, task_reopening.user&.name_or_email,
+                class: 'task-reopening-user' %>
+<%= content_tag :dd, value,
+                class: "task-reopening-#{task_closure.id}" %>

@@ -80,6 +80,12 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
          as: "#{roller}_closures"
     delete "/#{roller}_closures/:id" => "#{roller}_closures#destroy",
            as: "#{roller}_closure"
+    get "/#{roller}_reopenings/:#{roller}_id/new" => "#{roller}_reopenings#new",
+        as: "new_#{roller}_reopening"
+    post "/#{roller}_reopenings/:#{roller}_id" => "#{roller}_reopenings#create",
+         as: "#{roller}_reopenings"
+    delete "/#{roller}_reopenings/:id" => "#{roller}_reopenings#destroy",
+           as: "#{roller}_reopening"
   end
 
   %w[issues tasks].each do |roller|

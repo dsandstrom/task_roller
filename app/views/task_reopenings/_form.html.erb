@@ -1,0 +1,17 @@
+<%
+  url =
+    if task_reopening.persisted?
+      task_reopening_path(task_reopening)
+    else
+      task_reopenings_path(task_reopening.task)
+    end
+%>
+
+<%= form_with(model: task_reopening, url: url, local: true,
+              html: { name: :task_reopening_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

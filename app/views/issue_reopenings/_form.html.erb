@@ -1,0 +1,17 @@
+<%
+  url =
+    if issue_reopening.persisted?
+      issue_reopening_path(issue_reopening)
+    else
+      issue_reopenings_path(issue_reopening.issue)
+    end
+%>
+
+<%= form_with(model: issue_reopening, url: url, local: true,
+              html: { name: :issue_reopening_form }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

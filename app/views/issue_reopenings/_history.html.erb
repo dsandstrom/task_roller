@@ -1,0 +1,9 @@
+<%
+  value = "reopened (##{issue_reopening.issue_id}): "\
+          "#{format_date issue_reopening.created_at}"
+%>
+
+<%= content_tag :dt, issue_reopening.user&.name_or_email,
+                class: 'issue-reopening-user' %>
+<%= content_tag :dd, value,
+                class: "issue-reopening-#{issue_closure.id}" %>
