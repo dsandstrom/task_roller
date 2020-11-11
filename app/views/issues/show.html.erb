@@ -73,7 +73,7 @@
       <% elsif @issue.open? %>
         <% if can?(:create, IssueConnection) || can?(:close, @issue) %>
           <section class="issue-connections">
-            <h4 class="issue-column-title">Issue Actions</h4>
+            <h4 class="issue-column-title">Actions</h4>
 
             <% if can?(:create, IssueConnection) %>
               <p>
@@ -94,7 +94,7 @@
         <% end %>
       <% elsif can?(:create, IssueReopening.new(issue_id: @issue.id, user_id: current_user.id)) %>
         <section class="issue-connections">
-          <h4 class="issue-column-title">Task Actions</h4>
+          <h4 class="issue-column-title">Actions</h4>
           <p>
             <%= link_to 'reopen issue',
                         issue_reopenings_path(@issue), method: :post,
