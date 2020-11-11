@@ -6,8 +6,8 @@
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
 ## Introduction
-This is a Rails app built to be an issue and task manager for businesses. The
-main compenents are Issues and Tasks. Issues are opened to report problems,
+This is a Rails app built to be an Issue and Task manager for businesses. The
+main components are Issues and Tasks. Issues are opened to report problems,
 offer suggestions, and ask questions. While Tasks are created to address Issues.
 
 ## User Types
