@@ -5,6 +5,27 @@
 
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
+## User Types
+There are four available user types. Here is a short description of each:
+
+#### Admins
+One or two people responsible for the initial app setup and user management.
+They have the same abilities as Reviewers, but they can also edit/remove other
+people's issues, tasks, comments, etc.
+
+#### Reviewers
+Project managers. They can do some app setup like create Categories and
+Projects. However, their main responsibility is managing issues and tasks.
+
+#### Workers
+The busy bees working on tasks. In addition, they can report issues and self-assign
+tasks.
+
+#### Reporters
+Everyone else can open issues and see activity.
+
+## Issue & Task Types
+
 ## Workflows
 
 ### Issue Status Workflow
