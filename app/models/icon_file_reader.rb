@@ -6,7 +6,7 @@ class IconFileReader
     %w[alert arrow-down arrow-left arrow-right arrow-up checkmark close delete
        eye eye-disabled hamburger heart heart-outline thumbsup thumbsdown
        person person-add person-group plus bold italic code header strikethrough
-       link quote unordered-list ordered-list split arrow-expand].freeze
+       link quote unordered-list ordered-list split arrow-expand earth].freeze
 
   def new; end
 
