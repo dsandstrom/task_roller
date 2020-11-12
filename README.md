@@ -35,7 +35,7 @@ it's easy, just enter a name and pick one of the available colors and icons.
 For issues, I suggest: "Bug", "Suggestion", and "Question". For tasks: "Bug",
 "Improvement", and "Feature Request".
 
-![Issue Type Form](https://user-images.githubusercontent.com/1400414/98871055-23558b80-2429-11eb-86b3-8ab7c61f5364.png)
+![Issue Type Form](https://user-images.githubusercontent.com/1400414/98878817-c4980e00-2438-11eb-8741-278aa6eec6e8.png)
 
 ## Workflows
 
