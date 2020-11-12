@@ -1841,4 +1841,76 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#history_feed" do
+    let(:task) { Fabricate(:task) }
+
+    context "when no associations" do
+      it "returns []" do
+        expect(task.history_feed).to eq([])
+      end
+    end
+
+    context "when approved review" do
+      it "returns [review]" do
+        review = Fabricate(:approved_review, task: task)
+        Fabricate(:approved_review)
+        expect(task.history_feed).to eq([review])
+      end
+    end
+
+    context "when disapproved review" do
+      it "returns [review]" do
+        review = Fabricate(:disapproved_review, task: task)
+        Fabricate(:approved_review)
+        expect(task.history_feed).to eq([review])
+      end
+    end
+
+    context "when pending review" do
+      it "returns []" do
+        Fabricate(:pending_review, task: task)
+        expect(task.history_feed).to eq([])
+      end
+    end
+
+    context "when reopening" do
+      it "returns [reopening]" do
+        reopening = Fabricate(:task_reopening, task: task)
+        Fabricate(:task_reopening)
+        expect(task.history_feed).to eq([reopening])
+      end
+    end
+
+    context "when closure" do
+      it "returns [closure]" do
+        closure = Fabricate(:task_closure, task: task)
+        Fabricate(:task_closure)
+        expect(task.history_feed).to eq([closure])
+      end
+    end
+
+    context "when source_connection" do
+      it "returns [source_connection]" do
+        source_connection = Fabricate(:task_connection, source: task)
+        Fabricate(:task_connection)
+        expect(task.history_feed).to eq([source_connection])
+      end
+    end
+
+    context "when closure and reopening" do
+      it "orders by created_at" do
+        reopening = Fabricate(:task_reopening, task: task)
+        second_closure = Fabricate(:task_closure, task: task)
+        first_closure = nil
+
+        Timecop.freeze(1.day.ago) do
+          first_closure = Fabricate(:task_closure, task: task)
+        end
+
+        expect(task.history_feed)
+          .to eq([first_closure, reopening, second_closure])
+      end
+    end
+  end
 end

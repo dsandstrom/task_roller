@@ -1434,5 +1434,20 @@ RSpec.describe Issue, type: :model do
         expect(issue.history_feed).to eq([source_connection])
       end
     end
+
+    context "when closure and reopening" do
+      it "orders by created_at" do
+        reopening = Fabricate(:issue_reopening, issue: issue)
+        second_closure = Fabricate(:issue_closure, issue: issue)
+        first_closure = nil
+
+        Timecop.freeze(1.day.ago) do
+          first_closure = Fabricate(:issue_closure, issue: issue)
+        end
+
+        expect(issue.history_feed)
+          .to eq([first_closure, reopening, second_closure])
+      end
+    end
   end
 end

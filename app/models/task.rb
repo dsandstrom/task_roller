@@ -317,6 +317,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     project.task_subscribers.each { |u| subscribe_user(u) }
   end
 
+  # feed of closures, reopenings, duplicate, tasks, reviews
+  def history_feed
+    @history_feed ||= build_history_feed
+  end
+
   private
 
     def build_assigned
@@ -373,5 +378,15 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return unless issue
 
       issue.update_column :open_tasks_count, issue.tasks.all_open.count
+    end
+
+    # TODO: add assigned, or progressions grouped by user
+    def build_history_feed
+      feed = []
+      [closures, reopenings, concluded_reviews].each do |collection|
+        feed << collection if collection.any?
+      end
+      feed << source_connection if source_connection
+      feed.flatten.sort_by(&:created_at)
     end
 end

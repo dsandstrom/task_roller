@@ -271,7 +271,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @duplicate ||= source_connection.present?
   end
 
-  # feed of closures, reopenings, duplicate, tasks, resolutions,
+  # feed of closures, reopenings, duplicate, tasks, resolutions
   # TODO: add addressed_at
   def history_feed
     @history_feed ||= build_history_feed
