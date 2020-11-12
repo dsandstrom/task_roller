@@ -54,7 +54,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date pending resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:pending_resolution, issue: issue)
           end
           issue.reopen
@@ -65,7 +65,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date approved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:approved_resolution, issue: issue)
           end
           issue.reopen
@@ -76,7 +76,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue has an out of date disapproved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
           issue.reopen
@@ -115,7 +115,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date pending resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:pending_resolution, issue: issue)
           end
           issue.reopen
@@ -126,7 +126,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date approved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:approved_resolution, issue: issue)
           end
           issue.reopen
@@ -137,7 +137,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue has an out of date disapproved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
           issue.reopen
@@ -176,7 +176,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date pending resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:pending_resolution, issue: issue)
           end
           issue.reopen
@@ -187,7 +187,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue an out of date approved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:approved_resolution, issue: issue)
           end
           issue.reopen
@@ -198,7 +198,7 @@ RSpec.describe Resolution, type: :model do
 
       context "when it's issue has an out of date disapproved resolution" do
         before do
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
           issue.reopen

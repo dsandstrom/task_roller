@@ -114,7 +114,7 @@ RSpec.describe Task, type: :model do
         Fabricate(:pending_review, task: task)
         reopened_task = nil
 
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           reopened_task = Fabricate(:task)
           Fabricate(:pending_review, task: reopened_task)
         end
@@ -229,7 +229,7 @@ RSpec.describe Task, type: :model do
         Fabricate(:open_task)
         Fabricate(:closed_task)
         reopened_task = nil
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           reopened_task = Fabricate(:approved_task)
         end
         reopened_task.reopen
@@ -273,7 +273,7 @@ RSpec.describe Task, type: :model do
         Fabricate(:finished_progression, task: finished_task)
         Fabricate(:pending_review, task: reopened_task)
 
-        Timecop.freeze(Time.now + 2.days) do
+        travel(2.days) do
           reopened_task.reopen
         end
 
@@ -391,7 +391,7 @@ RSpec.describe Task, type: :model do
           second_task = Fabricate(:task, project: project)
           first_task = Fabricate(:task, project: project)
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             second_task.touch
           end
 
@@ -405,7 +405,7 @@ RSpec.describe Task, type: :model do
           second_task = Fabricate(:task, project: project)
           first_task = Fabricate(:task, project: project)
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             second_task.touch
           end
 
@@ -419,7 +419,7 @@ RSpec.describe Task, type: :model do
           second_task = Fabricate(:task, project: project)
           first_task = Fabricate(:task, project: project)
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             first_task.touch
           end
 
@@ -433,11 +433,11 @@ RSpec.describe Task, type: :model do
           first_task = nil
           second_task = nil
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             second_task = Fabricate(:task, project: project)
           end
 
-          Timecop.freeze(1.hour.ago) do
+          travel(-1.hour) do
             first_task = Fabricate(:task, project: project)
           end
 
@@ -451,11 +451,11 @@ RSpec.describe Task, type: :model do
           first_task = nil
           second_task = nil
 
-          Timecop.freeze(1.hour.ago) do
+          travel(-1.hour) do
             second_task = Fabricate(:task, project: project)
           end
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             first_task = Fabricate(:task, project: project)
           end
 
@@ -469,7 +469,7 @@ RSpec.describe Task, type: :model do
           second_task = Fabricate(:task, project: project)
           first_task = Fabricate(:task, project: project)
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             second_task.touch
           end
 
@@ -483,7 +483,7 @@ RSpec.describe Task, type: :model do
           second_task = Fabricate(:task, project: project)
           first_task = Fabricate(:task, project: project)
 
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             second_task.touch
           end
 
@@ -623,10 +623,10 @@ RSpec.describe Task, type: :model do
       first_review = nil
       second_review = nil
 
-      Timecop.freeze(2.weeks.ago) do
+      travel(-2.weeks) do
         second_review = Fabricate(:disapproved_review, task: task)
       end
-      Timecop.freeze(1.week.ago) do
+      travel(-1.week) do
         first_review = Fabricate(:approved_review, task: task)
       end
       second_review.touch
@@ -646,7 +646,7 @@ RSpec.describe Task, type: :model do
 
     context "when reviews" do
       before do
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           task.reopen
         end
       end
@@ -654,7 +654,7 @@ RSpec.describe Task, type: :model do
       it "returns approved reviews created after opened_at" do
         review = Fabricate(:disapproved_review, task: task)
         Fabricate(:approved_review)
-        Timecop.freeze(2.weeks.ago) do
+        travel(-2.weeks) do
           Fabricate(:approved_review, task: task)
         end
         review.update_column :approved, true
@@ -665,7 +665,7 @@ RSpec.describe Task, type: :model do
       it "returns pending reviews created after opened_at" do
         review = Fabricate(:disapproved_review, task: task)
         Fabricate(:pending_review)
-        Timecop.freeze(2.weeks.ago) do
+        travel(-2.weeks) do
           Fabricate(:pending_review, task: task)
         end
         review.update_column :approved, nil
@@ -676,7 +676,7 @@ RSpec.describe Task, type: :model do
       it "returns disapproved reviews created after opened_at" do
         review = Fabricate(:disapproved_review, task: task)
         Fabricate(:disapproved_review)
-        Timecop.freeze(2.weeks.ago) do
+        travel(-2.weeks) do
           Fabricate(:disapproved_review, task: task)
         end
 
@@ -739,7 +739,7 @@ RSpec.describe Task, type: :model do
         before do
           task.assignees << user
           Fabricate(:finished_progression, task: task)
-          Timecop.freeze(1.day.ago) do
+          travel(-1.day) do
             Fabricate(:pending_review, task: task)
           end
         end
@@ -1195,7 +1195,7 @@ RSpec.describe Task, type: :model do
           let(:second_user) { Fabricate(:user_worker) }
 
           before do
-            Timecop.freeze(1.day.ago) do
+            travel(-1.day) do
               Fabricate(:finished_progression, task: task, user: second_user)
             end
 
@@ -1262,7 +1262,7 @@ RSpec.describe Task, type: :model do
 
     context "when reviews" do
       before do
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           Fabricate(:approved_review, task: task)
         end
       end
@@ -1273,10 +1273,10 @@ RSpec.describe Task, type: :model do
       end
 
       it "doesn't return approved reviews created before opened_at" do
-        Timecop.freeze(5.hours.ago) do
+        travel(-5.hours) do
           Fabricate(:approved_review, task: task)
         end
-        Timecop.freeze(1.hour.ago) do
+        travel(-1.hour) do
           task.reopen
         end
         task.reload
@@ -1617,7 +1617,7 @@ RSpec.describe Task, type: :model do
 
     context "after updating" do
       it "sets opened_at as created_at" do
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           subject.save
         end
         subject.update summary: "New summary"
@@ -1904,7 +1904,7 @@ RSpec.describe Task, type: :model do
         second_closure = Fabricate(:task_closure, task: task)
         first_closure = nil
 
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           first_closure = Fabricate(:task_closure, task: task)
         end
 

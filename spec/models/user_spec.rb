@@ -436,7 +436,7 @@ RSpec.describe User, type: :model do
       context "that starts and stops on the same day" do
         context "a previous year" do
           before do
-            Timecop.freeze("20060305 1200") do
+            travel_to("20060305 1200") do
               Fabricate(:finished_progression, task: task, user: user)
             end
           end
@@ -448,7 +448,7 @@ RSpec.describe User, type: :model do
 
         context "current year" do
           before do
-            Timecop.freeze("3/5 12:00pm") do
+            travel_to("3/5 12:00pm") do
               Fabricate(:finished_progression, task: task, user: user)
             end
           end
@@ -463,10 +463,10 @@ RSpec.describe User, type: :model do
         context "a previous year" do
           before do
             progression = nil
-            Timecop.freeze("20060305 1200") do
+            travel_to("20060305 1200") do
               progression = Fabricate(:progression, task: task, user: user)
             end
-            Timecop.freeze("20060306 1200") do
+            travel_to("20060306 1200") do
               progression.finish
             end
           end
@@ -479,10 +479,10 @@ RSpec.describe User, type: :model do
         context "current year" do
           before do
             progression = nil
-            Timecop.freeze("3/5 12:00pm") do
+            travel_to("3/5 12:00pm") do
               progression = Fabricate(:progression, task: task, user: user)
             end
-            Timecop.freeze("3/6 12:00pm") do
+            travel_to("3/6 12:00pm") do
               progression.finish
             end
           end
@@ -498,13 +498,13 @@ RSpec.describe User, type: :model do
       context "and each are on different days" do
         before do
           progression = nil
-          Timecop.freeze("3/8 12:00pm") do
+          travel_to("3/8 12:00pm") do
             progression = Fabricate(:progression, task: task, user: user)
           end
-          Timecop.freeze("3/10 12:00pm") do
+          travel_to("3/10 12:00pm") do
             progression.finish
           end
-          Timecop.freeze("3/5 12:00pm") do
+          travel_to("3/5 12:00pm") do
             Fabricate(:finished_progression, task: task, user: user)
           end
         end
@@ -516,10 +516,10 @@ RSpec.describe User, type: :model do
 
       context "and all are on the same day" do
         before do
-          Timecop.freeze("3/5 12:00pm") do
+          travel_to("3/5 12:00pm") do
             Fabricate(:finished_progression, task: task, user: user)
           end
-          Timecop.freeze("3/5 1:00pm") do
+          travel_to("3/5 1:00pm") do
             Fabricate(:finished_progression, task: task, user: user)
           end
         end
@@ -585,7 +585,7 @@ RSpec.describe User, type: :model do
 
       it "orders by issues.created_at desc" do
         second_issue = nil
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           second_issue = Fabricate(:open_issue, user: user)
         end
         first_issue = Fabricate(:open_issue, user: user)
@@ -596,11 +596,11 @@ RSpec.describe User, type: :model do
       it "orders by other user comments.created_at desc" do
         second_issue = Fabricate(:open_issue, user: user)
         first_issue = nil
-        Timecop.freeze(2.days.ago) do
+        travel(-2.days) do
           first_issue = Fabricate(:open_issue, user: user)
           Fabricate(:issue_comment, issue: second_issue)
         end
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           Fabricate(:issue_comment, issue: first_issue)
         end
         Fabricate(:issue_comment, issue: second_issue, user: user)
@@ -611,7 +611,7 @@ RSpec.describe User, type: :model do
       it "orders by open_tasks_count, tasks_count" do
         second_issue = Fabricate(:open_issue, user: user)
         first_issue = nil
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           first_issue = Fabricate(:open_issue, user: user)
         end
         Fabricate(:open_task, issue: first_issue)
@@ -686,7 +686,7 @@ RSpec.describe User, type: :model do
 
       it "orders by tasks.created_at desc" do
         second_task = nil
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           second_task = Fabricate(:open_task)
         end
         first_task = Fabricate(:open_task)
@@ -705,7 +705,7 @@ RSpec.describe User, type: :model do
       it "orders by progressions.created_at desc" do
         first_task = nil
         second_task = nil
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           second_task = Fabricate(:open_task)
           first_task = Fabricate(:open_task)
         end
@@ -714,7 +714,7 @@ RSpec.describe User, type: :model do
           task.assignees << user
         end
 
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           Fabricate(:finished_progression, task: second_task, user: user)
         end
         Fabricate(:finished_progression, task: first_task, user: user)
@@ -730,7 +730,7 @@ RSpec.describe User, type: :model do
       it "orders by task_comments.created_at desc" do
         first_task = nil
         second_task = nil
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           second_task = Fabricate(:open_task)
           first_task = Fabricate(:open_task)
         end
@@ -739,10 +739,10 @@ RSpec.describe User, type: :model do
           task.assignees << user
         end
 
-        Timecop.freeze(2.days.ago) do
+        travel(-2.days) do
           Fabricate(:task_comment, task: second_task)
         end
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           Fabricate(:task_comment, task: first_task)
         end
         Fabricate(:task_comment, task: second_task, user: user)
@@ -802,10 +802,10 @@ RSpec.describe User, type: :model do
         first_task = nil
         second_task = nil
 
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           first_task = Fabricate(:open_task, user: user)
         end
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           second_task = Fabricate(:open_task, user: user)
           Fabricate(:task_comment, task: second_task)
         end
@@ -820,10 +820,10 @@ RSpec.describe User, type: :model do
         first_task = nil
         second_task = nil
 
-        Timecop.freeze(1.week.ago) do
+        travel(-1.week) do
           first_task = Fabricate(:open_task, user: user)
         end
-        Timecop.freeze(1.day.ago) do
+        travel(-1.day) do
           second_task = Fabricate(:open_task, user: user)
           Fabricate(:progression, task: second_task)
         end
