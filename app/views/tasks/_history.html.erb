@@ -1,21 +1,38 @@
-<% if history.current_review %>
-  <% review = history.current_review  %>
-  <% user = review.user %>
-  <% return unless user %>
+<%
+  title = nil
+  value = nil
 
-  <% if review.pending? %>
-    <%= content_tag :dt, link_to(user.name_or_email, user_assignments_path(user)) %>
-    <%= content_tag :dd, "submitted task for review (##{history.id}): #{format_date review.created_at}" %>
-  <% else %>
-    <%= content_tag :dt, user.name_or_email %>
-    <%= content_tag :dd, "#{review.status} task (##{history.id}): #{format_date review.updated_at}" %>
-  <% end %>
-<% elsif history.closed? %>
-  <%= render 'tasks/closed_history', task: history %>
-<% else %>
-  <% user = history.user %>
-  <% return unless user %>
+  if history.current_review
+    review = history.current_review
+    user = review.user
+    return unless user
 
-  <%= content_tag :dt, link_to(user.name_or_email, user_tasks_path(user)) %>
-  <%= content_tag :dd, "opened task (##{history.id}): #{format_date history.created_at}" %>
-<% end %>
+    if review.pending?
+      title = link_to(user.name_or_email, user_assignments_path(user))
+      value =  "submitted task for review (##{history.id}): #{format_date review.created_at}"
+    else
+      if review.approved?
+        assigned = history.assigned.map do |assignee|
+          link_to(assignee.name_or_email, user_assignments_path(assignee))
+        end
+        title = safe_join(assigned, ', ')
+        value =  "completed task (##{history.id}): #{format_date review.updated_at}"
+      else
+        title = user.name_or_email
+        value =  "#{review.status} task (##{history.id}): #{format_date review.updated_at}"
+      end
+    end
+  elsif history.open?
+    user = history.user
+    return unless user
+
+    title = link_to(user.name_or_email, user_tasks_path(user))
+    value =  "opened task (##{history.id}): #{format_date history.created_at}"
+  end
+
+  return unless title && value
+%>
+
+<%= content_tag :dt, title, class: 'task-history-title' %>
+<%= content_tag :dd, value, id: "task-history-#{history.id}",
+                            class: 'task-history' %>

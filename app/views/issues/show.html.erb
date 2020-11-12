@@ -14,7 +14,7 @@
 
 
       <% if @issue.addressed? %>
-        <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+        <% if can?(:create, Resolution.new(issue_id: @issue.id, user_id: current_user.id)) %>
           <section class="issue-resolution">
             <h4 class="issue-column-title">Actions</h4>
 
@@ -35,7 +35,7 @@
           </section>
         <% end %>
       <% elsif @issue.unresolved? %>
-        <% if can?(:create, @issue.resolutions.build(user_id: current_user.id)) %>
+        <% if can?(:create, Resolution.new(issue_id: @issue.id, user_id: current_user.id)) %>
           <section class="issue-resolution">
             <h4 class="issue-column-title">Actions</h4>
             <p>
@@ -127,17 +127,15 @@
                             class: 'issue-updated-at' %>
           <% end %>
 
-          <%= render partial: 'tasks/history',
-                     collection: @issue.tasks %>
+          <%= render partial: 'issues/history',
+                    collection: @issue.history_feed %>
 
-          <%# TODO: combine closures/reopenings and order %>
-          <%= render partial: 'issue_reopenings/history',
-                     collection: @issue.reopenings %>
-
-          <%= render partial: 'issue_closures/history',
-                     collection: @issue.closures %>
-
-          <%= render 'issues/closed_history', issue: @issue %>
+          <% if @issue.addressed? %>
+            <dt>Tasks</dt>
+            <%= content_tag :dd,
+                            "addressed issue: #{format_date @issue.addressed_at}",
+                            class: 'issue-addressed-at' %>
+          <% end %>
         </dl>
       </section>
     </div>

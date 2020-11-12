@@ -1,0 +1,11 @@
+<% if history.is_a?(IssueReopening) %>
+  <%= render 'issue_reopenings/history', history: history %>
+<% elsif history.is_a?(IssueClosure) %>
+  <%= render 'issue_closures/history', history: history %>
+<% elsif history.is_a?(Task) %>
+  <%= render 'tasks/history', history: history %>
+<% elsif history.is_a?(Resolution) %>
+  <%= render 'resolutions/history', resolution: history %>
+<% elsif history.is_a?(IssueConnection) %>
+  <%= render 'issue_connections/history', issue_connection: history %>
+<% end %>
