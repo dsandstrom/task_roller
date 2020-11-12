@@ -274,13 +274,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # feed of closures, reopenings, duplicate, tasks, resolutions,
   # TODO: add addressed_at
   def history_feed
-    feed = []
-    feed << closures if closures.any?
-    feed << reopenings if reopenings.any?
-    feed << resolutions if resolutions.any?
-    feed << tasks if tasks.any?
-    feed << source_connection if source_connection
-    feed.flatten.sort_by(&:created_at)
+    @history_feed ||= build_history_feed
   end
 
   private
@@ -309,5 +303,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         'closed'
       end
+    end
+
+    def build_history_feed
+      feed = []
+      [closures, reopenings, resolutions, tasks].each do |collection|
+        feed << collection if collection.any?
+      end
+      feed << source_connection if source_connection
+      feed.flatten.sort_by(&:created_at)
     end
 end
