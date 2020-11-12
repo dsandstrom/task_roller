@@ -6,6 +6,7 @@ class AssignmentsController < ApplicationController
   before_action :load_and_authorize_task, except: :index
 
   def index
+    # TODO: add previously assigned thru progressions too
     @assignments = @assignments.filter_by(build_filters).page(params[:page])
   end
 
