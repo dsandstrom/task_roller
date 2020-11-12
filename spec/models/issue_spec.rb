@@ -1385,4 +1385,54 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#history_feed" do
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no associations" do
+      it "returns []" do
+        expect(issue.history_feed).to eq([])
+      end
+    end
+
+    context "when task" do
+      it "returns [task]" do
+        task = Fabricate(:task, issue: issue)
+        Fabricate(:task)
+        expect(issue.history_feed).to eq([task])
+      end
+    end
+
+    context "when resolution" do
+      it "returns [resolution]" do
+        resolution = Fabricate(:resolution, issue: issue)
+        Fabricate(:resolution)
+        expect(issue.history_feed).to eq([resolution])
+      end
+    end
+
+    context "when reopening" do
+      it "returns [reopening]" do
+        reopening = Fabricate(:issue_reopening, issue: issue)
+        Fabricate(:issue_reopening)
+        expect(issue.history_feed).to eq([reopening])
+      end
+    end
+
+    context "when closure" do
+      it "returns [closure]" do
+        closure = Fabricate(:issue_closure, issue: issue)
+        Fabricate(:issue_closure)
+        expect(issue.history_feed).to eq([closure])
+      end
+    end
+
+    context "when source_connection" do
+      it "returns [source_connection]" do
+        source_connection = Fabricate(:issue_connection, source: issue)
+        Fabricate(:issue_connection)
+        expect(issue.history_feed).to eq([source_connection])
+      end
+    end
+  end
 end

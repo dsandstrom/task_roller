@@ -271,6 +271,18 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @duplicate ||= source_connection.present?
   end
 
+  # feed of closures, reopenings, duplicate, tasks, resolutions,
+  # TODO: add addressed_at
+  def history_feed
+    feed = []
+    feed << closures if closures.any?
+    feed << reopenings if reopenings.any?
+    feed << resolutions if resolutions.any?
+    feed << tasks if tasks.any?
+    feed << source_connection if source_connection
+    feed.flatten.sort_by(&:created_at)
+  end
+
   private
 
     def set_opened_at
