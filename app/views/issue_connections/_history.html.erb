@@ -1,9 +1,9 @@
 <%
-  value = "marked as duplicate (##{issue_connection.target_id}): "\
-          "#{format_date issue_connection.created_at}"
+  value = "marked as duplicate (##{history.target_id}): "\
+          "#{format_date history.created_at}"
 %>
 
-<%= content_tag :dt, issue_connection.user&.name_or_email,
+<%= content_tag :dt, history.user&.name_or_email,
                 class: 'issue-connection-user' %>
 <%= content_tag :dd, value,
-                class: "issue-connection-#{issue_connection.id}" %>
+                class: "issue-connection-#{history.id}" %>

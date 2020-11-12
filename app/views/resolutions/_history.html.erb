@@ -1,4 +1,4 @@
 <%= content_tag :dt, resolution.user&.name_or_email,
                 class: 'resolution-user' %>
-<%= content_tag :dd, "marked resolved: #{format_date resolution.updated_at}",
-                class: "resolution-#{resolution.id}" %>
+<%= content_tag :dd, "marked resolved: #{format_date history.updated_at}",
+                class: "resolution-#{history.id}" %>

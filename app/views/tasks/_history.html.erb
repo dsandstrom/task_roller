@@ -1,38 +1,48 @@
-<%
-  title = nil
-  value = nil
+<% if history.is_a?(TaskReopening) %>
+  <%= render 'task_reopenings/history', history: history %>
+<% elsif history.is_a?(TaskClosure) %>
+  <%= render 'task_closures/history', history: history %>
+<% elsif history.is_a?(Review) %>
+  <%= render history %>
+<% elsif history.is_a?(TaskConnection) %>
+  <%= render 'task_connections/history', history: history %>
+<% elsif history.is_a?(Task) %>
+  <%
+    title = nil
+    value = nil
 
-  if history.current_review
-    review = history.current_review
-    user = review.user
-    return unless user
+    if history.current_review
+      review = history.current_review
+      user = review.user
+      return unless user
 
-    if review.pending?
-      title = link_to(user.name_or_email, user_assignments_path(user))
-      value =  "submitted task for review (##{history.id}): #{format_date review.created_at}"
-    else
-      if review.approved?
-        assigned = history.assigned.map do |assignee|
-          link_to(assignee.name_or_email, user_assignments_path(assignee))
-        end
-        title = safe_join(assigned, ', ')
-        value =  "completed task (##{history.id}): #{format_date review.updated_at}"
+      if review.pending?
+        title = link_to(user.name_or_email, user_assignments_path(user))
+        value =  "submitted task for review (##{history.id}): #{format_date review.created_at}"
       else
-        title = user.name_or_email
-        value =  "#{review.status} task (##{history.id}): #{format_date review.updated_at}"
+        if review.approved?
+          assigned = history.assigned.map do |assignee|
+            link_to(assignee.name_or_email, user_assignments_path(assignee))
+          end
+          title = safe_join(assigned, ', ')
+          value =  "completed task (##{history.id}): #{format_date review.updated_at}"
+        else
+          title = user.name_or_email
+          value =  "#{review.status} task (##{history.id}): #{format_date review.updated_at}"
+        end
       end
+    elsif history.open?
+      user = history.user
+      return unless user
+
+      title = link_to(user.name_or_email, user_tasks_path(user))
+      value =  "opened task (##{history.id}): #{format_date history.created_at}"
     end
-  elsif history.open?
-    user = history.user
-    return unless user
 
-    title = link_to(user.name_or_email, user_tasks_path(user))
-    value =  "opened task (##{history.id}): #{format_date history.created_at}"
-  end
+    return unless title && value
+  %>
 
-  return unless title && value
-%>
-
-<%= content_tag :dt, title, class: 'task-history-title' %>
-<%= content_tag :dd, value, id: "task-history-#{history.id}",
-                            class: 'task-history' %>
+  <%= content_tag :dt, title, class: 'task-history-title' %>
+  <%= content_tag :dd, value, id: "task-history-#{history.id}",
+                              class: 'task-history' %>
+<% end %>

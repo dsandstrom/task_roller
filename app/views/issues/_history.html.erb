@@ -5,7 +5,7 @@
 <% elsif history.is_a?(Task) %>
   <%= render 'tasks/history', history: history %>
 <% elsif history.is_a?(Resolution) %>
-  <%= render 'resolutions/history', resolution: history %>
+  <%= render 'resolutions/history', history: history %>
 <% elsif history.is_a?(IssueConnection) %>
-  <%= render 'issue_connections/history', issue_connection: history %>
+  <%= render 'issue_connections/history', history: history %>
 <% end %>

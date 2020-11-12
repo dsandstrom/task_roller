@@ -169,20 +169,9 @@ review = @task.current_review
                        locals: { task: @task } %>
           <% end %>
 
-          <%# TODO: combine closures/reopenings and order %>
-          <%= render partial: 'task_reopenings/history',
-                     collection: @task.reopenings %>
-
-          <%= render partial: 'task_closures/history',
-                     collection: @task.closures %>
-
-          <% if @task.concluded_reviews.any? %>
-            <%= render @task.concluded_reviews, task: @task %>
-          <% end %>
-          <% if @task.closed? && @task.source_connection %>
-            <%= render 'task_connections/history',
-                       task_connection: @task.source_connection %>
-          <% end %>
+          <%= render partial: 'tasks/history',
+                     collection: @task.history_feed,
+                     locals: { task: @task } %>
         </dl>
       </section>
     </div><!-- first column  -->
