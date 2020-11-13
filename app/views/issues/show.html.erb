@@ -12,7 +12,6 @@
         <%= render @issue_subscription, issue: @issue %>
       </section>
 
-
       <% if @issue.addressed? %>
         <% if can?(:create, Resolution.new(issue_id: @issue.id, user_id: current_user.id)) %>
           <section class="issue-resolution">
@@ -26,14 +25,9 @@
           </section>
         <% end %>
       <% elsif @issue.current_resolution %>
-        <% if can?(:destroy, @issue.current_resolution) %>
-          <section class="issue-resolution">
-            <h4 class="issue-column-title">Resolution</h4>
-            <%= render 'shared/resolution',
-                       resolution: @issue.current_resolution,
-                       issue: @issue %>
-          </section>
-        <% end %>
+        <%= render 'shared/resolution',
+                   resolution: @issue.current_resolution,
+                   issue: @issue %>
       <% elsif @issue.unresolved? %>
         <% if can?(:create, Resolution.new(issue_id: @issue.id, user_id: current_user.id)) %>
           <section class="issue-resolution">

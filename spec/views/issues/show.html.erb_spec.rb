@@ -342,6 +342,44 @@ RSpec.describe "issues/show", type: :view do
         assert_select "a[href='#{url}'][data-method='post']"
       end
     end
+
+    context "when resolved issue" do
+      let(:issue) { Fabricate(:closed_issue, project: @project) }
+
+      before do
+        @issue = assign(:issue, issue)
+        @comment = assign(:issue_comment, @issue.comments.build)
+        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        @resolution = Fabricate(:resolution, issue: issue, user: @issue.user)
+      end
+
+      it "renders resolution" do
+        render
+
+        assert_select "#resolution-history-#{@resolution.id}"
+      end
+
+      it "doesn't render disapprove resolution link" do
+        render
+
+        url = disapprove_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render approve resolution link" do
+        render
+
+        url = approve_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders destroy resolution link" do
+        render
+
+        url = issue_resolution_path(@issue, @resolution)
+        assert_select "a[data-method='delete'][href='#{url}']"
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -683,6 +721,45 @@ RSpec.describe "issues/show", type: :view do
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
+
+        context "is resolved" do
+          let(:issue) do
+            Fabricate(:closed_issue, project: @project, user: current_user)
+          end
+
+          before do
+            @issue = assign(:issue, issue)
+            @resolution =
+              Fabricate(:resolution, issue: issue, user: current_user)
+          end
+
+          it "renders resolution" do
+            render
+
+            assert_select "#resolution-history-#{@resolution.id}"
+          end
+
+          it "doesn't render disapprove resolution link" do
+            render
+
+            url = disapprove_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render approve resolution link" do
+            render
+
+            url = approve_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render destroy resolution link" do
+            render
+
+            url = issue_resolution_path(@issue, @resolution)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+        end
       end
 
       context "when someone else's issue" do
@@ -755,6 +832,43 @@ RSpec.describe "issues/show", type: :view do
             render
 
             url = issue_reopenings_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+        end
+
+        context "is resolved" do
+          let(:issue) { Fabricate(:closed_issue, project: @project) }
+
+          before do
+            @issue = assign(:issue, issue)
+            @resolution =
+              Fabricate(:resolution, issue: issue, user: @issue.user)
+          end
+
+          it "renders resolution" do
+            render
+
+            assert_select "#resolution-history-#{@resolution.id}"
+          end
+
+          it "doesn't render disapprove resolution link" do
+            render
+
+            url = disapprove_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render approve resolution link" do
+            render
+
+            url = approve_issue_resolutions_path(@issue)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render destroy resolution link" do
+            render
+
+            url = issue_resolution_path(@issue, @resolution)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end
