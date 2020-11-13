@@ -181,6 +181,13 @@ RSpec.describe IssueConnectionsController, type: :controller do
           end.to change(source_issue, :closed).to(false)
         end
 
+        it "creates a reopening for the source_issue" do
+          issue_connection = Fabricate(:issue_connection, source: source_issue)
+          expect do
+            delete :destroy, params: { id: issue_connection.to_param }
+          end.to change(source_issue.reopenings, :count).by(1)
+        end
+
         it "doesn't change the target issue" do
           issue_connection = Fabricate(:issue_connection, source: source_issue,
                                                           target: target_issue)

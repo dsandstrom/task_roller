@@ -18,11 +18,13 @@ class IssueConnectionsController < ApplicationController
     end
   end
 
+  # TODO: add active to connections - disable instead of destroy
   def destroy
     notice = 'Issue was successfully reopened.'
     issue = @issue_connection.source
     @issue_connection.destroy
     issue.reopen
+    issue.reopenings.create(user_id: current_user.id)
     redirect_to issue, notice: notice
   end
 
