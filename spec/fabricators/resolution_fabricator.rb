@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: should be issue user
 Fabricator(:resolution) do
   user { Fabricate(:user_worker) }
   approved nil
