@@ -79,7 +79,7 @@
               <p>
                 <%= link_to 'mark as duplicate and close',
                             new_issue_connection_path(@issue),
-                            class: 'normal-link' %>
+                            class: 'destroy-link' %>
               </p>
             <% end %>
 
@@ -108,7 +108,8 @@
           <h4 class="issue-column-title">Duplicate Issues</h4>
 
           <%= render partial: 'shared/issue',
-                     collection: @issue.duplicates %>
+                     collection: @issue.duplicates,
+                     locals: { show_status: false } %>
         </section>
       <% end %>
 

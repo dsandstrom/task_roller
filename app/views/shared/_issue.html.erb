@@ -1,8 +1,12 @@
+<% show_status = true if show_status.nil? %>
+
 <p class="issue" id="issue-<%= issue.id %>">
   <%= issue_type_icon_tag(issue.issue_type) %>
   <%= link_to issue.id_and_summary, issue_path(issue) %>
 
-  <%= divider %>
-  <%= content_tag :strong, issue.status,
-                  class: 'issue-status' %>
+  <% if show_status %>
+    <%= divider %>
+    <%= content_tag :strong, issue.status,
+                    class: 'issue-status' %>
+  <% end %>
 </p>
