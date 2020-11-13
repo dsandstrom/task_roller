@@ -1,33 +1,34 @@
 # frozen_string_literal: true
 
 module CommentsHelper
-  # TODO: test
-  # TODO: when current day, just show time
-  def format_date(value)
-    date_format = '%-m/%-d'
-    time_format = '%-l:%M%P'
+  DATE_FORMAT = '%-m/%-d'
+  TIME_FORMAT = '%-l:%M%P'
 
+  # TODO: test
+  def format_date(value)
     zone = 'Pacific Time (US & Canada)'
     now = Time.now.in_time_zone(zone)
     value = value.in_time_zone(zone)
 
-    if value.year == now.year
-      return value.strftime("#{date_format}-#{time_format}")
+    return "#{time_ago_in_words(value)} ago" if recent?(value, now)
+
+    return value.strftime(TIME_FORMAT) if same_day?(value, now)
+
+    if same_year?(value, now)
+      return value.strftime("#{DATE_FORMAT}-#{TIME_FORMAT}")
     end
 
-    value.strftime("#{date_format}/%Y-#{time_format}")
+    value.strftime("#{DATE_FORMAT}/%Y-#{TIME_FORMAT}")
   end
 
   def format_day(value)
-    date_format = '%-m/%-d'
-
     zone = 'Pacific Time (US & Canada)'
     now = Time.now.in_time_zone(zone)
     value = value.in_time_zone(zone)
 
-    return value.strftime(date_format) if value.year == now.year
+    return value.strftime(DATE_FORMAT) if value.year == now.year
 
-    value.strftime("#{date_format}/%Y")
+    value.strftime("#{DATE_FORMAT}/%Y")
   end
 
   def formatted_dates(object)
@@ -36,4 +37,19 @@ module CommentsHelper
 
     "#{created_date} (ed. #{format_date(object.updated_at)})"
   end
+
+  private
+
+    def recent?(first, second)
+      first > (second - 1.hour)
+    end
+
+    def same_day?(first, second)
+      first.year == second.year && first.month == second.month &&
+        first.day == second.day
+    end
+
+    def same_year?(first, second)
+      first.year == second.year
+    end
 end
