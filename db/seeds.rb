@@ -4,32 +4,22 @@ require 'faker'
 
 class Seeds # rubocop:disable Metrics/ClassLength
   def create_admins
-    return if User.admins.any?
-
     2.times { create_user('Admin') }
   end
 
   def create_reporters
-    return if User.reporters.any?
-
     12.times { create_user('Reporter') }
   end
 
   def create_reviewers
-    return if User.reviewers.any?
-
     4.times { create_user('Reviewer') }
   end
 
   def create_workers
-    return if User.workers.any?
-
     10.times { create_user('Worker') }
   end
 
   def create_categories
-    return if Category.any?
-
     6.times do
       name = Faker::Commerce.unique.department
 
@@ -41,34 +31,26 @@ class Seeds # rubocop:disable Metrics/ClassLength
   end
 
   def create_issue_types
-    return if IssueType.all.any?
-
     IssueType.create!(name: 'Bug', color: 'red', icon: 'bug')
     IssueType.create!(name: 'Suggestion', color: 'green', icon: 'options')
     IssueType.create!(name: 'Question', color: 'blue', icon: 'help')
   end
 
   def create_task_types
-    return if TaskType.all.any?
-
     TaskType.create!(name: 'Bug', color: 'red', icon: 'bug')
     TaskType.create!(name: 'Improvement', color: 'yellow', icon: 'options')
     TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
   end
 
+  # TODO: add comments
   def create_issues_and_tasks
-    return if Issue.all.any?
-
     User.reporters.each do |user|
-      rand(3..11).times { create_open_issue(user) }
-      rand(3..11).times { create_being_worked_issue(user) }
-      rand(3..11).times { create_addressed_issue(user) }
-      rand(3..11).times { create_resolved_issue(user) }
-      rand(3..11).times { create_closed_issue(user) }
-      rand(1..5).times { create_reopened_issue(user) }
-      rand(1..5).times { create_duplicate_issue(user) }
+      create_open_user_issues(user)
+      create_closed_user_issues(user)
     end
+  end
 
+  def create_separate_tasks
     User.reviewers.each do |user|
       rand(3..11).times { create_reopened_task(user) }
       rand(1..5).times { create_duplicate_task(user) }
@@ -289,14 +271,28 @@ class Seeds # rubocop:disable Metrics/ClassLength
     def random_reviewer_id
       reviewer_ids.sample
     end
+
+    def create_open_user_issues(user)
+      rand(3..11).times { create_open_issue(user) }
+      rand(3..11).times { create_being_worked_issue(user) }
+      rand(1..5).times { create_reopened_issue(user) }
+    end
+
+    def create_closed_user_issues(user)
+      rand(3..11).times { create_addressed_issue(user) }
+      rand(3..11).times { create_resolved_issue(user) }
+      rand(3..11).times { create_closed_issue(user) }
+      rand(1..5).times { create_duplicate_issue(user) }
+    end
 end
 
 seeds = Seeds.new
-seeds.create_admins
-seeds.create_reporters
-seeds.create_reviewers
-seeds.create_workers
-seeds.create_categories
-seeds.create_issue_types
-seeds.create_task_types
+seeds.create_issue_types if IssueType.none?
+seeds.create_task_types if TaskType.none?
+seeds.create_admins if User.admins.none?
+seeds.create_reporters if User.reporters.none?
+seeds.create_reviewers if User.reviewers.none?
+seeds.create_workers if User.workers.none?
+seeds.create_categories if Category.none? || Project.none?
 seeds.create_issues_and_tasks
+seeds.create_separate_tasks
