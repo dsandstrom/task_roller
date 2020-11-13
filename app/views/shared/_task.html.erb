@@ -1,8 +1,12 @@
+<% show_status = true if show_status.nil? %>
+
 <p class="task" id="task-<%= task.id %>">
   <%= task_type_icon_tag(task.task_type) %>
   <%= link_to task.id_and_summary, task_path(task) %>
 
-  <%= divider %>
-  <%= content_tag :strong, task.status,
-                  class: 'task-status' %>
+  <% if show_status %>
+    <%= divider %>
+    <%= content_tag :strong, task.status,
+                    class: 'task-status' %>
+  <% end %>
 </p>

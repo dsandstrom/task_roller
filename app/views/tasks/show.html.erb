@@ -105,7 +105,8 @@ review = @task.current_review
           <h4 class="task-column-title">Duplicate Tasks</h4>
 
           <%= render partial: 'shared/task',
-                     collection: @task.duplicates %>
+                     collection: @task.duplicates,
+                     locals: { show_status: false } %>
         </section>
       <% end %>
 
