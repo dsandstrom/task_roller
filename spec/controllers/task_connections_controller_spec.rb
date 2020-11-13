@@ -156,6 +156,8 @@ RSpec.describe TaskConnectionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:source_task) { Fabricate(:closed_task, project: project) }
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -167,6 +169,21 @@ RSpec.describe TaskConnectionsController, type: :controller do
           expect do
             delete :destroy, params: { id: task_connection.to_param }
           end.to change(TaskConnection, :count).by(-1)
+        end
+
+        it "reopens the source task" do
+          task_connection = Fabricate(:task_connection, source: source_task)
+          expect do
+            delete :destroy, params: { id: task_connection.to_param }
+            source_task.reload
+          end.to change(source_task, :closed).to(false)
+        end
+
+        it "creates a reopening for the source_task" do
+          task_connection = Fabricate(:task_connection, source: source_task)
+          expect do
+            delete :destroy, params: { id: task_connection.to_param }
+          end.to change(source_task.reopenings, :count).by(1)
         end
 
         it "redirects to the task_connections list" do

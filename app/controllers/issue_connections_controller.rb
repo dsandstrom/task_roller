@@ -2,7 +2,8 @@
 
 class IssueConnectionsController < ApplicationController
   before_action :build_issue_connection, only: %i[new create]
-  before_action :set_issue_connection, only: :destroy
+  authorize_resource only: %i[new create]
+  load_and_authorize_resource except: %i[new create]
 
   def new; end
 
@@ -22,9 +23,10 @@ class IssueConnectionsController < ApplicationController
   def destroy
     notice = 'Issue was successfully reopened.'
     issue = @issue_connection.source
-    @issue_connection.destroy
-    issue.reopen
-    issue.reopenings.create(user_id: current_user.id)
+    if @issue_connection.destroy
+      issue.reopen
+      issue.reopenings.create(user_id: current_user.id)
+    end
     redirect_to issue, notice: notice
   end
 
@@ -37,12 +39,6 @@ class IssueConnectionsController < ApplicationController
       @issue_connection =
         IssueConnection.new(source_id: params[:source_id], target_id: target_id,
                             user_id: current_user.id)
-      authorize! :create, @issue_connection
-    end
-
-    def set_issue_connection
-      @issue_connection = IssueConnection.find(params[:id])
-      authorize! :destroy, @issue_connection
     end
 
     def issue_connection_params

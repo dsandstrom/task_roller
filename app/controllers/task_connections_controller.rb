@@ -2,7 +2,8 @@
 
 class TaskConnectionsController < ApplicationController
   before_action :build_task_connection, only: %i[new create]
-  before_action :set_task_connection, only: :destroy
+  authorize_resource only: %i[new create]
+  load_and_authorize_resource except: %i[new create]
 
   def new; end
 
@@ -21,8 +22,10 @@ class TaskConnectionsController < ApplicationController
   def destroy
     notice = 'Task was successfully reopened.'
     task = @task_connection.source
-    @task_connection.destroy
-    task.reopen
+    if @task_connection.destroy
+      task.reopen
+      task.reopenings.create(user_id: current_user.id)
+    end
     redirect_to task, notice: notice
   end
 
@@ -33,12 +36,6 @@ class TaskConnectionsController < ApplicationController
       @task_connection =
         TaskConnection.new(source_id: params[:source_id], target_id: target_id,
                            user_id: current_user.id)
-      authorize! :create, @task_connection
-    end
-
-    def set_task_connection
-      @task_connection = TaskConnection.find(params[:id])
-      authorize! :destroy, @task_connection
     end
 
     def task_connection_params
