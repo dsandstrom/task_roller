@@ -2,7 +2,7 @@
 
 require 'faker'
 
-class Seeds # rubocop:disable Metrics/ClassLength
+class Seeds
   def create_admins
     2.times { create_user('Admin') }
   end

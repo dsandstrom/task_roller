@@ -56,3 +56,7 @@ Style/Documentation:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
+
+Metrics/ClassLength:
+  Exclude:
+    - 'db/seeds.rb'
