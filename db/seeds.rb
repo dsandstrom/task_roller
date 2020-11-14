@@ -62,60 +62,6 @@ class Seeds
     create_task_comments
   end
 
-  def create_issue_comments
-    Issue.all.each do |issue|
-      if issue.comments.none?
-        issue.comments.create(user_id: random_reviewer_id,
-                              body: comment_question)
-        issue.comments.create(user_id: issue.user_id, body: comment_body)
-      end
-      next unless issue.open? && issue.tasks.all_assigned.any?
-
-      assignee_id = issue.tasks.all_assigned.sample.assignee_ids.sample
-      issue.comments.create(user_id: assignee_id, body: comment_question)
-      if rand(2).zero?
-        issue.comments.create(user_id: issue.user_id, body: comment_body)
-      end
-      if rand(2).zero?
-        issue.comments.create(user_id: random_reviewer_id, body: comment_body)
-      end
-    end
-  end
-
-  def create_task_comments
-    Task.all.each do |task|
-      if task.comments.none?
-        if task.assignees.any?
-          assignee_id = task.assignee_ids.sample
-          task.comments.create(user_id: assignee_id, body: comment_question)
-        else
-          task.comments.create(user_id: random_reviewer_id,
-                               body: comment_question)
-        end
-        if task.issue && rand(2).zero?
-          task.comments.create(user_id: task.issue.user_id, body: comment_body)
-        end
-        task.comments.create(user_id: task.user_id, body: comment_body)
-        if task.current_review
-          user_id = task.current_review.user_id
-          task.comments.create(user_id: user_id, body: comment_body)
-        end
-      elsif task.assignees.any?
-        assignee_id = task.assignee_ids.sample
-        task.comments.create(user_id: assignee_id, body: comment_question)
-        if task.issue && rand(2).zero?
-          task.comments.create(user_id: task.issue.user_id,
-                               body: comment_body)
-        end
-        task.comments.create(user_id: task.user_id, body: comment_body)
-      elsif task.open?
-        task.comments.create(user_id: random_reviewer_id,
-                             body: comment_question)
-        task.comments.create(user_id: task.user_id, body: comment_body)
-      end
-    end
-  end
-
   private
 
     def create_user(employee_type)
@@ -325,6 +271,10 @@ class Seeds
       reviewer_ids.sample
     end
 
+    def random_assignee_id(issue)
+      issue.tasks.all_assigned.sample.assignee_ids.sample
+    end
+
     def create_open_user_issues(user)
       rand(3..11).times { create_open_issue(user) }
       rand(3..11).times { create_being_worked_issue(user) }
@@ -359,6 +309,32 @@ class Seeds
       body
     end
 
+    def create_issue_q_a(issue, q_user_id, a_user_id)
+      issue.comments.create(user_id: q_user_id, body: comment_question)
+      if a_user_id.is_a?(Array)
+        a_user_id.each do |id|
+          next if rand(2).zero?
+
+          issue.comments.create(user_id: id, body: comment_body)
+        end
+      else
+        issue.comments.create(user_id: a_user_id, body: comment_body)
+      end
+    end
+
+    def create_task_q_a(task, q_user_id, a_user_id)
+      task.comments.create(user_id: q_user_id, body: comment_question)
+      if a_user_id.is_a?(Array)
+        a_user_id.each do |id|
+          next if rand(2).zero?
+
+          task.comments.create(user_id: id, body: comment_body)
+        end
+      else
+        task.comments.create(user_id: a_user_id, body: comment_body)
+      end
+    end
+
     def issue_description
       p_options = { sentence_count: 3, random_sentences_to_add: 5 }
       q_options = { word_count: 3, random_words_to_add: 6 }
@@ -378,6 +354,40 @@ class Seeds
       body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
       body += Faker::Lorem.paragraph(p_options)
       body
+    end
+
+    def create_issue_comments
+      Issue.all.each do |issue|
+        if issue.comments.none?
+          create_issue_q_a(issue, random_user_id, issue.user_id)
+        end
+        next unless issue.open? && issue.tasks.all_assigned.any?
+
+        create_issue_q_a(issue, random_assignee_id(issue),
+                         [issue.user_id, random_reviewer_id])
+      end
+    end
+
+    def create_task_comments
+      Task.all.each do |task|
+        create_task_q_a(task, task_comment_q_id(task), task_comment_a_id(task))
+      end
+    end
+
+    def task_comment_q_id(task)
+      if task.assignees.any?
+        task.assignee_ids.sample
+      else
+        random_reviewer_id
+      end
+    end
+
+    def task_comment_a_id(task)
+      if task.issue
+        [task.issue.user_id, task.user_id]
+      else
+        task.user_id
+      end
     end
 end
 
