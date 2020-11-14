@@ -19,7 +19,7 @@
             <%= divider %>
             <%= link_to 'delete',
                         task_task_comment_path(object, comment),
-                        method: :delete,
+                        method: :delete, class: 'destroy-link',
                         data: { confirm: 'Are you sure?' } %>
           <% end %>
         <% else %>
@@ -31,7 +31,7 @@
             <%= divider %>
             <%= link_to 'delete',
                         issue_issue_comment_path(object, comment),
-                        method: :delete,
+                        method: :delete, class: 'destroy-link',
                         data: { confirm: 'Are you sure?' } %>
           <% end %>
         <% end %>
