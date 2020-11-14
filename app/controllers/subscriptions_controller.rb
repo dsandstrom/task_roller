@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: show category & project subscriptions
+
 class SubscriptionsController < ApplicationController
   load_and_authorize_resource :unresolved_issue, through: :current_user,
                                                  only: :index,
