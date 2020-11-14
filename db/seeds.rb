@@ -59,6 +59,7 @@ class Seeds
 
   def create_comments
     create_issue_comments
+    create_task_comments
   end
 
   def create_issue_comments
@@ -68,12 +69,49 @@ class Seeds
                               body: comment_question)
         issue.comments.create(user_id: issue.user_id, body: comment_body)
       end
-      next if issue.closed?
+      next unless issue.open? && issue.tasks.all_assigned.any?
 
-      if issue.tasks&.all_assigned&.any?
-        assignee = issue.tasks.all_assigned.sample.assignee_ids.sample
-        issue.comments.create(user_id: assignee, body: comment_question)
+      assignee_id = issue.tasks.all_assigned.sample.assignee_ids.sample
+      issue.comments.create(user_id: assignee_id, body: comment_question)
+      if rand(2).zero?
         issue.comments.create(user_id: issue.user_id, body: comment_body)
+      end
+      if rand(2).zero?
+        issue.comments.create(user_id: random_reviewer_id, body: comment_body)
+      end
+    end
+  end
+
+  def create_task_comments
+    Task.all.each do |task|
+      if task.comments.none?
+        if task.assignees.any?
+          assignee_id = task.assignee_ids.sample
+          task.comments.create(user_id: assignee_id, body: comment_question)
+        else
+          task.comments.create(user_id: random_reviewer_id,
+                               body: comment_question)
+        end
+        if task.issue && rand(2).zero?
+          task.comments.create(user_id: task.issue.user_id, body: comment_body)
+        end
+        task.comments.create(user_id: task.user_id, body: comment_body)
+        if task.current_review
+          user_id = task.current_review.user_id
+          task.comments.create(user_id: user_id, body: comment_body)
+        end
+      elsif task.assignees.any?
+        assignee_id = task.assignee_ids.sample
+        task.comments.create(user_id: assignee_id, body: comment_question)
+        if task.issue && rand(2).zero?
+          task.comments.create(user_id: task.issue.user_id,
+                               body: comment_body)
+        end
+        task.comments.create(user_id: task.user_id, body: comment_body)
+      elsif task.open?
+        task.comments.create(user_id: random_reviewer_id,
+                             body: comment_question)
+        task.comments.create(user_id: task.user_id, body: comment_body)
       end
     end
   end
@@ -87,26 +125,22 @@ class Seeds
     end
 
     def create_issue(attrs = {})
-      description =
-        Faker::Lorem.paragraphs(number: 3, supplemental: true).join("\n")
       attrs.reverse_merge!(issue_type_id: IssueType.ids.sample,
                            user_id: User.reporters.ids.sample,
                            project_id: Project.ids.sample,
                            summary: Faker::Company.catch_phrase,
-                           description: description)
+                           description: issue_description)
       issue = Issue.create!(attrs)
       issue.subscribe_users
       issue
     end
 
     def create_task(attrs = {})
-      description =
-        Faker::Lorem.paragraphs(number: 3, supplemental: true).join("\n")
       attrs.reverse_merge!(task_type_id: TaskType.ids.sample,
                            user_id: User.reviewers.ids.sample,
                            project_id: Project.ids.sample,
                            summary: Faker::Company.bs.capitalize,
-                           description: description)
+                           description: task_description)
       task = Task.create!(attrs)
       task.subscribe_users
       task
@@ -168,16 +202,12 @@ class Seeds
 
     def create_open_task(issue, worker = nil)
       worker ||= User.workers.sample
-      create_task(issue_id: issue.id, closed: false,
-                  assignee_ids: [worker.id])
+      create_task(issue_id: issue.id, closed: false, assignee_ids: [worker.id])
     end
 
     def create_closed_task(issue, worker = nil)
       worker ||= User.workers.sample
-      task = create_task(issue_id: issue.id, closed: true,
-                         assignee_ids: [worker.id])
-      task.closures.create!(user_id: random_reviewer_id)
-      task
+      create_task(issue_id: issue.id, closed: true, assignee_ids: [worker.id])
     end
 
     def create_reopened_task(reviewer)
@@ -234,7 +264,7 @@ class Seeds
 
     def create_disapproved_task(issue)
       worker = User.workers.sample
-      task = create_closed_task(issue, worker)
+      task = create_open_task(issue, worker)
       create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: false)
       task
@@ -311,9 +341,9 @@ class Seeds
     def comment_body
       p_options = { sentence_count: 2, random_sentences_to_add: 4 }
 
-      body = Faker::Lorem.paragraph(p_options)
-      body += "\n\n#{Faker::Markdown.random('table')}\n" if rand(2).zero?
-      body += "\n#{Faker::Lorem.paragraph(p_options)}"
+      body = "#{Faker::Lorem.paragraph(p_options)}\n\n"
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += Faker::Lorem.paragraph(p_options)
       body
     end
 
@@ -321,11 +351,32 @@ class Seeds
       p_options = { sentence_count: 2, random_sentences_to_add: 4 }
       q_options = { word_count: 2, random_words_to_add: 4 }
 
-      body = Faker::Lorem.paragraph(p_options)
-      body += " #{Faker::Lorem.question(q_options)}"
-      body += "\n\n#{Faker::Markdown.random('table')}\n" if rand(2).zero?
-      body += "\n#{Faker::Lorem.paragraph(p_options)}"
-      body += " #{Faker::Lorem.question(q_options)}"
+      body = "#{Faker::Lorem.paragraph(p_options)} "
+      body += "#{Faker::Lorem.question(q_options)}\n\n"
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "#{Faker::Lorem.paragraph(p_options)} "
+      body += Faker::Lorem.question(q_options)
+      body
+    end
+
+    def issue_description
+      p_options = { sentence_count: 3, random_sentences_to_add: 5 }
+      q_options = { word_count: 3, random_words_to_add: 6 }
+
+      body = "#{Faker::Lorem.paragraph(p_options)} "
+      body += "#{Faker::Lorem.question(q_options)}\n\n"
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "#{Faker::Lorem.paragraph(p_options)} "
+      body += Faker::Lorem.question(q_options)
+      body
+    end
+
+    def task_description
+      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
+
+      body = "#{Faker::Lorem.paragraph(p_options)}\n\n"
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += Faker::Lorem.paragraph(p_options)
       body
     end
 end
