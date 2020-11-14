@@ -57,6 +57,27 @@ class Seeds
     end
   end
 
+  def create_comments
+    create_issue_comments
+  end
+
+  def create_issue_comments
+    Issue.all.each do |issue|
+      if issue.comments.none?
+        issue.comments.create(user_id: random_reviewer_id,
+                              body: comment_question)
+        issue.comments.create(user_id: issue.user_id, body: comment_body)
+      end
+      next if issue.closed?
+
+      if issue.tasks&.all_assigned&.any?
+        assignee = issue.tasks.all_assigned.sample.assignee_ids.sample
+        issue.comments.create(user_id: assignee, body: comment_question)
+        issue.comments.create(user_id: issue.user_id, body: comment_body)
+      end
+    end
+  end
+
   private
 
     def create_user(employee_type)
@@ -66,7 +87,8 @@ class Seeds
     end
 
     def create_issue(attrs = {})
-      description = Faker::Lorem.paragraphs(3, true).join("\r\n")
+      description =
+        Faker::Lorem.paragraphs(number: 3, supplemental: true).join("\n")
       attrs.reverse_merge!(issue_type_id: IssueType.ids.sample,
                            user_id: User.reporters.ids.sample,
                            project_id: Project.ids.sample,
@@ -78,7 +100,8 @@ class Seeds
     end
 
     def create_task(attrs = {})
-      description = Faker::Lorem.paragraphs(3, true).join("\r\n")
+      description =
+        Faker::Lorem.paragraphs(number: 3, supplemental: true).join("\n")
       attrs.reverse_merge!(task_type_id: TaskType.ids.sample,
                            user_id: User.reviewers.ids.sample,
                            project_id: Project.ids.sample,
@@ -284,6 +307,27 @@ class Seeds
       rand(3..11).times { create_closed_issue(user) }
       rand(1..5).times { create_duplicate_issue(user) }
     end
+
+    def comment_body
+      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
+
+      body = Faker::Lorem.paragraph(p_options)
+      body += "\n\n#{Faker::Markdown.random('table')}\n" if rand(2).zero?
+      body += "\n#{Faker::Lorem.paragraph(p_options)}"
+      body
+    end
+
+    def comment_question
+      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
+      q_options = { word_count: 2, random_words_to_add: 4 }
+
+      body = Faker::Lorem.paragraph(p_options)
+      body += " #{Faker::Lorem.question(q_options)}"
+      body += "\n\n#{Faker::Markdown.random('table')}\n" if rand(2).zero?
+      body += "\n#{Faker::Lorem.paragraph(p_options)}"
+      body += " #{Faker::Lorem.question(q_options)}"
+      body
+    end
 end
 
 seeds = Seeds.new
@@ -296,3 +340,4 @@ seeds.create_workers if User.workers.none?
 seeds.create_categories if Category.none? || Project.none?
 seeds.create_issues_and_tasks
 seeds.create_separate_tasks
+seeds.create_comments
