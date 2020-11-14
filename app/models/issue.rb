@@ -272,7 +272,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # feed of closures, reopenings, duplicate, tasks, resolutions
-  # TODO: add addressed_at
+  # TODO: add addressed_at (hardcoded on show right now)
   def history_feed
     @history_feed ||= build_history_feed
   end
