@@ -18,17 +18,8 @@ gem 'puma', '~> 5.0'
 gem 'sass-rails', '~> 6.0'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 5.1'
-# Use Uglifier as compressor for JavaScript assets
-# gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
-# Use CoffeeScript for .coffee assets and views
-# gem 'coffee-rails', '~> 5.0'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.7'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -48,7 +39,7 @@ gem 'redcarpet', '~> 3.4.0'
 
 gem 'cancancan', '~> 3.1.0'
 gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
-                             tag: 'v0.8.2'
+                             tag: 'v0.9.0'
 
 gem 'kaminari', '~> 1.2.1'
 
