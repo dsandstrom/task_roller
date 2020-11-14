@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: add quotes to comments
+# Faker::TvShows::Simpsons.quote
+
 require 'faker'
 
 class Seeds
