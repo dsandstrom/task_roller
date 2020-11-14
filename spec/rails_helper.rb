@@ -63,9 +63,6 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  # freeze_time & travel_to
-  config.include ActiveSupport::Testing::TimeHelpers
-
   config.include RollerAuthentication::TestHelpers
 
   config.include TestHelpers::Authentication, type: :view

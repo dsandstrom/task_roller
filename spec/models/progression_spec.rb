@@ -116,7 +116,7 @@ RSpec.describe Progression, type: :model do
     context "when created a previous year" do
       it "returns month/day/year" do
         progression = nil
-        travel_to("20020506 12:00pm") do
+        Timecop.freeze("20020506 12:00pm") do
           progression = Fabricate(:progression)
         end
         expect(progression.start_date).to eq("5/6/2002")
@@ -126,7 +126,7 @@ RSpec.describe Progression, type: :model do
     context "when created current year" do
       it "returns month/day" do
         progression = nil
-        travel_to("6/5 12:00pm") do
+        Timecop.freeze("6/5 12:00pm") do
           progression = Fabricate(:progression)
         end
         expect(progression.start_date).to eq("6/5")
@@ -141,10 +141,10 @@ RSpec.describe Progression, type: :model do
       context "when finished a previous year" do
         it "returns month/day/year" do
           progression = nil
-          travel_to("20020506 12:00pm") do
+          Timecop.freeze("20020506 12:00pm") do
             progression = Fabricate(:finished_progression)
           end
-          travel_to("20020510 12:00pm") do
+          Timecop.freeze("20020510 12:00pm") do
             progression.touch
           end
           expect(progression.finish_date).to eq("5/6/2002")
@@ -154,10 +154,10 @@ RSpec.describe Progression, type: :model do
       context "when finished current year" do
         it "returns month/day" do
           progression = nil
-          travel_to("6/5 12:00pm") do
+          Timecop.freeze("6/5 12:00pm") do
             progression = Fabricate(:finished_progression)
           end
-          travel_to("6/10 12:00pm") do
+          Timecop.freeze("6/10 12:00pm") do
             progression.touch
           end
           expect(progression.finish_date).to eq("6/5")
@@ -169,7 +169,7 @@ RSpec.describe Progression, type: :model do
       context "when updated last a previous year" do
         it "returns month/day/year" do
           progression = nil
-          travel_to("20020506 12:00pm") do
+          Timecop.freeze("20020506 12:00pm") do
             progression = Fabricate(:unfinished_progression)
           end
           expect(progression.finish_date).to be_nil
@@ -179,7 +179,7 @@ RSpec.describe Progression, type: :model do
       context "when updated last current year" do
         it "returns month/day" do
           progression = nil
-          travel_to("6/5 12:00pm") do
+          Timecop.freeze("6/5 12:00pm") do
             progression = Fabricate(:unfinished_progression)
           end
           expect(progression.finish_date).to be_nil

@@ -131,7 +131,7 @@ RSpec.describe Issue, type: :model do
       Fabricate(:closed_task, issue: issue)
 
       Fabricate(:pending_resolution, issue: pending_issue)
-      travel(-1.day) do
+      Timecop.freeze(1.day.ago) do
         Fabricate(:approved_resolution, issue: reopened_issue)
       end
 
@@ -163,7 +163,7 @@ RSpec.describe Issue, type: :model do
       Fabricate(:disapproved_resolution)
 
       reopened_issue = Fabricate(:closed_issue)
-      travel(-1.day) do
+      Timecop.freeze(1.day.ago) do
         Fabricate(:approved_resolution, issue: reopened_issue)
       end
 
@@ -188,7 +188,7 @@ RSpec.describe Issue, type: :model do
       Fabricate(:pending_resolution, issue: pending_issue)
       Fabricate(:disapproved_resolution, issue: disapproved_issue)
 
-      travel(-1.day) do
+      Timecop.freeze(1.day.ago) do
         Fabricate(:approved_resolution, issue: reopened_issue)
       end
     end
@@ -289,7 +289,7 @@ RSpec.describe Issue, type: :model do
           second_issue = Fabricate(:issue)
           first_issue = Fabricate(:issue)
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             second_issue.touch
           end
 
@@ -303,7 +303,7 @@ RSpec.describe Issue, type: :model do
           second_issue = Fabricate(:issue)
           first_issue = Fabricate(:issue)
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             second_issue.touch
           end
 
@@ -317,7 +317,7 @@ RSpec.describe Issue, type: :model do
           second_issue = Fabricate(:issue)
           first_issue = Fabricate(:issue)
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             first_issue.touch
           end
 
@@ -331,11 +331,11 @@ RSpec.describe Issue, type: :model do
           first_issue = nil
           second_issue = nil
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             second_issue = Fabricate(:issue)
           end
 
-          travel(-1.hour) do
+          Timecop.freeze(1.hour.ago) do
             first_issue = Fabricate(:issue)
           end
 
@@ -349,11 +349,11 @@ RSpec.describe Issue, type: :model do
           first_issue = nil
           second_issue = nil
 
-          travel(-1.hour) do
+          Timecop.freeze(1.hour.ago) do
             second_issue = Fabricate(:issue)
           end
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             first_issue = Fabricate(:issue)
           end
 
@@ -367,7 +367,7 @@ RSpec.describe Issue, type: :model do
           second_issue = Fabricate(:issue)
           first_issue = Fabricate(:issue)
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             second_issue.touch
           end
 
@@ -381,7 +381,7 @@ RSpec.describe Issue, type: :model do
           second_issue = Fabricate(:issue)
           first_issue = Fabricate(:issue)
 
-          travel(-1.day) do
+          Timecop.freeze(1.day.ago) do
             second_issue.touch
           end
 
@@ -546,7 +546,7 @@ RSpec.describe Issue, type: :model do
 
     context "after updating" do
       it "sets opened_at as created_at" do
-        travel(-1.week) do
+        Timecop.freeze(1.week.ago) do
           subject.save
         end
         subject.update summary: "New summary"
@@ -750,7 +750,7 @@ RSpec.describe Issue, type: :model do
 
     context "when approved resolution is made invalid" do
       before do
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           Fabricate(:approved_resolution, issue: issue)
         end
         issue.reopen
@@ -763,7 +763,7 @@ RSpec.describe Issue, type: :model do
 
     context "when disapproved resolution is made invalid" do
       before do
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
         issue.reopen
@@ -776,10 +776,10 @@ RSpec.describe Issue, type: :model do
 
     context "when disapproved resolution is then approved" do
       before do
-        travel(-1.week) do
+        Timecop.freeze(2.days.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           issue.reopen
         end
         Fabricate(:approved_resolution, issue: issue)
@@ -1027,7 +1027,7 @@ RSpec.describe Issue, type: :model do
       it "returns approved tasks created after opened_at" do
         task = Fabricate(:approved_task, issue: issue)
         Fabricate(:approved_task)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:approved_task, issue: issue)
         end
 
@@ -1037,7 +1037,7 @@ RSpec.describe Issue, type: :model do
       it "returns pending tasks created after opened_at" do
         task = Fabricate(:pending_task, issue: issue)
         Fabricate(:pending_task)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:pending_task, issue: issue)
         end
 
@@ -1047,7 +1047,7 @@ RSpec.describe Issue, type: :model do
       it "returns disapproved tasks created after opened_at" do
         task = Fabricate(:disapproved_task, issue: issue)
         Fabricate(:approved_task)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:disapproved_task, issue: issue)
         end
 
@@ -1073,7 +1073,7 @@ RSpec.describe Issue, type: :model do
       it "returns approved resolutions created after opened_at" do
         resolution = Fabricate(:disapproved_resolution, issue: issue)
         Fabricate(:approved_resolution)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:approved_resolution, issue: issue)
         end
         resolution.update_column :approved, true
@@ -1084,7 +1084,7 @@ RSpec.describe Issue, type: :model do
       it "returns pending resolutions created after opened_at" do
         resolution = Fabricate(:disapproved_resolution, issue: issue)
         Fabricate(:pending_resolution)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:pending_resolution, issue: issue)
         end
         resolution.update_column :approved, nil
@@ -1095,7 +1095,7 @@ RSpec.describe Issue, type: :model do
       it "returns disapproved resolutions created after opened_at" do
         resolution = Fabricate(:disapproved_resolution, issue: issue)
         Fabricate(:approved_resolution)
-        travel(-1.week) do
+        Timecop.freeze(2.weeks.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
 
@@ -1116,10 +1116,10 @@ RSpec.describe Issue, type: :model do
     context "when resolutions" do
       it "returns last created resolution" do
         issue = nil
-        travel(-1.week) do
+        Timecop.freeze(2.days.ago) do
           issue = Fabricate(:issue)
         end
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
         first_resolution = Fabricate(:disapproved_resolution, issue: issue)
@@ -1127,10 +1127,10 @@ RSpec.describe Issue, type: :model do
       end
 
       it "doesn't return approved resolutions created before opened_at" do
-        travel(-1.week) do
+        Timecop.freeze(5.hours.ago) do
           Fabricate(:approved_resolution, issue: issue)
         end
-        travel(-1.hour) do
+        Timecop.freeze(1.hour.ago) do
           issue.reopen
         end
         issue.reload
@@ -1329,7 +1329,7 @@ RSpec.describe Issue, type: :model do
     context "when previously approved task" do
       before do
         task = nil
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           task = Fabricate(:approved_task, issue: issue)
         end
         Fabricate(:disapproved_review, task: task)
@@ -1343,7 +1343,7 @@ RSpec.describe Issue, type: :model do
     context "when previously disapproved task" do
       it "returns it's approved review date" do
         task = nil
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           task = Fabricate(:disapproved_task, issue: issue)
         end
         review = Fabricate(:approved_review, task: task)
@@ -1356,11 +1356,11 @@ RSpec.describe Issue, type: :model do
       it "returns approved's review date" do
         task = nil
         review = nil
-        travel(-1.week) do
+        Timecop.freeze(2.days.ago) do
           task = Fabricate(:closed_task, issue: issue)
           Fabricate(:pending_task, issue: issue)
         end
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           review = Fabricate(:approved_review, task: task)
         end
         Fabricate(:pending_task, issue: issue)
@@ -1372,10 +1372,10 @@ RSpec.describe Issue, type: :model do
     context "when 2 approved tasks" do
       it "returns latest review date" do
         first_task = nil
-        travel(-1.week) do
+        Timecop.freeze(2.days.ago) do
           first_task = Fabricate(:closed_task, issue: issue)
         end
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           Fabricate(:approved_review, task: first_task)
         end
         second_task = Fabricate(:closed_task, issue: issue)
@@ -1441,7 +1441,7 @@ RSpec.describe Issue, type: :model do
         second_closure = Fabricate(:issue_closure, issue: issue)
         first_closure = nil
 
-        travel(-1.day) do
+        Timecop.freeze(1.day.ago) do
           first_closure = Fabricate(:issue_closure, issue: issue)
         end
 

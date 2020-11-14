@@ -82,4 +82,5 @@ group :test do
   gem 'rspec_junit_formatter', '~> 0.4.1'
   gem 'rubocop-junit_formatter', '~> 0.2', require: false
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'timecop', '~> 0.9'
 end
