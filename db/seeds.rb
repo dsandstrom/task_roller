@@ -42,7 +42,6 @@ class Seeds
     TaskType.create!(name: 'Feature Request', color: 'green', icon: 'bulb')
   end
 
-  # TODO: add comments
   def create_issues_and_tasks
     User.reporters.each do |user|
       create_open_user_issues(user)
@@ -216,13 +215,28 @@ class Seeds
       task
     end
 
-    # TODO: don't allow user to have multiple subscriptions of same type
     def create_category_subscriptions(category)
-      rand(5..15).times do
-        category.category_issues_subscriptions.create(user_id: random_user_id)
+      create_category_issues_subscriptions(category)
+      create_category_tasks_subscriptions(category)
+    end
+
+    def create_category_issues_subscriptions(category)
+      rand(5..8).times do
+        user_id = random_user_id
+        while category.category_issues_subscriptions.find_by(user_id: user_id)
+          user_id = random_user_id
+        end
+        category.category_issues_subscriptions.create(user_id: user_id)
       end
-      rand(5..15).times do
-        category.category_tasks_subscriptions.create(user_id: random_user_id)
+    end
+
+    def create_category_tasks_subscriptions(category)
+      rand(5..8).times do
+        user_id = random_user_id
+        while category.category_tasks_subscriptions.find_by(user_id: user_id)
+          user_id = random_user_id
+        end
+        category.category_tasks_subscriptions.create(user_id: user_id)
       end
     end
 
@@ -239,11 +253,27 @@ class Seeds
     end
 
     def create_project_subscriptions(project)
-      rand(5..15).times do
-        project.project_issues_subscriptions.create(user_id: random_user_id)
+      create_project_issues_subscriptions(project)
+      create_project_tasks_subscriptions(project)
+    end
+
+    def create_project_issues_subscriptions(project)
+      rand(5..8).times do
+        user_id = random_user_id
+        while project.project_issues_subscriptions.find_by(user_id: user_id)
+          user_id = random_user_id
+        end
+        project.project_issues_subscriptions.create(user_id: user_id)
       end
-      rand(5..15).times do
-        project.project_tasks_subscriptions.create(user_id: random_user_id)
+    end
+
+    def create_project_tasks_subscriptions(project)
+      rand(5..8).times do
+        user_id = random_user_id
+        while project.project_tasks_subscriptions.find_by(user_id: user_id)
+          user_id = random_user_id
+        end
+        project.project_tasks_subscriptions.create(user_id: user_id)
       end
     end
 
