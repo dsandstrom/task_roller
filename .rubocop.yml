@@ -42,6 +42,8 @@ Metrics/BlockLength:
     - 'Guardfile'
 
 Metrics/ClassLength:
+  Exclude:
+    - 'db/seeds.rb'
   Max: 150
 
 Naming/FileName:
@@ -56,7 +58,3 @@ Style/Documentation:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
-
-Metrics/ClassLength:
-  Exclude:
-    - 'db/seeds.rb'
