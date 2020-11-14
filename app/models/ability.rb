@@ -10,7 +10,10 @@ class Ability
     return unless user
 
     basic_abilities(user)
-    return unless user.reviewer? || user.admin?
+    return if user.reporter?
+
+    worker_abilities(user)
+    return if user.worker?
 
     reviewer_abilities(user)
     return unless user.admin?
@@ -28,7 +31,8 @@ class Ability
     end
 
     def basic_read_abilities(_user = nil)
-      [Category, Issue, IssueComment, IssueClosure, IssueConnection,
+      can :read, Category, visible: true, internal: false
+      [Issue, IssueComment, IssueClosure, IssueConnection,
        IssueReopening, Progression, Project, Task, TaskComment, TaskClosure,
        TaskConnection, TaskReopening, Resolution, Review,
        User].each do |class_name|
@@ -58,9 +62,14 @@ class Ability
                             task: { closed: false }
     end
 
+    def worker_abilities(_user)
+      can :read, Category, visible: true
+    end
+
     def reviewer_abilities(user)
       can %i[create update], Category
       can %i[create update], Project
+      can :read, Category
       reviewer_issue_abilities(user)
       reviewer_task_abilities(user)
     end

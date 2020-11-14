@@ -5,16 +5,55 @@ require "cancan/matchers"
 
 RSpec.describe Ability do
   describe "Category model" do
-    let(:category) { Fabricate(:category) }
-
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
       subject(:ability) { Ability.new(admin) }
 
-      it { is_expected.to be_able_to(:create, category) }
-      it { is_expected.to be_able_to(:read, category) }
-      it { is_expected.to be_able_to(:update, category) }
-      it { is_expected.to be_able_to(:destroy, category) }
+      context "when visible is true" do
+        context "and internal is true" do
+          let(:category) { Fabricate(:category, visible: true, internal: true) }
+
+          it { is_expected.to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.to be_able_to(:update, category) }
+          it { is_expected.to be_able_to(:destroy, category) }
+        end
+
+        context "and internal is false" do
+          let(:category) do
+            Fabricate(:category, visible: true, internal: false)
+          end
+
+          it { is_expected.to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.to be_able_to(:update, category) }
+          it { is_expected.to be_able_to(:destroy, category) }
+        end
+      end
+
+      context "when visible is false" do
+        context "and internal is true" do
+          let(:category) do
+            Fabricate(:category, visible: false, internal: true)
+          end
+
+          it { is_expected.to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.to be_able_to(:update, category) }
+          it { is_expected.to be_able_to(:destroy, category) }
+        end
+
+        context "and internal is false" do
+          let(:category) do
+            Fabricate(:category, visible: false, internal: false)
+          end
+
+          it { is_expected.to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.to be_able_to(:update, category) }
+          it { is_expected.to be_able_to(:destroy, category) }
+        end
+      end
     end
 
     %i[reviewer].each do |employee_type|
@@ -22,22 +61,151 @@ RSpec.describe Ability do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.to be_able_to(:create, category) }
-        it { is_expected.to be_able_to(:read, category) }
-        it { is_expected.to be_able_to(:update, category) }
-        it { is_expected.not_to be_able_to(:destroy, category) }
+        context "when visible is true" do
+          context "and internal is true" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            it { is_expected.to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+
+          context "and internal is false" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: false)
+            end
+
+            it { is_expected.to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+        end
+
+        context "when visible is false" do
+          context "and internal is true" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: true)
+            end
+
+            it { is_expected.to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+
+          context "and internal is false" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+
+            it { is_expected.to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+        end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.not_to be_able_to(:create, category) }
-        it { is_expected.to be_able_to(:read, category) }
-        it { is_expected.not_to be_able_to(:update, category) }
-        it { is_expected.not_to be_able_to(:destroy, category) }
+        context "when visible is true" do
+          context "and internal is true" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            it { is_expected.not_to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.not_to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+
+          context "and internal is false" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, category) }
+            it { is_expected.to be_able_to(:read, category) }
+            it { is_expected.not_to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+        end
+
+        context "when visible is false" do
+          context "and internal is true" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: true)
+            end
+
+            it { is_expected.not_to be_able_to(:create, category) }
+            it { is_expected.not_to be_able_to(:read, category) }
+            it { is_expected.not_to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+
+          context "and internal is false" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, category) }
+            it { is_expected.not_to be_able_to(:read, category) }
+            it { is_expected.not_to be_able_to(:update, category) }
+            it { is_expected.not_to be_able_to(:destroy, category) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when visible is true" do
+          let(:category) { Fabricate(:category, visible: true) }
+
+          it { is_expected.not_to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.not_to be_able_to(:update, category) }
+          it { is_expected.not_to be_able_to(:destroy, category) }
+        end
+
+        context "when visible is false" do
+          let(:category) { Fabricate(:category, visible: false) }
+
+          it { is_expected.not_to be_able_to(:create, category) }
+          it { is_expected.not_to be_able_to(:read, category) }
+          it { is_expected.not_to be_able_to(:update, category) }
+          it { is_expected.not_to be_able_to(:destroy, category) }
+        end
+
+        context "when internal is true" do
+          let(:category) { Fabricate(:category, internal: true) }
+
+          it { is_expected.not_to be_able_to(:create, category) }
+          it { is_expected.not_to be_able_to(:read, category) }
+          it { is_expected.not_to be_able_to(:update, category) }
+          it { is_expected.not_to be_able_to(:destroy, category) }
+        end
+
+        context "when internal is false" do
+          let(:category) { Fabricate(:category, internal: false) }
+
+          it { is_expected.not_to be_able_to(:create, category) }
+          it { is_expected.to be_able_to(:read, category) }
+          it { is_expected.not_to be_able_to(:update, category) }
+          it { is_expected.not_to be_able_to(:destroy, category) }
+        end
       end
     end
   end
