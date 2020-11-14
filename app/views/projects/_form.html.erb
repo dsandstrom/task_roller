@@ -12,6 +12,11 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
+    <%= form.label :category_id %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, id: :project_category_id %>
+  </div>
+
+  <div class="field">
     <%= required_field_label form, :name %>
     <%= form.text_field :name, id: :project_name %>
   </div>

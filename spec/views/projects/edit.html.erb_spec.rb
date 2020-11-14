@@ -18,7 +18,7 @@ RSpec.describe "projects/edit", type: :view do
       assert_select "input[name=?]", "project[name]"
       assert_select "input[name=?]", "project[visible]"
       assert_select "input[name=?]", "project[internal]"
-      assert_select "input[name=?]", "project[category_id]", count: 0
+      assert_select "select[name=?]", "project[category_id]"
     end
   end
 end
