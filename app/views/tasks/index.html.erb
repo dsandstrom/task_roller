@@ -9,20 +9,20 @@
     end
 %>
 
-<% if @project %>
-  <%= project_header @project %>
+<% if @parent.is_a?(Project) %>
+  <%= project_header @parent %>
   <header class="tasks-header">
     <h2>Project Tasks</h2>
-    <p><%= render @subscription, project: @project %></p>
+    <p><%= render @subscription %></p>
   </header>
-<% elsif @category %>
-  <%= category_header @category %>
+<% elsif @parent.is_a?(Category) %>
+  <%= category_header @parent %>
   <header class="tasks-header">
     <h2>Category Tasks</h2>
-    <p><%= render @subscription, category: @category %></p>
+    <p><%= render @subscription %></p>
   </header>
-<% elsif @user %>
-  <%= user_header @user %>
+<% elsif @parent.is_a?(User) %>
+  <%= user_header @parent %>
   <header class="tasks-header">
     <h2>Created Tasks</h2>
   </header>

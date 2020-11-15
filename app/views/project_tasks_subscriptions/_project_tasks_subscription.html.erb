@@ -1,3 +1,8 @@
+<%
+  project ||= project_tasks_subscription.project
+  return unless project
+%>
+
 <% if project_tasks_subscription.persisted? %>
   <% return unless can?(:destroy, project_tasks_subscription) %>
 

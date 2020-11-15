@@ -17,7 +17,6 @@ class TasksController < ApplicationController
   before_action :check_for_task_types, only: :new
 
   def index
-    # TODO: authorize project tasks within category
     authorize! :read, Task
 
     set_tasks
@@ -26,7 +25,6 @@ class TasksController < ApplicationController
 
   def show
     authorize! :read, @project
-    authorize! :read, @project.category
 
     @task_subscription =
       @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
@@ -74,17 +72,15 @@ class TasksController < ApplicationController
     end
 
     def set_parent
-      if params[:user_id]
-        @user = User.find(params[:user_id])
-        authorize! :read, @user
-      elsif params[:project_id]
-        @project = Project.find(params[:project_id])
-        authorize! :read, @project
-        authorize! :read, @project.category
-      else
-        @category = Category.find(params[:category_id])
-        authorize! :read, @category
-      end
+      @parent =
+        if params[:user_id]
+          User.find(params[:user_id])
+        elsif params[:project_id]
+          Project.find(params[:project_id])
+        else
+          Category.find(params[:category_id])
+        end
+      authorize! :read, @parent
     end
 
     def set_category_and_project
@@ -124,23 +120,14 @@ class TasksController < ApplicationController
     end
 
     def set_tasks
-      @tasks =
-        if @user
-          @user.tasks
-        elsif @project
-          @project.tasks
-        else
-          @category.tasks
-        end
+      @tasks = @parent.tasks
       @tasks = @tasks.filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription
       @subscription =
-        if @project
-          @project.tasks_subscription(current_user, init: true)
-        elsif @category
-          @category.tasks_subscription(current_user, init: true)
+        if @parent.is_a?(Project) || @parent.is_a?(Category)
+          @parent.tasks_subscription(current_user, init: true)
         end
     end
 end
