@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
 class ProjectsController < ApplicationController
-  load_and_authorize_resource only: %i[index show edit update destroy]
-  load_and_authorize_resource :category, only: %i[new create]
-  load_and_authorize_resource through: :category, only: %i[new create]
+  load_and_authorize_resource :category, except: %i[show edit update]
+  load_and_authorize_resource through: :category, except: %i[show edit update]
+  load_and_authorize_resource only: %i[show edit update]
+
+  def index
+    @issues = @category.issues.order(updated_at: :desc).limit(3)
+    @tasks = @category.tasks.order(updated_at: :desc).limit(3)
+    @issue_subscription =
+      @category.category_issues_subscriptions
+               .find_or_initialize_by(user_id: current_user.id)
+    @task_subscription =
+      @category.category_tasks_subscriptions
+               .find_or_initialize_by(user_id: current_user.id)
+  end
 
   def show
+    authorize! :read, @project.category
+
     @issues = @project.issues.order(updated_at: :desc).limit(3)
     @tasks = @project.tasks.order(updated_at: :desc).limit(3)
     @issue_subscription =
@@ -37,9 +50,9 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    category = @project.category
     @project.destroy
-    redirect_to category, notice: 'Project was successfully destroyed.'
+    redirect_to category_projects_url(@category),
+                notice: 'Project was successfully destroyed.'
   end
 
   private

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "categories/show", type: :view do
+RSpec.describe "projects/index", type: :view do
   let(:category) { Fabricate(:category) }
 
   before(:each) do

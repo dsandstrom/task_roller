@@ -5,25 +5,14 @@ class CategoriesController < ApplicationController
 
   def index; end
 
-  def show
-    @projects = @category.projects
-    @issues = @category.issues.order(updated_at: :desc).limit(3)
-    @tasks = @category.tasks.order(updated_at: :desc).limit(3)
-    @issue_subscription =
-      @category.category_issues_subscriptions
-               .find_or_initialize_by(user_id: current_user.id)
-    @task_subscription =
-      @category.category_tasks_subscriptions
-               .find_or_initialize_by(user_id: current_user.id)
-  end
-
   def new; end
 
   def edit; end
 
   def create
     if @category.save
-      redirect_to @category, notice: 'Category was successfully created.'
+      redirect_to category_projects_url(@category),
+                  notice: 'Category was successfully created.'
     else
       render :new
     end
@@ -31,7 +20,7 @@ class CategoriesController < ApplicationController
 
   def update
     if @category.update(category_params)
-      redirect_to @category, notice: 'Category was successfully updated.'
+      redirect_to categories_url, notice: 'Category was successfully updated.'
     else
       render :edit
     end

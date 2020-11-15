@@ -14,7 +14,7 @@ module ProjectsHelper
 
     content_tag :header, class: 'project-header' do
       concat breadcrumbs([['Categories', categories_path],
-                          [category.name, category_path(category)]])
+                          [category.name, category_projects_path(category)]])
       concat content_tag(:h1, project_header_heading(project))
       concat project_tags(project)
       concat project_nav(project)

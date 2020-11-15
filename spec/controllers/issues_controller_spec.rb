@@ -116,8 +116,7 @@ RSpec.describe IssuesController, type: :controller do
           it "redirects to project" do
             get :new, params: { category_id: category.to_param,
                                 project_id: project.to_param }
-            expect(response)
-              .to redirect_to(project_url(project))
+            expect(response).to redirect_to(categories_url)
           end
         end
       end

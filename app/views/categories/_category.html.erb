@@ -7,7 +7,9 @@ task_subscription =
 
 <div id="category-<%= category.id %>" class="category">
   <div class="category-name-and-tags">
-    <h3 class="category-name"><%= link_to category.name, category %></h3>
+    <h3 class="category-name">
+      <%= link_to category.name, category_projects_path(category) %>
+    </h3>
     <%= category_tags(category) %>
   </div>
 

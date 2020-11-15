@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add category nav
-
 module CategoriesHelper
   def category_tags(category)
     content_tag :p, class: 'category-tags' do
@@ -11,9 +9,11 @@ module CategoriesHelper
   end
 
   def category_header(category)
+    url = category_projects_path(category)
+
     content_tag :header, class: 'category-header' do
       concat breadcrumbs([['Categories', categories_path]])
-      concat content_tag(:h1, link_to_unless_current(category.name, category))
+      concat content_tag(:h1, link_to_unless_current(category.name, url))
       concat category_tags(category)
       concat category_nav(category)
       concat category_page_title(category)
@@ -56,9 +56,10 @@ module CategoriesHelper
     end
 
     def category_nav_links(category)
-      links = [link_to_unless_current('Category', category),
-               link_to_unless_current('Issues', category_issues_path(category)),
-               link_to_unless_current('Tasks', category_tasks_path(category))]
+      links =
+        [link_to_unless_current('Category', category_projects_path(category)),
+         link_to_unless_current('Issues', category_issues_path(category)),
+         link_to_unless_current('Tasks', category_tasks_path(category))]
       return links unless can?(:update, category)
 
       links.append(edit_category_link(category))

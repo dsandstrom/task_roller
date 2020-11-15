@@ -19,20 +19,6 @@ RSpec.describe CategoriesController, type: :controller do
     end
   end
 
-  describe "GET #show" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-      context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
-
-        it "returns a success response" do
-          category = Fabricate(:category)
-          get :show, params: { id: category.to_param }
-          expect(response).to be_successful
-        end
-      end
-    end
-  end
-
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
@@ -97,7 +83,8 @@ RSpec.describe CategoriesController, type: :controller do
 
           it "redirects to the created category" do
             post :create, params: { category: valid_attributes }
-            expect(response).to redirect_to(Category.last)
+            expect(response)
+              .to redirect_to(category_projects_url(Category.last))
           end
         end
 
@@ -143,7 +130,7 @@ RSpec.describe CategoriesController, type: :controller do
             category = Fabricate(:category)
             put :update, params: { id: category.to_param,
                                    category: new_attributes }
-            expect(response).to redirect_to(category)
+            expect(response).to redirect_to(categories_url)
           end
         end
 

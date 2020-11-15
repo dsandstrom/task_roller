@@ -7,14 +7,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :assignments, only: :index
   end
 
-  resources :categories do
+  resources :categories, except: :show do
     resources :tasks, only: :index
     resources :issues, only: :index
 
-    resources :projects, only: %i[new create]
+    resources :projects, except: %i[show edit update]
   end
 
-  resources :projects, except: %i[index new create] do
+  resources :projects, only: %i[show edit update] do
     resources :issues, only: %i[index new create]
     resources :tasks, only: %i[index new create]
   end

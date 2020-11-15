@@ -1,12 +1,54 @@
-<h1>Projects</h1>
+<%= category_header @category %>
 
-<header class="projects-header">
+<header class="category-projects-header">
+  <h2>Projects</h2>
+
+  <% if can?(:create, Project) %>
+    <p>
+      <%= link_to new_category_project_path(@category),
+                  class: 'button button-success' do %>
+        <i class="icon-plus"></i>
+        Add Project
+      <% end %>
+    </p>
+  <% end %>
 </header>
-
-<div class="projects">
+<div class="category-projects">
   <% if @projects.any? %>
     <%= render @projects %>
   <% else %>
-    <p class="no-project">none</p>
+    <p class="no-project">None yet</p>
+  <% end %>
+</div>
+
+<header class="issues-header">
+  <h2>Latest Issues</h2>
+  <p>
+    <%= render @issue_subscription, category: @category %>
+    <%= link_to 'View Category Issues', category_issues_path(@category),
+                class: 'button' %>
+  </p>
+</header>
+<div class="issues">
+  <% if @issues.any? %>
+    <%= render @issues, locals: { format: :short } %>
+  <% else %>
+    <p class="no-issue">None yet</p>
+  <% end %>
+</div>
+
+<header class="tasks-header">
+  <h2>Latest Tasks</h2>
+  <p>
+    <%= render @task_subscription, category: @category %>
+    <%= link_to 'View Category Tasks', category_tasks_path(@category),
+                class: 'button' %>
+  </p>
+</header>
+<div class="tasks">
+  <% if @tasks.any? %>
+    <%= render @tasks, locals: { format: :short } %>
+  <% else %>
+    <p class="no-task">None yet</p>
   <% end %>
 </div>
