@@ -721,21 +721,36 @@ RSpec.describe Ability do
 
   describe "Project model" do
     describe "for an admin" do
-      let(:project) { Fabricate(:project, visible: false, internal: true) }
-      let(:admin) { Fabricate(:user_admin) }
-      subject(:ability) { Ability.new(admin) }
+      let(:current_user) { Fabricate(:user_admin) }
 
-      it { is_expected.to be_able_to(:create, project) }
-      it { is_expected.to be_able_to(:read, project) }
-      it { is_expected.to be_able_to(:update, project) }
-      it { is_expected.to be_able_to(:destroy, project) }
+      subject(:ability) { Ability.new(current_user) }
+
+      context "when category/project are invisible and internal" do
+        let(:category) { Fabricate(:category, visible: false, internal: true) }
+        let(:project) do
+          Fabricate(:project, category: category, visible: false,
+                              internal: true)
+        end
+
+        it { is_expected.to be_able_to(:create, project) }
+        it { is_expected.to be_able_to(:read, project) }
+        it { is_expected.to be_able_to(:update, project) }
+        it { is_expected.to be_able_to(:destroy, project) }
+      end
     end
 
-    %i[reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
+    context "for a reviewer" do
+      let(:current_user) { Fabricate("user_reviewer") }
+
+      subject(:ability) { Ability.new(current_user) }
+
+      context "when category/project are invisible and internal" do
+        let(:category) { Fabricate(:category, visible: false, internal: true) }
+        let(:project) do
+          Fabricate(:project, category: category, visible: false,
+                              internal: true)
+        end
         let(:project) { Fabricate(:project, visible: false, internal: true) }
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.to be_able_to(:create, project) }
         it { is_expected.to be_able_to(:read, project) }
@@ -776,7 +791,8 @@ RSpec.describe Ability do
         context "and project is invisible" do
           context "and external" do
             let(:project) do
-              Fabricate(:project, visible: false, internal: false)
+              Fabricate(:project, visible: false,
+                                  internal: false)
             end
 
             it { is_expected.not_to be_able_to(:create, project) }
@@ -788,6 +804,40 @@ RSpec.describe Ability do
           context "and internal" do
             let(:project) do
               Fabricate(:project, visible: false, internal: true)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
+          end
+        end
+
+        context "when project category is internal" do
+          context "while project is visible and external" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
+          end
+        end
+
+        context "when project category is invisible" do
+          context "while project is visible and external" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
             end
 
             it { is_expected.not_to be_able_to(:create, project) }
@@ -831,8 +881,7 @@ RSpec.describe Ability do
         context "and project is invisible" do
           context "and external" do
             let(:project) do
-              Fabricate(:project, visible: false,
-                                  internal: false)
+              Fabricate(:project, visible: false, internal: false)
             end
 
             it { is_expected.not_to be_able_to(:create, project) }
@@ -844,6 +893,40 @@ RSpec.describe Ability do
           context "and internal" do
             let(:project) do
               Fabricate(:project, visible: false, internal: true)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
+          end
+        end
+
+        context "when project category is internal" do
+          context "while project is visible and external" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
+          end
+        end
+
+        context "when project category is invisible" do
+          context "while project is visible and external" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
             end
 
             it { is_expected.not_to be_able_to(:create, project) }
