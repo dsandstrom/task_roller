@@ -1,8 +1,6 @@
-<% path ||= nil  %>
-
 <div class="tasks">
   <% if tasks.any? || searching? %>
-    <%= render 'tasks/filter_form', path: path, tasks: tasks %>
+    <%= render 'tasks/filter_form', tasks: tasks %>
     <%= render tasks %>
   <% else %>
     <p class="no-task">None yet</p>
