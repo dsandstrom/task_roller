@@ -17,6 +17,7 @@ class TasksController < ApplicationController
   before_action :check_for_task_types, only: :new
 
   def index
+    # TODO: authorize project tasks within category
     authorize! :read, Task
 
     set_tasks
@@ -24,6 +25,10 @@ class TasksController < ApplicationController
   end
 
   def show
+    # TODO: authorize tasks on category & project
+    # authorize! :read, @project
+    # authorize! :read, @project.category
+
     # TODO: add feed of comments, reviews, progresssions, assignments
     @task_subscription =
       @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
@@ -73,10 +78,14 @@ class TasksController < ApplicationController
     def set_parent
       if params[:user_id]
         @user = User.find(params[:user_id])
+        authorize! :read, @user
       elsif params[:project_id]
         @project = Project.find(params[:project_id])
+        authorize! :read, @project
+        authorize! :read, @project.category
       else
         @category = Category.find(params[:category_id])
+        authorize! :read, @category
       end
     end
 

@@ -3,6 +3,8 @@
 # See the wiki for details:
 # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
+# TODO: don't allow reading user with nil employee_id
+
 class Ability
   include CanCan::Ability
 
