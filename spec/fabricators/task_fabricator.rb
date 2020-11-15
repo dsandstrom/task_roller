@@ -4,7 +4,7 @@ Fabricator(:task) do
   summary { sequence(:tasks) { |n| "Task Summary #{n + 1}" } }
   description 'Task Description'
   task_type
-  user
+  user { Fabricate(:user_reviewer) }
   project
 end
 

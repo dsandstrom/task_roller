@@ -1230,6 +1230,8 @@ RSpec.describe Task, type: :model do
   describe "#user_form_options" do
     let(:task) { Fabricate(:task) }
 
+    before { task.user.update employee_type: nil }
+
     context "when no users" do
       it "returns [['Admin', []], 'Reviewer', []]]" do
         expect(task.user_form_options).to eq([["Admin", []], ["Reviewer", []]])

@@ -25,11 +25,9 @@ class TasksController < ApplicationController
   end
 
   def show
-    # TODO: authorize tasks on category & project
-    # authorize! :read, @project
-    # authorize! :read, @project.category
+    authorize! :read, @project
+    authorize! :read, @project.category
 
-    # TODO: add feed of comments, reviews, progresssions, assignments
     @task_subscription =
       @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end
