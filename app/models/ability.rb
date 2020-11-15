@@ -32,8 +32,7 @@ class Ability
 
     def basic_read_abilities(_user = nil)
       can :read, Category, visible: true, internal: false
-      can :read, Project, visible: true, internal: false,
-                          category: { visible: true, internal: false }
+      can :read, Project, visible: true, internal: false
       [Issue, IssueComment, IssueClosure, IssueConnection,
        IssueReopening, Progression, Task, TaskComment, TaskClosure,
        TaskConnection, TaskReopening, Resolution, Review,
@@ -66,7 +65,7 @@ class Ability
 
     def worker_abilities(_user)
       can :read, Category, visible: true
-      can :read, Project, visible: true, category: { visible: true }
+      can :read, Project, visible: true
     end
 
     def reviewer_abilities(user)

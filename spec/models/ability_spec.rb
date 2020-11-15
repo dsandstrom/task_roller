@@ -749,235 +749,51 @@ RSpec.describe Ability do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when category is visible and external" do
-          let(:category) do
-            Fabricate(:category, visible: true, internal: false)
+        context "when project is visible" do
+          context "and external" do
+            let(:project) do
+              Fabricate(:project, visible: true, internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
+          context "and internal" do
+            let(:project) do
+              Fabricate(:project, visible: true, internal: true)
             end
 
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
-        context "when category is visible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: true, internal: true)
+        context "and project is invisible" do
+          context "and external" do
+            let(:project) do
+              Fabricate(:project, visible: false, internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
+          context "and internal" do
+            let(:project) do
+              Fabricate(:project, visible: false, internal: true)
             end
 
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-        end
-
-        context "when category is invisible and external" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: false)
-          end
-
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-        end
-
-        context "when category is invisible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: true)
-          end
-
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
       end
@@ -988,235 +804,52 @@ RSpec.describe Ability do
         let(:current_user) { Fabricate("user_#{employee_type}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when category is visible and external" do
-          let(:category) do
-            Fabricate(:category, visible: true, internal: false)
+        context "when project is visible" do
+          context "and external" do
+            let(:project) do
+              Fabricate(:project, visible: true, internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
+          context "and internal" do
+            let(:project) do
+              Fabricate(:project, visible: true, internal: true)
             end
 
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
-        context "when category is visible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: true, internal: true)
+        context "and project is invisible" do
+          context "and external" do
+            let(:project) do
+              Fabricate(:project, visible: false,
+                                  internal: false)
+            end
+
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
+          context "and internal" do
+            let(:project) do
+              Fabricate(:project, visible: false, internal: true)
             end
 
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-        end
-
-        context "when category is invisible and external" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: false)
-          end
-
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-        end
-
-        context "when category is invisible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: true)
-          end
-
-          context "and project is visible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: true,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-          end
-
-          context "and project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: false)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:project, category: category, visible: false,
-                                    internal: true)
-              end
-
-              it { is_expected.not_to be_able_to(:create, project) }
-              it { is_expected.not_to be_able_to(:read, project) }
-              it { is_expected.not_to be_able_to(:update, project) }
-              it { is_expected.not_to be_able_to(:destroy, project) }
-            end
+            it { is_expected.not_to be_able_to(:create, project) }
+            it { is_expected.not_to be_able_to(:read, project) }
+            it { is_expected.not_to be_able_to(:update, project) }
+            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
       end
