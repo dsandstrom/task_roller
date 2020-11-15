@@ -34,8 +34,7 @@ class IssuesController < ApplicationController
       authorize! :create, @issue
     else
       # TODO: raise error in ApplicationController and rescue/redirect
-      redirect_url =
-        can?(:create, IssueType) ? issue_types_url : project_url(@project)
+      redirect_url = can?(:create, IssueType) ? issue_types_url : @project
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end
   end
@@ -45,7 +44,7 @@ class IssuesController < ApplicationController
   def create
     if @issue.save
       @issue.subscribe_users
-      redirect_to issue_url(@issue), success: 'Issue was successfully created.'
+      redirect_to @issue, success: 'Issue was successfully created.'
     else
       set_form_options
       render :new
@@ -54,7 +53,7 @@ class IssuesController < ApplicationController
 
   def update
     if @issue.update(issue_params)
-      redirect_to issue_url(@issue), success: 'Issue was successfully updated.'
+      redirect_to @issue, success: 'Issue was successfully updated.'
     else
       set_form_options
       render :edit
@@ -63,8 +62,7 @@ class IssuesController < ApplicationController
 
   def destroy
     @issue.destroy
-    redirect_to project_url(@project),
-                success: 'Issue was successfully destroyed.'
+    redirect_to @project, success: 'Issue was successfully destroyed.'
   end
 
   private
@@ -72,8 +70,7 @@ class IssuesController < ApplicationController
     def check_for_issue_types
       return true if @issue_types&.any?
 
-      redirect_url =
-        can?(:create, IssueType) ? issue_types_url : project_url(@project)
+      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
       false
     end

@@ -155,7 +155,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "redirects to project" do
             get :new, params: { project_id: project.to_param }
-            expect(response).to redirect_to(project_url(project))
+            expect(response).to redirect_to(root_url)
           end
         end
       end
@@ -597,8 +597,7 @@ RSpec.describe TasksController, type: :controller do
           task = Fabricate(:task, project: project)
           delete :destroy, params: { project_id: project.to_param,
                                      id: task.to_param }
-          url = project_tasks_url(project)
-          expect(response).to redirect_to(url)
+          expect(response).to redirect_to(project)
         end
       end
     end

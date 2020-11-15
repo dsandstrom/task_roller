@@ -116,7 +116,7 @@ RSpec.describe IssuesController, type: :controller do
           it "redirects to project" do
             get :new, params: { category_id: category.to_param,
                                 project_id: project.to_param }
-            expect(response).to redirect_to(categories_url)
+            expect(response).to redirect_to(root_url)
           end
         end
       end
@@ -384,7 +384,7 @@ RSpec.describe IssuesController, type: :controller do
       it "redirects to the issues list" do
         issue = Fabricate(:issue, project: project)
         delete :destroy, params: { id: issue.to_param }
-        expect(response).to redirect_to(project_url(project))
+        expect(response).to redirect_to(project)
       end
     end
 

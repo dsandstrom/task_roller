@@ -3,7 +3,8 @@
 require "rails_helper"
 
 RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
-  let(:project) { Fabricate(:project) }
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
   let(:user) { Fabricate(:user_worker) }
 
   describe "GET #new" do
