@@ -1,7 +1,6 @@
 <div class="issues">
   <% if issues.any? || searching? %>
-    <%= render 'issues/filter_form', issues: issues,
-                                     index_path: index_path %>
+    <%= render 'issues/filter_form', issues: issues %>
     <%= render issues %>
   <% else %>
     <p class="no-issue">None yet</p>

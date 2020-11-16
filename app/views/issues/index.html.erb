@@ -1,35 +1,20 @@
-<%
-index_path =
-  if @user
-    user_issues_path(@user)
-  elsif @project
-    project_issues_path(@project)
-  elsif @category
-    category_issues_path(@category)
-  end
-%>
-
 <% if @project %>
   <%= project_header @project %>
   <header class="issues-header">
     <h2>Project Issues</h2>
-    <p><%= render @subscription, project: @project %></p>
+    <p><%= render @subscription %></p>
   </header>
 <% elsif @category %>
   <%= category_header @category %>
   <header class="issues-header">
     <h2>Category Issues</h2>
-    <p><%= render @subscription, category: @category %></p>
+    <p><%= render @subscription %></p>
   </header>
 <% elsif @user %>
   <%= user_header @user %>
   <header class="issues-header">
     <h2>Reported Issues</h2>
   </header>
-<% else %>
-  <h1>All Issues</h1>
-  <header class="issues-header"></header>
 <% end %>
 
-<%= render 'issues/issues', issues: @issues,
-                            index_path: index_path %>
+<%= render 'issues/issues', issues: @issues %>

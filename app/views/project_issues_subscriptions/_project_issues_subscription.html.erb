@@ -1,8 +1,15 @@
+<%
+  project ||= project_issues_subscription.project
+  return unless project
+%>
+
 <% if project_issues_subscription.persisted? %>
   <% return unless can?(:destroy, project_issues_subscription) %>
 
-  <%= link_to ' Issues',
-              project_issues_subscription_path(project, project_issues_subscription),
+  <% url = project_issues_subscription_path(project,
+                                            project_issues_subscription) %>
+
+  <%= link_to ' Issues', url,
               method: :delete,
               class: 'button button-success button-unsubscribe' %>
 <% elsif project&.category&.subscribed_to_issues?(current_user) %>

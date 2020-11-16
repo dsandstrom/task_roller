@@ -1,6 +1,6 @@
 <%
-index_path ||= nil
-return unless index_path
+  index_path ||= request.path
+  return unless index_path
 %>
 
 <div class="issue">
