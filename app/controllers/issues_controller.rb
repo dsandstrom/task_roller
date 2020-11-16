@@ -84,7 +84,7 @@ class IssuesController < ApplicationController
         else
           Category.find(params[:category_id])
         end
-      # authorize! :read, @sourc
+      authorize! :read, @source
     end
 
     def set_category_and_project
@@ -102,8 +102,7 @@ class IssuesController < ApplicationController
     end
 
     def set_issues
-      @issues = @source.issues
-      @issues = @issues.filter_by(build_filters).page(params[:page])
+      @issues = @source.issues.filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription

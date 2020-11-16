@@ -17,14 +17,16 @@ RSpec.describe IssuesController, type: :controller do
   let(:invalid_attributes) { { summary: "" } }
 
   describe "GET #index" do
-    let(:category) { Fabricate(:category) }
-    let(:project) { Fabricate(:project, category: category) }
-
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         before { login(Fabricate("user_#{employee_type.downcase}")) }
 
-        context "when category" do
+        context "when category is invisible and internal" do
+          let(:category) do
+            Fabricate(:category, visible: false, internal: true)
+          end
+          let(:project) { Fabricate(:project, category: category) }
+
           it "returns a success response" do
             Fabricate(:issue, project: project)
             get :index, params: { category_id: category.to_param }
@@ -32,7 +34,12 @@ RSpec.describe IssuesController, type: :controller do
           end
         end
 
-        context "when project" do
+        context "when project is invisible and internal" do
+          let(:project) do
+            Fabricate(:project, category: category, visible: false,
+                                internal: true)
+          end
+
           it "returns a success response" do
             Fabricate(:issue, project: project)
             get :index, params: { project_id: project.to_param }
@@ -41,11 +48,507 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "when user" do
-          it "returns a success response" do
-            Fabricate(:issue, user: user)
-            get :index, params: { user_id: user.to_param }
-            expect(response).to be_successful
+          context "is an employee" do
+            it "returns a success response" do
+              Fabricate(:issue, user: user)
+              get :index, params: { user_id: user.to_param }
+              expect(response).to be_successful
+            end
           end
+
+          # context "is not an employee" do
+          #   before { user.update employee_type: nil }
+          #
+          #   it "should be unauthorized" do
+          #     Fabricate(:issue, user: user)
+          #     get :index, params: { user_id: user.to_param }
+          #     expect_to_be_unauthorized(response)
+          #   end
+          # end
+        end
+      end
+    end
+
+    %w[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        before { login(current_user) }
+
+        context "when category" do
+          context "is visible" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: false)
+              end
+              let(:project) { Fabricate(:project, category: category) }
+
+              it "returns a success response" do
+                Fabricate(:issue, project: project)
+                Fabricate(:issue, project: project, user: current_user)
+                get :index, params: { category_id: category.to_param }
+                expect(response).to be_successful
+              end
+
+              context "and internal" do
+                let(:category) do
+                  Fabricate(:category, visible: true, internal: true)
+                end
+                let(:project) { Fabricate(:project, category: category) }
+
+                it "returns a success response" do
+                  Fabricate(:issue, project: project)
+                  Fabricate(:issue, project: project, user: current_user)
+                  get :index, params: { category_id: category.to_param }
+                  expect(response).to be_successful
+                end
+              end
+            end
+          end
+
+          context "is invisible" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: false, internal: false)
+              end
+              let(:project) { Fabricate(:project, category: category) }
+
+              it "should be unauthorized" do
+                Fabricate(:issue, project: project)
+                Fabricate(:issue, project: project, user: current_user)
+                get :index, params: { category_id: category.to_param }
+                expect_to_be_unauthorized(response)
+              end
+
+              context "and internal" do
+                let(:category) do
+                  Fabricate(:category, visible: false, internal: true)
+                end
+                let(:project) { Fabricate(:project, category: category) }
+
+                it "should be unauthorized" do
+                  Fabricate(:issue, project: project)
+                  Fabricate(:issue, project: project, user: current_user)
+                  get :index, params: { category_id: category.to_param }
+                  expect_to_be_unauthorized(response)
+                end
+              end
+            end
+          end
+        end
+
+        context "when project" do
+          context "has a visible category" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: false)
+              end
+
+              context "and project is visible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: false)
+                  end
+
+                  it "returns a success response" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: true)
+                  end
+
+                  it "returns a success response" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+
+              context "and project is invisible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: false)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+
+            context "and internal" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: true)
+              end
+
+              context "and project is visible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: false)
+                  end
+
+                  it "returns a success response" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: true)
+                  end
+
+                  it "returns a success response" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+
+              context "and project is invisible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: false)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+
+          context "is invisible" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
+            end
+
+            it "should be unauthorized" do
+              Fabricate(:issue, project: project)
+              Fabricate(:issue, project: project, user: current_user)
+              get :index, params: { project_id: project.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
+        end
+
+        context "when user" do
+          context "is an employee" do
+            it "returns a success response" do
+              Fabricate(:issue, user: user)
+              get :index, params: { user_id: user.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          # context "is not an employee" do
+          #   before { user.update employee_type: nil }
+          #
+          #   it "should be unauthorized" do
+          #     Fabricate(:issue, user: user)
+          #     get :index, params: { user_id: user.to_param }
+          #     expect_to_be_unauthorized(response)
+          #   end
+          # end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        before { login(current_user) }
+
+        context "when category" do
+          context "is visible" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: false)
+              end
+              let(:project) { Fabricate(:project, category: category) }
+
+              it "returns a success response" do
+                Fabricate(:issue, project: project)
+                Fabricate(:issue, project: project, user: current_user)
+                get :index, params: { category_id: category.to_param }
+                expect(response).to be_successful
+              end
+
+              context "and internal" do
+                let(:category) do
+                  Fabricate(:category, visible: true, internal: true)
+                end
+                let(:project) { Fabricate(:project, category: category) }
+
+                it "should be unauthorized" do
+                  Fabricate(:issue, project: project)
+                  Fabricate(:issue, project: project, user: current_user)
+                  get :index, params: { category_id: category.to_param }
+                  expect_to_be_unauthorized(response)
+                end
+              end
+            end
+          end
+
+          context "is invisible" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: false, internal: false)
+              end
+              let(:project) { Fabricate(:project, category: category) }
+
+              it "should be unauthorized" do
+                Fabricate(:issue, project: project)
+                Fabricate(:issue, project: project, user: current_user)
+                get :index, params: { category_id: category.to_param }
+                expect_to_be_unauthorized(response)
+              end
+
+              context "and internal" do
+                let(:category) do
+                  Fabricate(:category, visible: false, internal: true)
+                end
+                let(:project) { Fabricate(:project, category: category) }
+
+                it "should be unauthorized" do
+                  Fabricate(:issue, project: project)
+                  Fabricate(:issue, project: project, user: current_user)
+                  get :index, params: { category_id: category.to_param }
+                  expect_to_be_unauthorized(response)
+                end
+              end
+            end
+          end
+        end
+
+        context "when project" do
+          context "has a visible category" do
+            context "and external" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: false)
+              end
+
+              context "and project is visible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: false)
+                  end
+
+                  it "returns a success response" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+
+              context "and project is invisible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: false)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+
+            context "and internal" do
+              let(:category) do
+                Fabricate(:category, visible: true, internal: true)
+              end
+
+              context "and project is visible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: false)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: true,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+
+              context "and project is invisible" do
+                context "and external" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: false)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "and internal" do
+                  let(:project) do
+                    Fabricate(:project, category: category, visible: false,
+                                        internal: true)
+                  end
+
+                  it "should be unauthorized" do
+                    Fabricate(:issue, project: project)
+                    Fabricate(:issue, project: project, user: current_user)
+                    get :index, params: { project_id: project.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+
+          context "is invisible" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+            let(:project) do
+              Fabricate(:project, category: category, visible: true,
+                                  internal: false)
+            end
+
+            it "should be unauthorized" do
+              Fabricate(:issue, project: project)
+              Fabricate(:issue, project: project, user: current_user)
+              get :index, params: { project_id: project.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
+        end
+
+        context "when user" do
+          context "is an employee" do
+            it "returns a success response" do
+              Fabricate(:issue, user: user)
+              get :index, params: { user_id: user.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          # context "is not an employee" do
+          #   before { user.update employee_type: nil }
+          #
+          #   it "should be unauthorized" do
+          #     Fabricate(:issue, user: user)
+          #     get :index, params: { user_id: user.to_param }
+          #     expect_to_be_unauthorized(response)
+          #   end
+          # end
         end
       end
     end

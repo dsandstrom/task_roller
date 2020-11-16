@@ -120,8 +120,7 @@ class TasksController < ApplicationController
     end
 
     def set_tasks
-      @tasks = @source.tasks
-      @tasks = @tasks.filter_by(build_filters).page(params[:page])
+      @tasks = @source.tasks.filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription
