@@ -26,7 +26,7 @@ RSpec.describe "issues/index", type: :view do
       end
 
       before(:each) do
-        assign(:category, category)
+        assign(:source, category)
         assign(:issues, page([first_issue, second_issue]))
         assign(:subscription, category_issues_subscription)
       end
@@ -78,8 +78,7 @@ RSpec.describe "issues/index", type: :view do
       let(:second_issue) { Fabricate(:issue, project: project) }
 
       before(:each) do
-        assign(:category, category)
-        assign(:project, project)
+        assign(:source, project)
         assign(:issues, page([first_issue, second_issue]))
         assign(:subscription, project_issues_subscription)
       end
@@ -144,7 +143,7 @@ RSpec.describe "issues/index", type: :view do
       let(:second_issue) { Fabricate(:issue, user: user) }
 
       before(:each) do
-        assign(:user, user)
+        assign(:source, user)
         assign(:issues, page([first_issue, second_issue]))
       end
 
@@ -200,8 +199,7 @@ RSpec.describe "issues/index", type: :view do
 
       context "when project" do
         before(:each) do
-          assign(:category, category)
-          assign(:project, project)
+          assign(:source, project)
           assign(:issues, page([first_issue, second_issue]))
           assign(:subscription, project_issues_subscription)
         end
@@ -231,7 +229,7 @@ RSpec.describe "issues/index", type: :view do
           let(:second_issue) { Fabricate(:issue, user: current_user) }
 
           before(:each) do
-            assign(:user, current_user)
+            assign(:source, current_user)
             assign(:issues, page([first_issue, second_issue]))
           end
 
@@ -253,7 +251,7 @@ RSpec.describe "issues/index", type: :view do
           let(:second_issue) { Fabricate(:issue, user: user) }
 
           before(:each) do
-            assign(:user, user)
+            assign(:source, user)
             assign(:issues, page([first_issue, second_issue]))
           end
 

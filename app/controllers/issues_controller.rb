@@ -8,7 +8,7 @@ class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
-  before_action :set_parent, only: :index
+  before_action :set_source, only: :index
   before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_issue_types, only: :new
@@ -75,14 +75,16 @@ class IssuesController < ApplicationController
       false
     end
 
-    def set_parent
-      if params[:user_id]
-        @user = User.find(params[:user_id])
-      elsif params[:project_id]
-        @project = Project.find(params[:project_id])
-      else
-        @category = Category.find(params[:category_id])
-      end
+    def set_source
+      @source =
+        if params[:user_id]
+          User.find(params[:user_id])
+        elsif params[:project_id]
+          Project.find(params[:project_id])
+        else
+          Category.find(params[:category_id])
+        end
+      # authorize! :read, @sourc
     end
 
     def set_category_and_project
@@ -100,24 +102,14 @@ class IssuesController < ApplicationController
     end
 
     def set_issues
-      @issues =
-        if @user
-          @issues = @user.issues
-        elsif @project
-          @project.issues
-        else
-          @category.issues
-        end
+      @issues = @source.issues
       @issues = @issues.filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription
-      @subscription =
-        if @project
-          @project.issues_subscription(current_user, init: true)
-        elsif @category
-          @category.issues_subscription(current_user, init: true)
-        end
+      return unless @source.is_a?(Category) || @source.is_a?(Project)
+
+      @subscription = @source.issues_subscription(current_user, init: true)
     end
 
     def issue_params

@@ -11,7 +11,7 @@ class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource only: %i[show edit update destroy]
-  before_action :set_parent, only: :index
+  before_action :set_source, only: :index
   before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_task_types, only: :new
@@ -71,7 +71,7 @@ class TasksController < ApplicationController
       false
     end
 
-    def set_parent
+    def set_source
       @source =
         if params[:user_id]
           User.find(params[:user_id])
@@ -125,9 +125,8 @@ class TasksController < ApplicationController
     end
 
     def set_subscription
-      @subscription =
-        if @source.is_a?(Project) || @source.is_a?(Category)
-          @source.tasks_subscription(current_user, init: true)
-        end
+      return unless @source.is_a?(Project) || @source.is_a?(Category)
+
+      @subscription = @source.tasks_subscription(current_user, init: true)
     end
 end
