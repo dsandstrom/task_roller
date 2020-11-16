@@ -26,15 +26,6 @@
   <main class="issue-main">
     <%= issue_tags(issue) %>
 
-    <% if project && category %>
-      <p>
-        Project: <%= link_to_unless_current project.name,
-                                            project_issues_path(project) %>
-        (<%= link_to_unless_current category.name,
-                                    category_issues_path(category) %>)
-      </p>
-    <% end %>
-
     <p>
       Opened
       <%= content_tag :strong, format_date(issue.created_at),

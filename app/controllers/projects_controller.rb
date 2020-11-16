@@ -8,6 +8,9 @@ class ProjectsController < ApplicationController
   load_resource :issues, through: :category, only: :index, singleton: true
   load_resource :tasks, through: :category, only: :index, singleton: true
 
+  load_resource :issues, through: :project, only: :show, singleton: true
+  load_resource :tasks, through: :project, only: :show, singleton: true
+
   def index
     @issues = @issues.accessible_by(current_ability)
                      .order(updated_at: :desc).limit(3)
@@ -22,8 +25,10 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @issues = @project.issues.order(updated_at: :desc).limit(3)
-    @tasks = @project.tasks.order(updated_at: :desc).limit(3)
+    @issues = @issues.accessible_by(current_ability)
+                     .order(updated_at: :desc).limit(3)
+    @tasks = @tasks.accessible_by(current_ability)
+                   .order(updated_at: :desc).limit(3)
     @issue_subscription =
       @project.project_issues_subscriptions
               .find_or_initialize_by(user_id: current_user.id)
