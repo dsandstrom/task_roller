@@ -530,7 +530,7 @@ RSpec.describe "tasks/show", type: :view do
     end
   end
 
-  context "for an reviewer" do
+  context "for a reviewer" do
     let(:reviewer) { Fabricate(:user_reviewer) }
     let(:task_subscription) do
       Fabricate(:task_subscription, task: task, user: reviewer)

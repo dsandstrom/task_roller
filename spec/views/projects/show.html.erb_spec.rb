@@ -114,7 +114,7 @@ RSpec.describe "projects/show", type: :view do
     end
   end
 
-  context "for an reviewer" do
+  context "for a reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
     let(:issue_subscription) do
       Fabricate(:project_issues_subscription, user: current_user)
