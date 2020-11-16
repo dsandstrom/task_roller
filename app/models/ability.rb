@@ -8,6 +8,21 @@
 class Ability
   include CanCan::Ability
 
+  REPORTER_CATEGORY_OPTIONS = { visible: true, internal: false }.freeze
+  REPORTER_PROJECT_OPTIONS = { visible: true, internal: false,
+                               category: REPORTER_CATEGORY_OPTIONS }.freeze
+  WORKER_CATEGORY_OPTIONS = { visible: true }.freeze
+  WORKER_PROJECT_OPTIONS = { visible: true,
+                             category: WORKER_CATEGORY_OPTIONS }.freeze
+  MANAGE_CLASSES = [CategoryIssuesSubscription, CategoryTasksSubscription,
+                    IssueSubscription, ProjectIssuesSubscription,
+                    ProjectTasksSubscription, TaskSubscription].freeze
+  READ_CLASSES = [IssueComment, IssueClosure, IssueConnection, IssueReopening,
+                  Progression, Task, TaskComment, TaskClosure, TaskConnection,
+                  TaskReopening, Resolution, Review, User].freeze
+  DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
+                     TaskClosure, TaskReopening].freeze
+
   def initialize(user)
     return unless user
 
@@ -33,38 +48,29 @@ class Ability
     end
 
     def basic_read_abilities(_user = nil)
-      can :read, Category, visible: true, internal: false
-      can :read, Project, visible: true, internal: false,
-                          category: { visible: true, internal: false }
-      can :read, Issue,
-          project: { visible: true, internal: false,
-                     category: { visible: true, internal: false } }
-      [IssueComment, IssueClosure, IssueConnection,
-       IssueReopening, Progression, Task, TaskComment, TaskClosure,
-       TaskConnection, TaskReopening, Resolution, Review,
-       User].each do |class_name|
+      can :read, Category, REPORTER_CATEGORY_OPTIONS
+      can :read, Project, REPORTER_PROJECT_OPTIONS
+      can :read, Issue, project: REPORTER_PROJECT_OPTIONS
+      READ_CLASSES.each do |class_name|
         can :read, class_name
       end
     end
 
     def basic_manage_abilities(user)
-      can %i[create update], Issue,
-          user_id: user.id,
-          project: { visible: true, internal: false,
-                     category: { visible: true, internal: false } }
+      can %i[create update], Issue, user_id: user.id,
+                                    project: REPORTER_PROJECT_OPTIONS
       can :update, Task, user_id: user.id
       can %i[create update], IssueComment, user_id: user.id
       can %i[create update], TaskComment, user_id: user.id
       can :create, Resolution, user_id: user.id, issue: { user_id: user.id }
-      [CategoryIssuesSubscription, CategoryTasksSubscription, IssueSubscription,
-       ProjectIssuesSubscription, ProjectTasksSubscription,
-       TaskSubscription].each do |class_name|
+      MANAGE_CLASSES.each do |class_name|
         can :manage, class_name, user_id: user.id
       end
     end
 
     def basic_assigned_task_abilities(user)
       task_params = { task_assignees: { assignee_id: user.id } }
+
       can :create, Progression, user_id: user.id, task: task_params
       can :finish, Progression, user_id: user.id
       can :create, Review, user_id: user.id, task: task_params
@@ -73,12 +79,11 @@ class Ability
     end
 
     def worker_abilities(user)
-      can :read, Category, visible: true
-      can :read, Project, visible: true, category: { visible: true }
-      can :read, Issue, project: { visible: true, category: { visible: true } }
-      can %i[create update], Issue,
-          user_id: user.id,
-          project: { visible: true, category: { visible: true } }
+      can :read, Category, WORKER_CATEGORY_OPTIONS
+      can :read, Project, WORKER_PROJECT_OPTIONS
+      can :read, Issue, project: WORKER_PROJECT_OPTIONS
+      can %i[create update], Issue, user_id: user.id,
+                                    project: WORKER_PROJECT_OPTIONS
     end
 
     def reviewer_abilities(user)
@@ -118,8 +123,7 @@ class Ability
     end
 
     def admin_destroy_abilities
-      [Category, IssueClosure, IssueReopening, Project, TaskClosure,
-       TaskReopening].each do |class_name|
+      DESTROY_CLASSES.each do |class_name|
         can :destroy, class_name
       end
     end

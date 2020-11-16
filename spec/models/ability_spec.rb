@@ -299,75 +299,43 @@ RSpec.describe Ability do
       end
     end
 
-    %i[reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        let(:category) { Fabricate(:category) }
-        let(:project) { Fabricate(:project, category: category) }
+    context "for a reviewer" do
+      let(:current_user) { Fabricate("user_reviewer") }
+      let(:category) { Fabricate(:category) }
+      let(:project) { Fabricate(:project, category: category) }
 
-        subject(:ability) { Ability.new(current_user) }
+      subject(:ability) { Ability.new(current_user) }
 
-        context "when issue category/project are invisible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: true)
-          end
-          let(:project) do
-            Fabricate(:project, category: category, visible: false,
-                                internal: true)
-          end
+      context "when issue category/project are invisible and internal" do
+        let(:category) do
+          Fabricate(:category, visible: false, internal: true)
+        end
+        let(:project) do
+          Fabricate(:project, category: category, visible: false,
+                              internal: true)
+        end
 
-          context "when belongs to them" do
-            let(:issue) do
-              Fabricate(:issue, project: project, user: current_user)
-            end
-
-            it { is_expected.to be_able_to(:create, issue) }
-            it { is_expected.to be_able_to(:read, issue) }
-            it { is_expected.to be_able_to(:update, issue) }
-            it { is_expected.not_to be_able_to(:destroy, issue) }
+        context "when belongs to them" do
+          let(:issue) do
+            Fabricate(:issue, project: project, user: current_user)
           end
 
-          context "when doesn't belong to them" do
-            let(:issue) { Fabricate(:issue, project: project) }
+          it { is_expected.to be_able_to(:create, issue) }
+          it { is_expected.to be_able_to(:read, issue) }
+          it { is_expected.to be_able_to(:update, issue) }
+          it { is_expected.not_to be_able_to(:destroy, issue) }
+        end
 
-            it { is_expected.not_to be_able_to(:create, issue) }
-            it { is_expected.to be_able_to(:read, issue) }
-            it { is_expected.not_to be_able_to(:update, issue) }
-            it { is_expected.not_to be_able_to(:destroy, issue) }
-          end
+        context "when doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue) }
+          it { is_expected.to be_able_to(:read, issue) }
+          it { is_expected.not_to be_able_to(:update, issue) }
+          it { is_expected.not_to be_able_to(:destroy, issue) }
         end
       end
     end
-
-    # %i[worker].each do |employee_type|
-    #   context "for a #{employee_type}" do
-    #     let(:current_user) { Fabricate("user_#{employee_type}") }
-    #     let(:category) { Fabricate(:category) }
-    #     let(:project) { Fabricate(:project, category: category) }
-    #
-    #     subject(:ability) { Ability.new(current_user) }
-    #
-    #     context "when belongs to them" do
-    #       let(:issue) do
-    #         Fabricate(:issue, project: project, user: current_user)
-    #       end
-    #
-    #       it { is_expected.to be_able_to(:create, issue) }
-    #       it { is_expected.to be_able_to(:read, issue) }
-    #       it { is_expected.to be_able_to(:update, issue) }
-    #       it { is_expected.not_to be_able_to(:destroy, issue) }
-    #     end
-    #
-    #     context "when doesn't belong to them" do
-    #       let(:issue) { Fabricate(:issue, project: project) }
-    #
-    #       it { is_expected.not_to be_able_to(:create, issue) }
-    #       it { is_expected.to be_able_to(:read, issue) }
-    #       it { is_expected.not_to be_able_to(:update, issue) }
-    #       it { is_expected.not_to be_able_to(:destroy, issue) }
-    #     end
-    #   end
-    # end
 
     %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
