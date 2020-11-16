@@ -72,7 +72,7 @@ class TasksController < ApplicationController
     end
 
     def set_parent
-      @parent =
+      @source =
         if params[:user_id]
           User.find(params[:user_id])
         elsif params[:project_id]
@@ -80,7 +80,7 @@ class TasksController < ApplicationController
         else
           Category.find(params[:category_id])
         end
-      authorize! :read, @parent
+      authorize! :read, @source
     end
 
     def set_category_and_project
@@ -120,14 +120,14 @@ class TasksController < ApplicationController
     end
 
     def set_tasks
-      @tasks = @parent.tasks
+      @tasks = @source.tasks
       @tasks = @tasks.filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription
       @subscription =
-        if @parent.is_a?(Project) || @parent.is_a?(Category)
-          @parent.tasks_subscription(current_user, init: true)
+        if @source.is_a?(Project) || @source.is_a?(Category)
+          @source.tasks_subscription(current_user, init: true)
         end
     end
 end

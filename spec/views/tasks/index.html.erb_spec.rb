@@ -29,7 +29,7 @@ RSpec.describe "tasks/index", type: :view do
       end
 
       before(:each) do
-        assign(:parent, category)
+        assign(:source, category)
         assign(:tasks, page([first_task, second_task]))
         assign(:subscription, category_tasks_subscription)
       end
@@ -89,7 +89,7 @@ RSpec.describe "tasks/index", type: :view do
       let(:second_task) { Fabricate(:task, project: project, issue: issue) }
 
       before(:each) do
-        assign(:parent, project)
+        assign(:source, project)
         assign(:tasks, page([first_task, second_task]))
         assign(:subscription, project_tasks_subscription)
       end
@@ -156,7 +156,7 @@ RSpec.describe "tasks/index", type: :view do
       let(:second_task) { Fabricate(:task, user: user, issue: issue) }
 
       before(:each) do
-        assign(:parent, user)
+        assign(:source, user)
         assign(:tasks, page([first_task, second_task]))
         assign(:subscription, project_tasks_subscription)
       end
@@ -210,7 +210,7 @@ RSpec.describe "tasks/index", type: :view do
         let(:second_task) { Fabricate(:task, project: project, issue: issue) }
 
         before(:each) do
-          assign(:parent, project)
+          assign(:source, project)
           assign(:tasks, page([first_task, second_task]))
           assign(:subscription, project_tasks_subscription)
         end
@@ -260,7 +260,7 @@ RSpec.describe "tasks/index", type: :view do
         let(:second_task) { Fabricate(:task, project: project, issue: issue) }
 
         before(:each) do
-          assign(:parent, project)
+          assign(:source, project)
           assign(:tasks, page([first_task, second_task]))
           assign(:subscription, project_tasks_subscription)
         end
