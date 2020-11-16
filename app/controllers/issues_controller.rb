@@ -21,6 +21,8 @@ class IssuesController < ApplicationController
   end
 
   def show
+    authorize! :read, @project
+
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build
     @issue_subscription =

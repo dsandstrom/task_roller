@@ -555,14 +555,442 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "GET #show" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        it "returns a success response" do
-          issue = Fabricate(:issue, project: project)
-          get :show, params: { id: issue.to_param }
-          expect(response).to be_successful
+        context "when category/project are invisible and internal" do
+          let(:category) do
+            Fabricate(:category, visible: false, internal: true)
+          end
+          let(:project) do
+            Fabricate(:project, category: category, visible: false,
+                                internal: true)
+          end
+
+          before { login(current_user) }
+
+          context "when someone else's issue" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              get :show, params: { id: issue.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when their issue" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project, user: current_user)
+              get :show, params: { id: issue.to_param }
+              expect(response).to be_successful
+            end
+          end
+        end
+      end
+    end
+
+    %w[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        context "when category is visible" do
+          context "and external" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: false)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "when their issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project,
+                                              user: current_user)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: true)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "when their issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project,
+                                              user: current_user)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+
+          context "and internal" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "when their issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project,
+                                              user: current_user)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: true)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "when their issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project,
+                                              user: current_user)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        context "when category is invisible" do
+          context "and external" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        context "when category is visible" do
+          context "and external" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: false)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+
+                context "when their issue" do
+                  it "returns a success response" do
+                    issue = Fabricate(:issue, project: project,
+                                              user: current_user)
+                    get :show, params: { id: issue.to_param }
+                    expect(response).to be_successful
+                  end
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: true)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+
+          context "and internal" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        context "when category is invisible" do
+          context "and external" do
+            let(:category) do
+              Fabricate(:category, visible: false, internal: false)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: true,
+                                      internal: false)
+                end
+
+                before { login(current_user) }
+
+                context "when someone else's issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+
+                context "when their issue" do
+                  it "should be unauthorized" do
+                    issue = Fabricate(:issue, project: project)
+                    get :show, params: { id: issue.to_param }
+                    expect_to_be_unauthorized(response)
+                  end
+                end
+              end
+            end
+          end
         end
       end
     end
