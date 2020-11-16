@@ -5,9 +5,14 @@ class ProjectsController < ApplicationController
   load_and_authorize_resource through: :category, except: %i[show edit update]
   load_and_authorize_resource only: %i[show edit update]
 
+  load_resource :issues, through: :category, only: :index, singleton: true
+  load_resource :tasks, through: :category, only: :index, singleton: true
+
   def index
-    @issues = @category.issues.order(updated_at: :desc).limit(3)
-    @tasks = @category.tasks.order(updated_at: :desc).limit(3)
+    @issues = @issues.accessible_by(current_ability)
+                     .order(updated_at: :desc).limit(3)
+    @tasks = @tasks.accessible_by(current_ability)
+                   .order(updated_at: :desc).limit(3)
     @issue_subscription =
       @category.category_issues_subscriptions
                .find_or_initialize_by(user_id: current_user.id)
@@ -17,8 +22,6 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    authorize! :read, @project.category
-
     @issues = @project.issues.order(updated_at: :desc).limit(3)
     @tasks = @project.tasks.order(updated_at: :desc).limit(3)
     @issue_subscription =

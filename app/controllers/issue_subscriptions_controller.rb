@@ -9,8 +9,8 @@ class IssueSubscriptionsController < ApplicationController
 
   def index
     @subscribed_issues =
-      current_user.subscribed_issues.filter_by(build_filters)
-                  .page(params[:page])
+      current_user.subscribed_issues.accessible_by(current_ability)
+                  .filter_by(build_filters).page(params[:page])
   end
 
   def new; end

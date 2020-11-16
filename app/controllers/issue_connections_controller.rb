@@ -23,6 +23,8 @@ class IssueConnectionsController < ApplicationController
   def destroy
     notice = 'Issue was successfully reopened.'
     issue = @issue_connection.source
+    authorize! :read, issue
+
     if @issue_connection.destroy
       issue.reopen
       issue.reopenings.create(user_id: current_user.id)
@@ -39,6 +41,7 @@ class IssueConnectionsController < ApplicationController
       @issue_connection =
         IssueConnection.new(source_id: params[:source_id], target_id: target_id,
                             user_id: current_user.id)
+      authorize! :read, @issue_connection.source
     end
 
     def issue_connection_params

@@ -8,7 +8,7 @@ class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
-  before_action :set_source, only: :index
+  before_action :set_source, :set_issues, only: :index
   before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_issue_types, only: :new
@@ -16,7 +16,6 @@ class IssuesController < ApplicationController
   def index
     authorize! :read, Issue
 
-    set_issues
     set_subscription
   end
 
@@ -104,7 +103,8 @@ class IssuesController < ApplicationController
     end
 
     def set_issues
-      @issues = @source.issues.filter_by(build_filters).page(params[:page])
+      @issues = @source.issues.accessible_by(current_ability)
+                       .filter_by(build_filters).page(params[:page])
     end
 
     def set_subscription

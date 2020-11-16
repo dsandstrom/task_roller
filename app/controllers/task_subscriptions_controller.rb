@@ -9,7 +9,8 @@ class TaskSubscriptionsController < ApplicationController
 
   def index
     @subscribed_tasks =
-      current_user.subscribed_tasks.filter_by(build_filters).page(params[:page])
+      current_user.subscribed_tasks.accessible_by(current_ability)
+                  .filter_by(build_filters).page(params[:page])
   end
 
   def new; end

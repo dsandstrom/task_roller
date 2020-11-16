@@ -22,6 +22,8 @@ class TaskConnectionsController < ApplicationController
   def destroy
     notice = 'Task was successfully reopened.'
     task = @task_connection.source
+    authorize! :read, task
+
     if @task_connection.destroy
       task.reopen
       task.reopenings.create(user_id: current_user.id)
@@ -36,6 +38,7 @@ class TaskConnectionsController < ApplicationController
       @task_connection =
         TaskConnection.new(source_id: params[:source_id], target_id: target_id,
                            user_id: current_user.id)
+      authorize! :read, @task_connection.source
     end
 
     def task_connection_params
