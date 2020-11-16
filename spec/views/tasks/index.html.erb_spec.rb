@@ -277,7 +277,7 @@ RSpec.describe "tasks/index", type: :view do
 
           assert_select "#task-#{first_task.id}"
           first_url = edit_task_path(first_task)
-          expect(rendered).to have_link(nil, href: first_url)
+          expect(rendered).not_to have_link(nil, href: first_url)
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)

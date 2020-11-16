@@ -18,7 +18,7 @@ class Ability
                     IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
   READ_CLASSES = [IssueComment, IssueClosure, IssueConnection, IssueReopening,
-                  Progression, Task, TaskComment, TaskClosure, TaskConnection,
+                  Progression, TaskComment, TaskClosure, TaskConnection,
                   TaskReopening, Resolution, Review, User].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
                      TaskClosure, TaskReopening].freeze
@@ -51,6 +51,7 @@ class Ability
       can :read, Category, REPORTER_CATEGORY_OPTIONS
       can :read, Project, REPORTER_PROJECT_OPTIONS
       can :read, Issue, project: REPORTER_PROJECT_OPTIONS
+      can :read, Task, project: REPORTER_PROJECT_OPTIONS
       READ_CLASSES.each do |class_name|
         can :read, class_name
       end
@@ -59,7 +60,6 @@ class Ability
     def basic_manage_abilities(user)
       can %i[create update], Issue, user_id: user.id,
                                     project: REPORTER_PROJECT_OPTIONS
-      can :update, Task, user_id: user.id
       can %i[create update], IssueComment, user_id: user.id
       can %i[create update], TaskComment, user_id: user.id
       can :create, Resolution, user_id: user.id, issue: { user_id: user.id }
@@ -82,6 +82,7 @@ class Ability
       can :read, Category, WORKER_CATEGORY_OPTIONS
       can :read, Project, WORKER_PROJECT_OPTIONS
       can :read, Issue, project: WORKER_PROJECT_OPTIONS
+      can :read, Task, project: WORKER_PROJECT_OPTIONS
       can %i[create update], Issue, user_id: user.id,
                                     project: WORKER_PROJECT_OPTIONS
     end
@@ -89,28 +90,29 @@ class Ability
     def reviewer_abilities(user)
       can %i[create read update], Category
       can %i[create read update], Project
-      can :read, Issue
       reviewer_issue_abilities(user)
       reviewer_task_abilities(user)
     end
 
     def reviewer_issue_abilities(user)
+      can :create, Issue, user_id: user.id, project: WORKER_PROJECT_OPTIONS
+      can :read, Issue
+      can :update, Issue, user_id: user.id
       can :create, IssueClosure, user_id: user.id
-      can :create, IssueReopening, user_id: user.id
-      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
-      can :create, TaskReopening, user_id: user.id
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
+      can :create, IssueReopening, user_id: user.id
       can %i[approve disapprove], Review, approved: nil
     end
 
     def reviewer_task_abilities(user)
-      can :create, Issue, user_id: user.id, project: WORKER_PROJECT_OPTIONS
-      can :update, Issue, user_id: user.id
-      can :create, Task, user_id: user.id
-      can :assign, Task
+      can :create, Task, user_id: user.id, project: WORKER_PROJECT_OPTIONS
+      can %i[read assign], Task
+      can :update, Task, user_id: user.id
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
+      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
+      can :create, TaskReopening, user_id: user.id
     end
 
     def admin_abilities(user)

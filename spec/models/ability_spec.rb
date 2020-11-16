@@ -2340,80 +2340,1209 @@ RSpec.describe Ability do
 
   describe "Task model" do
     describe "for an admin" do
+      let(:category) { Fabricate(:category) }
+      let(:project) { Fabricate(:project, category: category) }
       let(:admin) { Fabricate(:user_admin) }
+
       subject(:ability) { Ability.new(admin) }
 
-      context "when belongs to them" do
-        let(:task) { Fabricate(:task, user: admin) }
+      context "when task category is visible" do
+        context "and external" do
+          context "while project is visible" do
+            context "and external" do
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
 
-        it { is_expected.to be_able_to(:create, task) }
-        it { is_expected.to be_able_to(:read, task) }
-        it { is_expected.to be_able_to(:update, task) }
-        it { is_expected.to be_able_to(:destroy, task) }
-        it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false,
+                                    internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+        end
       end
 
-      context "when doesn't belong to them" do
-        let(:task) { Fabricate(:task) }
+      context "when task category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:category, visible: false) }
 
-        it { is_expected.not_to be_able_to(:create, task) }
-        it { is_expected.to be_able_to(:read, task) }
-        it { is_expected.to be_able_to(:update, task) }
-        it { is_expected.to be_able_to(:destroy, task) }
-        it { is_expected.to be_able_to(:assign, task) }
+          context "while project is visible" do
+            context "and external" do
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false,
+                                    internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) { Fabricate(:task, project: project, user: admin) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+        end
       end
     end
 
-    %i[reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-        subject(:ability) { Ability.new(current_user) }
+    describe "for a reviewer" do
+      let(:category) { Fabricate(:category) }
+      let(:project) { Fabricate(:project, category: category) }
+      let(:current_user) { Fabricate(:user_reviewer) }
 
-        context "when belongs to them" do
-          let(:task) { Fabricate(:task, user: current_user) }
+      subject(:ability) { Ability.new(current_user) }
 
-          it { is_expected.to be_able_to(:create, task) }
-          it { is_expected.to be_able_to(:read, task) }
-          it { is_expected.to be_able_to(:update, task) }
-          it { is_expected.not_to be_able_to(:destroy, task) }
-          it { is_expected.to be_able_to(:assign, task) }
+      context "when task category is visible" do
+        context "and external" do
+          context "while project is visible" do
+            context "and external" do
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false,
+                                    internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
         end
+      end
 
-        context "when doesn't belong to them" do
-          let(:task) { Fabricate(:task) }
+      context "when task category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:category, visible: false) }
 
-          it { is_expected.not_to be_able_to(:create, task) }
-          it { is_expected.to be_able_to(:read, task) }
-          it { is_expected.not_to be_able_to(:update, task) }
-          it { is_expected.not_to be_able_to(:destroy, task) }
-          it { is_expected.to be_able_to(:assign, task) }
+          context "while project is visible" do
+            context "and external" do
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:project, category: category, visible: false,
+                                    internal: true)
+              end
+
+              context "when belongs to them" do
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+              end
+            end
+          end
         end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:category) { Fabricate(:category) }
+        let(:project) { Fabricate(:project, category: category) }
+
         subject(:ability) { Ability.new(current_user) }
 
-        context "when belongs to them" do
-          let(:task) { Fabricate(:task, user: current_user) }
+        context "when category is visible" do
+          context "and external" do
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
 
-          it { is_expected.not_to be_able_to(:create, task) }
-          it { is_expected.to be_able_to(:read, task) }
-          it { is_expected.to be_able_to(:update, task) }
-          it { is_expected.not_to be_able_to(:destroy, task) }
-          it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
         end
 
-        context "when doesn't belong to them" do
-          let(:task) { Fabricate(:task) }
+        context "when category is invisible" do
+          context "and external" do
+            let(:category) { Fabricate(:category, visible: false) }
 
-          it { is_expected.not_to be_able_to(:create, task) }
-          it { is_expected.to be_able_to(:read, task) }
-          it { is_expected.not_to be_able_to(:update, task) }
-          it { is_expected.not_to be_able_to(:destroy, task) }
-          it { is_expected.not_to be_able_to(:assign, task) }
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
+
+          context "and internal" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:category) { Fabricate(:category) }
+        let(:project) { Fabricate(:project, category: category) }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when category is visible" do
+          context "and external" do
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
+        end
+
+        context "when category is invisible" do
+          context "and external" do
+            let(:category) { Fabricate(:category, visible: false) }
+
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
+
+          context "and internal" do
+            let(:category) do
+              Fabricate(:category, visible: true, internal: true)
+            end
+
+            context "while project is visible" do
+              context "and external" do
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+
+            context "while project is invisible" do
+              context "and external" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: false)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+
+              context "and internal" do
+                let(:project) do
+                  Fabricate(:project, category: category, visible: false,
+                                      internal: true)
+                end
+
+                context "when belongs to them" do
+                  let(:task) do
+                    Fabricate(:task, project: project, user: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+
+                context "when doesn't belong to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.not_to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                end
+              end
+            end
+          end
         end
       end
     end

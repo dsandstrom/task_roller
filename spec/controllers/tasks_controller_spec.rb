@@ -1016,7 +1016,7 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -1026,9 +1026,7 @@ RSpec.describe TasksController, type: :controller do
           it "returns a success response" do
             task = Fabricate(:task, project: project, issue: issue,
                                     user: current_user)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: task.to_param }
+            get :edit, params: { id: task.to_param }
             expect(response).to be_successful
           end
         end
@@ -1036,9 +1034,32 @@ RSpec.describe TasksController, type: :controller do
         context "when someone else's issue" do
           it "returns a success response" do
             task = Fabricate(:task, project: project, issue: issue)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
-                                 id: task.to_param }
+            get :edit, params: { id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue,
+                                    user: current_user)
+            get :edit, params: { id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when someone else's issue" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project, issue: issue)
+            get :edit, params: { id: task.to_param }
             expect_to_be_unauthorized(response)
           end
         end
@@ -1331,7 +1352,7 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -1364,6 +1385,50 @@ RSpec.describe TasksController, type: :controller do
                                      task: invalid_attributes }
               expect(response).to be_successful
             end
+          end
+        end
+
+        context "when someone else's task" do
+          it "doesn't update the requested task" do
+            task = Fabricate(:task, project: project)
+            expect do
+              put :update, params: { id: task.to_param,
+                                     task: new_attributes }
+              task.reload
+            end.not_to change(task, :summary)
+          end
+
+          it "should be unauthorized" do
+            task = Fabricate(:task, project: project)
+            put :update, params: { id: task.to_param,
+                                   task: new_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type}") }
+
+        before { login(current_user) }
+
+        context "when their task" do
+          it "doesn't update the requested task" do
+            task = Fabricate(:task, project: project)
+            expect do
+              put :update, params: { id: task.to_param,
+                                     task: new_attributes }
+              task.reload
+            end.not_to change(task, :summary)
+          end
+
+          it "should be unauthorized" do
+            task = Fabricate(:task, project: project)
+            put :update, params: { id: task.to_param,
+                                   task: new_attributes }
+            expect_to_be_unauthorized(response)
           end
         end
 
