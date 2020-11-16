@@ -36,7 +36,10 @@ class Ability
       can :read, Category, visible: true, internal: false
       can :read, Project, visible: true, internal: false,
                           category: { visible: true, internal: false }
-      [Issue, IssueComment, IssueClosure, IssueConnection,
+      can :read, Issue,
+          project: { visible: true, internal: false,
+                     category: { visible: true, internal: false } }
+      [IssueComment, IssueClosure, IssueConnection,
        IssueReopening, Progression, Task, TaskComment, TaskClosure,
        TaskConnection, TaskReopening, Resolution, Review,
        User].each do |class_name|
@@ -45,7 +48,10 @@ class Ability
     end
 
     def basic_manage_abilities(user)
-      can %i[create update], Issue, user_id: user.id
+      can %i[create update], Issue,
+          user_id: user.id,
+          project: { visible: true, internal: false,
+                     category: { visible: true, internal: false } }
       can :update, Task, user_id: user.id
       can %i[create update], IssueComment, user_id: user.id
       can %i[create update], TaskComment, user_id: user.id
@@ -66,14 +72,19 @@ class Ability
                             task: { closed: false }
     end
 
-    def worker_abilities(_user)
+    def worker_abilities(user)
       can :read, Category, visible: true
       can :read, Project, visible: true, category: { visible: true }
+      can :read, Issue, project: { visible: true, category: { visible: true } }
+      can %i[create update], Issue,
+          user_id: user.id,
+          project: { visible: true, category: { visible: true } }
     end
 
     def reviewer_abilities(user)
       can %i[create read update], Category
       can %i[create read update], Project
+      can :read, Issue
       reviewer_issue_abilities(user)
       reviewer_task_abilities(user)
     end
@@ -90,6 +101,7 @@ class Ability
 
     def reviewer_task_abilities(user)
       can :create, Task, user_id: user.id
+      can %i[create update], Issue, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
