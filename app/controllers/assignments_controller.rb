@@ -2,7 +2,7 @@
 
 class AssignmentsController < ApplicationController
   load_and_authorize_resource :user, only: :index
-  load_and_authorize_resource through: :user, only: :index, class: 'Task'
+  load_and_authorize_resource through: :user, class: 'Task', only: :index
   before_action :load_and_authorize_task, except: :index
 
   def index
