@@ -105,8 +105,9 @@ class Ability
     end
 
     def reviewer_task_abilities(user)
+      can :create, Issue, user_id: user.id, project: WORKER_PROJECT_OPTIONS
+      can :update, Issue, user_id: user.id
       can :create, Task, user_id: user.id
-      can %i[create update], Issue, user_id: user.id
       can :assign, Task
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
