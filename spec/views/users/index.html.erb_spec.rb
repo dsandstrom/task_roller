@@ -26,7 +26,7 @@ RSpec.describe "users/index", type: :view do
       render
 
       User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-        path = new_user_path(employee_type: employee_type)
+        path = new_user_path(user: { employee_type: employee_type })
         expect(rendered).to have_link(nil, href: path)
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe "users/index", type: :view do
       render
 
       User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-        path = new_user_path(employee_type: employee_type)
+        path = new_user_path(user: { employee_type: employee_type })
         expect(rendered).not_to have_link(nil, href: path)
       end
     end
@@ -150,7 +150,7 @@ RSpec.describe "users/index", type: :view do
       render
 
       User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-        path = new_user_path(employee_type: employee_type)
+        path = new_user_path(user: { employee_type: employee_type })
         expect(rendered).not_to have_link(nil, href: path)
       end
     end
@@ -211,7 +211,7 @@ RSpec.describe "users/index", type: :view do
       render
 
       User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-        path = new_user_path(employee_type: employee_type)
+        path = new_user_path(user: { employee_type: employee_type })
         expect(rendered).not_to have_link(nil, href: path)
       end
     end

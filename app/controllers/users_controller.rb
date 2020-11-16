@@ -14,14 +14,7 @@ class UsersController < ApplicationController
   # TODO: for reviewer+, show tasks ready for review
   def show; end
 
-  def new
-    # TODO: disallow when no employee_type or add select to form
-    employee_type = params[:employee_type]
-    return unless employee_type &&
-                  User::VALID_EMPLOYEE_TYPES.include?(employee_type)
-
-    @user.employee_type = employee_type
-  end
+  def new; end
 
   def edit; end
 

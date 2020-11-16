@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
-  let(:invalid_attributes) { { name: "" } }
+  let(:invalid_attributes) { { name: "", employee_type: "Reporter" } }
 
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
@@ -31,14 +31,62 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET #show" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-      context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+    context "for an admin" do
+      let(:current_user) { Fabricate(:user_admin) }
 
+      before { login(current_user) }
+
+      context "when user has an employee_type" do
         it "returns a success response" do
           user = Fabricate(:user)
           get :show, params: { id: user.to_param }
           expect(response).to be_successful
+        end
+      end
+
+      context "when user doesn't have an employee_type" do
+        it "returns a success response" do
+          user = Fabricate(:user_unemployed)
+          get :show, params: { id: user.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when themself" do
+        it "returns a success response" do
+          get :show, params: { id: current_user.to_param }
+          expect(response).to be_successful
+        end
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when user has an employee_type" do
+          it "returns a success response" do
+            user = Fabricate(:user)
+            get :show, params: { id: user.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when themself" do
+          it "returns a success response" do
+            get :show, params: { id: current_user.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user doesn't have an employee_type" do
+          it "should be unauthorized" do
+            user = Fabricate(:user_unemployed)
+            get :show, params: { id: user.to_param }
+            expect_to_be_unauthorized(response)
+          end
         end
       end
     end
@@ -48,9 +96,25 @@ RSpec.describe UsersController, type: :controller do
     context "for an admin" do
       before { login(Fabricate(:user_admin)) }
 
-      it "returns a success response" do
-        get :new
-        expect(response).to be_successful
+      context "when valid employee_type" do
+        it "returns a success response" do
+          get :new, params: { user: { employee_type: "Reporter" } }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when invalid employee_type" do
+        it "returns a success response" do
+          get :new, params: { user: { employee_type: "Invalid" } }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when no employee_type" do
+        it "should be unauthorized" do
+          get :new, params: {}
+          expect_to_be_unauthorized(response)
+        end
       end
     end
 
@@ -59,7 +123,7 @@ RSpec.describe UsersController, type: :controller do
         before { login(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
-          get :new, params: {}
+          get :new, params: { user: { employee_type: "Reporter" } }
           expect_to_be_unauthorized(response)
         end
       end
@@ -70,10 +134,20 @@ RSpec.describe UsersController, type: :controller do
     context "for an admin" do
       before { login(Fabricate(:user_admin)) }
 
-      it "returns a success response" do
-        user = Fabricate(:user)
-        get :edit, params: { id: user.to_param }
-        expect(response).to be_successful
+      context "when user has an employee_type" do
+        it "returns a success response" do
+          user = Fabricate(:user)
+          get :edit, params: { id: user.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when user doesn't have an employee_type" do
+        it "returns a success response" do
+          user = Fabricate(:user_unemployed)
+          get :edit, params: { id: user.to_param }
+          expect(response).to be_successful
+        end
       end
     end
 
@@ -86,6 +160,14 @@ RSpec.describe UsersController, type: :controller do
         context "when editing another user" do
           it "should be unauthorized" do
             user = Fabricate(:user)
+            get :edit, params: { id: user.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when editing non employee" do
+          it "should be unauthorized" do
+            user = Fabricate(:user_unemployed)
             get :edit, params: { id: user.to_param }
             expect_to_be_unauthorized(response)
           end
@@ -283,6 +365,72 @@ RSpec.describe UsersController, type: :controller do
         it "should be unauthorized" do
           delete :destroy, params: { id: admin.to_param }
           expect_to_be_unauthorized(response)
+        end
+      end
+
+      context "when destroying a non-employee" do
+        it "destroys the requested user" do
+          user = Fabricate(:user_unemployed)
+          expect do
+            delete :destroy, params: { id: user.to_param }
+          end.to change(User, :count).by(-1)
+        end
+
+        it "redirects to the users list" do
+          user = Fabricate(:user_unemployed)
+          delete :destroy, params: { id: user.to_param }
+          expect(response).to redirect_to(users_url)
+        end
+      end
+    end
+
+    %w[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when another user" do
+          it "doesn't destroy the requested user" do
+            user = Fabricate(:user)
+            expect do
+              delete :destroy, params: { id: user.to_param }
+            end.not_to change(User, :count)
+          end
+
+          it "should be unauthorized" do
+            user = Fabricate(:user)
+            delete :destroy, params: { id: user.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when a non-employee" do
+          it "doesn't destroy the requested user" do
+            user = Fabricate(:user_unemployed)
+            expect do
+              delete :destroy, params: { id: user.to_param }
+            end.not_to change(User, :count)
+          end
+
+          it "should be unauthorized" do
+            user = Fabricate(:user_unemployed)
+            delete :destroy, params: { id: user.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when themself" do
+          it "doesn't destroy the requested user" do
+            expect do
+              delete :destroy, params: { id: current_user.to_param }
+            end.not_to change(User, :count)
+          end
+
+          it "should be unauthorized" do
+            delete :destroy, params: { id: current_user.to_param }
+            expect_to_be_unauthorized(response)
+          end
         end
       end
     end

@@ -29,6 +29,6 @@ Fabricator(:user_unemployed, from: :user) do
   email { sequence(:users) { |n| "former-user-email-#{n + 1}@example.com" } }
 
   after_create do |user, _|
-    user.employee_type = nil
+    user.update_attribute :employee_type, nil
   end
 end
