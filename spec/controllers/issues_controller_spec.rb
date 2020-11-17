@@ -17,54 +17,102 @@ RSpec.describe IssuesController, type: :controller do
   let(:invalid_attributes) { { summary: "" } }
 
   describe "GET #index" do
-    %w[admin reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+    context "for an admin" do
+      before { login(Fabricate(:user_admin)) }
 
-        context "when category is invisible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: true)
-          end
-          let(:project) { Fabricate(:project, category: category) }
+      context "when category is invisible and internal" do
+        let(:category) do
+          Fabricate(:category, visible: false, internal: true)
+        end
+        let(:project) { Fabricate(:project, category: category) }
 
+        it "returns a success response" do
+          Fabricate(:issue, project: project)
+          get :index, params: { category_id: category.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when project is invisible and internal" do
+        let(:project) do
+          Fabricate(:project, category: category, visible: false,
+                              internal: true)
+        end
+
+        it "returns a success response" do
+          Fabricate(:issue, project: project)
+          get :index, params: { project_id: project.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when user" do
+        context "is an employee" do
           it "returns a success response" do
-            Fabricate(:issue, project: project)
-            get :index, params: { category_id: category.to_param }
+            Fabricate(:issue, user: user)
+            get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when project is invisible and internal" do
-          let(:project) do
-            Fabricate(:project, category: category, visible: false,
-                                internal: true)
-          end
+        context "is not an employee" do
+          before { user.update employee_type: nil }
 
           it "returns a success response" do
-            Fabricate(:issue, project: project)
-            get :index, params: { project_id: project.to_param }
+            Fabricate(:issue, user: user)
+            get :index, params: { user_id: user.to_param }
+            expect(response).to be_successful
+          end
+        end
+      end
+    end
+
+    context "for a reviewer" do
+      before { login(Fabricate(:user_reviewer)) }
+
+      context "when category is invisible and internal" do
+        let(:category) do
+          Fabricate(:category, visible: false, internal: true)
+        end
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns a success response" do
+          Fabricate(:issue, project: project)
+          get :index, params: { category_id: category.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when project is invisible and internal" do
+        let(:project) do
+          Fabricate(:project, category: category, visible: false,
+                              internal: true)
+        end
+
+        it "returns a success response" do
+          Fabricate(:issue, project: project)
+          get :index, params: { project_id: project.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "when user" do
+        context "is an employee" do
+          it "returns a success response" do
+            Fabricate(:issue, user: user)
+            get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when user" do
-          context "is an employee" do
-            it "returns a success response" do
-              Fabricate(:issue, user: user)
-              get :index, params: { user_id: user.to_param }
-              expect(response).to be_successful
-            end
-          end
+        context "is not an employee" do
+          before { user.update employee_type: nil }
 
-          # context "is not an employee" do
-          #   before { user.update employee_type: nil }
-          #
-          #   it "should be unauthorized" do
-          #     Fabricate(:issue, user: user)
-          #     get :index, params: { user_id: user.to_param }
-          #     expect_to_be_unauthorized(response)
-          #   end
-          # end
+          it "should be unauthorized" do
+            Fabricate(:issue, user: user)
+            get :index, params: { user_id: user.to_param }
+            expect_to_be_unauthorized(response)
+          end
         end
       end
     end
@@ -298,15 +346,15 @@ RSpec.describe IssuesController, type: :controller do
             end
           end
 
-          # context "is not an employee" do
-          #   before { user.update employee_type: nil }
-          #
-          #   it "should be unauthorized" do
-          #     Fabricate(:issue, user: user)
-          #     get :index, params: { user_id: user.to_param }
-          #     expect_to_be_unauthorized(response)
-          #   end
-          # end
+          context "is not an employee" do
+            before { user.update employee_type: nil }
+
+            it "should be unauthorized" do
+              Fabricate(:issue, user: user)
+              get :index, params: { user_id: user.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
         end
       end
     end
@@ -540,15 +588,15 @@ RSpec.describe IssuesController, type: :controller do
             end
           end
 
-          # context "is not an employee" do
-          #   before { user.update employee_type: nil }
-          #
-          #   it "should be unauthorized" do
-          #     Fabricate(:issue, user: user)
-          #     get :index, params: { user_id: user.to_param }
-          #     expect_to_be_unauthorized(response)
-          #   end
-          # end
+          context "is not an employee" do
+            before { user.update employee_type: nil }
+
+            it "should be unauthorized" do
+              Fabricate(:issue, user: user)
+              get :index, params: { user_id: user.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
         end
       end
     end
