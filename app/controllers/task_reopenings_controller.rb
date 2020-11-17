@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class TaskReopeningsController < ApplicationController
-  load_and_authorize_resource :task, only: %i[new create]
-  load_and_authorize_resource through: :task, through_association: :reopenings,
-                              only: %i[new create]
-  load_and_authorize_resource only: :destroy
+  load_and_authorize_resource :task
+  load_and_authorize_resource through: :task, through_association: :reopenings
 
   def new; end
 
@@ -22,8 +20,7 @@ class TaskReopeningsController < ApplicationController
 
   def destroy
     notice = 'Task Reopening was successfully destroyed.'
-    task = @task_reopening.task
     @task_reopening.destroy
-    redirect_to task, notice: notice
+    redirect_to @task, notice: notice
   end
 end

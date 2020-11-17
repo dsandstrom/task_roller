@@ -6,7 +6,7 @@
 
   <p>
     <%= link_to 'remove reopening',
-                 issue_reopening,
+                 issue_reopening_path(issue_reopening.issue, issue_reopening),
                  method: :delete, class: 'destroy-link',
                  data: { confirm: confirm } %>
   </p>

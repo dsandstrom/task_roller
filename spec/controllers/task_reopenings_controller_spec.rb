@@ -115,20 +115,23 @@ RSpec.describe TaskReopeningsController, type: :controller do
         it "destroys the requested task_reopening" do
           task_reopening = Fabricate(:task_reopening, task: task)
           expect do
-            delete :destroy, params: { id: task_reopening.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_reopening.to_param }
           end.to change(TaskReopening, :count).by(-1)
         end
 
         it "doesn't change the requested task_reopening's task" do
           task_reopening = Fabricate(:task_reopening, task: task)
           expect do
-            delete :destroy, params: { id: task_reopening.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_reopening.to_param }
           end.not_to change(task, :closed)
         end
 
         it "redirects to the task_reopenings list" do
           task_reopening = Fabricate(:task_reopening, task: task)
-          delete :destroy, params: { id: task_reopening.to_param }
+          delete :destroy, params: { task_id: task.to_param,
+                                     id: task_reopening.to_param }
           expect(response).to redirect_to(task)
         end
       end
@@ -143,20 +146,23 @@ RSpec.describe TaskReopeningsController, type: :controller do
         it "doesn't destroy the requested task_reopening" do
           task_reopening = Fabricate(:task_reopening, task: task)
           expect do
-            delete :destroy, params: { id: task_reopening.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_reopening.to_param }
           end.not_to change(TaskReopening, :count)
         end
 
         it "doesn't change the requested task_reopening's task" do
           task_reopening = Fabricate(:task_reopening, task: task)
           expect do
-            delete :destroy, params: { id: task_reopening.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_reopening.to_param }
           end.not_to change(task, :closed)
         end
 
         it "should be unauthorized" do
           task_reopening = Fabricate(:task_reopening, task: task)
-          delete :destroy, params: { id: task_reopening.to_param }
+          delete :destroy, params: { task_id: task.to_param,
+                                     id: task_reopening.to_param }
           expect_to_be_unauthorized(response)
         end
       end

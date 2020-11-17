@@ -115,20 +115,23 @@ RSpec.describe IssueReopeningsController, type: :controller do
         it "destroys the requested issue_reopening" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
           expect do
-            delete :destroy, params: { id: issue_reopening.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_reopening.to_param }
           end.to change(IssueReopening, :count).by(-1)
         end
 
         it "doesn't change the requested issue_reopening's issue" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
           expect do
-            delete :destroy, params: { id: issue_reopening.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_reopening.to_param }
           end.not_to change(issue, :closed)
         end
 
         it "redirects to the issue_reopenings list" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
-          delete :destroy, params: { id: issue_reopening.to_param }
+          delete :destroy, params: { issue_id: issue.to_param,
+                                     id: issue_reopening.to_param }
           expect(response).to redirect_to(issue)
         end
       end
@@ -143,20 +146,23 @@ RSpec.describe IssueReopeningsController, type: :controller do
         it "doesn't destroy the requested issue_reopening" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
           expect do
-            delete :destroy, params: { id: issue_reopening.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_reopening.to_param }
           end.not_to change(IssueReopening, :count)
         end
 
         it "doesn't change the requested issue_reopening's issue" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
           expect do
-            delete :destroy, params: { id: issue_reopening.to_param }
+            delete :destroy, params: { issue_id: issue.to_param,
+                                       id: issue_reopening.to_param }
           end.not_to change(issue, :closed)
         end
 
         it "should be unauthorized" do
           issue_reopening = Fabricate(:issue_reopening, issue: issue)
-          delete :destroy, params: { id: issue_reopening.to_param }
+          delete :destroy, params: { issue_id: issue.to_param,
+                                     id: issue_reopening.to_param }
           expect_to_be_unauthorized(response)
         end
       end

@@ -6,7 +6,7 @@
 
   <p>
     <%= link_to 'remove reopening',
-                 task_reopening,
+                 task_reopening_path(task_reopening.task, task_reopening),
                  method: :delete, class: 'destroy-link',
                  data: { confirm: confirm } %>
   </p>
