@@ -53,10 +53,33 @@ RSpec.describe AssignmentsController, type: :controller do
 
         before { login(current_user) }
 
-        it "returns a success response" do
-          task = Fabricate(:task, project: project)
-          get :edit, params: { id: task.to_param }
-          expect(response).to be_successful
+        context "when task category/project are visible" do
+          it "returns a success response" do
+            task = Fabricate(:task, project: project)
+            get :edit, params: { id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when task project is invisible" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          it "returns a success response" do
+            task = Fabricate(:task, project: project)
+            get :edit, params: { id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when task category is invisible" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+
+          it "returns a success response" do
+            task = Fabricate(:task, project: project)
+            get :edit, params: { id: task.to_param }
+            expect(response).to be_successful
+          end
         end
       end
     end
@@ -83,56 +106,129 @@ RSpec.describe AssignmentsController, type: :controller do
 
         before { login(current_user) }
 
-        context "with valid params" do
-          it "updates the requested task's assignments" do
-            task = Fabricate(:task, project: project)
-            expect do
-              put :update, params: { id: task.to_param, task: valid_attributes }
-              task.reload
-            end.to change(task, :assignee_ids)
+        context "when task category/project are visible" do
+          context "with valid params" do
+            it "updates the requested task's assignments" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(task, :assignee_ids)
+            end
+
+            it "subscribes the assignees" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(user_worker.task_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:task, project: project)
+              url = task_path(task)
+              put :update, params: { id: task.to_param,
+                                     task: valid_attributes }
+              expect(response).to redirect_to(url)
+            end
           end
 
-          it "subscribes the assignees" do
-            task = Fabricate(:task, project: project)
-            expect do
-              put :update, params: { id: task.to_param, task: valid_attributes }
-              task.reload
-            end.to change(user_worker.task_subscriptions, :count).by(1)
-          end
+          context "with blank params" do
+            let(:task) { Fabricate(:task, project: project) }
 
-          it "redirects to the task" do
-            task = Fabricate(:task, project: project)
-            url = task_path(task)
-            put :update, params: { id: task.to_param, task: valid_attributes }
-            expect(response).to redirect_to(url)
+            before do
+              task.update(valid_attributes)
+              task.reload
+            end
+
+            it "updates the requested task's assignments" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: blank_attributes }
+                task.reload
+              end.to change(task, :assignee_ids).to([])
+            end
+
+            it "doesn't change task_subscriptions" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: blank_attributes }
+              end.not_to change(TaskSubscription, :count)
+            end
+
+            it "redirects to the task" do
+              url = task_path(task)
+              put :update, params: { id: task.to_param,
+                                     task: blank_attributes }
+              expect(response).to redirect_to(url)
+            end
           end
         end
 
-        context "with blank params" do
-          let(:task) { Fabricate(:task, project: project) }
+        context "when task project is invisible" do
+          let(:project) { Fabricate(:invisible_project) }
 
-          before do
-            task.update(valid_attributes)
-            task.reload
+          context "with valid params" do
+            it "updates the requested task's assignments" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(task, :assignee_ids)
+            end
+
+            it "subscribes the assignees" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(user_worker.task_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:task, project: project)
+              url = task_path(task)
+              put :update, params: { id: task.to_param,
+                                     task: valid_attributes }
+              expect(response).to redirect_to(url)
+            end
           end
+        end
 
-          it "updates the requested task's assignments" do
-            expect do
-              put :update, params: { id: task.to_param, task: blank_attributes }
-              task.reload
-            end.to change(task, :assignee_ids).to([])
-          end
+        context "when task category is invisible" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
 
-          it "doesn't change task_subscriptions" do
-            expect do
-              put :update, params: { id: task.to_param, task: blank_attributes }
-            end.not_to change(TaskSubscription, :count)
-          end
+          context "with valid params" do
+            it "updates the requested task's assignments" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(task, :assignee_ids)
+            end
 
-          it "redirects to the task" do
-            url = task_path(task)
-            put :update, params: { id: task.to_param, task: blank_attributes }
-            expect(response).to redirect_to(url)
+            it "subscribes the assignees" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(user_worker.task_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the task" do
+              task = Fabricate(:task, project: project)
+              url = task_path(task)
+              put :update, params: { id: task.to_param,
+                                     task: valid_attributes }
+              expect(response).to redirect_to(url)
+            end
           end
         end
       end
