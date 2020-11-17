@@ -13,17 +13,23 @@ RSpec.describe "issues/edit", type: :view do
 
   let(:url) { issue_path(@issue) }
 
-  it "renders the edit issue form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "input[name=?]", "issue[summary]"
+    before { enable_can(view, current_user) }
 
-      assert_select "textarea[name=?]", "issue[description]"
+    it "renders the edit issue form" do
+      render
 
-      assert_select "input[name=?]", "issue[issue_type_id]"
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "input[name=?]", "issue[summary]"
 
-      assert_select "select[name=?]", "issue[user_id]"
+        assert_select "textarea[name=?]", "issue[description]"
+
+        assert_select "input[name=?]", "issue[issue_type_id]"
+
+        assert_select "select[name=?]", "issue[user_id]"
+      end
     end
   end
 end

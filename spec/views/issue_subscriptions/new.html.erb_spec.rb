@@ -8,11 +8,17 @@ RSpec.describe "issue_subscriptions/new", type: :view do
     assign(:issue_subscription, IssueSubscription.new)
   end
 
-  it "renders new issue_subscription form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    url = issue_issue_subscriptions_path(@issue)
-    assert_select "form[action=?][method=?]", url, "post" do
+    before { enable_can(view, current_user) }
+
+    it "renders new issue_subscription form" do
+      render
+
+      url = issue_issue_subscriptions_path(@issue)
+      assert_select "form[action=?][method=?]", url, "post" do
+      end
     end
   end
 end

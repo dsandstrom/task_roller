@@ -11,14 +11,20 @@ RSpec.describe "projects/edit", type: :view do
     @project = assign(:project, Fabricate(:project, category: @category))
   end
 
-  it "renders the edit project form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    assert_select "form[action=?][method=?]", form_path, "post" do
-      assert_select "input[name=?]", "project[name]"
-      assert_select "input[name=?]", "project[visible]"
-      assert_select "input[name=?]", "project[internal]"
-      assert_select "select[name=?]", "project[category_id]"
+    before { enable_can(view, current_user) }
+
+    it "renders the edit project form" do
+      render
+
+      assert_select "form[action=?][method=?]", form_path, "post" do
+        assert_select "input[name=?]", "project[name]"
+        assert_select "input[name=?]", "project[visible]"
+        assert_select "input[name=?]", "project[internal]"
+        assert_select "select[name=?]", "project[category_id]"
+      end
     end
   end
 end

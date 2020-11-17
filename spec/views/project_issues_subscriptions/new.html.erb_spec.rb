@@ -9,11 +9,17 @@ RSpec.describe "project_issues_subscriptions/new", type: :view do
            Fabricate.build(:project_issues_subscription))
   end
 
-  it "renders new project_issues_subscription form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    url = project_issues_subscriptions_path(@project)
-    assert_select "form[action=?][method=?]", url, "post" do
+    before { enable_can(view, current_user) }
+
+    it "renders new project_issues_subscription form" do
+      render
+
+      url = project_issues_subscriptions_path(@project)
+      assert_select "form[action=?][method=?]", url, "post" do
+      end
     end
   end
 end

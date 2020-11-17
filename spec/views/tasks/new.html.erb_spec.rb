@@ -17,14 +17,20 @@ RSpec.describe "tasks/new", type: :view do
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
   end
 
-  it "renders new task form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "input[name=?]", "task[summary]"
-      assert_select "textarea[name=?]", "task[description]"
-      assert_select "input[name=?]", "task[task_type_id]"
-      assert_select "select[name=?]", "task[assignee_ids][]"
+    before { enable_can(view, current_user) }
+
+    it "renders new task form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "input[name=?]", "task[summary]"
+        assert_select "textarea[name=?]", "task[description]"
+        assert_select "input[name=?]", "task[task_type_id]"
+        assert_select "select[name=?]", "task[assignee_ids][]"
+      end
     end
   end
 end

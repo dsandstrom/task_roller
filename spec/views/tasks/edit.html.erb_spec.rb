@@ -14,14 +14,20 @@ RSpec.describe "tasks/edit", type: :view do
 
   let(:url) { task_path(@task) }
 
-  it "renders the edit task form" do
-    render
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "input[name=?]", "task[summary]"
-      assert_select "textarea[name=?]", "task[description]"
-      assert_select "input[name=?]", "task[task_type_id]"
-      assert_select "select[name=?]", "task[assignee_ids][]"
+    before { enable_can(view, current_user) }
+
+    it "renders the edit task form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "input[name=?]", "task[summary]"
+        assert_select "textarea[name=?]", "task[description]"
+        assert_select "input[name=?]", "task[task_type_id]"
+        assert_select "select[name=?]", "task[assignee_ids][]"
+      end
     end
   end
 end
