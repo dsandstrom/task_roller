@@ -209,20 +209,23 @@ RSpec.describe TaskClosuresController, type: :controller do
         it "destroys the requested task_closure" do
           task_closure = Fabricate(:task_closure, task: task)
           expect do
-            delete :destroy, params: { id: task_closure.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_closure.to_param }
           end.to change(TaskClosure, :count).by(-1)
         end
 
         it "doesn't change the requested task_closure's task" do
           task_closure = Fabricate(:task_closure, task: task)
           expect do
-            delete :destroy, params: { id: task_closure.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_closure.to_param }
           end.not_to change(task, :closed)
         end
 
         it "redirects to the task_closures list" do
           task_closure = Fabricate(:task_closure, task: task)
-          delete :destroy, params: { id: task_closure.to_param }
+          delete :destroy, params: { task_id: task.to_param,
+                                     id: task_closure.to_param }
           expect(response).to redirect_to(task)
         end
       end
@@ -237,20 +240,23 @@ RSpec.describe TaskClosuresController, type: :controller do
         it "doesn't destroy the requested task_closure" do
           task_closure = Fabricate(:task_closure, task: task)
           expect do
-            delete :destroy, params: { id: task_closure.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_closure.to_param }
           end.not_to change(TaskClosure, :count)
         end
 
         it "doesn't change the requested task_closure's task" do
           task_closure = Fabricate(:task_closure, task: task)
           expect do
-            delete :destroy, params: { id: task_closure.to_param }
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_closure.to_param }
           end.not_to change(task, :closed)
         end
 
         it "should be unauthorized" do
           task_closure = Fabricate(:task_closure, task: task)
-          delete :destroy, params: { id: task_closure.to_param }
+          delete :destroy, params: { task_id: task.to_param,
+                                     id: task_closure.to_param }
           expect_to_be_unauthorized(response)
         end
       end

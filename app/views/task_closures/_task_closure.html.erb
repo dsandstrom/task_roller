@@ -6,7 +6,7 @@
 
   <p>
     <%= link_to 'remove closure',
-                 task_closure,
+                 task_closure_path(task_closure.task, task_closure),
                  method: :delete, class: 'destroy-link',
                  data: { confirm: confirm } %>
   </p>

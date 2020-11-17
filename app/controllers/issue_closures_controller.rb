@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class IssueClosuresController < ApplicationController
-  load_and_authorize_resource :issue, only: %i[new create]
-  load_and_authorize_resource through: :issue, through_association: :closures,
-                              only: %i[new create]
-  load_and_authorize_resource only: :destroy
+  load_and_authorize_resource :issue
+  load_and_authorize_resource through: :issue, through_association: :closures
 
   def new; end
 
@@ -22,8 +20,7 @@ class IssueClosuresController < ApplicationController
 
   def destroy
     notice = 'Issue Closure was successfully destroyed.'
-    issue = @issue_closure.issue
     @issue_closure.destroy
-    redirect_to issue, notice: notice
+    redirect_to @issue, notice: notice
   end
 end

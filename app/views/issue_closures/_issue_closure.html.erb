@@ -6,7 +6,7 @@
 
   <p>
     <%= link_to 'remove closure',
-                 issue_closure,
+                 issue_closure_path(issue_closure.issue, issue_closure),
                  method: :delete, class: 'destroy-link',
                  data: { confirm: confirm } %>
   </p>
