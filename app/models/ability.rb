@@ -96,7 +96,6 @@ class Ability
     end
 
     def reviewer_issue_abilities(user)
-      can :create, Issue, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
       can :read, Issue
       can :update, Issue, user_id: user.id
       can :create, IssueClosure, user_id: user.id
