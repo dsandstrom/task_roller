@@ -40,31 +40,36 @@ RSpec.describe IssueClosuresController, type: :controller do
 
         before { login(current_user) }
 
-        context "with valid params" do
-          it "creates a new IssueClosure for the issue" do
-            expect do
-              post :create, params: { issue_id: issue.to_param }
-              issue.reload
-            end.to change(issue.closures, :count).by(1)
-          end
+        context "when invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:open_issue, project: project) }
 
-          it "creates a new IssueSubscription for the current_user" do
-            expect do
-              post :create, params: { issue_id: issue.to_param }
-              issue.reload
-            end.to change(current_user.issue_subscriptions, :count).by(1)
-          end
+          context "with valid params" do
+            it "creates a new IssueClosure for the issue" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }
+                issue.reload
+              end.to change(issue.closures, :count).by(1)
+            end
 
-          it "closes the issue" do
-            expect do
-              post :create, params: { issue_id: issue.to_param }
-              issue.reload
-            end.to change(issue, :closed).to(true)
-          end
+            it "creates a new IssueSubscription for the current_user" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }
+                issue.reload
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
 
-          it "redirects to the created issue_closure" do
-            post :create, params: { issue_id: issue.to_param }
-            expect(response).to redirect_to(issue)
+            it "closes the issue" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }
+                issue.reload
+              end.to change(issue, :closed).to(true)
+            end
+
+            it "redirects to the created issue_closure" do
+              post :create, params: { issue_id: issue.to_param }
+              expect(response).to redirect_to(issue)
+            end
           end
         end
       end
