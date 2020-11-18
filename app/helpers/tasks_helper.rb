@@ -23,6 +23,10 @@ module TasksHelper
     end
   end
 
+  def new_task(project)
+    Task.new(project_id: project.id, user_id: current_user.id)
+  end
+
   private
 
     def task_header_title(task)

@@ -29,6 +29,15 @@ module IssuesHelper
     end
   end
 
+  def new_issue(project)
+    Issue.new(project_id: project.id, user_id: current_user.id)
+  end
+
+  # using build causes unpersisted entries to show up in render calls
+  def new_resolution(issue)
+    Resolution.new(issue_id: issue.id, user_id: current_user.id)
+  end
+
   private
 
     def issue_title_heading(issue)

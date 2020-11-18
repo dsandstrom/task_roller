@@ -47,23 +47,23 @@ module ProjectsHelper
     def project_nav_links(project)
       links = [link_to_unless_current('Project', project),
                link_to_unless_current('Issues', project_issues_path(project)),
-               link_to_unless_current('Tasks', project_tasks_path(project))]
-      links.append(new_project_issue_link(project)) if can?(:create, Issue)
-      links.append(new_project_task_link(project)) if can?(:create, Task)
+               link_to_unless_current('Tasks', project_tasks_path(project)),
+               new_project_issue_link(project),
+               new_project_task_link(project)].compact
       return links unless can?(:update, project)
 
       links.append(edit_project_link(project))
     end
 
     def new_project_issue_link(project, options = {})
-      return unless can?(:create, Issue)
+      return unless can?(:create, new_issue(project))
 
       link_to_unless_current('Report Issue', new_project_issue_path(project),
                              class: options[:class])
     end
 
     def new_project_task_link(project, options = {})
-      return unless can?(:create, Task)
+      return unless can?(:create, new_task(project))
 
       link_to_unless_current('Plan Task', new_project_task_path(project),
                              class: options[:class])
