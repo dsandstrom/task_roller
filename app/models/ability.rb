@@ -16,7 +16,7 @@ class Ability
                     IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
   READ_CLASSES = [IssueComment, IssueClosure, IssueConnection, IssueReopening,
-                  Progression, TaskComment, TaskClosure, TaskConnection,
+                  Progression, TaskClosure, TaskConnection,
                   TaskReopening, Resolution, Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
                      TaskClosure, TaskReopening].freeze
@@ -62,7 +62,9 @@ class Ability
       can %i[create update], Issue, user_id: user.id,
                                     project: EXTERNAL_PROJECT_OPTIONS
       can %i[create update], IssueComment, user_id: user.id
-      can %i[create update], TaskComment, user_id: user.id
+      can :read, TaskComment, task: { project: EXTERNAL_PROJECT_OPTIONS }
+      can %i[create update], TaskComment,
+          user_id: user.id, task: { project: EXTERNAL_PROJECT_OPTIONS }
       can :create, Resolution, user_id: user.id, issue: { user_id: user.id }
       MANAGE_CLASSES.each do |class_name|
         can :manage, class_name, user_id: user.id
@@ -86,6 +88,9 @@ class Ability
       can :read, Task, project: VISIBLE_PROJECT_OPTIONS
       can %i[create update], Issue, user_id: user.id,
                                     project: VISIBLE_PROJECT_OPTIONS
+      can :read, TaskComment, task: { project: VISIBLE_PROJECT_OPTIONS }
+      can %i[create update], TaskComment,
+          user_id: user.id, task: { project: VISIBLE_PROJECT_OPTIONS }
     end
 
     def reviewer_abilities(user)
@@ -109,6 +114,7 @@ class Ability
       can :create, Task, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
       can %i[read assign], Task
       can :update, Task, user_id: user.id
+      can :read, TaskComment
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
       can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
