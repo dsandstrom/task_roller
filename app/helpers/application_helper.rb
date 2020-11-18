@@ -11,7 +11,6 @@ module ApplicationHelper
     value = value.in_time_zone(zone)
 
     return "#{time_ago_in_words(value)} ago" if recent?(value, now)
-
     return value.strftime(TIME_FORMAT) if same_day?(value, now)
 
     if same_year?(value, now)

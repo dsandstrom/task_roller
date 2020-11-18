@@ -12,7 +12,8 @@
           if category_page?(category)
             [[project.name, project]]
           else
-            [[category.name, category], [project.name, project]]
+            [[category.name, category_projects_path(category)],
+             [project.name, project]]
           end
       %>
       <%= breadcrumbs breadcrumb_pages %>

@@ -19,7 +19,9 @@ task_subscription =
                      project.name, project_path(project) %>
     </h3>
 
-    <%= project_tags(project) %>
+    <p class="project-tags">
+      <%= visible_tag(project) %><%= internal_tag(project) %>
+    </p>
   </div>
 
   <% unless @category %>
