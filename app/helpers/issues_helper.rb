@@ -9,7 +9,8 @@ module IssuesHelper
     return unless category
 
     items = [issue_header_breadcrumbs(category, project), issue_title(issue),
-             issue_tags(issue), issue_page_title(issue)]
+             project_tags(issue.project), issue_tags(issue),
+             issue_page_title(issue)].compact
     content_tag :header, class: 'issue-header' do
       safe_join(items)
     end

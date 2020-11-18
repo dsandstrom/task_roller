@@ -11,8 +11,8 @@ $border-radius: .2rem;
   font-weight: bold;
   text-transform: uppercase;
 
-  &.tag-visible,
-  &.tag-external {
+  &.tag-invisible,
+  &.tag-internal {
     color: $color-quinary;
   }
 }

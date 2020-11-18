@@ -8,10 +8,11 @@ module TasksHelper
     category = project.category
     return unless category
 
+    items = [breadcrumbs(task_header_pages(task)), task_header_title(task),
+             project_tags(project), task_page_title(task)].compact
+
     content_tag :header, class: 'task-header' do
-      concat breadcrumbs(task_header_pages(task))
-      concat task_header_title(task)
-      concat task_page_title(task)
+      safe_join(items)
     end
   end
 
@@ -47,7 +48,8 @@ module TasksHelper
       category = task.category
       return unless category
 
-      [[category.name, category], project_breadcrumb_item(project),
+      [[category.name, category_projects_path(category)],
+       project_breadcrumb_item(project),
        ['Project Tasks', project_tasks_path(project)]]
     end
 

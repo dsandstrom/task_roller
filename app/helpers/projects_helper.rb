@@ -3,8 +3,8 @@
 module ProjectsHelper
   def project_tags(project)
     content_tag :p, class: 'project-tags' do
-      concat visible_tag(project)
-      concat internal_tag(project)
+      concat project_invisible_tag(project)
+      concat project_internal_tag(project)
     end
   end
 
@@ -93,5 +93,29 @@ module ProjectsHelper
       else
         "Project: #{project.name} (#{project.category&.name})"
       end
+    end
+
+    def project_internal_tag(project)
+      text =
+        if project.internal?
+          'Internal'
+        elsif project.category.internal?
+          'Internal Category'
+        end
+      return unless text
+
+      roller_tag text, 'internal'
+    end
+
+    def project_invisible_tag(project)
+      text =
+        if !project.visible?
+          'Invisible'
+        elsif !project.category.visible?
+          'Invisible Category'
+        end
+      return unless text
+
+      roller_tag text, 'invisible'
     end
 end

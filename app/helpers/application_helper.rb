@@ -54,27 +54,15 @@ module ApplicationHelper
     end
 
     def visible_tag(object)
-      if object.visible?
-        text = 'Visible'
-        klass = 'visible'
-      else
-        text = 'Invisible'
-        klass = 'invisible'
-      end
+      return if object.visible?
 
-      roller_tag text, klass
+      roller_tag 'Invisible', 'invisible'
     end
 
     def internal_tag(object)
-      if object.internal?
-        text = 'Internal'
-        klass = 'internal'
-      else
-        text = 'External'
-        klass = 'external'
-      end
+      return unless object.internal?
 
-      roller_tag text, klass
+      roller_tag 'Internal', 'internal'
     end
 
     def recent?(first, second)
