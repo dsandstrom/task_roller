@@ -23,7 +23,7 @@ class IssuesController < ApplicationController
     authorize! :read, @project
 
     @comments = @issue.comments.includes(:user)
-    @comment = @issue.comments.build
+    @comment = @issue.comments.build(user_id: current_user.id)
     @issue_subscription =
       @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end

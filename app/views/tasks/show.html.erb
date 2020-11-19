@@ -1,29 +1,19 @@
-<%
-comments = @task.comments.includes(:user)
-comment = @task.comments.build
-user = @task.user
-assignees = @task.assignees.includes(:progressions)
-assigned = @task.assigned
-review = @task.current_review
-# TODO: add way to share the url (copy to the clipboard, expandable)
-%>
-
 <div class="task-show-page">
   <%= task_header(@task) %>
 
   <div class="task-columns">
     <div class="task-column first-column">
       <section class="task-subscription-wrapper">
-        <%= render @task_subscription, task: @task %>
+        <%= render @subscription, task: @task %>
       </section>
 
       <% if @task.open? %>
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>
 
-          <% if assignees.any? %>
+          <% if @assignees.any? %>
             <dl class="task-assignees">
-              <% assignees.each do |assignee| %>
+              <% @assignees.each do |assignee| %>
                 <%= render 'shared/assignee',
                            assignee: assignee, task: @task %>
               <% end %>
@@ -81,8 +71,8 @@ review = @task.current_review
             </p>
           <% end %>
 
-          <% if review&.pending? %>
-            <%= render 'reviews/pending', review: review %>
+          <% if @review&.pending? %>
+            <%= render 'reviews/pending', review: @review %>
           <% end %>
         </section>
       <% end %>
@@ -91,9 +81,7 @@ review = @task.current_review
         <h4 class="task-column-title">Source Issue</h4>
         <p>
           <% if @task.issue %>
-            <%= render 'shared/issue',
-                       issue: @task.issue, task: @task,
-                       category: @category, project: @project %>
+            <%= render 'shared/issue', issue: @task.issue %>
           <% else %>
             no connection
           <% end %>
@@ -127,7 +115,7 @@ review = @task.current_review
             <p>
               <%= link_to 'mark as duplicate and close',
                           new_task_connection_path(@task),
-                          class: 'normal-link' %>
+                          class: 'destroy-link' %>
             </p>
           <% end %>
           <% if can?(:create, TaskClosure.new(task_id: @task.id, user_id: current_user.id)) %>
@@ -153,9 +141,9 @@ review = @task.current_review
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
         <dl class="task-history">
-          <% if user %>
-            <%= content_tag :dt, link_to(user.name_or_email,
-                                         user_tasks_path(user)) %>
+          <% if @user %>
+            <%= content_tag :dt, link_to(@user.name_or_email,
+                                         user_tasks_path(@user)) %>
           <% end %>
           <%= content_tag :dd, "opened: #{format_date @task.created_at}",
                           class: 'task-created-at' %>
@@ -164,9 +152,9 @@ review = @task.current_review
                             class: 'task-updated-at' %>
           <% end %>
 
-          <% if assigned.any? %>
+          <% if @assigned.any? %>
             <%= render partial: 'shared/assignee',
-                       collection: assigned,
+                       collection: @assigned,
                        locals: { task: @task } %>
           <% end %>
 
@@ -181,13 +169,12 @@ review = @task.current_review
       <div class="task-comments comments">
         <%= render 'tasks/description', task: @task %>
 
-        <%= render partial: 'shared/comment', collection: comments,
-                   locals: { category: @category, project: @task.project,
-                             object: @task } %>
+        <%= render partial: 'shared/comment', collection: @comments,
+                   locals: { object: @task } %>
 
         <%= render 'shared/new_comment',
-                   category: @category, project: @task.project, object: @task,
-                   comment: comment, user_options: @comment_user_options %>
+                   object: @task, comment: @comment,
+                   user_options: @comment_user_options %>
       </div>
     </div>
   </div>

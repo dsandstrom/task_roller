@@ -18,13 +18,19 @@ RSpec.describe "tasks/show", type: :view do
 
     before do
       enable_can(view, admin)
-      @project = assign(:project, project)
+      @comments = assign(:comments, [])
+      @assignees = assign(:assignees, [])
+      @assigned = assign(:assigned, [])
+      @review = nil
     end
 
     context "when project" do
       before do
         @task = assign(:task, task)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       let(:url) { task_task_comments_url(@task) }
@@ -59,11 +65,11 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       context "task belongs to an issue" do
-        let(:issue) { Fabricate(:issue, project: @project) }
+        let(:issue) { Fabricate(:issue, project: project) }
 
         before do
           @task =
-            assign(:task, Fabricate(:task, project: @project, issue: issue))
+            assign(:task, Fabricate(:task, project: project, issue: issue))
         end
 
         it "renders issue" do
@@ -77,6 +83,8 @@ RSpec.describe "tasks/show", type: :view do
 
         before do
           Fabricate(:task_assignee, task: @task, assignee: user)
+          @assignees = assign(:assignees, [user])
+          @assigned = assign(:assigned, [])
         end
 
         it "renders assignee" do
@@ -91,6 +99,7 @@ RSpec.describe "tasks/show", type: :view do
         before do
           Fabricate(:task_assignee, task: @task, assignee: user)
           @task_comment = Fabricate(:task_comment, task: @task)
+          @comments = assign(:comments, [@task_comment])
         end
 
         it "renders them" do
@@ -105,7 +114,11 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "renders close link" do
@@ -118,7 +131,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when no task_type" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
 
         @task.task_type.destroy
         @task.reload
@@ -133,7 +150,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task's user destroyed" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
 
         @task.user.destroy
         @task.reload
@@ -150,8 +171,13 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_comment = Fabricate(:task_comment, task: @task, user: user)
-        assign(:task_subscription, task_subscription)
+        @comments = assign(:comments, [@task_comment])
+        assign(:subscription, task_subscription)
 
         @task_comment.user.destroy
         @task_comment.reload
@@ -169,8 +195,14 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @task_comment = Fabricate(:task_comment, task: @task, user: user)
         Fabricate(:task_assignee, task: @task, assignee: user)
-        assign(:task_subscription, task_subscription)
+        assign(:subscription, task_subscription)
+        @assignees = assign(:assignees, [user])
 
         user.destroy
         @task.reload
@@ -185,10 +217,14 @@ RSpec.describe "tasks/show", type: :view do
 
     context "task's issue destroyed" do
       before do
-        @issue = Fabricate(:issue, project: @project)
+        @issue = Fabricate(:issue, project: project)
         @task =
-          assign(:task, Fabricate(:task, project: @project, issue: @issue))
-        assign(:task_subscription, task_subscription)
+          assign(:task, Fabricate(:task, project: project, issue: @issue))
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
 
         @issue.destroy
         @task.reload
@@ -204,8 +240,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is in review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:pending_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "renders approval link" do
@@ -235,7 +274,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task doesn't have a source_connection" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
       end
 
       it "renders new task connection link" do
@@ -250,7 +293,10 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "renders reopen link" do
@@ -263,7 +309,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is closed with source_connection" do
       before do
         @task = assign(:task, closed_task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, source: @task)
       end
 
@@ -301,8 +351,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is closed with approved review" do
       before do
         @task = assign(:task, closed_task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:approved_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:approved_review, task: @task))
       end
 
       it "doesn't render a new task connection link" do
@@ -331,8 +384,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is closed with disapproved review" do
       before do
         @task = assign(:task, closed_task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:disapproved_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:disapproved_review, task: @task))
       end
 
       it "renders reopen link" do
@@ -350,8 +407,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when task is open with disapproved review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:disapproved_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:disapproved_review, task: @task))
       end
 
       it "renders close link" do
@@ -375,7 +436,10 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has target_connections" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, target: @task)
       end
 
@@ -390,8 +454,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when an unfinished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @task.assignees << @task.user
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @task.assignees << @user
+        @assignees = assign(:assignees, [@user])
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
 
@@ -419,8 +487,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when a finished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
+        @assignees = assign(:assignees, [@user])
         @progression = Fabricate(:finished_progression, task: @task)
       end
 
@@ -454,8 +526,9 @@ RSpec.describe "tasks/show", type: :view do
     context "when no review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        assign(:subscription, task_subscription)
         @task.assignees << @task.user
+        @assignees = assign(:assignees, [@user])
       end
 
       it "doesn't render new review link" do
@@ -467,9 +540,14 @@ RSpec.describe "tasks/show", type: :view do
     context "when a pending review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
         @task.assignees << @task.user
-        @review = Fabricate(:pending_review, task: @task)
+        @assignees = assign(:assignees, [@user])
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "doesn't render destroy review link" do
@@ -504,8 +582,10 @@ RSpec.describe "tasks/show", type: :view do
     context "when comments" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @first_comment = Fabricate(:task_comment, task: @task)
         @second_comment = Fabricate(:task_comment, task: @task, user: admin)
         @comments = assign(:comments, [@first_comment, @second_comment])
@@ -528,6 +608,18 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{second_url}']"
       end
     end
+
+    # TODO: when task category/project invisible & internal
+    context "when task project is invisible" do
+      before do
+        @task = assign(:task, task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task, user: admin))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        assign(:subscription, task_subscription)
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -538,13 +630,20 @@ RSpec.describe "tasks/show", type: :view do
 
     before do
       enable_can(view, reviewer)
-      @project = assign(:project, project)
+      @comments = assign(:comments, [])
+      @assignees = assign(:assignees, [])
+      @assigned = assign(:assigned, [])
+      @review = nil
     end
 
     context "when task is open" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "renders task's heading" do
@@ -582,7 +681,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, source: @task)
       end
 
@@ -603,7 +706,7 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has target_connections" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, target: @task)
       end
 
@@ -618,7 +721,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when an unfinished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
@@ -653,7 +760,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when a finished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
         @progression = Fabricate(:finished_progression, task: @task)
       end
@@ -688,7 +799,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when no review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
       end
 
@@ -701,9 +816,14 @@ RSpec.describe "tasks/show", type: :view do
     context "when a pending review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
-        @review = Fabricate(:pending_review, task: @task)
+        @assignees = assign(:assignees, [@task.user])
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "doesn't render destroy review link" do
@@ -733,8 +853,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when comments" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @comment =
+          assign(:task_comment, @task.comments.build(user_id: reviewer.id))
         @first_comment = Fabricate(:task_comment, task: @task)
         @second_comment = Fabricate(:task_comment, task: @task, user: reviewer)
         @comments = assign(:comments, [@first_comment, @second_comment])
@@ -761,8 +886,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when closures" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @comment =
+          assign(:task_comment, @task.comments.build(user_id: reviewer.id))
         @comments = assign(:comments, [])
 
         @closure = Fabricate(:task_closure, task: task)
@@ -777,9 +907,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when reopenings" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
-        @comments = assign(:comments, [])
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
 
         @reopening = Fabricate(:task_reopening, task: task)
       end
@@ -793,9 +925,14 @@ RSpec.describe "tasks/show", type: :view do
     context "when not subscribed to the task" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription,
+        @comment =
+          assign(:comment, Fabricate.build(:task_comment, task: @task,
+                                                          user: reviewer))
+        @user = assign(:user, @task.user)
+        assign(:subscription,
                Fabricate.build(:task_subscription, task: @task, user: reviewer))
-        @comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:task_comment,
+                          @task.comments.build(user_id: reviewer.id))
       end
 
       it "renders new task_subscription link" do
@@ -808,8 +945,9 @@ RSpec.describe "tasks/show", type: :view do
     context "when subscribed to the task" do
       before do
         @task = assign(:task, task)
-        @comment = assign(:task_comment, @task.comments.build)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @subscription = assign(:subscription, task_subscription)
+        @comment =
+          assign(:task_comment, @task.comments.build(user_id: reviewer.id))
       end
 
       it "doesn't render new task_subscription link" do
@@ -820,7 +958,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders destroy task_subscription link" do
         render
-        url = task_task_subscription_path(@task, @task_subscription)
+        url = task_task_subscription_path(@task, @subscription)
         assert_select "a[data-method='delete'][href='#{url}']"
       end
     end
@@ -828,9 +966,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when someone else's task" do
       context "is open" do
         before do
-          @task = assign(:task, Fabricate(:open_task, project: @project))
-          assign(:task_subscription,
-                 Fabricate(:task_subscription, task: @task, user: reviewer))
+          @task = assign(:task, Fabricate(:open_task, project: project))
+          @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                      task: @task,
+                                                      user: reviewer))
+          @user = assign(:user, @task.user)
+          @subscription = assign(:subscription, task_subscription)
         end
 
         it "doesn't render reopen link" do
@@ -848,8 +989,8 @@ RSpec.describe "tasks/show", type: :view do
 
       context "when task is closed" do
         before do
-          @task = assign(:task, Fabricate(:closed_task, project: @project))
-          assign(:task_subscription,
+          @task = assign(:task, Fabricate(:closed_task, project: project))
+          assign(:subscription,
                  Fabricate(:task_subscription, task: @task, user: reviewer))
         end
 
@@ -872,8 +1013,11 @@ RSpec.describe "tasks/show", type: :view do
 
         before do
           @task = assign(:task, task)
-          @comment = assign(:task_comment, @task.comments.build)
-          @task_subscription = assign(:task_subscription, task_subscription)
+          @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                      task: @task,
+                                                      user: reviewer))
+          @user = assign(:user, @task.user)
+          @subscription = assign(:subscription, task_subscription)
         end
 
         it "renders close link" do
@@ -887,8 +1031,9 @@ RSpec.describe "tasks/show", type: :view do
 
         before do
           @task = assign(:task, task)
-          @comment = assign(:task_comment, @task.comments.build)
-          @task_subscription = assign(:task_subscription, task_subscription)
+          @comment = assign(:task_comment,
+                            @task.comments.build(user_id: reviewer.id))
+          @subscription = assign(:subscription, task_subscription)
         end
 
         context "without a duplicate" do
@@ -932,13 +1077,19 @@ RSpec.describe "tasks/show", type: :view do
 
     before do
       enable_can(view, current_user)
-      @project = assign(:project, project)
+      @comments = assign(:comments, [])
+      @assignees = assign(:assignees, [])
+      @assigned = assign(:assigned, [])
     end
 
     context "when task is open" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "renders task's heading" do
@@ -969,9 +1120,12 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is closed" do
       before do
-        @task = assign(:task, Fabricate(:closed_task, project: @project))
-        assign(:task_subscription,
-               Fabricate(:task_subscription, task: @task, user: current_user))
+        @task = assign(:task, Fabricate(:closed_task, project: project))
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "doesn't render reopen link" do
@@ -984,8 +1138,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when Task assigned to them" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << current_user
+        @assignees = assign(:assignees, [current_user])
       end
 
       context "and they have an unfinished progression" do
@@ -1063,7 +1222,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "with a pending review" do
         before do
-          @review = Fabricate(:pending_review, task: @task)
+          @review = assign(:review, Fabricate(:pending_review, task: @task))
         end
 
         it "doesn't render destroy review link" do
@@ -1094,8 +1253,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when someone else's Task" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
+        @assignees = assign(:assignees, [@task.user])
       end
 
       it "renders new task_comment form" do
@@ -1128,7 +1292,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "with a pending review" do
         before do
-          @review = Fabricate(:pending_review, task: @task)
+          @review = assign(:review, Fabricate(:pending_review, task: @task))
         end
 
         it "doesn't render destroy review link" do
@@ -1159,7 +1323,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, source: @task)
       end
 
@@ -1180,7 +1348,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has target_connections" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, target: @task)
       end
 
@@ -1195,9 +1367,14 @@ RSpec.describe "tasks/show", type: :view do
     context "when a pending review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
-        @review = Fabricate(:pending_review, task: @task)
+        @assignees = assign(:assignees, [@task.user])
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "doesn't render destroy review link" do
@@ -1227,8 +1404,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when comments" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @first_comment = Fabricate(:task_comment, task: @task)
         @second_comment =
           Fabricate(:task_comment, task: @task, user: current_user)
@@ -1258,8 +1438,11 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
-        @comment = assign(:task_comment, @task.comments.build)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "doesn't render close link" do
@@ -1277,14 +1460,20 @@ RSpec.describe "tasks/show", type: :view do
 
     before do
       enable_can(view, current_user)
-      @project = assign(:project, project)
+      @comments = assign(:comments, [])
+      @assignees = assign(:assignees, [])
+      @assigned = assign(:assigned, [])
     end
 
     context "when task is open" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:pending_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "renders task's heading" do
@@ -1330,8 +1519,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is closed" do
       before do
-        @task = assign(:task, Fabricate(:closed_task, project: @project))
-        assign(:task_subscription,
+        @task = assign(:task, Fabricate(:closed_task, project: project))
+        assign(:subscription,
                Fabricate(:task_subscription, task: task, user: current_user))
       end
 
@@ -1345,7 +1534,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has a source_connection" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, source: @task)
       end
 
@@ -1366,7 +1559,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has target_connections" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task_connection = Fabricate(:task_connection, target: @task)
       end
 
@@ -1381,8 +1578,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has an unfinished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
+        @assignees = assign(:assignees, [@task.user])
         @progression = Fabricate(:unfinished_progression, task: @task)
       end
 
@@ -1419,8 +1621,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has a finished progression" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
         @task.assignees << @task.user
+        @assignees = assign(:assignees, [@task.user])
         @progression = Fabricate(:finished_progression, task: @task)
       end
 
@@ -1457,7 +1664,11 @@ RSpec.describe "tasks/show", type: :view do
     context "when task doesn't have a review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "doesn't render new review link" do
@@ -1469,8 +1680,12 @@ RSpec.describe "tasks/show", type: :view do
     context "when task has a pending review" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @review = Fabricate(:pending_review, task: @task)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
+        @review = assign(:review, Fabricate(:pending_review, task: @task))
       end
 
       it "doesn't render destroy review link" do
@@ -1500,8 +1715,9 @@ RSpec.describe "tasks/show", type: :view do
     context "when comments" do
       before do
         @task = assign(:task, task)
-        assign(:task_subscription, task_subscription)
-        @comment = assign(:task_comment, @task.comments.build)
+        assign(:subscription, task_subscription)
+        @comment = assign(:task_comment,
+                          @task.comments.build(user_id: current_user.id))
         @first_comment = Fabricate(:task_comment, task: @task)
         @second_comment =
           Fabricate(:task_comment, task: @task, user: current_user)
@@ -1531,8 +1747,11 @@ RSpec.describe "tasks/show", type: :view do
 
       before do
         @task = assign(:task, task)
-        @comment = assign(:task_comment, @task.comments.build)
-        @task_subscription = assign(:task_subscription, task_subscription)
+        @comment = assign(:comment, Fabricate.build(:task_comment,
+                                                    task: @task,
+                                                    user: current_user))
+        @user = assign(:user, @task.user)
+        @subscription = assign(:subscription, task_subscription)
       end
 
       it "doesn't render close link" do

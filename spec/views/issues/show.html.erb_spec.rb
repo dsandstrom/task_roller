@@ -14,18 +14,19 @@ RSpec.describe "issues/show", type: :view do
   end
 
   context "for an admin" do
-    let(:admin) { Fabricate(:user_admin) }
+    let(:current_user) { Fabricate(:user_admin) }
     let(:issue_subscription) do
-      Fabricate(:issue_subscription, issue: issue, user: admin)
+      Fabricate(:issue_subscription, issue: issue, user: current_user)
     end
 
-    before { enable_can(view, admin) }
+    before { enable_can(view, current_user) }
 
     context "when project" do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
       end
 
@@ -127,7 +128,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
         @issue.update_attribute :project_id, nil
         @issue.reload
@@ -143,7 +145,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
         @issue.issue_type.destroy
         @issue.reload
@@ -160,7 +163,8 @@ RSpec.describe "issues/show", type: :view do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
         @comments = assign(:comments, [])
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
 
         @issue.user.destroy
         @issue.reload
@@ -180,7 +184,8 @@ RSpec.describe "issues/show", type: :view do
         assign(:issue_subscription, issue_subscription)
         @issue_comment = Fabricate(:issue_comment, issue: @issue, user: user)
         @comments = assign(:comments, [@issue_comment])
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
 
         @issue_comment.user.destroy
         @issue_comment.reload
@@ -199,7 +204,8 @@ RSpec.describe "issues/show", type: :view do
         assign(:issue_subscription, issue_subscription)
         @task =
           assign(:task, Fabricate(:task, project: @project, issue: @issue))
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
 
         @task.destroy
@@ -217,9 +223,11 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @first_comment = Fabricate(:issue_comment, issue: @issue)
-        @second_comment = Fabricate(:issue_comment, issue: @issue, user: admin)
+        @second_comment = Fabricate(:issue_comment, issue: @issue,
+                                                    user: current_user)
         @comments = assign(:comments, [@first_comment, @second_comment])
       end
 
@@ -244,9 +252,11 @@ RSpec.describe "issues/show", type: :view do
     context "when not subscribed to the issue" do
       before do
         @issue = assign(:issue, issue)
-        assign(:issue_subscription,
-               Fabricate.build(:issue_subscription, issue: @issue, user: admin))
-        @comment = assign(:issue_comment, @issue.comments.build)
+        assign(:issue_subscription, Fabricate.build(:issue_subscription,
+                                                    issue: @issue,
+                                                    user: current_user))
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
       end
 
       it "renders new issue_subscription link" do
@@ -259,7 +269,8 @@ RSpec.describe "issues/show", type: :view do
     context "when subscribed to the issue" do
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
@@ -279,7 +290,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue open" do
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
@@ -301,7 +313,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed with a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
         Fabricate(:issue_connection, source: @issue)
       end
@@ -324,7 +337,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed without a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
@@ -348,7 +362,8 @@ RSpec.describe "issues/show", type: :view do
 
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
         @resolution = Fabricate(:resolution, issue: issue, user: @issue.user)
       end
@@ -383,12 +398,12 @@ RSpec.describe "issues/show", type: :view do
   end
 
   context "for a reviewer" do
-    let(:reviewer) { Fabricate(:user_reviewer) }
+    let(:current_user) { Fabricate(:user_reviewer) }
     let(:issue_subscription) do
-      Fabricate(:issue_subscription, issue: issue, user: reviewer)
+      Fabricate(:issue_subscription, issue: issue, user: current_user)
     end
 
-    before { enable_can(view, reviewer) }
+    before { enable_can(view, current_user) }
 
     context "when someone else's issue" do
       let(:url) { issue_issue_comments_url(@issue) }
@@ -396,7 +411,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
       end
 
@@ -445,7 +461,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
         @issue_connection = Fabricate(:issue_connection, source: @issue)
       end
@@ -477,7 +494,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
         @issue_connection = Fabricate(:issue_connection, target: @issue)
       end
@@ -495,10 +513,11 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @first_comment = Fabricate(:issue_comment, issue: @issue)
         @second_comment = Fabricate(:issue_comment, issue: @issue,
-                                                    user: reviewer)
+                                                    user: current_user)
         @comments = assign(:comments, [@first_comment, @second_comment])
       end
 
@@ -523,7 +542,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue open" do
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
@@ -545,7 +565,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed with a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
         Fabricate(:issue_connection, source: @issue)
       end
@@ -568,7 +589,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed without a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @issue_subscription = assign(:issue_subscription, issue_subscription)
       end
 
@@ -591,7 +613,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
 
         @closure = Fabricate(:issue_closure, issue: issue)
@@ -607,7 +630,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment, @issue.comments.build)
+        @comment = assign(:issue_comment,
+                          @issue.comments.build(user_id: current_user.id))
         @comments = assign(:comments, [])
 
         @reopening = Fabricate(:issue_reopening, issue: issue)
@@ -637,7 +661,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment, @issue.comments.build)
+          @comment = assign(:issue_comment,
+                            @issue.comments.build(user_id: current_user.id))
           @comments = assign(:comments, [])
         end
 
@@ -768,7 +793,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment, @issue.comments.build)
+          @comment = assign(:issue_comment,
+                            @issue.comments.build(user_id: current_user.id))
           @comments = assign(:comments, [])
         end
 
@@ -878,7 +904,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment, @issue.comments.build)
+          @comment = assign(:issue_comment,
+                            @issue.comments.build(user_id: current_user.id))
           @comments = assign(:comments, [])
           @issue_connection = Fabricate(:issue_connection, source: @issue)
         end
@@ -910,7 +937,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment, @issue.comments.build)
+          @comment = assign(:issue_comment,
+                            @issue.comments.build(user_id: current_user.id))
           @comments = assign(:comments, [])
           @issue_connection = Fabricate(:issue_connection, target: @issue)
         end
@@ -928,7 +956,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment, @issue.comments.build)
+          @comment = assign(:issue_comment,
+                            @issue.comments.build(user_id: current_user.id))
           @first_comment = Fabricate(:issue_comment, issue: @issue)
           @second_comment = Fabricate(:issue_comment, issue: @issue,
                                                       user: current_user)

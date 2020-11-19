@@ -3,16 +3,16 @@
 # TODO: allow admins to connect task to issue, move to different issue
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
-# TODO: allow creating issue/task from comment
+# TODO: allow creating issue/task from comment (another issue_connection?)
 # TODO: allow user to customize subscription notifications
 # TODO: when closed, lock description & assignees
+# TODO: add way to share issue/task url (copy to the clipboard, expandable)
 
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
-  load_and_authorize_resource only: %i[show edit update destroy]
+  load_and_authorize_resource except: %i[index new create]
   before_action :set_source, only: :index
-  before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_task_types, only: :new
 
@@ -24,9 +24,13 @@ class TasksController < ApplicationController
   end
 
   def show
-    authorize! :read, @project
-
-    @task_subscription =
+    @comments = @task.comments.includes(:user)
+    @comment = @task.comments.build(user_id: current_user.id)
+    @user = @task.user
+    @assignees = @task.assignees.includes(:progressions)
+    @assigned = @task.assigned
+    @review = @task.current_review
+    @subscription =
       @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end
 
@@ -57,8 +61,9 @@ class TasksController < ApplicationController
   end
 
   def destroy
+    project = @task.project
     @task.destroy
-    redirect_to @project, success: 'Task was successfully destroyed.'
+    redirect_to project, success: 'Task was successfully destroyed.'
   end
 
   private
@@ -83,12 +88,6 @@ class TasksController < ApplicationController
       authorize! :read, @source
     end
 
-    def set_category_and_project
-      @project ||= @task.project
-      @category ||= @task.category
-      true # rubocop complains about memoization
-    end
-
     def task_params
       params.require(:task).permit(:summary, :description, :task_type_id,
                                    :issue_id, assignee_ids: [])
@@ -104,6 +103,7 @@ class TasksController < ApplicationController
       @task_types = TaskType.all
     end
 
+    # TODO: change to just workers after allowing self-assigning
     def set_assignee_options
       @assignee_options =
         %w[Worker Reviewer].map do |type|
@@ -114,7 +114,7 @@ class TasksController < ApplicationController
 
     def set_issue_options
       @issue_options =
-        @project.issues.map do |issue|
+        @task.project.issues.map do |issue|
           [issue.id_and_summary, issue.id]
         end
     end
