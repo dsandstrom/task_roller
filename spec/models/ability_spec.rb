@@ -1466,6 +1466,1560 @@ RSpec.describe Ability do
     end
   end
 
+  describe "IssueComment model" do
+    describe "for an admin" do
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:admin) { Fabricate(:user_admin) }
+      subject(:ability) { Ability.new(admin) }
+
+      context "when category is visible" do
+        context "and external" do
+          let(:category) { Fabricate(:category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+
+      context "when category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:invisible_category, internal: true) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: admin)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+    end
+
+    describe "for a reviewer" do
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:current_user) { Fabricate(:user_reviewer) }
+      subject(:ability) { Ability.new(current_user) }
+
+      context "when category is visible" do
+        context "and external" do
+          let(:category) { Fabricate(:category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+
+      context "when category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:invisible_category, internal: true) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+    end
+
+    describe "for a worker" do
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:current_user) { Fabricate(:user_worker) }
+      subject(:ability) { Ability.new(current_user) }
+
+      context "when category is visible" do
+        context "and external" do
+          let(:category) { Fabricate(:category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+
+      context "when category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:invisible_category, internal: true) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+    end
+
+    describe "for a reporter" do
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:current_user) { Fabricate(:user_reporter) }
+      subject(:ability) { Ability.new(current_user) }
+
+      context "when category is visible" do
+        context "and external" do
+          let(:category) { Fabricate(:category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+
+      context "when category is invisible" do
+        context "and external" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+
+        context "and internal" do
+          let(:category) { Fabricate(:invisible_category, internal: true) }
+
+          context "while project is visible" do
+            context "and external" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+
+          context "while project is invisible" do
+            context "and external" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+
+            context "and internal" do
+              let(:project) do
+                Fabricate(:internal_project, category: category, visible: false)
+              end
+
+              context "when belongs to them" do
+                let(:issue_comment) do
+                  Fabricate(:issue_comment, issue: issue, user: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+                it { is_expected.not_to be_able_to(:create, issue_comment) }
+                it { is_expected.not_to be_able_to(:read, issue_comment) }
+                it { is_expected.not_to be_able_to(:update, issue_comment) }
+                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   describe "IssueConnection model" do
     %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
