@@ -8,7 +8,7 @@ RSpec.describe "issues/show", type: :view do
   let(:issue) { Fabricate(:issue, project: project) }
   let(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
-  before { @project = assign(:project, project) }
+  before { @project = project }
 
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
@@ -69,7 +69,7 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
 
-      context "with tasks" do
+      context "and has tasks" do
         it "renders a list of tasks" do
           task = Fabricate(:task, issue: @issue)
 
@@ -78,37 +78,7 @@ RSpec.describe "issues/show", type: :view do
         end
       end
 
-      context "when a source_connection" do
-        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
-
-        before do
-          @source_connection = assign(:source_connection, issue_connection)
-        end
-
-        it "renders source_connection" do
-          render
-
-          duplicatee = @source_connection.target
-          url = issue_path(duplicatee)
-          expect(rendered).to have_link(nil, href: url)
-        end
-
-        it "doesn't render new connection link" do
-          render
-
-          url = new_issue_connection_path(@issue)
-          expect(rendered).not_to have_link(nil, href: url)
-        end
-
-        it "renders destroy connection link" do
-          render
-
-          url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
-        end
-      end
-
-      context "when a target_issue_connection" do
+      context "and has a target_issue_connection" do
         before do
           @target_connection = Fabricate(:issue_connection, target: @issue)
           @duplicates = assign(:duplicates, [@target_connection.source])
@@ -299,6 +269,28 @@ RSpec.describe "issues/show", type: :view do
         @source_connection = assign(:source_connection, issue_connection)
       end
 
+      it "renders source_connection" do
+        render
+
+        duplicatee = @source_connection.target
+        url = issue_path(duplicatee)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new connection link" do
+        render
+
+        url = new_issue_connection_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders destroy connection link" do
+        render
+
+        url = issue_connection_path(@source_connection)
+        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+      end
+
       it "doesn't render close issue link" do
         render
 
@@ -365,6 +357,180 @@ RSpec.describe "issues/show", type: :view do
 
         url = issue_resolution_path(@issue, @resolution)
         assert_select "a[data-method='delete'][href='#{url}']"
+      end
+    end
+
+    context "when issue project is internal" do
+      let(:project) { Fabricate(:internal_project, category: category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+      context "and open" do
+        before { @issue = assign(:issue, issue) }
+
+        it "renders new issue_comment form" do
+          render
+
+          url = issue_issue_comments_url(issue)
+          assert_select "form[action=?][method=?]", url, "post"
+        end
+
+        it "renders edit link" do
+          render
+
+          url = edit_issue_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new task link" do
+          render
+
+          url =
+            new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders close issue link" do
+          render
+
+          url = issue_closures_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
+      end
+
+      context "and closed with a source_connection" do
+        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
+
+        before do
+          @issue = assign(:issue, closed_issue)
+          @source_connection = assign(:source_connection, issue_connection)
+        end
+
+        it "renders source_connection" do
+          render
+
+          duplicatee = @source_connection.target
+          url = issue_path(duplicatee)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy connection link" do
+          render
+
+          url = issue_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+    end
+
+    context "when issue project is invisible" do
+      let(:project) { Fabricate(:invisible_project, category: category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+      context "and open" do
+        before { @issue = assign(:issue, issue) }
+
+        it "doesn't render new issue_comment form" do
+          render
+
+          url = issue_issue_comments_url(issue)
+          assert_select "form[action=?]", url, count: 0
+        end
+
+        it "renders edit link" do
+          render
+
+          url = edit_issue_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new task link" do
+          render
+
+          url =
+            new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders close issue link" do
+          render
+
+          url = issue_closures_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
+      end
+
+      context "and closed with a source_connection" do
+        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
+
+        before do
+          @issue = assign(:issue, closed_issue)
+          @source_connection = assign(:source_connection, issue_connection)
+        end
+
+        it "renders source_connection" do
+          render
+
+          duplicatee = @source_connection.target
+          url = issue_path(duplicatee)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy connection link" do
+          render
+
+          url = issue_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "and is closed with resolution" do
+        before do
+          @issue = assign(:issue, closed_issue)
+          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+        end
+
+        it "renders resolution" do
+          render
+
+          assert_select "#resolution-history-#{@resolution.id}"
+        end
+
+        it "renders destroy resolution link" do
+          render
+
+          url = issue_resolution_path(@issue, @resolution)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
       end
     end
   end
@@ -529,6 +695,26 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when issue is resolved" do
+      before do
+        @issue = assign(:issue, closed_issue)
+        @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+      end
+
+      it "renders resolution" do
+        render
+
+        assert_select "#resolution-history-#{@resolution.id}"
+      end
+
+      it "doesn't render destroy resolution link" do
+        render
+
+        url = issue_resolution_path(@issue, @resolution)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
     context "when issue closed with a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
@@ -600,6 +786,158 @@ RSpec.describe "issues/show", type: :view do
       it "renders list of reopenings" do
         render
         assert_select "#issue-reopening-#{@reopening.id}"
+      end
+    end
+
+    context "when issue project is internal" do
+      let(:project) { Fabricate(:internal_project, category: category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+      context "and open" do
+        before { @issue = assign(:issue, issue) }
+
+        it "renders new issue_comment form" do
+          render
+
+          url = issue_issue_comments_url(issue)
+          assert_select "form[action=?][method=?]", url, "post"
+        end
+
+        it "renders new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new task link" do
+          render
+
+          url =
+            new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders close issue link" do
+          render
+
+          url = issue_closures_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
+      end
+
+      context "and closed with a source_connection" do
+        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
+
+        before do
+          @issue = assign(:issue, closed_issue)
+          @source_connection = assign(:source_connection, issue_connection)
+        end
+
+        it "renders source_connection" do
+          render
+
+          duplicatee = @source_connection.target
+          url = issue_path(duplicatee)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders destroy connection link" do
+          render
+
+          url = issue_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "and is closed with resolution" do
+        before do
+          @issue = assign(:issue, closed_issue)
+          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+        end
+
+        it "renders resolution" do
+          render
+
+          assert_select "#resolution-history-#{@resolution.id}"
+        end
+      end
+    end
+
+    context "when issue project is invisible" do
+      let(:project) { Fabricate(:invisible_project, category: category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+      context "and open" do
+        before { @issue = assign(:issue, issue) }
+
+        it "doesn't render new issue_comment form" do
+          render
+
+          url = issue_issue_comments_url(issue)
+          assert_select "form[action=?]", url, count: 0
+        end
+
+        it "renders new connection link" do
+          render
+
+          url = new_issue_connection_path(@issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new task link" do
+          render
+
+          url =
+            new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders close issue link" do
+          render
+
+          url = issue_closures_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
+      end
+
+      context "and closed with a source_connection" do
+        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
+
+        before do
+          @issue = assign(:issue, closed_issue)
+          @source_connection = assign(:source_connection, issue_connection)
+        end
+
+        it "renders source_connection" do
+          render
+
+          duplicatee = @source_connection.target
+          url = issue_path(duplicatee)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders destroy connection link" do
+          render
+
+          url = issue_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "and is closed with resolution" do
+        before do
+          @issue = assign(:issue, closed_issue)
+          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+        end
+
+        it "renders resolution" do
+          render
+
+          assert_select "#resolution-history-#{@resolution.id}"
+        end
       end
     end
   end
