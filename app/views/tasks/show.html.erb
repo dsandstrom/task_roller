@@ -84,12 +84,12 @@
         </p>
       </section>
 
-      <% if @task.duplicates.any? %>
+      <% if @duplicates.any? %>
         <section class="task-duplicates">
           <h4 class="task-column-title">Duplicate Tasks</h4>
 
           <%= render partial: 'shared/task',
-                     collection: @task.duplicates,
+                     collection: @duplicates,
                      locals: { show_status: false } %>
         </section>
       <% end %>

@@ -24,7 +24,7 @@ class TasksController < ApplicationController
   end
 
   def show
-    @user = @task.user
+    set_user_resources
     set_task_resources
   end
 
@@ -124,11 +124,16 @@ class TasksController < ApplicationController
       @subscription = @source.tasks_subscription(current_user, init: true)
     end
 
-    def set_task_resources
-      @comments = @task.comments.includes(:user)
+    def set_user_resources
+      @user = @task.user
       @assignees = @task.assignees.includes(:progressions)
       @assigned = @task.assigned
+    end
+
+    def set_task_resources
       @source_connection = @task.source_connection
+      @duplicates = @task.duplicates
+      @comments = @task.comments.includes(:user)
       @subscription = @task.task_subscriptions
                            .find_or_initialize_by(user_id: current_user.id)
       @progressions = @task.progressions.unfinished

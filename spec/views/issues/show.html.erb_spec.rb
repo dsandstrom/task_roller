@@ -8,10 +8,7 @@ RSpec.describe "issues/show", type: :view do
   let(:issue) { Fabricate(:issue, project: project) }
   let(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
-  before(:each) do
-    @category = assign(:category, category)
-    @project = assign(:project, project)
-  end
+  before { @project = assign(:project, project) }
 
   context "for an admin" do
     let(:current_user) { Fabricate(:user_admin) }
