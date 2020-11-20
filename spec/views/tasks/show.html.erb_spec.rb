@@ -66,54 +66,57 @@ RSpec.describe "tasks/show", type: :view do
         render
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
+    end
 
-      context "task belongs to an issue" do
-        let(:issue) { Fabricate(:issue, project: project) }
+    context "when task belongs to an issue" do
+      let(:issue) { Fabricate(:issue, project: project) }
 
-        before do
-          @task =
-            assign(:task, Fabricate(:task, project: project, issue: issue))
-        end
-
-        it "renders issue" do
-          render
-          assert_select "#issue-#{issue.id}"
-        end
+      before do
+        @task =
+          assign(:task, Fabricate(:task, project: project, issue: issue))
       end
 
-      context "task assigned to a user" do
-        let(:user) { Fabricate(:user_worker) }
+      it "renders issue" do
+        render
+        assert_select "#issue-#{issue.id}"
+      end
+    end
 
-        before do
-          Fabricate(:task_assignee, task: @task, assignee: user)
-          assign(:assignees, [user])
-          assign(:assigned, [])
-        end
+    context "when task assigned to a user" do
+      let(:user) { Fabricate(:user_worker) }
 
-        it "renders assignee" do
-          render
-          assert_select "#assignee-#{user.id}"
-        end
-
-        it "renders edit task assignments link" do
-          render
-          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
-        end
+      before do
+        @task = assign(:task, task)
+        Fabricate(:task_assignee, task: @task, assignee: user)
+        assign(:assignees, [user])
+        assign(:assigned, [])
       end
 
-      context "when task has comments" do
-        let(:user) { Fabricate(:user_worker) }
+      it "renders assignee" do
+        render
+        assert_select "#assignee-#{user.id}"
+        expect(rendered).to have_link(nil, href: user_assignments_path(user))
+      end
 
-        before do
-          Fabricate(:task_assignee, task: @task, assignee: user)
-          @task_comment = Fabricate(:task_comment, task: @task)
-          assign(:comments, [@task_comment])
-        end
+      it "renders edit task assignments link" do
+        render
+        expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+      end
+    end
 
-        it "renders them" do
-          render
-          assert_select "#comment-#{@task_comment.id}"
-        end
+    context "when task has comments" do
+      let(:user) { Fabricate(:user_worker) }
+
+      before do
+        @task = assign(:task, task)
+        Fabricate(:task_assignee, task: @task, assignee: user)
+        @task_comment = Fabricate(:task_comment, task: @task)
+        assign(:comments, [@task_comment])
+      end
+
+      it "renders them" do
+        render
+        assert_select "#comment-#{@task_comment.id}"
       end
     end
 
@@ -140,6 +143,18 @@ RSpec.describe "tasks/show", type: :view do
       it "renders heading" do
         render
         assert_select ".task-heading", @task.heading
+      end
+    end
+
+    context "when task user" do
+      before do
+        @task = assign(:task, task)
+        @user = assign(:user, @task.user)
+      end
+
+      it "renders link to user tasks" do
+        render
+        expect(rendered).to have_link(nil, href: user_tasks_path(@user))
       end
     end
 
@@ -572,14 +587,11 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    # TODO: when task category/project invisible & internal
     context "when task project is invisible" do
       let(:project) { Fabricate(:invisible_project, category: category) }
       let(:form_url) { task_task_comments_url(@task) }
 
-      before do
-        @task = assign(:task, task)
-      end
+      before { @task = assign(:task, task) }
 
       it "renders edit link" do
         render
@@ -591,6 +603,113 @@ RSpec.describe "tasks/show", type: :view do
         render
 
         assert_select "form[action=?]", form_url, count: 0
+      end
+
+      it "renders edit task assignments link" do
+        render
+        expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+      end
+
+      it "renders close link" do
+        render
+        url = task_closures_path(@task)
+        assert_select "a[href='#{url}'][data-method='post']"
+      end
+
+      it "renders a new task connection link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_task_connection_path(@task))
+      end
+
+      context "and assigned to a user" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:task_assignee, task: @task, assignee: user)
+          assign(:assignees, [user])
+          assign(:assigned, [])
+        end
+
+        it "renders assignee" do
+          render
+          assert_select "#assignee-#{user.id}"
+        end
+
+        it "renders edit task assignments link" do
+          render
+          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+        end
+      end
+
+      context "and in review" do
+        before do
+          @review = assign(:review, Fabricate(:pending_review, task: @task))
+        end
+
+        it "renders approval link" do
+          render
+          url = approve_task_review_path(@task, @review)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders disapproval link" do
+          render
+          url = disapprove_task_review_path(@task, @review)
+          expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "and is closed with approved review" do
+        before do
+          @task = assign(:task, closed_task)
+          @review = assign(:review, Fabricate(:approved_review, task: @task))
+        end
+
+        it "renders reopen link" do
+          render
+          expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
+        end
+      end
+
+      context "and is closed with source_connection" do
+        before do
+          @task = assign(:task, closed_task)
+          task_connection = Fabricate(:task_connection, source: @task)
+          @source_connection = assign(:source_connection, task_connection)
+        end
+
+        it "renders link to target task" do
+          render
+          target = @source_connection.target
+          url = task_path(target)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders destroy link" do
+          render
+          url = task_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+    end
+
+    context "when task project is internal" do
+      let(:project) { Fabricate(:internal_project, category: category) }
+      let(:form_url) { task_task_comments_url(@task) }
+
+      before { @task = assign(:task, task) }
+
+      it "renders edit link" do
+        render
+        url = edit_task_path(@task)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task_comment form" do
+        render
+
+        assert_select "form[action=?][method=?]", form_url, "post"
       end
 
       it "renders edit task assignments link" do
@@ -730,6 +849,28 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = new_task_connection_path(@task)
         expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders edit task assignments link" do
+        render
+        expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+      end
+    end
+
+    context "when task assigned to a user" do
+      let(:user) { Fabricate(:user_worker) }
+
+      before do
+        @task = assign(:task, task)
+        Fabricate(:task_assignee, task: @task, assignee: user)
+        assign(:assignees, [user])
+        assign(:assigned, [])
+      end
+
+      it "renders assignee" do
+        render
+        assert_select "#assignee-#{user.id}"
+        expect(rendered).to have_link(nil, href: user_assignments_path(user))
       end
 
       it "renders edit task assignments link" do
@@ -1090,6 +1231,125 @@ RSpec.describe "tasks/show", type: :view do
 
           form_url = task_task_comments_url(@task)
           assert_select "form[action=?]", form_url, count: 0
+        end
+
+        it "renders edit task assignments link" do
+          render
+          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+        end
+
+        it "renders close link" do
+          render
+          url = task_closures_path(@task)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
+
+        it "renders a new task connection link" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: new_task_connection_path(@task))
+        end
+      end
+
+      context "and assigned to a user" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          @task = assign(:task, task)
+          Fabricate(:task_assignee, task: @task, assignee: user)
+          assign(:assignees, [user])
+          assign(:assigned, [])
+        end
+
+        it "renders assignee" do
+          render
+          assert_select "#assignee-#{user.id}"
+        end
+
+        it "renders edit task assignments link" do
+          render
+          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+        end
+      end
+
+      context "and in review" do
+        before do
+          @task = assign(:task, task)
+          @review = assign(:review, Fabricate(:pending_review, task: @task))
+        end
+
+        it "renders approval link" do
+          render
+          url = approve_task_review_path(@task, @review)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders disapproval link" do
+          render
+          url = disapprove_task_review_path(@task, @review)
+          expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "and is closed with approved review" do
+        before do
+          @task = assign(:task, closed_task)
+          @review = assign(:review, Fabricate(:approved_review, task: @task))
+        end
+
+        it "renders reopen link" do
+          render
+          expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
+        end
+      end
+
+      context "and is closed with source_connection" do
+        before do
+          @task = assign(:task, closed_task)
+          task_connection = Fabricate(:task_connection, source: @task)
+          @source_connection = assign(:source_connection, task_connection)
+        end
+
+        it "renders link to target task" do
+          render
+          target = @source_connection.target
+          url = task_path(target)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders destroy link" do
+          render
+          url = task_connection_path(@source_connection)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+    end
+
+    context "when task project is internal" do
+      let(:project) { Fabricate(:internal_project, category: category) }
+      let(:task) { Fabricate(:task, project: project, user: reviewer) }
+      let(:closed_task) do
+        Fabricate(:closed_task, project: project, user: reviewer)
+      end
+
+      context "and their task" do
+        let(:task) { Fabricate(:task, project: project, user: reviewer) }
+
+        before do
+          @task = assign(:task, task)
+        end
+
+        it "renders edit link" do
+          render
+          url = edit_task_path(@task)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new task_comment form" do
+          render
+
+          form_url = task_task_comments_url(@task)
+          assert_select "form[action=?][method=?]", form_url, "post"
         end
 
         it "renders edit task assignments link" do

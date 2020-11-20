@@ -153,7 +153,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when user" do
+    context "when issue user" do
       before do
         @issue = assign(:issue, issue)
         @user = assign(:user, @issue.user)
