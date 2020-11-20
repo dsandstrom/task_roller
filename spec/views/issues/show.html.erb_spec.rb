@@ -21,6 +21,7 @@ RSpec.describe "issues/show", type: :view do
       assign(:duplicates, [])
       assign(:comments, [])
       assign(:subscription, issue_subscription)
+      assign(:user, issue.user)
     end
 
     context "when project" do
@@ -152,12 +153,22 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when user" do
+      before do
+        @issue = assign(:issue, issue)
+        @user = assign(:user, @issue.user)
+      end
+
+      it "renders link to user issues" do
+        render
+        expect(rendered).to have_link(nil, href: user_issues_path(@user))
+      end
+    end
+
     context "when issue's user destroyed" do
       before do
         @issue = assign(:issue, issue)
-
-        @issue.user.destroy
-        @issue.reload
+        @user = assign(:user, nil)
       end
 
       it "renders default user name" do
@@ -369,6 +380,7 @@ RSpec.describe "issues/show", type: :view do
       assign(:duplicates, [])
       assign(:comments, [])
       assign(:subscription, issue_subscription)
+      assign(:user, issue.user)
     end
 
     context "when someone else's issue" do
@@ -376,6 +388,7 @@ RSpec.describe "issues/show", type: :view do
 
       before do
         @issue = assign(:issue, issue)
+        @user = assign(:user, @issue.user)
         assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
       end
 
@@ -417,6 +430,11 @@ RSpec.describe "issues/show", type: :view do
         url =
           new_project_task_path(@issue.project, task: { issue_id: @issue.id })
         expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders link to issue user's issues" do
+        render
+        expect(rendered).to have_link(nil, href: user_issues_path(@user))
       end
     end
 
@@ -598,6 +616,7 @@ RSpec.describe "issues/show", type: :view do
         assign(:duplicates, [])
         assign(:comments, [])
         assign(:subscription, issue_subscription)
+        assign(:user, issue.user)
       end
 
       context "when their issue" do
@@ -605,7 +624,10 @@ RSpec.describe "issues/show", type: :view do
 
         let(:issue) { Fabricate(:issue, project: @project, user: current_user) }
 
-        before { @issue = assign(:issue, issue) }
+        before do
+          @issue = assign(:issue, issue)
+          @user = assign(:user, @issue.user)
+        end
 
         it "renders issue's heading" do
           render
@@ -654,6 +676,12 @@ RSpec.describe "issues/show", type: :view do
 
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders link to their issues" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: user_issues_path(current_user))
         end
 
         context "is addressed" do
@@ -731,7 +759,10 @@ RSpec.describe "issues/show", type: :view do
       context "when someone else's issue" do
         let(:url) { issue_issue_comments_url(@issue) }
 
-        before { @issue = assign(:issue, issue) }
+        before do
+          @issue = assign(:issue, issue)
+          @user = assign(:user, @issue.user)
+        end
 
         it "renders issue's heading" do
           render
@@ -772,6 +803,11 @@ RSpec.describe "issues/show", type: :view do
 
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders link to issue user's issues" do
+          render
+          expect(rendered).to have_link(nil, href: user_issues_path(@user))
         end
 
         context "is addressed" do

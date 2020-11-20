@@ -1,6 +1,6 @@
 <div class="comment issue-description">
   <header class="issue-user-date">
-    <p><span class="issue-user"><%= issue.user ? issue.user.name_or_email : User.destroyed_name %></span>:</p>
+    <p><span class="issue-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
   </header>
 
   <%= content_tag :main, issue.description_html.html_safe %>

@@ -132,7 +132,7 @@
 
     <div class="issue-column second-column">
       <div class="issue-comments comments">
-        <%= render 'issues/description', issue: @issue %>
+        <%= render 'issues/description', issue: @issue, user: @user %>
 
         <%# TODO: link to new task from comment, auto assign %>
         <%= render partial: 'shared/comment', collection: @comments,
