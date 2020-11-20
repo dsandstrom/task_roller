@@ -9,7 +9,6 @@ class IssuesController < ApplicationController
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
   before_action :set_source, :set_issues, only: :index
-  before_action :set_category_and_project, except: :index
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_issue_types, only: :new
 
@@ -20,16 +19,14 @@ class IssuesController < ApplicationController
   end
 
   def show
-    authorize! :read, @project
-
+    @project = @issue.project
     @comments = @issue.comments.includes(:user)
-    @comment = @issue.comments.build(user_id: current_user.id)
     @user = @issue.user
     @source_connection = @issue.source_connection
     @duplicates = @issue.duplicates
-    @issue_subscription =
-      @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
     @source_connection = @issue.source_connection
+    @subscription =
+      @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
   end
 
   def new
@@ -66,8 +63,9 @@ class IssuesController < ApplicationController
   end
 
   def destroy
+    project = @issue.project
     @issue.destroy
-    redirect_to @project, success: 'Issue was successfully destroyed.'
+    redirect_to project, success: 'Issue was successfully destroyed.'
   end
 
   private
@@ -90,12 +88,6 @@ class IssuesController < ApplicationController
           Category.find(params[:category_id])
         end
       authorize! :read, @source
-    end
-
-    def set_category_and_project
-      @project ||= @issue.project
-      @category ||= @issue.category
-      true # rubocop complains about memoization
     end
 
     def set_form_options
