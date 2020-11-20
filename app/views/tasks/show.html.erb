@@ -47,23 +47,18 @@
 
           <% unless @task.in_review? %>
             <p>
-              <%
-                progressions =
-                  @task.progressions.unfinished
-                       .where('progressions.user_id = ?', current_user.id)
-              %>
-              <% if progressions.any? %>
+              <% if @progressions.any? %>
                 <%= render partial: 'shared/progression',
-                           collection: progressions,
+                           collection: @progressions,
                            locals: { task: @task } %>
               <% elsif @task.assigned? &&
-                       can?(:create, @task.progressions.build(user_id: current_user.id)) %>
+                       can?(:create, new_progression(@task)) %>
                 <%= link_to 'start task',
                             task_progressions_path(@task),
                             method: :post, class: 'create-link' %>
               <% end %>
 
-              <% if can?(:create, @task.reviews.build(user_id: current_user.id)) %>
+              <% if can?(:create, new_review(@task)) %>
                 <%= divider %>
                 <%= link_to 'mark complete', task_reviews_path(@task),
                             method: :post, class: 'secondary-link' %>
@@ -98,14 +93,11 @@
         </section>
       <% end %>
 
-      <%
-        task_connection = @task.source_connection
-        if task_connection.present?
-      %>
+      <% if @task.duplicate? %>
         <section class="task-duplicatee">
           <h4 class="task-column-title">Duplicate Of</h4>
 
-          <%= render task_connection %>
+          <%= render @source_connection %>
         </section>
       <% elsif @task.open? && !@task.in_review? &&
               (can?(:create, TaskConnection) || can?(:close, @task)) %>
@@ -118,7 +110,7 @@
                           class: 'destroy-link' %>
             </p>
           <% end %>
-          <% if can?(:create, TaskClosure.new(task_id: @task.id, user_id: current_user.id)) %>
+          <% if can?(:create, new_task_closure(@task)) %>
             <p>
               <%= link_to 'mark invalid and close',
                           task_closures_path(@task), method: :post,
@@ -127,7 +119,7 @@
           <% end %>
         </section>
       <% elsif @task.closed? && !@task.source_connection &&
-               can?(:create, TaskReopening.new(task_id: @task.id, user_id: current_user.id)) %>
+               can?(:create, new_task_reopening(@task)) %>
         <section class="task-connections">
           <h4 class="task-column-title">Actions</h4>
           <p>
@@ -173,7 +165,7 @@
                    locals: { object: @task } %>
 
         <%= render 'shared/new_comment',
-                   object: @task, comment: @comment,
+                   object: @task, comment: new_task_comment(@task),
                    user_options: @comment_user_options %>
       </div>
     </div>

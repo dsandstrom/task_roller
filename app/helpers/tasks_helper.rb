@@ -28,6 +28,26 @@ module TasksHelper
     Task.new(project_id: project.id, user_id: current_user.id)
   end
 
+  def new_task_closure(task)
+    TaskClosure.new(task_id: task.id, user_id: current_user.id)
+  end
+
+  def new_task_reopening(task)
+    TaskReopening.new(task_id: task.id, user_id: current_user.id)
+  end
+
+  def new_task_comment(task)
+    TaskComment.new(task_id: task.id, user_id: current_user.id)
+  end
+
+  def new_progression(task)
+    Progression.new(task_id: task.id, user_id: current_user.id)
+  end
+
+  def new_review(task)
+    Review.new(task_id: task.id, user_id: current_user.id)
+  end
+
   private
 
     def task_header_title(task)

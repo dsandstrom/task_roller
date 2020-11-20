@@ -21,6 +21,9 @@ RSpec.describe "tasks/show", type: :view do
       @comments = assign(:comments, [])
       @assignees = assign(:assignees, [])
       @assigned = assign(:assigned, [])
+      @progressions = assign(:progressions, [])
+      @source_connection = assign(:source_connection,
+                                  Fabricate(:task_connection))
       @review = nil
     end
 
@@ -288,7 +291,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when task is closed without approved review or duplicate" do
+    context "when task is closed without approved review nor duplicate" do
       let(:task) { Fabricate(:closed_task) }
 
       before do
@@ -314,19 +317,20 @@ RSpec.describe "tasks/show", type: :view do
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
         assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, source: @task)
+        @source_connection =
+          assign(:source_connection, Fabricate(:task_connection, source: @task))
       end
 
       it "renders link to target task" do
         render
-        target = @task_connection.target
+        target = @source_connection.target
         url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders destroy link" do
         render
-        url = task_connection_path(@task_connection)
+        url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
 
@@ -440,12 +444,12 @@ RSpec.describe "tasks/show", type: :view do
                                                     task: @task, user: admin))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, target: @task)
+        @target_connection = Fabricate(:task_connection, target: @task)
       end
 
       it "renders link to source task" do
         render
-        source = @task_connection.source
+        source = @target_connection.source
         url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -633,6 +637,9 @@ RSpec.describe "tasks/show", type: :view do
       @comments = assign(:comments, [])
       @assignees = assign(:assignees, [])
       @assigned = assign(:assigned, [])
+      @progressions = assign(:progressions, [])
+      @source_connection = assign(:source_connection,
+                                  Fabricate(:task_connection))
       @review = nil
     end
 
@@ -686,19 +693,20 @@ RSpec.describe "tasks/show", type: :view do
                                                           user: reviewer))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, source: @task)
+        @source_connection = assign(:source_connection,
+                                    Fabricate(:task_connection, source: @task))
       end
 
       it "renders link to target task" do
         render
-        target = @task_connection.target
+        target = @source_connection.target
         url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders destroy link" do
         render
-        url = task_connection_path(@task_connection)
+        url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
     end
@@ -707,12 +715,12 @@ RSpec.describe "tasks/show", type: :view do
       before do
         @task = assign(:task, task)
         assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, target: @task)
+        @target_connection = Fabricate(:task_connection, target: @task)
       end
 
       it "renders link to source task" do
         render
-        source = @task_connection.source
+        source = @target_connection.source
         url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -1051,7 +1059,11 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         context "with a duplicate" do
-          before { Fabricate(:task_connection, source: task) }
+          let(:source_connection) { Fabricate(:task_connection, source: task) }
+
+          before do
+            @source_connection = assign(:source_connection, source_connection)
+          end
 
           it "doesn't render close link" do
             render
@@ -1080,6 +1092,9 @@ RSpec.describe "tasks/show", type: :view do
       @comments = assign(:comments, [])
       @assignees = assign(:assignees, [])
       @assigned = assign(:assigned, [])
+      @progressions = assign(:progressions, [])
+      @source_connection = assign(:source_connection,
+                                  Fabricate(:task_connection))
     end
 
     context "when task is open" do
@@ -1151,6 +1166,7 @@ RSpec.describe "tasks/show", type: :view do
         before do
           @progression = Fabricate(:unfinished_progression, user: current_user,
                                                             task: @task)
+          @progressions = assign(:progressions, [@progression])
         end
 
         it "renders the progression" do
@@ -1328,19 +1344,20 @@ RSpec.describe "tasks/show", type: :view do
                                                     user: current_user))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, source: @task)
+        @source_connection = assign(:source_connection,
+                                    Fabricate(:task_connection, source: @task))
       end
 
       it "renders link to target task" do
         render
-        target = @task_connection.target
+        target = @source_connection.target
         url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render destroy link" do
         render
-        url = task_connection_path(@task_connection)
+        url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
     end
@@ -1353,12 +1370,12 @@ RSpec.describe "tasks/show", type: :view do
                                                     user: current_user))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, target: @task)
+        @target_connection = Fabricate(:task_connection, target: @task)
       end
 
       it "renders link to source task" do
         render
-        source = @task_connection.source
+        source = @target_connection.source
         url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -1463,6 +1480,9 @@ RSpec.describe "tasks/show", type: :view do
       @comments = assign(:comments, [])
       @assignees = assign(:assignees, [])
       @assigned = assign(:assigned, [])
+      @progressions = assign(:progressions, [])
+      @source_connection = assign(:source_connection,
+                                  Fabricate(:task_connection))
     end
 
     context "when task is open" do
@@ -1539,19 +1559,20 @@ RSpec.describe "tasks/show", type: :view do
                                                     user: current_user))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, source: @task)
+        @source_connection = assign(:source_connection,
+                                    Fabricate(:task_connection, source: @task))
       end
 
       it "renders link to target task" do
         render
-        target = @task_connection.target
+        target = @source_connection.target
         url = task_path(target)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render destroy link" do
         render
-        url = task_connection_path(@task_connection)
+        url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
     end
@@ -1564,12 +1585,12 @@ RSpec.describe "tasks/show", type: :view do
                                                     user: current_user))
         @user = assign(:user, @task.user)
         @subscription = assign(:subscription, task_subscription)
-        @task_connection = Fabricate(:task_connection, target: @task)
+        @target_connection = Fabricate(:task_connection, target: @task)
       end
 
       it "renders link to source task" do
         render
-        source = @task_connection.source
+        source = @target_connection.source
         url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
       end

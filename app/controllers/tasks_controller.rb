@@ -25,13 +25,15 @@ class TasksController < ApplicationController
 
   def show
     @comments = @task.comments.includes(:user)
-    @comment = @task.comments.build(user_id: current_user.id)
     @user = @task.user
     @assignees = @task.assignees.includes(:progressions)
     @assigned = @task.assigned
     @review = @task.current_review
+    @source_connection = @task.source_connection
     @subscription =
       @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
+    @progressions =
+      @task.progressions.unfinished.where(user_id: current_user.id)
   end
 
   def new
