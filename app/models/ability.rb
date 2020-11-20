@@ -116,12 +116,12 @@ class Ability
     def reviewer_issue_abilities(user)
       can :read, Issue
       can :update, Issue, user_id: user.id
+      # TODO: if issue visible (but allow admin)
       can :create, IssueClosure, user_id: user.id
       can :read, IssueComment
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
       can :create, IssueReopening, user_id: user.id
-      can %i[approve disapprove], Review, approved: nil
     end
 
     def reviewer_task_abilities(user)
@@ -129,10 +129,12 @@ class Ability
       can %i[read assign], Task
       can :update, Task, user_id: user.id
       can :read, TaskComment
+      # TODO: if task visible (but allow admin)
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
       can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
       can :create, TaskReopening, user_id: user.id
+      can %i[approve disapprove], Review, approved: nil
     end
 
     def admin_abilities(user)
