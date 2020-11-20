@@ -136,9 +136,7 @@ RSpec.describe "tasks/show", type: :view do
     context "when task's user destroyed" do
       before do
         @task = assign(:task, task)
-
-        @task.user.destroy
-        @task.reload
+        @user = assign(:user, nil)
       end
 
       it "renders default user name" do

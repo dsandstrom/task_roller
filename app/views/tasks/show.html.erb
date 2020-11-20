@@ -160,7 +160,7 @@
 
     <div class="task-column second-column">
       <div class="task-comments comments">
-        <%= render 'tasks/description', task: @task %>
+        <%= render 'tasks/description', task: @task, user: @user %>
 
         <%= render partial: 'shared/comment', collection: @comments,
                    locals: { object: @task } %>
