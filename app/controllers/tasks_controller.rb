@@ -12,9 +12,9 @@ class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
-  before_action :set_source, only: :index
+  before_action :load_and_authorize_source, only: :index
   before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_task_types, only: :new
+  before_action :check_for_task_types, only: %i[new edit]
 
   def index
     authorize! :read, Task
@@ -24,16 +24,8 @@ class TasksController < ApplicationController
   end
 
   def show
-    @comments = @task.comments.includes(:user)
     @user = @task.user
-    @assignees = @task.assignees.includes(:progressions)
-    @assigned = @task.assigned
-    @review = @task.current_review
-    @source_connection = @task.source_connection
-    @subscription =
-      @task.task_subscriptions.find_or_initialize_by(user_id: current_user.id)
-    @progressions =
-      @task.progressions.unfinished.where(user_id: current_user.id)
+    set_task_resources
   end
 
   def new
@@ -78,7 +70,7 @@ class TasksController < ApplicationController
       false
     end
 
-    def set_source
+    def load_and_authorize_source
       @source =
         if params[:user_id]
           User.find(params[:user_id])
@@ -130,5 +122,16 @@ class TasksController < ApplicationController
       return unless @source.is_a?(Project) || @source.is_a?(Category)
 
       @subscription = @source.tasks_subscription(current_user, init: true)
+    end
+
+    def set_task_resources
+      @comments = @task.comments.includes(:user)
+      @assignees = @task.assignees.includes(:progressions)
+      @assigned = @task.assigned
+      @source_connection = @task.source_connection
+      @subscription = @task.task_subscriptions
+                           .find_or_initialize_by(user_id: current_user.id)
+      @progressions = @task.progressions.unfinished
+                           .where(user_id: current_user.id)
     end
 end
