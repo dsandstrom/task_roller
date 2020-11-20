@@ -4,6 +4,7 @@
 # TODO: add icon options
 # TODO: add image
 # TODO: force moving issues/tasks before destroying
+# TODO: add way to archive (or use visible for that)
 
 class Project < ApplicationRecord
   belongs_to :category
