@@ -19,15 +19,17 @@ RSpec.describe "issues/show", type: :view do
       Fabricate(:issue_subscription, issue: issue, user: current_user)
     end
 
-    before { enable_can(view, current_user) }
+    before do
+      enable_can(view, current_user)
+      assign(:duplicates, [])
+      assign(:comments, [])
+    end
 
     context "when project" do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
       end
 
       let(:url) { issue_issue_comments_url(@issue) }
@@ -82,14 +84,16 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "when a source_connection" do
+        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
+
         before do
-          @issue_connection = Fabricate(:issue_connection, source: @issue)
+          @source_connection = assign(:source_connection, issue_connection)
         end
 
         it "renders source_connection" do
           render
 
-          duplicatee = @issue_connection.target
+          duplicatee = @source_connection.target
           url = issue_path(duplicatee)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -104,20 +108,21 @@ RSpec.describe "issues/show", type: :view do
         it "renders destroy connection link" do
           render
 
-          url = issue_connection_path(@issue_connection)
+          url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
         end
       end
 
       context "when a target_issue_connection" do
         before do
-          @issue_connection = Fabricate(:issue_connection, target: @issue)
+          @target_connection = Fabricate(:issue_connection, target: @issue)
+          @duplicates = assign(:duplicates, [@target_connection.source])
         end
 
         it "renders a list of target_connections" do
           render
 
-          duplicate = @issue_connection.source
+          duplicate = @target_connection.source
           url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -128,9 +133,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+
         @issue.update_attribute :project_id, nil
         @issue.reload
       end
@@ -145,9 +149,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+
         @issue.issue_type.destroy
         @issue.reload
       end
@@ -162,9 +165,7 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comments = assign(:comments, [])
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
 
         @issue.user.destroy
         @issue.reload
@@ -183,9 +184,8 @@ RSpec.describe "issues/show", type: :view do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
         @issue_comment = Fabricate(:issue_comment, issue: @issue, user: user)
-        @comments = assign(:comments, [@issue_comment])
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
+        assign(:comments, [@issue_comment])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
 
         @issue_comment.user.destroy
         @issue_comment.reload
@@ -204,9 +204,7 @@ RSpec.describe "issues/show", type: :view do
         assign(:issue_subscription, issue_subscription)
         @task =
           assign(:task, Fabricate(:task, project: @project, issue: @issue))
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
 
         @task.destroy
         @issue.reload
@@ -313,10 +311,10 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed with a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
-        Fabricate(:issue_connection, source: @issue)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
+        issue_connection = Fabricate(:issue_connection, source: @issue)
+        @source_connection = assign(:source_connection, issue_connection)
       end
 
       it "doesn't render close issue link" do
@@ -337,9 +335,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed without a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
       end
 
       it "doesn't render close issue link" do
@@ -362,9 +359,8 @@ RSpec.describe "issues/show", type: :view do
 
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
         @resolution = Fabricate(:resolution, issue: issue, user: @issue.user)
       end
 
@@ -403,17 +399,19 @@ RSpec.describe "issues/show", type: :view do
       Fabricate(:issue_subscription, issue: issue, user: current_user)
     end
 
-    before { enable_can(view, current_user) }
+    before do
+      enable_can(view, current_user)
+      assign(:duplicates, [])
+      assign(:comments, [])
+      assign(:issue_subscription, issue_subscription)
+    end
 
     context "when someone else's issue" do
       let(:url) { issue_issue_comments_url(@issue) }
 
       before do
         @issue = assign(:issue, issue)
-        assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
       end
 
       it "renders issue's heading" do
@@ -461,16 +459,16 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
-        @issue_connection = Fabricate(:issue_connection, source: @issue)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:comments, [])
+        issue_connection = Fabricate(:issue_connection, source: @issue)
+        @source_connection = assign(:source_connection, issue_connection)
       end
 
       it "renders a list of issue_connections" do
         render
 
-        duplicatee = @issue_connection.target
+        duplicatee = @source_connection.target
         url = issue_path(duplicatee)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -485,7 +483,7 @@ RSpec.describe "issues/show", type: :view do
       it "renders destroy connection link" do
         render
 
-        url = issue_connection_path(@issue_connection)
+        url = issue_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
     end
@@ -494,16 +492,15 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
-        @issue_connection = Fabricate(:issue_connection, target: @issue)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        @target_connection = Fabricate(:issue_connection, target: @issue)
+        assign(:duplicates, [@target_connection.source])
       end
 
       it "renders a list of target_connections" do
         render
 
-        duplicate = @issue_connection.source
+        duplicate = @target_connection.source
         url = issue_path(duplicate)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -513,12 +510,11 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
         @first_comment = Fabricate(:issue_comment, issue: @issue)
         @second_comment = Fabricate(:issue_comment, issue: @issue,
                                                     user: current_user)
-        @comments = assign(:comments, [@first_comment, @second_comment])
+        assign(:comments, [@first_comment, @second_comment])
       end
 
       it "renders a list of comments" do
@@ -542,9 +538,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue open" do
       before do
         @issue = assign(:issue, issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
       end
 
       it "renders close issue link" do
@@ -565,10 +560,17 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed with a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
-        Fabricate(:issue_connection, source: @issue)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
+        issue_connection = Fabricate(:issue_connection, source: @issue)
+        @source_connection = assign(:source_connection, issue_connection)
+      end
+
+      it "renders link to issue_connection target" do
+        render
+
+        url = issue_path(@source_connection.target)
+        expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render close issue link" do
@@ -589,9 +591,8 @@ RSpec.describe "issues/show", type: :view do
     context "when issue closed without a duplicate" do
       before do
         @issue = assign(:issue, closed_issue)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @issue_subscription = assign(:issue_subscription, issue_subscription)
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:issue_subscription, issue_subscription)
       end
 
       it "doesn't render close issue link" do
@@ -613,10 +614,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
-
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:comments, [])
         @closure = Fabricate(:issue_closure, issue: issue)
       end
 
@@ -630,10 +629,8 @@ RSpec.describe "issues/show", type: :view do
       before do
         @issue = assign(:issue, issue)
         assign(:issue_subscription, issue_subscription)
-        @comment = assign(:issue_comment,
-                          @issue.comments.build(user_id: current_user.id))
-        @comments = assign(:comments, [])
-
+        assign(:issue_comment, @issue.comments.build(user_id: current_user.id))
+        assign(:comments, [])
         @reopening = Fabricate(:issue_reopening, issue: issue)
       end
 
@@ -651,7 +648,11 @@ RSpec.describe "issues/show", type: :view do
         Fabricate(:issue_subscription, issue: issue, user: current_user)
       end
 
-      before { enable_can(view, current_user) }
+      before do
+        enable_can(view, current_user)
+        assign(:duplicates, [])
+        assign(:comments, [])
+      end
 
       context "when their issue" do
         let(:url) { issue_issue_comments_url(@issue) }
@@ -661,9 +662,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment,
-                            @issue.comments.build(user_id: current_user.id))
-          @comments = assign(:comments, [])
+          assign(:issue_comment,
+                 @issue.comments.build(user_id: current_user.id))
         end
 
         it "renders issue's heading" do
@@ -793,9 +793,8 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment,
-                            @issue.comments.build(user_id: current_user.id))
-          @comments = assign(:comments, [])
+          assign(:issue_comment,
+                 @issue.comments.build(user_id: current_user.id))
         end
 
         it "renders issue's heading" do
@@ -904,16 +903,16 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment,
-                            @issue.comments.build(user_id: current_user.id))
-          @comments = assign(:comments, [])
-          @issue_connection = Fabricate(:issue_connection, source: @issue)
+          assign(:issue_comment,
+                 @issue.comments.build(user_id: current_user.id))
+          issue_connection = Fabricate(:issue_connection, source: @issue)
+          @source_connection = assign(:source_connection, issue_connection)
         end
 
         it "renders a list of issue_connections" do
           render
 
-          duplicatee = @issue_connection.target
+          duplicatee = @source_connection.target
           url = issue_path(duplicatee)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -928,7 +927,7 @@ RSpec.describe "issues/show", type: :view do
         it "doesn't render destroy connection link" do
           render
 
-          url = issue_connection_path(@issue_connection)
+          url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
       end
@@ -937,16 +936,16 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment,
-                            @issue.comments.build(user_id: current_user.id))
-          @comments = assign(:comments, [])
-          @issue_connection = Fabricate(:issue_connection, target: @issue)
+          assign(:issue_comment,
+                 @issue.comments.build(user_id: current_user.id))
+          @target_connection = Fabricate(:issue_connection, target: @issue)
+          assign(:duplicates, [@target_connection.source])
         end
 
         it "renders a list of target_connections" do
           render
 
-          duplicate = @issue_connection.source
+          duplicate = @target_connection.source
           url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -956,12 +955,12 @@ RSpec.describe "issues/show", type: :view do
         before do
           @issue = assign(:issue, issue)
           assign(:issue_subscription, issue_subscription)
-          @comment = assign(:issue_comment,
-                            @issue.comments.build(user_id: current_user.id))
+          assign(:issue_comment,
+                 @issue.comments.build(user_id: current_user.id))
           @first_comment = Fabricate(:issue_comment, issue: @issue)
           @second_comment = Fabricate(:issue_comment, issue: @issue,
                                                       user: current_user)
-          @comments = assign(:comments, [@first_comment, @second_comment])
+          assign(:comments, [@first_comment, @second_comment])
         end
 
         it "renders a list of comments" do

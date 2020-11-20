@@ -24,8 +24,12 @@ class IssuesController < ApplicationController
 
     @comments = @issue.comments.includes(:user)
     @comment = @issue.comments.build(user_id: current_user.id)
+    @user = @issue.user
+    @source_connection = @issue.source_connection
+    @duplicates = @issue.duplicates
     @issue_subscription =
       @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
+    @source_connection = @issue.source_connection
   end
 
   def new

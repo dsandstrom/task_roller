@@ -66,8 +66,9 @@
             </p>
           <% end %>
 
-          <% if @review&.pending? %>
-            <%= render 'reviews/pending', review: @review %>
+          <% if @task.in_review? %>
+            <%= render 'reviews/pending',
+                       review: @task.current_review %>
           <% end %>
         </section>
       <% end %>
