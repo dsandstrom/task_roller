@@ -131,6 +131,18 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     "issues.#{column}_at #{direction}"
   end
 
+  def self.all_visible
+    joins(:project, project: :category)
+      .where('projects.visible = :visible AND categories.visible = :visible',
+             visible: true)
+  end
+
+  def self.all_invisible
+    joins(:project, project: :category)
+      .where('projects.visible = :visible OR categories.visible = :visible',
+             visible: false)
+  end
+
   # INSTANCE
 
   def description_html

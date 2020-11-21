@@ -422,6 +422,51 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_visible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: category)
+    end
+    let(:invisible_category_project) do
+      Fabricate(:project, category: invisible_category)
+    end
+
+    before do
+      Fabricate(:issue, project: invisible_project)
+      Fabricate(:issue, project: invisible_category_project)
+    end
+
+    it "returns issues from visible projects from visible categories" do
+      issue = Fabricate(:issue, project: project)
+      expect(Issue.all_visible).to eq([issue])
+    end
+  end
+
+  describe ".all_invisible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: category)
+    end
+    let(:invisible_category_project) do
+      Fabricate(:project, category: invisible_category)
+    end
+
+    before { Fabricate(:issue, project: project) }
+
+    it "returns issues from visible projects from visible categories" do
+      invisible_issue = Fabricate(:issue, project: invisible_project)
+      invisible_category_issue =
+        Fabricate(:issue, project: invisible_category_project)
+
+      expect(Issue.all_invisible)
+        .to contain_exactly(invisible_issue, invisible_category_issue)
+    end
+  end
+
   # INSTANCE
 
   describe "#tasks" do

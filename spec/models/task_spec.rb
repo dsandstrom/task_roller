@@ -511,6 +511,51 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe ".all_visible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: category)
+    end
+    let(:invisible_category_project) do
+      Fabricate(:project, category: invisible_category)
+    end
+
+    before do
+      Fabricate(:task, project: invisible_project)
+      Fabricate(:task, project: invisible_category_project)
+    end
+
+    it "returns tasks from visible projects from visible categories" do
+      task = Fabricate(:task, project: project)
+      expect(Task.all_visible).to eq([task])
+    end
+  end
+
+  describe ".all_invisible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: category)
+    end
+    let(:invisible_category_project) do
+      Fabricate(:project, category: invisible_category)
+    end
+
+    before { Fabricate(:task, project: project) }
+
+    it "returns tasks from visible projects from visible categories" do
+      invisible_task = Fabricate(:task, project: invisible_project)
+      invisible_category_task =
+        Fabricate(:task, project: invisible_category_project)
+
+      expect(Task.all_invisible)
+        .to contain_exactly(invisible_task, invisible_category_task)
+    end
+  end
+
   # INSTANCE
 
   describe "#task_assignees" do
