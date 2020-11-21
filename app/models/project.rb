@@ -65,4 +65,10 @@ class Project < ApplicationRecord
   def subscribed_to_tasks?(user)
     tasks_subscription(user).present?
   end
+
+  def visible?
+    return false unless category
+
+    super && category.visible?
+  end
 end

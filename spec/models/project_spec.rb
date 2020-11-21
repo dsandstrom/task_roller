@@ -258,4 +258,45 @@ RSpec.describe Project, type: :model do
       end
     end
   end
+
+  describe "#visible?" do
+    context "when visible is true" do
+      context "and category visible is true" do
+        let(:category) { Fabricate(:category) }
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns true" do
+          expect(project.visible?).to eq(true)
+        end
+      end
+
+      context "and category visible is false" do
+        let(:category) { Fabricate(:invisible_category) }
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns false" do
+          expect(project.visible?).to eq(false)
+        end
+      end
+
+      context "and no category" do
+        let(:project) { Fabricate(:project) }
+
+        before { project.category = nil }
+
+        it "returns false" do
+          expect(project.visible?).to eq(false)
+        end
+      end
+    end
+
+    context "when visible is false" do
+      let(:category) { Fabricate(:category) }
+      let(:project) { Fabricate(:invisible_project, category: category) }
+
+      it "returns false" do
+        expect(project.visible?).to eq(false)
+      end
+    end
+  end
 end
