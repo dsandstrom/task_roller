@@ -20,6 +20,18 @@ class Category < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 200 }
 
+  # CLASS
+
+  def self.all_visible
+    where(visible: true)
+  end
+
+  def self.all_invisible
+    where(visible: false)
+  end
+
+  # INSTANCE
+
   def issues_subscription(user, options = {})
     method =
       if options[:init] == true

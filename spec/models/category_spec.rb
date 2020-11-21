@@ -27,6 +27,28 @@ RSpec.describe Category, type: :model do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_length_of(:name).is_at_most(200) }
 
+  # CLASS
+
+  describe ".all_visible" do
+    before { Fabricate(:invisible_category) }
+
+    it "returns categories with true visible" do
+      category = Fabricate(:category)
+      expect(Category.all_visible).to eq([category])
+    end
+  end
+
+  describe ".all_invisible" do
+    before { Fabricate(:category) }
+
+    it "returns categories with false visible" do
+      category = Fabricate(:invisible_category)
+      expect(Category.all_invisible).to eq([category])
+    end
+  end
+
+  # INSTANCE
+
   describe "#issues_subscription" do
     let(:user) { Fabricate(:user_worker) }
     let(:category) { Fabricate(:category) }
