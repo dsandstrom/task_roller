@@ -76,4 +76,10 @@ module ApplicationHelper
     def same_year?(first, second)
       first.year == second.year
     end
+
+    def navitize(links)
+      links.map do |value, url, options = {}|
+        link_to_unless_current(value, url, options)
+      end
+    end
 end

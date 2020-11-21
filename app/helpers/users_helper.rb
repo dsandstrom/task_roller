@@ -14,12 +14,12 @@ module UsersHelper
   end
 
   def dashboard_nav
-    links =
-      [link_to_unless_current('Dashboard', root_path),
-       link_to_unless_current('Subscribed Issues', issue_subscriptions_path),
-       link_to_unless_current('Subscribed Tasks', task_subscriptions_path)]
+    links = [['Dashboard', root_path],
+             ['Subscribed Issues', issue_subscriptions_path],
+             ['Subscribed Tasks', task_subscriptions_path]]
+
     content_tag :p, class: 'user-nav' do
-      safe_join(links, divider_with_spaces)
+      safe_join(navitize(links), divider_with_spaces)
     end
   end
 
@@ -27,31 +27,22 @@ module UsersHelper
 
     def user_nav(user)
       content_tag :p, class: 'user-nav' do
-        safe_join(user_nav_links(user), divider_with_spaces)
+        safe_join(navitize(user_nav_links(user)), divider_with_spaces)
       end
     end
 
     # TODO: rename Profile to Dashboard?
     def user_nav_links(user)
-      links = user_main_nav_links(user)
+      links = [['Profile', user_path(user)],
+               ['Reported Issues', user_issues_path(user)]]
+      links << ['Created Tasks', user_tasks_path(user)] if user.tasks.any?
+
+      if user.assignments.any?
+        links << ['Assigned Tasks', user_assignments_path(user)]
+      end
       return links unless can?(:update, user)
 
-      links.append link_to_unless_current('Options', edit_user_path(user),
-                                          class: 'destroy-link')
-    end
-
-    def user_main_nav_links(user)
-      links =
-        [link_to_unless_current('Profile', user_path(user)),
-         link_to_unless_current('Reported Issues', user_issues_path(user))]
-      if user.tasks.any?
-        links << link_to_unless_current('Created Tasks', user_tasks_path(user))
-      end
-      return links if user.assignments.none?
-
-      links <<
-        link_to_unless_current('Assigned Tasks', user_assignments_path(user))
-      links
+      links.append ['Options', edit_user_path(user), { class: 'destroy-link' }]
     end
 
     def user_page_title(user)

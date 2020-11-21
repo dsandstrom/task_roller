@@ -40,38 +40,33 @@ module ProjectsHelper
 
     def project_nav(project)
       content_tag :p, class: 'project-nav' do
-        safe_join(project_nav_links(project), divider_with_spaces)
+        safe_join(navitize(project_nav_links(project)), divider_with_spaces)
       end
     end
 
     def project_nav_links(project)
-      links = [link_to_unless_current('Project', project),
-               link_to_unless_current('Issues', project_issues_path(project)),
-               link_to_unless_current('Tasks', project_tasks_path(project)),
-               new_project_issue_link(project),
-               new_project_task_link(project)].compact
-      return links unless can?(:update, project)
-
-      links.append(edit_project_link(project))
+      [['Project', project], ['Issues', project_issues_path(project)],
+       ['Tasks', project_tasks_path(project)], new_project_issue_link(project),
+       new_project_task_link(project), edit_project_link(project)].compact
     end
 
     def new_project_issue_link(project, options = {})
       return unless can?(:create, new_issue(project))
 
-      link_to_unless_current('Report Issue', new_project_issue_path(project),
-                             class: options[:class])
+      ['Report Issue', new_project_issue_path(project),
+       { class: options[:class] }]
     end
 
     def new_project_task_link(project, options = {})
       return unless can?(:create, new_task(project))
 
-      link_to_unless_current('Plan Task', new_project_task_path(project),
-                             class: options[:class])
+      ['Plan Task', new_project_task_path(project), { class: options[:class] }]
     end
 
     def edit_project_link(project)
-      link_to_unless_current('Settings', edit_project_path(project),
-                             class: 'destroy-link')
+      return unless can?(:update, project)
+
+      ['Settings', edit_project_path(project), { class: 'destroy-link' }]
     end
 
     def project_page_title(project)
