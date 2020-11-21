@@ -34,6 +34,41 @@ RSpec.describe Project, type: :model do
   it { is_expected.to validate_length_of(:name).is_at_most(250) }
   it { is_expected.to validate_presence_of(:category_id) }
 
+  # CLASS
+
+  describe ".all_visible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+
+    before do
+      Fabricate(:invisible_project)
+      Fabricate(:project, category: invisible_category)
+    end
+
+    it "returns projects with true visible and visible category" do
+      project = Fabricate(:project)
+      expect(Project.all_visible).to eq([project])
+    end
+  end
+
+  describe ".all_invisible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+
+    before { Fabricate(:project) }
+
+    it "returns projects with true visible and visible category" do
+      invisible_project = Fabricate(:invisible_project)
+      invisible_category_project =
+        Fabricate(:project, category: invisible_category)
+
+      expect(Project.all_invisible)
+        .to contain_exactly(invisible_project, invisible_category_project)
+    end
+  end
+
+  # INSTANCE
+
   describe "#issues" do
     let(:project) { Fabricate(:project) }
 

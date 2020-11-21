@@ -22,6 +22,22 @@ class Project < ApplicationRecord
   validates :category_id, presence: true
   validates :category, presence: true, if: :category_id
 
+  # CLASS
+
+  def self.all_visible
+    joins(:category)
+      .where('projects.visible = :visible AND categories.visible = :visible',
+             visible: true)
+  end
+
+  def self.all_invisible
+    joins(:category)
+      .where('projects.visible = :visible OR categories.visible = :visible',
+             visible: false)
+  end
+
+  # INSTANCE
+
   def issues_subscription(user, options = {})
     method =
       if options[:init] == true
