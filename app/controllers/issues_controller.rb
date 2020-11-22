@@ -8,14 +8,17 @@ class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
-  before_action :set_source, :set_issues, only: :index
+  authorize_resource only: :index
+
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_issue_types, only: :new
 
   def index
-    authorize! :read, Issue
+    @source = build_source
+    authorize! :read, @source
 
-    set_subscription
+    @issues = build_issues
+    @subscription = build_subscription
   end
 
   def show
@@ -70,6 +73,14 @@ class IssuesController < ApplicationController
 
   private
 
+    def issue_params
+      params.require(:issue).permit(:summary, :description, :issue_type_id)
+    end
+
+    def set_form_options
+      @issue_types = IssueType.all
+    end
+
     def check_for_issue_types
       return true if @issue_types&.any?
 
@@ -78,38 +89,28 @@ class IssuesController < ApplicationController
       false
     end
 
-    def set_source
-      @source =
-        if params[:user_id]
-          User.find(params[:user_id])
-        elsif params[:project_id]
-          Project.find(params[:project_id])
-        else
-          Category.find(params[:category_id])
-        end
-      authorize! :read, @source
+    def build_source
+      if params[:user_id]
+        User.find(params[:user_id])
+      elsif params[:project_id]
+        Project.find(params[:project_id])
+      else
+        Category.find(params[:category_id])
+      end
     end
 
-    def set_form_options
-      set_issue_types
+    def build_issues
+      issues = @source.issues
+      if @source.respond_to?(:visible?) && @source.visible?
+        issues = issues.all_visible
+      end
+      issues.accessible_by(current_ability).filter_by(build_filters)
+            .page(params[:page])
     end
 
-    def set_issue_types
-      @issue_types = IssueType.all
-    end
-
-    def set_issues
-      @issues = @source.issues.accessible_by(current_ability)
-                       .filter_by(build_filters).page(params[:page])
-    end
-
-    def set_subscription
+    def build_subscription
       return unless @source.is_a?(Category) || @source.is_a?(Project)
 
-      @subscription = @source.issues_subscription(current_user, init: true)
-    end
-
-    def issue_params
-      params.require(:issue).permit(:summary, :description, :issue_type_id)
+      @source.issues_subscription(current_user, init: true)
     end
 end
