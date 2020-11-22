@@ -55,13 +55,37 @@ module ApplicationHelper
     def visible_tag(object)
       return if object.visible?
 
-      roller_tag 'Invisible', 'invisible'
+      roller_tag 'Archived', 'invisible'
     end
 
     def internal_tag(object)
       return unless object.internal?
 
       roller_tag 'Internal', 'internal'
+    end
+
+    def project_internal_tag(project)
+      text =
+        if project.internal?
+          'Internal'
+        elsif project.category.internal?
+          'Internal Category'
+        end
+      return unless text
+
+      roller_tag text, 'internal'
+    end
+
+    def project_invisible_tag(project)
+      text =
+        if !project.visible?
+          'Archived'
+        elsif !project.category.visible?
+          'Archived Category'
+        end
+      return unless text
+
+      roller_tag text, 'invisible'
     end
 
     def recent?(first, second)

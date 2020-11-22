@@ -89,28 +89,4 @@ module ProjectsHelper
         "Project: #{project.name} (#{project.category&.name})"
       end
     end
-
-    def project_internal_tag(project)
-      text =
-        if project.internal?
-          'Internal'
-        elsif project.category.internal?
-          'Internal Category'
-        end
-      return unless text
-
-      roller_tag text, 'internal'
-    end
-
-    def project_invisible_tag(project)
-      text =
-        if !project.visible?
-          'Invisible'
-        elsif !project.category.visible?
-          'Invisible Category'
-        end
-      return unless text
-
-      roller_tag text, 'invisible'
-    end
 end
