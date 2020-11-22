@@ -3,6 +3,25 @@ issue_subscription =
   category.issues_subscription(current_user, init: true)
 task_subscription =
   category.tasks_subscription(current_user, init: true)
+
+projects_count =
+  if category.visible?
+    visible_projects(category).count
+  else
+    category.projects.count
+  end
+issues_count =
+  if category.visible?
+    visible_issues(category).count
+  else
+    category.issues.count
+  end
+tasks_count =
+  if category.visible?
+    visible_tasks(category).count
+  else
+    category.tasks.count
+  end
 %>
 
 <div id="category-<%= category.id %>" class="category">
@@ -14,37 +33,20 @@ task_subscription =
   </div>
 
   <div class="category-counts">
-    <% if category.visible? %>
-      <%= content_tag :p, pluralize(visible_projects(category).count, 'Project'),
-                          class: 'category-project-count' %>
+    <%= content_tag :p, pluralize(projects_count, 'Project'),
+                        class: 'category-project-count' %>
 
-      <p class="category-issues-link">
-        <%= link_to_if can?(:read, Issue),
-                       pluralize(visible_issues(category).count, 'Issue'),
-                       category_issues_path(category) %>
-      </p>
+    <p class="category-issues-link">
+      <%= link_to_if can?(:read, Issue),
+                     pluralize(issues_count, 'Issue'),
+                     category_issues_path(category) %>
+    </p>
 
-      <p class="category-tasks-link">
-        <%= link_to_if can?(:read, Task),
-                       pluralize(visible_tasks(category).count, 'Task'),
-                       category_tasks_path(category) %>
-      </p>
-    <% else %>
-      <%= content_tag :p, pluralize(category.projects.count, 'Project'),
-                          class: 'category-project-count' %>
-
-      <p class="category-issues-link">
-        <%= link_to_if can?(:read, Issue),
-                       pluralize(category.issues.count, 'Issue'),
-                       category_issues_path(category) %>
-      </p>
-
-      <p class="category-tasks-link">
-        <%= link_to_if can?(:read, Task),
-                       pluralize(category.tasks.count, 'Task'),
-                       category_tasks_path(category) %>
-      </p>
-    <% end %>
+    <p class="category-tasks-link">
+      <%= link_to_if can?(:read, Task),
+                     pluralize(tasks_count, 'Task'),
+                     category_tasks_path(category) %>
+    </p>
   </div>
 
   <p class="category-links">
