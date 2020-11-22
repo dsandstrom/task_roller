@@ -25,15 +25,11 @@ class Project < ApplicationRecord
   # CLASS
 
   def self.all_visible
-    joins(:category)
-      .where('projects.visible = :visible AND categories.visible = :visible',
-             visible: true)
+    where(visible: true)
   end
 
   def self.all_invisible
-    joins(:category)
-      .where('projects.visible = :visible OR categories.visible = :visible',
-             visible: false)
+    where(visible: false)
   end
 
   # INSTANCE
@@ -66,9 +62,7 @@ class Project < ApplicationRecord
     tasks_subscription(user).present?
   end
 
-  def visible?
-    return false unless category
-
-    super && category.visible?
+  def totally_visible?
+    visible? && category.present? && category.visible?
   end
 end

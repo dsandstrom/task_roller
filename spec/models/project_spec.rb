@@ -42,12 +42,15 @@ RSpec.describe Project, type: :model do
 
     before do
       Fabricate(:invisible_project)
-      Fabricate(:project, category: invisible_category)
     end
 
     it "returns projects with true visible and visible category" do
       project = Fabricate(:project)
-      expect(Project.all_visible).to eq([project])
+      invisible_category_project =
+        Fabricate(:project, category: invisible_category)
+
+      expect(Project.all_visible)
+        .to contain_exactly(project, invisible_category_project)
     end
   end
 
@@ -55,15 +58,15 @@ RSpec.describe Project, type: :model do
     let(:category) { Fabricate(:category) }
     let(:invisible_category) { Fabricate(:invisible_category) }
 
-    before { Fabricate(:project) }
+    before do
+      Fabricate(:project)
+      Fabricate(:project, category: invisible_category)
+    end
 
     it "returns projects with true visible and visible category" do
       invisible_project = Fabricate(:invisible_project)
-      invisible_category_project =
-        Fabricate(:project, category: invisible_category)
 
-      expect(Project.all_invisible)
-        .to contain_exactly(invisible_project, invisible_category_project)
+      expect(Project.all_invisible).to contain_exactly(invisible_project)
     end
   end
 
@@ -259,14 +262,14 @@ RSpec.describe Project, type: :model do
     end
   end
 
-  describe "#visible?" do
+  describe "#totally_visible?" do
     context "when visible is true" do
       context "and category visible is true" do
         let(:category) { Fabricate(:category) }
         let(:project) { Fabricate(:project, category: category) }
 
         it "returns true" do
-          expect(project.visible?).to eq(true)
+          expect(project.totally_visible?).to eq(true)
         end
       end
 
@@ -275,7 +278,7 @@ RSpec.describe Project, type: :model do
         let(:project) { Fabricate(:project, category: category) }
 
         it "returns false" do
-          expect(project.visible?).to eq(false)
+          expect(project.totally_visible?).to eq(false)
         end
       end
 
@@ -285,7 +288,7 @@ RSpec.describe Project, type: :model do
         before { project.category = nil }
 
         it "returns false" do
-          expect(project.visible?).to eq(false)
+          expect(project.totally_visible?).to eq(false)
         end
       end
     end
@@ -295,7 +298,7 @@ RSpec.describe Project, type: :model do
       let(:project) { Fabricate(:invisible_project, category: category) }
 
       it "returns false" do
-        expect(project.visible?).to eq(false)
+        expect(project.totally_visible?).to eq(false)
       end
     end
   end
