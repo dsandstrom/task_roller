@@ -12,7 +12,7 @@ module CategoriesHelper
     url = category_projects_path(category)
 
     content_tag :header, class: 'category-header' do
-      concat breadcrumbs([['Categories', categories_path]])
+      concat breadcrumbs(category_breadcrumb_pages(category))
       concat content_tag(:h1, link_to_unless_current(category.name, url))
       concat category_tags(category)
       concat category_nav(category)
@@ -22,7 +22,7 @@ module CategoriesHelper
 
   def category_page?(category)
     pages = [category_path(category), category_tasks_path(category),
-             category_issues_path(category)]
+             category_issues_path(category), category_projects_path(category)]
     pages.any? { |path| current_page?(path) }
   end
 
@@ -47,8 +47,8 @@ module CategoriesHelper
     end
 
     def categories_nav
-      links = [['Active Categories', categories_path],
-               ['Archives', archived_categories_path]]
+      links = [['Active', categories_path],
+               ['Archived', archived_categories_path]]
 
       content_tag :p, class: 'category-nav' do
         safe_join(navitize(links), divider_with_spaces)
@@ -83,20 +83,36 @@ module CategoriesHelper
     end
 
     def category_nav_links(category)
-      links =
-        [['Category', category_projects_path(category)],
-         ['Issues', category_issues_path(category)],
-         ['Tasks', category_tasks_path(category)]]
-      return links unless can?(:update, category)
+      [['Category', category_projects_path(category)],
+       ['Issues', category_issues_path(category)],
+       ['Tasks', category_tasks_path(category)],
+       archived_projects_link(category),
+       edit_category_link(category)].compact
+    end
 
-      links.append(edit_category_link(category))
+    def archived_projects_link(category)
+      return unless can?(:read, invisible_category)
+
+      ['Archived Projects', archived_category_projects_path(category),
+       { class: 'secondary-link' }]
     end
 
     def edit_category_link(category)
+      return unless can?(:update, category)
+
       ['Settings', edit_category_path(category), { class: 'destroy-link' }]
     end
 
     def invisible_category
       @invisible_category ||= Category.new(visible: false)
+    end
+
+    def category_breadcrumb_pages(category)
+      if category.visible?
+        [['Categories', categories_path]]
+      else
+        [['Categories', categories_path],
+         ['Archived', archived_categories_path]]
+      end
     end
 end

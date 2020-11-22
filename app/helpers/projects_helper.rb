@@ -8,13 +8,25 @@ module ProjectsHelper
     end
   end
 
+  def project_breadcrumb_pages(project)
+    category = project.category
+    return unless category
+
+    pages = [['Categories', categories_path]]
+    pages << ['Archived', archived_categories_path] unless category.visible?
+    pages << [category.name, category_projects_path(category)]
+    unless project.visible?
+      pages << ['Archived Projects', archived_category_projects_path(category)]
+    end
+    pages
+  end
+
   def project_header(project)
     category = project.category
     return unless category
 
     content_tag :header, class: 'project-header' do
-      concat breadcrumbs([['Categories', categories_path],
-                          [category.name, category_projects_path(category)]])
+      concat breadcrumbs(project_breadcrumb_pages(project))
       concat content_tag(:h1, project_header_heading(project))
       concat project_tags(project)
       concat project_nav(project)
