@@ -20,9 +20,13 @@
           </section>
         <% end %>
       <% elsif @issue.current_resolution %>
-        <%= render 'shared/resolution',
-                   resolution: @issue.current_resolution,
-                   issue: @issue %>
+        <% if can?(:destroy, @issue.current_resolution) %>
+          <section class="issue-resolution">
+            <h4 class="issue-column-title">Resolution</h4>
+
+            <%= render @issue.current_resolution, issue: @issue %>
+          </section>
+        <% end %>
       <% elsif @issue.unresolved? %>
         <% if can?(:create, new_resolution(@issue)) %>
           <section class="issue-resolution">

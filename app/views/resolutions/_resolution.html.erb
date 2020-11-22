@@ -1,4 +1,25 @@
-<p id="resolution_<%= resolution.id %>" class="resolution">
-  <%= content_tag :strong, resolution.status, class: 'resolution-status' %>
-  <%= render 'shared/resolution', resolution: resolution, issue: issue %>
-</p>
+<div id="resolution_<%= resolution.id %>" class="resolution">
+  <p>
+    <%= content_tag :strong, resolution.status,
+                    class: 'resolution-status' %>
+    by
+    <%= content_tag :span, resolution.user.name_or_email,
+                    class: 'resolution-name' %>
+    <%= content_tag :span, format_date(resolution.created_at),
+                    class: 'resolution-date' %>
+  </p>
+
+  <% if issue && can?(:destroy, resolution) %>
+    <%
+      confirm =
+        "Are you sure you want to delete the resolution for #{issue.heading}"
+    %>
+
+    <p>
+      <%= link_to 'delete resolution and reopen',
+                  issue_resolution_path(issue, resolution),
+                  method: :delete, data: { confirm: confirm },
+                  class: 'destroy-link' %>
+    </p>
+  <% end %>
+</div>
