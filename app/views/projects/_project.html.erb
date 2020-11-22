@@ -1,28 +1,42 @@
 <%
+category = project.category
+unless category
+  return content_tag(:p, content_tag(:code, 'App Error: No Category'))
+end
+
 issue_subscription =
   project.issues_subscription(current_user, init: true)
 task_subscription =
   project.tasks_subscription(current_user, init: true)
+issues_count =
+  if project.totally_visible?
+    project.issues.all_visible.count
+  else
+    project.issues.count
+  end
+tasks_count =
+  if project.totally_visible?
+    project.tasks.all_visible.count
+  else
+    project.tasks.count
+  end
 %>
 
 <div id="project-<%= project.id %>" class="project">
-  <%
-    category = project.category
-    unless category
-      return content_tag(:p, content_tag(:code, 'App Error: No Category'))
-    end
-  %>
+  <header class="project-name-and-tags">
+    <% unless category_page?(category) %>
+      <%= breadcrumbs [[category.name, category_projects_path(category)]] %>
+    <% end %>
 
-  <div class="project-name-and-tags">
     <h3 class="project-name">
       <%= link_to_if can?(:read, project),
                      project.name, project_path(project) %>
     </h3>
 
     <p class="project-tags">
-      <%= visible_tag(project) %><%= internal_tag(project) %>
+      <%= project_invisible_tag(project) %><%= internal_tag(project) %>
     </p>
-  </div>
+  </header>
 
   <% unless @category %>
     <p class="project-category">
@@ -34,13 +48,13 @@ task_subscription =
   <div class="project-counts">
     <p class="project-issues-link">
       <%= link_to_if can?(:read, Issue),
-                     pluralize(project.issues.count, 'Issue'),
+                     pluralize(issues_count, 'Issue'),
                      project_issues_path(project) %>
     </p>
 
     <p class="project-tasks-link">
       <%= link_to_if can?(:read, Task),
-                     pluralize(project.tasks.count, 'Task'),
+                     pluralize(tasks_count, 'Task'),
                      project_tasks_path(project) %>
     </p>
   </div>
