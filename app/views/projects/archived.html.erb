@@ -1,0 +1,13 @@
+<%= category_header @category %>
+
+<header class="category-projects-header">
+  <h2>Archived Projects</h2>
+</header>
+
+<div class="category-projects">
+  <% if @projects.any? %>
+    <%= render @projects %>
+  <% else %>
+    <p class="no-project">none</p>
+  <% end %>
+</div>

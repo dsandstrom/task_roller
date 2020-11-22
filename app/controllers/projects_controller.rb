@@ -2,39 +2,29 @@
 
 class ProjectsController < ApplicationController
   load_and_authorize_resource :category, except: %i[show edit update]
-  load_and_authorize_resource through: :category, except: %i[show edit update]
+  load_and_authorize_resource through: :category,
+                              except: %i[archived show edit update]
   load_and_authorize_resource only: %i[show edit update]
 
-  load_resource :issues, through: :category, only: :index, singleton: true
-  load_resource :tasks, through: :category, only: :index, singleton: true
-
-  load_resource :issues, through: :project, only: :show, singleton: true
-  load_resource :tasks, through: :project, only: :show, singleton: true
-
   def index
-    @issues = @issues.accessible_by(current_ability)
-                     .order(updated_at: :desc).limit(3)
-    @tasks = @tasks.accessible_by(current_ability)
-                   .order(updated_at: :desc).limit(3)
-    @issue_subscription =
-      @category.category_issues_subscriptions
-               .find_or_initialize_by(user_id: current_user.id)
-    @task_subscription =
-      @category.category_tasks_subscriptions
-               .find_or_initialize_by(user_id: current_user.id)
+    @projects = @projects.all_visible
+    @issues = build_issues
+    @tasks = build_tasks
+    @issue_subscription = build_issue_subscription
+    @task_subscription = build_task_subscription
+  end
+
+  def archived
+    authorize! :read, Project.new(visible: false)
+
+    @projects = @category.projects.all_invisible.accessible_by(current_ability)
   end
 
   def show
-    @issues = @issues.accessible_by(current_ability)
-                     .order(updated_at: :desc).limit(3)
-    @tasks = @tasks.accessible_by(current_ability)
-                   .order(updated_at: :desc).limit(3)
-    @issue_subscription =
-      @project.project_issues_subscriptions
-              .find_or_initialize_by(user_id: current_user.id)
-    @task_subscription =
-      @project.project_tasks_subscriptions
-              .find_or_initialize_by(user_id: current_user.id)
+    @issues = build_issues
+    @tasks = build_tasks
+    @issue_subscription = build_issue_subscription
+    @task_subscription = build_task_subscription
   end
 
   def new; end
@@ -67,5 +57,48 @@ class ProjectsController < ApplicationController
 
     def project_params
       params.require(:project).permit(:category_id, :name, :visible, :internal)
+    end
+
+    def build_issues
+      if @category
+        issues = @category.issues
+        issues = issues.all_visible if @category.visible?
+        issues.accessible_by(current_ability)
+              .order(updated_at: :desc).limit(3)
+      elsif @project
+        @project.issues.accessible_by(current_ability)
+                .order(updated_at: :desc).limit(3)
+      end
+    end
+
+    def build_tasks
+      if @category
+        tasks = @category.tasks
+        tasks = tasks.all_visible if @category.visible?
+        tasks.accessible_by(current_ability).order(updated_at: :desc).limit(3)
+      elsif @project
+        @project.tasks.accessible_by(current_ability)
+                .order(updated_at: :desc).limit(3)
+      end
+    end
+
+    def build_task_subscription
+      if @category
+        @category.category_tasks_subscriptions
+                 .find_or_initialize_by(user_id: current_user.id)
+      elsif @project
+        @project.project_tasks_subscriptions
+                .find_or_initialize_by(user_id: current_user.id)
+      end
+    end
+
+    def build_issue_subscription
+      if @category
+        @category.category_issues_subscriptions
+                 .find_or_initialize_by(user_id: current_user.id)
+      elsif @project
+        @project.project_issues_subscriptions
+                .find_or_initialize_by(user_id: current_user.id)
+      end
     end
 end

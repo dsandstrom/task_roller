@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource except: :archived
 
-  def index; end
+  def index
+    @categories = @categories.all_visible
+  end
+
+  def archived
+    authorize! :read, Category.new(visible: false)
+
+    @categories = Category.all_invisible.accessible_by(current_ability)
+  end
 
   def new; end
 

@@ -19,6 +19,32 @@ RSpec.describe CategoriesController, type: :controller do
     end
   end
 
+  describe "GET #archived" do
+    before { Fabricate(:invisible_category) }
+
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type.downcase}")) }
+
+        it "returns a success response" do
+          get :archived
+          expect(response).to be_successful
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { login(Fabricate("user_#{employee_type}")) }
+
+        it "should be unauthorized" do
+          get :archived
+          expect_to_be_unauthorized(response)
+        end
+      end
+    end
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

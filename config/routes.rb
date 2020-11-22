@@ -8,10 +8,13 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :categories, except: :show do
+    collection { get :archived }
+
     resources :tasks, only: :index
     resources :issues, only: :index
-
-    resources :projects, except: %i[show edit update]
+    resources :projects, except: %i[show edit update] do
+      collection { get :archived }
+    end
   end
 
   resources :projects, only: %i[show edit update] do
