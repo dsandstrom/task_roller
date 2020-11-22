@@ -70,26 +70,3 @@
     }
   }
 }
-
-.categories-header {
-  padding: 1.5rem;
-  border-radius: $border-radius $border-radius 0 0;
-  background-color: $dark-blue;
-  color: $white;
-  text-align: center;
-
-  p {
-    margin-bottom: 0;
-  }
-
-  .button {
-    margin: 0;
-  }
-}
-
-@include breakpoint(medium up) {
-  .categories-header {
-    padding: 1.5rem 2rem;
-    text-align: right;
-  }
-}

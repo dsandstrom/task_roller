@@ -73,6 +73,7 @@
 }
 
 .projects-header,
+.categories-header,
 .category-projects-header,
 .issues-header,
 .tasks-header {
@@ -133,6 +134,10 @@
     .project {
       grid-template-columns: 2fr 1fr auto;
     }
+  }
+
+  .categories-header {
+    text-align: right;
   }
 
   .category-projects-header {
