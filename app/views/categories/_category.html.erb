@@ -6,19 +6,19 @@ task_subscription =
 
 projects_count =
   if category.visible?
-    visible_projects(category).count
+    category.projects.all_visible.accessible_by(current_ability).count
   else
     category.projects.count
   end
 issues_count =
   if category.visible?
-    visible_issues(category).count
+    category.issues.all_visible.accessible_by(current_ability).count
   else
     category.issues.count
   end
 tasks_count =
   if category.visible?
-    visible_tasks(category).count
+    category.tasks.all_visible.accessible_by(current_ability).count
   else
     category.tasks.count
   end
