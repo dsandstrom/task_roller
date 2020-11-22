@@ -8,25 +8,6 @@ RSpec.describe ResolutionsController, type: :controller do
   let(:issue) { Fabricate(:issue, project: project) }
   let(:admin) { Fabricate(:user_admin) }
 
-  describe "GET #index" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        let(:issue) { Fabricate(:issue, project: project, user: current_user) }
-
-        before do
-          Fabricate(:resolution, issue: issue)
-          login(current_user)
-        end
-
-        it "returns a success response" do
-          get :index, params: { issue_id: issue.to_param }
-          expect(response).to be_successful
-        end
-      end
-    end
-  end
-
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do

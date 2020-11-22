@@ -25,7 +25,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :issues, except: %i[index new create] do
     resources :issue_comments, except: %i[index show]
     resources :issue_subscriptions, only: %i[new create destroy]
-    resources :resolutions, only: %i[index new create destroy] do
+    resources :resolutions, only: %i[new create destroy] do
       collection do
         post :approve
         post :disapprove

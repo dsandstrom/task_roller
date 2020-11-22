@@ -6,9 +6,6 @@ class ResolutionsController < ApplicationController
   # not sure how to tell helper to build resource
   before_action :build_and_authorize, only: %i[approve disapprove]
 
-  # TODO: remove Resolutions#index
-  def index; end
-
   def new; end
 
   def approve
