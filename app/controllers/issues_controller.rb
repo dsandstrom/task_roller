@@ -3,11 +3,12 @@
 # TODO: allow searching by text (to see if reported)
 # TODO: when closed, lock updating description
 # TODO: add issue type filter
+# TODO: add link to delete issue
 
 class IssuesController < ApplicationController
-  load_and_authorize_resource :project, only: %i[new create]
-  load_and_authorize_resource through: :project, only: %i[new create]
-  load_and_authorize_resource except: %i[index new create]
+  load_and_authorize_resource :project, only: %i[new create destroy]
+  load_and_authorize_resource through: :project, only: %i[new create destroy]
+  load_and_authorize_resource only: %i[show edit update]
   authorize_resource only: :index
 
   before_action :set_form_options, only: %i[new edit]
@@ -66,9 +67,8 @@ class IssuesController < ApplicationController
   end
 
   def destroy
-    project = @issue.project
     @issue.destroy
-    redirect_to project, success: 'Issue was successfully destroyed.'
+    redirect_to @project, success: 'Issue was successfully destroyed.'
   end
 
   private

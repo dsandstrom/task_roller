@@ -9,9 +9,9 @@
 # TODO: add way to share issue/task url (copy to the clipboard, expandable)
 
 class TasksController < ApplicationController
-  load_and_authorize_resource :project, only: %i[new create]
-  load_and_authorize_resource through: :project, only: %i[new create]
-  load_and_authorize_resource except: %i[index new create]
+  load_and_authorize_resource :project, only: %i[new create destroy]
+  load_and_authorize_resource through: :project, only: %i[new create destroy]
+  load_and_authorize_resource only: %i[show edit update]
   authorize_resource only: :index
 
   before_action :set_form_options, only: %i[new edit]
@@ -57,9 +57,8 @@ class TasksController < ApplicationController
   end
 
   def destroy
-    project = @task.project
     @task.destroy
-    redirect_to project, success: 'Task was successfully destroyed.'
+    redirect_to @project, success: 'Task was successfully destroyed.'
   end
 
   private

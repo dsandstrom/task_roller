@@ -1356,13 +1356,15 @@ RSpec.describe IssuesController, type: :controller do
       it "destroys the requested issue" do
         issue = Fabricate(:issue, project: project)
         expect do
-          delete :destroy, params: { id: issue.to_param }
+          delete :destroy, params: { project_id: project.to_param,
+                                     id: issue.to_param }
         end.to change(Issue, :count).by(-1)
       end
 
       it "redirects to the issues list" do
         issue = Fabricate(:issue, project: project)
-        delete :destroy, params: { id: issue.to_param }
+        delete :destroy, params: { project_id: project.to_param,
+                                   id: issue.to_param }
         expect(response).to redirect_to(project)
       end
     end
@@ -1375,7 +1377,8 @@ RSpec.describe IssuesController, type: :controller do
 
         it "should be unauthorized" do
           issue = Fabricate(:issue, project: project, user: current_user)
-          delete :destroy, params: { id: issue.to_param }
+          delete :destroy, params: { project_id: project.to_param,
+                                     id: issue.to_param }
           expect_to_be_unauthorized(response)
         end
       end
