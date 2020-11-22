@@ -5,8 +5,8 @@ class ResolutionsController < ApplicationController
   load_and_authorize_resource through: :issue, except: %i[approve disapprove]
   # not sure how to tell helper to build resource
   before_action :build_and_authorize, only: %i[approve disapprove]
-  before_action :set_category_and_project, except: [:index]
 
+  # TODO: remove Resolutions#index
   def index; end
 
   def new; end
@@ -41,10 +41,5 @@ class ResolutionsController < ApplicationController
     def build_and_authorize
       @resolution = @issue.resolutions.build(user_id: current_user.id)
       authorize! :create, @resolution
-    end
-
-    def set_category_and_project
-      @project = @issue.project
-      @category = @issue.category
     end
 end

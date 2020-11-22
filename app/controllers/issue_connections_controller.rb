@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IssueConnectionsController < ApplicationController
-  before_action :build_issue_connection, only: %i[new create]
+  before_action :load_and_authorize, only: %i[new create]
   authorize_resource only: %i[new create]
   load_and_authorize_resource except: %i[new create]
 
@@ -34,7 +34,7 @@ class IssueConnectionsController < ApplicationController
 
   private
 
-    def build_issue_connection
+    def load_and_authorize
       if params[:issue_connection]
         target_id = issue_connection_params[:target_id]
       end

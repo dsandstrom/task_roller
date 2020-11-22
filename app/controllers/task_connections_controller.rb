@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TaskConnectionsController < ApplicationController
-  before_action :build_task_connection, only: %i[new create]
+  before_action :load_and_authorize, only: %i[new create]
   authorize_resource only: %i[new create]
   load_and_authorize_resource except: %i[new create]
 
@@ -33,7 +33,7 @@ class TaskConnectionsController < ApplicationController
 
   private
 
-    def build_task_connection
+    def load_and_authorize
       target_id = task_connection_params[:target_id] if params[:task_connection]
       @task_connection =
         TaskConnection.new(source_id: params[:source_id], target_id: target_id,

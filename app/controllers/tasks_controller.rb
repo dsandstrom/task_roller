@@ -12,15 +12,17 @@ class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create]
   load_and_authorize_resource through: :project, only: %i[new create]
   load_and_authorize_resource except: %i[index new create]
-  before_action :load_and_authorize_source, only: :index
+  authorize_resource only: :index
+
   before_action :set_form_options, only: %i[new edit]
   before_action :check_for_task_types, only: %i[new edit]
 
   def index
-    authorize! :read, Task
+    @source = build_source
+    authorize! :read, @source
 
-    set_tasks
-    set_subscription
+    @tasks = build_tasks
+    @subscription = build_subscription
   end
 
   def show
@@ -70,16 +72,14 @@ class TasksController < ApplicationController
       false
     end
 
-    def load_and_authorize_source
-      @source =
-        if params[:user_id]
-          User.find(params[:user_id])
-        elsif params[:project_id]
-          Project.find(params[:project_id])
-        else
-          Category.find(params[:category_id])
-        end
-      authorize! :read, @source
+    def build_source
+      if params[:user_id]
+        User.find(params[:user_id])
+      elsif params[:project_id]
+        Project.find(params[:project_id])
+      else
+        Category.find(params[:category_id])
+      end
     end
 
     def task_params
@@ -88,40 +88,38 @@ class TasksController < ApplicationController
     end
 
     def set_form_options
-      set_task_types
-      set_assignee_options
-      set_issue_options
-    end
-
-    def set_task_types
       @task_types = TaskType.all
+      @assignee_options = build_assignee_options
+      @issue_options = build_issue_options
     end
 
     # TODO: change to just workers after allowing self-assigning
-    def set_assignee_options
-      @assignee_options =
-        %w[Worker Reviewer].map do |type|
-          employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
-          [type.pluralize, employees]
-        end
+    def build_assignee_options
+      %w[Worker Reviewer].map do |type|
+        employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
+        [type.pluralize, employees]
+      end
     end
 
-    def set_issue_options
-      @issue_options =
-        @task.project.issues.map do |issue|
-          [issue.id_and_summary, issue.id]
-        end
+    def build_issue_options
+      @task.project.issues.map do |issue|
+        [issue.id_and_summary, issue.id]
+      end
     end
 
-    def set_tasks
-      @tasks = @source.tasks.accessible_by(current_ability)
-                      .filter_by(build_filters).page(params[:page])
+    def build_tasks
+      tasks = @source.tasks
+      if @source.respond_to?(:visible?) && @source.visible?
+        tasks = tasks.all_visible
+      end
+      tasks.accessible_by(current_ability).filter_by(build_filters)
+           .page(params[:page])
     end
 
-    def set_subscription
+    def build_subscription
       return unless @source.is_a?(Project) || @source.is_a?(Category)
 
-      @subscription = @source.tasks_subscription(current_user, init: true)
+      @source.tasks_subscription(current_user, init: true)
     end
 
     def set_user_resources

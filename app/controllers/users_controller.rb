@@ -48,10 +48,10 @@ class UsersController < ApplicationController
     end
 
     def employee_type
-      @employee_type ||= fetch_employee_type
+      @employee_type ||= build_employee_type
     end
 
-    def fetch_employee_type
+    def build_employee_type
       return unless params[:type] &&
                     %w[Reporter Reviewer Worker].includes?(params[:type])
 

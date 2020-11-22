@@ -34,15 +34,6 @@ class IssueCommentsController < ApplicationController
 
   private
 
-    def set_issue
-      @issue = Issue.find(params[:issue_id])
-    end
-
-    def set_issue_comment
-      @issue_comment = IssueComment.find(params[:id])
-      @issue = @issue_comment.issue
-    end
-
     def issue_comment_params
       params.require(:issue_comment).permit(:body)
     end
