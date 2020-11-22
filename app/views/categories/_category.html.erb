@@ -14,22 +14,37 @@ task_subscription =
   </div>
 
   <div class="category-counts">
-    <%= content_tag :p, pluralize(category.projects.size, 'Project'),
-                        class: 'category-project-count' %>
+    <% if category.visible? %>
+      <%= content_tag :p, pluralize(visible_projects(category).count, 'Project'),
+                          class: 'category-project-count' %>
 
-    <%# TODO: change to open issues %>
-    <p class="category-issues-link">
-      <%= link_to_if can?(:read, Issue),
-                     pluralize(category.issues.count, 'Issue'),
-                     category_issues_path(category) %>
-    </p>
+      <p class="category-issues-link">
+        <%= link_to_if can?(:read, Issue),
+                       pluralize(visible_issues(category).count, 'Issue'),
+                       category_issues_path(category) %>
+      </p>
 
-    <%# TODO: change to open tasks %>
-    <p class="category-tasks-link">
-      <%= link_to_if can?(:read, Task),
-                     pluralize(category.tasks.count, 'Task'),
-                     category_tasks_path(category) %>
-    </p>
+      <p class="category-tasks-link">
+        <%= link_to_if can?(:read, Task),
+                       pluralize(visible_tasks(category).count, 'Task'),
+                       category_tasks_path(category) %>
+      </p>
+    <% else %>
+      <%= content_tag :p, pluralize(category.projects.count, 'Project'),
+                          class: 'category-project-count' %>
+
+      <p class="category-issues-link">
+        <%= link_to_if can?(:read, Issue),
+                       pluralize(category.issues.count, 'Issue'),
+                       category_issues_path(category) %>
+      </p>
+
+      <p class="category-tasks-link">
+        <%= link_to_if can?(:read, Task),
+                       pluralize(category.tasks.count, 'Task'),
+                       category_tasks_path(category) %>
+      </p>
+    <% end %>
   </div>
 
   <p class="category-links">

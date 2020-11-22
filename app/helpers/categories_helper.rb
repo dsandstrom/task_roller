@@ -35,6 +35,18 @@ module CategoriesHelper
     end
   end
 
+  def visible_projects(category)
+    category.projects.all_visible.accessible_by(current_ability)
+  end
+
+  def visible_issues(category)
+    category.issues.all_visible.accessible_by(current_ability)
+  end
+
+  def visible_tasks(category)
+    category.tasks.all_visible.accessible_by(current_ability)
+  end
+
   private
 
     def categories_heading
