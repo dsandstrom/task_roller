@@ -108,8 +108,10 @@ class TasksController < ApplicationController
 
     def build_tasks
       tasks = @source.tasks
-      if @source.respond_to?(:visible?) && @source.visible?
-        tasks = tasks.all_visible
+      if @source.respond_to?(:totally_visible?)
+        tasks = tasks.all_visible if @source.totally_visible?
+      elsif @source.respond_to?(:visible?)
+        tasks = tasks.all_visible if @source.visible?
       end
       tasks.accessible_by(current_ability).filter_by(build_filters)
            .page(params[:page])

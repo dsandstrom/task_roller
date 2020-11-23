@@ -101,8 +101,10 @@ class IssuesController < ApplicationController
 
     def build_issues
       issues = @source.issues
-      if @source.respond_to?(:visible?) && @source.visible?
-        issues = issues.all_visible
+      if @source.respond_to?(:totally_visible?)
+        issues = issues.all_visible if @source.totally_visible?
+      elsif @source.respond_to?(:visible?)
+        issues = issues.all_visible if @source.visible?
       end
       issues.accessible_by(current_ability).filter_by(build_filters)
             .page(params[:page])
