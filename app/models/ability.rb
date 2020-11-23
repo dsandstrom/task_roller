@@ -14,8 +14,7 @@ class Ability
   VISIBLE_CATEGORY_OPTIONS = { visible: true }.freeze
   VISIBLE_PROJECT_OPTIONS = { visible: true,
                               category: VISIBLE_CATEGORY_OPTIONS }.freeze
-  MANAGE_CLASSES = [CategoryIssuesSubscription, CategoryTasksSubscription,
-                    IssueSubscription, ProjectIssuesSubscription,
+  MANAGE_CLASSES = [IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
   READ_CLASSES = [IssueClosure, IssueConnection, IssueReopening, Progression,
                   TaskClosure, TaskConnection, TaskReopening, Resolution,
@@ -73,6 +72,10 @@ class Ability
       MANAGE_CLASSES.each do |class_name|
         can :manage, class_name, user_id: user.id
       end
+
+      [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
+        can :manage, name, user_id: user.id, category: EXTERNAL_CATEGORY_OPTIONS
+      end
     end
 
     def basic_assigned_task_abilities(user)
@@ -90,6 +93,10 @@ class Ability
       can :read, Project, VISIBLE_PROJECT_OPTIONS
       worker_issue_abilities(user)
       worker_task_abilities(user)
+
+      [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
+        can :manage, name, user_id: user.id, category: VISIBLE_CATEGORY_OPTIONS
+      end
     end
 
     def worker_issue_abilities(user)

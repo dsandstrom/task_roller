@@ -58,7 +58,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when visible is true" do
@@ -113,7 +113,7 @@ RSpec.describe Ability do
 
     %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when visible is true" do
@@ -168,7 +168,7 @@ RSpec.describe Ability do
 
     %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when visible is true" do
@@ -211,58 +211,268 @@ RSpec.describe Ability do
   end
 
   describe "CategoryIssuesSubscription model" do
-    %i[admin reviewer worker reporter].each do |employee_type|
+    %i[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when belongs to them" do
-          let(:subscription) do
-            Fabricate(:category_issues_subscription, user: current_user)
+        context "for a visible category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
           end
 
-          it { is_expected.to be_able_to(:create, subscription) }
-          it { is_expected.to be_able_to(:read, subscription) }
-          it { is_expected.to be_able_to(:update, subscription) }
-          it { is_expected.to be_able_to(:destroy, subscription) }
+          context "when subscription doesn't belong to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
         end
 
-        context "when doesn't belong to them" do
-          let(:subscription) { Fabricate(:category_issues_subscription) }
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
 
-          it { is_expected.not_to be_able_to(:create, subscription) }
-          it { is_expected.not_to be_able_to(:read, subscription) }
-          it { is_expected.not_to be_able_to(:update, subscription) }
-          it { is_expected.not_to be_able_to(:destroy, subscription) }
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a visible category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
+          end
+
+          context "when subscription doesn't belong to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_issues_subscription, category: category,
+                                                       user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
         end
       end
     end
   end
 
   describe "CategoryTasksSubscription model" do
-    %i[admin reviewer worker reporter].each do |employee_type|
+    %i[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when belongs to them" do
-          let(:subscription) do
-            Fabricate(:category_tasks_subscription, user: current_user)
+        context "for a visible category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
           end
 
-          it { is_expected.to be_able_to(:create, subscription) }
-          it { is_expected.to be_able_to(:read, subscription) }
-          it { is_expected.to be_able_to(:update, subscription) }
-          it { is_expected.to be_able_to(:destroy, subscription) }
+          context "when subscription doesn't belong to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
         end
 
-        context "when doesn't belong to them" do
-          let(:subscription) { Fabricate(:category_tasks_subscription) }
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
 
-          it { is_expected.not_to be_able_to(:create, subscription) }
-          it { is_expected.not_to be_able_to(:read, subscription) }
-          it { is_expected.not_to be_able_to(:update, subscription) }
-          it { is_expected.not_to be_able_to(:destroy, subscription) }
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a visible category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, subscription) }
+            it { is_expected.to be_able_to(:read, subscription) }
+            it { is_expected.to be_able_to(:update, subscription) }
+            it { is_expected.to be_able_to(:destroy, subscription) }
+          end
+
+          context "when subscription doesn't belong to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          context "when subscription belongs to them" do
+            let(:subscription) do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, subscription) }
+            it { is_expected.not_to be_able_to(:read, subscription) }
+            it { is_expected.not_to be_able_to(:update, subscription) }
+            it { is_expected.not_to be_able_to(:destroy, subscription) }
+          end
         end
       end
     end
@@ -711,7 +921,7 @@ RSpec.describe Ability do
 
     %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:category) { Fabricate(:category) }
         let(:project) { Fabricate(:project, category: category) }
 
@@ -1055,7 +1265,7 @@ RSpec.describe Ability do
 
     %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:category) { Fabricate(:category) }
         let(:project) { Fabricate(:project, category: category) }
 
@@ -1401,7 +1611,7 @@ RSpec.describe Ability do
   describe "IssueClosure model" do
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -1427,7 +1637,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -1453,7 +1663,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
 
         subject(:ability) { Ability.new(current_user) }
@@ -3023,7 +3233,7 @@ RSpec.describe Ability do
   describe "IssueConnection model" do
     %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -3051,7 +3261,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:issue_connection) do
           Fabricate(:issue_connection, user: current_user)
         end
@@ -3069,7 +3279,7 @@ RSpec.describe Ability do
   describe "IssueReopening model" do
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -3097,7 +3307,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -3125,7 +3335,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:issue_reopening) do
           Fabricate(:issue_reopening, user: current_user)
         end
@@ -3166,7 +3376,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when belongs to them" do
@@ -3197,7 +3407,7 @@ RSpec.describe Ability do
 
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.to be_able_to(:create, issue_type) }
@@ -3209,7 +3419,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.not_to be_able_to(:create, issue_type) }
@@ -3273,7 +3483,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when assigned to the task" do
@@ -3370,7 +3580,7 @@ RSpec.describe Ability do
 
     %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when project is visible" do
@@ -3460,7 +3670,7 @@ RSpec.describe Ability do
 
     %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when project is visible" do
@@ -3549,9 +3759,9 @@ RSpec.describe Ability do
   end
 
   describe "ProjectIssuesSubscription model" do
-    %i[admin reviewer worker reporter].each do |employee_type|
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when belongs to them" do
@@ -3578,9 +3788,9 @@ RSpec.describe Ability do
   end
 
   describe "ProjectTasksSubscription model" do
-    %i[admin reviewer worker reporter].each do |employee_type|
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when belongs to them" do
@@ -3644,7 +3854,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when resolution/issue belong to them" do
@@ -3773,7 +3983,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when assigned to the task" do
@@ -3848,7 +4058,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when assigned to the task" do
@@ -4367,7 +4577,7 @@ RSpec.describe Ability do
 
     %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:category) { Fabricate(:category) }
         let(:project) { Fabricate(:project, category: category) }
 
@@ -4735,7 +4945,7 @@ RSpec.describe Ability do
 
     %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:category) { Fabricate(:category) }
         let(:project) { Fabricate(:project, category: category) }
 
@@ -6659,7 +6869,7 @@ RSpec.describe Ability do
   describe "TaskClosure model" do
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -6685,7 +6895,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -6733,7 +6943,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:task) { Fabricate(:task, user: current_user) }
         let(:task_closure) do
           Fabricate(:task_closure, task: task, user: current_user)
@@ -6752,7 +6962,7 @@ RSpec.describe Ability do
   describe "TaskConnection model" do
     %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -6780,7 +6990,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:task_connection) do
           Fabricate(:task_connection, user: current_user)
         end
@@ -6798,7 +7008,7 @@ RSpec.describe Ability do
   describe "TaskReopening model" do
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -6826,7 +7036,7 @@ RSpec.describe Ability do
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
 
@@ -6854,7 +7064,7 @@ RSpec.describe Ability do
 
     %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:task_reopening) do
           Fabricate(:task_reopening, user: current_user)
         end
@@ -6874,7 +7084,7 @@ RSpec.describe Ability do
 
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.to be_able_to(:create, task_type) }
@@ -6886,7 +7096,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         it { is_expected.not_to be_able_to(:create, task_type) }
@@ -6923,7 +7133,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when belongs to them" do
@@ -6981,7 +7191,7 @@ RSpec.describe Ability do
 
     %i[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
         context "when another user" do

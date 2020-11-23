@@ -28,25 +28,44 @@ RSpec.describe CategoryTasksSubscriptionsController, type: :controller do
 
         before { login(current_user) }
 
-        context "with valid params" do
-          it "creates a new CategoryTasksSubscription" do
-            expect do
+        context "for a visible and internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
+          context "with valid params" do
+            it "creates a new CategoryTasksSubscription" do
+              expect do
+                post :create, params: { category_id: category.to_param }
+              end.to change(current_user.category_tasks_subscriptions, :count)
+                .by(1)
+            end
+
+            it "redirects to the requested category" do
               post :create, params: { category_id: category.to_param }
-            end.to change(current_user.category_tasks_subscriptions, :count)
-              .by(1)
+              expect(response).to redirect_to(category)
+            end
           end
 
-          it "redirects to the requested category" do
-            post :create, params: { category_id: category.to_param }
-            expect(response).to redirect_to(category)
+          context "with invalid params" do
+            before do
+              Fabricate(:category_tasks_subscription, category: category,
+                                                      user: current_user)
+            end
+
+            it "doesn't create a new CategoryTasksSubscription" do
+              expect do
+                post :create, params: { category_id: category.to_param }
+              end.not_to change(CategoryTasksSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { category_id: category.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "with invalid params" do
-          before do
-            Fabricate(:category_tasks_subscription, category: category,
-                                                    user: current_user)
-          end
+        context "for an invisible and external category" do
+          let(:category) { Fabricate(:invisible_category) }
 
           it "doesn't create a new CategoryTasksSubscription" do
             expect do
@@ -54,9 +73,9 @@ RSpec.describe CategoryTasksSubscriptionsController, type: :controller do
             end.not_to change(CategoryTasksSubscription, :count)
           end
 
-          it "renders new" do
+          it "should be unauthorized" do
             post :create, params: { category_id: category.to_param }
-            expect(response).to be_successful
+            expect_to_be_unauthorized(response)
           end
         end
       end

@@ -28,8 +28,8 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
 
         before { login(current_user) }
 
-        context "for an invisible and internal category" do
-          let(:category) { Fabricate(:invisible_category, internal: true) }
+        context "for a visible and internal category" do
+          let(:category) { Fabricate(:category, internal: true) }
 
           context "with valid params" do
             it "creates a new CategoryIssuesSubscription" do
@@ -61,6 +61,21 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
               post :create, params: { category_id: category.to_param }
               expect(response).to be_successful
             end
+          end
+        end
+
+        context "for an invisible and external category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          it "doesn't create a new CategoryIssuesSubscription" do
+            expect do
+              post :create, params: { category_id: category.to_param }
+            end.not_to change(CategoryIssuesSubscription, :count)
+          end
+
+          it "should be unauthorized" do
+            post :create, params: { category_id: category.to_param }
+            expect_to_be_unauthorized(response)
           end
         end
       end
