@@ -895,11 +895,11 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "renders close issue link" do
+        it "doesn't render close issue link" do
           render
 
           url = issue_closures_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
 

@@ -1615,22 +1615,64 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their closure" do
-          let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
+        context "for a totally visible issue" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
-          it { is_expected.to be_able_to(:create, issue_closure) }
-          it { is_expected.to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.to be_able_to(:destroy, issue_closure) }
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.to be_able_to(:destroy, issue_closure) }
+          end
+
+          context "when someone else's closure" do
+            let(:issue_closure) { Fabricate(:issue_closure, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.to be_able_to(:destroy, issue_closure) }
+          end
         end
 
-        context "when someone else's closure" do
-          let(:issue_closure) { Fabricate(:issue_closure) }
+        context "for an issue from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
-          it { is_expected.not_to be_able_to(:create, issue_closure) }
-          it { is_expected.to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.to be_able_to(:destroy, issue_closure) }
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.to be_able_to(:destroy, issue_closure) }
+          end
+        end
+
+        context "for an issue from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.to be_able_to(:destroy, issue_closure) }
+          end
         end
       end
     end
@@ -1641,37 +1683,167 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their closure" do
-          let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
+        context "for a totally visible issue" do
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, user: current_user)
+            end
 
-          it { is_expected.to be_able_to(:create, issue_closure) }
-          it { is_expected.to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+            it { is_expected.to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+          end
+
+          context "when someone else's closure" do
+            let(:issue_closure) { Fabricate(:issue_closure) }
+
+            it { is_expected.not_to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+          end
         end
 
-        context "when someone else's closure" do
-          let(:issue_closure) { Fabricate(:issue_closure) }
+        context "for an issue from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+          end
+        end
+
+        context "for an issue from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible issue" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
 
           it { is_expected.not_to be_able_to(:create, issue_closure) }
           it { is_expected.to be_able_to(:read, issue_closure) }
           it { is_expected.not_to be_able_to(:update, issue_closure) }
           it { is_expected.not_to be_able_to(:destroy, issue_closure) }
         end
+
+        context "for an issue from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
+
+        context "for an issue from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.not_to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        let(:issue_closure) { Fabricate(:issue_closure, user: current_user) }
 
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.not_to be_able_to(:create, issue_closure) }
-        it { is_expected.to be_able_to(:read, issue_closure) }
-        it { is_expected.not_to be_able_to(:update, issue_closure) }
-        it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        context "for a totally visible issue" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
+
+        context "for an issue from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.not_to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
+
+        context "for an issue from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:issue_closure) do
+            Fabricate(:issue_closure, issue: issue, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, issue_closure) }
+          it { is_expected.not_to be_able_to(:read, issue_closure) }
+          it { is_expected.not_to be_able_to(:update, issue_closure) }
+          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+        end
       end
     end
   end

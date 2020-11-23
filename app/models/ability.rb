@@ -16,7 +16,7 @@ class Ability
                               category: VISIBLE_CATEGORY_OPTIONS }.freeze
   MANAGE_CLASSES = [IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
-  READ_CLASSES = [IssueClosure, IssueConnection, IssueReopening, Progression,
+  READ_CLASSES = [IssueConnection, IssueReopening, Progression,
                   TaskClosure, TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
@@ -73,6 +73,7 @@ class Ability
         can :manage, class_name, user_id: user.id
       end
 
+      can :read, IssueClosure, issue: { project: EXTERNAL_PROJECT_OPTIONS }
       [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, category: EXTERNAL_CATEGORY_OPTIONS
       end
@@ -103,6 +104,7 @@ class Ability
       can :read, Issue, project: VISIBLE_PROJECT_OPTIONS
       can %i[create update], Issue, user_id: user.id,
                                     project: VISIBLE_PROJECT_OPTIONS
+      can :read, IssueClosure, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can %i[create update], IssueComment,
           user_id: user.id, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
@@ -126,7 +128,9 @@ class Ability
       can :read, Issue
       can :update, Issue, user_id: user.id
       # TODO: if issue visible (but allow admin)
-      can :create, IssueClosure, user_id: user.id
+      can :create, IssueClosure, user_id: user.id,
+                                 issue: { project: VISIBLE_PROJECT_OPTIONS }
+      can :read, IssueClosure
       can :read, IssueComment
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
@@ -166,8 +170,9 @@ class Ability
       end
     end
 
-    def admin_issue_abilities(_user)
+    def admin_issue_abilities(user)
       can %i[update destroy open close], Issue
+      can :create, IssueClosure, user_id: user.id
       can %i[update destroy], IssueComment
       can %i[update destroy], Resolution
     end
