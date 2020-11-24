@@ -142,6 +142,10 @@ group :backend do
     # watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$}) do |m|
     #   Dir[File.join("**/#{m[1]}.feature")][0] || "spec/acceptance"
     # end
+
+    watch('app/models/ability.rb') do
+      "#{rspec.spec_dir}/models/abilities"
+    end
   end
 
   guard :bundler do
