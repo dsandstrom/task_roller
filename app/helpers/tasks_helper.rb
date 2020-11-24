@@ -28,6 +28,10 @@ module TasksHelper
     Task.new(project_id: project.id, user_id: current_user.id)
   end
 
+  def new_task_connection(task)
+    TaskConnection.new(source_id: task.id, user_id: current_user.id)
+  end
+
   def new_task_closure(task)
     TaskClosure.new(task_id: task.id, user_id: current_user.id)
   end

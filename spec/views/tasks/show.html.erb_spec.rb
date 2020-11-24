@@ -1246,10 +1246,10 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "renders a new task connection link" do
+        it "doesn't render a new task connection link" do
           render
           expect(rendered)
-            .to have_link(nil, href: new_task_connection_path(@task))
+            .not_to have_link(nil, href: new_task_connection_path(@task))
         end
       end
 
@@ -1283,13 +1283,13 @@ RSpec.describe "tasks/show", type: :view do
         it "renders approval link" do
           render
           url = approve_task_review_path(@task, @review)
-          expect(rendered).to have_link(nil, href: url)
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders disapproval link" do
           render
           url = disapprove_task_review_path(@task, @review)
-          expect(rendered).to have_link(nil, href: url)
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
 
@@ -1337,7 +1337,7 @@ RSpec.describe "tasks/show", type: :view do
           assign(:subscription, subscription)
         end
 
-        it "renders new task_subscription link" do
+        it "doesn't render new task_subscription link" do
           render
           expect(rendered)
             .not_to have_link(nil, href: task_task_subscriptions_path(@task))
@@ -1350,7 +1350,7 @@ RSpec.describe "tasks/show", type: :view do
           @subscription = assign(:subscription, task_subscription)
         end
 
-        it "renders destroy task_subscription link" do
+        it "doesn't render destroy task_subscription link" do
           render
           url = task_task_subscription_path(@task, @subscription)
           expect(rendered).not_to have_link(nil, href: url)
