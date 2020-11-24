@@ -1240,10 +1240,10 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
         end
 
-        it "renders close link" do
+        it "doesn't render close link" do
           render
           url = task_closures_path(@task)
-          assert_select "a[href='#{url}'][data-method='post']"
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders a new task connection link" do
@@ -1299,9 +1299,10 @@ RSpec.describe "tasks/show", type: :view do
           @review = assign(:review, Fabricate(:approved_review, task: @task))
         end
 
-        it "renders reopen link" do
+        it "doesn' render reopen link" do
           render
-          expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
+          expect(rendered)
+            .not_to have_link(nil, href: task_reopenings_path(@task))
         end
       end
 
@@ -1319,10 +1320,40 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).to have_link(nil, href: url)
         end
 
-        it "renders destroy link" do
+        it "doesn't render destroy link" do
           render
           url = task_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+      end
+
+      context "when not subscribed to the task" do
+        let(:subscription) do
+          Fabricate.build(:task_subscription, task: @task, user: reviewer)
+        end
+
+        before do
+          @task = assign(:task, task)
+          assign(:subscription, subscription)
+        end
+
+        it "renders new task_subscription link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_task_subscriptions_path(@task))
+        end
+      end
+
+      context "when subscribed to the task" do
+        before do
+          @task = assign(:task, task)
+          @subscription = assign(:subscription, task_subscription)
+        end
+
+        it "renders destroy task_subscription link" do
+          render
+          url = task_task_subscription_path(@task, @subscription)
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
     end
@@ -1442,6 +1473,42 @@ RSpec.describe "tasks/show", type: :view do
           render
           url = task_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "when not subscribed to the task" do
+        let(:subscription) do
+          Fabricate.build(:task_subscription, task: @task, user: reviewer)
+        end
+
+        before do
+          @task = assign(:task, task)
+          assign(:subscription, subscription)
+        end
+
+        it "renders new task_subscription link" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: task_task_subscriptions_path(@task))
+        end
+      end
+
+      context "when subscribed to the task" do
+        before do
+          @task = assign(:task, task)
+          @subscription = assign(:subscription, task_subscription)
+        end
+
+        it "doesn't render new task_subscription link" do
+          render
+          url = task_task_subscriptions_path(@task)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy task_subscription link" do
+          render
+          url = task_task_subscription_path(@task, @subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
         end
       end
     end

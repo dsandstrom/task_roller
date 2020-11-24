@@ -3763,72 +3763,492 @@ RSpec.describe Ability do
       let(:admin) { Fabricate(:user_admin) }
       subject(:ability) { Ability.new(admin) }
 
-      context "when resolution/issue belong to them" do
-        let(:issue) { Fabricate(:issue, user: admin) }
-        let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+      context "when issue is totally visible" do
+        let(:project) { Fabricate(:project) }
 
-        it { is_expected.to be_able_to(:create, resolution) }
-        it { is_expected.to be_able_to(:read, resolution) }
-        it { is_expected.to be_able_to(:update, resolution) }
-        it { is_expected.to be_able_to(:destroy, resolution) }
+        context "and resolution/issue belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and issue doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and resolution doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
       end
 
-      context "when issue doesn't belong to them" do
-        let(:issue) { Fabricate(:issue) }
-        let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+      context "when issue project is internal" do
+        let(:project) { Fabricate(:internal_project) }
 
-        it { is_expected.not_to be_able_to(:create, resolution) }
-        it { is_expected.to be_able_to(:read, resolution) }
-        it { is_expected.to be_able_to(:update, resolution) }
-        it { is_expected.to be_able_to(:destroy, resolution) }
+        context "and resolution/issue belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and issue doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and resolution doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
       end
 
-      context "when resolution doesn't belong to them" do
-        let(:issue) { Fabricate(:issue, user: admin) }
-        let(:resolution) { Fabricate(:resolution, issue: issue) }
+      context "when issue project is invisible" do
+        let(:project) { Fabricate(:invisible_project) }
 
-        it { is_expected.not_to be_able_to(:create, resolution) }
-        it { is_expected.to be_able_to(:read, resolution) }
-        it { is_expected.to be_able_to(:update, resolution) }
-        it { is_expected.to be_able_to(:destroy, resolution) }
+        context "and resolution/issue belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and issue doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+
+        context "and resolution doesn't belong to them" do
+          let(:issue) { Fabricate(:issue, project: project, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+          it { is_expected.not_to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
       end
     end
 
-    %i[reviewer worker reporter].each do |employee_type|
+    %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when resolution/issue belong to them" do
-          let(:issue) { Fabricate(:issue, user: current_user) }
-          let(:resolution) do
-            Fabricate(:resolution, issue: issue, user: current_user)
+        context "when issue is totally visible" do
+          let(:project) { Fabricate(:project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
           end
 
-          it { is_expected.to be_able_to(:create, resolution) }
-          it { is_expected.to be_able_to(:read, resolution) }
-          it { is_expected.not_to be_able_to(:update, resolution) }
-          it { is_expected.not_to be_able_to(:destroy, resolution) }
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
         end
 
-        context "when resolution doesn't belong to them" do
-          let(:issue) { Fabricate(:issue, user: current_user) }
-          let(:resolution) { Fabricate(:resolution, issue: issue) }
+        context "when issue project is internal" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
-          it { is_expected.not_to be_able_to(:create, resolution) }
-          it { is_expected.to be_able_to(:read, resolution) }
-          it { is_expected.not_to be_able_to(:update, resolution) }
-          it { is_expected.not_to be_able_to(:destroy, resolution) }
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
         end
 
-        context "when issue doesn't belong to them" do
-          let(:issue) { Fabricate(:issue) }
-          let(:resolution) { Fabricate(:resolution, issue: issue) }
+        context "when issue project is invisible" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
-          it { is_expected.not_to be_able_to(:create, resolution) }
-          it { is_expected.to be_able_to(:read, resolution) }
-          it { is_expected.not_to be_able_to(:update, resolution) }
-          it { is_expected.not_to be_able_to(:destroy, resolution) }
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when issue is totally visible" do
+          let(:project) { Fabricate(:project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue project is internal" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue project is invisible" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when issue is totally visible" do
+          let(:project) { Fabricate(:project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue project is internal" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue project is invisible" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when resolution/issue belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) do
+              Fabricate(:issue, project: project, user: current_user)
+            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
         end
       end
     end

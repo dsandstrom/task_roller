@@ -18,9 +18,8 @@ class Ability
                                  category: VISIBLE_CATEGORY_OPTIONS } }.freeze
   EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
-  MANAGE_CLASSES = [TaskSubscription].freeze
-  READ_CLASSES = [TaskConnection, TaskReopening, Resolution,
-                  Review].freeze
+  MANAGE_CLASSES = [].freeze
+  READ_CLASSES = [Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
                      TaskClosure, TaskReopening].freeze
 
@@ -60,6 +59,8 @@ class Ability
       can :read, IssueReopening, issue: EXTERNAL_OPTIONS
       can :read, Task, project: EXTERNAL_PROJECT_OPTIONS
       can :read, TaskComment, task: { project: EXTERNAL_PROJECT_OPTIONS }
+      can :read, TaskConnection, source: EXTERNAL_OPTIONS
+      can :read, TaskReopening, task: EXTERNAL_OPTIONS
       READ_CLASSES.each do |class_name|
         can :read, class_name
       end
@@ -70,9 +71,13 @@ class Ability
                                     project: EXTERNAL_PROJECT_OPTIONS
       can %i[create update], IssueComment,
           user_id: user.id, issue: { project: EXTERNAL_PROJECT_OPTIONS }
+      can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
+
       can %i[create update], TaskComment,
           user_id: user.id, task: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :create, Resolution, user_id: user.id, issue: { user_id: user.id }
+      can :create, Resolution,
+          user_id: user.id, issue: { user_id: user.id }.merge(EXTERNAL_OPTIONS)
+      can :read, Resolution, issue: EXTERNAL_OPTIONS
       MANAGE_CLASSES.each do |class_name|
         can :manage, class_name, user_id: user.id
       end
@@ -85,7 +90,7 @@ class Ability
       [ProjectTasksSubscription, ProjectIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, project: EXTERNAL_PROJECT_OPTIONS
       end
-      can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
+      can :manage, TaskSubscription, user_id: user.id, task: EXTERNAL_OPTIONS
     end
 
     def basic_assigned_task_abilities(user)
@@ -118,6 +123,10 @@ class Ability
       can :create, Progression, user_id: user.id, task: task_params
       can :read, Progression, task: VISIBLE_OPTIONS
       can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
+
+      can :create, Resolution,
+          user_id: user.id, issue: { user_id: user.id }.merge(VISIBLE_OPTIONS)
+      can :read, Resolution, issue: VISIBLE_OPTIONS
     end
 
     def worker_issue_abilities(user)
@@ -131,6 +140,7 @@ class Ability
       can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueConnection, source: VISIBLE_OPTIONS
       can :read, IssueReopening, issue: VISIBLE_OPTIONS
+      can :manage, IssueSubscription, user_id: user.id, issue: VISIBLE_OPTIONS
     end
 
     def worker_task_abilities(user)
@@ -138,7 +148,9 @@ class Ability
       can %i[create update], TaskComment,
           user_id: user.id, task: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, TaskComment, task: { project: VISIBLE_PROJECT_OPTIONS }
-      can :manage, IssueSubscription, user_id: user.id, issue: VISIBLE_OPTIONS
+      can :read, TaskConnection, source: VISIBLE_OPTIONS
+      can :read, TaskReopening, task: VISIBLE_OPTIONS
+      can :manage, TaskSubscription, user_id: user.id, task: VISIBLE_OPTIONS
     end
 
     def reviewer_abilities(user)
@@ -157,11 +169,12 @@ class Ability
       can :read, IssueClosure
       can :read, IssueComment
       can :read, IssueConnection
+      can :manage, IssueConnection, user_id: user.id, source: VISIBLE_OPTIONS
+      can :destroy, IssueConnection, source: VISIBLE_OPTIONS
       can :read, IssueReopening
       can :create, IssueReopening, user_id: user.id,
                                    issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :manage, IssueConnection, user_id: user.id, source: VISIBLE_OPTIONS
-      can :destroy, IssueConnection, source: VISIBLE_OPTIONS
+      can :read, Resolution
     end
 
     def reviewer_task_abilities(user)
@@ -170,12 +183,15 @@ class Ability
       can :update, Task, user_id: user.id
       can :read, TaskComment
       # TODO: if task visible (but allow admin)
-      can :manage, TaskConnection, user_id: user.id
-      can :destroy, TaskConnection
-      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id },
-                                task: { project: VISIBLE_PROJECT_OPTIONS }
+      can :read, TaskConnection
+      can :manage, TaskConnection, user_id: user.id, source: VISIBLE_OPTIONS
+      can :destroy, TaskConnection, source: VISIBLE_OPTIONS
+      can :create, TaskClosure, user_id: user.id,
+                                task: VISIBLE_OPTIONS.merge(user_id: user.id)
       can :read, TaskClosure
-      can :create, TaskReopening, user_id: user.id
+      can :read, TaskReopening
+      can :create, TaskReopening, user_id: user.id,
+                                  task: { project: VISIBLE_PROJECT_OPTIONS }
       can %i[approve disapprove], Review, approved: nil
 
       task_params =
@@ -210,6 +226,7 @@ class Ability
       can :create, IssueClosure, user_id: user.id
       can %i[update destroy], IssueComment
       can :manage, IssueConnection, user_id: user.id
+      can :manage, TaskConnection, user_id: user.id
       can :destroy, IssueConnection
       can :create, IssueReopening, user_id: user.id
       can %i[update destroy], Resolution
@@ -219,6 +236,8 @@ class Ability
       can %i[update destroy open close], Task
       can :create, TaskClosure, user_id: user.id
       can %i[update destroy], TaskComment
+      can :destroy, TaskConnection
+      can :create, TaskReopening, user_id: user.id
       can %i[update destroy], Progression
       can %i[update], Review
 
