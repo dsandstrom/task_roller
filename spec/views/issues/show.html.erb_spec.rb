@@ -324,7 +324,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when resolved issue" do
+    context "when issue is resolved" do
       let(:issue) { Fabricate(:closed_issue, project: @project) }
 
       before do
@@ -357,6 +357,50 @@ RSpec.describe "issues/show", type: :view do
 
         url = issue_resolution_path(@issue, @resolution)
         assert_select "a[data-method='delete'][href='#{url}']"
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = issue_closures_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue is addressed" do
+      let(:issue) { Fabricate(:closed_issue, project: @project) }
+
+      before do
+        @issue = assign(:issue, issue)
+        Fabricate(:approved_task, issue: issue)
+      end
+
+      it "doesn't render disapprove resolution link" do
+        render
+
+        url = disapprove_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render approve resolution link" do
+        render
+
+        url = approve_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders reopen issue link" do
+        render
+
+        url = issue_reopenings_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = issue_closures_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
       end
     end
 
@@ -718,6 +762,43 @@ RSpec.describe "issues/show", type: :view do
         render
 
         url = issue_resolution_path(@issue, @resolution)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue is addressed" do
+      let(:issue) { Fabricate(:closed_issue, project: @project) }
+
+      before do
+        @issue = assign(:issue, issue)
+        Fabricate(:approved_task, issue: issue)
+      end
+
+      it "doesn't render disapprove resolution link" do
+        render
+
+        url = disapprove_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render approve resolution link" do
+        render
+
+        url = approve_issue_resolutions_path(@issue)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders reopen issue link" do
+        render
+
+        url = issue_reopenings_path(@issue)
+        assert_select "a[href='#{url}'][data-method='post']"
+      end
+
+      it "doesn't render close issue link" do
+        render
+
+        url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
     end
