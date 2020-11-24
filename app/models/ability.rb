@@ -19,7 +19,7 @@ class Ability
   EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
   MANAGE_CLASSES = [TaskSubscription].freeze
-  READ_CLASSES = [TaskClosure, TaskConnection, TaskReopening, Resolution,
+  READ_CLASSES = [TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
                      TaskClosure, TaskReopening].freeze
@@ -78,6 +78,7 @@ class Ability
       end
 
       can :read, IssueClosure, issue: { project: EXTERNAL_PROJECT_OPTIONS }
+      can :read, TaskClosure, task: { project: EXTERNAL_PROJECT_OPTIONS }
       [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, category: EXTERNAL_CATEGORY_OPTIONS
       end
@@ -124,6 +125,7 @@ class Ability
       can %i[create update], Issue, user_id: user.id,
                                     project: VISIBLE_PROJECT_OPTIONS
       can :read, IssueClosure, issue: { project: VISIBLE_PROJECT_OPTIONS }
+      can :read, TaskClosure, task: { project: VISIBLE_PROJECT_OPTIONS }
       can %i[create update], IssueComment,
           user_id: user.id, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
@@ -170,7 +172,9 @@ class Ability
       # TODO: if task visible (but allow admin)
       can :manage, TaskConnection, user_id: user.id
       can :destroy, TaskConnection
-      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
+      can :create, TaskClosure, user_id: user.id, task: { user_id: user.id },
+                                task: { project: VISIBLE_PROJECT_OPTIONS }
+      can :read, TaskClosure
       can :create, TaskReopening, user_id: user.id
       can %i[approve disapprove], Review, approved: nil
 

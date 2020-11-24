@@ -3615,22 +3615,64 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their closure" do
-          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+        context "for a totally visible task" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
 
-          it { is_expected.to be_able_to(:create, task_closure) }
-          it { is_expected.to be_able_to(:read, task_closure) }
-          it { is_expected.not_to be_able_to(:update, task_closure) }
-          it { is_expected.to be_able_to(:destroy, task_closure) }
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.to be_able_to(:destroy, task_closure) }
+          end
+
+          context "when someone else's closure" do
+            let(:task_closure) { Fabricate(:task_closure, task: task) }
+
+            it { is_expected.not_to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.to be_able_to(:destroy, task_closure) }
+          end
         end
 
-        context "when someone else's closure" do
-          let(:task_closure) { Fabricate(:task_closure) }
+        context "for an task from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
 
-          it { is_expected.not_to be_able_to(:create, task_closure) }
-          it { is_expected.to be_able_to(:read, task_closure) }
-          it { is_expected.not_to be_able_to(:update, task_closure) }
-          it { is_expected.to be_able_to(:destroy, task_closure) }
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.to be_able_to(:destroy, task_closure) }
+          end
+        end
+
+        context "for an task from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.to be_able_to(:destroy, task_closure) }
+          end
         end
       end
     end
@@ -3641,20 +3683,93 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their task and closure" do
-          let(:task) { Fabricate(:task, user: current_user) }
+        context "for a totally visible task" do
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.not_to be_able_to(:destroy, task_closure) }
+          end
+
+          context "when someone else's closure" do
+            let(:task_closure) { Fabricate(:task_closure) }
+
+            it { is_expected.not_to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.not_to be_able_to(:destroy, task_closure) }
+          end
+        end
+
+        context "for an task from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.not_to be_able_to(:destroy, task_closure) }
+          end
+        end
+
+        context "for an task from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.not_to be_able_to(:destroy, task_closure) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
           let(:task_closure) do
             Fabricate(:task_closure, task: task, user: current_user)
           end
 
-          it { is_expected.to be_able_to(:create, task_closure) }
+          it { is_expected.not_to be_able_to(:create, task_closure) }
           it { is_expected.to be_able_to(:read, task_closure) }
           it { is_expected.not_to be_able_to(:update, task_closure) }
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end
 
-        context "when their closure, someone else's task" do
-          let(:task_closure) { Fabricate(:task_closure, user: current_user) }
+        context "for an task from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
 
           it { is_expected.not_to be_able_to(:create, task_closure) }
           it { is_expected.to be_able_to(:read, task_closure) }
@@ -3662,41 +3777,73 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end
 
-        context "when their task, someone else's closure" do
-          let(:task) { Fabricate(:task, user: current_user) }
-          let(:task_closure) { Fabricate(:task_closure, task: task) }
+        context "for an task from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
 
           it { is_expected.not_to be_able_to(:create, task_closure) }
-          it { is_expected.to be_able_to(:read, task_closure) }
-          it { is_expected.not_to be_able_to(:update, task_closure) }
-          it { is_expected.not_to be_able_to(:destroy, task_closure) }
-        end
-
-        context "when someone else's task and closure" do
-          let(:task_closure) { Fabricate(:task_closure) }
-
-          it { is_expected.not_to be_able_to(:create, task_closure) }
-          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:read, task_closure) }
           it { is_expected.not_to be_able_to(:update, task_closure) }
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        let(:task) { Fabricate(:task, user: current_user) }
-        let(:task_closure) do
-          Fabricate(:task_closure, task: task, user: current_user)
-        end
 
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.not_to be_able_to(:create, task_closure) }
-        it { is_expected.to be_able_to(:read, task_closure) }
-        it { is_expected.not_to be_able_to(:update, task_closure) }
-        it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        context "for a totally visible task" do
+          let(:category) { Fabricate(:category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "for an task from an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.not_to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "for an task from an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+          let(:project) { Fabricate(:project, category: category) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.not_to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
       end
     end
   end
