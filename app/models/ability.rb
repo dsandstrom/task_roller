@@ -20,8 +20,7 @@ class Ability
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
   MANAGE_CLASSES = [ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
-  READ_CLASSES = [Progression,
-                  TaskClosure, TaskConnection, TaskReopening, Resolution,
+  READ_CLASSES = [TaskClosure, TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
                      TaskClosure, TaskReopening].freeze
@@ -87,10 +86,12 @@ class Ability
     end
 
     def basic_assigned_task_abilities(user)
-      task_params = { task_assignees: { assignee_id: user.id } }
+      task_params =
+        { task_assignees: { assignee_id: user.id } }.merge(EXTERNAL_OPTIONS)
 
       can :create, Progression, user_id: user.id, task: task_params
-      can :finish, Progression, user_id: user.id
+      can :read, Progression, task: EXTERNAL_OPTIONS
+      can :finish, Progression, user_id: user.id, task: EXTERNAL_OPTIONS
       can :create, Review, user_id: user.id, task: task_params
       can :destroy, Review, user_id: user.id, approved: nil,
                             task: { closed: false }
@@ -105,6 +106,12 @@ class Ability
       [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, category: VISIBLE_CATEGORY_OPTIONS
       end
+
+      task_params =
+        { task_assignees: { assignee_id: user.id } }.merge(VISIBLE_OPTIONS)
+      can :create, Progression, user_id: user.id, task: task_params
+      can :read, Progression, task: VISIBLE_OPTIONS
+      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
     end
 
     def worker_issue_abilities(user)
@@ -161,6 +168,12 @@ class Ability
       can :create, TaskClosure, user_id: user.id, task: { user_id: user.id }
       can :create, TaskReopening, user_id: user.id
       can %i[approve disapprove], Review, approved: nil
+
+      task_params =
+        { task_assignees: { assignee_id: user.id } }.merge(VISIBLE_OPTIONS)
+      can :create, Progression, user_id: user.id, task: task_params
+      can :read, Progression
+      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
     end
 
     def admin_abilities(user)
@@ -199,6 +212,10 @@ class Ability
       can %i[update destroy], TaskComment
       can %i[update destroy], Progression
       can %i[update], Review
+
+      task_params = { task_assignees: { assignee_id: user.id } }
+      can :create, Progression, user_id: user.id, task: task_params
+      can :finish, Progression, user_id: user.id
     end
 
     def admin_user_abilities(user)

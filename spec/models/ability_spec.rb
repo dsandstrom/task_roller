@@ -4239,36 +4239,115 @@ RSpec.describe Ability do
       let(:admin) { Fabricate(:user_admin) }
       subject(:ability) { Ability.new(admin) }
 
-      context "when assigned to the task" do
-        let(:progression) { Fabricate(:progression, task: task, user: admin) }
+      context "for a totally visible task" do
+        let(:project) { Fabricate(:project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        before { task.assignees << admin }
+        context "when assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
 
-        it { is_expected.to be_able_to(:create, progression) }
+          before { task.assignees << admin }
+
+          it { is_expected.to be_able_to(:create, progression) }
+        end
+
+        context "when not assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, progression) }
+        end
+
+        context "when belongs to them" do
+          let(:progression) { Fabricate(:progression, user: admin) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.to be_able_to(:finish, progression) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:progression) { Fabricate(:progression, task: task) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.not_to be_able_to(:finish, progression) }
+        end
       end
 
-      context "when not assigned to the task" do
-        let(:progression) { Fabricate(:progression, task: task, user: admin) }
+      context "for a task from an internal project" do
+        let(:project) { Fabricate(:internal_project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        it { is_expected.not_to be_able_to(:create, progression) }
+        context "when assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          before { task.assignees << admin }
+
+          it { is_expected.to be_able_to(:create, progression) }
+        end
+
+        context "when not assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, progression) }
+        end
+
+        context "when belongs to them" do
+          let(:progression) { Fabricate(:progression, user: admin) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.to be_able_to(:finish, progression) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:progression) { Fabricate(:progression, task: task) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.not_to be_able_to(:finish, progression) }
+        end
       end
 
-      context "when belongs to them" do
-        let(:progression) { Fabricate(:progression, user: admin) }
+      context "for a task from an invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        it { is_expected.to be_able_to(:read, progression) }
-        it { is_expected.to be_able_to(:update, progression) }
-        it { is_expected.to be_able_to(:destroy, progression) }
-        it { is_expected.to be_able_to(:finish, progression) }
-      end
+        context "when assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
 
-      context "when doesn't belong to them" do
-        let(:progression) { Fabricate(:progression, task: task) }
+          before { task.assignees << admin }
 
-        it { is_expected.to be_able_to(:read, progression) }
-        it { is_expected.to be_able_to(:update, progression) }
-        it { is_expected.to be_able_to(:destroy, progression) }
-        it { is_expected.not_to be_able_to(:finish, progression) }
+          it { is_expected.to be_able_to(:create, progression) }
+        end
+
+        context "when not assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, progression) }
+        end
+
+        context "when belongs to them" do
+          let(:progression) { Fabricate(:progression, user: admin) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.to be_able_to(:finish, progression) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:progression) { Fabricate(:progression, task: task) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.not_to be_able_to(:finish, progression) }
+        end
       end
 
       context "when no task" do
@@ -4283,58 +4362,499 @@ RSpec.describe Ability do
       end
     end
 
-    %i[reviewer worker reporter].each do |employee_type|
+    %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when assigned to the task" do
-          let(:progression) do
-            Fabricate(:progression, task: task, user: current_user)
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, progression) }
           end
 
-          before { task.assignees << current_user }
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
 
-          it { is_expected.to be_able_to(:create, progression) }
-        end
-
-        context "when not assigned to the task" do
-          let(:progression) do
-            Fabricate(:progression, task: task, user: current_user)
+            it { is_expected.not_to be_able_to(:create, progression) }
           end
 
-          it { is_expected.not_to be_able_to(:create, progression) }
-        end
+          context "when belongs to them" do
+            let(:progression) { Fabricate(:progression, user: current_user) }
 
-        context "when belongs to them" do
-          let(:progression) { Fabricate(:progression, user: current_user) }
-
-          it { is_expected.to be_able_to(:read, progression) }
-          it { is_expected.not_to be_able_to(:update, progression) }
-          it { is_expected.to be_able_to(:finish, progression) }
-          it { is_expected.not_to be_able_to(:destroy, progression) }
-        end
-
-        context "when doesn't belong to them" do
-          let(:progression) { Fabricate(:progression, task: task) }
-
-          it { is_expected.to be_able_to(:read, progression) }
-          it { is_expected.not_to be_able_to(:update, progression) }
-          it { is_expected.not_to be_able_to(:finish, progression) }
-          it { is_expected.not_to be_able_to(:destroy, progression) }
-        end
-
-        context "when no task" do
-          let(:progression) do
-            Fabricate(:progression, task: task, user: current_user)
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
           end
 
-          before do
-            task.assignees << current_user
-            progression.update_attribute :task_id, 0
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
           end
 
-          it { is_expected.not_to be_able_to(:create, progression) }
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, progression) }
+          end
+
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, progression) }
+          end
+
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, progression) }
+          end
+
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) { Fabricate(:progression, task: task, user: current_user) }
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, progression) }
+          end
+
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when not assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:progression) { Fabricate(:progression, task: task) }
+
+            it { is_expected.not_to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
+          end
+
+          context "when no task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before do
+              task.assignees << current_user
+              progression.update_attribute :task_id, 0
+            end
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
         end
       end
     end
