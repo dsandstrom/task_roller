@@ -12,10 +12,9 @@ module ProjectsHelper
     category = project.category
     return unless category
 
-    pages = [['Categories', categories_path]]
-    pages << ['Archived', archived_categories_path] unless category.visible?
+    pages = category_breadcrumb_pages(category)
     pages << [category.name, category_projects_path(category)]
-    unless project.visible?
+    if category.visible? && !project.visible?
       pages << ['Archived Projects', archived_category_projects_path(category)]
     end
     pages

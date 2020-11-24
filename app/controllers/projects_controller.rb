@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
   load_and_authorize_resource only: %i[show edit update]
 
   def index
-    @projects = @projects.all_visible
+    @projects = @projects.all_visible if @category.visible?
     @issues = build_issues
     @tasks = build_tasks
     @issue_subscription = build_issue_subscription

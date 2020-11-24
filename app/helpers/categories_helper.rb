@@ -91,7 +91,8 @@ module CategoriesHelper
     end
 
     def archived_projects_link(category)
-      return unless can?(:read, invisible_category)
+      return unless category.visible? && can?(:read, invisible_category) &&
+                    category.projects.all_invisible.any?
 
       ['Archived Projects', archived_category_projects_path(category),
        { class: 'secondary-link' }]
@@ -111,8 +112,7 @@ module CategoriesHelper
       if category.visible?
         [['Categories', categories_path]]
       else
-        [['Categories', categories_path],
-         ['Archived', archived_categories_path]]
+        [['Archived Categories', archived_categories_path]]
       end
     end
 end
