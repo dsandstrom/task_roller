@@ -641,85 +641,266 @@ RSpec.describe Ability do
       let(:admin) { Fabricate(:user_admin) }
       subject(:ability) { Ability.new(admin) }
 
-      context "when assigned to the task" do
-        let(:review) { Fabricate.build(:review, task: task, user: admin) }
+      context "for a totally visible task" do
+        let(:project) { Fabricate(:project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        before { task.assignees << admin }
+        context "when assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
 
-        it { is_expected.to be_able_to(:create, review) }
-      end
+          before { task.assignees << admin }
 
-      context "when not assigned to the task" do
-        let(:review) { Fabricate.build(:review, task: task, user: admin) }
-
-        it { is_expected.not_to be_able_to(:create, review) }
-      end
-
-      context "when belongs to them" do
-        let(:review) { Fabricate(:review, task: task, user: admin) }
-
-        it { is_expected.to be_able_to(:read, review) }
-        it { is_expected.to be_able_to(:update, review) }
-        it { is_expected.to be_able_to(:approve, review) }
-        it { is_expected.to be_able_to(:disapprove, review) }
-      end
-
-      context "when doesn't belong to them" do
-        let(:review) { Fabricate(:review, task: task) }
-
-        it { is_expected.to be_able_to(:read, review) }
-        it { is_expected.to be_able_to(:update, review) }
-        it { is_expected.not_to be_able_to(:destroy, review) }
-        it { is_expected.to be_able_to(:approve, review) }
-        it { is_expected.to be_able_to(:disapprove, review) }
-      end
-
-      context "when their review is pending" do
-        context "and task is open" do
-          let(:review) { Fabricate(:review, task: task, user: admin) }
-
-          it { is_expected.to be_able_to(:destroy, review) }
+          it { is_expected.to be_able_to(:create, review) }
         end
 
-        context "and task is closed" do
-          let(:task) { Fabricate(:closed_task) }
+        context "when not assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, review) }
+        end
+
+        context "when belongs to them" do
           let(:review) { Fabricate(:review, task: task, user: admin) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.not_to be_able_to(:destroy, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when their review is pending" do
+          context "and task is open" do
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.to be_able_to(:destroy, review) }
+          end
+
+          context "and task is closed" do
+            let(:task) { Fabricate(:closed_task) }
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
+        end
+
+        context "when their review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task, user: admin) }
 
           it { is_expected.not_to be_able_to(:destroy, review) }
         end
+
+        context "when their review is already disapproved" do
+          let(:review) do
+            Fabricate(:disapproved_review, task: task, user: admin)
+          end
+
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+
+        context "when review is pending" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already disapproved" do
+          let(:review) { Fabricate(:disapproved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
       end
 
-      context "when their review is already approved" do
-        let(:review) { Fabricate(:approved_review, task: task, user: admin) }
+      context "for task from a internal project" do
+        let(:project) { Fabricate(:internal_project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        it { is_expected.not_to be_able_to(:destroy, review) }
+        context "when assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
+
+          before { task.assignees << admin }
+
+          it { is_expected.to be_able_to(:create, review) }
+        end
+
+        context "when not assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:create, review) }
+        end
+
+        context "when belongs to them" do
+          let(:review) { Fabricate(:review, task: task, user: admin) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.not_to be_able_to(:destroy, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when their review is pending" do
+          context "and task is open" do
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.to be_able_to(:destroy, review) }
+          end
+
+          context "and task is closed" do
+            let(:task) { Fabricate(:closed_task) }
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
+        end
+
+        context "when their review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+
+        context "when their review is already disapproved" do
+          let(:review) { Fabricate(:disapproved_review, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+
+        context "when review is pending" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already disapproved" do
+          let(:review) { Fabricate(:disapproved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
       end
 
-      context "when their review is already disapproved" do
-        let(:review) { Fabricate(:disapproved_review, task: task, user: admin) }
+      context "for task from a invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+        let(:task) { Fabricate(:task, project: project) }
 
-        it { is_expected.not_to be_able_to(:destroy, review) }
-      end
+        context "when assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
 
-      context "when review is pending" do
-        let(:review) { Fabricate(:review, task: task) }
+          before { task.assignees << admin }
 
-        it { is_expected.to be_able_to(:approve, review) }
-        it { is_expected.to be_able_to(:disapprove, review) }
-      end
+          it { is_expected.not_to be_able_to(:create, review) }
+        end
 
-      context "when review is already approved" do
-        let(:review) { Fabricate(:approved_review, task: task) }
+        context "when not assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
 
-        it { is_expected.not_to be_able_to(:approve, review) }
-        it { is_expected.not_to be_able_to(:disapprove, review) }
-      end
+          it { is_expected.not_to be_able_to(:create, review) }
+        end
 
-      context "when review is already disapproved" do
-        let(:review) { Fabricate(:disapproved_review, task: task) }
+        context "when belongs to them" do
+          let(:review) { Fabricate(:review, task: task, user: admin) }
 
-        it { is_expected.not_to be_able_to(:approve, review) }
-        it { is_expected.not_to be_able_to(:disapprove, review) }
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when doesn't belong to them" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.not_to be_able_to(:destroy, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when their review is pending" do
+          context "and task is open" do
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.to be_able_to(:destroy, review) }
+          end
+
+          context "and task is closed" do
+            let(:task) { Fabricate(:closed_task) }
+            let(:review) { Fabricate(:review, task: task, user: admin) }
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
+        end
+
+        context "when their review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task, user: admin) }
+
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+
+        context "when their review is already disapproved" do
+          let(:review) do
+            Fabricate(:disapproved_review, task: task, user: admin)
+          end
+
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+
+        context "when review is pending" do
+          let(:review) { Fabricate(:review, task: task) }
+
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already approved" do
+          let(:review) { Fabricate(:approved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
+
+        context "when review is already disapproved" do
+          let(:review) { Fabricate(:disapproved_review, task: task) }
+
+          it { is_expected.not_to be_able_to(:approve, review) }
+          it { is_expected.not_to be_able_to(:disapprove, review) }
+        end
       end
     end
 
@@ -728,117 +909,328 @@ RSpec.describe Ability do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when assigned to the task" do
-          let(:review) do
-            Fabricate.build(:review, task: task, user: current_user)
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, review) }
           end
 
-          before { task.assignees << current_user }
+          context "when not assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
 
-          it { is_expected.to be_able_to(:create, review) }
-        end
-
-        context "when not assigned to the task" do
-          let(:review) do
-            Fabricate.build(:review, task: task, user: current_user)
+            it { is_expected.not_to be_able_to(:create, review) }
           end
 
-          it { is_expected.not_to be_able_to(:create, review) }
-        end
-
-        context "when belongs to them" do
-          let(:review) { Fabricate(:review, task: task, user: current_user) }
-
-          it { is_expected.to be_able_to(:read, review) }
-          it { is_expected.not_to be_able_to(:update, review) }
-          it { is_expected.to be_able_to(:approve, review) }
-          it { is_expected.to be_able_to(:disapprove, review) }
-        end
-
-        context "when doesn't belong to them" do
-          let(:review) { Fabricate(:review, task: task) }
-
-          it { is_expected.to be_able_to(:read, review) }
-          it { is_expected.not_to be_able_to(:update, review) }
-          it { is_expected.not_to be_able_to(:destroy, review) }
-          it { is_expected.to be_able_to(:approve, review) }
-          it { is_expected.to be_able_to(:disapprove, review) }
-        end
-
-        context "when their review is pending" do
-          context "and task is open" do
+          context "when belongs to them" do
             let(:review) { Fabricate(:review, task: task, user: current_user) }
 
-            it { is_expected.to be_able_to(:destroy, review) }
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.to be_able_to(:approve, review) }
+            it { is_expected.to be_able_to(:disapprove, review) }
           end
 
-          context "and task is closed" do
-            let(:task) { Fabricate(:closed_task) }
-            let(:review) { Fabricate(:review, task: task, user: current_user) }
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.to be_able_to(:approve, review) }
+            it { is_expected.to be_able_to(:disapprove, review) }
+          end
+
+          context "when their review is pending" do
+            context "and task is open" do
+              let(:review) do
+                Fabricate(:review, task: task, user: current_user)
+              end
+
+              it { is_expected.to be_able_to(:destroy, review) }
+            end
+
+            context "and task is closed" do
+              let(:task) { Fabricate(:closed_task) }
+              let(:review) do
+                Fabricate(:review, task: task, user: current_user)
+              end
+
+              it { is_expected.not_to be_able_to(:destroy, review) }
+            end
+          end
+
+          context "when already approved" do
+            let(:review) do
+              Fabricate(:approved_review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
+
+          context "when already disapproved" do
+            let(:review) do
+              Fabricate(:disapproved_review, task: task, user: current_user)
+            end
 
             it { is_expected.not_to be_able_to(:destroy, review) }
           end
         end
 
-        context "when already approved" do
-          let(:review) do
-            Fabricate(:approved_review, task: task, user: current_user)
+        context "for a task from a internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, review) }
           end
 
-          it { is_expected.not_to be_able_to(:destroy, review) }
+          context "when not assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.to be_able_to(:approve, review) }
+            it { is_expected.to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.to be_able_to(:approve, review) }
+            it { is_expected.to be_able_to(:disapprove, review) }
+          end
+
+          context "when their review is pending" do
+            context "and task is open" do
+              let(:review) do
+                Fabricate(:review, task: task, user: current_user)
+              end
+
+              it { is_expected.to be_able_to(:destroy, review) }
+            end
+
+            context "and task is closed" do
+              let(:task) { Fabricate(:closed_task) }
+              let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+              it { is_expected.not_to be_able_to(:destroy, review) }
+            end
+          end
+
+          context "when already approved" do
+            let(:review) do
+              Fabricate(:approved_review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
+
+          context "when already disapproved" do
+            let(:review) do
+              Fabricate(:disapproved_review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:destroy, review) }
+          end
         end
 
-        context "when already disapproved" do
-          let(:review) do
-            Fabricate(:disapproved_review, task: task, user: current_user)
+        context "for a task from a invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
           end
 
-          it { is_expected.not_to be_able_to(:destroy, review) }
+          context "when not assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when their review is pending" do
+            context "and task is open" do
+              let(:review) do
+                Fabricate(:review, task: task, user: current_user)
+              end
+
+              it { is_expected.not_to be_able_to(:destroy, review) }
+            end
+          end
         end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when assigned to the task" do
-          let(:review) do
-            Fabricate.build(:review, task: task, user: current_user)
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, review) }
           end
 
-          before { task.assignees << current_user }
+          context "when not assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
 
-          it { is_expected.to be_able_to(:create, review) }
-        end
-
-        context "when not assigned to the task" do
-          let(:review) do
-            Fabricate.build(:review, task: task, user: current_user)
+            it { is_expected.not_to be_able_to(:create, review) }
           end
 
-          it { is_expected.not_to be_able_to(:create, review) }
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
         end
 
-        context "when belongs to them" do
-          let(:review) { Fabricate(:review, task: task, user: current_user) }
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
 
-          it { is_expected.to be_able_to(:read, review) }
-          it { is_expected.not_to be_able_to(:update, review) }
-          it { is_expected.to be_able_to(:destroy, review) }
-          it { is_expected.not_to be_able_to(:approve, review) }
-          it { is_expected.not_to be_able_to(:disapprove, review) }
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
         end
 
-        context "when doesn't belong to them" do
-          let(:review) { Fabricate(:review, task: task) }
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
 
-          it { is_expected.to be_able_to(:read, review) }
-          it { is_expected.not_to be_able_to(:update, review) }
-          it { is_expected.not_to be_able_to(:destroy, review) }
-          it { is_expected.not_to be_able_to(:approve, review) }
-          it { is_expected.not_to be_able_to(:disapprove, review) }
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.not_to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.not_to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
         end
       end
     end
