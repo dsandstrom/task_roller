@@ -18,8 +18,7 @@ class Ability
                                  category: VISIBLE_CATEGORY_OPTIONS } }.freeze
   EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
-  MANAGE_CLASSES = [ProjectIssuesSubscription,
-                    ProjectTasksSubscription, TaskSubscription].freeze
+  MANAGE_CLASSES = [TaskSubscription].freeze
   READ_CLASSES = [TaskClosure, TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
@@ -82,6 +81,9 @@ class Ability
       [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, category: EXTERNAL_CATEGORY_OPTIONS
       end
+      [ProjectTasksSubscription, ProjectIssuesSubscription].each do |name|
+        can :manage, name, user_id: user.id, project: EXTERNAL_PROJECT_OPTIONS
+      end
       can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
     end
 
@@ -105,6 +107,9 @@ class Ability
 
       [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
         can :manage, name, user_id: user.id, category: VISIBLE_CATEGORY_OPTIONS
+      end
+      [ProjectTasksSubscription, ProjectIssuesSubscription].each do |name|
+        can :manage, name, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
       end
 
       task_params =
