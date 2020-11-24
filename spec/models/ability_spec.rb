@@ -3701,7 +3701,57 @@ RSpec.describe Ability do
 
           context "when their closure" do
             let(:issue_reopening) do
-              Fabricate(:issue_reopening, user: current_user)
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
             end
 
             it { is_expected.to be_able_to(:create, issue_reopening) }
@@ -3728,41 +3778,162 @@ RSpec.describe Ability do
 
         subject(:ability) { Ability.new(current_user) }
 
-        context "when their reopening" do
-          let(:issue_reopening) do
-            Fabricate(:issue_reopening, user: current_user)
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their reopening" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
           end
 
-          it { is_expected.to be_able_to(:create, issue_reopening) }
-          it { is_expected.to be_able_to(:read, issue_reopening) }
-          it { is_expected.not_to be_able_to(:update, issue_reopening) }
-          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
         end
 
-        context "when someone else's reopening" do
-          let(:issue_reopening) { Fabricate(:issue_reopening) }
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        let(:issue_reopening) do
+          Fabricate(:issue_reopening, issue: issue, user: current_user)
+        end
+
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.to be_able_to(:read, issue_reopening) }
           it { is_expected.not_to be_able_to(:update, issue_reopening) }
           it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
         end
+
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.not_to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
       end
     end
 
-    %i[worker reporter].each do |employee_type|
+    %i[reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:issue_reopening) do
-          Fabricate(:issue_reopening, user: current_user)
+          Fabricate(:issue_reopening, issue: issue, user: current_user)
         end
 
         subject(:ability) { Ability.new(current_user) }
 
-        it { is_expected.not_to be_able_to(:create, issue_reopening) }
-        it { is_expected.to be_able_to(:read, issue_reopening) }
-        it { is_expected.not_to be_able_to(:update, issue_reopening) }
-        it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.not_to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.not_to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
       end
     end
   end

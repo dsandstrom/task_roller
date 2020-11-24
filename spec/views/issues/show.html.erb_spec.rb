@@ -531,6 +531,13 @@ RSpec.describe "issues/show", type: :view do
           url = issue_resolution_path(@issue, @resolution)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
+
+        it "renders reopen issue link" do
+          render
+
+          url = issue_reopenings_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
       end
     end
   end
@@ -862,6 +869,13 @@ RSpec.describe "issues/show", type: :view do
 
           assert_select "#resolution-history-#{@resolution.id}"
         end
+
+        it "renders reopen issue link" do
+          render
+
+          url = issue_reopenings_path(@issue)
+          assert_select "a[href='#{url}'][data-method='post']"
+        end
       end
     end
 
@@ -937,6 +951,13 @@ RSpec.describe "issues/show", type: :view do
           render
 
           assert_select "#resolution-history-#{@resolution.id}"
+        end
+
+        it "doesn't render reopen issue link" do
+          render
+
+          url = issue_reopenings_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
     end
@@ -1089,6 +1110,13 @@ RSpec.describe "issues/show", type: :view do
             render
 
             url = issue_resolution_path(@issue, @resolution)
+            expect(rendered).not_to have_link(nil, href: url)
+          end
+
+          it "doesn't render open issue link" do
+            render
+
+            url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
         end

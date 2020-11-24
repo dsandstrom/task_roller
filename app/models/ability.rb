@@ -20,7 +20,7 @@ class Ability
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
   MANAGE_CLASSES = [IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
-  READ_CLASSES = [IssueReopening, Progression,
+  READ_CLASSES = [Progression,
                   TaskClosure, TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
@@ -59,6 +59,7 @@ class Ability
       can :read, Issue, project: EXTERNAL_PROJECT_OPTIONS
       can :read, IssueComment, issue: { project: EXTERNAL_PROJECT_OPTIONS }
       can :read, IssueConnection, source: EXTERNAL_OPTIONS
+      can :read, IssueReopening, issue: EXTERNAL_OPTIONS
       can :read, Task, project: EXTERNAL_PROJECT_OPTIONS
       can :read, TaskComment, task: { project: EXTERNAL_PROJECT_OPTIONS }
       READ_CLASSES.each do |class_name|
@@ -114,6 +115,7 @@ class Ability
           user_id: user.id, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueConnection, source: VISIBLE_OPTIONS
+      can :read, IssueReopening, issue: VISIBLE_OPTIONS
     end
 
     def worker_task_abilities(user)
@@ -139,9 +141,11 @@ class Ability
       can :read, IssueClosure
       can :read, IssueComment
       can :read, IssueConnection
+      can :read, IssueReopening
+      can :create, IssueReopening, user_id: user.id,
+                                   issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :manage, IssueConnection, user_id: user.id, source: VISIBLE_OPTIONS
       can :destroy, IssueConnection, source: VISIBLE_OPTIONS
-      can :create, IssueReopening, user_id: user.id
     end
 
     def reviewer_task_abilities(user)
@@ -183,6 +187,7 @@ class Ability
       can %i[update destroy], IssueComment
       can :manage, IssueConnection, user_id: user.id
       can :destroy, IssueConnection
+      can :create, IssueReopening, user_id: user.id
       can %i[update destroy], Resolution
     end
 
