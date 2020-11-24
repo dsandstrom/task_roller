@@ -51,6 +51,10 @@ module IssuesHelper
     IssueComment.new(issue_id: issue.id, user_id: current_user.id)
   end
 
+  def new_issue_connection(issue)
+    IssueConnection.new(source_id: issue.id, user_id: current_user.id)
+  end
+
   private
 
     def issue_title_heading(issue)

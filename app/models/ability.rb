@@ -14,9 +14,13 @@ class Ability
   VISIBLE_CATEGORY_OPTIONS = { visible: true }.freeze
   VISIBLE_PROJECT_OPTIONS = { visible: true,
                               category: VISIBLE_CATEGORY_OPTIONS }.freeze
+  VISIBLE_OPTIONS = { project: { visible: true,
+                                 category: VISIBLE_CATEGORY_OPTIONS } }.freeze
+  EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
+                                  category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
   MANAGE_CLASSES = [IssueSubscription, ProjectIssuesSubscription,
                     ProjectTasksSubscription, TaskSubscription].freeze
-  READ_CLASSES = [IssueConnection, IssueReopening, Progression,
+  READ_CLASSES = [IssueReopening, Progression,
                   TaskClosure, TaskConnection, TaskReopening, Resolution,
                   Review].freeze
   DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
@@ -54,6 +58,7 @@ class Ability
       can :read, Project, EXTERNAL_PROJECT_OPTIONS
       can :read, Issue, project: EXTERNAL_PROJECT_OPTIONS
       can :read, IssueComment, issue: { project: EXTERNAL_PROJECT_OPTIONS }
+      can :read, IssueConnection, source: EXTERNAL_OPTIONS
       can :read, Task, project: EXTERNAL_PROJECT_OPTIONS
       can :read, TaskComment, task: { project: EXTERNAL_PROJECT_OPTIONS }
       READ_CLASSES.each do |class_name|
@@ -108,6 +113,7 @@ class Ability
       can %i[create update], IssueComment,
           user_id: user.id, issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
+      can :read, IssueConnection, source: VISIBLE_OPTIONS
     end
 
     def worker_task_abilities(user)
@@ -132,8 +138,9 @@ class Ability
                                  issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueClosure
       can :read, IssueComment
-      can :manage, IssueConnection, user_id: user.id
-      can :destroy, IssueConnection
+      can :read, IssueConnection
+      can :manage, IssueConnection, user_id: user.id, source: VISIBLE_OPTIONS
+      can :destroy, IssueConnection, source: VISIBLE_OPTIONS
       can :create, IssueReopening, user_id: user.id
     end
 
@@ -174,6 +181,8 @@ class Ability
       can %i[update destroy open close], Issue
       can :create, IssueClosure, user_id: user.id
       can %i[update destroy], IssueComment
+      can :manage, IssueConnection, user_id: user.id
+      can :destroy, IssueConnection
       can %i[update destroy], Resolution
     end
 

@@ -64,11 +64,16 @@
           <%= render @source_connection %>
         </section>
       <% elsif @issue.open? %>
-        <% if can?(:create, IssueConnection) || can?(:close, @issue) %>
+        <%
+          issue_connection = new_issue_connection(@issue)
+          issue_closure = new_issue_closure(@issue)
+        %>
+
+        <% if can?(:create, issue_connection) || can?(:create, issue_closure) %>
           <section class="issue-connections">
             <h4 class="issue-column-title">Actions</h4>
 
-            <% if can?(:create, IssueConnection) %>
+            <% if can?(:create, issue_connection) %>
               <p>
                 <%= link_to 'mark as duplicate and close',
                             new_issue_connection_path(@issue),
@@ -76,7 +81,7 @@
               </p>
             <% end %>
 
-            <% if can?(:create, new_issue_closure(@issue)) %>
+            <% if can?(:create, issue_closure) %>
               <p>
                 <%= link_to 'mark invalid and close',
                             issue_closures_path(@issue), method: :post,

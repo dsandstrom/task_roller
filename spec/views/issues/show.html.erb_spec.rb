@@ -880,11 +880,11 @@ RSpec.describe "issues/show", type: :view do
           assert_select "form[action=?]", url, count: 0
         end
 
-        it "renders new connection link" do
+        it "doesn't render new connection link" do
           render
 
           url = new_issue_connection_path(@issue)
-          expect(rendered).to have_link(nil, href: url)
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render new task link" do
@@ -919,11 +919,11 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).to have_link(nil, href: url)
         end
 
-        it "renders destroy connection link" do
+        it "doesn't render destroy connection link" do
           render
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+          expect(rendered).not_to have_link(nil, href: url)
         end
       end
 
