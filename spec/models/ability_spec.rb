@@ -3939,52 +3939,266 @@ RSpec.describe Ability do
   end
 
   describe "IssueSubscription model" do
-    describe "for an admin" do
-      let(:admin) { Fabricate(:user_admin) }
-      subject(:ability) { Ability.new(admin) }
-
-      context "when belongs to them" do
-        let(:issue_subscription) { Fabricate(:issue_subscription, user: admin) }
-
-        it { is_expected.to be_able_to(:create, issue_subscription) }
-        it { is_expected.to be_able_to(:read, issue_subscription) }
-        it { is_expected.to be_able_to(:update, issue_subscription) }
-        it { is_expected.to be_able_to(:destroy, issue_subscription) }
-      end
-
-      context "when doesn't belong to them" do
-        let(:issue_subscription) { Fabricate(:issue_subscription) }
-
-        it { is_expected.not_to be_able_to(:create, issue_subscription) }
-        it { is_expected.not_to be_able_to(:read, issue_subscription) }
-        it { is_expected.not_to be_able_to(:update, issue_subscription) }
-        it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
-      end
-    end
-
-    %i[reviewer worker reporter].each do |employee_type|
+    %i[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
 
-        context "when belongs to them" do
-          let(:issue_subscription) do
-            Fabricate(:issue_subscription, user: current_user)
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
           end
 
-          it { is_expected.to be_able_to(:create, issue_subscription) }
-          it { is_expected.to be_able_to(:read, issue_subscription) }
-          it { is_expected.to be_able_to(:update, issue_subscription) }
-          it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
         end
 
-        context "when doesn't belong to them" do
-          let(:issue_subscription) { Fabricate(:issue_subscription) }
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
 
-          it { is_expected.not_to be_able_to(:create, issue_subscription) }
-          it { is_expected.not_to be_able_to(:read, issue_subscription) }
-          it { is_expected.not_to be_able_to(:update, issue_subscription) }
-          it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible issue" do
+          let(:project) { Fabricate(:project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for an issue from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for an issue from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_subscription) }
+            it { is_expected.not_to be_able_to(:read, issue_subscription) }
+            it { is_expected.not_to be_able_to(:update, issue_subscription) }
+            it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
         end
       end
     end

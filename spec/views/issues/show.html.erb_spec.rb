@@ -409,6 +409,41 @@ RSpec.describe "issues/show", type: :view do
       let(:issue) { Fabricate(:issue, project: project) }
       let(:closed_issue) { Fabricate(:closed_issue, project: project) }
 
+      context "when not subscribed to the issue" do
+        before do
+          @issue = assign(:issue, issue)
+          subscription =
+            Fabricate.build(:issue_subscription, issue: @issue,
+                                                 user: current_user)
+          assign(:subscription, subscription)
+        end
+
+        it "renders new issue_subscription link" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+        end
+      end
+
+      context "when subscribed to the issue" do
+        before do
+          @issue = assign(:issue, issue)
+          @subscription = assign(:subscription, issue_subscription)
+        end
+
+        it "doesn't render new issue_subscription link" do
+          render
+          url = issue_issue_subscriptions_path(@issue)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders destroy issue_subscription link" do
+          render
+          url = issue_issue_subscription_path(@issue, @subscription)
+          assert_select "a[data-method='delete'][href='#{url}']"
+        end
+      end
+
       context "and open" do
         before { @issue = assign(:issue, issue) }
 
@@ -485,6 +520,35 @@ RSpec.describe "issues/show", type: :view do
       let(:project) { Fabricate(:invisible_project, category: category) }
       let(:issue) { Fabricate(:issue, project: project) }
       let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+
+      context "and not subscribed to the issue" do
+        before do
+          @issue = assign(:issue, issue)
+          subscription =
+            Fabricate.build(:issue_subscription, issue: @issue,
+                                                 user: current_user)
+          assign(:subscription, subscription)
+        end
+
+        it "doesn't render new issue_subscription link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+        end
+      end
+
+      context "and subscribed to the issue" do
+        before do
+          @issue = assign(:issue, issue)
+          @subscription = assign(:subscription, issue_subscription)
+        end
+
+        it "doesn't render destroy issue_subscription link" do
+          render
+          url = issue_issue_subscription_path(@issue, @subscription)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+      end
 
       context "and open" do
         before { @issue = assign(:issue, issue) }
