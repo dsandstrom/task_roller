@@ -61,17 +61,17 @@ module ProjectsHelper
        new_project_task_link(project), edit_project_link(project)].compact
     end
 
-    def new_project_issue_link(project, options = {})
+    def new_project_issue_link(project)
       return unless can?(:create, new_issue(project))
 
       ['Report Issue', new_project_issue_path(project),
-       { class: options[:class] }]
+       { class: 'create-link' }]
     end
 
-    def new_project_task_link(project, options = {})
+    def new_project_task_link(project)
       return unless can?(:create, new_task(project))
 
-      ['Plan Task', new_project_task_path(project), { class: options[:class] }]
+      ['Plan Task', new_project_task_path(project), { class: 'create-link' }]
     end
 
     def edit_project_link(project)
