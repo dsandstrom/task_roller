@@ -788,7 +788,9 @@ RSpec.describe Ability do
         end
 
         context "when their review is already disapproved" do
-          let(:review) { Fabricate(:disapproved_review, task: task, user: admin) }
+          let(:review) do
+            Fabricate(:disapproved_review, task: task, user: admin)
+          end
 
           it { is_expected.not_to be_able_to(:destroy, review) }
         end
@@ -1038,7 +1040,9 @@ RSpec.describe Ability do
 
             context "and task is closed" do
               let(:task) { Fabricate(:closed_task) }
-              let(:review) { Fabricate(:review, task: task, user: current_user) }
+              let(:review) do
+                Fabricate(:review, task: task, user: current_user)
+              end
 
               it { is_expected.not_to be_able_to(:destroy, review) }
             end
