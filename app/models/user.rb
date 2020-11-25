@@ -94,6 +94,19 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     'removed'
   end
 
+  # users from progressions that aren't current assignees
+  def self.assigned_to(task)
+    query = 'task_assignees.task_id = :id OR progressions.task_id = :id'
+    order = 'progressions.created_at asc, task_assignees.created_at asc'
+
+    assigned = eager_load(:progressions, :task_assignees)
+               .where(query, id: task.id)
+    if task.open? && task.assignee_ids.any?
+      assigned = assigned.where('users.id NOT IN (?)', task.assignee_ids)
+    end
+    assigned.order(order)
+  end
+
   # INSTANCE
 
   def admin?

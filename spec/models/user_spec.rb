@@ -234,6 +234,190 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".assigned_to" do
+    context "for an open task" do
+      let(:task) { Fabricate(:open_task) }
+
+      context "and no assignees and progressions" do
+        it "returns none" do
+          expect(User.assigned_to(task)).to eq([])
+        end
+      end
+
+      context "and an assignee" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { Fabricate(:task_assignee, task: task, assignee: user) }
+
+        it "returns none" do
+          expect(User.assigned_to(task)).to eq([])
+        end
+      end
+
+      context "and a progression" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { Fabricate(:progression, task: task, user: user) }
+
+        it "returns progression users" do
+          expect(User.assigned_to(task)).to eq([user])
+        end
+      end
+
+      context "and a progression user is also an assignee" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:progression, task: task, user: user)
+        end
+
+        it "returns none" do
+          expect(User.assigned_to(task)).to eq([])
+        end
+      end
+
+      context "and two progressions" do
+        context "for the same user" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            Fabricate(:finished_progression, task: task, user: user)
+            Fabricate(:progression, task: task, user: user)
+          end
+
+          it "returns user once" do
+            expect(User.assigned_to(task)).to eq([user])
+          end
+        end
+
+        context "for the different users" do
+          let(:first_user) { Fabricate(:user_worker) }
+          let(:second_user) { Fabricate(:user_worker) }
+
+          before do
+            Fabricate(:finished_progression, task: task, user: second_user)
+
+            Timecop.freeze(1.day.ago) do
+              Fabricate(:finished_progression, task: task, user: first_user)
+            end
+          end
+
+          it "orders by created_at" do
+            expect(User.assigned_to(task)).to eq([first_user, second_user])
+          end
+        end
+      end
+    end
+
+    context "for an closed task" do
+      let(:task) { Fabricate(:closed_task) }
+
+      context "and no assignees and progressions" do
+        it "returns none" do
+          expect(User.assigned_to(task)).to eq([])
+        end
+      end
+
+      context "and an assignee" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { Fabricate(:task_assignee, task: task, assignee: user) }
+
+        it "returns assignee" do
+          expect(User.assigned_to(task)).to eq([user])
+        end
+      end
+
+      context "and a progression" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before { Fabricate(:progression, task: task, user: user) }
+
+        it "returns progression users" do
+          expect(User.assigned_to(task)).to eq([user])
+        end
+      end
+
+      context "and a progression user is also an assignee" do
+        let(:user) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          Fabricate(:progression, task: task, user: user)
+        end
+
+        it "returns user" do
+          expect(User.assigned_to(task)).to eq([user])
+        end
+      end
+
+      context "and a progression user and a different assignee" do
+        let(:user) { Fabricate(:user_worker) }
+        let(:assignee) { Fabricate(:user_worker) }
+
+        before do
+          task.assignees << user
+          task.assignees << assignee
+          Fabricate(:progression, task: task, user: user)
+        end
+
+        it "returns both" do
+          expect(User.assigned_to(task)).to contain_exactly(user, assignee)
+        end
+      end
+
+      context "and two progressions" do
+        context "for the same user" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            Fabricate(:finished_progression, task: task, user: user)
+            Fabricate(:progression, task: task, user: user)
+          end
+
+          it "returns user once" do
+            expect(User.assigned_to(task)).to eq([user])
+          end
+        end
+
+        context "for the different users" do
+          let(:first_user) { Fabricate(:user_worker) }
+          let(:second_user) { Fabricate(:user_worker) }
+
+          before do
+            Fabricate(:finished_progression, task: task, user: second_user)
+
+            Timecop.freeze(1.day.ago) do
+              Fabricate(:finished_progression, task: task, user: first_user)
+            end
+          end
+
+          it "orders by created_at" do
+            expect(User.assigned_to(task)).to eq([first_user, second_user])
+          end
+        end
+      end
+
+      context "and two assignees" do
+        let(:first_user) { Fabricate(:user_worker) }
+        let(:second_user) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:task_assignee, task: task, assignee: second_user)
+
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_assignee, task: task, assignee: first_user)
+          end
+        end
+
+        it "orders by created_at" do
+          expect(User.assigned_to(task)).to eq([first_user, second_user])
+        end
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#admin?" do

@@ -197,7 +197,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # users from progressions that aren't current assignees
   def assigned
-    @assigned ||= build_assigned
+    @assigned ||= User.assigned_to(self)
   end
 
   def user_form_options
@@ -339,14 +339,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   private
-
-    def build_assigned
-      users = User.includes(:progressions).where('progressions.task_id = ?', id)
-      if open? && assignee_ids.any?
-        users = users.where('users.id NOT IN (?)', assignee_ids)
-      end
-      users.order('progressions.created_at desc')
-    end
 
     def open_status
       if in_review?

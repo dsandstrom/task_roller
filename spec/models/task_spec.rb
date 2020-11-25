@@ -25,6 +25,9 @@ RSpec.describe Task, type: :model do
   it { is_expected.to respond_to(:opened_at) }
   it { is_expected.to respond_to(:category) }
 
+  # User.assigned_to
+  it { is_expected.to respond_to(:assigned) }
+
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_presence_of(:summary) }
@@ -1184,90 +1187,6 @@ RSpec.describe Task, type: :model do
 
       it "returns nil" do
         expect(task.heading).to be_nil
-      end
-    end
-  end
-
-  describe "#assigned" do
-    context "for an open task" do
-      let(:task) { Fabricate(:open_task) }
-
-      context "and no progressions" do
-        it "returns none" do
-          expect(task.assigned).to eq([])
-        end
-      end
-
-      context "and a progression" do
-        let(:user) { Fabricate(:user_worker) }
-
-        before { Fabricate(:progression, task: task, user: user) }
-
-        it "returns progression users" do
-          expect(task.assigned).to eq([user])
-        end
-      end
-
-      context "and a progression user is also an assignee" do
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:progression, task: task, user: user)
-        end
-
-        it "returns none" do
-          expect(task.assigned).to eq([])
-        end
-      end
-
-      context "and two progressions" do
-        context "for the same user" do
-          let(:user) { Fabricate(:user_worker) }
-
-          before do
-            Fabricate(:finished_progression, task: task, user: user)
-            Fabricate(:progression, task: task, user: user)
-          end
-
-          it "returns user once" do
-            expect(task.assigned).to eq([user])
-          end
-        end
-
-        context "for the different users" do
-          let(:first_user) { Fabricate(:user_worker) }
-          let(:second_user) { Fabricate(:user_worker) }
-
-          before do
-            Timecop.freeze(1.day.ago) do
-              Fabricate(:finished_progression, task: task, user: second_user)
-            end
-
-            Fabricate(:finished_progression, task: task, user: first_user)
-          end
-
-          it "orders by created_at" do
-            expect(task.assigned).to eq([first_user, second_user])
-          end
-        end
-      end
-    end
-
-    context "for a closed task" do
-      let(:task) { Fabricate(:closed_task) }
-
-      context "and a progression user is also an assignee" do
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:progression, task: task, user: user)
-        end
-
-        it "returns user" do
-          expect(task.assigned).to eq([user])
-        end
       end
     end
   end
