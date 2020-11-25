@@ -1541,9 +1541,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1553,7 +1553,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
 
@@ -1570,9 +1570,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1582,7 +1582,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
           end
@@ -1602,9 +1602,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1614,7 +1614,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
 
@@ -1630,9 +1630,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1642,7 +1642,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
           end
@@ -1660,9 +1660,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1672,7 +1672,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
 
@@ -1689,9 +1689,9 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, task) }
                 it { is_expected.to be_able_to(:read, task) }
-                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1701,7 +1701,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
-                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
               end
             end
           end

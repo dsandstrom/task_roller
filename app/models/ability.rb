@@ -170,8 +170,8 @@ class Ability
 
     def reviewer_issue_abilities(user)
       can :read, Issue
+      # TODO: don't allow reviewer to update
       can :update, Issue, user_id: user.id
-      # TODO: if issue visible (but allow admin)
       can :create, IssueClosure, user_id: user.id,
                                  issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueClosure
@@ -186,11 +186,11 @@ class Ability
     end
 
     def reviewer_task_abilities(user)
-      can :create, Task, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
-      can %i[read assign], Task
-      can :update, Task, user_id: user.id
+      can %i[create update], Task, user_id: user.id,
+                                   project: VISIBLE_PROJECT_OPTIONS
+      can :read, Task
+      can :assign, Task, project: VISIBLE_PROJECT_OPTIONS
       can :read, TaskComment
-      # TODO: if task visible (but allow admin)
       can :read, TaskConnection
       can :manage, TaskConnection, user_id: user.id, source: VISIBLE_OPTIONS
       can :destroy, TaskConnection, source: VISIBLE_OPTIONS
@@ -242,7 +242,7 @@ class Ability
     end
 
     def admin_task_abilities(user)
-      can %i[update destroy open close], Task
+      can %i[update destroy open close assign], Task
       can :create, TaskClosure, user_id: user.id
       can %i[update destroy], TaskComment
       can :destroy, TaskConnection

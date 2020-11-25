@@ -1222,10 +1222,10 @@ RSpec.describe "tasks/show", type: :view do
           @task = assign(:task, task)
         end
 
-        it "renders edit link" do
+        it "doesn't render edit link" do
           render
           url = edit_task_path(@task)
-          expect(rendered).to have_link(nil, href: url)
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render new task_comment form" do
@@ -1235,9 +1235,10 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "form[action=?]", form_url, count: 0
         end
 
-        it "renders edit task assignments link" do
+        it "doesn't render edit task assignments link" do
           render
-          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+          expect(rendered)
+            .not_to have_link(nil, href: edit_assignment_path(@task))
         end
 
         it "doesn't render close link" do
@@ -1268,9 +1269,10 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "#assignee-#{user.id}"
         end
 
-        it "renders edit task assignments link" do
+        it "doesn't render edit task assignments link" do
           render
-          expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
+          expect(rendered)
+            .not_to have_link(nil, href: edit_assignment_path(@task))
         end
       end
 
@@ -1280,13 +1282,13 @@ RSpec.describe "tasks/show", type: :view do
           @review = assign(:review, Fabricate(:pending_review, task: @task))
         end
 
-        it "renders approval link" do
+        it "doesn't render approval link" do
           render
           url = approve_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "renders disapproval link" do
+        it "doesn't render disapproval link" do
           render
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1299,7 +1301,7 @@ RSpec.describe "tasks/show", type: :view do
           @review = assign(:review, Fabricate(:approved_review, task: @task))
         end
 
-        it "doesn' render reopen link" do
+        it "doesn't render reopen link" do
           render
           expect(rendered)
             .not_to have_link(nil, href: task_reopenings_path(@task))
