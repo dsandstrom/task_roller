@@ -1960,4 +1960,33 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#assigned_at" do
+    let(:task) { Fabricate(:task) }
+    let(:user) { Fabricate(:user_worker) }
+
+    context "when no one assigned" do
+      it "returns nil" do
+        expect(task.assigned_at(user)).to be_nil
+      end
+    end
+
+    context "when assignees" do
+      let(:another_user) { Fabricate(:user_worker) }
+
+      before do
+        Timecop.freeze(2.days.ago) do
+          Fabricate(:task_assignee, task: task, assignee: another_user)
+        end
+        Timecop.freeze(1.day.ago) do
+          @assignment = Fabricate(:task_assignee, task: task, assignee: user)
+        end
+        @assignment.touch
+      end
+
+      it "returns requested user's task_assignee created_at" do
+        expect(task.assigned_at(user)).to eq(@assignment.created_at)
+      end
+    end
+  end
 end

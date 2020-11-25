@@ -334,6 +334,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @history_feed ||= build_history_feed
   end
 
+  def assigned_at(assignee)
+    task_assignees.where(assignee_id: assignee.id).minimum(:created_at)
+  end
+
   private
 
     def build_assigned
