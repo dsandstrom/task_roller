@@ -3,7 +3,7 @@
 # See the wiki for details:
 # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
-# TODO: disallow subscribing to invisible
+# TODO: refactor
 
 class Ability
   include CanCan::Ability
@@ -170,8 +170,6 @@ class Ability
 
     def reviewer_issue_abilities(user)
       can :read, Issue
-      # TODO: don't allow reviewer to update
-      can :update, Issue, user_id: user.id
       can :create, IssueClosure, user_id: user.id,
                                  issue: { project: VISIBLE_PROJECT_OPTIONS }
       can :read, IssueClosure
@@ -231,7 +229,7 @@ class Ability
     end
 
     def admin_issue_abilities(user)
-      can %i[update destroy open close], Issue
+      can %i[update destroy], Issue
       can :create, IssueClosure, user_id: user.id
       can %i[update destroy], IssueComment
       can :manage, IssueConnection, user_id: user.id
@@ -242,7 +240,7 @@ class Ability
     end
 
     def admin_task_abilities(user)
-      can %i[update destroy open close assign], Task
+      can %i[update destroy assign], Task
       can :create, TaskClosure, user_id: user.id
       can %i[update destroy], TaskComment
       can :destroy, TaskConnection

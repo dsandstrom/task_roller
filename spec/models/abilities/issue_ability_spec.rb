@@ -289,7 +289,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
@@ -316,7 +316,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
@@ -346,7 +346,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
@@ -372,7 +372,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
@@ -400,7 +400,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
@@ -427,7 +427,7 @@ RSpec.describe Ability do
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
-                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
 
