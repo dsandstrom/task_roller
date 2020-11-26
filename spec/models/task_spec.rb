@@ -1905,7 +1905,8 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns requested user's task_assignee created_at" do
-        expect(task.assigned_at(user)).to eq(@assignment.created_at)
+        expect(task.assigned_at(user).change(usec: 0))
+          .to eq(@assignment.created_at.change(usec: 0))
       end
     end
   end
