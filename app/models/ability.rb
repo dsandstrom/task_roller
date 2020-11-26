@@ -3,9 +3,9 @@
 # See the wiki for details:
 # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
-# TODO: refactor
+# TODO: separate into classes
 
-class Ability
+class Ability # rubocop:disable Metrics/ClassLength
   include CanCan::Ability
 
   EXTERNAL_CATEGORY_OPTIONS = { visible: true, internal: false }.freeze
@@ -18,10 +18,21 @@ class Ability
                                  category: VISIBLE_CATEGORY_OPTIONS } }.freeze
   EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
-  MANAGE_CLASSES = [].freeze
-  READ_CLASSES = [].freeze
-  DESTROY_CLASSES = [Category, IssueClosure, IssueReopening, Project,
-                     TaskClosure, TaskReopening].freeze
+
+  PROJECT_CLASSES = [Issue, Task].freeze
+  CONNECTION_CLASSES = [IssueConnection, TaskConnection].freeze
+  ISSUE_CLASSES = [IssueClosure, IssueComment, IssueReopening,
+                   Resolution].freeze
+  ISSUE_USER_CLASSES = [IssueComment].freeze
+  TASK_USER_CLASSES = [TaskComment].freeze
+  TASK_CLASSES = [Progression, Review, TaskClosure, TaskComment,
+                  TaskReopening].freeze
+  REVIEWER_ISSUE_CLASSES = [IssueClosure, IssueReopening].freeze
+  REVIEWER_TASK_CLASSES =  [TaskClosure, TaskReopening].freeze
+  CATEGORY_CLASSES = [CategoryTasksSubscription,
+                      CategoryIssuesSubscription].freeze
+  PROJECT_USER_CLASSES = [ProjectIssuesSubscription,
+                          ProjectTasksSubscription].freeze
 
   def initialize(user)
     return unless user && user.employee_type.present?
@@ -44,6 +55,9 @@ class Ability
       basic_read_abilities(user)
       basic_manage_abilities(user)
       basic_assigned_task_abilities(user)
+      basic_issue_abilities(user)
+      basic_task_abilities(user)
+
       can :read, User
       cannot :read, User, employee_type: nil
       can :update, User, id: user.id
@@ -53,44 +67,43 @@ class Ability
     def basic_read_abilities(_user = nil)
       can :read, Category, EXTERNAL_CATEGORY_OPTIONS
       can :read, Project, EXTERNAL_PROJECT_OPTIONS
-      can :read, Issue, project: EXTERNAL_PROJECT_OPTIONS
-      can :read, IssueComment, issue: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :read, IssueConnection, source: EXTERNAL_OPTIONS
-      can :read, IssueReopening, issue: EXTERNAL_OPTIONS
-      can :read, Task, project: EXTERNAL_PROJECT_OPTIONS
-      can :read, TaskComment, task: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :read, TaskConnection, source: EXTERNAL_OPTIONS
-      can :read, TaskReopening, task: EXTERNAL_OPTIONS
-      READ_CLASSES.each do |class_name|
-        can :read, class_name
+
+      ISSUE_CLASSES.each { |name| can :read, name, issue: EXTERNAL_OPTIONS }
+      PROJECT_CLASSES.each do |name|
+        can :read, name, project: EXTERNAL_PROJECT_OPTIONS
+      end
+      CONNECTION_CLASSES.each do |name|
+        can :read, name, source: EXTERNAL_OPTIONS
       end
     end
 
     def basic_manage_abilities(user)
-      can %i[create update], Issue, user_id: user.id,
-                                    project: EXTERNAL_PROJECT_OPTIONS
-      can %i[create update], IssueComment,
-          user_id: user.id, issue: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
-
-      can %i[create update], TaskComment,
-          user_id: user.id, task: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :create, Resolution,
-          user_id: user.id, issue: { user_id: user.id }.merge(EXTERNAL_OPTIONS)
-      can :read, Resolution, issue: EXTERNAL_OPTIONS
-      MANAGE_CLASSES.each do |class_name|
-        can :manage, class_name, user_id: user.id
-      end
-
-      can :read, IssueClosure, issue: { project: EXTERNAL_PROJECT_OPTIONS }
-      can :read, TaskClosure, task: { project: EXTERNAL_PROJECT_OPTIONS }
-      [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
+      CATEGORY_CLASSES.each do |name|
         can :manage, name, user_id: user.id, category: EXTERNAL_CATEGORY_OPTIONS
       end
-      [ProjectTasksSubscription, ProjectIssuesSubscription].each do |name|
+      PROJECT_USER_CLASSES.each do |name|
         can :manage, name, user_id: user.id, project: EXTERNAL_PROJECT_OPTIONS
       end
+    end
+
+    def basic_issue_abilities(user)
+      can %i[create update], Issue, user_id: user.id,
+                                    project: EXTERNAL_PROJECT_OPTIONS
+      can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
+      can :create, Resolution, user_id: user.id,
+                               issue: EXTERNAL_OPTIONS.merge(user_id: user.id)
+
+      ISSUE_USER_CLASSES.each do |name|
+        can %i[create update], name, user_id: user.id, issue: EXTERNAL_OPTIONS
+      end
+    end
+
+    def basic_task_abilities(user)
       can :manage, TaskSubscription, user_id: user.id, task: EXTERNAL_OPTIONS
+
+      TASK_USER_CLASSES.each do |name|
+        can %i[create update], name, user_id: user.id, task: EXTERNAL_OPTIONS
+      end
     end
 
     def basic_assigned_task_abilities(user)
@@ -98,126 +111,134 @@ class Ability
         { task_assignees: { assignee_id: user.id } }.merge(EXTERNAL_OPTIONS)
 
       can :create, Progression, user_id: user.id, task: task_params
-      can :read, Progression, task: EXTERNAL_OPTIONS
       can :finish, Progression, user_id: user.id, task: EXTERNAL_OPTIONS
       can :create, Review, user_id: user.id, task: task_params
-      can :read, Review, task: EXTERNAL_OPTIONS
       can :destroy, Review, user_id: user.id, approved: nil,
                             task: EXTERNAL_OPTIONS.merge(closed: false)
+      TASK_CLASSES.each do |class_name|
+        can :read, class_name, task: EXTERNAL_OPTIONS
+      end
     end
 
     def worker_abilities(user)
-      can :read, Category, VISIBLE_CATEGORY_OPTIONS
-      can :read, Project, VISIBLE_PROJECT_OPTIONS
+      worker_read_abilities(user)
       worker_issue_abilities(user)
       worker_task_abilities(user)
+      worker_assigned_task_abilities(user)
 
-      [CategoryTasksSubscription, CategoryIssuesSubscription].each do |name|
+      CATEGORY_CLASSES.each do |name|
         can :manage, name, user_id: user.id, category: VISIBLE_CATEGORY_OPTIONS
       end
-      [ProjectTasksSubscription, ProjectIssuesSubscription].each do |name|
+      PROJECT_USER_CLASSES.each do |name|
         can :manage, name, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
       end
+    end
 
-      task_params =
-        { task_assignees: { assignee_id: user.id } }.merge(VISIBLE_OPTIONS)
-      can :create, Progression, user_id: user.id, task: task_params
-      can :read, Progression, task: VISIBLE_OPTIONS
-      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
+    def worker_read_abilities(_user)
+      can :read, Category, VISIBLE_CATEGORY_OPTIONS
+      can :read, Project, VISIBLE_PROJECT_OPTIONS
 
-      can :create, Resolution,
-          user_id: user.id, issue: { user_id: user.id }.merge(VISIBLE_OPTIONS)
-      can :read, Resolution, issue: VISIBLE_OPTIONS
+      PROJECT_CLASSES.each do |name|
+        can :read, name, project: VISIBLE_PROJECT_OPTIONS
+      end
+      CONNECTION_CLASSES.each do |name|
+        can :read, name, source: VISIBLE_OPTIONS
+      end
     end
 
     def worker_issue_abilities(user)
-      can :read, Issue, project: VISIBLE_PROJECT_OPTIONS
       can %i[create update], Issue, user_id: user.id,
                                     project: VISIBLE_PROJECT_OPTIONS
-      can :read, IssueClosure, issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, TaskClosure, task: { project: VISIBLE_PROJECT_OPTIONS }
-      can %i[create update], IssueComment,
-          user_id: user.id, issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, IssueComment, issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, IssueConnection, source: VISIBLE_OPTIONS
-      can :read, IssueReopening, issue: VISIBLE_OPTIONS
       can :manage, IssueSubscription, user_id: user.id, issue: VISIBLE_OPTIONS
+      can :create, Resolution, user_id: user.id,
+                               issue: VISIBLE_OPTIONS.merge(user_id: user.id)
+
+      ISSUE_CLASSES.each { |name| can :read, name, issue: VISIBLE_OPTIONS }
+      ISSUE_USER_CLASSES.each do |name|
+        can %i[create update], name, user_id: user.id, issue: VISIBLE_OPTIONS
+      end
     end
 
     def worker_task_abilities(user)
-      can :read, Task, project: VISIBLE_PROJECT_OPTIONS
-      can %i[create update], TaskComment,
-          user_id: user.id, task: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, TaskComment, task: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, TaskConnection, source: VISIBLE_OPTIONS
-      can :read, TaskReopening, task: VISIBLE_OPTIONS
+      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
       can :manage, TaskSubscription, user_id: user.id, task: VISIBLE_OPTIONS
+      can :destroy, Review, user_id: user.id, approved: nil,
+                            task: VISIBLE_OPTIONS.merge(closed: false)
 
+      TASK_CLASSES.each { |name| can :read, name, task: VISIBLE_OPTIONS }
+      TASK_USER_CLASSES.each do |name|
+        can %i[create update], name, user_id: user.id, task: VISIBLE_OPTIONS
+      end
+    end
+
+    def worker_assigned_task_abilities(user)
       task_params =
         { task_assignees: { assignee_id: user.id } }.merge(VISIBLE_OPTIONS)
       can :create, Review, user_id: user.id, task: task_params
-      can :read, Review, task: VISIBLE_OPTIONS
-      can :destroy, Review, user_id: user.id, approved: nil,
-                            task: VISIBLE_OPTIONS.merge(closed: false)
+      can :create, Progression, user_id: user.id, task: task_params
     end
 
     def reviewer_abilities(user)
-      can %i[create read update], Category
-      can %i[create read update], Project
+      reviewer_manage_abilities(user)
       reviewer_issue_abilities(user)
       reviewer_task_abilities(user)
+      reviewer_assigned_task_abilities(user)
+
+      [CONNECTION_CLASSES, ISSUE_CLASSES, PROJECT_CLASSES,
+       TASK_CLASSES].flatten.each do |model_name|
+        can :read, model_name
+      end
+    end
+
+    def reviewer_manage_abilities(user)
+      can %i[create read update], Category
+      can %i[create read update], Project
+
+      CONNECTION_CLASSES.each do |model_name|
+        can :manage, model_name, user_id: user.id, source: VISIBLE_OPTIONS
+        can :destroy, model_name, source: VISIBLE_OPTIONS
+      end
     end
 
     def reviewer_issue_abilities(user)
       can :read, Issue
-      can :create, IssueClosure, user_id: user.id,
-                                 issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, IssueClosure
-      can :read, IssueComment
-      can :read, IssueConnection
-      can :manage, IssueConnection, user_id: user.id, source: VISIBLE_OPTIONS
-      can :destroy, IssueConnection, source: VISIBLE_OPTIONS
-      can :read, IssueReopening
-      can :create, IssueReopening, user_id: user.id,
-                                   issue: { project: VISIBLE_PROJECT_OPTIONS }
-      can :read, Resolution
+
+      REVIEWER_ISSUE_CLASSES.each do |model_name|
+        can :create, model_name, user_id: user.id, issue: VISIBLE_OPTIONS
+      end
     end
 
     def reviewer_task_abilities(user)
+      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
+      can %i[approve disapprove], Review, approved: nil, task: VISIBLE_OPTIONS
       can %i[create update], Task, user_id: user.id,
                                    project: VISIBLE_PROJECT_OPTIONS
-      can :read, Task
       can :assign, Task, project: VISIBLE_PROJECT_OPTIONS
-      can :read, TaskComment
-      can :read, TaskConnection
-      can :manage, TaskConnection, user_id: user.id, source: VISIBLE_OPTIONS
-      can :destroy, TaskConnection, source: VISIBLE_OPTIONS
       can :create, TaskClosure, user_id: user.id,
                                 task: VISIBLE_OPTIONS.merge(user_id: user.id)
-      can :read, TaskClosure
-      can :read, TaskReopening
       can :create, TaskReopening, user_id: user.id, task: VISIBLE_OPTIONS
-      can %i[approve disapprove], Review, approved: nil, task: VISIBLE_OPTIONS
+    end
 
+    def reviewer_assigned_task_abilities(user)
       task_params =
         { task_assignees: { assignee_id: user.id } }.merge(VISIBLE_OPTIONS)
+
       can :create, Progression, user_id: user.id, task: task_params
-      can :read, Progression
-      can :finish, Progression, user_id: user.id, task: VISIBLE_OPTIONS
       can :create, Review, user_id: user.id, task: task_params
-      can :read, Review
     end
 
     def admin_abilities(user)
       admin_destroy_abilities
       admin_setup_abilities
-      admin_issue_abilities(user)
+      admin_manage_abilities(user)
       admin_task_abilities(user)
       admin_user_abilities(user)
     end
 
     def admin_destroy_abilities
-      DESTROY_CLASSES.each do |class_name|
+      [Category, Project, CONNECTION_CLASSES, ISSUE_USER_CLASSES,
+       PROJECT_CLASSES, REVIEWER_ISSUE_CLASSES, REVIEWER_TASK_CLASSES,
+       TASK_USER_CLASSES].flatten.each do |class_name|
         can :destroy, class_name
       end
     end
@@ -228,33 +249,32 @@ class Ability
       end
     end
 
-    def admin_issue_abilities(user)
-      can %i[update destroy], Issue
-      can :create, IssueClosure, user_id: user.id
-      can %i[update destroy], IssueComment
-      can :manage, IssueConnection, user_id: user.id
-      can :manage, TaskConnection, user_id: user.id
-      can :destroy, IssueConnection
-      can :create, IssueReopening, user_id: user.id
-      can %i[update destroy], Resolution
-    end
-
     def admin_task_abilities(user)
-      can %i[update destroy assign], Task
-      can :create, TaskClosure, user_id: user.id
-      can %i[update destroy], TaskComment
-      can :destroy, TaskConnection
-      can :create, TaskReopening, user_id: user.id
-      can %i[update destroy], Progression
-      can %i[update], Review
-
       task_params = { task_assignees: { assignee_id: user.id } }
       can :create, Progression, user_id: user.id, task: task_params
       can :finish, Progression, user_id: user.id
-      can :read, Review
+
+      can :update, Review
       can :destroy, Review, user_id: user.id, approved: nil,
                             task: { closed: false }
       can %i[approve disapprove], Review, approved: nil
+
+      can %i[update destroy assign], Task
+    end
+
+    def admin_manage_abilities(user)
+      [REVIEWER_ISSUE_CLASSES, REVIEWER_TASK_CLASSES].flatten.each do |name|
+        can :create, name, user_id: user.id
+      end
+
+      CONNECTION_CLASSES.each do |model_name|
+        can :manage, model_name, user_id: user.id
+      end
+
+      [Issue, Progression, Resolution, ISSUE_USER_CLASSES,
+       TASK_USER_CLASSES].flatten.each do |model_name|
+        can %i[update destroy], model_name
+      end
     end
 
     def admin_user_abilities(user)
