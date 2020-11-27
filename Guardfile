@@ -146,6 +146,10 @@ group :backend do
     watch('app/models/ability.rb') do
       "#{rspec.spec_dir}/models/abilities"
     end
+
+    watch(%r{^app/models/concerns/(.+)_ability\.rb$}) do |m|
+      "#{rspec.spec_dir}/models/abilities/#{m[1]}_ability_spec.rb"
+    end
   end
 
   guard :bundler do

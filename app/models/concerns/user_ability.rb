@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
-class UserAbility
-  attr_accessor :ability, :user
-
-  def initialize(attrs)
-    %i[ability user].each do |key|
-      send("#{key}=", attrs[key])
-    end
-  end
-
+class UserAbility < BaseAbility
   def activate
     ability.can :read, User
     ability.cannot :read, User, employee_type: nil
