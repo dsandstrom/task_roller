@@ -2132,16 +2132,6 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                 end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
               end
             end
 
@@ -2163,16 +2153,6 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                 end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
               end
 
               context "and internal" do
@@ -2185,16 +2165,6 @@ RSpec.describe Ability do
                   let(:task) do
                     Fabricate(:task, project: project, user: current_user)
                   end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
 
                   it { is_expected.not_to be_able_to(:create, task) }
                   it { is_expected.not_to be_able_to(:read, task) }
@@ -2224,16 +2194,6 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                 end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
               end
 
               context "and internal" do
@@ -2245,16 +2205,6 @@ RSpec.describe Ability do
                   let(:task) do
                     Fabricate(:task, project: project, user: current_user)
                   end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
 
                   it { is_expected.not_to be_able_to(:create, task) }
                   it { is_expected.not_to be_able_to(:read, task) }
@@ -2283,16 +2233,6 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                 end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
               end
 
               context "and internal" do
@@ -2305,16 +2245,6 @@ RSpec.describe Ability do
                   let(:task) do
                     Fabricate(:task, project: project, user: current_user)
                   end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
 
                   it { is_expected.not_to be_able_to(:create, task) }
                   it { is_expected.not_to be_able_to(:read, task) }
@@ -2344,16 +2274,6 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                 end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
               end
 
               context "and internal" do
@@ -2365,16 +2285,6 @@ RSpec.describe Ability do
                   let(:task) do
                     Fabricate(:task, project: project, user: current_user)
                   end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
 
                   it { is_expected.not_to be_able_to(:create, task) }
                   it { is_expected.not_to be_able_to(:read, task) }
@@ -3302,15 +3212,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
 
             context "and internal" do
@@ -3322,15 +3223,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3410,15 +3302,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
 
             context "and internal" do
@@ -3430,15 +3313,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3468,15 +3342,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
 
             context "and internal" do
@@ -3486,15 +3351,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3516,93 +3372,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) { Fabricate(:internal_project, category: category) }
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-          end
-
-          context "while project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:invisible_project, category: category)
-              end
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:internal_project, category: category, visible: false)
-              end
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3662,15 +3431,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
           end
 
@@ -3690,15 +3450,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
 
             context "and internal" do
@@ -3710,15 +3461,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3746,39 +3488,6 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) { Fabricate(:internal_project, category: category) }
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
             end
           end
 
@@ -3792,41 +3501,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:internal_project, category: category, visible: false)
-              end
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -3850,147 +3524,6 @@ RSpec.describe Ability do
                 let(:task_comment) do
                   Fabricate(:task_comment, task: task, user: current_user)
                 end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) { Fabricate(:internal_project, category: category) }
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-          end
-        end
-
-        context "and internal" do
-          let(:category) { Fabricate(:invisible_category, internal: true) }
-
-          context "while project is visible" do
-            context "and external" do
-              let(:project) { Fabricate(:project, category: category) }
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) { Fabricate(:internal_project, category: category) }
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-          end
-
-          context "while project is invisible" do
-            context "and external" do
-              let(:project) do
-                Fabricate(:invisible_project, category: category)
-              end
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-            end
-
-            context "and internal" do
-              let(:project) do
-                Fabricate(:internal_project, category: category, visible: false)
-              end
-
-              context "when belongs to them" do
-                let(:task_comment) do
-                  Fabricate(:task_comment, task: task, user: current_user)
-                end
-
-                it { is_expected.not_to be_able_to(:create, task_comment) }
-                it { is_expected.not_to be_able_to(:read, task_comment) }
-                it { is_expected.not_to be_able_to(:update, task_comment) }
-                it { is_expected.not_to be_able_to(:destroy, task_comment) }
-              end
-
-              context "when doesn't belong to them" do
-                let(:task_comment) { Fabricate(:task_comment, task: task) }
 
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
@@ -4900,17 +4433,6 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:update, task_subscription) }
             it { is_expected.to be_able_to(:destroy, task_subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
         end
 
         context "for a task from an invisible project" do
@@ -4920,17 +4442,6 @@ RSpec.describe Ability do
           context "when belongs to them" do
             let(:task_subscription) do
               Fabricate(:task_subscription, task: task, user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
             end
 
             it { is_expected.not_to be_able_to(:create, task_subscription) }
@@ -4988,17 +4499,6 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:update, task_subscription) }
             it { is_expected.to be_able_to(:destroy, task_subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
         end
 
         context "for a task from an invisible project" do
@@ -5008,17 +4508,6 @@ RSpec.describe Ability do
           context "when belongs to them" do
             let(:task_subscription) do
               Fabricate(:task_subscription, task: task, user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
             end
 
             it { is_expected.not_to be_able_to(:create, task_subscription) }
@@ -5076,17 +4565,6 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:update, task_subscription) }
             it { is_expected.not_to be_able_to(:destroy, task_subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
         end
 
         context "for a task from an invisible project" do
@@ -5096,17 +4574,6 @@ RSpec.describe Ability do
           context "when belongs to them" do
             let(:task_subscription) do
               Fabricate(:task_subscription, task: task, user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, task_subscription) }
-            it { is_expected.not_to be_able_to(:read, task_subscription) }
-            it { is_expected.not_to be_able_to(:update, task_subscription) }
-            it { is_expected.not_to be_able_to(:destroy, task_subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:task_subscription) do
-              Fabricate(:task_subscription, task: task)
             end
 
             it { is_expected.not_to be_able_to(:create, task_subscription) }

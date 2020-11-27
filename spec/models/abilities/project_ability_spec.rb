@@ -80,10 +80,7 @@ RSpec.describe Ability do
                                   internal: false)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
           context "and internal" do
@@ -91,10 +88,7 @@ RSpec.describe Ability do
               Fabricate(:project, visible: false, internal: true)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
@@ -125,10 +119,7 @@ RSpec.describe Ability do
                                   internal: false)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
       end
@@ -156,10 +147,7 @@ RSpec.describe Ability do
               Fabricate(:project, visible: true, internal: true)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
@@ -169,10 +157,7 @@ RSpec.describe Ability do
               Fabricate(:project, visible: false, internal: false)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
 
           context "and internal" do
@@ -180,10 +165,7 @@ RSpec.describe Ability do
               Fabricate(:project, visible: false, internal: true)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
@@ -197,10 +179,7 @@ RSpec.describe Ability do
                                   internal: false)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
 
@@ -214,10 +193,7 @@ RSpec.describe Ability do
                                   internal: false)
             end
 
-            it { is_expected.not_to be_able_to(:create, project) }
             it { is_expected.not_to be_able_to(:read, project) }
-            it { is_expected.not_to be_able_to(:update, project) }
-            it { is_expected.not_to be_able_to(:destroy, project) }
           end
         end
       end
@@ -398,10 +374,7 @@ RSpec.describe Ability do
               Fabricate(:project_issues_subscription, project: project)
             end
 
-            it { is_expected.not_to be_able_to(:create, subscription) }
             it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
           end
         end
 
@@ -413,17 +386,6 @@ RSpec.describe Ability do
             let(:subscription) do
               Fabricate(:project_issues_subscription, project: project,
                                                       user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_issues_subscription, project: project)
             end
 
             it { is_expected.not_to be_able_to(:create, subscription) }
@@ -448,17 +410,6 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:update, subscription) }
             it { is_expected.not_to be_able_to(:destroy, subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_issues_subscription, project: project)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
         end
 
         context "when category is internal" do
@@ -476,17 +427,6 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:update, subscription) }
             it { is_expected.not_to be_able_to(:destroy, subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_issues_subscription, project: project)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
         end
 
         context "when category is invisible" do
@@ -497,17 +437,6 @@ RSpec.describe Ability do
             let(:subscription) do
               Fabricate(:project_issues_subscription, project: project,
                                                       user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_issues_subscription, project: project)
             end
 
             it { is_expected.not_to be_able_to(:create, subscription) }
@@ -716,17 +645,6 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:update, subscription) }
             it { is_expected.not_to be_able_to(:destroy, subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_tasks_subscription, project: project)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
         end
 
         context "when project is invisible" do
@@ -737,17 +655,6 @@ RSpec.describe Ability do
             let(:subscription) do
               Fabricate(:project_tasks_subscription, project: project,
                                                      user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_tasks_subscription, project: project)
             end
 
             it { is_expected.not_to be_able_to(:create, subscription) }
@@ -772,17 +679,6 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:update, subscription) }
             it { is_expected.not_to be_able_to(:destroy, subscription) }
           end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_tasks_subscription, project: project)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
         end
 
         context "when category is invisible" do
@@ -793,17 +689,6 @@ RSpec.describe Ability do
             let(:subscription) do
               Fabricate(:project_tasks_subscription, project: project,
                                                      user: current_user)
-            end
-
-            it { is_expected.not_to be_able_to(:create, subscription) }
-            it { is_expected.not_to be_able_to(:read, subscription) }
-            it { is_expected.not_to be_able_to(:update, subscription) }
-            it { is_expected.not_to be_able_to(:destroy, subscription) }
-          end
-
-          context "when doesn't belong to them" do
-            let(:subscription) do
-              Fabricate(:project_tasks_subscription, project: project)
             end
 
             it { is_expected.not_to be_able_to(:create, subscription) }

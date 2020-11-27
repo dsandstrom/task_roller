@@ -1297,10 +1297,7 @@ RSpec.describe Ability do
             Fabricate(:issue_closure, issue: issue, user: current_user)
           end
 
-          it { is_expected.not_to be_able_to(:create, issue_closure) }
           it { is_expected.to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
         end
 
         context "for an issue from an invisible category" do
@@ -1312,10 +1309,7 @@ RSpec.describe Ability do
             Fabricate(:issue_closure, issue: issue, user: current_user)
           end
 
-          it { is_expected.not_to be_able_to(:create, issue_closure) }
           it { is_expected.not_to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
         end
       end
     end
@@ -1350,10 +1344,7 @@ RSpec.describe Ability do
             Fabricate(:issue_closure, issue: issue, user: current_user)
           end
 
-          it { is_expected.not_to be_able_to(:create, issue_closure) }
           it { is_expected.not_to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
         end
 
         context "for an issue from an invisible category" do
@@ -1365,10 +1356,7 @@ RSpec.describe Ability do
             Fabricate(:issue_closure, issue: issue, user: current_user)
           end
 
-          it { is_expected.not_to be_able_to(:create, issue_closure) }
           it { is_expected.not_to be_able_to(:read, issue_closure) }
-          it { is_expected.not_to be_able_to(:update, issue_closure) }
-          it { is_expected.not_to be_able_to(:destroy, issue_closure) }
         end
       end
     end
@@ -2590,10 +2578,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2618,10 +2603,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2644,10 +2626,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2674,10 +2653,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2698,10 +2674,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2726,10 +2699,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2752,10 +2722,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2784,10 +2751,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2808,10 +2772,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2838,10 +2799,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2862,10 +2820,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
@@ -2890,10 +2845,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
 
@@ -2916,10 +2868,7 @@ RSpec.describe Ability do
               context "when doesn't belong to them" do
                 let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
-                it { is_expected.not_to be_able_to(:create, issue_comment) }
                 it { is_expected.not_to be_able_to(:read, issue_comment) }
-                it { is_expected.not_to be_able_to(:update, issue_comment) }
-                it { is_expected.not_to be_able_to(:destroy, issue_comment) }
               end
             end
           end
