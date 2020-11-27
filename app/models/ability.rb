@@ -35,8 +35,10 @@ class Ability # rubocop:disable Metrics/ClassLength
   def initialize(user)
     return unless user && user.employee_type.present?
 
-    category_ability = CategoryAbility.new(ability: self, user: user)
-    category_ability.activate
+    [CategoryAbility, ProjectAbility].each do |klass|
+      ability = klass.new(ability: self, user: user)
+      ability.activate
+    end
 
     basic_abilities(user)
     return if user.reporter?
@@ -54,7 +56,6 @@ class Ability # rubocop:disable Metrics/ClassLength
 
     def basic_abilities(user)
       basic_read_abilities(user)
-      basic_manage_abilities(user)
       basic_assigned_task_abilities(user)
       basic_issue_abilities(user)
       basic_task_abilities(user)
@@ -66,20 +67,12 @@ class Ability # rubocop:disable Metrics/ClassLength
     end
 
     def basic_read_abilities(_user = nil)
-      can :read, Project, EXTERNAL_PROJECT_OPTIONS
-
       ISSUE_CLASSES.each { |name| can :read, name, issue: EXTERNAL_OPTIONS }
       PROJECT_CLASSES.each do |name|
         can :read, name, project: EXTERNAL_PROJECT_OPTIONS
       end
       CONNECTION_CLASSES.each do |name|
         can :read, name, source: EXTERNAL_OPTIONS
-      end
-    end
-
-    def basic_manage_abilities(user)
-      PROJECT_USER_CLASSES.each do |name|
-        can :manage, name, user_id: user.id, project: EXTERNAL_PROJECT_OPTIONS
       end
     end
 
@@ -122,15 +115,9 @@ class Ability # rubocop:disable Metrics/ClassLength
       worker_issue_abilities(user)
       worker_task_abilities(user)
       worker_assigned_task_abilities(user)
-
-      PROJECT_USER_CLASSES.each do |name|
-        can :manage, name, user_id: user.id, project: VISIBLE_PROJECT_OPTIONS
-      end
     end
 
     def worker_read_abilities(_user)
-      can :read, Project, VISIBLE_PROJECT_OPTIONS
-
       PROJECT_CLASSES.each do |name|
         can :read, name, project: VISIBLE_PROJECT_OPTIONS
       end
@@ -184,8 +171,6 @@ class Ability # rubocop:disable Metrics/ClassLength
     end
 
     def reviewer_manage_abilities(user)
-      can %i[create read update], Project
-
       CONNECTION_CLASSES.each do |model_name|
         can :manage, model_name, user_id: user.id, source: VISIBLE_OPTIONS
         can :destroy, model_name, source: VISIBLE_OPTIONS
@@ -228,7 +213,7 @@ class Ability # rubocop:disable Metrics/ClassLength
     end
 
     def admin_destroy_abilities
-      [Project, CONNECTION_CLASSES, ISSUE_USER_CLASSES,
+      [CONNECTION_CLASSES, ISSUE_USER_CLASSES,
        PROJECT_CLASSES, REVIEWER_ISSUE_CLASSES, REVIEWER_TASK_CLASSES,
        TASK_USER_CLASSES].flatten.each do |class_name|
         can :destroy, class_name
