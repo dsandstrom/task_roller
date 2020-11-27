@@ -35,7 +35,7 @@ class Ability # rubocop:disable Metrics/ClassLength
   def initialize(user)
     return unless user && user.employee_type.present?
 
-    [CategoryAbility, ProjectAbility].each do |klass|
+    [CategoryAbility, ProjectAbility, UserAbility].each do |klass|
       ability = klass.new(ability: self, user: user)
       ability.activate
     end
@@ -59,11 +59,6 @@ class Ability # rubocop:disable Metrics/ClassLength
       basic_assigned_task_abilities(user)
       basic_issue_abilities(user)
       basic_task_abilities(user)
-
-      can :read, User
-      cannot :read, User, employee_type: nil
-      can :update, User, id: user.id
-      cannot :update, User, employee_type: nil
     end
 
     def basic_read_abilities(_user = nil)
@@ -209,7 +204,6 @@ class Ability # rubocop:disable Metrics/ClassLength
       admin_setup_abilities
       admin_manage_abilities(user)
       admin_task_abilities(user)
-      admin_user_abilities(user)
     end
 
     def admin_destroy_abilities
@@ -252,11 +246,5 @@ class Ability # rubocop:disable Metrics/ClassLength
        TASK_USER_CLASSES].flatten.each do |model_name|
         can %i[update destroy], model_name
       end
-    end
-
-    def admin_user_abilities(user)
-      can :manage, User
-      cannot :create, User, employee_type: nil
-      cannot :destroy, User, id: user.id
     end
 end
