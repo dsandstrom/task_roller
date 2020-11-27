@@ -8,4 +8,8 @@ class BaseAbility
       send("#{key}=", attrs[key])
     end
   end
+
+  def user_id
+    @user_id ||= user&.id
+  end
 end

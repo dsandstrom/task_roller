@@ -19,23 +19,17 @@ class Ability # rubocop:disable Metrics/ClassLength
   EXTERNAL_OPTIONS = { project: { visible: true, internal: false,
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
 
-  PROJECT_CLASSES = [Issue, Task].freeze
-  CONNECTION_CLASSES = [IssueConnection, TaskConnection].freeze
-  ISSUE_CLASSES = [IssueClosure, IssueComment, IssueReopening,
-                   Resolution].freeze
-  ISSUE_USER_CLASSES = [IssueComment].freeze
+  PROJECT_CLASSES = [Task].freeze
+  CONNECTION_CLASSES = [TaskConnection].freeze
   TASK_USER_CLASSES = [TaskComment].freeze
   TASK_CLASSES = [Progression, Review, TaskClosure, TaskComment,
                   TaskReopening].freeze
-  REVIEWER_ISSUE_CLASSES = [IssueClosure, IssueReopening].freeze
-  REVIEWER_TASK_CLASSES =  [TaskClosure, TaskReopening].freeze
-  PROJECT_USER_CLASSES = [ProjectIssuesSubscription,
-                          ProjectTasksSubscription].freeze
+  REVIEWER_TASK_CLASSES = [TaskClosure, TaskReopening].freeze
 
   def initialize(user)
     return unless user && user.employee_type.present?
 
-    [CategoryAbility, ProjectAbility, UserAbility].each do |klass|
+    [CategoryAbility, ProjectAbility, UserAbility, IssueAbility].each do |klass|
       ability = klass.new(ability: self, user: user)
       ability.activate
     end
@@ -57,29 +51,15 @@ class Ability # rubocop:disable Metrics/ClassLength
     def basic_abilities(user)
       basic_read_abilities(user)
       basic_assigned_task_abilities(user)
-      basic_issue_abilities(user)
       basic_task_abilities(user)
     end
 
     def basic_read_abilities(_user = nil)
-      ISSUE_CLASSES.each { |name| can :read, name, issue: EXTERNAL_OPTIONS }
       PROJECT_CLASSES.each do |name|
         can :read, name, project: EXTERNAL_PROJECT_OPTIONS
       end
       CONNECTION_CLASSES.each do |name|
         can :read, name, source: EXTERNAL_OPTIONS
-      end
-    end
-
-    def basic_issue_abilities(user)
-      can %i[create update], Issue, user_id: user.id,
-                                    project: EXTERNAL_PROJECT_OPTIONS
-      can :manage, IssueSubscription, user_id: user.id, issue: EXTERNAL_OPTIONS
-      can :create, Resolution, user_id: user.id,
-                               issue: EXTERNAL_OPTIONS.merge(user_id: user.id)
-
-      ISSUE_USER_CLASSES.each do |name|
-        can %i[create update], name, user_id: user.id, issue: EXTERNAL_OPTIONS
       end
     end
 
@@ -107,7 +87,6 @@ class Ability # rubocop:disable Metrics/ClassLength
 
     def worker_abilities(user)
       worker_read_abilities(user)
-      worker_issue_abilities(user)
       worker_task_abilities(user)
       worker_assigned_task_abilities(user)
     end
@@ -118,19 +97,6 @@ class Ability # rubocop:disable Metrics/ClassLength
       end
       CONNECTION_CLASSES.each do |name|
         can :read, name, source: VISIBLE_OPTIONS
-      end
-    end
-
-    def worker_issue_abilities(user)
-      can %i[create update], Issue, user_id: user.id,
-                                    project: VISIBLE_PROJECT_OPTIONS
-      can :manage, IssueSubscription, user_id: user.id, issue: VISIBLE_OPTIONS
-      can :create, Resolution, user_id: user.id,
-                               issue: VISIBLE_OPTIONS.merge(user_id: user.id)
-
-      ISSUE_CLASSES.each { |name| can :read, name, issue: VISIBLE_OPTIONS }
-      ISSUE_USER_CLASSES.each do |name|
-        can %i[create update], name, user_id: user.id, issue: VISIBLE_OPTIONS
       end
     end
 
@@ -155,11 +121,10 @@ class Ability # rubocop:disable Metrics/ClassLength
 
     def reviewer_abilities(user)
       reviewer_manage_abilities(user)
-      reviewer_issue_abilities(user)
       reviewer_task_abilities(user)
       reviewer_assigned_task_abilities(user)
 
-      [CONNECTION_CLASSES, ISSUE_CLASSES, PROJECT_CLASSES,
+      [CONNECTION_CLASSES, PROJECT_CLASSES,
        TASK_CLASSES].flatten.each do |model_name|
         can :read, model_name
       end
@@ -169,14 +134,6 @@ class Ability # rubocop:disable Metrics/ClassLength
       CONNECTION_CLASSES.each do |model_name|
         can :manage, model_name, user_id: user.id, source: VISIBLE_OPTIONS
         can :destroy, model_name, source: VISIBLE_OPTIONS
-      end
-    end
-
-    def reviewer_issue_abilities(user)
-      can :read, Issue
-
-      REVIEWER_ISSUE_CLASSES.each do |model_name|
-        can :create, model_name, user_id: user.id, issue: VISIBLE_OPTIONS
       end
     end
 
@@ -207,15 +164,14 @@ class Ability # rubocop:disable Metrics/ClassLength
     end
 
     def admin_destroy_abilities
-      [CONNECTION_CLASSES, ISSUE_USER_CLASSES,
-       PROJECT_CLASSES, REVIEWER_ISSUE_CLASSES, REVIEWER_TASK_CLASSES,
+      [CONNECTION_CLASSES, PROJECT_CLASSES, REVIEWER_TASK_CLASSES,
        TASK_USER_CLASSES].flatten.each do |class_name|
         can :destroy, class_name
       end
     end
 
     def admin_setup_abilities
-      [IssueType, TaskType].each do |class_name|
+      [TaskType].each do |class_name|
         can :manage, class_name
       end
     end
@@ -234,7 +190,7 @@ class Ability # rubocop:disable Metrics/ClassLength
     end
 
     def admin_manage_abilities(user)
-      [REVIEWER_ISSUE_CLASSES, REVIEWER_TASK_CLASSES].flatten.each do |name|
+      REVIEWER_TASK_CLASSES.flatten.each do |name|
         can :create, name, user_id: user.id
       end
 
@@ -242,8 +198,7 @@ class Ability # rubocop:disable Metrics/ClassLength
         can :manage, model_name, user_id: user.id
       end
 
-      [Issue, Progression, Resolution, ISSUE_USER_CLASSES,
-       TASK_USER_CLASSES].flatten.each do |model_name|
+      TASK_USER_CLASSES.each do |model_name|
         can %i[update destroy], model_name
       end
     end

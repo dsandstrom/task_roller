@@ -17,6 +17,10 @@ class ProjectAbility < BaseAbility
 
   private
 
+    def activate_admin
+      ability.can :destroy, Project
+    end
+
     def activate_reviewer
       ability.can :read, Project
       ability.can %i[create read update], Project
@@ -24,10 +28,6 @@ class ProjectAbility < BaseAbility
         ability.can :manage, name, user_id: user.id,
                                    project: Ability::VISIBLE_PROJECT_OPTIONS
       end
-    end
-
-    def activate_admin
-      ability.can :destroy, Project
     end
 
     def activate_worker

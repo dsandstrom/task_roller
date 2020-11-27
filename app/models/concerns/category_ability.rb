@@ -17,6 +17,10 @@ class CategoryAbility < BaseAbility
 
   private
 
+    def activate_admin
+      ability.can :destroy, Category
+    end
+
     def activate_reviewer
       ability.can :read, Category
       ability.can %i[create read update], Category
@@ -24,10 +28,6 @@ class CategoryAbility < BaseAbility
         ability.can :manage, name, user_id: user.id,
                                    category: Ability::VISIBLE_CATEGORY_OPTIONS
       end
-    end
-
-    def activate_admin
-      ability.can :destroy, Category
     end
 
     def activate_worker
