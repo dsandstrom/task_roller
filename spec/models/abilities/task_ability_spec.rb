@@ -972,6 +972,29 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:disapprove, review) }
         end
       end
+
+      context "for closed task" do
+        let(:project) { Fabricate(:project) }
+        let(:task) { Fabricate(:closed_task, project: project) }
+
+        context "when assigned to the task" do
+          let(:review) { Fabricate.build(:review, task: task, user: admin) }
+
+          before { task.assignees << admin }
+
+          it { is_expected.not_to be_able_to(:create, review) }
+        end
+
+        context "when belongs to them" do
+          let(:review) { Fabricate(:review, task: task, user: admin) }
+
+          it { is_expected.to be_able_to(:read, review) }
+          it { is_expected.to be_able_to(:update, review) }
+          it { is_expected.to be_able_to(:approve, review) }
+          it { is_expected.to be_able_to(:disapprove, review) }
+          it { is_expected.not_to be_able_to(:destroy, review) }
+        end
+      end
     end
 
     %i[reviewer].each do |employee_type|
@@ -1184,6 +1207,30 @@ RSpec.describe Ability do
             end
           end
         end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.to be_able_to(:approve, review) }
+            it { is_expected.to be_able_to(:disapprove, review) }
+          end
+        end
       end
     end
 
@@ -1298,6 +1345,106 @@ RSpec.describe Ability do
             let(:review) { Fabricate(:review, task: task) }
 
             it { is_expected.not_to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when not assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:review) { Fabricate(:review, task: task) }
+
+            it { is_expected.to be_able_to(:read, review) }
+            it { is_expected.not_to be_able_to(:update, review) }
+            it { is_expected.not_to be_able_to(:destroy, review) }
+            it { is_expected.not_to be_able_to(:approve, review) }
+            it { is_expected.not_to be_able_to(:disapprove, review) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when assigned to the task" do
+            let(:review) do
+              Fabricate.build(:review, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, review) }
+          end
+
+          context "when belongs to them" do
+            let(:review) { Fabricate(:review, task: task, user: current_user) }
+
+            it { is_expected.to be_able_to(:read, review) }
             it { is_expected.not_to be_able_to(:update, review) }
             it { is_expected.not_to be_able_to(:destroy, review) }
             it { is_expected.not_to be_able_to(:approve, review) }
@@ -2366,6 +2513,31 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:destroy, task_comment) }
               end
             end
+
+            context "and task is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+              let(:task) { Fabricate(:closed_task, project: project) }
+
+              context "when belongs to them" do
+                let(:task_comment) do
+                  Fabricate(:task_comment, task: task, user: admin)
+                end
+
+                it { is_expected.to be_able_to(:create, task_comment) }
+                it { is_expected.to be_able_to(:read, task_comment) }
+                it { is_expected.to be_able_to(:update, task_comment) }
+                it { is_expected.to be_able_to(:destroy, task_comment) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:task_comment) { Fabricate(:task_comment, task: task) }
+
+                it { is_expected.not_to be_able_to(:create, task_comment) }
+                it { is_expected.to be_able_to(:read, task_comment) }
+                it { is_expected.to be_able_to(:update, task_comment) }
+                it { is_expected.to be_able_to(:destroy, task_comment) }
+              end
+            end
           end
 
           context "while project is invisible" do
@@ -2751,6 +2923,22 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.to be_able_to(:read, task_comment) }
                 it { is_expected.not_to be_able_to(:update, task_comment) }
+                it { is_expected.not_to be_able_to(:destroy, task_comment) }
+              end
+            end
+
+            context "and task is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+              let(:task) { Fabricate(:closed_task, project: project) }
+
+              context "when belongs to them" do
+                let(:task_comment) do
+                  Fabricate(:task_comment, task: task, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, task_comment) }
+                it { is_expected.to be_able_to(:read, task_comment) }
+                it { is_expected.to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
             end
@@ -3142,6 +3330,22 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
             end
+
+            context "and task is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+              let(:task) { Fabricate(:closed_task, project: project) }
+
+              context "when belongs to them" do
+                let(:task_comment) do
+                  Fabricate(:task_comment, task: task, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, task_comment) }
+                it { is_expected.to be_able_to(:read, task_comment) }
+                it { is_expected.to be_able_to(:update, task_comment) }
+                it { is_expected.not_to be_able_to(:destroy, task_comment) }
+              end
+            end
           end
 
           context "while project is invisible" do
@@ -3377,6 +3581,22 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:create, task_comment) }
                 it { is_expected.not_to be_able_to(:read, task_comment) }
                 it { is_expected.not_to be_able_to(:update, task_comment) }
+                it { is_expected.not_to be_able_to(:destroy, task_comment) }
+              end
+            end
+
+            context "and task is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+              let(:task) { Fabricate(:closed_task, project: project) }
+
+              context "when belongs to them" do
+                let(:task_comment) do
+                  Fabricate(:task_comment, task: task, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, task_comment) }
+                it { is_expected.to be_able_to(:read, task_comment) }
+                it { is_expected.to be_able_to(:update, task_comment) }
                 it { is_expected.not_to be_able_to(:destroy, task_comment) }
               end
             end
