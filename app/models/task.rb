@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # TODO: create task reopens issue?
-# TODO: show other tasks from issue
 # TODO: allow self-assigning for worker+
 # TODO: allow reviewer+ to change project (any category)
 
