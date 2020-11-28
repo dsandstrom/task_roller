@@ -60,8 +60,9 @@ class TaskAbility < BaseAbility
     end
 
     def activate_visible_assigned_abilities
-      task_params = Ability::VISIBLE_OPTIONS
-                    .merge(task_assignees: { assignee_id: user_id })
+      task_params =
+        Ability::VISIBLE_OPTIONS
+        .merge(closed: false, task_assignees: { assignee_id: user_id })
 
       ability.can :create, Progression, user_id: user_id, task: task_params
       ability.can :finish, Progression,
@@ -78,9 +79,10 @@ class TaskAbility < BaseAbility
     end
 
     def activate_invisible_assigned_abilities
-      ability.can :create, Progression,
-                  user_id: user_id,
-                  task: { task_assignees: { assignee_id: user_id } }
+      task_params = { task_assignees: { assignee_id: user_id } }
+
+      ability.can :create, Progression, user_id: user_id, task: task_params
+      ability.can :finish, Progression, user_id: user_id
     end
 
     def activate_external_abilities

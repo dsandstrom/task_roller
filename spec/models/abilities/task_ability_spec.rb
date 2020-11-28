@@ -30,7 +30,7 @@ RSpec.describe Ability do
         end
 
         context "when belongs to them" do
-          let(:progression) { Fabricate(:progression, user: admin) }
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
 
           it { is_expected.to be_able_to(:read, progression) }
           it { is_expected.to be_able_to(:update, progression) }
@@ -67,7 +67,7 @@ RSpec.describe Ability do
         end
 
         context "when belongs to them" do
-          let(:progression) { Fabricate(:progression, user: admin) }
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
 
           it { is_expected.to be_able_to(:read, progression) }
           it { is_expected.to be_able_to(:update, progression) }
@@ -104,7 +104,7 @@ RSpec.describe Ability do
         end
 
         context "when belongs to them" do
-          let(:progression) { Fabricate(:progression, user: admin) }
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
 
           it { is_expected.to be_able_to(:read, progression) }
           it { is_expected.to be_able_to(:update, progression) }
@@ -119,6 +119,28 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:update, progression) }
           it { is_expected.to be_able_to(:destroy, progression) }
           it { is_expected.not_to be_able_to(:finish, progression) }
+        end
+      end
+
+      context "and task is closed" do
+        let(:project) { Fabricate(:project) }
+        let(:task) { Fabricate(:closed_task, project: project) }
+
+        context "when assigned to the task" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          before { task.assignees << admin }
+
+          it { is_expected.to be_able_to(:create, progression) }
+        end
+
+        context "when belongs to them" do
+          let(:progression) { Fabricate(:progression, task: task, user: admin) }
+
+          it { is_expected.to be_able_to(:read, progression) }
+          it { is_expected.to be_able_to(:update, progression) }
+          it { is_expected.to be_able_to(:destroy, progression) }
+          it { is_expected.to be_able_to(:finish, progression) }
         end
       end
 
@@ -162,7 +184,9 @@ RSpec.describe Ability do
           end
 
           context "when belongs to them" do
-            let(:progression) { Fabricate(:progression, user: current_user) }
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
 
             it { is_expected.to be_able_to(:read, progression) }
             it { is_expected.not_to be_able_to(:update, progression) }
@@ -294,6 +318,32 @@ RSpec.describe Ability do
             end
 
             it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "and task is closed" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
           end
         end
       end
@@ -461,6 +511,32 @@ RSpec.describe Ability do
             end
 
             it { is_expected.not_to be_able_to(:create, progression) }
+          end
+        end
+
+        context "and task is closed" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when assigned to the task" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            before { task.assignees << current_user }
+
+            it { is_expected.not_to be_able_to(:create, progression) }
+          end
+
+          context "when belongs to them" do
+            let(:progression) do
+              Fabricate(:progression, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:read, progression) }
+            it { is_expected.not_to be_able_to(:update, progression) }
+            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:destroy, progression) }
           end
         end
       end
