@@ -6,8 +6,7 @@ Fabricator(:review) do
   approved nil
 end
 
-Fabricator(:pending_review, from: :review) do
-end
+Fabricator(:pending_review, from: :review)
 
 Fabricator(:approved_review, from: :review) do
   approved true

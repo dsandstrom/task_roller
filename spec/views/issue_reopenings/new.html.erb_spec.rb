@@ -14,7 +14,6 @@ RSpec.describe "issue_reopenings/new", type: :view do
   it "renders new issue_reopening form" do
     render
 
-    assert_select "form[action=?][method=?]", path, "post" do
-    end
+    assert_select "form[action=?][method=?]", path, "post"
   end
 end

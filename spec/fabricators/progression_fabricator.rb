@@ -6,8 +6,7 @@ Fabricator(:progression) do
   finished false
 end
 
-Fabricator(:unfinished_progression, from: :progression) do
-end
+Fabricator(:unfinished_progression, from: :progression)
 
 Fabricator(:finished_progression, from: :progression) do
   finished true

@@ -14,7 +14,6 @@ RSpec.describe "task_closures/new", type: :view do
   it "renders new task_closure form" do
     render
 
-    assert_select "form[action=?][method=?]", path, "post" do
-    end
+    assert_select "form[action=?][method=?]", path, "post"
   end
 end

@@ -865,9 +865,6 @@ RSpec.describe User, type: :model do
     end
 
     context "when user has 2 tasks with no progressions" do
-      before do
-      end
-
       it "orders by tasks.created_at desc" do
         second_task = nil
         Timecop.freeze(1.week.ago) do
@@ -883,9 +880,6 @@ RSpec.describe User, type: :model do
     end
 
     context "when user has 2 tasks with a progression" do
-      before do
-      end
-
       it "orders by progressions.created_at desc" do
         first_task = nil
         second_task = nil
@@ -908,9 +902,6 @@ RSpec.describe User, type: :model do
     end
 
     context "when user has 2 tasks with a comment" do
-      before do
-      end
-
       it "orders by task_comments.created_at desc" do
         first_task = nil
         second_task = nil

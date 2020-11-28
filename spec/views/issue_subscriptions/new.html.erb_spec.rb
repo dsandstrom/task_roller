@@ -17,8 +17,7 @@ RSpec.describe "issue_subscriptions/new", type: :view do
       render
 
       url = issue_issue_subscriptions_path(@issue)
-      assert_select "form[action=?][method=?]", url, "post" do
-      end
+      assert_select "form[action=?][method=?]", url, "post"
     end
   end
 end

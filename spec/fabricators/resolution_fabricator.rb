@@ -15,8 +15,7 @@ Fabricator(:resolution) do
   end
 end
 
-Fabricator(:pending_resolution, from: :resolution) do
-end
+Fabricator(:pending_resolution, from: :resolution)
 
 Fabricator(:approved_resolution, from: :resolution) do
   approved true
