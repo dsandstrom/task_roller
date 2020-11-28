@@ -4143,6 +4143,21 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:destroy, task_closure) }
           end
         end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when their closure" do
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.to be_able_to(:destroy, task_closure) }
+          end
+        end
       end
     end
 
@@ -4184,6 +4199,18 @@ RSpec.describe Ability do
 
           context "when someone else's task" do
             let(:task) { Fabricate(:task, project: project) }
+            let(:task_closure) do
+              Fabricate(:task_closure, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_closure) }
+            it { is_expected.to be_able_to(:read, task_closure) }
+            it { is_expected.not_to be_able_to(:update, task_closure) }
+            it { is_expected.not_to be_able_to(:destroy, task_closure) }
+          end
+
+          context "when their task is closed" do
+            let(:task) { Fabricate(:closed_task, user: current_user) }
             let(:task_closure) do
               Fabricate(:task_closure, task: task, user: current_user)
             end
@@ -4333,6 +4360,19 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:update, task_closure) }
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end
+
+        context "for closed a task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
       end
     end
 
@@ -4383,6 +4423,19 @@ RSpec.describe Ability do
 
           it { is_expected.not_to be_able_to(:create, task_closure) }
           it { is_expected.not_to be_able_to(:read, task_closure) }
+          it { is_expected.not_to be_able_to(:update, task_closure) }
+          it { is_expected.not_to be_able_to(:destroy, task_closure) }
+        end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task, user: current_user) }
+
+          let(:task_closure) do
+            Fabricate(:task_closure, task: task, user: current_user)
+          end
+
+          it { is_expected.not_to be_able_to(:create, task_closure) }
+          it { is_expected.to be_able_to(:read, task_closure) }
           it { is_expected.not_to be_able_to(:update, task_closure) }
           it { is_expected.not_to be_able_to(:destroy, task_closure) }
         end

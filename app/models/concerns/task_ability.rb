@@ -134,7 +134,7 @@ class TaskAbility < BaseAbility
       ability.can :destroy, TaskConnection, source: Ability::VISIBLE_OPTIONS
       ability.can :create, TaskClosure,
                   user_id: user_id,
-                  task: Ability::VISIBLE_OPTIONS.merge(user_id: user_id)
+                  task: Ability::VISIBLE_OPTIONS.merge(closed: false, user_id: user_id)
       ability.can :create, TaskReopening,
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
     end
@@ -146,9 +146,11 @@ class TaskAbility < BaseAbility
                   user_options.merge(approved: nil, task: { closed: false })
       ability.can %i[assign self_assign], Task
       ability.can %i[approve disapprove], Review, approved: nil
-      [TaskConnection, TaskClosure, TaskReopening].each do |model_name|
+      [TaskConnection, TaskReopening].each do |model_name|
         ability.can :create, model_name, user_options
       end
+      ability.can :create, TaskClosure,
+                  user_options.merge(task: { closed: false })
       ability.can :update, TaskConnection, user_options
     end
 end
