@@ -3792,6 +3792,33 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:destroy, task_connection) }
           end
         end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when their connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
+            it { is_expected.to be_able_to(:update, task_connection) }
+            it { is_expected.to be_able_to(:destroy, task_connection) }
+          end
+
+          context "when someone else's connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
+            it { is_expected.not_to be_able_to(:update, task_connection) }
+            it { is_expected.to be_able_to(:destroy, task_connection) }
+          end
+        end
       end
     end
 
@@ -3881,6 +3908,33 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, task_connection) }
           end
         end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when their connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
+            it { is_expected.to be_able_to(:update, task_connection) }
+            it { is_expected.to be_able_to(:destroy, task_connection) }
+          end
+
+          context "when someone else's connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
+            it { is_expected.not_to be_able_to(:update, task_connection) }
+            it { is_expected.to be_able_to(:destroy, task_connection) }
+          end
+        end
       end
     end
 
@@ -3934,6 +3988,22 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, task_connection) }
           end
         end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when their connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
+            it { is_expected.not_to be_able_to(:update, task_connection) }
+            it { is_expected.not_to be_able_to(:destroy, task_connection) }
+          end
+        end
       end
     end
 
@@ -3983,6 +4053,22 @@ RSpec.describe Ability do
 
             it { is_expected.not_to be_able_to(:create, task_connection) }
             it { is_expected.not_to be_able_to(:read, task_connection) }
+            it { is_expected.not_to be_able_to(:update, task_connection) }
+            it { is_expected.not_to be_able_to(:destroy, task_connection) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
+
+          context "when their connection" do
+            let(:task_connection) do
+              Fabricate(:task_connection, source: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_connection) }
+            it { is_expected.to be_able_to(:read, task_connection) }
             it { is_expected.not_to be_able_to(:update, task_connection) }
             it { is_expected.not_to be_able_to(:destroy, task_connection) }
           end
