@@ -22,7 +22,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :user # reporter
   belongs_to :issue_type
   belongs_to :project
-  has_many :tasks, dependent: :nullify
+  has_many :tasks, -> { order(created_at: :asc) }, dependent: :nullify
   has_many :comments, class_name: 'IssueComment', foreign_key: :issue_id,
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
@@ -276,7 +276,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @addressed_at ||=
       approved_tasks
       .select('tasks.id, MAX(reviews.updated_at) AS addressed_at')
-      .group(:id).order(addressed_at: :desc).first&.addressed_at
+      .group(:id).reorder(addressed_at: :desc).first&.addressed_at
   end
 
   def duplicate?
