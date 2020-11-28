@@ -13,10 +13,11 @@
     made progress:
     <%= progress %>
   </dd>
-<% else %>
+<% elsif task.closed? %>
   <dd id="assignee-<%= assignee.id %>"
       class="assignee">
     assigned:
-    <%= format_date task.assigned_at(assignee) %>
+    <%= content_tag :span, format_date(task.assigned_at(assignee)),
+                    class: 'assigned-date' %>
   </dd>
 <% end %>

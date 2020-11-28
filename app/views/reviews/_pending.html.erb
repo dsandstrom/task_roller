@@ -14,7 +14,8 @@
 
   <dd>
     marked ready for review:
-    <%= format_date review.created_at %>
+    <%= content_tag :span, format_date(review.created_at),
+                    class: 'review-date' %>
   </dd>
 
   <dd>
