@@ -482,14 +482,6 @@ RSpec.describe Ability do
 
             before { task.assignees << current_user }
 
-            it { is_expected.to be_able_to(:create, progression) }
-          end
-
-          context "when not assigned to the task" do
-            let(:progression) do
-              Fabricate(:progression, task: task, user: current_user)
-            end
-
             it { is_expected.not_to be_able_to(:create, progression) }
           end
 
@@ -500,7 +492,7 @@ RSpec.describe Ability do
 
             it { is_expected.to be_able_to(:read, progression) }
             it { is_expected.not_to be_able_to(:update, progression) }
-            it { is_expected.to be_able_to(:finish, progression) }
+            it { is_expected.not_to be_able_to(:finish, progression) }
             it { is_expected.not_to be_able_to(:destroy, progression) }
           end
 

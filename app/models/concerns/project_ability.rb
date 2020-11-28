@@ -25,7 +25,7 @@ class ProjectAbility < BaseAbility
       ability.can :read, Project
       ability.can %i[create read update], Project
       CLASSES.each do |name|
-        ability.can :manage, name, user_id: user.id,
+        ability.can :manage, name, user_id: user_id,
                                    project: Ability::VISIBLE_PROJECT_OPTIONS
       end
     end
@@ -33,7 +33,7 @@ class ProjectAbility < BaseAbility
     def activate_worker
       ability.can :read, Project, Ability::VISIBLE_PROJECT_OPTIONS
       CLASSES.each do |name|
-        ability.can :manage, name, user_id: user.id,
+        ability.can :manage, name, user_id: user_id,
                                    project: Ability::VISIBLE_PROJECT_OPTIONS
       end
     end
@@ -41,7 +41,7 @@ class ProjectAbility < BaseAbility
     def activate_reporter
       ability.can :read, Project, Ability::EXTERNAL_PROJECT_OPTIONS
       CLASSES.each do |name|
-        ability.can :manage, name, user_id: user.id,
+        ability.can :manage, name, user_id: user_id,
                                    project: Ability::EXTERNAL_PROJECT_OPTIONS
       end
     end

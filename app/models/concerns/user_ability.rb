@@ -4,7 +4,7 @@ class UserAbility < BaseAbility
   def activate
     ability.can :read, User
     ability.cannot :read, User, employee_type: nil
-    ability.can :update, User, id: user.id
+    ability.can :update, User, id: user_id
     ability.cannot :update, User, employee_type: nil
     return unless user.admin?
 
@@ -16,6 +16,6 @@ class UserAbility < BaseAbility
     def activate_admin
       ability.can :manage, User
       ability.cannot :create, User, employee_type: nil
-      ability.cannot :destroy, User, id: user.id
+      ability.cannot :destroy, User, id: user_id
     end
 end
