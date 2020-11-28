@@ -18,6 +18,7 @@ class TaskAbility < BaseAbility
     def activate_admin
       activate_reviewer
       activate_invisible_abilities
+
       ability.can :manage, TaskType
 
       [Task, TaskComment, Progression, Review].each do |model_name|
@@ -32,29 +33,15 @@ class TaskAbility < BaseAbility
 
     def activate_reviewer
       activate_visible_abilities
-      activate_visible_read_abilities
+      activate_visible_assigned_abilities
       activate_invisible_read_abilities
-
-      ability.can %i[approve disapprove], Review,
-                  approved: nil, task: Ability::VISIBLE_OPTIONS
-
-      ability.can %i[create update], Task,
-                  user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
-      ability.can :assign, Task, project: Ability::VISIBLE_PROJECT_OPTIONS
-
-      ability.can %i[create update], TaskConnection,
-                  user_id: user_id, source: Ability::VISIBLE_OPTIONS
-      ability.can :destroy, TaskConnection, source: Ability::VISIBLE_OPTIONS
-
-      ability.can :create, TaskClosure,
-                  user_id: user_id,
-                  task: Ability::VISIBLE_OPTIONS.merge(user_id: user_id)
-      ability.can :create, TaskReopening,
-                  user_id: user_id, task: Ability::VISIBLE_OPTIONS
+      activate_visible_task_abilities
+      activate_visible_review_abilities
     end
 
     def activate_worker
       activate_visible_abilities
+      activate_visible_assigned_abilities
       activate_visible_read_abilities
     end
 
@@ -68,7 +55,9 @@ class TaskAbility < BaseAbility
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
       ability.can :manage, TaskSubscription,
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
+    end
 
+    def activate_visible_assigned_abilities
       task_params = Ability::VISIBLE_OPTIONS
                     .merge(task_assignees: { assignee_id: user_id })
 
@@ -81,14 +70,15 @@ class TaskAbility < BaseAbility
                   task: Ability::VISIBLE_OPTIONS.merge(closed: false)
     end
 
-    def activate_visible_read_abilities
-      ability.can :read, Task, project: Ability::VISIBLE_PROJECT_OPTIONS
-      ability.can :read, TaskConnection, source: Ability::VISIBLE_OPTIONS
+    def activate_invisible_abilities
+      activate_invisible_assigned_abilities
+      activate_invisible_task_review_abilities
+    end
 
-      [TaskClosure, TaskComment, TaskReopening,
-       Progression, Review].each do |model_name|
-        ability.can :read, model_name, task: Ability::VISIBLE_OPTIONS
-      end
+    def activate_invisible_assigned_abilities
+      ability.can :create, Progression,
+                  user_id: user_id,
+                  task: { task_assignees: { assignee_id: user_id } }
     end
 
     def activate_external_abilities
@@ -108,6 +98,16 @@ class TaskAbility < BaseAbility
       end
     end
 
+    def activate_visible_read_abilities
+      ability.can :read, Task, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.can :read, TaskConnection, source: Ability::VISIBLE_OPTIONS
+
+      [TaskClosure, TaskComment, TaskReopening,
+       Progression, Review].each do |model_name|
+        ability.can :read, model_name, task: Ability::VISIBLE_OPTIONS
+      end
+    end
+
     def activate_invisible_read_abilities
       [Task, TaskClosure, TaskConnection, TaskComment, TaskReopening,
        Progression, Review].each do |model_name|
@@ -115,17 +115,35 @@ class TaskAbility < BaseAbility
       end
     end
 
-    def activate_invisible_abilities
-      ability.can :create, Progression,
+    def activate_visible_task_abilities
+      ability.can %i[create update], Task,
+                  user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.can :assign, Task, project: Ability::VISIBLE_PROJECT_OPTIONS
+    end
+
+    def activate_visible_review_abilities
+      ability.can %i[approve disapprove], Review,
+                  approved: nil, task: Ability::VISIBLE_OPTIONS
+      ability.can %i[create update], TaskConnection,
+                  user_id: user_id, source: Ability::VISIBLE_OPTIONS
+      ability.can :destroy, TaskConnection, source: Ability::VISIBLE_OPTIONS
+      ability.can :create, TaskClosure,
                   user_id: user_id,
-                  task: { task_assignees: { assignee_id: user_id } }
+                  task: Ability::VISIBLE_OPTIONS.merge(user_id: user_id)
+      ability.can :create, TaskReopening,
+                  user_id: user_id, task: Ability::VISIBLE_OPTIONS
+    end
+
+    def activate_invisible_task_review_abilities
+      user_options = { user_id: user_id }
+
       ability.can :destroy, Review,
-                  user_id: user_id, approved: nil, task: { closed: false }
+                  user_options.merge(approved: nil, task: { closed: false })
       ability.can :assign, Task
       ability.can %i[approve disapprove], Review, approved: nil
       [TaskConnection, TaskClosure, TaskReopening].each do |model_name|
-        ability.can :create, model_name, user_id: user_id
+        ability.can :create, model_name, user_options
       end
-      ability.can :update, TaskConnection, user_id: user_id
+      ability.can :update, TaskConnection, user_options
     end
 end
