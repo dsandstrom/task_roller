@@ -83,6 +83,7 @@ class TaskAbility < BaseAbility
 
       ability.can :create, Progression, user_id: user_id, task: task_params
       ability.can :finish, Progression, user_id: user_id
+      ability.can %i[assign self_assign], Task
     end
 
     def activate_external_abilities
@@ -124,6 +125,10 @@ class TaskAbility < BaseAbility
                   user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
       ability.can :assign, Task,
                   closed: false, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.can :create, TaskClosure,
+                  user_id: user_id,
+                  task: Ability::VISIBLE_OPTIONS.merge(closed: false,
+                                                       user_id: user_id)
     end
 
     def activate_visible_review_abilities
@@ -132,9 +137,6 @@ class TaskAbility < BaseAbility
       ability.can %i[create update], TaskConnection,
                   user_id: user_id, source: Ability::VISIBLE_OPTIONS
       ability.can :destroy, TaskConnection, source: Ability::VISIBLE_OPTIONS
-      ability.can :create, TaskClosure,
-                  user_id: user_id,
-                  task: Ability::VISIBLE_OPTIONS.merge(closed: false, user_id: user_id)
       ability.can :create, TaskReopening,
                   user_id: user_id,
                   task: Ability::VISIBLE_OPTIONS.merge(closed: true)
@@ -145,7 +147,6 @@ class TaskAbility < BaseAbility
 
       ability.can :destroy, Review,
                   user_options.merge(approved: nil, task: { closed: false })
-      ability.can %i[assign self_assign], Task
       ability.can %i[approve disapprove], Review, approved: nil
       ability.can :create, TaskClosure,
                   user_options.merge(task: { closed: false })
