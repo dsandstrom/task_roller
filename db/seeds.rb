@@ -3,6 +3,9 @@
 # TODO: add quotes to comments
 # Faker::TvShows::Simpsons.quote
 
+# TODO: approve, disapprove, close current issues/tasks
+# make it look like action is happening to older issues
+
 require 'faker'
 
 class Seeds
