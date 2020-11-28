@@ -17,7 +17,7 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "GET #new" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -29,6 +29,30 @@ RSpec.describe ReviewsController, type: :controller do
           it "returns a success response" do
             get :new, params: { task_id: task.to_param }
             expect(response).to be_successful
+          end
+        end
+
+        context "when progression task is not assigned to them" do
+          it "should be unauthorized" do
+            get :new, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when progression task is assigned to them" do
+          before { task.assignees << current_user }
+
+          it "should be unauthorized" do
+            get :new, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
           end
         end
 
@@ -78,7 +102,7 @@ RSpec.describe ReviewsController, type: :controller do
   describe "POST #create" do
     let(:path) { task_path(task) }
 
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -115,10 +139,46 @@ RSpec.describe ReviewsController, type: :controller do
         end
       end
     end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when review task is assigned to them" do
+          before { task.assignees << current_user }
+
+          it "doesn't create a new Review" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            post :create, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when review task is not assigned to them" do
+          it "doesn't create a new Review" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            post :create, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
   end
 
   describe "DELETE #destroy" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -172,6 +232,48 @@ RSpec.describe ReviewsController, type: :controller do
 
           it "should be unauthorized" do
             review = Fabricate(:approved_review, task: task, user: current_user)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: review.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when someone else's review" do
+          it "doesn't destroy the requested review" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            review = Fabricate(:pending_review, task: task)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: review.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when their review is pending and task open" do
+          it "doesn't destroy the requested review" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+            end.not_to change(Review, :count)
+          end
+
+          it "should be unauthorized" do
+            review = Fabricate(:pending_review, task: task)
             delete :destroy, params: { task_id: task.to_param,
                                        id: review.to_param }
             expect_to_be_unauthorized(response)

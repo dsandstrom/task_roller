@@ -6,7 +6,7 @@ RSpec.describe ProgressionsController, type: :controller do
   let(:task) { Fabricate(:task) }
 
   describe "GET #new" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -29,12 +29,36 @@ RSpec.describe ProgressionsController, type: :controller do
         end
       end
     end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when progression task is assigned to them" do
+          before { task.assignees << current_user }
+
+          it "should be unauthorized" do
+            get :new, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when progression task is not assigned to them" do
+          it "should be unauthorized" do
+            get :new, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
   end
 
   describe "POST #create" do
     let(:path) { task_path(task) }
 
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -77,13 +101,49 @@ RSpec.describe ProgressionsController, type: :controller do
         end
       end
     end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when progression task is assigned to them" do
+          before { task.assignees << current_user }
+
+          it "doesn't create a new Progression" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.not_to change(Progression, :count)
+          end
+
+          it "should be unauthorized" do
+            post :create, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when progression task is not assigned to them" do
+          it "doesn't create a new Progression" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.not_to change(Progression, :count)
+          end
+
+          it "should be unauthorized" do
+            post :create, params: { task_id: task.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
   end
 
   describe "PUT #finish" do
     let(:new_user) { Fabricate(:user_worker) }
     let(:path) { task_path(task) }
 
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -138,6 +198,55 @@ RSpec.describe ProgressionsController, type: :controller do
                                        id: progression.to_param }
               expect(response).to be_successful
             end
+          end
+        end
+
+        context "when someone else's progression" do
+          it "doesn't update the requested progression" do
+            progression = Fabricate(:progression, task: task)
+            expect do
+              patch :finish, params: { task_id: task.to_param,
+                                       id: progression.to_param }
+              progression.reload
+            end.not_to change(progression, :finished)
+          end
+
+          it "should be unauthorized" do
+            progression = Fabricate(:progression, task: task)
+            patch :finish, params: { task_id: task.to_param,
+                                     id: progression.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before do
+          task.assignees << current_user
+          login(current_user)
+        end
+
+        context "when their progression" do
+          it "doesn't update the requested progression" do
+            progression = Fabricate(:progression, task: task,
+                                                  user: current_user)
+            expect do
+              patch :finish, params: { task_id: task.to_param,
+                                       id: progression.to_param }
+              progression.reload
+            end.not_to change(progression, :finished)
+          end
+
+          it "should be unauthorized" do
+            progression = Fabricate(:progression, task: task,
+                                                  user: current_user)
+            patch :finish, params: { task_id: task.to_param,
+                                     id: progression.to_param }
+            expect_to_be_unauthorized(response)
           end
         end
 
