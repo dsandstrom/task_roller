@@ -2,7 +2,8 @@
 
 <p class="issue" id="issue-<%= issue.id %>">
   <%= issue_type_icon_tag(issue.issue_type) %>
-  <%= link_to issue.id_and_summary, issue_path(issue) %>
+  <%= link_to_if can?(:read, issue),
+                 issue.id_and_summary, issue_path(issue) %>
 
   <% if show_status %>
     <%= divider %>

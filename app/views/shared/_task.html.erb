@@ -2,7 +2,8 @@
 
 <p class="task" id="task-<%= task.id %>">
   <%= task_type_icon_tag(task.task_type) %>
-  <%= link_to task.id_and_summary, task_path(task) %>
+  <%= link_to_if can?(:read, task),
+                 task.id_and_summary, task_path(task) %>
 
   <% if show_status %>
     <%= divider %>
