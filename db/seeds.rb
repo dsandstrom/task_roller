@@ -153,12 +153,14 @@ class Seeds
 
     def create_open_task(issue, worker = nil)
       worker ||= User.workers.sample
-      create_task(issue_id: issue.id, closed: false, assignee_ids: [worker.id])
+      create_task(issue_id: issue.id, project_id: issue.project_id,
+                  closed: false, assignee_ids: [worker.id])
     end
 
     def create_closed_task(issue, worker = nil)
       worker ||= User.workers.sample
-      create_task(issue_id: issue.id, closed: true, assignee_ids: [worker.id])
+      create_task(issue_id: issue.id, project_id: issue.project_id,
+                  closed: true, assignee_ids: [worker.id])
     end
 
     def create_reopened_task(reviewer)
