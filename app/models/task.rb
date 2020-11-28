@@ -339,6 +339,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     task_assignees.where(assignee_id: assignee.id).minimum(:created_at)
   end
 
+  def siblings
+    return unless issue
+
+    issue.tasks.where.not(id: id)
+  end
+
   private
 
     def open_status

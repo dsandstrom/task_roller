@@ -1910,4 +1910,33 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#siblings" do
+    context "when no issue" do
+      let(:task) { Fabricate(:task, issue: nil) }
+
+      it "returns nil" do
+        expect(task.siblings).to be_nil
+      end
+    end
+
+    context "when issue" do
+      let(:issue) { Fabricate(:issue) }
+      let(:task) { Fabricate(:task, issue: issue) }
+
+      context "without any other tasks" do
+        it "returns []" do
+          expect(task.siblings).to eq([])
+        end
+      end
+
+      context "with another task" do
+        let(:sibling) { Fabricate(:task, issue: issue) }
+
+        it "returns it" do
+          expect(task.siblings).to eq([sibling])
+        end
+      end
+    end
+  end
 end
