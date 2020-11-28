@@ -55,6 +55,8 @@ class TaskAbility < BaseAbility
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
       ability.can :manage, TaskSubscription,
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
+      ability.can :self_assign, Task,
+                  closed: false, project: Ability::VISIBLE_PROJECT_OPTIONS
     end
 
     def activate_visible_assigned_abilities
@@ -118,7 +120,8 @@ class TaskAbility < BaseAbility
     def activate_visible_task_abilities
       ability.can %i[create update], Task,
                   user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
-      ability.can :assign, Task, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.can :assign, Task,
+                  closed: false, project: Ability::VISIBLE_PROJECT_OPTIONS
     end
 
     def activate_visible_review_abilities
@@ -139,7 +142,7 @@ class TaskAbility < BaseAbility
 
       ability.can :destroy, Review,
                   user_options.merge(approved: nil, task: { closed: false })
-      ability.can :assign, Task
+      ability.can %i[assign self_assign], Task
       ability.can %i[approve disapprove], Review, approved: nil
       [TaskConnection, TaskClosure, TaskReopening].each do |model_name|
         ability.can :create, model_name, user_options

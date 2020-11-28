@@ -1252,6 +1252,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1262,6 +1263,17 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
+              end
+
+              context "and closed" do
+                let(:task) { Fabricate(:closed_task, project: project) }
+
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1278,6 +1290,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1288,6 +1301,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1306,6 +1320,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1316,6 +1331,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1333,6 +1349,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1343,6 +1360,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1363,6 +1381,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1373,6 +1392,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1389,6 +1409,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1399,6 +1420,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1417,6 +1439,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1427,6 +1450,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1444,6 +1468,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1454,6 +1479,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1482,6 +1508,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1492,6 +1519,15 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
+              end
+
+              context "and closed" do
+                let(:task) { Fabricate(:closed_task, project: project) }
+
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1510,6 +1546,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1520,6 +1557,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1540,6 +1578,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1550,6 +1589,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1569,6 +1609,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1579,6 +1620,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1601,6 +1643,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1611,6 +1654,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1629,6 +1673,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1639,6 +1684,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1659,6 +1705,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1669,6 +1716,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -1688,6 +1736,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1698,6 +1747,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -1727,6 +1777,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.to be_able_to(:self_assign, task) }
                 end
 
                 context "when doesn't belong to them" do
@@ -1737,6 +1788,14 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.to be_able_to(:self_assign, task) }
+                end
+
+                context "and closed" do
+                  let(:task) { Fabricate(:closed_task, project: project) }
+
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
               end
 
@@ -1755,6 +1814,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.to be_able_to(:self_assign, task) }
                 end
 
                 context "when doesn't belong to them" do
@@ -1765,6 +1825,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.to be_able_to(:self_assign, task) }
                 end
               end
             end
@@ -1786,16 +1847,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
               end
 
@@ -1815,16 +1867,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
               end
             end
@@ -1847,44 +1890,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-              end
-
-              context "and internal" do
-                let(:project) do
-                  Fabricate(:project, category: category, internal: true)
-                end
-
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
               end
             end
@@ -1906,45 +1912,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-              end
-
-              context "and internal" do
-                let(:project) do
-                  Fabricate(:project, category: category, visible: false,
-                                      internal: true)
-                end
-
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
               end
             end
@@ -1957,27 +1925,16 @@ RSpec.describe Ability do
 
             context "while project is visible" do
               context "and external" do
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -1985,27 +1942,16 @@ RSpec.describe Ability do
                   Fabricate(:project, category: category, internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:self_assign, task) }
               end
             end
 
@@ -2016,27 +1962,16 @@ RSpec.describe Ability do
                                       internal: false)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2045,27 +1980,16 @@ RSpec.describe Ability do
                                       internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -2085,27 +2009,14 @@ RSpec.describe Ability do
           context "and external" do
             context "while project is visible" do
               context "and external" do
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
+                let(:task) { Fabricate(:task, project: project) }
 
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
-
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2113,17 +2024,16 @@ RSpec.describe Ability do
                   Fabricate(:project, category: category, internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -2134,17 +2044,16 @@ RSpec.describe Ability do
                                       internal: false)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2153,17 +2062,16 @@ RSpec.describe Ability do
                                       internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -2175,17 +2083,16 @@ RSpec.describe Ability do
 
             context "while project is visible" do
               context "and external" do
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2193,17 +2100,16 @@ RSpec.describe Ability do
                   Fabricate(:project, category: category, internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -2214,17 +2120,16 @@ RSpec.describe Ability do
                                       internal: false)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2233,17 +2138,16 @@ RSpec.describe Ability do
                                       internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
@@ -2255,17 +2159,16 @@ RSpec.describe Ability do
 
             context "while project is visible" do
               context "and external" do
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2273,17 +2176,16 @@ RSpec.describe Ability do
                   Fabricate(:project, category: category, internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
 
@@ -2294,27 +2196,16 @@ RSpec.describe Ability do
                                       internal: false)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and internal" do
@@ -2323,27 +2214,16 @@ RSpec.describe Ability do
                                       internal: true)
                 end
 
-                context "when belongs to them" do
-                  let(:task) do
-                    Fabricate(:task, project: project, user: current_user)
-                  end
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user)
                 end
 
-                context "when doesn't belong to them" do
-                  let(:task) { Fabricate(:task, project: project) }
-
-                  it { is_expected.not_to be_able_to(:create, task) }
-                  it { is_expected.not_to be_able_to(:read, task) }
-                  it { is_expected.not_to be_able_to(:update, task) }
-                  it { is_expected.not_to be_able_to(:destroy, task) }
-                  it { is_expected.not_to be_able_to(:assign, task) }
-                end
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.not_to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
             end
           end
