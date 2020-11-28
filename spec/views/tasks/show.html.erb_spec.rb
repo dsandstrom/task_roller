@@ -28,6 +28,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)
+      assign(:siblings, nil)
     end
 
     context "when project" do
@@ -589,6 +590,20 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when task has a sibling" do
+      before do
+        @task = assign(:task, task)
+        @sibling = Fabricate(:task, issue: @task.issue)
+        assign(:siblings, [@sibling])
+      end
+
+      it "renders a list of related tasks" do
+        render
+
+        assert_select "#task-#{@sibling.id}"
+      end
+    end
+
     context "when task project is invisible" do
       let(:project) { Fabricate(:invisible_project, category: category) }
       let(:form_url) { task_task_comments_url(@task) }
@@ -820,6 +835,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)
+      assign(:siblings, nil)
     end
 
     context "when task is open" do
@@ -1531,6 +1547,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:duplicates, [])
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
+      assign(:siblings, nil)
     end
 
     context "when task is open" do
@@ -1887,6 +1904,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)
+      assign(:siblings, nil)
     end
 
     context "when task is open" do

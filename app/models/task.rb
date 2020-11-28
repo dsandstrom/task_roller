@@ -340,9 +340,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def siblings
-    return unless issue
-
-    issue.tasks.where.not(id: id)
+    @siblings ||= issue&.tasks&.where&.not(id: id)
   end
 
   private

@@ -84,6 +84,14 @@
         </p>
       </section>
 
+      <% if @siblings&.any? %>
+        <section class="task-siblings">
+          <h4 class="task-column-title">Related <%= 'Task'.pluralize(@siblings.size) %></h4>
+          <%= render partial: 'shared/task',
+                     collection: @siblings %>
+        </section>
+      <% end %>
+
       <% if @duplicates.any? %>
         <section class="task-duplicates">
           <h4 class="task-column-title">Duplicate Tasks</h4>

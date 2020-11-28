@@ -132,6 +132,7 @@ class TasksController < ApplicationController
     def set_task_resources
       @source_connection = @task.source_connection
       @duplicates = @task.duplicates
+      @siblings = @task.siblings
       @comments = @task.comments.includes(:user)
       @subscription = @task.task_subscriptions
                            .find_or_initialize_by(user_id: current_user.id)
