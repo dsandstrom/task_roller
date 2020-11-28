@@ -136,7 +136,8 @@ class TaskAbility < BaseAbility
                   user_id: user_id,
                   task: Ability::VISIBLE_OPTIONS.merge(closed: false, user_id: user_id)
       ability.can :create, TaskReopening,
-                  user_id: user_id, task: Ability::VISIBLE_OPTIONS
+                  user_id: user_id,
+                  task: Ability::VISIBLE_OPTIONS.merge(closed: true)
     end
 
     def activate_invisible_task_review_abilities
@@ -146,11 +147,11 @@ class TaskAbility < BaseAbility
                   user_options.merge(approved: nil, task: { closed: false })
       ability.can %i[assign self_assign], Task
       ability.can %i[approve disapprove], Review, approved: nil
-      [TaskConnection, TaskReopening].each do |model_name|
-        ability.can :create, model_name, user_options
-      end
       ability.can :create, TaskClosure,
                   user_options.merge(task: { closed: false })
+      ability.can :create, TaskConnection, user_options
+      ability.can :create, TaskReopening,
+                  user_options.merge(task: { closed: true })
       ability.can :update, TaskConnection, user_options
     end
 end

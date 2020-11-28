@@ -4452,7 +4452,7 @@ RSpec.describe Ability do
 
         context "for a totally visible task" do
           let(:project) { Fabricate(:project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their closure" do
             let(:task_reopening) do
@@ -4477,7 +4477,7 @@ RSpec.describe Ability do
 
         context "for a task from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their closure" do
             let(:task_reopening) do
@@ -4502,7 +4502,7 @@ RSpec.describe Ability do
 
         context "for a task from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their closure" do
             let(:task_reopening) do
@@ -4524,6 +4524,21 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:destroy, task_reopening) }
           end
         end
+
+        context "for an open task" do
+          let(:task) { Fabricate(:task) }
+
+          context "when their closure" do
+            let(:task_reopening) do
+              Fabricate(:task_reopening, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_reopening) }
+            it { is_expected.to be_able_to(:read, task_reopening) }
+            it { is_expected.not_to be_able_to(:update, task_reopening) }
+            it { is_expected.to be_able_to(:destroy, task_reopening) }
+          end
+        end
       end
     end
 
@@ -4535,7 +4550,7 @@ RSpec.describe Ability do
 
         context "for a totally visible task" do
           let(:project) { Fabricate(:project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their reopening" do
             let(:task_reopening) do
@@ -4560,7 +4575,7 @@ RSpec.describe Ability do
 
         context "for a task from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their closure" do
             let(:task_reopening) do
@@ -4585,7 +4600,7 @@ RSpec.describe Ability do
 
         context "for a task from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           context "when their closure" do
             let(:task_reopening) do
@@ -4607,6 +4622,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, task_reopening) }
           end
         end
+
+        context "for an open task" do
+          let(:task) { Fabricate(:task) }
+
+          context "when their closure" do
+            let(:task_reopening) do
+              Fabricate(:task_reopening, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_reopening) }
+            it { is_expected.to be_able_to(:read, task_reopening) }
+            it { is_expected.not_to be_able_to(:update, task_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+          end
+        end
       end
     end
 
@@ -4621,7 +4651,7 @@ RSpec.describe Ability do
 
         context "for a totally visible task" do
           let(:project) { Fabricate(:project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.to be_able_to(:read, task_reopening) }
@@ -4631,7 +4661,7 @@ RSpec.describe Ability do
 
         context "for a task from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.to be_able_to(:read, task_reopening) }
@@ -4641,10 +4671,19 @@ RSpec.describe Ability do
 
         context "for a task from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.not_to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+        end
+
+        context "for an open task" do
+          let(:task) { Fabricate(:task) }
+
+          it { is_expected.not_to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
           it { is_expected.not_to be_able_to(:update, task_reopening) }
           it { is_expected.not_to be_able_to(:destroy, task_reopening) }
         end
@@ -4662,7 +4701,7 @@ RSpec.describe Ability do
 
         context "for a totally visible task" do
           let(:project) { Fabricate(:project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.to be_able_to(:read, task_reopening) }
@@ -4672,7 +4711,7 @@ RSpec.describe Ability do
 
         context "for a task from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.not_to be_able_to(:read, task_reopening) }
@@ -4682,10 +4721,19 @@ RSpec.describe Ability do
 
         context "for a task from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:task) { Fabricate(:task, project: project) }
+          let(:task) { Fabricate(:closed_task, project: project) }
 
           it { is_expected.not_to be_able_to(:create, task_reopening) }
           it { is_expected.not_to be_able_to(:read, task_reopening) }
+          it { is_expected.not_to be_able_to(:update, task_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, task_reopening) }
+        end
+
+        context "for an open task" do
+          let(:task) { Fabricate(:task) }
+
+          it { is_expected.not_to be_able_to(:create, task_reopening) }
+          it { is_expected.to be_able_to(:read, task_reopening) }
           it { is_expected.not_to be_able_to(:update, task_reopening) }
           it { is_expected.not_to be_able_to(:destroy, task_reopening) }
         end
@@ -4757,6 +4805,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, task_subscription) }
           end
         end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_subscription) do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_subscription) }
+            it { is_expected.to be_able_to(:read, task_subscription) }
+            it { is_expected.to be_able_to(:update, task_subscription) }
+            it { is_expected.to be_able_to(:destroy, task_subscription) }
+          end
+        end
       end
     end
 
@@ -4823,6 +4886,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, task_subscription) }
           end
         end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_subscription) do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_subscription) }
+            it { is_expected.to be_able_to(:read, task_subscription) }
+            it { is_expected.to be_able_to(:update, task_subscription) }
+            it { is_expected.to be_able_to(:destroy, task_subscription) }
+          end
+        end
       end
     end
 
@@ -4887,6 +4965,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, task_subscription) }
             it { is_expected.not_to be_able_to(:update, task_subscription) }
             it { is_expected.not_to be_able_to(:destroy, task_subscription) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_subscription) do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_subscription) }
+            it { is_expected.to be_able_to(:read, task_subscription) }
+            it { is_expected.to be_able_to(:update, task_subscription) }
+            it { is_expected.to be_able_to(:destroy, task_subscription) }
           end
         end
       end
