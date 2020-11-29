@@ -39,6 +39,10 @@ module ProjectsHelper
     pages.any? { |path| current_page?(path) }
   end
 
+  def new_project(category)
+    Project.new(category_id: category.id)
+  end
+
   private
 
     def project_header_heading(project)

@@ -158,6 +158,25 @@ RSpec.describe "projects/index", type: :view do
         assert_select ".task", count: 0
       end
     end
+
+    context "when category is invisible" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:task) { Fabricate(:task, project: project) }
+
+      before do
+        @category = assign(:category, Fabricate(:invisible_category))
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([task]))
+      end
+
+      it "doesn't render new project link" do
+        render
+
+        expect(rendered).not_to have_link(nil, href: new_project_url)
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -337,6 +356,25 @@ RSpec.describe "projects/index", type: :view do
 
         url = category_tasks_subscriptions_path(@category)
         assert_select "a[href='#{url}'][data-method='post']"
+      end
+    end
+
+    context "when category is invisible" do
+      let(:project) { Fabricate(:project, category: @category) }
+      let(:issue) { Fabricate(:issue, project: project) }
+      let(:task) { Fabricate(:task, project: project) }
+
+      before do
+        @category = assign(:category, Fabricate(:invisible_category))
+        @projects = assign(:projects, [project])
+        @issues = assign(:issues, page([issue]))
+        @tasks = assign(:tasks, page([task]))
+      end
+
+      it "doesn't render new project link" do
+        render
+
+        expect(rendered).not_to have_link(nil, href: new_project_url)
       end
     end
   end
