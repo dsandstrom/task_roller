@@ -94,9 +94,13 @@ RSpec.describe "tasks/show", type: :view do
     context "when task assigned to a user" do
       let(:user) { Fabricate(:user_worker) }
 
+      let(:task_assignee) do
+        Fabricate(:task_assignee, task: @task, assignee: user)
+      end
+
       before do
         @task = assign(:task, task)
-        Fabricate(:task_assignee, task: @task, assignee: user)
+        task_assignee
         assign(:assignees, [user])
         assign(:assigned, [])
       end
@@ -116,6 +120,12 @@ RSpec.describe "tasks/show", type: :view do
         render
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
+      end
+
+      it "doesn't render destroy task_assignee link" do
+        render
+        url = task_task_assignee_path(@task, task_assignee)
+        expect(rendered).not_to have_link(nil, href: url)
       end
     end
 
@@ -1654,9 +1664,13 @@ RSpec.describe "tasks/show", type: :view do
     end
 
     context "when Task assigned to them" do
+      let(:task_assignee) do
+        Fabricate(:task_assignee, task: @task, assignee: current_user)
+      end
+
       before do
         @task = assign(:task, task)
-        @task.assignees << current_user
+        @task_assignee = assign(:task_assignee, task_assignee)
         assign(:assignees, [current_user])
       end
 
@@ -1707,6 +1721,12 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
+
+        it "doesn't render destroy task_assignee link" do
+          render
+          url = task_task_assignee_path(@task, task_assignee)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
       end
 
       context "and they have an finished progression" do
@@ -1736,6 +1756,12 @@ RSpec.describe "tasks/show", type: :view do
           render
           url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+
+        it "renders destroy task_assignee link" do
+          render
+          url = task_task_assignee_path(@task, task_assignee)
+          expect(rendered).to have_link(nil, href: url)
         end
       end
 
@@ -1779,15 +1805,25 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
+
+        it "doesn't render destroy task_assignee link" do
+          render
+          url = task_task_assignee_path(@task, task_assignee)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
       end
     end
 
     context "when Task assigned to them and another worker" do
+      let(:task_assignee) do
+        Fabricate(:task_assignee, task: @task, assignee: current_user)
+      end
+
       let(:another_worker) { Fabricate(:user_worker) }
 
       before do
         @task = assign(:task, task)
-        @task.assignees << current_user
+        @task_assignee = assign(:task_assignee, task_assignee)
         @task.assignees << another_worker
         assign(:assignees, [current_user, another_worker])
       end
@@ -1825,6 +1861,12 @@ RSpec.describe "tasks/show", type: :view do
         it "renders the new progression link" do
           render
           url = task_progressions_path(@task)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders destroy task_assignee link" do
+          render
+          url = task_task_assignee_path(@task, task_assignee)
           expect(rendered).to have_link(nil, href: url)
         end
       end

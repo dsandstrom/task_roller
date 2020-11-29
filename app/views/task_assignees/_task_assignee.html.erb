@@ -1,0 +1,11 @@
+<%
+  confirm = "Are you sure you want to unassign yourself from #{task.heading}?"
+%>
+
+<%= content_tag :span, class: "task_assignee-#{task_assignee.id}" do %>
+  <%= link_to 'unassign',
+              task_task_assignee_path(task, task_assignee),
+              method: :delete,
+              data: { confirm: confirm },
+              class: 'destroy-link' %>
+<% end %>

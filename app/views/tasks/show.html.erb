@@ -68,10 +68,17 @@
                 <%= render partial: 'shared/progression',
                            collection: @progressions,
                            locals: { task: @task } %>
-              <% elsif can?(:create, new_progression(@task)) %>
-                <%= link_to 'start task',
-                            task_progressions_path(@task),
-                            method: :post, class: 'create-link' %>
+              <% else %>
+                <% if can?(:create, new_progression(@task)) %>
+                  <%= link_to 'start task',
+                              task_progressions_path(@task),
+                              method: :post, class: 'create-link' %>
+                <% end %>
+
+                <% if @task_assignee && can?(:destroy, @task_assignee) %>
+                  <%= divider %>
+                  <%= render @task_assignee, task: @task %>
+                <% end %>
               <% end %>
 
               <% if can?(:create, new_review(@task)) %>

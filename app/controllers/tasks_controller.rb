@@ -127,6 +127,8 @@ class TasksController < ApplicationController
       @user = @task.user
       @assignees = @task.assignees.includes(:progressions)
       @assigned = @task.assigned
+      @task_assignee = @task.task_assignees
+                            .find_by(assignee_id: current_user.id)
     end
 
     def set_task_resources
