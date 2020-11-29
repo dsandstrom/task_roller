@@ -25,10 +25,10 @@ RSpec.describe TaskAssigneesController, type: :controller do
         context "when task project is invisible" do
           let(:project) { Fabricate(:invisible_project) }
 
-          it "returns a success response" do
+          it "should be unauthorized" do
             task = Fabricate(:task, project: project)
             get :new, params: { task_id: task.to_param }
-            expect(response).to be_successful
+            expect_to_be_unauthorized(response)
           end
         end
 
@@ -36,10 +36,10 @@ RSpec.describe TaskAssigneesController, type: :controller do
           let(:category) { Fabricate(:invisible_category) }
           let(:project) { Fabricate(:project, category: category) }
 
-          it "returns a success response" do
+          it "should be unauthorized" do
             task = Fabricate(:task, project: project)
             get :new, params: { task_id: task.to_param }
-            expect(response).to be_successful
+            expect_to_be_unauthorized(response)
           end
         end
       end
@@ -160,21 +160,26 @@ RSpec.describe TaskAssigneesController, type: :controller do
 
         context "when task project is invisible" do
           let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
 
           context "with valid params" do
-            it "assigns the current user to the requested task" do
-              task = Fabricate(:task, project: project)
+            it "doesn't assign the current user to the requested task" do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.to change(current_user.task_assignees, :count).by(1)
+              end.not_to change(current_user.task_assignees, :count)
             end
 
-            it "redirects to the task" do
-              task = Fabricate(:task, project: project)
-              url = task_path(task)
+            it "doesn't subscribe the current_user" do
+              expect do
+                post :create, params: { task_id: task.to_param }
+                task.reload
+              end.not_to change(current_user.task_subscriptions, :count)
+            end
+
+            it "should be unauthorized" do
               post :create, params: { task_id: task.to_param }
-              expect(response).to redirect_to(url)
+              expect_to_be_unauthorized(response)
             end
           end
         end

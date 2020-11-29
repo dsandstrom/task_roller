@@ -44,6 +44,10 @@ module TasksHelper
     TaskComment.new(task_id: task.id, user_id: current_user.id)
   end
 
+  def new_task_assignee(task)
+    TaskAssignee.new(task_id: task.id, assignee_id: current_user.id)
+  end
+
   def new_progression(task)
     Progression.new(task_id: task.id, user_id: current_user.id)
   end

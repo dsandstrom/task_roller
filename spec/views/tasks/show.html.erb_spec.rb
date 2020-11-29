@@ -73,7 +73,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignment link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -115,7 +115,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignment link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -673,7 +673,7 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render new task assignment link" do
           render
           expect(rendered)
-            .not_to have_link(nil, href: task_assignments_path(@task))
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
       end
 
@@ -895,7 +895,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignment link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -923,7 +923,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignment link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -1290,7 +1290,7 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render new task assignment link" do
           render
           expect(rendered)
-            .not_to have_link(nil, href: task_assignments_path(@task))
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
 
         it "doesn't render close link" do
@@ -1330,7 +1330,7 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render new task assignment link" do
           render
           expect(rendered)
-            .not_to have_link(nil, href: task_assignments_path(@task))
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
       end
 
@@ -1630,7 +1630,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_assignments_path(@task))
+        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -1648,7 +1648,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignment link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -1704,7 +1704,7 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render new task assignment link" do
           render
           expect(rendered)
-            .not_to have_link(nil, href: task_assignments_path(@task))
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
       end
 
@@ -1776,7 +1776,7 @@ RSpec.describe "tasks/show", type: :view do
         it "doesn't render new task assignment link" do
           render
           expect(rendered)
-            .not_to have_link(nil, href: task_assignments_path(@task))
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
       end
     end
@@ -1811,12 +1811,12 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_assignments_path(@task))
+        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_assignments_path(@task))
+        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       context "with no review" do
@@ -2016,7 +2016,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "doesn't render new task assignment link" do
         render
-        url = task_assignments_path(@task)
+        url = task_task_assignees_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
@@ -2132,7 +2132,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignments link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -2182,7 +2182,7 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render new task assignments link" do
         render
         expect(rendered)
-          .not_to have_link(nil, href: task_assignments_path(@task))
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 

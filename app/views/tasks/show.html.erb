@@ -27,10 +27,10 @@
                               id: 'task_assignment_link',
                               class: 'secondary-link' %>
                 </p>
-              <% elsif can?(:self_assign, @task) %>
+              <% elsif can?(:create, new_task_assignee(@task)) %>
                 <p>
                   <%= link_to "self assign",
-                              task_assignments_path(@task),
+                              task_task_assignees_path(@task),
                               method: :post,
                               class: 'create-link' %>
                 </p>
@@ -47,10 +47,10 @@
                               edit_assignment_path(@task),
                               id: 'task_assignment_link',
                               class: 'secondary-link' %>
-                <% elsif can?(:self_assign, @task) %>
+                <% elsif can?(:create, new_task_assignee(@task)) %>
                   <%= divider %>
                   <%= link_to "self assign",
-                              task_assignments_path(@task),
+                              task_task_assignees_path(@task),
                               method: :post,
                               class: 'create-link' %>
                 <% end %>
@@ -68,8 +68,7 @@
                 <%= render partial: 'shared/progression',
                            collection: @progressions,
                            locals: { task: @task } %>
-              <% elsif @task.assigned? &&
-                       can?(:create, new_progression(@task)) %>
+              <% elsif can?(:create, new_progression(@task)) %>
                 <%= link_to 'start task',
                             task_progressions_path(@task),
                             method: :post, class: 'create-link' %>
