@@ -110,6 +110,30 @@ RSpec.describe Ability do
               end
             end
           end
+
+          context "while the issue is closed" do
+            let(:project) { Fabricate(:project, category: category) }
+
+            context "when belongs to them" do
+              let(:issue) do
+                Fabricate(:closed_issue, project: project, user: admin)
+              end
+
+              it { is_expected.to be_able_to(:create, issue) }
+              it { is_expected.to be_able_to(:read, issue) }
+              it { is_expected.to be_able_to(:update, issue) }
+              it { is_expected.to be_able_to(:destroy, issue) }
+            end
+
+            context "when doesn't belong to them" do
+              let(:issue) { Fabricate(:closed_issue, project: project) }
+
+              it { is_expected.not_to be_able_to(:create, issue) }
+              it { is_expected.to be_able_to(:read, issue) }
+              it { is_expected.to be_able_to(:update, issue) }
+              it { is_expected.to be_able_to(:destroy, issue) }
+            end
+          end
         end
       end
 
@@ -328,6 +352,30 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, issue) }
                 it { is_expected.not_to be_able_to(:destroy, issue) }
               end
+            end
+          end
+
+          context "while issue is closed" do
+            let(:project) { Fabricate(:project, category: category) }
+
+            context "when belongs to them" do
+              let(:issue) do
+                Fabricate(:closed_issue, project: project, user: current_user)
+              end
+
+              it { is_expected.to be_able_to(:create, issue) }
+              it { is_expected.to be_able_to(:read, issue) }
+              it { is_expected.to be_able_to(:update, issue) }
+              it { is_expected.not_to be_able_to(:destroy, issue) }
+            end
+
+            context "when doesn't belong to them" do
+              let(:issue) { Fabricate(:closed_issue, project: project) }
+
+              it { is_expected.not_to be_able_to(:create, issue) }
+              it { is_expected.to be_able_to(:read, issue) }
+              it { is_expected.not_to be_able_to(:update, issue) }
+              it { is_expected.not_to be_able_to(:destroy, issue) }
             end
           end
         end
@@ -558,6 +606,30 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, issue) }
                   it { is_expected.not_to be_able_to(:destroy, issue) }
                 end
+              end
+            end
+
+            context "while the issue is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue) do
+                  Fabricate(:closed_issue, project: project, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:destroy, issue) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue) { Fabricate(:closed_issue, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:destroy, issue) }
               end
             end
           end
@@ -902,6 +974,30 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, issue) }
                   it { is_expected.not_to be_able_to(:destroy, issue) }
                 end
+              end
+            end
+
+            context "while the issue is closed" do
+              let(:project) { Fabricate(:project, category: category) }
+
+              context "when belongs to them" do
+                let(:issue) do
+                  Fabricate(:closed_issue, project: project, user: current_user)
+                end
+
+                it { is_expected.to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:destroy, issue) }
+              end
+
+              context "when doesn't belong to them" do
+                let(:issue) { Fabricate(:closed_issue, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:destroy, issue) }
               end
             end
           end
