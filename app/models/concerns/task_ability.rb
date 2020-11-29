@@ -57,6 +57,8 @@ class TaskAbility < BaseAbility
                   user_id: user_id, task: Ability::VISIBLE_OPTIONS
       ability.can :self_assign, Task,
                   closed: false, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.cannot :self_assign, Task,
+                     task_assignees: { assignee_id: user_id }
     end
 
     def activate_visible_assigned_abilities
@@ -84,6 +86,8 @@ class TaskAbility < BaseAbility
       ability.can :create, Progression, user_id: user_id, task: task_params
       ability.can :finish, Progression, user_id: user_id
       ability.can %i[assign self_assign], Task
+      ability.cannot :self_assign, Task,
+                     task_assignees: { assignee_id: user_id }
     end
 
     def activate_external_abilities

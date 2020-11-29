@@ -1489,6 +1489,20 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:self_assign, task) }
               end
 
+              context "when assigned to the task" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                before do
+                  Fabricate(:task_assignee, task: task, assignee: admin)
+                end
+
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.to be_able_to(:update, task) }
+                it { is_expected.to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
+              end
+
               context "and closed" do
                 let(:task) { Fabricate(:closed_task, project: project) }
 
@@ -1743,6 +1757,21 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
                 it { is_expected.to be_able_to(:self_assign, task) }
+              end
+
+              context "when assigned to them" do
+                let(:task) { Fabricate(:task, project: project) }
+
+                before do
+                  Fabricate(:task_assignee, task: task, assignee: current_user)
+                end
+
+                it { is_expected.not_to be_able_to(:create, task) }
+                it { is_expected.to be_able_to(:read, task) }
+                it { is_expected.not_to be_able_to(:update, task) }
+                it { is_expected.not_to be_able_to(:destroy, task) }
+                it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:self_assign, task) }
               end
 
               context "and closed" do
@@ -2012,6 +2041,22 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
                   it { is_expected.to be_able_to(:self_assign, task) }
+                end
+
+                context "when assigned to them" do
+                  let(:task) { Fabricate(:task, project: project) }
+
+                  before do
+                    Fabricate(:task_assignee, task: task,
+                                              assignee: current_user)
+                  end
+
+                  it { is_expected.not_to be_able_to(:create, task) }
+                  it { is_expected.to be_able_to(:read, task) }
+                  it { is_expected.not_to be_able_to(:update, task) }
+                  it { is_expected.not_to be_able_to(:destroy, task) }
+                  it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:self_assign, task) }
                 end
 
                 context "and closed" do

@@ -190,9 +190,9 @@ RSpec.describe AssignmentsController, type: :controller do
               end.not_to change(current_user.task_subscriptions, :count)
             end
 
-            it "renders new" do
+            it "should be unauthorized" do
               post :create, params: { task_id: task.to_param }
-              expect(response).to be_successful
+              expect_to_be_unauthorized(response)
             end
           end
         end
@@ -273,9 +273,9 @@ RSpec.describe AssignmentsController, type: :controller do
               end.not_to change(current_user.task_subscriptions, :count)
             end
 
-            it "renders new" do
+            it "should be unauthorized" do
               post :create, params: { task_id: task.to_param }
-              expect(response).to be_successful
+              expect_to_be_unauthorized(response)
             end
           end
         end
