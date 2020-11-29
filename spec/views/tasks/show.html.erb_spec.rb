@@ -1630,7 +1630,8 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
+        expect(rendered)
+          .to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -1781,6 +1782,126 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when Task assigned to them and another worker" do
+      let(:another_worker) { Fabricate(:user_worker) }
+
+      before do
+        @task = assign(:task, task)
+        @task.assignees << current_user
+        @task.assignees << another_worker
+        assign(:assignees, [current_user, another_worker])
+      end
+
+      context "and someone else has an unfinished progression" do
+        before do
+          @progression =
+            Fabricate(:unfinished_progression, user: another_worker,
+                                               task: @task)
+          @progressions = assign(:progressions, [])
+        end
+
+        it "render the other worker" do
+          render
+          assert_select "#assignee-#{another_worker.id}"
+        end
+
+        it "doesn't render the progression" do
+          render
+          assert_select "#progression_#{@progression.id}", count: 0
+        end
+
+        it "doesn't render the finish link" do
+          render
+          url = finish_task_progression_path(@task, @progression)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "renders new review link" do
+          render
+          url = task_reviews_path(@task)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders the new progression link" do
+          render
+          url = task_progressions_path(@task)
+          expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "and they have an finished progression" do
+        before do
+          @progression = Fabricate(:finished_progression, user: current_user,
+                                                          task: @task)
+        end
+
+        it "doesn't render the progression" do
+          render
+          assert_select "#progression_#{@progression.id}", count: 0
+        end
+
+        it "renders the new progression link" do
+          render
+          url = task_progressions_path(@task)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render the finish link" do
+          render
+          url = finish_task_progression_path(@task, @progression)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render destroy progression link" do
+          render
+          url = task_progression_path(@task, @progression)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+      end
+
+      context "with no review" do
+        it "renders new review link" do
+          render
+          expect(rendered).to have_link(nil, href: task_reviews_path(@task))
+        end
+      end
+
+      context "with a pending review" do
+        before do
+          @review = assign(:review, Fabricate(:pending_review, task: @task))
+        end
+
+        it "doesn't render destroy review link" do
+          render
+          url = task_review_path(@task, @review)
+          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+        end
+
+        it "doesn't render new review link" do
+          render
+          expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
+        end
+
+        it "doesn't render approve review link" do
+          render
+          url = approve_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render disapprove review link" do
+          render
+          url = disapprove_task_review_path(@task, @review)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render new task assignment link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: task_task_assignees_path(@task))
+        end
+      end
+    end
+
     context "when someone else's Task" do
       before do
         @task = assign(:task, task)
@@ -1811,12 +1932,14 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
+        expect(rendered)
+          .to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       it "renders new task assignment link" do
         render
-        expect(rendered).to have_link(nil, href: task_task_assignees_path(@task))
+        expect(rendered)
+          .to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       context "with no review" do

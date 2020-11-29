@@ -119,7 +119,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.to change(current_user.task_subscriptions, :count).by(1)
+              end.to change(current_user.task_assignees, :count).by(1)
             end
 
             it "redirects to the task" do
@@ -148,7 +148,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.not_to change(current_user.task_subscriptions, :count)
+              end.not_to change(current_user.task_assignees, :count)
             end
 
             it "should be unauthorized" do
@@ -174,7 +174,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.not_to change(current_user.task_subscriptions, :count)
+              end.not_to change(current_user.task_assignees, :count)
             end
 
             it "should be unauthorized" do
@@ -207,7 +207,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.to change(current_user.task_subscriptions, :count).by(1)
+              end.to change(current_user.task_assignees, :count).by(1)
             end
 
             it "redirects to the task" do
@@ -236,7 +236,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               expect do
                 post :create, params: { task_id: task.to_param }
                 task.reload
-              end.not_to change(current_user.task_subscriptions, :count)
+              end.not_to change(current_user.task_assignees, :count)
             end
 
             it "should be unauthorized" do
@@ -257,11 +257,11 @@ RSpec.describe TaskAssigneesController, type: :controller do
             end.not_to change(task, :assignee_ids)
           end
 
-          it "doesn't create any task_subscriptions" do
+          it "doesn't create any task_assignees" do
             task = Fabricate(:task, project: project)
             expect do
               post :create, params: { task_id: task.to_param }
-            end.not_to change(TaskSubscription, :count)
+            end.not_to change(TaskAssignee, :count)
           end
 
           it "should be unauthorized" do
@@ -283,11 +283,11 @@ RSpec.describe TaskAssigneesController, type: :controller do
             end.not_to change(task, :assignee_ids)
           end
 
-          it "doesn't create any task_subscriptions" do
+          it "doesn't create any task_assignees" do
             task = Fabricate(:task, project: project)
             expect do
               post :create, params: { task_id: task.to_param }
-            end.not_to change(TaskSubscription, :count)
+            end.not_to change(TaskAssignee, :count)
           end
 
           it "should be unauthorized" do
@@ -313,17 +313,92 @@ RSpec.describe TaskAssigneesController, type: :controller do
           end.not_to change(task, :assignee_ids)
         end
 
-        it "doesn't create any task_subscriptions" do
+        it "doesn't create any task_assignees" do
           task = Fabricate(:task, project: project)
           expect do
             post :create, params: { task_id: task.to_param }
-          end.not_to change(TaskSubscription, :count)
+          end.not_to change(TaskAssignee, :count)
         end
 
         it "should be unauthorized" do
           task = Fabricate(:task, project: project)
           post :create, params: { task_id: task.to_param }
           expect_to_be_unauthorized(response)
+        end
+      end
+    end
+  end
+
+  describe "DELETE #destroy" do
+    let(:task) { Fabricate(:task) }
+
+    %w[admin reviewer worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when their task_assignee" do
+          it "destroys the requested task_assignee" do
+            task_assignee =
+              Fabricate(:task_assignee, task: task, assignee: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+            end.to change(current_user.task_assignees, :count).by(-1)
+          end
+
+          it "redirects to the task_assignees list" do
+            task_assignee =
+              Fabricate(:task_assignee, task: task, assignee: current_user)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_assignee.to_param }
+            expect(response).to redirect_to(task)
+          end
+        end
+
+        context "when someone else's task_assignee" do
+          it "doesn't destroys the requested task_assignee" do
+            task_assignee = Fabricate(:task_assignee, task: task)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+            end.not_to change(TaskAssignee, :count)
+          end
+
+          it "should be unauthorized" do
+            task_assignee = Fabricate(:task_assignee, task: task)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_assignee.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    %w[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { login(current_user) }
+
+        context "when their task_assignee" do
+          it "doesn't destroys the requested task_assignee" do
+            task_assignee = Fabricate(:task_assignee, task: task,
+                                                      assignee: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+            end.not_to change(TaskAssignee, :count)
+          end
+
+          it "should be unauthorized" do
+            task_assignee = Fabricate(:task_assignee, task: task,
+                                                      assignee: current_user)
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: task_assignee.to_param }
+            expect_to_be_unauthorized(response)
+          end
         end
       end
     end
