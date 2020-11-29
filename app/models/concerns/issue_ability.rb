@@ -34,18 +34,8 @@ class IssueAbility < BaseAbility
     def activate_reviewer
       activate_visible_abilities
       activate_visible_read_abilities
+      activate_visible_review_abilities
       activate_invisible_read_abilities
-
-      ability.can %i[create update], IssueConnection,
-                  user_id: user_id, source: Ability::VISIBLE_OPTIONS
-      ability.can :destroy, IssueConnection, source: Ability::VISIBLE_OPTIONS
-
-      ability.can :create, IssueClosure,
-                  user_id: user_id,
-                  issue: Ability::VISIBLE_OPTIONS.merge(closed: false)
-      ability.can :create, IssueReopening,
-                  user_id: user_id,
-                  issue: Ability::VISIBLE_OPTIONS.merge(closed: true)
     end
 
     def activate_worker
@@ -116,5 +106,17 @@ class IssueAbility < BaseAbility
       ability.can :create, IssueReopening,
                   user_id: user_id, issue: { closed: true }
       ability.can :update, IssueConnection, user_id: user_id
+    end
+
+    def activate_visible_review_abilities
+      ability.can :create, IssueClosure,
+                  user_id: user_id,
+                  issue: Ability::VISIBLE_OPTIONS.merge(closed: false)
+      ability.can %i[create update], IssueConnection,
+                  user_id: user_id, source: Ability::VISIBLE_OPTIONS
+      ability.can :destroy, IssueConnection, source: Ability::VISIBLE_OPTIONS
+      ability.can :create, IssueReopening,
+                  user_id: user_id,
+                  issue: Ability::VISIBLE_OPTIONS.merge(closed: true)
     end
 end
