@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: show category & project subscriptions
+# TODO: separate archived issues/tasks subscriptions
 
 class SubscriptionsController < ApplicationController
   authorize_resource :issue_subscription
