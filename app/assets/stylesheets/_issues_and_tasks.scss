@@ -171,6 +171,14 @@
   line-height: 1.1;
 }
 
+.first-column {
+  section {
+    &:empty {
+      display: none;
+    }
+  }
+}
+
 @include breakpoint(large up) {
   .issue-columns,
   .task-columns {
