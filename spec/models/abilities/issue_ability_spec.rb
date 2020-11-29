@@ -3155,6 +3155,21 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:destroy, issue_connection) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when their connection" do
+            let(:issue_connection) do
+              Fabricate(:issue_connection, source: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_connection) }
+            it { is_expected.to be_able_to(:read, issue_connection) }
+            it { is_expected.to be_able_to(:update, issue_connection) }
+            it { is_expected.to be_able_to(:destroy, issue_connection) }
+          end
+        end
       end
     end
 
@@ -3244,6 +3259,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, issue_connection) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when their connection" do
+            let(:issue_connection) do
+              Fabricate(:issue_connection, source: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_connection) }
+            it { is_expected.to be_able_to(:read, issue_connection) }
+            it { is_expected.to be_able_to(:update, issue_connection) }
+            it { is_expected.to be_able_to(:destroy, issue_connection) }
+          end
+        end
       end
     end
 
@@ -3293,6 +3323,21 @@ RSpec.describe Ability do
 
             it { is_expected.not_to be_able_to(:create, issue_connection) }
             it { is_expected.not_to be_able_to(:read, issue_connection) }
+            it { is_expected.not_to be_able_to(:update, issue_connection) }
+            it { is_expected.not_to be_able_to(:destroy, issue_connection) }
+          end
+        end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when their connection" do
+            let(:issue_connection) do
+              Fabricate(:issue_connection, source: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_connection) }
+            it { is_expected.to be_able_to(:read, issue_connection) }
             it { is_expected.not_to be_able_to(:update, issue_connection) }
             it { is_expected.not_to be_able_to(:destroy, issue_connection) }
           end
@@ -3350,6 +3395,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, issue_connection) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when their connection" do
+            let(:issue_connection) do
+              Fabricate(:issue_connection, source: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_connection) }
+            it { is_expected.to be_able_to(:read, issue_connection) }
+            it { is_expected.not_to be_able_to(:update, issue_connection) }
+            it { is_expected.not_to be_able_to(:destroy, issue_connection) }
+          end
+        end
       end
     end
   end
@@ -3363,7 +3423,7 @@ RSpec.describe Ability do
 
         context "for a totally visible issue" do
           let(:project) { Fabricate(:project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           context "when their closure" do
             let(:issue_reopening) do
@@ -3388,7 +3448,7 @@ RSpec.describe Ability do
 
         context "for an issue from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           context "when their closure" do
             let(:issue_reopening) do
@@ -3413,7 +3473,7 @@ RSpec.describe Ability do
 
         context "for an issue from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           context "when their closure" do
             let(:issue_reopening) do
@@ -3421,6 +3481,30 @@ RSpec.describe Ability do
             end
 
             it { is_expected.to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+
+        context "for a open issue" do
+          let(:issue) { Fabricate(:issue) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
             it { is_expected.to be_able_to(:read, issue_reopening) }
             it { is_expected.not_to be_able_to(:update, issue_reopening) }
             it { is_expected.to be_able_to(:destroy, issue_reopening) }
@@ -3446,7 +3530,7 @@ RSpec.describe Ability do
 
         context "for a totally visible issue" do
           let(:project) { Fabricate(:project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           context "when their reopening" do
             let(:issue_reopening) do
@@ -3471,7 +3555,7 @@ RSpec.describe Ability do
 
         context "for an issue from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           context "when their closure" do
             let(:issue_reopening) do
@@ -3496,7 +3580,31 @@ RSpec.describe Ability do
 
         context "for an issue from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_reopening) do
+              Fabricate(:issue_reopening, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+
+          context "when someone else's reopening" do
+            let(:issue_reopening) { Fabricate(:issue_reopening) }
+
+            it { is_expected.not_to be_able_to(:create, issue_reopening) }
+            it { is_expected.to be_able_to(:read, issue_reopening) }
+            it { is_expected.not_to be_able_to(:update, issue_reopening) }
+            it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+          end
+        end
+
+        context "for a open issue" do
+          let(:issue) { Fabricate(:issue) }
 
           context "when their closure" do
             let(:issue_reopening) do
@@ -3532,7 +3640,7 @@ RSpec.describe Ability do
 
         context "for a totally visible issue" do
           let(:project) { Fabricate(:project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.to be_able_to(:read, issue_reopening) }
@@ -3542,7 +3650,7 @@ RSpec.describe Ability do
 
         context "for an issue from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.to be_able_to(:read, issue_reopening) }
@@ -3552,10 +3660,19 @@ RSpec.describe Ability do
 
         context "for an issue from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.not_to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "for an open issue" do
+          let(:issue) { Fabricate(:issue) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
           it { is_expected.not_to be_able_to(:update, issue_reopening) }
           it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
         end
@@ -3573,7 +3690,7 @@ RSpec.describe Ability do
 
         context "for a totally visible issue" do
           let(:project) { Fabricate(:project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.to be_able_to(:read, issue_reopening) }
@@ -3583,7 +3700,7 @@ RSpec.describe Ability do
 
         context "for an issue from an internal project" do
           let(:project) { Fabricate(:internal_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.not_to be_able_to(:read, issue_reopening) }
@@ -3593,10 +3710,19 @@ RSpec.describe Ability do
 
         context "for an issue from an invisible project" do
           let(:project) { Fabricate(:invisible_project) }
-          let(:issue) { Fabricate(:issue, project: project) }
+          let(:issue) { Fabricate(:closed_issue, project: project) }
 
           it { is_expected.not_to be_able_to(:create, issue_reopening) }
           it { is_expected.not_to be_able_to(:read, issue_reopening) }
+          it { is_expected.not_to be_able_to(:update, issue_reopening) }
+          it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
+        end
+
+        context "for an open issue" do
+          let(:issue) { Fabricate(:issue) }
+
+          it { is_expected.not_to be_able_to(:create, issue_reopening) }
+          it { is_expected.to be_able_to(:read, issue_reopening) }
           it { is_expected.not_to be_able_to(:update, issue_reopening) }
           it { is_expected.not_to be_able_to(:destroy, issue_reopening) }
         end
