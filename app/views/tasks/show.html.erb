@@ -19,24 +19,41 @@
               <% end %>
             </dl>
 
-            <% if can?(:assign, @task) && !@task.in_review? %>
-              <p>
-                <%= link_to 'reassign',
-                            edit_assignment_path(@task),
-                            id: 'task_assignment_link',
-                            class: 'secondary-link' %>
-              </p>
+            <% unless @task.in_review? %>
+              <% if can?(:assign, @task) %>
+                <p>
+                  <%= link_to 'reassign',
+                              edit_assignment_path(@task),
+                              id: 'task_assignment_link',
+                              class: 'secondary-link' %>
+                </p>
+              <% elsif can?(:self_assign, @task) %>
+                <p>
+                  <%= link_to "self assign",
+                              task_assignments_path(@task),
+                              method: :post,
+                              class: 'create-link' %>
+                </p>
+              <% end %>
             <% end %>
           <% else %>
             <p>
               no one
               <%# TODO: add form with ajax with first click, then toggle hide class %>
-              <% if !@task.in_review? && can?(:assign, @task) %>
-                <%= divider %>
-                <%= link_to 'assign someone',
-                            edit_assignment_path(@task),
-                            id: 'task_assignment_link',
-                            class: 'secondary-link' %>
+              <% unless @task.in_review? %>
+                <% if can?(:assign, @task) %>
+                  <%= divider %>
+                  <%= link_to 'assign someone',
+                              edit_assignment_path(@task),
+                              id: 'task_assignment_link',
+                              class: 'secondary-link' %>
+                <% elsif can?(:self_assign, @task) %>
+                  <%= divider %>
+                  <%= link_to "self assign",
+                              task_assignments_path(@task),
+                              method: :post,
+                              class: 'create-link' %>
+                <% end %>
               <% end %>
             </p>
           <% end %>
