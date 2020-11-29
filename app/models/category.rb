@@ -59,4 +59,8 @@ class Category < ApplicationRecord
   def subscribed_to_tasks?(user)
     tasks_subscription(user).present?
   end
+
+  def name_and_tag
+    @name_and_tag ||= "#{name}#{' (archived)' unless visible?}"
+  end
 end

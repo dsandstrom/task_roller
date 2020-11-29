@@ -212,4 +212,40 @@ RSpec.describe Category, type: :model do
       end
     end
   end
+
+  describe "#name_and_tag" do
+    context "when category is visible" do
+      let(:category) { Fabricate(:category) }
+
+      it "returns name only" do
+        expect(category.name_and_tag).to eq(category.name)
+      end
+    end
+
+    context "when category is internal" do
+      let(:category) { Fabricate(:internal_category) }
+
+      it "returns name only" do
+        expect(category.name_and_tag).to eq(category.name)
+      end
+    end
+
+    context "when category is invisible" do
+      let(:category) { Fabricate(:invisible_category) }
+
+      it "returns name and archived tag" do
+        expect(category.name_and_tag).to eq("#{category.name} (archived)")
+      end
+    end
+
+    context "when category is visible, but missing name" do
+      let(:category) { Fabricate(:category) }
+
+      before { category.name = nil }
+
+      it "returns string" do
+        expect(category.name_and_tag).to eq("")
+      end
+    end
+  end
 end
