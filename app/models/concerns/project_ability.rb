@@ -23,7 +23,8 @@ class ProjectAbility < BaseAbility
 
     def activate_reviewer
       ability.can :read, Project
-      ability.can %i[create read update], Project
+      ability.can :create, Project, category: { visible: true }
+      ability.can %i[read update], Project
       CLASSES.each do |name|
         ability.can :manage, name, user_id: user_id,
                                    project: Ability::VISIBLE_PROJECT_OPTIONS
