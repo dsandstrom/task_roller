@@ -1,0 +1,11 @@
+<%= form_with model: task_assignee,
+              url: task_task_assignees_path(task),
+              local: true,
+              html: { id: 'task_assignee_form',
+                      name: 'task_assignee_form' } do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="actions">
+    <%= form.submit 'Self Assign' %>
+  </div>
+<% end %>

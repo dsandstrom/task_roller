@@ -1,0 +1,7 @@
+<%= task_header @task %>
+
+<h2>New Task Assignment</h2>
+
+<%= render 'form', task_assignee: @task_assignee, task: @task %>
+
+<%= link_to 'Back to task', @task %>
