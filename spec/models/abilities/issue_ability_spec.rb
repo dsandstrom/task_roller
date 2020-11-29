@@ -3816,6 +3816,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+        end
       end
     end
 
@@ -3904,6 +3919,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
+          end
+        end
       end
     end
 
@@ -3990,6 +4020,21 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, issue_subscription) }
             it { is_expected.not_to be_able_to(:update, issue_subscription) }
             it { is_expected.not_to be_able_to(:destroy, issue_subscription) }
+          end
+        end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when belongs to them" do
+            let(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, issue_subscription) }
+            it { is_expected.to be_able_to(:read, issue_subscription) }
+            it { is_expected.to be_able_to(:update, issue_subscription) }
+            it { is_expected.to be_able_to(:destroy, issue_subscription) }
           end
         end
       end
@@ -4130,6 +4175,18 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:destroy, resolution) }
         end
       end
+
+      context "when issue is closed" do
+        context "and resolution/issue belong to them" do
+          let(:issue) { Fabricate(:closed_issue, user: admin) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
+
+          it { is_expected.to be_able_to(:create, resolution) }
+          it { is_expected.to be_able_to(:read, resolution) }
+          it { is_expected.to be_able_to(:update, resolution) }
+          it { is_expected.to be_able_to(:destroy, resolution) }
+        end
+      end
     end
 
     %i[reviewer].each do |employee_type|
@@ -4250,6 +4307,40 @@ RSpec.describe Ability do
 
           context "when issue doesn't belong to them" do
             let(:issue) { Fabricate(:issue, project: project) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue is closed" do
+          context "when resolution/issue belong to them" do
+            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when resolution doesn't belong to them" do
+            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
+
+            it { is_expected.not_to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+
+          context "when issue doesn't belong to them" do
+            let(:issue) { Fabricate(:closed_issue) }
             let(:resolution) { Fabricate(:resolution, issue: issue) }
 
             it { is_expected.not_to be_able_to(:create, resolution) }
@@ -4387,6 +4478,20 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:destroy, resolution) }
           end
         end
+
+        context "when issue is closed" do
+          context "when resolution/issue belong to them" do
+            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
       end
     end
 
@@ -4512,6 +4617,20 @@ RSpec.describe Ability do
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.not_to be_able_to(:read, resolution) }
+            it { is_expected.not_to be_able_to(:update, resolution) }
+            it { is_expected.not_to be_able_to(:destroy, resolution) }
+          end
+        end
+
+        context "when issue is closed" do
+          context "when resolution/issue belong to them" do
+            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, resolution) }
+            it { is_expected.to be_able_to(:read, resolution) }
             it { is_expected.not_to be_able_to(:update, resolution) }
             it { is_expected.not_to be_able_to(:destroy, resolution) }
           end
