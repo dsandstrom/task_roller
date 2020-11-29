@@ -8,9 +8,10 @@ class TaskSubscriptionsController < ApplicationController
   load_and_authorize_resource through: :task, except: :index
 
   def index
+    # fetch the tasks thru the subscriptions to block invisible/internal
     @subscribed_tasks =
-      current_user.subscribed_tasks.accessible_by(current_ability)
-                  .filter_by(build_filters).page(params[:page])
+      Task.where(id: @task_subscriptions.map(&:task_id))
+          .filter_by(build_filters).page(params[:page])
   end
 
   def new; end

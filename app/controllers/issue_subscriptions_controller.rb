@@ -3,14 +3,15 @@
 # TODO: add js create/destroy response and partials
 
 class IssueSubscriptionsController < ApplicationController
-  authorize_resource only: :index
+  load_and_authorize_resource only: :index
   load_and_authorize_resource :issue, except: :index
   load_and_authorize_resource through: :issue, except: :index
 
   def index
+    # fetch the issues thru the subscriptions to block invisible/internal
     @subscribed_issues =
-      current_user.subscribed_issues.accessible_by(current_ability)
-                  .filter_by(build_filters).page(params[:page])
+      Issue.where(id: @issue_subscriptions.map(&:issue_id))
+           .filter_by(build_filters).page(params[:page])
   end
 
   def new; end
