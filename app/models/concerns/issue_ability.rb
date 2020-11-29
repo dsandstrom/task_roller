@@ -40,10 +40,11 @@ class IssueAbility < BaseAbility
                   user_id: user_id, source: Ability::VISIBLE_OPTIONS
       ability.can :destroy, IssueConnection, source: Ability::VISIBLE_OPTIONS
 
-      [IssueClosure, IssueReopening].each do |model_name|
-        ability.can :create, model_name,
-                    user_id: user_id, issue: Ability::VISIBLE_OPTIONS
-      end
+      ability.can :create, IssueClosure,
+                  user_id: user_id,
+                  issue: Ability::VISIBLE_OPTIONS.merge(closed: false)
+      ability.can :create, IssueReopening,
+                  user_id: user_id, issue: Ability::VISIBLE_OPTIONS
     end
 
     def activate_worker
@@ -108,9 +109,11 @@ class IssueAbility < BaseAbility
     end
 
     def activate_invisible_abilities
-      [IssueConnection, IssueClosure, IssueReopening].each do |model_name|
+      [IssueConnection, IssueReopening].each do |model_name|
         ability.can :create, model_name, user_id: user_id
       end
+      ability.can :create, IssueClosure,
+                  user_id: user_id, issue: { closed: false }
       ability.can :update, IssueConnection, user_id: user_id
     end
 end

@@ -1296,11 +1296,27 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:destroy, issue_closure) }
           end
         end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
+
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.to be_able_to(:destroy, issue_closure) }
+          end
+        end
       end
     end
 
     %i[reviewer].each do |employee_type|
       context "for a #{employee_type}" do
+        let(:issue) { Fabricate(:issue) }
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         subject(:ability) { Ability.new(current_user) }
@@ -1308,7 +1324,7 @@ RSpec.describe Ability do
         context "for a totally visible issue" do
           context "when their closure" do
             let(:issue_closure) do
-              Fabricate(:issue_closure, user: current_user)
+              Fabricate(:issue_closure, issue: issue, user: current_user)
             end
 
             it { is_expected.to be_able_to(:create, issue_closure) }
@@ -1348,6 +1364,21 @@ RSpec.describe Ability do
           let(:category) { Fabricate(:invisible_category) }
           let(:project) { Fabricate(:project, category: category) }
           let(:issue) { Fabricate(:issue, project: project) }
+
+          context "when their closure" do
+            let(:issue_closure) do
+              Fabricate(:issue_closure, issue: issue, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, issue_closure) }
+            it { is_expected.to be_able_to(:read, issue_closure) }
+            it { is_expected.not_to be_able_to(:update, issue_closure) }
+            it { is_expected.not_to be_able_to(:destroy, issue_closure) }
+          end
+        end
+
+        context "for a closed issue" do
+          let(:issue) { Fabricate(:closed_issue) }
 
           context "when their closure" do
             let(:issue_closure) do
@@ -1845,6 +1876,22 @@ RSpec.describe Ability do
           end
         end
       end
+
+      context "when issue is closed" do
+        let(:project) { Fabricate(:project) }
+        let(:issue) { Fabricate(:closed_issue) }
+
+        context "when belongs to them" do
+          let(:issue_comment) do
+            Fabricate(:issue_comment, issue: issue, user: admin)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_comment) }
+          it { is_expected.to be_able_to(:read, issue_comment) }
+          it { is_expected.to be_able_to(:update, issue_comment) }
+          it { is_expected.to be_able_to(:destroy, issue_comment) }
+        end
+      end
     end
 
     describe "for a reviewer" do
@@ -2231,6 +2278,22 @@ RSpec.describe Ability do
               end
             end
           end
+        end
+      end
+
+      context "when issue is closed" do
+        let(:project) { Fabricate(:project) }
+        let(:issue) { Fabricate(:closed_issue) }
+
+        context "when belongs to them" do
+          let(:issue_comment) do
+            Fabricate(:issue_comment, issue: issue, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_comment) }
+          it { is_expected.to be_able_to(:read, issue_comment) }
+          it { is_expected.to be_able_to(:update, issue_comment) }
+          it { is_expected.not_to be_able_to(:destroy, issue_comment) }
         end
       end
     end
@@ -2621,6 +2684,22 @@ RSpec.describe Ability do
           end
         end
       end
+
+      context "when issue is closed" do
+        let(:project) { Fabricate(:project) }
+        let(:issue) { Fabricate(:closed_issue) }
+
+        context "when belongs to them" do
+          let(:issue_comment) do
+            Fabricate(:issue_comment, issue: issue, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_comment) }
+          it { is_expected.to be_able_to(:read, issue_comment) }
+          it { is_expected.to be_able_to(:update, issue_comment) }
+          it { is_expected.not_to be_able_to(:destroy, issue_comment) }
+        end
+      end
     end
 
     describe "for a reporter" do
@@ -2968,6 +3047,22 @@ RSpec.describe Ability do
               end
             end
           end
+        end
+      end
+
+      context "when issue is closed" do
+        let(:project) { Fabricate(:project) }
+        let(:issue) { Fabricate(:closed_issue) }
+
+        context "when belongs to them" do
+          let(:issue_comment) do
+            Fabricate(:issue_comment, issue: issue, user: current_user)
+          end
+
+          it { is_expected.to be_able_to(:create, issue_comment) }
+          it { is_expected.to be_able_to(:read, issue_comment) }
+          it { is_expected.to be_able_to(:update, issue_comment) }
+          it { is_expected.not_to be_able_to(:destroy, issue_comment) }
         end
       end
     end
