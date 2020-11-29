@@ -3,9 +3,9 @@
 
   <div class="issue-columns">
     <div class="issue-column first-column">
-      <section class="issue-subscription-wrapper">
-        <%= render @subscription, issue: @issue %>
-      </section>
+      <%= content_tag :section,
+                      render(@subscription, issue: @issue),
+                      class: "issue-subscription-wrapper" %>
 
       <% if @issue.addressed? %>
         <% if can?(:create, new_resolution(@issue)) %>
