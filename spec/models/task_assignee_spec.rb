@@ -20,5 +20,14 @@ RSpec.describe TaskAssignee, type: :model do
 
   it { is_expected.to be_valid }
 
-  it { is_expected.to validate_uniqueness_of(:assignee_id).scoped_to(:task_id) }
+  describe "#validations" do
+    context "when a duplicate" do
+      before do
+        Fabricate(:task_assignee, task: subject.task,
+                                  assignee: subject.assignee)
+      end
+
+      it { is_expected.not_to be_valid }
+    end
+  end
 end
