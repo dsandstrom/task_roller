@@ -75,6 +75,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
+
+      it "renders move task link" do
+        render
+        expect(rendered).to have_link(nil, href: new_task_move_path(@task))
+      end
     end
 
     context "when task belongs to an issue" do
@@ -907,6 +912,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
+
+      it "renders move task link" do
+        render
+        expect(rendered).to have_link(nil, href: new_task_move_path(@task))
+      end
     end
 
     context "when task assigned to a user" do
@@ -1643,6 +1653,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered)
           .to have_link(nil, href: task_task_assignees_path(@task))
       end
+
+      it "doesn't render move task link" do
+        render
+        expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
+      end
     end
 
     context "when task is closed" do
@@ -2200,6 +2215,11 @@ RSpec.describe "tasks/show", type: :view do
         render
         url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "doesn't render move task link" do
+        render
+        expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
       end
     end
 
