@@ -9,15 +9,13 @@
 
       <% if @issue.addressed? %>
         <% if can?(:create, new_resolution(@issue)) %>
-          <section class="issue-resolution">
-            <h4 class="issue-column-title">Actions</h4>
-
+          <%= content_for :actions do %>
             <p>
               <%= link_to 'report issue was not fixed and reopen',
                           disapprove_issue_resolutions_path(@issue),
                           method: :post, class: 'destroy-link' %>
             </p>
-          </section>
+          <% end %>
         <% end %>
       <% elsif @issue.current_resolution %>
         <% if can?(:destroy, @issue.current_resolution) %>
@@ -29,14 +27,13 @@
         <% end %>
       <% elsif @issue.unresolved? %>
         <% if can?(:create, new_resolution(@issue)) %>
-          <section class="issue-resolution">
-            <h4 class="issue-column-title">Actions</h4>
+          <%= content_for :actions do %>
             <p>
               <%= link_to 'mark resolved and close',
                           approve_issue_resolutions_path(@issue),
                           method: :post, class: 'destroy-link' %>
             </p>
-          </section>
+          <% end %>
         <% end %>
       <% end %>
 
@@ -64,41 +61,33 @@
           <%= render @source_connection %>
         </section>
       <% elsif @issue.open? %>
-        <%
-          issue_connection = new_issue_connection(@issue)
-          issue_closure = new_issue_closure(@issue)
-        %>
+        <% if can?(:create, new_issue_connection(@issue)) %>
+          <%= content_for :actions do %>
+            <p>
+              <%= link_to 'mark as duplicate and close',
+                          new_issue_connection_path(@issue),
+                          class: 'destroy-link' %>
+            </p>
+          <% end %>
+        <% end %>
 
-        <% if can?(:create, issue_connection) || can?(:create, issue_closure) %>
-          <section class="issue-connections">
-            <h4 class="issue-column-title">Actions</h4>
-
-            <% if can?(:create, issue_connection) %>
-              <p>
-                <%= link_to 'mark as duplicate and close',
-                            new_issue_connection_path(@issue),
-                            class: 'destroy-link' %>
-              </p>
-            <% end %>
-
-            <% if can?(:create, issue_closure) %>
-              <p>
-                <%= link_to 'mark invalid and close',
-                            issue_closures_path(@issue), method: :post,
-                            class: 'destroy-link' %>
-              </p>
-            <% end %>
-          </section>
+        <% if can?(:create, new_issue_closure(@issue)) %>
+          <%= content_for :actions do %>
+            <p>
+              <%= link_to 'mark invalid and close',
+                          issue_closures_path(@issue), method: :post,
+                          class: 'destroy-link' %>
+            </p>
+          <% end %>
         <% end %>
       <% elsif can?(:create, new_issue_reopening(@issue)) %>
-        <section class="issue-connections">
-          <h4 class="issue-column-title">Actions</h4>
+        <%= content_for :actions do %>
           <p>
             <%= link_to 'reopen issue',
                         issue_reopenings_path(@issue), method: :post,
                         class: 'destroy-link' %>
           </p>
-        </section>
+        <% end %>
       <% end %>
 
       <% if @duplicates.any? %>
@@ -110,6 +99,18 @@
                      locals: { show_status: false } %>
         </section>
       <% end %>
+
+      <% if can?(:move, @issue) %>
+        <%= content_for :actions do %>
+          <p>
+            <%= link_to 'move to a different project',
+                        new_issue_move_path(@issue),
+                        class: 'secondary-link' %>
+          </p>
+        <% end %>
+      <% end %>
+
+      <%= render 'actions', issue: @issue %>
 
       <section class="issue-history">
         <h4 class="issue-column-title">History</h4>

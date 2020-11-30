@@ -168,7 +168,8 @@
         <%= content_for :actions do %>
           <p>
             <%= link_to 'move to a different project',
-                        new_task_move_path(@task) %>
+                        new_task_move_path(@task),
+                        class: 'secondary-link' %>
           </p>
         <% end %>
       <% end %>

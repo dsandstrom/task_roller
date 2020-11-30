@@ -69,6 +69,11 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
 
+      it "renders move issue link" do
+        render
+        expect(rendered).to have_link(nil, href: new_issue_move_path(@issue))
+      end
+
       context "and has tasks" do
         it "renders a list of tasks" do
           task = Fabricate(:task, issue: @issue)
@@ -717,6 +722,11 @@ RSpec.describe "issues/show", type: :view do
         render
         expect(rendered).to have_link(nil, href: user_issues_path(@user))
       end
+
+      it "renders move issue link" do
+        render
+        expect(rendered).to have_link(nil, href: new_issue_move_path(@issue))
+      end
     end
 
     context "when a source_connection" do
@@ -1186,6 +1196,12 @@ RSpec.describe "issues/show", type: :view do
           render
           expect(rendered)
             .to have_link(nil, href: user_issues_path(current_user))
+        end
+
+        it "doesn't render move issue link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: new_issue_move_path(@issue))
         end
 
         context "is addressed" do
