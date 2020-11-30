@@ -33,9 +33,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  get 'issues/:issue_id/move' => 'move_issues#edit', as: :new_issue_move
-  patch 'issues/:issue_id/move' => 'move_issues#update', as: :move_issue
-
   resources :tasks, only: %i[show edit update] do
     resources :task_assignees, only: %i[new create destroy]
     resources :task_comments, except: %i[index show]
@@ -85,6 +82,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
          as: "#{roller}_reopenings"
     delete "/#{roller}s/:#{roller}_id/reopenings/:id" =>
       "#{roller}_reopenings#destroy", as: "#{roller}_reopening"
+
+    get "#{roller}s/:#{roller}_id/move" => "move_#{roller}s#edit",
+        as: "new_#{roller}_move"
+    patch "#{roller}s/:#{roller}_id/move" => "move_#{roller}s#update",
+          as: "move_#{roller}"
   end
 
   %w[issues tasks].each do |roller|
