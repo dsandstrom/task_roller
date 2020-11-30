@@ -1475,6 +1475,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1485,6 +1486,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when assigned to the task" do
@@ -1498,6 +1500,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "and closed" do
@@ -1507,6 +1510,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1523,6 +1527,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1533,6 +1538,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1551,6 +1557,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1561,6 +1568,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1578,6 +1586,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1588,6 +1597,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1608,6 +1618,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1618,6 +1629,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1634,6 +1646,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1644,6 +1657,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1662,6 +1676,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1672,6 +1687,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1689,6 +1705,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1699,6 +1716,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1727,6 +1745,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1737,6 +1756,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when assigned to them" do
@@ -1751,6 +1771,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "and closed" do
@@ -1758,6 +1779,7 @@ RSpec.describe Ability do
 
                 it { is_expected.to be_able_to(:read, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1776,6 +1798,7 @@ RSpec.describe Ability do
                 it { is_expected.to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1786,6 +1809,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1806,6 +1830,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1816,6 +1841,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1835,6 +1861,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1845,6 +1872,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1867,6 +1895,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1877,6 +1906,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1895,6 +1925,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1905,6 +1936,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1925,6 +1957,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1935,6 +1968,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
 
@@ -1954,6 +1988,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
 
               context "when doesn't belong to them" do
@@ -1964,6 +1999,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.to be_able_to(:move, task) }
               end
             end
           end
@@ -1993,6 +2029,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
 
                 context "when doesn't belong to them" do
@@ -2003,6 +2040,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
 
                 context "when assigned to them" do
@@ -2018,6 +2056,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
 
@@ -2036,6 +2075,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
 
                 context "when doesn't belong to them" do
@@ -2046,6 +2086,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
             end
@@ -2067,6 +2108,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
 
@@ -2086,6 +2128,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
             end
@@ -2108,6 +2151,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
             end
@@ -2129,6 +2173,7 @@ RSpec.describe Ability do
                   it { is_expected.not_to be_able_to(:update, task) }
                   it { is_expected.not_to be_able_to(:destroy, task) }
                   it { is_expected.not_to be_able_to(:assign, task) }
+                  it { is_expected.not_to be_able_to(:move, task) }
                 end
               end
             end
@@ -2150,6 +2195,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2166,6 +2212,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
 
@@ -2185,6 +2232,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2202,6 +2250,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
           end
@@ -2228,6 +2277,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2244,6 +2294,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
 
@@ -2263,6 +2314,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2280,6 +2332,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
           end
@@ -2300,6 +2353,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2316,6 +2370,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
 
@@ -2335,6 +2390,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2352,6 +2408,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
           end
@@ -2372,6 +2429,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2388,6 +2446,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
 
@@ -2407,6 +2466,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
 
               context "and internal" do
@@ -2424,6 +2484,7 @@ RSpec.describe Ability do
                 it { is_expected.not_to be_able_to(:update, task) }
                 it { is_expected.not_to be_able_to(:destroy, task) }
                 it { is_expected.not_to be_able_to(:assign, task) }
+                it { is_expected.not_to be_able_to(:move, task) }
               end
             end
           end

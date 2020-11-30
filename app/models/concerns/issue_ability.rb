@@ -109,6 +109,7 @@ class IssueAbility < BaseAbility
     end
 
     def activate_visible_review_abilities
+      ability.can :move, Issue
       ability.can :create, IssueClosure,
                   user_id: user_id,
                   issue: Ability::VISIBLE_OPTIONS.merge(closed: false)

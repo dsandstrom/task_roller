@@ -130,6 +130,7 @@ class TaskAbility < BaseAbility
                   user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
       ability.can :assign, Task,
                   closed: false, project: Ability::VISIBLE_PROJECT_OPTIONS
+      ability.can :move, Task
       ability.can :create, TaskClosure,
                   user_id: user_id,
                   task: Ability::VISIBLE_OPTIONS.merge(closed: false,
