@@ -51,6 +51,7 @@ staging:
   encoding: unicode
   database: task-roller-staging
   pool: 5
+  host: <%= Rails.application.credentials.database[:host] %>
   username: <%= Rails.application.credentials.database[:username] %>
   password: <%= Rails.application.credentials.database[:password] %>
 
@@ -59,5 +60,6 @@ production:
   encoding: unicode
   database: task-roller-production
   pool: 5
+  host: <%= Rails.application.credentials.database[:host] %>
   username: <%= Rails.application.credentials.database[:username] %>
   password: <%= Rails.application.credentials.database[:password] %>
