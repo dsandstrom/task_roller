@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: allow admins to connect task to issue, move to different issue
+# TODO: allow reviewers to connect any task to issue, move to different issue
 # TODO: when issue, auto assign summary/description
 # TODO: add history page to show all progressions, approvals
 # TODO: allow creating issue/task from comment (another issue_connection?)
