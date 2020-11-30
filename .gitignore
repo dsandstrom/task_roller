@@ -23,9 +23,14 @@
 .byebug_history
 
 # Ignore encrypted secrets key file.
-config/secrets.yml
-config/secrets.yml.enc
-config/secrets.yml.key
+/config/secrets.yml
+/config/secrets.yml.enc
+/config/secrets.yml.key
+/config/master.key
+/config/credentials/development.key
+/config/credentials/production.key
+/config/credentials/staging.key
+/config/credentials/test.key
 
 *.debug.js
 
