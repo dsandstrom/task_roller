@@ -1,0 +1,17 @@
+<% url = move_issue_path(issue) %>
+
+<%= form_with(model: issue, url: url, local: true, method: :patch,
+              html: { name: 'move_issue_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :project_id %>
+    <%= form.grouped_collection_select :project_id,
+                                       Category.all, :projects,
+                                       :name_and_tag, :id, :name %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
