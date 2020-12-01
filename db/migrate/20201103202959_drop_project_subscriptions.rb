@@ -7,5 +7,6 @@ class DropProjectSubscriptions < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
+  rescue PG::UndefinedTable
   end
 end
