@@ -9,7 +9,7 @@ class CategoryTasksSubscriptionsController < ApplicationController
   def create
     if @category_tasks_subscription.save
       redirect_back fallback_location: @category,
-                    notice: 'Subscribed to Category Tasks'
+                    notice: 'Subscribed to new Category Tasks'
     else
       render :new
     end
@@ -18,6 +18,6 @@ class CategoryTasksSubscriptionsController < ApplicationController
   def destroy
     @category_tasks_subscription.destroy
     redirect_back fallback_location: @category,
-                  notice: 'Unsubscribed from Category Tasks'
+                  notice: 'Unsubscribed from new Category Tasks'
   end
 end

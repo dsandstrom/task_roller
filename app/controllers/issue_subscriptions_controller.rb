@@ -18,7 +18,8 @@ class IssueSubscriptionsController < ApplicationController
 
   def create
     if @issue_subscription.save
-      redirect_back fallback_location: @issue, notice: 'Subscribed to Issue'
+      notice = 'Subscribed to Issue. You will be notified of future actions.'
+      redirect_back fallback_location: @issue, notice: notice
     else
       render :new
     end

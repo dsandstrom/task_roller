@@ -9,7 +9,7 @@ class ProjectTasksSubscriptionsController < ApplicationController
   def create
     if @project_tasks_subscription.save
       redirect_back fallback_location: @project,
-                    notice: 'Subscribed to Project Tasks'
+                    notice: 'Subscribed to new Project Tasks'
     else
       render :new
     end
@@ -18,6 +18,6 @@ class ProjectTasksSubscriptionsController < ApplicationController
   def destroy
     @project_tasks_subscription.destroy
     redirect_back fallback_location: @project,
-                  notice: 'Unsubscribed from Project Tasks'
+                  notice: 'Unsubscribed from new Project Tasks'
   end
 end
