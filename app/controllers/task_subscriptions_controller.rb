@@ -18,7 +18,7 @@ class TaskSubscriptionsController < ApplicationController
 
   def create
     if @task_subscription.save
-      notice = 'Subscribed to Task. You will be notified of future actions.'
+      notice = 'Subscribed to Task. You will be notified of future updates.'
       redirect_back fallback_location: @task, notice: notice
     else
       render :new

@@ -9,15 +9,15 @@ class ProjectIssuesSubscriptionsController < ApplicationController
   def create
     if @project_issues_subscription.save
       redirect_back fallback_location: @project,
-                    notice: 'Subscribed to new Project Issues'
+                    notice: "Subscribed to future issues for #{@project.name}"
     else
       render :new
     end
   end
 
   def destroy
+    notice = "No longer subscribed to future issues for #{@project.name}"
     @project_issues_subscription.destroy
-    redirect_back fallback_location: @project,
-                  notice: 'Unsubscribed from Project Issues'
+    redirect_back fallback_location: @project, notice: notice
   end
 end

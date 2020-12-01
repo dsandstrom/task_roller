@@ -18,7 +18,8 @@ class IssueSubscriptionsController < ApplicationController
 
   def create
     if @issue_subscription.save
-      notice = 'Subscribed to Issue. You will be notified of future actions.'
+      notice = "Subscribed to Issue ##{@issue.id}. You will be notified after "\
+               'updates.'
       redirect_back fallback_location: @issue, notice: notice
     else
       render :new
@@ -27,6 +28,7 @@ class IssueSubscriptionsController < ApplicationController
 
   def destroy
     @issue_subscription.destroy
-    redirect_back fallback_location: @issue, notice: 'Unsubscribed from Issue'
+    redirect_back fallback_location: @issue,
+                  notice: "Unsubscribed from Issue ##{@issue.id}"
   end
 end

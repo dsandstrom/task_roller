@@ -9,15 +9,16 @@ class CategoryIssuesSubscriptionsController < ApplicationController
   def create
     if @category_issues_subscription.save
       redirect_back fallback_location: @category,
-                    notice: 'Subscribed to new Category Issues'
+                    notice: "Subscribed to future issues for #{@category.name}"
     else
       render :new
     end
   end
 
   def destroy
+    notice = "No longer subscribed to future issues for #{@category.name}"
+
     @category_issues_subscription.destroy
-    redirect_back fallback_location: @category,
-                  notice: 'Unsubscribed from new Category Issues'
+    redirect_back fallback_location: @category, notice: notice
   end
 end
