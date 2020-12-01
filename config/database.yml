@@ -49,7 +49,6 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV["PG_HOST"] %>
   database: <%= ENV["PG_DATABASE"] %>
   pool: 5
   username: <%= ENV["PG_USERNAME"] %>
