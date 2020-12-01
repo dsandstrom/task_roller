@@ -3,6 +3,8 @@
 # TODO: create task reopens issue?
 # TODO: allow reviewer+ to change project (any category)
 # TODO: explain internal & invisible in readme/app
+# TODO: add content to footer (app info, help links)
+# TODO: add help page, explain workflows, subscriptions
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
