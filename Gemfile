@@ -43,6 +43,8 @@ gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
 
 gem 'kaminari', '~> 1.2.1'
 
+gem 'faker', '~> 2.14', require: false
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console
@@ -62,7 +64,6 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'faker', '~> 2.14', require: false
   gem 'guard-livereload', '~> 2.5', require: false
   # Access an IRB console on exception pages or by using <%= console %> anywhere
   # in the code.
