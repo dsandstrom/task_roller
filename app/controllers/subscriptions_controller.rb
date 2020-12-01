@@ -9,8 +9,10 @@ class SubscriptionsController < ApplicationController
   load_resource :unresolved_issues, through: :current_user, singleton: true
 
   def index
-    @unresolved_issues = @unresolved_issues.accessible_by(current_ability)
-    @open_tasks = @open_tasks.accessible_by(current_ability)
-    @active_assignments = @active_assignments.accessible_by(current_ability)
+    @unresolved_issues =
+      @unresolved_issues.all_visible.accessible_by(current_ability)
+    @open_tasks = @open_tasks.all_visible.accessible_by(current_ability)
+    @active_assignments =
+      @active_assignments.all_visible.accessible_by(current_ability)
   end
 end

@@ -2,6 +2,7 @@
 
 # TODO: create task reopens issue?
 # TODO: allow reviewer+ to change project (any category)
+# TODO: explain internal & invisible in readme/app
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
