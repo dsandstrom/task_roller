@@ -22,7 +22,7 @@ RSpec.describe TasksController, type: :controller do
     context "for an admin" do
       let(:current_user) { Fabricate(:user_admin) }
 
-      before { login(current_user) }
+      before { sign_in(current_user) }
 
       context "when category is invisible and internal" do
         let(:category) do
@@ -76,7 +76,7 @@ RSpec.describe TasksController, type: :controller do
     context "for a reviewer" do
       let(:current_user) { Fabricate(:user_reviewer) }
 
-      before { login(current_user) }
+      before { sign_in(current_user) }
 
       context "when category is invisible and internal" do
         let(:category) do
@@ -131,7 +131,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when category" do
           context "is visible" do
@@ -373,7 +373,7 @@ RSpec.describe TasksController, type: :controller do
     %w[reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when category" do
           context "is visible" do
@@ -627,7 +627,7 @@ RSpec.describe TasksController, type: :controller do
                                 internal: true)
           end
 
-          before { login(current_user) }
+          before { sign_in(current_user) }
 
           context "when someone else's task" do
             it "returns a success response" do
@@ -669,7 +669,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
@@ -686,7 +686,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
@@ -705,7 +705,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -730,7 +730,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
@@ -747,7 +747,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
@@ -766,7 +766,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -793,7 +793,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -826,7 +826,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
@@ -843,7 +843,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -862,7 +862,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -887,7 +887,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -906,7 +906,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -933,7 +933,7 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
@@ -957,7 +957,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when project" do
           it "returns a success response" do
@@ -994,7 +994,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when project" do
           it "returns a success response" do
@@ -1028,7 +1028,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           get :new, params: { category_id: category.to_param,
@@ -1044,7 +1044,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           it "returns a success response" do
@@ -1073,7 +1073,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           it "returns a success response" do
@@ -1098,7 +1098,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           it "returns a success response" do
@@ -1125,7 +1125,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when project" do
           context "with valid params" do
@@ -1284,7 +1284,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't create a Task" do
           expect do
@@ -1309,7 +1309,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their task" do
           context "with valid params" do
@@ -1409,7 +1409,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their task" do
           context "with valid params" do
@@ -1465,7 +1465,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their task" do
           it "doesn't update the requested task" do
@@ -1511,7 +1511,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested task" do
           task = Fabricate(:task, project: project)
@@ -1534,7 +1534,7 @@ RSpec.describe TasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested task" do
           task = Fabricate(:task, project: project, user: current_user)

@@ -116,4 +116,7 @@ Rails.application.configure do
   #   ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context =
   #   ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+
+  config.action_mailer.default_url_options =
+    { host: 'task-roller.net', port: 80 }
 end

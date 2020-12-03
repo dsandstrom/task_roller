@@ -1,0 +1,36 @@
+<div class="columns">
+  <div class="first-column">
+    <h2>Change your password</h2>
+
+    <%= form_for(resource, as: resource_name,
+                           url: password_path(resource_name),
+                           html: { method: :put, name: 'user_form',
+                                   class: 'user-password-form',
+                                   novalidate: 'novalidate' }) do |form| %>
+      <%= form_errors(form.object) %>
+
+      <%= form.hidden_field :reset_password_token %>
+
+      <div class="field">
+          <%= required_field_label form, :password, "New password" %>
+        <%= form.password_field :password, autofocus: true,
+                                           autocomplete: "new-password" %>
+      </div>
+
+      <div class="field">
+        <%= required_field_label form, :password_confirmation,
+                                       "Confirm New password" %>
+        <%= form.password_field :password_confirmation,
+                                autocomplete: "new-password" %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Change my password" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

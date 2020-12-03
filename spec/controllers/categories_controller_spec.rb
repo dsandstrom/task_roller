@@ -8,7 +8,7 @@ RSpec.describe CategoriesController, type: :controller do
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
           _category = Fabricate(:category)
@@ -24,7 +24,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
           get :archived
@@ -35,7 +35,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :archived
@@ -48,7 +48,7 @@ RSpec.describe CategoriesController, type: :controller do
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "returns a success response" do
           get :new
@@ -59,7 +59,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :new, params: {}
@@ -71,7 +71,7 @@ RSpec.describe CategoriesController, type: :controller do
 
   describe "GET #edit" do
     %w[admin reviewer].each do |employee_type|
-      before { login(Fabricate("user_#{employee_type}")) }
+      before { sign_in(Fabricate("user_#{employee_type}")) }
 
       it "returns a success response" do
         category = Fabricate(:category)
@@ -82,7 +82,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           category = Fabricate(:category)
@@ -98,7 +98,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
           it "creates a new Category" do
@@ -125,7 +125,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           post :create, params: { category: valid_attributes }
@@ -140,7 +140,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
           it "updates the requested category" do
@@ -173,7 +173,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           post :create, params: { category: new_attributes }
@@ -187,7 +187,7 @@ RSpec.describe CategoriesController, type: :controller do
     context "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
 
-      before { login(admin) }
+      before { sign_in(admin) }
 
       it "destroys the requested category" do
         category = Fabricate(:category)
@@ -205,7 +205,7 @@ RSpec.describe CategoriesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "doesn't destroy the requested category" do
           category = Fabricate(:category)

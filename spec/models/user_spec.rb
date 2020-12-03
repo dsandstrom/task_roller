@@ -5,7 +5,8 @@ require "rails_helper"
 RSpec.describe User, type: :model do
   before do
     @user = User.new(name: "User Name", email: "test@example.com",
-                     employee_type: "Worker")
+                     employee_type: "Worker", password: "password",
+                     password_confirmation: "password", confirmed_at: Time.now)
   end
 
   subject { @user }

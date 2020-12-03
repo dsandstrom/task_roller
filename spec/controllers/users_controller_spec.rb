@@ -8,7 +8,7 @@ RSpec.describe UsersController, type: :controller do
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         context "when no users" do
           it "returns a success response" do
@@ -34,7 +34,7 @@ RSpec.describe UsersController, type: :controller do
     context "for an admin" do
       let(:current_user) { Fabricate(:user_admin) }
 
-      before { login(current_user) }
+      before { sign_in(current_user) }
 
       context "when user has an employee_type" do
         it "returns a success response" do
@@ -64,7 +64,7 @@ RSpec.describe UsersController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when user has an employee_type" do
           it "returns a success response" do
@@ -94,7 +94,7 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET #new" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "when valid employee_type" do
         it "returns a success response" do
@@ -120,7 +120,7 @@ RSpec.describe UsersController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :new, params: { user: { employee_type: "Reporter" } }
@@ -132,7 +132,7 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET #edit" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "when user has an employee_type" do
         it "returns a success response" do
@@ -155,7 +155,7 @@ RSpec.describe UsersController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when editing another user" do
           it "should be unauthorized" do
@@ -190,7 +190,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "creates a new User" do
@@ -215,7 +215,7 @@ RSpec.describe UsersController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           post :create, params: { user: valid_attributes }
@@ -232,7 +232,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "updates the requested user" do
@@ -279,7 +279,7 @@ RSpec.describe UsersController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when editing another user" do
           it "should be unauthorized" do
@@ -338,7 +338,7 @@ RSpec.describe UsersController, type: :controller do
     let(:admin) { Fabricate(:user_admin) }
 
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "when destroying another user" do
         it "destroys the requested user" do
@@ -388,7 +388,7 @@ RSpec.describe UsersController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when another user" do
           it "doesn't destroy the requested user" do

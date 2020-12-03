@@ -10,7 +10,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { task_id: task.to_param }
@@ -23,7 +23,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           get :new, params: { task_id: task.to_param }
@@ -38,7 +38,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new TaskReopening for the task" do
@@ -74,7 +74,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't create a new TaskReopening" do
           expect do
@@ -110,7 +110,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested task_reopening" do
           task_reopening = Fabricate(:task_reopening, task: task)
@@ -141,7 +141,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested task_reopening" do
           task_reopening = Fabricate(:task_reopening, task: task)

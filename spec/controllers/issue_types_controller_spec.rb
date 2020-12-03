@@ -8,7 +8,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
   describe "GET #index" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "returns a success response" do
         Fabricate(:issue_type)
@@ -20,7 +20,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           Fabricate(:issue_type)
@@ -34,7 +34,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
   describe "GET #new" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "returns a success response" do
         get :new, params: {}
@@ -44,7 +44,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :new, params: {}
@@ -56,7 +56,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
   describe "GET #edit" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "returns a success response" do
         issue_type = Fabricate(:issue_type)
@@ -67,7 +67,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)
@@ -80,7 +80,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
   describe "POST #create" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "creates a new IssueType" do
@@ -105,7 +105,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           post :create, params: { issue_type: valid_attributes }
@@ -119,7 +119,7 @@ RSpec.describe IssueTypesController, type: :controller do
     let(:new_attributes) { { name: "New Name" } }
 
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "updates the requested issue_type" do
@@ -151,7 +151,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)
@@ -165,7 +165,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
   describe "DELETE #destroy" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "destroys the requested issue_type" do
         issue_type = Fabricate(:issue_type)
@@ -183,7 +183,7 @@ RSpec.describe IssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)

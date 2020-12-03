@@ -38,8 +38,7 @@ gem 'acts_as_list', '~> 0.9.10'
 gem 'redcarpet', '~> 3.4.0'
 
 gem 'cancancan', '~> 3.1.0'
-gem 'roller_authentication', github: 'dsandstrom/roller_authentication',
-                             tag: 'v0.9.0'
+gem 'devise', '~> 4.7.3'
 
 gem 'kaminari', '~> 1.2.1'
 
@@ -62,17 +61,18 @@ group :development, :test do
 end
 
 group :development do
+  # Access an IRB console on exception pages or by using <%= console %> anywhere
+  # in the code.
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'guard-livereload', '~> 2.5', require: false
-  # Access an IRB console on exception pages or by using <%= console %> anywhere
-  # in the code.
+  gem 'letter_opener'
   gem 'listen', '~> 3.2'
-  # Spring speeds up development by keeping your application running in the
-  # background. Read more: https://github.com/rails/spring
   gem 'rubocop', '~> 1.4.2', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
+  # Spring speeds up development by keeping your application running in the
+  # background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 2.1'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'

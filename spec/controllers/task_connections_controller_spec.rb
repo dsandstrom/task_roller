@@ -10,14 +10,14 @@ RSpec.describe TaskConnectionsController, type: :controller do
   let(:invalid_attributes) { { target_id: "" } }
   let(:path) { task_path(source_task) }
 
-  before { login(Fabricate(:user_admin)) }
+  before { sign_in(Fabricate(:user_admin)) }
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { source_id: source_task.to_param }
@@ -30,7 +30,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           get :new, params: { source_id: source_task.to_param }
@@ -45,7 +45,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new TaskConnection for the source" do
@@ -129,7 +129,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't create a new TaskConnection" do
           expect do
@@ -162,7 +162,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested task_connection" do
           task_connection = Fabricate(:task_connection, source: source_task)
@@ -198,7 +198,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested task_connection" do
           task_connection = Fabricate(:task_connection, source: source_task)

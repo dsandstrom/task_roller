@@ -4,6 +4,9 @@ Fabricator(:user, aliases: :user_worker) do
   name { sequence(:users) { |n| "User Name #{n + 1}" } }
   email { sequence(:users) { |n| "user-email-#{n + 1}@example.com" } }
   employee_type { 'Worker' }
+  password { '12345679' }
+  password_confirmation { '12345679' }
+  confirmed_at { Time.now }
 end
 
 Fabricator(:user_admin, from: :user) do

@@ -8,7 +8,7 @@ RSpec.describe SubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when users" do
           it "returns a success response" do

@@ -13,7 +13,7 @@ RSpec.describe MoveTasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           task = Fabricate(:task)
@@ -27,7 +27,7 @@ RSpec.describe MoveTasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           task = Fabricate(:task)
@@ -41,7 +41,7 @@ RSpec.describe MoveTasksController, type: :controller do
   describe "PUT #update" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
           it "updates the requested task" do
@@ -83,7 +83,7 @@ RSpec.describe MoveTasksController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           task = Fabricate(:task)

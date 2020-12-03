@@ -10,7 +10,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { issue_id: issue.to_param }
@@ -23,7 +23,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           get :new, params: { issue_id: issue.to_param }
@@ -38,7 +38,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when a totally visible issue" do
           let(:project) { Fabricate(:project) }
@@ -145,7 +145,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when a totally visible issue" do
           let(:project) { Fabricate(:project) }
@@ -248,7 +248,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't create a new IssueClosure" do
           expect do
@@ -284,7 +284,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested issue_closure" do
           issue_closure = Fabricate(:issue_closure, issue: issue)
@@ -315,7 +315,7 @@ RSpec.describe IssueClosuresController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested issue_closure" do
           issue_closure = Fabricate(:issue_closure, issue: issue)

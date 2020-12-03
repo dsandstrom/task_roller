@@ -13,7 +13,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { source_id: source_issue.to_param }
@@ -26,7 +26,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           get :new, params: { source_id: source_issue.to_param }
@@ -41,7 +41,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new IssueConnection for the source" do
@@ -121,7 +121,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't create a new IssueConnection" do
           expect do
@@ -164,7 +164,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested issue_connection" do
           issue_connection = Fabricate(:issue_connection, source: source_issue)
@@ -209,7 +209,7 @@ RSpec.describe IssueConnectionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested issue_connection" do
           issue_connection = Fabricate(:issue_connection, source: source_issue)

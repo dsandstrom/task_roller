@@ -2,6 +2,7 @@
 
 # TODO: add quotes to comments
 # Faker::TvShows::Simpsons.quote
+# TODO: add password/confirmation to users
 
 # TODO: approve, disapprove, close current issues/tasks
 # make it look like action is happening to older issues

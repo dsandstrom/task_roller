@@ -12,7 +12,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when task category/project are visible" do
           it "returns a success response" do
@@ -49,7 +49,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when task category/project are visible" do
           it "returns a success response" do
@@ -86,7 +86,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           task = Fabricate(:task, project: project)
@@ -102,7 +102,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when task category/project are visible" do
           context "with valid params" do
@@ -190,7 +190,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when task category/project are visible" do
           context "with valid params" do
@@ -303,7 +303,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't update the requested task's assignments" do
           task = Fabricate(:task, project: project)
@@ -336,7 +336,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their task_assignee" do
           it "destroys the requested task_assignee" do
@@ -380,7 +380,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their task_assignee" do
           it "doesn't destroys the requested task_assignee" do

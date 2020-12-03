@@ -1,0 +1,42 @@
+<div class="columns">
+  <div class="first-column">
+    <h2>Sign up</h2>
+
+    <%= form_for(resource, as: resource_name,
+                           url: registration_path(resource_name),
+                           html: { name: 'user_form',
+                                   class: 'user-registration-form',
+                                   novalidate: 'novalidate' }) do |form| %>
+      <%= form_errors(form.object) %>
+
+      <div class="field">
+        <%= required_field_label form, :email %>
+        <%= form.email_field :email, autofocus: true,
+                                     autocomplete: "email" %>
+      </div>
+
+      <div class="field">
+        <%= required_field_label form, :password %>
+        <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %> characters minimum)</em>
+        <% end %>
+        <%= form.password_field :password,
+                                autocomplete: "new-password" %>
+      </div>
+
+      <div class="field">
+        <%= required_field_label form, :password_confirmation %>
+        <%= form.password_field :password_confirmation,
+                                autocomplete: "new-password" %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Sign up" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

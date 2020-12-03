@@ -8,7 +8,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
   describe "GET #new" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "returns a success response" do
         get :new, params: {}
@@ -18,7 +18,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           get :new, params: {}
@@ -30,7 +30,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
   describe "GET #edit" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "returns a success response" do
         task_type = Fabricate(:task_type)
@@ -41,7 +41,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           task_type = Fabricate(:task_type)
@@ -54,7 +54,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
   describe "POST #create" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "creates a new TaskType" do
@@ -79,7 +79,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           post :create, params: { task_type: valid_attributes }
@@ -93,7 +93,7 @@ RSpec.describe TaskTypesController, type: :controller do
     let(:new_attributes) { { name: "New Name" } }
 
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "updates the requested task_type" do
@@ -125,7 +125,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           task_type = Fabricate(:task_type)
@@ -139,7 +139,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
   describe "DELETE #destroy" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       it "destroys the requested task_type" do
         task_type = Fabricate(:task_type)
@@ -157,7 +157,7 @@ RSpec.describe TaskTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           task_type = Fabricate(:task_type)

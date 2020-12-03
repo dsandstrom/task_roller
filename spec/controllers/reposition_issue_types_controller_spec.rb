@@ -10,7 +10,7 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
     before { Fabricate(:issue_type) }
 
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "with valid params" do
         it "updates the requested issue_type's position" do
@@ -51,7 +51,7 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "redirects to unauthorized" do
           issue_type = Fabricate(:issue_type)

@@ -18,7 +18,7 @@ RSpec.describe IssuesController, type: :controller do
 
   describe "GET #index" do
     context "for an admin" do
-      before { login(Fabricate(:user_admin)) }
+      before { sign_in(Fabricate(:user_admin)) }
 
       context "when category is invisible and internal" do
         let(:category) do
@@ -68,7 +68,7 @@ RSpec.describe IssuesController, type: :controller do
     end
 
     context "for a reviewer" do
-      before { login(Fabricate(:user_reviewer)) }
+      before { sign_in(Fabricate(:user_reviewer)) }
 
       context "when category is invisible and internal" do
         let(:category) do
@@ -120,7 +120,7 @@ RSpec.describe IssuesController, type: :controller do
     %w[worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when category" do
           context "is visible" do
@@ -362,7 +362,7 @@ RSpec.describe IssuesController, type: :controller do
     %w[reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when category" do
           context "is visible" do
@@ -616,7 +616,7 @@ RSpec.describe IssuesController, type: :controller do
                                 internal: true)
           end
 
-          before { login(current_user) }
+          before { sign_in(current_user) }
 
           context "when someone else's issue" do
             it "returns a success response" do
@@ -654,7 +654,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -680,7 +680,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -708,7 +708,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -741,7 +741,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -767,7 +767,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -795,7 +795,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -830,7 +830,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -871,7 +871,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -897,7 +897,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: true)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -924,7 +924,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -957,7 +957,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -984,7 +984,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -1019,7 +1019,7 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { login(current_user) }
+                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -1046,7 +1046,7 @@ RSpec.describe IssuesController, type: :controller do
 
   describe "GET #new" do
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "when an IssueType and a User" do
         before do
@@ -1074,7 +1074,7 @@ RSpec.describe IssuesController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         context "when an IssueType and a User" do
           before do
@@ -1104,7 +1104,7 @@ RSpec.describe IssuesController, type: :controller do
 
   describe "GET #edit" do
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "for their own Issue" do
         it "returns a success response" do
@@ -1127,7 +1127,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for their own Issue" do
           it "returns a success response" do
@@ -1153,7 +1153,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new Issue" do
@@ -1232,7 +1232,7 @@ RSpec.describe IssuesController, type: :controller do
     let(:new_attributes) { { summary: "New Summary" } }
 
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "for their own Issue" do
         context "with valid params" do
@@ -1303,7 +1303,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for their own Issue" do
           context "with valid params" do
@@ -1351,7 +1351,7 @@ RSpec.describe IssuesController, type: :controller do
 
   describe "DELETE #destroy" do
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       it "destroys the requested issue" do
         issue = Fabricate(:issue, project: project)
@@ -1373,7 +1373,7 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "should be unauthorized" do
           issue = Fabricate(:issue, project: project, user: current_user)

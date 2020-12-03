@@ -11,7 +11,7 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { category_id: category.to_param }
@@ -26,7 +26,7 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for a visible and internal category" do
           let(:category) { Fabricate(:category, internal: true) }
@@ -85,7 +85,7 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for a visible" do
           context "and external category" do
@@ -197,7 +197,7 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for a visible" do
           context "and external category" do
@@ -290,7 +290,7 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their category_issues_subscription" do
           it "destroys the requested category_issues_subscription" do

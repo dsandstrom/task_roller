@@ -11,8 +11,6 @@ end
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
-require 'roller_authentication/test_helpers'
-
 Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -63,7 +61,8 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  config.include RollerAuthentication::TestHelpers
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :view
 
   config.include TestHelpers::Authentication, type: :view
   config.include TestHelpers::Authorization, type: :controller

@@ -21,7 +21,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -45,7 +45,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -71,7 +71,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           review = Fabricate(:review, task: task)
@@ -87,7 +87,7 @@ RSpec.describe ReviewsController, type: :controller do
 
         before do
           task.assignees << current_user
-          login(current_user)
+          sign_in(current_user)
         end
 
         it "should be unauthorized" do
@@ -106,7 +106,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when review task is assigned to them" do
           before { task.assignees << current_user }
@@ -144,7 +144,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when review task is assigned to them" do
           before { task.assignees << current_user }
@@ -182,7 +182,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their review is pending and task open" do
           it "destroys the requested review" do
@@ -261,7 +261,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their review is pending and task open" do
           it "doesn't destroy the requested review" do
@@ -305,7 +305,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "approves the requested review" do
@@ -371,7 +371,7 @@ RSpec.describe ReviewsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           review = Fabricate(:pending_review, task: task)
@@ -397,7 +397,7 @@ RSpec.describe ReviewsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "disapproves the requested review" do
@@ -464,7 +464,7 @@ RSpec.describe ReviewsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           review = Fabricate(:pending_review, task: task)

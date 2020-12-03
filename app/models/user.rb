@@ -7,6 +7,11 @@
 # TODO: user subscription?
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  # TODO: allow github omniauth
+  # Include default devise modules. Others available are:
+  #  :timeoutable  and :omniauthable
+  devise :confirmable, :database_authenticatable, :lockable, # :registerable,
+         :recoverable, :rememberable, :trackable, :validatable
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 

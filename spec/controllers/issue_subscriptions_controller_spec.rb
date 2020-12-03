@@ -10,7 +10,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           Fabricate(:issue_subscription, issue: issue, user: current_user)
@@ -26,7 +26,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "returns a success response" do
           get :new, params: { issue_id: issue.to_param }
@@ -41,7 +41,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new IssueSubscription" do
@@ -81,7 +81,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue_subscription" do
           it "destroys the requested issue_subscription" do

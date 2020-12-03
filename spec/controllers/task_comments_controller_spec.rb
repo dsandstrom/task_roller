@@ -14,7 +14,7 @@ RSpec.describe TaskCommentsController, type: :controller do
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
           get :new, params: { task_id: task.to_param }
@@ -26,7 +26,7 @@ RSpec.describe TaskCommentsController, type: :controller do
 
   describe "GET #edit" do
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "for their own TaskComment" do
         it "returns a success response" do
@@ -51,7 +51,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for their own TaskComment" do
           it "returns a success response" do
@@ -80,7 +80,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "with valid params" do
           it "creates a new TaskComment" do
@@ -138,7 +138,7 @@ RSpec.describe TaskCommentsController, type: :controller do
     let(:new_attributes) { { body: "New body" } }
 
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       context "for their own TaskComment" do
         context "with valid params" do
@@ -215,7 +215,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "for their own TaskComment" do
           context "with valid params" do
@@ -279,7 +279,7 @@ RSpec.describe TaskCommentsController, type: :controller do
 
   describe "DELETE #destroy" do
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       it "destroys the requested task_comment" do
         task_comment = Fabricate(:task_comment, task: task)
@@ -301,7 +301,7 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested task_comment" do
           task_comment = Fabricate(:task_comment, task: task)

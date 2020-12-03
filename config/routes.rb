@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
-  resources :users do
+  resources :users, only: nil do
     resources :issues, only: :index
     resources :tasks, only: :index
     resources :assignments, only: :index
@@ -111,8 +111,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
            as: "project_#{roller}_subscription"
   end
 
-  mount RollerAuthentication::Engine => '/auth'
-
+  # devise_for :users
+  devise_for :users, path: 'auth'
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'subscriptions#index'
+  # root to: 'static#unauthorized'
 end

@@ -13,7 +13,7 @@ RSpec.describe ResolutionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           let(:issue) do
@@ -43,7 +43,7 @@ RSpec.describe ResolutionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           let(:issue) do
@@ -96,7 +96,7 @@ RSpec.describe ResolutionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when their issue" do
           let(:issue) do
@@ -148,7 +148,7 @@ RSpec.describe ResolutionsController, type: :controller do
     let(:issue) { Fabricate(:closed_issue, project: project) }
 
     context "for an admin" do
-      before { login(admin) }
+      before { sign_in(admin) }
 
       it "destroys the requested resolution" do
         resolution = Fabricate(:resolution, issue: issue)
@@ -195,7 +195,7 @@ RSpec.describe ResolutionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "doesn't destroy the requested resolution" do
           resolution = Fabricate(:resolution, issue: issue)

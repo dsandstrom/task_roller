@@ -1,0 +1,37 @@
+<%
+  email_value =
+    if resource.pending_reconfirmation?
+      resource.unconfirmed_email
+    else
+      resource.email
+    end
+%>
+
+<div class="columns">
+  <div class="first-column">
+    <h2>Resend confirmation instructions</h2>
+
+    <%= form_for(resource, as: resource_name,
+                           url: confirmation_path(resource_name),
+                           html: { method: :post, name: 'user_form',
+                                   class: 'user-confirmation-form',
+                                   novalidate: 'novalidate' }) do |form| %>
+      <%= form_errors(form.object) %>
+
+      <div class="field">
+        <%= required_field_label form, :email %>
+        <%= form.email_field :email, autofocus: true,
+                                     autocomplete: "email",
+                                     value: email_value %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Resend confirmation instructions" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

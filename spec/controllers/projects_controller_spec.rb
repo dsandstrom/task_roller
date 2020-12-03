@@ -10,7 +10,7 @@ RSpec.describe ProjectsController, type: :controller do
   describe "GET #index" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category internal and invisible" do
           it "returns a success response" do
@@ -24,7 +24,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category visible" do
           context "and external" do
@@ -66,7 +66,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category visible" do
           context "and external" do
@@ -112,7 +112,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type.downcase}")) }
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
           get :archived, params: { category_id: category.to_param }
@@ -123,7 +123,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :archived, params: { category_id: category.to_param }
@@ -136,7 +136,7 @@ RSpec.describe ProjectsController, type: :controller do
   describe "GET #show" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category/project are invisible and internal" do
           let(:category) do
@@ -155,7 +155,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category is visible and external" do
           let(:category) do
@@ -261,7 +261,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "when category is visible and external" do
           let(:category) do
@@ -369,7 +369,7 @@ RSpec.describe ProjectsController, type: :controller do
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "returns a success response" do
           get :new, params: { category_id: category.to_param }
@@ -380,7 +380,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           get :new, params: { category_id: category.to_param }
@@ -393,7 +393,7 @@ RSpec.describe ProjectsController, type: :controller do
   describe "GET #edit" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "returns a success response" do
           project = Fabricate(:project, category: category)
@@ -405,7 +405,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           project = Fabricate(:project, category: category)
@@ -421,7 +421,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
           it "creates a new Project" do
@@ -450,7 +450,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           post :create, params: { category_id: category.to_param,
@@ -473,7 +473,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
           it "updates the requested project" do
@@ -506,7 +506,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "should be unauthorized" do
           project = Fabricate(:project, category: category)
@@ -531,7 +531,7 @@ RSpec.describe ProjectsController, type: :controller do
     context "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
 
-      before { login(admin) }
+      before { sign_in(admin) }
 
       it "destroys the requested project" do
         project = Fabricate(:project, category: category)
@@ -551,7 +551,7 @@ RSpec.describe ProjectsController, type: :controller do
 
     %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
-        before { login(Fabricate("user_#{employee_type}")) }
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
         it "doesn't destroy the requested category" do
           project = Fabricate(:project, category: category)

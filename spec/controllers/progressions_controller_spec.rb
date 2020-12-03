@@ -10,7 +10,7 @@ RSpec.describe ProgressionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -34,7 +34,7 @@ RSpec.describe ProgressionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -62,7 +62,7 @@ RSpec.describe ProgressionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -106,7 +106,7 @@ RSpec.describe ProgressionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         context "when progression task is assigned to them" do
           before { task.assignees << current_user }
@@ -149,7 +149,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
         before do
           task.assignees << current_user
-          login(current_user)
+          sign_in(current_user)
         end
 
         context "when their progression" do
@@ -227,7 +227,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
         before do
           task.assignees << current_user
-          login(current_user)
+          sign_in(current_user)
         end
 
         context "when their progression" do
@@ -278,7 +278,7 @@ RSpec.describe ProgressionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { login(current_user) }
+        before { sign_in(current_user) }
 
         it "destroys the requested progression" do
           progression = Fabricate(:progression, task: task)
@@ -303,7 +303,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
         before do
           task.assignees << current_user
-          login(current_user)
+          sign_in(current_user)
         end
 
         it "doesn't destroy the requested progression" do

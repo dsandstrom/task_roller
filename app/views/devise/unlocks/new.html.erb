@@ -1,0 +1,27 @@
+<div class="columns">
+  <div class="first-column">
+    <h2>Resend unlock instructions</h2>
+
+    <%= form_for(resource, as: resource_name,
+                           url: unlock_path(resource_name),
+                           html: { method: :post, name: 'user_form',
+                                   class: 'user-unlock-form',
+                                   novalidate: 'novalidate' }) do |form| %>
+      <%= form_errors(form.object) %>
+
+      <div class="field">
+        <%= required_field_label form, :email %>
+        <%= form.email_field :email, autofocus: true,
+                                  autocomplete: "email" %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Resend unlock instructions" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

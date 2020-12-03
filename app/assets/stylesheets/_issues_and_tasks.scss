@@ -201,6 +201,49 @@
       order: 1;
     }
   }
+
+  .columns {
+    display: flex;
+    margin: 0 -1rem;
+
+    .first-column,
+    .second-column {
+      border: 0 solid transparent;
+      border-width: 0 1rem;
+    }
+
+    .first-column {
+      flex: 1 1 auto;
+      order: 1;
+    }
+
+    .second-column {
+      flex: 0 0 30rem;
+      order: 2;
+    }
+  }
+}
+
+.devise-links {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  height: 100%;
+  padding: 1rem;
+  border: 1px solid $light-gray;
+  background-color: $off-white;
+
+  p {
+    margin-bottom: .5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  h3 {
+    margin: 0 0 1rem;
+  }
 }
 
 .breadcrumbs {
