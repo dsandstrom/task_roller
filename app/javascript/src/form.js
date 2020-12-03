@@ -100,6 +100,11 @@ export class Form {
         rules: `required|matches[${currentName}[password]]`
       },
       {
+        name: `${currentName}[current_password]`,
+        display: 'Current password',
+        rules: 'required'
+      },
+      {
         name: `${currentName}[body]`,
         display: 'Body',
         rules: 'callback_required_with_editor'
