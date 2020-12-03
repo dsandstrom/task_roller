@@ -1,3 +1,4 @@
+// https://github.com/rickharrison/validate.js
 import FormValidator from 'validate-js/validate';
 
 export class Form {
@@ -84,6 +85,16 @@ export class Form {
       {
         name: `${currentName}[summary]`,
         display: 'Summary',
+        rules: 'required'
+      },
+      {
+        name: `${currentName}[password]`,
+        display: 'Password',
+        rules: 'required|min_length[6]'
+      },
+      {
+        name: `${currentName}[password_confirmation]`,
+        display: 'Confirmation',
         rules: 'required'
       },
       {
