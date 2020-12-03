@@ -15,17 +15,27 @@
           <%= menu_link 'App Setup', main_app.issue_types_path %>
         <% end %>
       </div>
+
+      <div class="app-name-and-logo">
+        <p class="app-name">
+          <%= link_to 'Task Roller', main_app.root_path %>
+        </p>
+
+        <p class="app-logo">
+          <%= image_tag 'wheel.svg' %>
+        </p>
+      </div>
+    <% else %>
+      <div class="app-name-and-logo">
+        <p class="app-name">
+          <%= link_to 'Task Roller', main_app.new_user_session_path %>
+        </p>
+
+        <p class="app-logo">
+          <%= image_tag 'wheel.svg' %>
+        </p>
+      </div>
     <% end %>
-
-    <div class="app-name-and-logo">
-      <p class="app-name">
-        <%= link_to 'Task Roller', main_app.root_path %>
-      </p>
-
-      <p class="app-logo">
-        <%= image_tag 'wheel.svg' %>
-      </p>
-    </div>
   </div>
 
   <% if current_user.present? %>
