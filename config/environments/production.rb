@@ -118,5 +118,5 @@ Rails.application.configure do
   #   ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
   config.action_mailer.default_url_options =
-    { host: 'task-roller.net', port: 80 }
+    { host: (ENV['FRONTEND_URL'] || 'task-roller.net'), port: 80 }
 end
