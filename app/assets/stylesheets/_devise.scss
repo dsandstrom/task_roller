@@ -1,0 +1,21 @@
+.devise-links {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  height: 100%;
+  padding: 1rem;
+  border: 1px solid $light-gray;
+  background-color: $off-white;
+
+  p {
+    margin-bottom: .5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  h3 {
+    margin: 0 0 1rem;
+  }
+}

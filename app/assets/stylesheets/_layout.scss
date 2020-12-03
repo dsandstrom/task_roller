@@ -120,3 +120,52 @@ body {
   margin: 0 auto;
   padding: 0 3%;
 }
+
+@include breakpoint(large up) {
+  .columns {
+    display: flex;
+    margin: 0 -1rem;
+
+    .first-column,
+    .second-column {
+      border: 0 solid transparent;
+      border-width: 0 1rem;
+    }
+
+    .first-column {
+      flex: 1 1 auto;
+      order: 1;
+    }
+
+    .second-column {
+      flex: 0 0 30rem;
+      order: 2;
+    }
+  }
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -.25rem;
+
+  .breadcrumb {
+    border: 0 solid transparent;
+    border-width: 0 .25rem;
+    white-space: nowrap;
+
+    &:not(:last-child) {
+      &::after {
+        content: '>';
+        padding-left: .5rem;
+      }
+    }
+  }
+}
+
+.project-header,
+.category-header {
+  .breadcrumbs {
+    margin-bottom: 1rem;
+  }
+}
