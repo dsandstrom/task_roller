@@ -42,6 +42,7 @@ class FlashMessage {
       // TODO: use querySelectorAll
       // multiple messages not really supported by the css anyways
       const currentElem = event.target.querySelector('.flash-message');
+      if (!currentElem) return;
 
       if (top === null || top > window.pageYOffset) {
         top = window.pageYOffset
