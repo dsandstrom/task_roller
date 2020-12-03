@@ -14,6 +14,7 @@
       background-color: $color-warning-hover;
 
       &.button-outline {
+        border-color: $color-warning-hover;
         background-color: transparent;
         color: $color-warning-hover;
       }
@@ -35,6 +36,7 @@
       background-color: $color-success-hover;
 
       &.button-outline {
+        border-color: $color-success-hover;
         background-color: transparent;
         color: $color-success-hover;
       }
