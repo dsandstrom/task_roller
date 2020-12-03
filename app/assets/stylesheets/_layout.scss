@@ -121,6 +121,12 @@ body {
   padding: 0 3%;
 }
 
+.columns {
+  .second-column {
+    margin-top: 4rem;
+  }
+}
+
 @include breakpoint(large up) {
   .columns {
     display: flex;
@@ -140,6 +146,7 @@ body {
     .second-column {
       flex: 0 0 30rem;
       order: 2;
+      margin-top: 0;
     }
   }
 }
