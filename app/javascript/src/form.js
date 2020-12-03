@@ -64,6 +64,8 @@ export class Form {
     return matches != null;
   }
 
+  // TODO: add 'min_length[6]' for password edit only
+
   options() {
     const matches = this.form.name.match(/^(\w+)_form$/);
     if (!matches) return;
@@ -90,12 +92,12 @@ export class Form {
       {
         name: `${currentName}[password]`,
         display: 'Password',
-        rules: 'required|min_length[6]'
+        rules: 'required'
       },
       {
         name: `${currentName}[password_confirmation]`,
         display: 'Confirmation',
-        rules: 'required'
+        rules: `required|matches[${currentName}[password]]`
       },
       {
         name: `${currentName}[body]`,
