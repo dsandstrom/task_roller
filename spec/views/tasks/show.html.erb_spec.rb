@@ -403,6 +403,21 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when task reviewer destroyed" do
+      before do
+        @task = assign(:task, closed_task)
+        assign(:user, @task.user)
+        @review = assign(:review, Fabricate(:approved_review, task: @task))
+        @review.user.destroy
+      end
+
+      it "still renders the review" do
+        render
+        assert_select "#review_#{@review.id}"
+        assert_select ".review-user", User.destroyed_name
+      end
+    end
+
     context "when task is closed with disapproved review" do
       before do
         @task = assign(:task, closed_task)

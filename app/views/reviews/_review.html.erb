@@ -1,4 +1,6 @@
-<%= content_tag :dt, review.user.name_or_email, class: 'review-user' %>
+<%= content_tag :dt,
+                (review.user ? review.user.name_or_email : User.destroyed_name),
+                class: 'review-user' %>
 
 <dd id="review_<%= review.id %>" class="review">
   <%= content_tag :span, review.status,
