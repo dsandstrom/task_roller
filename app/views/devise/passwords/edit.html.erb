@@ -8,11 +8,14 @@
                                    class: 'user-password-form',
                                    novalidate: 'novalidate' }) do |form| %>
       <%= form_errors(form.object) %>
-
       <%= form.hidden_field :reset_password_token %>
 
       <div class="field">
-          <%= required_field_label form, :password, "New password" %>
+        <div class="field-label-and-message">
+          <%= form.label :password, "New password" %>
+          <%= content_tag :span, "#{@minimum_password_length} characters minimum",
+                          class: 'field-message' %>
+        </div>
         <%= form.password_field :password, autofocus: true,
                                            autocomplete: "new-password" %>
       </div>

@@ -16,10 +16,11 @@
       </div>
 
       <div class="field">
-        <%= required_field_label form, :password %>
-        <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> characters minimum)</em>
-        <% end %>
+        <div class="field-label-and-message">
+          <%= form.label :password %>
+          <%= content_tag :span, "#{@minimum_password_length} characters minimum",
+                          class: 'field-message' %>
+        </div>
         <%= form.password_field :password,
                                 autocomplete: "new-password" %>
       </div>
