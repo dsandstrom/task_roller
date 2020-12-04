@@ -1,7 +1,10 @@
-<%= enable_page_title 'New Category' %>
+<%= category_index_header %>
 
-<h1>New Category</h1>
-
-<%= render 'form', category: @category %>
+<div class="columns">
+  <div class="first-column">
+    <%= render 'form', category: @category %>
+  </div>
+  <div class="second-column"></div>
+</div>
 
 <p><%= link_to 'back', :back %></p>

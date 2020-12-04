@@ -1,11 +1,12 @@
-<%= project_header @project %>
+<%= project_header @project,
+                   subscriptions: [@issue_subscription, @task_subscription] %>
 
 <header class="issues-header">
   <h2>Latest Issues</h2>
   <p>
-    <%= render @issue_subscription, project: @project %>
     <%= link_to 'View Project Issues',
-                project_issues_path(@project), class: 'button' %>
+                project_issues_path(@project),
+                class: 'button button-clear' %>
   </p>
 </header>
 <div class="issues">
@@ -19,9 +20,9 @@
 <header class="tasks-header">
   <h2>Latest Tasks</h2>
   <p>
-    <%= render @task_subscription, project: @project %>
     <%= link_to 'View Project Tasks',
-                project_tasks_path(@project), class: 'button' %>
+                project_tasks_path(@project),
+                class: 'button button-clear' %>
   </p>
 </header>
 <div class="tasks">

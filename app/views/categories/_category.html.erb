@@ -1,9 +1,4 @@
 <%
-issue_subscription =
-  category.issues_subscription(current_user, init: true)
-task_subscription =
-  category.tasks_subscription(current_user, init: true)
-
 projects_count =
   if category.visible?
     category.projects.all_visible.accessible_by(current_ability).count
@@ -50,9 +45,6 @@ tasks_count =
   </div>
 
   <p class="category-links">
-    <%= render issue_subscription, category: category %>
-    <%= render task_subscription, category: category %>
-
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },

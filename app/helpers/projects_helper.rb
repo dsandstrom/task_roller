@@ -20,16 +20,15 @@ module ProjectsHelper
     pages
   end
 
-  def project_header(project)
+  def project_header(project, options = {})
     category = project.category
     return unless category
 
     content_tag :header, class: 'project-header' do
-      concat breadcrumbs(project_breadcrumb_pages(project))
-      concat content_tag(:h1, project_header_heading(project))
-      concat project_tags(project)
-      concat project_nav(project)
-      concat project_page_title(project)
+      content_tag :div, class: 'columns' do
+        concat project_header_first_column(project)
+        concat project_header_second_column(project, options)
+      end
     end
   end
 
@@ -102,6 +101,27 @@ module ProjectsHelper
         "Edit Project: #{project.name}"
       else
         "Project: #{project.name} (#{project.category&.name})"
+      end
+    end
+
+    def project_header_first_column(project)
+      content_tag :div, class: 'first-column' do
+        concat breadcrumbs(project_breadcrumb_pages(project))
+        concat content_tag(:h1, project_header_heading(project))
+        concat project_tags(project)
+        concat project_nav(project)
+        concat project_page_title(project)
+      end
+    end
+
+    def project_header_second_column(project, options)
+      return unless options[:subscriptions].present?
+
+      buttons = options[:subscriptions].map do |s|
+        content_tag :p, render(s, project: project)
+      end
+      content_tag :div, class: 'second-column' do
+        safe_join(buttons)
       end
     end
 end

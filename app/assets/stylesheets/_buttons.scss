@@ -1,43 +1,67 @@
 .button {
   &.button-warning {
-    border-color: $color-warning;
-    background-color: $color-warning;
+    &:not(.button-clear) {
+      border-color: $color-warning;
+      background-color: $color-warning;
+    }
 
     &.button-outline {
       background-color: transparent;
       color: $color-warning;
     }
 
+    &.button-clear {
+      color: $color-warning;
+    }
+
     &:focus,
     &:hover {
-      border-color: $color-warning-hover;
-      background-color: $color-warning-hover;
+      &:not(.button-clear) {
+        border-color: $color-warning-hover;
+        background-color: $color-warning-hover;
+      }
 
       &.button-outline {
         border-color: $color-warning-hover;
         background-color: transparent;
         color: $color-warning-hover;
       }
+
+      &.button-clear {
+        color: $color-warning-hover;
+      }
     }
   }
 
   &.button-success {
-    border-color: $color-success;
-    background-color: $color-success;
+    &:not(.button-clear) {
+      border-color: $color-success;
+      background-color: $color-success;
+    }
 
     &.button-outline {
       background-color: transparent;
       color: $color-success;
     }
 
+    &.button-clear {
+      color: $color-success;
+    }
+
     &:focus,
     &:hover {
-      border-color: $color-success-hover;
-      background-color: $color-success-hover;
+      &:not(.button-clear) {
+        border-color: $color-success-hover;
+        background-color: $color-success-hover;
+      }
 
       &.button-outline {
         border-color: $color-success-hover;
         background-color: transparent;
+        color: $color-success-hover;
+      }
+
+      &.button-clear {
         color: $color-success-hover;
       }
     }

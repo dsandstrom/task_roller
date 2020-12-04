@@ -4,10 +4,6 @@ unless category
   return content_tag(:p, content_tag(:code, 'App Error: No Category'))
 end
 
-issue_subscription =
-  project.issues_subscription(current_user, init: true)
-task_subscription =
-  project.tasks_subscription(current_user, init: true)
 issues_count =
   if project.totally_visible?
     project.issues.all_visible.count
@@ -60,9 +56,6 @@ tasks_count =
   </div>
 
   <p class="project-links">
-    <%= render issue_subscription, project: project %>
-    <%= render task_subscription, project: project %>
-
     <% if can?(:destroy, project) %>
       <%= link_to 'Delete',
                   project_path(project),
@@ -71,7 +64,7 @@ tasks_count =
     <% end %>
     <% if can?(:update, project) %>
       <%= link_to 'Edit', edit_project_path(project),
-                  class: 'button button-outline' %>
+                  class: 'button button-clear' %>
     <% end %>
   </p>
 </div>

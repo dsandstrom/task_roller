@@ -46,6 +46,9 @@ Metrics/ClassLength:
     - 'db/seeds.rb'
   Max: 150
 
+Metrics/ModuleLength:
+  Max: 150
+
 Naming/FileName:
   Exclude:
     - 'Gemfile'
