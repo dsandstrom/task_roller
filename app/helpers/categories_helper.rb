@@ -109,7 +109,7 @@ module CategoriesHelper
     end
 
     def new_project_link(category)
-      return unless can?(:update, new_project(category))
+      return unless can?(:create, new_project(category))
 
       ['New Project', new_category_project_path(category),
        { class: 'create-link' }]

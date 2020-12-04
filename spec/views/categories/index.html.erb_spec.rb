@@ -58,43 +58,6 @@ RSpec.describe "categories/index", type: :view do
 
       expect(rendered).to have_link(nil, href: new_category_path)
     end
-
-    context "when subscribed to issues and tasks" do
-      let(:issue_subscription) do
-        Fabricate(:category_issues_subscription, category: first_category,
-                                                 user: reviewer)
-      end
-
-      let(:task_subscription) do
-        Fabricate(:category_tasks_subscription, category: second_category,
-                                                user: reviewer)
-      end
-
-      it "renders subscribe and unsubscribe buttons" do
-        first_unsubscribe =
-          category_issues_subscription_path(first_category, issue_subscription)
-        second_unsubscribe =
-          category_tasks_subscription_path(second_category, task_subscription)
-
-        first_issue_subscribe =
-          category_issues_subscriptions_path(first_category)
-        second_issue_subscribe =
-          category_issues_subscriptions_path(second_category)
-        first_task_subscribe =
-          category_tasks_subscriptions_path(first_category)
-        second_task_subscribe =
-          category_tasks_subscriptions_path(second_category)
-
-        render
-
-        expect(rendered).to have_link(nil, href: first_unsubscribe)
-        expect(rendered).to have_link(nil, href: second_unsubscribe)
-        expect(rendered).not_to have_link(nil, href: first_issue_subscribe)
-        expect(rendered).to have_link(nil, href: second_issue_subscribe)
-        expect(rendered).to have_link(nil, href: first_task_subscribe)
-        expect(rendered).not_to have_link(nil, href: second_task_subscribe)
-      end
-    end
   end
 
   %w[worker reporter].each do |employee_type|
