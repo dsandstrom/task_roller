@@ -118,10 +118,13 @@ module ProjectsHelper
       return unless options[:subscriptions].present?
 
       buttons = options[:subscriptions].map do |s|
-        content_tag :p, render(s, project: project)
-      end
+        content = render(s, project: project)
+        content == "\n" ? nil : content
+      end.compact
+      return unless buttons&.any?
+
       content_tag :div, class: 'second-column' do
-        safe_join(buttons)
+        content_tag :p, safe_join(buttons)
       end
     end
 end

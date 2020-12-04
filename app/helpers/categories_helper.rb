@@ -144,9 +144,7 @@ module CategoriesHelper
 
       buttons = options[:subscriptions].map do |s|
         content = render(s, category: category)
-        next if content == "\n"
-
-        content_tag :p, content
+        content == "\n" ? nil : content
       end.compact
       return unless buttons&.any?
 
