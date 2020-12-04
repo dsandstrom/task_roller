@@ -48,11 +48,11 @@ tasks_count =
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },
-                  class: 'button button-outline button-warning' %>
+                  class: 'button button-clear button-warning' %>
     <% end %>
     <% if can?(:update, category) %>
       <%= link_to 'Edit', edit_category_path(category),
-                  class: 'button button-outline' %>
+                  class: 'button button-clear' %>
     <% end %>
   </p>
 </div>

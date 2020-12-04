@@ -127,6 +127,10 @@ body {
   }
 }
 
+form {
+  max-width: 70rem;
+}
+
 @include breakpoint(large up) {
   .columns {
     display: flex;
