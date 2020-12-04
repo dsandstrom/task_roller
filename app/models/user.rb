@@ -8,6 +8,8 @@
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
+  # TODO: allow registerable for password edit, but not user destroy
+  # TODO: add registerable as app config
   # Include default devise modules. Others available are:
   #  :timeoutable  and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, # :registerable,

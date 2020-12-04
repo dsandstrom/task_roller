@@ -90,8 +90,7 @@ module CategoriesHelper
       [['Category', category_projects_path(category)],
        ['Issues', category_issues_path(category)],
        ['Tasks', category_tasks_path(category)],
-       archived_projects_link(category),
-       new_project_link(category),
+       archived_projects_link(category), new_project_link(category),
        edit_category_link(category)].compact
     end
 

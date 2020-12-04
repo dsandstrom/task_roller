@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# TODO: make devise aware of employee_type
+# if nil, should not be able to do anything
+# don't allow users to destroy themselves (paper trail?)
+
 class UsersController < ApplicationController
   load_and_authorize_resource
 
