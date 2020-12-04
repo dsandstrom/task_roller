@@ -119,7 +119,9 @@ module ProjectsHelper
 
       buttons = options[:subscriptions].map do |s|
         content = render(s, project: project)
-        content == "\n" ? nil : content
+        return nil if content == "\n"
+
+        content
       end.compact
       return unless buttons&.any?
 
