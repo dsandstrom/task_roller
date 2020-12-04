@@ -20,7 +20,16 @@
 
       <main class="main-content">
         <div class="page">
-          <%= yield %>
+          <div class="columns">
+            <div class="first-column">
+              <%= yield %>
+            </div>
+            <% if content_for?(:sidebar) %>
+              <div class="second-column">
+                <%= yield :sidebar %>
+              </div>
+            <% end %>
+          </div>
         </div>
       </main>
 

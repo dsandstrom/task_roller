@@ -14,3 +14,9 @@
 <%= render 'form', user: @user %>
 
 <p><%= link_to 'Back', :back %></p>
+
+<%= content_for :sidebar do %>
+  <h3>Advanced Settings</h3>
+  <%= content_tag :p, link_to('Change your password',
+                              edit_user_registration_path) %>
+<% end %>

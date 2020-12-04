@@ -1,41 +1,35 @@
-<div class="columns">
-  <div class="first-column">
-    <h1>Log In</h1>
+<h1>Log In</h1>
 
-    <%= form_for(resource, as: resource_name,
-                           url: session_path(resource_name),
-                           html: { name: 'user_form',
-                           class: 'user-session-form',
-                           novalidate: 'novalidate' }) do |form| %>
-      <%= form_errors(form.object) %>
+<%= form_for(resource, as: resource_name,
+                       url: session_path(resource_name),
+                       html: { name: 'user_form',
+                       class: 'user-session-form',
+                       novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
 
-      <div class="field">
-        <%= required_field_label form, :email %>
-        <%= form.email_field :email, autofocus: true,
-                                     autocomplete: "email" %>
-      </div>
+  <div class="field">
+    <%= required_field_label form, :email %>
+    <%= form.email_field :email, autofocus: true,
+                                 autocomplete: "email" %>
+  </div>
 
-      <div class="field">
-        <%= required_field_label form, :password %>
-        <%= form.password_field :password,
-                                autocomplete: "current-password" %>
-      </div>
+  <div class="field">
+    <%= required_field_label form, :password %>
+    <%= form.password_field :password,
+                            autocomplete: "current-password" %>
+  </div>
 
-      <% if devise_mapping.rememberable? %>
-        <div class="field">
-          <%= form.label :remember_me do %>
-            <%= form.check_box :remember_me %> Remember Me
-          <% end %>
-        </div>
+  <% if devise_mapping.rememberable? %>
+    <div class="field">
+      <%= form.label :remember_me do %>
+        <%= form.check_box :remember_me %> Remember Me
       <% end %>
+    </div>
+  <% end %>
 
-      <div class="actions">
-        <%= form.submit "Log in" %>
-      </div>
-    <% end %>
+  <div class="actions">
+    <%= form.submit "Log in" %>
   </div>
+<% end %>
 
-  <div class="second-column">
-    <%= render "devise/shared/links" %>
-  </div>
-</div>
+<%= content_for :sidebar, render('devise/shared/links') %>

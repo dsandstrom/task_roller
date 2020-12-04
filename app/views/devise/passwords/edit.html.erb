@@ -1,39 +1,33 @@
-<div class="columns">
-  <div class="first-column">
-    <h1>Change Your Password</h1>
+<h1>Change Your Password</h1>
 
-    <%= form_for(resource, as: resource_name,
-                           url: password_path(resource_name),
-                           html: { method: :put, name: 'user_form',
-                                   class: 'user-password-form',
-                                   novalidate: 'novalidate' }) do |form| %>
-      <%= form_errors(form.object) %>
-      <%= form.hidden_field :reset_password_token %>
+<%= form_for(resource, as: resource_name,
+                       url: password_path(resource_name),
+                       html: { method: :put, name: 'user_form',
+                               class: 'user-password-form',
+                               novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
+  <%= form.hidden_field :reset_password_token %>
 
-      <div class="field">
-        <div class="field-label-and-message">
-          <%= form.label :password, "New password" %>
-          <%= content_tag :span, "#{@minimum_password_length} characters minimum",
-                          class: 'field-message' %>
-        </div>
-        <%= form.password_field :password, autofocus: true,
-                                           autocomplete: "new-password" %>
-      </div>
-
-      <div class="field">
-        <%= required_field_label form, :password_confirmation,
-                                       "Confirm New password" %>
-        <%= form.password_field :password_confirmation,
-                                autocomplete: "new-password" %>
-      </div>
-
-      <div class="actions">
-        <%= form.submit "Change my password" %>
-      </div>
-    <% end %>
+  <div class="field">
+    <div class="field-label-and-message">
+      <%= form.label :password, "New password" %>
+      <%= content_tag :span, "#{@minimum_password_length} characters minimum",
+                      class: 'field-message' %>
+    </div>
+    <%= form.password_field :password, autofocus: true,
+                                       autocomplete: "new-password" %>
   </div>
 
-  <div class="second-column">
-    <%= render "devise/shared/links" %>
+  <div class="field">
+    <%= required_field_label form, :password_confirmation,
+                                   "Confirm New password" %>
+    <%= form.password_field :password_confirmation,
+                            autocomplete: "new-password" %>
   </div>
-</div>
+
+  <div class="actions">
+    <%= form.submit "Change my password" %>
+  </div>
+<% end %>
+
+<%= content_for :sidebar, render('devise/shared/links') %>

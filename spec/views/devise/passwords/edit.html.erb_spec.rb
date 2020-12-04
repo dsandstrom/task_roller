@@ -11,22 +11,21 @@ RSpec.describe "devise/passwords/edit", type: :view do
     enable_devise_user(view)
   end
 
-  context "for a guest" do
-    it "renders edit password form" do
-      render
+  it "renders edit password form" do
+    render
 
-      assert_select "form[action=?][method=?]", url, "post" do
-        assert_select "input[name=?]", "user[password]"
-        assert_select "input[name=?]", "user[password_confirmation]"
-      end
+    assert_select "form[action=?][method=?]", url, "post" do
+      assert_select "input[name=?]", "user[password]"
+      assert_select "input[name=?]", "user[password_confirmation]"
     end
+  end
 
-    it "renders links" do
-      render
+  it "renders links" do
+    render template: subject, layout: "layouts/application"
 
-      expect(rendered).to have_link(nil, href: new_user_session_path)
-      expect(rendered).to have_link(nil, href: new_user_confirmation_path)
-      expect(rendered).to have_link(nil, href: new_user_unlock_path)
-    end
+    expect(rendered).to have_link(nil, href: new_user_session_path)
+    expect(rendered).to have_link(nil, href: new_user_confirmation_path)
+    expect(rendered).to have_link(nil, href: new_user_unlock_path)
+    expect(rendered).to have_link(nil, href: new_user_password_path)
   end
 end

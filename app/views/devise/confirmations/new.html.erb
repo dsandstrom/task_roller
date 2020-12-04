@@ -7,31 +7,25 @@
     end
 %>
 
-<div class="columns">
-  <div class="first-column">
-    <h1>Resend Confirmation Instructions</h1>
+<h1>Resend Confirmation Instructions</h1>
 
-    <%= form_for(resource, as: resource_name,
-                           url: confirmation_path(resource_name),
-                           html: { method: :post, name: 'user_form',
-                                   class: 'user-confirmation-form',
-                                   novalidate: 'novalidate' }) do |form| %>
-      <%= form_errors(form.object) %>
+<%= form_for(resource, as: resource_name,
+                       url: confirmation_path(resource_name),
+                       html: { method: :post, name: 'user_form',
+                               class: 'user-confirmation-form',
+                               novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
 
-      <div class="field">
-        <%= required_field_label form, :email %>
-        <%= form.email_field :email, autofocus: true,
-                                     autocomplete: "email",
-                                     value: email_value %>
-      </div>
-
-      <div class="actions">
-        <%= form.submit "Resend confirmation instructions" %>
-      </div>
-    <% end %>
+  <div class="field">
+    <%= required_field_label form, :email %>
+    <%= form.email_field :email, autofocus: true,
+                                 autocomplete: "email",
+                                 value: email_value %>
   </div>
 
-  <div class="second-column">
-    <%= render "devise/shared/links" %>
+  <div class="actions">
+    <%= form.submit "Resend confirmation instructions" %>
   </div>
-</div>
+<% end %>
+
+<%= content_for :sidebar, render('devise/shared/links') %>

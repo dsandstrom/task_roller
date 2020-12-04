@@ -1,27 +1,21 @@
-<div class="columns">
-  <div class="first-column">
-    <h1>Forgot Your Password?</h1>
+<h1>Forgot Your Password?</h1>
 
-    <%= form_for(resource, as: resource_name,
-                           url: password_path(resource_name),
-                           html: { method: :post, name: 'user_form',
-                                   class: 'user-password-form',
-                                   novalidate: 'novalidate' }) do |form| %>
-      <%= form_errors(form.object) %>
+<%= form_for(resource, as: resource_name,
+                       url: password_path(resource_name),
+                       html: { method: :post, name: 'user_form',
+                               class: 'user-password-form',
+                               novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
 
-      <div class="field">
-        <%= required_field_label form, :email %>
-        <%= form.email_field :email, autofocus: true,
-                                     autocomplete: "email" %>
-      </div>
-
-      <div class="actions">
-        <%= form.submit "Send me reset password instructions" %>
-      </div>
-    <% end %>
+  <div class="field">
+    <%= required_field_label form, :email %>
+    <%= form.email_field :email, autofocus: true,
+                                 autocomplete: "email" %>
   </div>
 
-  <div class="second-column">
-    <%= render "devise/shared/links" %>
+  <div class="actions">
+    <%= form.submit "Send me reset password instructions" %>
   </div>
-</div>
+<% end %>
+
+<%= content_for :sidebar, render('devise/shared/links') %>
