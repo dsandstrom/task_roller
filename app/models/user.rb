@@ -16,7 +16,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # Include default devise modules. Others available are:
   #   :registerable, :timeoutable and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, :recoverable,
-         :rememberable, :trackable, :validatable
+         :rememberable, :trackable, :validatable, :registerable
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 
