@@ -1,6 +1,8 @@
 // https://github.com/rickharrison/validate.js
 import FormValidator from 'validate-js/validate';
 
+// FIXME: if rails validation error, adds div around input, breaks js
+
 export class Form {
   constructor(elem, editors = []) {
     this.afterValidate = this.afterValidate.bind(this);
@@ -24,24 +26,33 @@ export class Form {
     return validator;
   }
 
+  inputField(input) {
+    var field = input.parentNode;
+    if (field.classList.contains('field')) {
+      return field;
+    }
+    return field.parentNode;
+  }
+
   displayError(error) {
     const input = document.getElementById(error.id);
     if (!input) return;
 
-    this.addClass(input);
-    this.updateMessage(input, error.message);
+    const field = this.inputField(input);
+    this.addClass(input, field);
+    this.updateMessage(input, field, error.message);
   }
 
   // used by displayError
-  addClass(input) {
+  addClass(input, field) {
     input.classList.add('error');
-    input.parentNode.classList.add('error');
+    field.classList.add('error');
   }
 
   // used by displayError
-  updateMessage(input, message) {
+  updateMessage(input, field, message) {
     const messageClass = 'field-message';
-    let elem = input.parentNode.querySelector(`.${messageClass}`);
+    let elem = field.querySelector(`.${messageClass}`);
 
     if (!elem) {
       elem = this.addNewMessage(input, messageClass);
@@ -55,7 +66,7 @@ export class Form {
     const elem = document.createElement('p');
 
     elem.classList.add(messageClass);
-    input.parentNode.appendChild(elem);
+    this.inputField(input).appendChild(elem);;
     return elem;
   }
 
