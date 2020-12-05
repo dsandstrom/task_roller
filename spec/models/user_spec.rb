@@ -1023,4 +1023,56 @@ RSpec.describe User, type: :model do
       expect(potential_token_digest).to eql(actual_token_digest)
     end
   end
+
+  describe "#active_for_authentication?" do
+    context "for an admin" do
+      let(:user) { Fabricate(:user_admin) }
+
+      it "returns true" do
+        expect(user.active_for_authentication?).to eq(true)
+      end
+    end
+
+    context "for a reviewer" do
+      let(:user) { Fabricate(:user_reviewer) }
+
+      it "returns true" do
+        expect(user.active_for_authentication?).to eq(true)
+      end
+    end
+
+    context "for a worker" do
+      let(:user) { Fabricate(:user_worker) }
+
+      it "returns true" do
+        expect(user.active_for_authentication?).to eq(true)
+      end
+    end
+
+    context "for a reporter" do
+      let(:user) { Fabricate(:user_reporter) }
+
+      it "returns true" do
+        expect(user.active_for_authentication?).to eq(true)
+      end
+    end
+
+    context "for an unconfirmed reporter" do
+      let(:user) do
+        Fabricate(:user_reporter, confirmed_at: nil)
+      end
+
+      it "returns false" do
+        expect(user.active_for_authentication?).to eq(false)
+      end
+    end
+
+    context "for a non-employee" do
+      let(:user) { Fabricate(:user_unemployed) }
+
+      it "returns false" do
+        expect(user.active_for_authentication?).to eq(false)
+      end
+    end
+  end
 end

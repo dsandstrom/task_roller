@@ -252,6 +252,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(OPENS_TASKS_ORDER)
   end
 
+  # block non-employees from devise
+  def active_for_authentication?
+    super && employee?
+  end
+
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
