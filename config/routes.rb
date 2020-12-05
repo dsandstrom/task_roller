@@ -111,8 +111,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
            as: "project_#{roller}_subscription"
   end
 
-  # devise_for :users
-  devise_for :users, path: 'auth'
+  devise_controllers =
+    { confirmations: 'users/confirmations', passwords: 'devise/passwords',
+      sessions: 'devise/sessions', unlocks: 'devise/unlocks' }
+  devise_for :users, path: 'auth', controllers: devise_controllers
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'subscriptions#index'
 end

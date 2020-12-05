@@ -1,4 +1,4 @@
-<h1>Change Your Password</h1>
+<h1>Add Secure Password</h1>
 
 <%= form_for(resource, as: resource_name,
                        url: password_path(resource_name),
@@ -10,7 +10,7 @@
 
   <div class="field">
     <div class="field-label-and-message">
-      <%= form.label :password, "New password" %>
+      <%= form.label :password, "Password" %>
       <%= content_tag :span, "#{@minimum_password_length} characters minimum",
                       class: 'field-message' %>
     </div>
@@ -20,13 +20,13 @@
 
   <div class="field">
     <%= required_field_label form, :password_confirmation,
-                                   "Confirm New password" %>
+                                   "Confirm Password" %>
     <%= form.password_field :password_confirmation,
                             autocomplete: "new-password" %>
   </div>
 
   <div class="actions">
-    <%= form.submit "Change my password" %>
+    <%= form.submit "Set my password" %>
   </div>
 <% end %>
 
