@@ -23,12 +23,8 @@ class UsersController < ApplicationController
   def edit; end
 
   def create
-    # TODO: create user without a password
-    @user.password = '1234567'
-    @user.password_confirmation = '1234567'
-    @user.confirmed_at = Time.now
     if @user.save
-      redirect_to @user, notice: 'User was successfully created.'
+      redirect_to users_url, notice: 'User was successfully created.'
     else
       render :new, type: employee_type
     end

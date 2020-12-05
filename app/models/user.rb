@@ -5,6 +5,7 @@
 # they can't log in, but allow admin to disable/enable connection
 # TODO: add priority column to use for ordering
 # TODO: user subscription?
+# TODO: tasks from a user's open issues for reporters/show view
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
@@ -251,9 +252,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(OPENS_TASKS_ORDER)
   end
 
-  # TODO: tasks from a user's open issues
-  # for reporters/show view
-  # def tasks_from_open_issues
-  #   # code
-  # end
+  protected
+
+    # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
+    # override to be able to create without a password
+    def password_required?
+      confirmed? ? super : false
+    end
 end
