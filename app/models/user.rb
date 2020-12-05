@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: allow admins to upgrade/downgrade employee connection
+# TODO: allow reviewers to create reviewers-, workers create reporters
 # TODO: use employee connection to disable users
 # they can't log in, but allow admin to disable/enable connection
 # TODO: add priority column to use for ordering
@@ -13,9 +14,9 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow registerable for password edit, but not user destroy
   # TODO: add registerable as app config
   # Include default devise modules. Others available are:
-  #  :timeoutable  and :omniauthable
-  devise :confirmable, :database_authenticatable, :lockable, # :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  #   :registerable, :timeoutable and :omniauthable
+  devise :confirmable, :database_authenticatable, :lockable, :recoverable,
+         :rememberable, :trackable, :validatable
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 
