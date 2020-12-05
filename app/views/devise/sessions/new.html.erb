@@ -8,13 +8,13 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= required_field_label form, :email %>
+    <%= hidden_required_field_label form, :email %>
     <%= form.email_field :email, autofocus: true,
                                  autocomplete: "email" %>
   </div>
 
   <div class="field">
-    <%= required_field_label form, :password %>
+    <%= hidden_required_field_label form, :password %>
     <%= form.password_field :password,
                             autocomplete: "current-password" %>
   </div>

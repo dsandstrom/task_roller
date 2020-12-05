@@ -17,7 +17,7 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= required_field_label form, :email %>
+    <%= hidden_required_field_label form, :email %>
     <%= form.email_field :email, autofocus: true,
                                  autocomplete: "email",
                                  value: email_value %>

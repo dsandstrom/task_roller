@@ -18,6 +18,13 @@ module FormsHelper
     end
   end
 
+  def hidden_required_field_label(form, field_name, value = nil)
+    content_tag :div, class: 'field-label-and-message' do
+      concat form.label(field_name, value)
+      concat content_tag :span, 'required', class: 'field-message hide'
+    end
+  end
+
   def searching?
     params[:order].present?
   end

@@ -8,7 +8,7 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= required_field_label form, :email %>
+    <%= hidden_required_field_label form, :email %>
     <%= form.email_field :email, autofocus: true,
                                  autocomplete: "email" %>
   </div>
@@ -20,16 +20,17 @@
                       class: 'field-message' %>
     </div>
     <%= form.password_field :password,
-                            autocomplete: "new-password" %>
+                            autocomplete: 'new-password' %>
   </div>
 
   <div class="field">
-    <%= required_field_label form, :password_confirmation %>
+    <%= hidden_required_field_label form, :password_confirmation %>
     <%= form.password_field :password_confirmation,
-                            autocomplete: "new-password" %>
+                            autocomplete: 'new-password' %>
   </div>
 
   <div class="actions">
+    <p><em>All fields required</em></p>
     <%= form.submit "Sign up" %>
   </div>
 <% end %>
