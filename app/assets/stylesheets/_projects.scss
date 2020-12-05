@@ -176,8 +176,6 @@
 
 .category-header,
 .project-header {
-  .category-nav,
-  .project-nav,
   .second-column {
     margin-bottom: 1rem;
     text-align: center;
@@ -187,11 +185,6 @@
 @include breakpoint(large up) {
   .category-header,
   .project-header {
-    .category-nav,
-    .project-nav {
-      text-align: left;
-    }
-
     .second-column {
       margin-bottom: 0;
       text-align: right;

@@ -94,6 +94,13 @@ a {
   }
 }
 
+h1 {
+  a {
+    color: $ink;
+    text-decoration: underline;
+  }
+}
+
 @include breakpoint(small down) {
   body {
     font-size: 1.8em;

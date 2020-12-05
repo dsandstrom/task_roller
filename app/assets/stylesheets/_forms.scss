@@ -106,6 +106,17 @@ label {
   }
 }
 
+// Rails form error
+.field_with_errors { // scss-lint:disable SelectorFormat
+  label {
+    color: $color-warning;
+  }
+
+  input {
+    border-color: $color-warning;
+  }
+}
+
 .error-card {
   margin-bottom: 2rem;
   border-radius: $border-radius;
