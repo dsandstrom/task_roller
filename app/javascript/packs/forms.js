@@ -8,7 +8,8 @@ const editorIds = ['task_description', 'issue_description',
                    'issue_comment_body', 'task_comment_body'];
 const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'issue_form', 'category_form', 'project_form',
-                   'task_form', 'task_comment_form', 'issue_comment_form'];
+                   'task_form', 'task_comment_form', 'issue_comment_form',
+                   'user_password_form'];
 let hiddenForms = new Map();
 hiddenForms.set('task_assignment_link', 'task_assignment_form');
 

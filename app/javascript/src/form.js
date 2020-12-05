@@ -70,8 +70,12 @@ export class Form {
     const matches = this.form.name.match(/^(\w+)_form$/);
     if (!matches) return;
 
-    const currentName = matches[1];
+    var currentName = matches[1];
     if (!currentName) return;
+
+    if (currentName == 'user_password') {
+      currentName = 'user';
+    }
 
     return [
       {
