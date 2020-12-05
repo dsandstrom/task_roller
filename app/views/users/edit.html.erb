@@ -24,5 +24,16 @@
                                     edit_user_registration_path) %>
       </div>
     <% end %>
+  <% elsif can?(:destroy, @user) %>
+    <div class="devise-links">
+      <h3>Advanced</h3>
+      <p>
+        <%= link_to 'Cancel Account',
+                    @user,
+                    method: :delete,
+                    data: { confirm: 'Are you sure?' },
+                    class: 'button button-outline button-warning' %>
+      </p>
+    </div>
   <% end %>
 <% end %>

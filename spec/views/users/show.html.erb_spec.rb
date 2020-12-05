@@ -17,8 +17,6 @@ RSpec.describe "users/show", type: :view do
       render
       expect(rendered).to match(/id="user-detail-#{@user.id}"/)
       expect(rendered).to have_link(nil, href: edit_user_path(@user))
-      selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
-      expect(rendered).to have_selector(:css, selector)
     end
   end
 
