@@ -16,9 +16,13 @@
 <p><%= link_to 'Back', :back %></p>
 
 <%= content_for :sidebar do %>
-  <%- if respond_to?(:edit_user_registration_path) %>
-    <h3>Advanced Settings</h3>
-    <%= content_tag :p, link_to('Change your password',
-                                edit_user_registration_path) %>
+  <%- if current_user.id == @user.id %>
+    <%- if respond_to?(:edit_user_registration_path) %>
+      <div class="devise-links">
+        <h3>Advanced</h3>
+        <%= content_tag :p, link_to('Change your password',
+                                    edit_user_registration_path) %>
+      </div>
+    <% end %>
   <% end %>
 <% end %>
