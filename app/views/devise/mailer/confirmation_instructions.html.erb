@@ -1,5 +1,16 @@
-<p>Welcome <%= @email %>!</p>
+<h1>Task Roller Invitation</h1>
 
-<p>You can confirm your account email through the link below:</p>
+<p>
+  Hello <strong><%= @user.name_or_email %></strong>, you've been invited to
+  particate in <strong>Task Roller</strong>.
+</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p>
+  If you'd like to set up an account by adding a secure password,
+  please follow the link below:
+</p>
+
+<p>
+  <%= link_to 'Confirm my account',
+              confirmation_url(@resource, confirmation_token: @token) %>
+</p>
