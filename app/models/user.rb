@@ -6,6 +6,7 @@
 # TODO: add priority column to use for ordering
 # TODO: user subscription?
 # TODO: tasks from a user's open issues for reporters/show view
+# TODO: show if user unconfirmed
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
