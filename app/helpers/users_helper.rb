@@ -2,14 +2,14 @@
 
 module UsersHelper
   def user_header(user = nil)
+    return new_user_header(user) unless user.persisted?
+
+    link = link_to_unless_current(user.name_or_email, user)
+    user_page_title(user)
     content_tag :header, class: 'user-header' do
-      concat breadcrumbs([['Users', users_path]])
-      if user.present?
-        link = link_to_unless_current(user.name_or_email, user)
-        concat content_tag(:h1, link)
-        concat user_nav(user)
-        concat user_page_title(user)
-      end
+      concat user_breadcrumbs
+      concat content_tag(:h1, link)
+      concat user_nav(user)
     end
   end
 
@@ -21,6 +21,10 @@ module UsersHelper
     content_tag :p, class: 'user-nav' do
       safe_join(navitize(links), divider_with_spaces)
     end
+  end
+
+  def user_breadcrumbs
+    @user_breadcrumbs ||= breadcrumbs([['Users', users_path]])
   end
 
   private
@@ -72,6 +76,15 @@ module UsersHelper
         "Edit User: #{name}"
       else
         "User: #{name}"
+      end
+    end
+
+    def new_user_header(user)
+      heading =
+        "New #{user.employee_type&.present? ? user.employee_type : 'User'}"
+      content_tag :header, class: 'user-header' do
+        concat user_breadcrumbs
+        concat content_tag(:h1, heading)
       end
     end
 end
