@@ -46,7 +46,7 @@ module UsersHelper
       end
       return links unless can?(:update, user)
 
-      links.append ['Options', edit_user_path(user), { class: 'destroy-link' }]
+      links.append ['Settings', edit_user_path(user), { class: 'destroy-link' }]
     end
 
     def user_page_title(user)
