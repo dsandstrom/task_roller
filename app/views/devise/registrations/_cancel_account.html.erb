@@ -1,0 +1,14 @@
+<% return unless can?(:destroy, user) %>
+
+<hr>
+
+<h3>Cancel Account</h3>
+
+<p>
+  Unhappy?
+  <%= button_to "Cancel my account",
+                user_registration_path,
+                data: { confirm: "Are you sure?" },
+                method: :delete,
+                class: 'button button-outline button-warning' %>
+</p>

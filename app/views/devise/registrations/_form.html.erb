@@ -1,0 +1,34 @@
+<%= form_for(resource, as: resource_name,
+                       url: user_registration_path,
+                       html: { method: :put, name: 'user_password_form',
+                               class: 'user-registration-form',
+                               novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <div class="field-label-and-message">
+      <%= form.label :password, "New password" %>
+      <%= content_tag :span, "#{minimum_password_length} characters minimum",
+                      class: 'field-message' %>
+    </div>
+    <%= form.password_field :password, autofocus: false,
+                                       autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= hidden_required_field_label form, :password_confirmation %>
+    <%= form.password_field :password_confirmation,
+                            autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= hidden_required_field_label form, :current_password %>
+    <%= form.password_field :current_password,
+                            autocomplete: "current-password",
+                            placeholder: 'we need your current one to confirm the change' %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Update Password" %>
+  </div>
+<% end %>
