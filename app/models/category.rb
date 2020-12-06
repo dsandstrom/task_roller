@@ -4,8 +4,6 @@
 # TODO: add icon options
 # TODO: add image
 # TODO: force moving projects before destroying
-# TODO: use internal - invisible to reporters
-# TODO: use visible - false: invisible to workers & reporters
 
 class Category < ApplicationRecord
   has_many :projects, dependent: :destroy
