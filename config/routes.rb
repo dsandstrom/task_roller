@@ -111,11 +111,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
            as: "project_#{roller}_subscription"
   end
 
-  devise_controllers =
-    { confirmations: 'users/confirmations', passwords: 'devise/passwords',
-      registrations: 'users/registrations', sessions: 'devise/sessions',
-      unlocks: 'devise/unlocks' }
-  devise_for :users, path: 'auth', controllers: devise_controllers
+  # https://github.com/heartcombo/devise/wiki/
+  # How-To:-Allow-users-to-edit-their-password
+  devise_for :users, path: 'auth', skip: :registrations,
+                     controllers: { confirmations: 'users/confirmations' }
+  as :user do
+    get 'auth/edit' => 'devise/registrations#edit', as: :edit_user_registration
+    put 'auth' => 'devise/registrations#update', as: :user_registration
+  end
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'subscriptions#index'
 end
