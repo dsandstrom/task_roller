@@ -8,9 +8,15 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
+    <%= hidden_required_field_label form, :name %>
+    <%= form.text_field :name, id: :user_name,
+                               autofocus: true, placeholder: 'Your Name' %>
+  </div>
+
+  <div class="field">
     <%= hidden_required_field_label form, :email %>
-    <%= form.email_field :email, autofocus: true,
-                                 autocomplete: "email" %>
+    <%= form.email_field :email, autocomplete: 'email',
+                                 placeholder: 'your@email.com' %>
   </div>
 
   <div class="field">
