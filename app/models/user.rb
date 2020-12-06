@@ -13,9 +13,9 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
   # TODO: add registerable as app config
   # Include default devise modules. Others available are:
-  #   :registerable, :timeoutable and :omniauthable
+  #    :timeoutable and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, :recoverable,
-         :rememberable, :trackable, :validatable
+         :registerable, :rememberable, :trackable, :validatable
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
 

@@ -115,9 +115,13 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # How-To:-Allow-users-to-edit-their-password
   devise_for :users, path: 'auth', skip: :registrations,
                      controllers: { confirmations: 'users/confirmations' }
-  as :user do
-    get 'auth/edit' => 'devise/registrations#edit', as: :edit_user_registration
-    put 'auth' => 'devise/registrations#update', as: :user_registration
+  devise_scope :user do
+    get 'auth/sign_up' => 'users/registrations#new', as: :new_user_registration
+    post 'auth' => 'users/registrations#create', as: :user_registrations
+    delete 'auth' => 'users/registrations#destroy'
+
+    get 'auth/edit' => 'users/registrations#edit', as: :edit_user_registration
+    put 'auth' => 'users/registrations#update', as: :user_registration
   end
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'subscriptions#index'

@@ -24,7 +24,6 @@ module Users
     # def update
     #   super
     # end
-    # TODO: redirect to user
 
     # DELETE /resource
     # def destroy
@@ -60,6 +59,11 @@ module Users
         self.resource = send(:"current_#{resource_name}")
         # authorize too
         authorize! params[:action].to_sym, resource
+      end
+
+      def after_update_path_for(resource)
+        flash[:notice] = 'Account was succesfully updated'
+        resource
       end
 
     # If you have extra params to permit, append them to the sanitizer.
