@@ -12,6 +12,11 @@
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
   # TODO: add registerable as app config
+  # set env variable ALLOW_REGISTER = true,
+  # allows creating & destroying reporter accounts
+  # have to add soft-delete for destroy
+  # https://github.com/jhawthorn/discard
+  # or cancel account removes employee_type
   # Include default devise modules. Others available are:
   #    :timeoutable and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, :recoverable,
