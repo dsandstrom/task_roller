@@ -41,6 +41,7 @@ group :frontend do
   #                                      # options except `pid_file`!
   guard 'rails' do
     watch('Gemfile.lock')
+    watch(/\.env(\.\w+(\.\w+)?)?/)
     watch(%r{^(config|lib)/.*})
     watch(%r{app/assets/fonts/*})
   end
