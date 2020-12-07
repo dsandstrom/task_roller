@@ -87,5 +87,66 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:destroy, non_employee) }
       end
     end
+
+    context "for a guest" do
+      subject(:ability) { Ability.new(nil) }
+
+      context "when allowing devise registration" do
+        before { allow(User).to receive(:allow_registration?) { true } }
+
+        context "when new Reporter" do
+          let(:new_user) { Fabricate.build(:user_reporter) }
+
+          it { is_expected.to be_able_to(:create, new_user) }
+          it { is_expected.not_to be_able_to(:read, new_user) }
+          it { is_expected.not_to be_able_to(:update, new_user) }
+          it { is_expected.not_to be_able_to(:destroy, new_user) }
+        end
+
+        %i[admin reviewer worker].each do |employee_type|
+          context "when new #{employee_type}" do
+            let(:new_user) { Fabricate.build("user_#{employee_type}") }
+
+            it { is_expected.not_to be_able_to(:create, new_user) }
+            it { is_expected.not_to be_able_to(:read, new_user) }
+            it { is_expected.not_to be_able_to(:update, new_user) }
+            it { is_expected.not_to be_able_to(:destroy, new_user) }
+          end
+        end
+
+        context "when no employee_type" do
+          let(:new_user) { Fabricate.build(:user, employee_type: nil) }
+
+          it { is_expected.not_to be_able_to(:create, new_user) }
+          it { is_expected.not_to be_able_to(:read, new_user) }
+          it { is_expected.not_to be_able_to(:update, new_user) }
+          it { is_expected.not_to be_able_to(:destroy, new_user) }
+        end
+      end
+
+      context "when not allowing devise registration" do
+        before { allow(User).to receive(:allow_registration?) { false } }
+
+        User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+          context "when new #{employee_type}" do
+            let(:new_user) { Fabricate.build("user_#{employee_type.downcase}") }
+
+            it { is_expected.not_to be_able_to(:create, new_user) }
+            it { is_expected.not_to be_able_to(:read, new_user) }
+            it { is_expected.not_to be_able_to(:update, new_user) }
+            it { is_expected.not_to be_able_to(:destroy, new_user) }
+          end
+        end
+
+        context "when no employee_type" do
+          let(:new_user) { Fabricate.build(:user, employee_type: nil) }
+
+          it { is_expected.not_to be_able_to(:create, new_user) }
+          it { is_expected.not_to be_able_to(:read, new_user) }
+          it { is_expected.not_to be_able_to(:update, new_user) }
+          it { is_expected.not_to be_able_to(:destroy, new_user) }
+        end
+      end
+    end
   end
 end

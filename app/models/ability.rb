@@ -18,6 +18,7 @@ class Ability
                                   category: EXTERNAL_CATEGORY_OPTIONS } }.freeze
 
   def initialize(user)
+    can :create, User, employee_type: 'Reporter' if User.allow_registration?
     return unless user && user.employee_type.present?
 
     [CategoryAbility, ProjectAbility, UserAbility, IssueAbility,
