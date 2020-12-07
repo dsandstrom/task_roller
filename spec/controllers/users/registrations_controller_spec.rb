@@ -6,11 +6,27 @@ RSpec.describe Users::RegistrationsController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
   describe "GET #new" do
-    before { enable_devise_user(controller) }
+    context "for a guest" do
+      before { enable_devise_user(controller) }
 
-    it "returns a success response" do
-      get :new
-      expect(response).to be_successful
+      context "when not allowing registration" do
+        before { allow(User).to receive(:allow_registration?) { false } }
+
+        it "should be unauthorized" do
+          get :new
+
+          expect_to_be_unauthorized(response)
+        end
+      end
+
+      context "when allowing registration" do
+        before { allow(User).to receive(:allow_registration?) { true } }
+
+        it "returns a success response" do
+          get :new
+          expect(response).to be_successful
+        end
+      end
     end
   end
 
@@ -57,7 +73,7 @@ RSpec.describe Users::RegistrationsController, type: :controller do
         context "when editing another_user" do
           before { enable_devise_user(controller, Fabricate(:user_reviewer)) }
 
-          it "returns a success response" do
+          it "should be unauthorized" do
             get :edit
             expect_to_be_unauthorized(response)
           end
@@ -74,29 +90,53 @@ RSpec.describe Users::RegistrationsController, type: :controller do
 
     before { enable_devise_user(controller) }
 
-    context "with valid params" do
-      it "creates a new User" do
-        expect do
+    context "for a guest" do
+      before { enable_devise_user(controller) }
+
+      context "when not allowing registration" do
+        before { allow(User).to receive(:allow_registration?) { false } }
+
+        it "doesn't create a new User" do
+          expect do
+            post :create, params: { user: valid_attributes }
+          end.not_to change(User, :count)
+        end
+
+        it "should be unauthorized" do
           post :create, params: { user: valid_attributes }
-        end.to change(User, :count).by(1)
+
+          expect_to_be_unauthorized(response)
+        end
       end
 
-      it "creates a new Reporter" do
-        expect do
-          post :create, params: { user: valid_attributes }
-        end.to change(User.reporters, :count).by(1)
-      end
+      context "when allowing registration" do
+        before { allow(User).to receive(:allow_registration?) { true } }
 
-      it "redirects to root" do
-        post :create, params: { user: valid_attributes }
-        expect(response).to redirect_to(:root)
-      end
-    end
+        context "with valid params" do
+          it "creates a new User" do
+            expect do
+              post :create, params: { user: valid_attributes }
+            end.to change(User, :count).by(1)
+          end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: { user: invalid_attributes }
-        expect(response).to be_successful
+          it "creates a new Reporter" do
+            expect do
+              post :create, params: { user: valid_attributes }
+            end.to change(User.reporters, :count).by(1)
+          end
+
+          it "redirects to root" do
+            post :create, params: { user: valid_attributes }
+            expect(response).to redirect_to(:root)
+          end
+        end
+
+        context "with invalid params" do
+          it "returns a success response ('new' template)" do
+            post :create, params: { user: invalid_attributes }
+            expect(response).to be_successful
+          end
+        end
       end
     end
   end

@@ -46,24 +46,28 @@ module Users
         devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
       end
 
-      def sign_up_params
-        devise_parameter_sanitizer
-          .sanitize(:sign_up).merge(employee_type: 'Reporter')
+      # Build a devise resource passing in the session. Useful to move
+      # temporary session data to the newly created user.
+      def build_resource(hash = {})
+        super
+        resource.employee_type ||= 'Reporter'
+        authorize! params[:action].to_sym, resource
       end
 
       # Authenticates the current scope and gets the current resource from the
       # session.
       # runs on edit, update, destroy
       def authenticate_scope!
-        send(:"authenticate_#{resource_name}!", force: true)
-        self.resource = send(:"current_#{resource_name}")
-        # authorize too
+        super
         authorize! params[:action].to_sym, resource
       end
 
       def after_update_path_for(resource)
-        flash[:notice] = 'Account was succesfully updated'
-        resource
+        if sign_in_after_change_password?
+          user_path(resource)
+        else
+          new_session_path(resource_name)
+        end
       end
 
     # If you have extra params to permit, append them to the sanitizer.
