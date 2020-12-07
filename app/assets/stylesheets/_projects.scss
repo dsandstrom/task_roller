@@ -186,8 +186,11 @@
   .category-header,
   .project-header {
     .second-column {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-end;
       margin-bottom: 0;
-      text-align: right;
     }
   }
 }
