@@ -59,6 +59,15 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:update, non_employee) }
           it { is_expected.not_to be_able_to(:destroy, non_employee) }
         end
+
+        context "when a new Reporter user" do
+          let(:new_reporter) { Fabricate.build(:user_reporter) }
+
+          it { is_expected.not_to be_able_to(:create, new_reporter) }
+          it { is_expected.to be_able_to(:read, new_reporter) }
+          it { is_expected.not_to be_able_to(:update, new_reporter) }
+          it { is_expected.not_to be_able_to(:destroy, new_reporter) }
+        end
       end
     end
 
