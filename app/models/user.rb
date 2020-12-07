@@ -121,6 +121,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     assigned.order(order)
   end
 
+  # Whether to allow guests to sign up
+  def self.allow_registration?
+    ENV['USER_REGISTRATION'] == 'enabled'
+  end
+
   # INSTANCE
 
   def admin?

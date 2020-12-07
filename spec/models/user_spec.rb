@@ -83,6 +83,34 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#allow_registration?" do
+    after { ENV["USER_REGISTRATION"] = nil }
+
+    context "when ENV['USER_REGISTRATION'] is not set" do
+      before { ENV["USER_REGISTRATION"] = nil }
+
+      it "returns false" do
+        expect(User.allow_registration?).to eq(false)
+      end
+    end
+
+    context "when ENV['USER_REGISTRATION'] is enabled" do
+      before { ENV["USER_REGISTRATION"] = "enabled" }
+
+      it "returns true" do
+        expect(User.allow_registration?).to eq(true)
+      end
+    end
+
+    context "when ENV['USER_REGISTRATION'] is disabled" do
+      before { ENV["USER_REGISTRATION"] = "disabled" }
+
+      it "returns false" do
+        expect(User.allow_registration?).to eq(false)
+      end
+    end
+  end
+
   # CLASS
 
   describe ".employees" do
