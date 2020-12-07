@@ -19,22 +19,6 @@
                                  placeholder: 'your@email.com' %>
   </div>
 
-  <div class="field">
-    <div class="field-label-and-message">
-      <%= form.label :password %>
-      <%= content_tag :span, "#{@minimum_password_length} characters minimum",
-                      class: 'field-message' %>
-    </div>
-    <%= form.password_field :password,
-                            autocomplete: 'new-password' %>
-  </div>
-
-  <div class="field">
-    <%= hidden_required_field_label form, :password_confirmation %>
-    <%= form.password_field :password_confirmation,
-                            autocomplete: 'new-password' %>
-  </div>
-
   <div class="actions">
     <p><em>All fields required</em></p>
     <%= form.submit "Sign up" %>

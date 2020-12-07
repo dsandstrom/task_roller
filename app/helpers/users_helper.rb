@@ -27,6 +27,10 @@ module UsersHelper
     @user_breadcrumbs ||= breadcrumbs([['Users', users_path]])
   end
 
+  def new_reporter
+    @new_reporter ||= User.new(employee_type: 'Reporter')
+  end
+
   private
 
     def user_nav(user)
