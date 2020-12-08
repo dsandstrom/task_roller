@@ -17,6 +17,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, random_user) }
         it { is_expected.to be_able_to(:update, random_user) }
         it { is_expected.to be_able_to(:destroy, random_user) }
+        it { is_expected.to be_able_to(:cancel, random_user) }
       end
 
       context "when themselves" do
@@ -24,6 +25,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, admin) }
         it { is_expected.to be_able_to(:update, admin) }
         it { is_expected.not_to be_able_to(:destroy, admin) }
+        it { is_expected.not_to be_able_to(:cancel, admin) }
       end
 
       context "when a non-employee user" do
@@ -31,6 +33,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, non_employee) }
         it { is_expected.to be_able_to(:update, non_employee) }
         it { is_expected.to be_able_to(:destroy, non_employee) }
+        it { is_expected.to be_able_to(:cancel, non_employee) }
       end
     end
 
@@ -44,6 +47,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, random_user) }
           it { is_expected.not_to be_able_to(:update, random_user) }
           it { is_expected.not_to be_able_to(:destroy, random_user) }
+          it { is_expected.not_to be_able_to(:cancel, random_user) }
         end
 
         context "when themselves" do
@@ -51,6 +55,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, current_user) }
           it { is_expected.to be_able_to(:update, current_user) }
           it { is_expected.not_to be_able_to(:destroy, current_user) }
+          it { is_expected.to be_able_to(:cancel, current_user) }
         end
 
         context "when a non-employee user" do
@@ -64,9 +69,6 @@ RSpec.describe Ability do
           let(:new_reporter) { Fabricate.build(:user_reporter) }
 
           it { is_expected.not_to be_able_to(:create, new_reporter) }
-          it { is_expected.to be_able_to(:read, new_reporter) }
-          it { is_expected.not_to be_able_to(:update, new_reporter) }
-          it { is_expected.not_to be_able_to(:destroy, new_reporter) }
         end
       end
     end
@@ -80,6 +82,7 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, random_user) }
         it { is_expected.not_to be_able_to(:update, random_user) }
         it { is_expected.not_to be_able_to(:destroy, random_user) }
+        it { is_expected.not_to be_able_to(:cancel, random_user) }
       end
 
       context "when themselves" do
@@ -87,6 +90,7 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, current_user) }
         it { is_expected.not_to be_able_to(:update, current_user) }
         it { is_expected.not_to be_able_to(:destroy, current_user) }
+        it { is_expected.not_to be_able_to(:cancel, current_user) }
       end
 
       context "when another non-employee user" do
@@ -94,6 +98,7 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, non_employee) }
         it { is_expected.not_to be_able_to(:update, non_employee) }
         it { is_expected.not_to be_able_to(:destroy, non_employee) }
+        it { is_expected.not_to be_able_to(:cancel, non_employee) }
       end
     end
 
@@ -110,6 +115,7 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, new_user) }
           it { is_expected.not_to be_able_to(:update, new_user) }
           it { is_expected.not_to be_able_to(:destroy, new_user) }
+          it { is_expected.not_to be_able_to(:cancel, new_user) }
         end
 
         %i[admin reviewer worker].each do |employee_type|
@@ -120,6 +126,7 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, new_user) }
             it { is_expected.not_to be_able_to(:update, new_user) }
             it { is_expected.not_to be_able_to(:destroy, new_user) }
+            it { is_expected.not_to be_able_to(:cancel, new_user) }
           end
         end
 
@@ -130,6 +137,7 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, new_user) }
           it { is_expected.not_to be_able_to(:update, new_user) }
           it { is_expected.not_to be_able_to(:destroy, new_user) }
+          it { is_expected.not_to be_able_to(:cancel, new_user) }
         end
       end
 
@@ -144,6 +152,7 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, new_user) }
             it { is_expected.not_to be_able_to(:update, new_user) }
             it { is_expected.not_to be_able_to(:destroy, new_user) }
+            it { is_expected.not_to be_able_to(:cancel, new_user) }
           end
         end
 
@@ -154,6 +163,7 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, new_user) }
           it { is_expected.not_to be_able_to(:update, new_user) }
           it { is_expected.not_to be_able_to(:destroy, new_user) }
+          it { is_expected.not_to be_able_to(:cancel, new_user) }
         end
       end
     end
