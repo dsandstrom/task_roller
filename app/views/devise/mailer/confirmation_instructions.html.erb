@@ -1,14 +1,25 @@
 <h1>Task Roller Invitation</h1>
 
-<p>
-  Hello <strong><%= @user.name_or_email %></strong>, you've been invited to
-  particate in <strong>Task Roller</strong>.
-</p>
+<% if @user.password? %>
+  <p>
+    Welcome <strong><%= @user.name_or_email %></strong>, you've signed up
+    for <strong>Task Roller</strong>.
+  </p>
 
-<p>
-  If you'd like to set up an account by adding a secure password,
-  please follow the link below:
-</p>
+  <p>
+    You can confirm your account through the link below:
+  </p>
+<% else %>
+  <p>
+    Hello <strong><%= @user.name_or_email %></strong>, you've been invited to
+    particate in <strong>Task Roller</strong>.
+  </p>
+
+  <p>
+    If you'd like to set up an account by adding a secure password,
+    please follow the link below:
+  </p>
+<% end %>
 
 <p>
   <%= link_to 'Confirm my account',
