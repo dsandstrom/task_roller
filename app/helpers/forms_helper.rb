@@ -26,7 +26,8 @@ module FormsHelper
   end
 
   def searching?
-    params[:order].present?
+    @searching_ = params[:order].present? if @searching_.nil?
+    @searching_
   end
 
   private

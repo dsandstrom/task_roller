@@ -126,25 +126,31 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # INSTANCE
 
   def admin?
-    employee_type == 'Admin'
+    @admin_ = employee_type == 'Admin' if @admin_.nil?
+    @admin_
   end
 
   def reviewer?
-    employee_type == 'Reviewer'
+    @reviewer_ = employee_type == 'Reviewer' if @reviewer_.nil?
+    @reviewer_
   end
 
   def worker?
-    employee_type == 'Worker'
+    @worker_ = employee_type == 'Worker' if @worker_.nil?
+    @worker_
   end
 
   def reporter?
-    employee_type == 'Reporter'
+    @reporter_ = employee_type == 'Reporter' if @reporter_.nil?
+    @reporter_
   end
 
   def employee?
-    return false unless employee_type
-
-    VALID_EMPLOYEE_TYPES.include?(employee_type)
+    if @employee_.nil?
+      @employee_ = employee_type.present? &&
+                   VALID_EMPLOYEE_TYPES.include?(employee_type)
+    end
+    @employee_
   end
 
   def name_and_email
@@ -265,17 +271,19 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     super && employee?
   end
 
-  # rubocop:disable Naming/MemoizedInstanceVariableName
   def password?
-    @password_ ||= encrypted_password.present?
+    @password_ = encrypted_password.present? if @password_.nil?
+    @password_
   end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
     # override to be able to create without a password
     def password_required?
-      confirmed? ? super : false
+      if @password_required_.nil?
+        @password_required_ = confirmed? ? super : false
+      end
+      @password_required_
     end
 end

@@ -265,49 +265,61 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def in_review?
-    @in_review ||= open? && current_reviews.pending.any?
+    @in_review_ = open? && current_reviews.pending.any? if @in_review_.nil?
+    @in_review_
   end
 
   def in_progress?
-    @in_progress ||=
-      if in_review?
-        false
-      else
-        open? && progressions.unfinished.any?
-      end
+    if @in_progress_.nil?
+      @in_progress_ =
+        if in_review?
+          false
+        else
+          open? && progressions.unfinished.any?
+        end
+    end
+    @in_progress_
   end
 
-  # rubocop:disable Naming/MemoizedInstanceVariableName
   def assigned?
-    @assigned_ ||=
-      if in_review? || in_progress?
-        false
-      else
-        open? && assignees.any?
-      end
+    if @assigned_.nil?
+      @assigned_ =
+        if in_review? || in_progress?
+          false
+        else
+          open? && assignees.any?
+        end
+    end
+    @assigned_
   end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def unassigned?
-    @unassigned ||=
-      if assigned? || in_review? || in_progress?
-        false
-      else
-        open?
-      end
+    if @unassigned_.nil?
+      @unassigned_ =
+        if assigned? || in_review? || in_progress?
+          false
+        else
+          open?
+        end
+    end
+    @unassigned_
   end
 
   def approved?
-    @approved ||=
-      if current_review.blank?
-        false
-      else
-        current_review.approved?
-      end
+    if @approved_.nil?
+      @approved_ =
+        if current_review.blank?
+          false
+        else
+          current_review.approved?
+        end
+    end
+    @approved_
   end
 
   def duplicate?
-    @duplicate ||= source_connection.present?
+    @duplicate_ = source_connection.present? if @duplicate_.nil?
+    @duplicate_
   end
 
   def subscribe_user(subscriber = nil)

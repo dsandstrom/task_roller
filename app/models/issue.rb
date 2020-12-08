@@ -163,7 +163,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def open?
-    !closed?
+    @open_ = !closed? if @open_.nil?
+    @open_
   end
 
   def open_tasks
@@ -281,7 +282,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def duplicate?
-    @duplicate ||= source_connection.present?
+    @duplicate_ = source_connection.present? if @duplicate_.nil?
+    @duplicate_
   end
 
   # feed of closures, reopenings, duplicate, tasks, resolutions

@@ -65,6 +65,9 @@ class Project < ApplicationRecord
   end
 
   def totally_visible?
-    visible? && category.present? && category.visible?
+    if @totally_visible_.nil?
+      @totally_visible_ = visible? && category.present? && category.visible?
+    end
+    @totally_visible_
   end
 end

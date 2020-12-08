@@ -40,11 +40,13 @@ class Review < ApplicationRecord
   # INSTANCE
 
   def disapproved?
-    approved == false
+    @disapproved_ = approved == false if @disapproved_.nil?
+    @disapproved_
   end
 
   def pending?
-    approved.nil?
+    @pending_ = approved.nil? if @pending_.nil?
+    @pending_
   end
 
   def approve(user = nil)
