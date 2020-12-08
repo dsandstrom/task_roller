@@ -265,6 +265,12 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     super && employee?
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
+  def password?
+    @password_ ||= encrypted_password.present?
+  end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
+
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
