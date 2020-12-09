@@ -19,7 +19,7 @@ RSpec.describe "users/edit", type: :view do
         assert_select "form[action=?][method=?]", user_path(@user), "post" do
           assert_select "input[name=?]", "user[name]"
           assert_select "input[name=?][disabled]", "user[email]"
-          assert_select "input[name=?]", "user[employee_type]", count: 0
+          assert_select "select[name=?]", "user[employee_type]", count: 0
         end
       end
 
@@ -42,7 +42,7 @@ RSpec.describe "users/edit", type: :view do
         assert_select "form[action=?][method=?]", user_path(@user), "post" do
           assert_select "input[name=?]", "user[name]"
           assert_select "input[name=?][disabled]", "user[email]"
-          assert_select "input[name=?]", "user[employee_type]", count: 0
+          assert_select "select[name=?]", "user[employee_type]", count: 0
         end
       end
 
@@ -72,7 +72,7 @@ RSpec.describe "users/edit", type: :view do
         assert_select "form[action=?][method=?]", user_path(@user), "post" do
           assert_select "input[name=?]", "user[name]"
           assert_select "input[name=?][disabled]", "user[email]"
-          assert_select "input[name=?]", "user[employee_type]", count: 0
+          assert_select "select[name=?]", "user[employee_type]", count: 0
         end
       end
 
