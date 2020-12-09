@@ -8,6 +8,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :cancel_users, only: %i[edit update]
+  resources :promote_users, only: %i[edit update]
 
   resources :categories, except: :show do
     collection { get :archived }

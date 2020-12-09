@@ -1,0 +1,11 @@
+<%= user_header @user %>
+
+<div class="columns">
+  <div class="first-column">
+    <%= content_tag :h2, "Change Account Type" %>
+
+    <%= render 'form', user: @user %>
+  </div>
+</div>
+
+<p><%= link_to 'Back', :back %></p>
