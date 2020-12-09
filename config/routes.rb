@@ -2,13 +2,12 @@
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :users, only: nil do
-    member do
-      patch :cancel
-    end
     resources :issues, only: :index
     resources :tasks, only: :index
     resources :assignments, only: :index
   end
+
+  resources :cancel_users, only: %i[edit update]
 
   resources :categories, except: :show do
     collection { get :archived }
