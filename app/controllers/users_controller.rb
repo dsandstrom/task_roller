@@ -35,6 +35,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def cancel
+    if @user.update(employee_type: nil)
+      cancel_redirect(@user)
+    else
+      render :edit
+    end
+  end
+
   def destroy
     @user.destroy
     redirect_to users_url, notice: 'User was successfully destroyed.'
@@ -56,5 +64,17 @@ class UsersController < ApplicationController
                     %w[Reporter Reviewer Worker].includes?(params[:type])
 
       params[:type]
+    end
+
+    def cancel_redirect(user)
+      if user.id == current_user.id
+        sign_out user
+        redirect_to new_user_session_path,
+                    notice: 'Your account was successfully cancelled.'
+      else
+        notice =
+          "The account for #{user.name_or_email} was successfully cancelled."
+        redirect_to users_path, notice: notice
+      end
     end
 end

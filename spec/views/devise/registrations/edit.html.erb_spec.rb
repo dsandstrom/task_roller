@@ -7,12 +7,12 @@ RSpec.describe "devise/registrations/edit", type: :view do
 
   before { enable_devise_user(view) }
 
-  context "for a reporter" do
-    let(:user) { Fabricate(:user_reporter) }
+  context "for a admin" do
+    let(:user) { Fabricate(:user_admin) }
 
     before do
       @user = assign(:user, user)
-      enable_can(view, user)
+      enable_can(view, @user)
     end
 
     it "renders edit registration form" do
@@ -23,6 +23,40 @@ RSpec.describe "devise/registrations/edit", type: :view do
         assert_select "input[name=?]", "user[name]", count: 0
         assert_select "input[name=?]", "user[password]"
         assert_select "input[name=?]", "user[password_confirmation]"
+      end
+    end
+
+    it "doesn't render cancel form" do
+      render
+      cancel_url = cancel_user_path(@user)
+      assert_select "form[action=?]", cancel_url, count: 0
+    end
+  end
+
+  %w[reviewer worker reporter].each do |employee_type|
+    context "for a #{employee_type}" do
+      let(:user) { Fabricate("user_#{employee_type}") }
+
+      before do
+        @user = assign(:user, user)
+        enable_can(view, @user)
+      end
+
+      it "renders edit registration form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "input[name=?]", "user[email]", count: 0
+          assert_select "input[name=?]", "user[name]", count: 0
+          assert_select "input[name=?]", "user[password]"
+          assert_select "input[name=?]", "user[password_confirmation]"
+        end
+      end
+
+      it "renders cancel form" do
+        render
+        cancel_url = cancel_user_path(@user)
+        assert_select "form[action=?][method=?]", cancel_url, "post"
       end
     end
   end

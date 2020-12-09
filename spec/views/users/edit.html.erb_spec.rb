@@ -26,7 +26,8 @@ RSpec.describe "users/edit", type: :view do
       it "renders Advanced user links" do
         render
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
-        expect(rendered).to have_selector(:css, selector)
+        expect(rendered).not_to have_selector(:css, selector)
+        expect(rendered).to have_link(nil, href: cancel_user_path(@user))
         expect(rendered)
           .not_to have_link(nil, href: edit_user_registration_path)
       end
@@ -50,6 +51,7 @@ RSpec.describe "users/edit", type: :view do
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)
+        expect(rendered).not_to have_link(nil, href: cancel_user_path(@user))
       end
     end
   end
@@ -79,6 +81,7 @@ RSpec.describe "users/edit", type: :view do
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)
+        expect(rendered).not_to have_link(nil, href: cancel_user_path(@user))
       end
     end
   end
