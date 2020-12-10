@@ -75,7 +75,7 @@ export class Form {
     return matches != null;
   }
 
-  // TODO: add 'min_length[6]' for password edit only
+  // TODO: add 'min_length[6]' for password edit
 
   options() {
     const matches = this.form.name.match(/^(\w+)_form$/);
