@@ -1,0 +1,33 @@
+<% if user.employee? %>
+  <%= form_with(model: user, url: user_employee_type_path(user),
+                local: true, method: :patch,
+                html: { name: 'user_form', class: 'user-employee-type-form',
+                        novalidate: 'novalidate' }) do |form| %>
+    <%= form_errors(form.object) %>
+
+    <div class="field">
+      <%= form.label :employee_type %>
+      <%= form.select :employee_type, User::VALID_EMPLOYEE_TYPES.reverse %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Change #{user.employee_type}" %>
+    </div>
+  <% end %>
+<% else %>
+  <%= form_with(model: user, url: user_employee_types_path(user),
+                local: true, method: :post,
+                html: { name: 'user_form', class: 'user-employee-type-form',
+                        novalidate: 'novalidate' }) do |form| %>
+    <%= form_errors(form.object) %>
+
+    <div class="field">
+      <%= form.label :employee_type %>
+      <%= form.select :employee_type, User::VALID_EMPLOYEE_TYPES.reverse %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+  <% end %>
+<% end %>

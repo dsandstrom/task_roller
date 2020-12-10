@@ -1,0 +1,30 @@
+<%= user_header @user %>
+
+<div class="columns">
+  <div class="first-column">
+    <%= content_tag :h2, "Change Account Type" %>
+
+    <%= render 'form', user: @user %>
+  </div>
+
+  <div class="second-column">
+    <div class="devise-links">
+      <h3>Advanced</h3>
+
+      <% if can?(:cancel, @user) %>
+        <%
+          confirm = "Are you sure you want to cancel the account "\
+                    "for #{@user.name_or_email}?"
+        %>
+        <p>
+          <%= button_to "Cancel Account",
+                        user_employee_type_path(@user),
+                        method: :delete, data: { confirm: confirm },
+                        class: 'button button-outline button-warning' %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<p><%= link_to 'Back', :back %></p>

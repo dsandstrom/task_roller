@@ -27,7 +27,8 @@ RSpec.describe "users/edit", type: :view do
         render
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
-        expect(rendered).to have_link(nil, href: cancel_user_path(@user))
+        expect(rendered)
+          .to have_link(nil, href: edit_user_employee_type_path(@user))
         expect(rendered)
           .not_to have_link(nil, href: edit_user_registration_path)
       end
@@ -51,7 +52,38 @@ RSpec.describe "users/edit", type: :view do
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)
-        expect(rendered).not_to have_link(nil, href: cancel_user_path(@user))
+        expect(rendered)
+          .not_to have_link(nil, href: edit_user_employee_type_path(@user))
+        expect(rendered)
+          .not_to have_link(nil, href: new_user_employee_type_path(@user))
+      end
+    end
+
+    context "when editing a non-employee" do
+      let(:user) { Fabricate(:user_unemployed) }
+
+      before { @user = assign(:user, user) }
+
+      it "renders the edit user form" do
+        render
+
+        assert_select "form[action=?][method=?]", user_path(@user), "post" do
+          assert_select "input[name=?]", "user[name]"
+          assert_select "input[name=?][disabled]", "user[email]"
+          assert_select "select[name=?]", "user[employee_type]", count: 0
+        end
+      end
+
+      it "renders Advanced user links" do
+        render
+        selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
+        expect(rendered).not_to have_selector(:css, selector)
+        expect(rendered)
+          .not_to have_link(nil, href: edit_user_employee_type_path(@user))
+        expect(rendered)
+          .to have_link(nil, href: new_user_employee_type_path(@user))
+        expect(rendered)
+          .not_to have_link(nil, href: edit_user_registration_path)
       end
     end
   end
@@ -81,7 +113,10 @@ RSpec.describe "users/edit", type: :view do
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)
-        expect(rendered).not_to have_link(nil, href: cancel_user_path(@user))
+        expect(rendered)
+          .not_to have_link(nil, href: edit_user_employee_type_path(@user))
+        expect(rendered)
+          .not_to have_link(nil, href: new_user_employee_type_path(@user))
       end
     end
   end

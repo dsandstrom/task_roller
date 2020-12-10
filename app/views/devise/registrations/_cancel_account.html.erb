@@ -1,4 +1,5 @@
 <% return unless can?(:cancel, user) %>
+
 <% confirm = 'Are you sure you want to cancel your account?' %>
 
 <hr>
@@ -8,7 +9,7 @@
 <p>
   Unhappy?
   <%= button_to "Cancel my account",
-                cancel_user_path(user),
-                data: { confirm: confirm }, method: :patch,
+                user_employee_type_path(user),
+                method: :delete, data: { confirm: confirm },
                 class: 'button button-outline button-warning' %>
 </p>

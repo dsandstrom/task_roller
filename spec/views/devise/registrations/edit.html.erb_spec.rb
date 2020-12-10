@@ -28,7 +28,7 @@ RSpec.describe "devise/registrations/edit", type: :view do
 
     it "doesn't render cancel form" do
       render
-      cancel_url = cancel_user_path(@user)
+      cancel_url = user_employee_type_path(@user)
       assert_select "form[action=?]", cancel_url, count: 0
     end
   end
@@ -55,8 +55,10 @@ RSpec.describe "devise/registrations/edit", type: :view do
 
       it "renders cancel form" do
         render
-        cancel_url = cancel_user_path(@user)
-        assert_select "form[action=?][method=?]", cancel_url, "post"
+        cancel_url = user_employee_type_path(@user)
+        assert_select "form[action=?]", cancel_url do
+          assert_select "input[name=?][value=?]", "_method", "delete"
+        end
       end
     end
   end

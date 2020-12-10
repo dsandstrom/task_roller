@@ -29,18 +29,17 @@
         <h3>Advanced</h3>
 
         <% if can?(:promote, @user) %>
-          <p>
-            <%= link_to 'Change Account Type',
-                        edit_promote_user_path(@user) %>
-          </p>
-        <% end %>
-
-        <% if can?(:cancel, @user) && @user.employee? %>
-          <p>
-            <%= link_to 'Cancel Account',
-                        edit_cancel_user_path(@user),
-                        class: 'destroy-link' %>
-          </p>
+          <% if @user.employee? %>
+            <p>
+              <%= link_to 'Change Account Type',
+                          edit_user_employee_type_path(@user) %>
+            </p>
+          <% else %>
+            <p>
+              <%= link_to 'Assign Account Type',
+                          new_user_employee_type_path(@user) %>
+            </p>
+          <% end %>
         <% end %>
       </div>
     <% end %>

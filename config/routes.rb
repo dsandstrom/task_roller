@@ -7,8 +7,15 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :assignments, only: :index
   end
 
-  resources :cancel_users, only: %i[edit update]
-  resources :promote_users, only: %i[edit update]
+  get 'users/:user_id/employee_types/new' => 'employee_types#new',
+      as: :new_user_employee_type
+  get 'users/:user_id/employee_types/edit' => 'employee_types#edit',
+      as: :edit_user_employee_type
+  post 'users/:user_id/employee_types' => 'employee_types#create',
+       as: :user_employee_types
+  patch 'users/:user_id/employee_type' => 'employee_types#update',
+        as: :user_employee_type
+  delete 'users/:user_id/employee_type' => 'employee_types#destroy'
 
   resources :categories, except: :show do
     collection { get :archived }
