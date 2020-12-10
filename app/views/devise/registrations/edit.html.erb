@@ -13,12 +13,18 @@
                                 new_confirmation_path(resource_name)) %>
   </div>
 <% else %>
-  <h3>Change My Password</h3>
+  <div class="columns">
+    <div class="first-column">
+      <h3>Change My Password</h3>
 
-  <%= render 'form',
-             minimum_password_length: @minimum_password_length %>
+      <%= render 'form',
+                 minimum_password_length: @minimum_password_length %>
 
-  <%= render 'cancel_account', user: @user %>
+      <%= render 'cancel_account', user: @user %>
+    </div>
+
+    <div class="second-column"></div>
+  </div>
 
   <%= content_tag :p, link_to('Back', :back) %>
 <% end %>
