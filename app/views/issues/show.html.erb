@@ -117,8 +117,9 @@
 
         <dl class="issue-history">
           <% if @user %>
-            <%= content_tag :dt, link_to(@user.name_or_email,
-                                         user_issues_path(@user)) %>
+            <%= content_tag :dt, link_to_if(can?(:read, @user),
+                                            @user.name_or_email,
+                                            user_issues_path(@user)) %>
           <% end %>
           <%= content_tag :dd, "opened issue: #{format_date @issue.created_at}",
                           class: 'issue-created-at' %>

@@ -180,8 +180,9 @@
       <section class="task-history-wrapper">
         <dl class="task-history">
           <% if @user %>
-            <%= content_tag :dt, link_to(@user.name_or_email,
-                                         user_tasks_path(@user)) %>
+            <%= content_tag :dt, link_to_if(can?(:read, @user),
+                                            @user.name_or_email,
+                                            user_tasks_path(@user)) %>
           <% end %>
           <%= content_tag :dd, "opened: #{format_date @task.created_at}",
                           class: 'task-created-at' %>

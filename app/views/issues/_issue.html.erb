@@ -32,10 +32,14 @@
       <%= content_tag :strong, format_date(issue.created_at),
                       class: 'issue-dates' %>
       by
-      <% if user %>
+      <% if user && can?(:read, user) %>
         <%= link_to_unless_current user.name_or_email,
                                    user_issues_path(user),
                                    class: 'issue-user' %>
+      <% else %>
+        <%= content_tag :strong,
+                        (user&.name_or_email || User.destroyed_name),
+                        class: 'issue-user' %>
       <% end %>
       <% if issue.created_at != issue.updated_at %>
         <%= content_tag :span,

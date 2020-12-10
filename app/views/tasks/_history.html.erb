@@ -17,12 +17,14 @@
       return unless user
 
       if review.pending?
-        title = link_to(user.name_or_email, user_assignments_path(user))
+        title = link_to_if(can?(:read, user), user.name_or_email,
+                           user_assignments_path(user))
         value =  "submitted task for review (##{history.id}): #{format_date review.created_at}"
       else
         if review.approved?
           assigned = history.assigned.map do |assignee|
-            link_to(assignee.name_or_email, user_assignments_path(assignee))
+            link_to_if(can?(:read, user), assignee.name_or_email,
+                       user_assignments_path(assignee))
           end
           title = safe_join(assigned, ', ')
           value =  "completed task (##{history.id}): #{format_date review.updated_at}"
@@ -35,8 +37,9 @@
       user = history.user
       return unless user
 
-      title = link_to(user.name_or_email, user_tasks_path(user))
-      value =  "opened task (##{history.id}): #{format_date history.created_at}"
+      title =
+        link_to_if(can?(:read, user), user.name_or_email, user_tasks_path(user))
+      value = "opened task (##{history.id}): #{format_date history.created_at}"
     end
 
     return unless title && value

@@ -166,6 +166,10 @@ RSpec.describe "tasks/index", type: :view do
 
         assert_select "#task-#{first_task.id}"
         assert_select "#task-#{second_task.id}"
+        expect(rendered)
+          .to have_link(nil, href: user_tasks_path(first_task.user))
+        expect(rendered)
+          .to have_link(nil, href: user_tasks_path(second_task.user))
       end
     end
 
@@ -182,8 +186,27 @@ RSpec.describe "tasks/index", type: :view do
       it "renders a list of tasks" do
         render
         assert_select "#task-#{first_task.id} .task-user", first_task.user.name
-        assert_select "#task-#{second_task.id}"
-        assert_select "#task-#{second_task.id} .task-user", count: 0
+        assert_select "#task-#{second_task.id} .task-user", User.destroyed_name
+      end
+    end
+
+    context "when a task user was cancelled" do
+      let(:first_task) { Fabricate(:task) }
+      let(:second_task) { Fabricate(:task) }
+
+      before(:each) do
+        second_task.user.update employee_type: nil
+        second_task.reload
+        assign(:tasks, page([first_task, second_task]))
+      end
+
+      it "renders a list of tasks" do
+        render
+        assert_select "#task-#{first_task.id} .task-user", first_task.user.name
+        assert_select "#task-#{second_task.id} .task-user",
+                      second_task.user.name
+        expect(rendered)
+          .to have_link(nil, href: user_tasks_path(second_task.user))
       end
     end
   end
@@ -235,6 +258,27 @@ RSpec.describe "tasks/index", type: :view do
           expect(rendered).to have_link(nil, href: show_url)
         end
       end
+
+      context "when a task user was cancelled" do
+        let(:first_task) { Fabricate(:task) }
+        let(:second_task) { Fabricate(:task) }
+
+        before(:each) do
+          second_task.user.update employee_type: nil
+          second_task.reload
+          assign(:tasks, page([first_task, second_task]))
+        end
+
+        it "renders a list of tasks" do
+          render
+          assert_select "#task-#{first_task.id} .task-user",
+                        first_task.user.name
+          assert_select "#task-#{second_task.id} .task-user",
+                        second_task.user.name
+          expect(rendered)
+            .not_to have_link(nil, href: user_tasks_path(second_task.user))
+        end
+      end
     end
   end
 
@@ -283,6 +327,27 @@ RSpec.describe "tasks/index", type: :view do
           expect(rendered).not_to have_link(nil, href: second_url)
           show_url = issue_path(issue)
           expect(rendered).to have_link(nil, href: show_url)
+        end
+      end
+
+      context "when a task user was cancelled" do
+        let(:first_task) { Fabricate(:task) }
+        let(:second_task) { Fabricate(:task) }
+
+        before(:each) do
+          second_task.user.update employee_type: nil
+          second_task.reload
+          assign(:tasks, page([first_task, second_task]))
+        end
+
+        it "renders a list of tasks" do
+          render
+          assert_select "#task-#{first_task.id} .task-user",
+                        first_task.user.name
+          assert_select "#task-#{second_task.id} .task-user",
+                        second_task.user.name
+          expect(rendered)
+            .not_to have_link(nil, href: user_tasks_path(second_task.user))
         end
       end
     end

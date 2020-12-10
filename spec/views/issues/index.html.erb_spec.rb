@@ -34,7 +34,11 @@ RSpec.describe "issues/index", type: :view do
       it "renders a list of issues" do
         render
         assert_select "#issue-#{first_issue.id}"
+        expect(rendered)
+          .to have_link(nil, href: user_issues_path(first_issue.user))
         assert_select "#issue-#{second_issue.id}"
+        expect(rendered)
+          .to have_link(nil, href: user_issues_path(second_issue.user))
       end
 
       context "and subscribed to issues" do
@@ -174,7 +178,30 @@ RSpec.describe "issues/index", type: :view do
         assert_select "#issue-#{first_issue.id} .issue-user",
                       first_issue.user.name
         assert_select "#issue-#{second_issue.id}"
-        assert_select "#issue-#{second_issue.id} .issue-user", count: 0
+        assert_select "#issue-#{second_issue.id} .issue-user",
+                      User.destroyed_name
+      end
+    end
+
+    context "when an issue user was cancelled" do
+      let(:first_issue) { Fabricate(:issue) }
+      let(:second_issue) { Fabricate(:issue) }
+
+      before(:each) do
+        second_issue.user.update employee_type: nil
+        second_issue.reload
+        assign(:issues, page([first_issue, second_issue]))
+      end
+
+      it "renders a list of issues" do
+        render
+        assert_select "#issue-#{first_issue.id} .issue-user",
+                      first_issue.user.name
+        assert_select "#issue-#{second_issue.id}"
+        assert_select "#issue-#{second_issue.id} .issue-user",
+                      second_issue.user.name
+        expect(rendered)
+          .to have_link(nil, href: user_issues_path(second_issue.user))
       end
     end
   end
@@ -265,6 +292,28 @@ RSpec.describe "issues/index", type: :view do
             url = edit_issue_path(second_issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
+        end
+      end
+
+      context "when an issue user was cancelled" do
+        let(:first_issue) { Fabricate(:issue) }
+        let(:second_issue) { Fabricate(:issue) }
+
+        before(:each) do
+          second_issue.user.update employee_type: nil
+          second_issue.reload
+          assign(:issues, page([first_issue, second_issue]))
+        end
+
+        it "renders a list of issues" do
+          render
+          assert_select "#issue-#{first_issue.id} .issue-user",
+                        first_issue.user.name
+          assert_select "#issue-#{second_issue.id}"
+          assert_select "#issue-#{second_issue.id} .issue-user",
+                        second_issue.user.name
+          expect(rendered)
+            .not_to have_link(nil, href: user_issues_path(second_issue.user))
         end
       end
     end
