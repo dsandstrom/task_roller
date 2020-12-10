@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: allow admins to upgrade/downgrade employee connection
 # TODO: allow reviewers to create reviewers-, workers create reporters
-# TODO: use employee connection to disable users
-# they can't log in, but allow admin to disable/enable connection
 # TODO: add priority column to use for ordering
 # TODO: user subscription?
 # TODO: tasks from a user's open issues for reporters/show view
@@ -11,9 +8,6 @@
 
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: allow github omniauth
-  # TODO: add cancellable as app config and ability
-  # set env variable USER_CANCELLATION=enabled,
-  # allows users to cancel their accounts (removes employee_type)
   # Include default devise modules. Others available are:
   #    :timeoutable and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, :recoverable,
@@ -27,8 +21,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                          source: :task
   has_many :progressions, dependent: :destroy
   # TODO: accomodate destroyed user issues/tasks
-  # remove employee connection instead of destroying
-  # probably add paper_trail too
   has_many :issues
   has_many :tasks
   has_many :issue_comments
