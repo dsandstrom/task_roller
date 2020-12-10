@@ -19,12 +19,10 @@
           confirm = "Are you sure you want to cancel the account "\
                     "for #{@user.name_or_email}?"
         %>
-        <p>
-          <%= button_to "Cancel Account",
-                        user_employee_type_path(@user),
-                        method: :delete, data: { confirm: confirm },
-                        class: 'button button-outline button-warning' %>
-        </p>
+        <%= button_to "Cancel Account",
+                      user_employee_type_path(@user),
+                      method: :delete, data: { confirm: confirm },
+                      class: 'button button-outline button-warning' %>
 
       </div>
     <% end %>

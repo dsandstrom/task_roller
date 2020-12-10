@@ -122,6 +122,12 @@ body {
 }
 
 .columns {
+  .first-column {
+    > h3 {
+      margin-top: 2.5rem;
+    }
+  }
+
   .second-column {
     margin: 4rem 0 2rem;
 

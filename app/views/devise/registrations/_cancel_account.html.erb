@@ -11,10 +11,8 @@
     still be visible to other users.
   </p>
 
-  <p>
-    <%= button_to "Cancel my account",
-                  user_employee_type_path(user),
-                  method: :delete, data: { confirm: confirm },
-                  class: 'button button-outline button-warning' %>
-  </p>
+  <%= button_to "Cancel my account",
+                user_employee_type_path(user),
+                method: :delete, data: { confirm: confirm },
+                class: 'button button-outline button-warning' %>
 </div>
