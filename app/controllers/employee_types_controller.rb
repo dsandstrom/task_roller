@@ -59,7 +59,7 @@ class EmployeeTypesController < ApplicationController
       else
         notice =
           "The account for #{user.name_or_email} was successfully cancelled."
-        redirect_to users_path, notice: notice
+        redirect_to users_url(anchor: "user-#{@user.id}"), notice: notice
       end
     end
 end

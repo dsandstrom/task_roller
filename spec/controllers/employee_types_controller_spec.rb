@@ -376,7 +376,8 @@ RSpec.describe EmployeeTypesController, type: :controller do
         it "redirects to users" do
           user = Fabricate(:user)
           delete :destroy, params: { user_id: user.to_param }
-          expect(response).to redirect_to(:users)
+          expect(response)
+            .to redirect_to(users_url(anchor: "user-#{user.id}"))
         end
       end
 
@@ -440,7 +441,8 @@ RSpec.describe EmployeeTypesController, type: :controller do
 
         it "redirects to users" do
           delete :destroy, params: { user_id: user.to_param }
-          expect(response).to redirect_to(:users)
+          expect(response)
+            .to redirect_to(users_url(anchor: "user-#{user.id}"))
         end
       end
     end
