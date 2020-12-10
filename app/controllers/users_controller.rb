@@ -10,6 +10,7 @@ class UsersController < ApplicationController
     @reporters = @users.reporters
     @reviewers = @users.reviewers
     @workers = @users.workers
+    @unemployed = @users.unemployed
   end
 
   # TODO: show tasks from reviews by user

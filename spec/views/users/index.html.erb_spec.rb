@@ -11,12 +11,15 @@ RSpec.describe "users/index", type: :view do
   let(:second_user_reviewer) { Fabricate(:user_reviewer) }
   let(:first_user_worker) { Fabricate(:user_worker) }
   let(:second_user_worker) { Fabricate(:user_worker) }
+  let(:first_user_unemployed) { Fabricate(:user_unemployed) }
+  let(:second_user_unemployed) { Fabricate(:user_unemployed) }
 
   before(:each) do
     assign(:admins, [first_user_admin, second_user_admin])
     assign(:reviewers, [first_user_reviewer, second_user_reviewer])
     assign(:reporters, [first_user_reporter, second_user_reporter])
     assign(:workers, [first_user_worker, second_user_worker])
+    assign(:unemployed, [first_user_unemployed, second_user_unemployed])
   end
 
   context "for an admin" do
@@ -29,6 +32,8 @@ RSpec.describe "users/index", type: :view do
         path = new_user_path(user: { employee_type: employee_type })
         expect(rendered).to have_link(nil, href: path)
       end
+      path = new_user_path(user: { employee_type: nil })
+      expect(rendered).not_to have_link(nil, href: path)
     end
 
     it "renders a list of user/admins" do
@@ -78,6 +83,18 @@ RSpec.describe "users/index", type: :view do
         assert_select "#user-#{worker.id} a[data-method=\"delete\"]", count: 0
         expect(rendered).to have_link(nil, href: user_path(worker))
         expect(rendered).to have_link(nil, href: edit_user_path(worker))
+      end
+    end
+
+    it "renders a list of user/unemployed" do
+      render
+
+      [first_user_unemployed, second_user_unemployed].each do |unemployed|
+        assert_select "#user-#{unemployed.id}"
+        assert_select "#user-#{unemployed.id} a[data-method=\"delete\"]",
+                      count: 0
+        expect(rendered).to have_link(nil, href: user_path(unemployed))
+        expect(rendered).to have_link(nil, href: edit_user_path(unemployed))
       end
     end
   end
