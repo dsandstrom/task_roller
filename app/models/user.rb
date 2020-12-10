@@ -84,6 +84,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(employee_type: 'Worker')
   end
 
+  def self.unemployed
+    where('employee_type IS NULL OR employee_type NOT IN (?)',
+          VALID_EMPLOYEE_TYPES)
+  end
+
   # used in task filter form to display unassigned tasks
   def self.unassigned
     new(id: 0, name: '~ Unassigned ~')

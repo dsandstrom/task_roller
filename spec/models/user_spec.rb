@@ -233,6 +233,24 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".unemployed" do
+    it "includes only Workers" do
+      nil_user = Fabricate(:user)
+      nil_user.update_attribute :employee_type, nil
+      blank_user = Fabricate(:user)
+      blank_user.update_attribute :employee_type, ""
+      invalid_user = Fabricate(:user)
+      invalid_user.update_attribute :employee_type, "invalid"
+      Fabricate(:user_admin)
+      Fabricate(:user_reporter)
+      Fabricate(:user_reviewer)
+      Fabricate(:user_worker)
+
+      expect(User.unemployed)
+        .to contain_exactly(nil_user, blank_user, invalid_user)
+    end
+  end
+
   describe ".assignable_employees" do
     it "includes Reviewers & Workers" do
       user_reviewer = Fabricate(:user_reviewer)
