@@ -141,3 +141,20 @@
 .review-date {
   white-space: nowrap;
 }
+
+.user-edit-links {
+  margin-bottom: 2.5rem;
+  padding: 2.5rem 0;
+  border: 1px solid $light-gray;
+  border-width: 1px 0;
+
+  h2,
+  h3 {
+    margin-top: 0;
+  }
+
+  form,
+  .button {
+    margin-bottom: 0;
+  }
+}

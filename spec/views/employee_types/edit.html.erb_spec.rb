@@ -30,5 +30,26 @@ RSpec.describe "employee_types/edit", type: :view do
         end
       end
     end
+
+    context "when requested user is unemployed" do
+      let(:user) { Fabricate(:user_unemployed) }
+
+      before { @user = assign(:user, user) }
+
+      it "renders the edit user employee_type form" do
+        render
+
+        assert_select "form[action=?]", user_employee_types_path(@user) do
+          assert_select "select[name=?]", "user[employee_type]"
+        end
+      end
+
+      it "doesn't renders destroy user employee_type link" do
+        render
+
+        url = user_employee_type_path(@user)
+        assert_select "form[action=?]", url, count: 0
+      end
+    end
   end
 end

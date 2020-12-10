@@ -42,7 +42,7 @@ RSpec.describe "users/index", type: :view do
 
       assert_select "#user-#{second_user_admin.id}"
       second_url = user_path(second_user_admin)
-      assert_select "a[data-method=\"delete\"][href='#{second_url}']"
+      assert_select "a[data-method=\"delete\"][href='#{second_url}']", count: 0
       expect(rendered).to have_link(nil, href: second_url)
       expect(rendered)
         .to have_link(nil, href: edit_user_path(second_user_admin))
@@ -53,7 +53,7 @@ RSpec.describe "users/index", type: :view do
 
       [first_user_reporter, second_user_reporter].each do |reporter|
         assert_select "#user-#{reporter.id}"
-        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]"
+        assert_select "#user-#{reporter.id} a[data-method=\"delete\"]", count: 0
         expect(rendered).to have_link(nil, href: user_path(reporter))
         expect(rendered).to have_link(nil, href: edit_user_path(reporter))
       end
@@ -64,7 +64,7 @@ RSpec.describe "users/index", type: :view do
 
       [first_user_reviewer, second_user_reviewer].each do |reviewer|
         assert_select "#user-#{reviewer.id}"
-        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]"
+        assert_select "#user-#{reviewer.id} a[data-method=\"delete\"]", count: 0
         expect(rendered).to have_link(nil, href: user_path(reviewer))
         expect(rendered).to have_link(nil, href: edit_user_path(reviewer))
       end
@@ -75,7 +75,7 @@ RSpec.describe "users/index", type: :view do
 
       [first_user_worker, second_user_worker].each do |worker|
         assert_select "#user-#{worker.id}"
-        assert_select "#user-#{worker.id} a[data-method=\"delete\"]"
+        assert_select "#user-#{worker.id} a[data-method=\"delete\"]", count: 0
         expect(rendered).to have_link(nil, href: user_path(worker))
         expect(rendered).to have_link(nil, href: edit_user_path(worker))
       end

@@ -5,13 +5,16 @@
     <%= content_tag :h2, "Change Account Type" %>
 
     <%= render 'form', user: @user %>
-  </div>
 
-  <div class="second-column">
-    <div class="devise-links">
-      <h3>Advanced</h3>
+    <% if @user.employee? && can?(:cancel, @user) %>
+      <div class="user-edit-links">
+        <h2>Cancel Account</h2>
 
-      <% if can?(:cancel, @user) %>
+        <p>
+          Clear <%= content_tag :strong, @user.name_or_email %>'s
+          account type and disallow them from accessing the site:
+        </p>
+
         <%
           confirm = "Are you sure you want to cancel the account "\
                     "for #{@user.name_or_email}?"
@@ -22,9 +25,12 @@
                         method: :delete, data: { confirm: confirm },
                         class: 'button button-outline button-warning' %>
         </p>
-      <% end %>
-    </div>
+
+      </div>
+    <% end %>
   </div>
+
+  <div class="second-column"></div>
 </div>
 
 <p><%= link_to 'Back', :back %></p>

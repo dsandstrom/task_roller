@@ -124,6 +124,13 @@ body {
 .columns {
   .second-column {
     margin: 4rem 0 2rem;
+
+    .devise-links {
+      display: flex;
+      flex-direction: column;
+      align-content: stretch;
+      height: 100%;
+    }
   }
 }
 
