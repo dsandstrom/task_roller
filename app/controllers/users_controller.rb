@@ -27,7 +27,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # TODO: allow admin to change employee_type
   def update
     if @user.update(user_params)
       redirect_to @user, notice: 'User was successfully updated.'
