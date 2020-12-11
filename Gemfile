@@ -67,7 +67,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'guard-livereload', '~> 2.5', require: false
-  gem 'letter_opener'
+  gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rubocop', '~> 1.4.2', require: false
   gem 'scss_lint', '~> 0.59', require: false

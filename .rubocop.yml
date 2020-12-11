@@ -40,6 +40,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'Guardfile'
+    - 'config/environments/*'
 
 Metrics/ClassLength:
   Exclude:

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.configure do # rubocop:disable Metrics/BlockLength
+Rails.application.configure do
   # Settings specified here will take precedence over those in
   # config/application.rb.
 
@@ -36,7 +36,7 @@ Rails.application.configure do # rubocop:disable Metrics/BlockLength
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
 
@@ -65,6 +65,6 @@ Rails.application.configure do # rubocop:disable Metrics/BlockLength
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :letter_opener
 end

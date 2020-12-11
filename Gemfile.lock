@@ -352,7 +352,7 @@ DEPENDENCIES
   guard-rails (~> 0.8.1)
   guard-rspec (~> 4.7.3)
   kaminari (~> 1.2.1)
-  letter_opener
+  letter_opener (~> 1.7)
   listen (~> 3.2)
   pg (~> 1.2.3)
   puma (~> 5.0)
