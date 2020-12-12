@@ -10,6 +10,9 @@ This is a Ruby on Rails app built to be an Issue and Task manager for
 businesses. Issues are opened to report problems, offer suggestions, and ask
 questions. While Tasks are created to address Issues.
 
+## Live App
+Please feel free to check out a live version of the app and [report issues](http://production.task-roller.net).
+
 ## User Types
 There are four available user types. Here is a short description of each:
 
