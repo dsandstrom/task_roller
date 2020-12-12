@@ -19,7 +19,6 @@ class IssueConnectionsController < ApplicationController
     end
   end
 
-  # TODO: add active to connections - disable instead of destroy
   def destroy
     notice = 'Issue was successfully reopened.'
     issue = @issue_connection.source

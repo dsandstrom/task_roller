@@ -1,10 +1,7 @@
-// FIXME: redcarpet requires code block to have emtpy line above
-// TODO: comment forms - hide toolbar and shorten unless focused once
-
 import EasyMDE from 'easymde/dist/easymde.min.js';
 import hljs from 'highlight.js';
 
-// TODO: import just the highlight.js languages that are needed
+// pick languages to import for highlight.js instead of all
 // https://bjacobel.com/2016/12/04/highlight-bundle-size/
 //
 // import hljs from 'highlight.js/lib/highlight';

@@ -3,7 +3,6 @@
 class CategoriesController < ApplicationController
   load_and_authorize_resource except: :archived
 
-  # TODO: show categories with invisible projects?
   def index
     @categories = @categories.all_visible
   end

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add js create/destroy response and partials
-
 class IssueSubscriptionsController < ApplicationController
   load_and_authorize_resource only: :index
   load_and_authorize_resource :issue, except: :index

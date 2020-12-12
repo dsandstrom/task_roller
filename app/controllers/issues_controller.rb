@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: allow searching by text (to see if reported)
-# TODO: when closed, lock updating description
-# TODO: add issue type filter
 # TODO: add link to delete issue
 
 class IssuesController < ApplicationController
