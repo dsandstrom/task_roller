@@ -20,7 +20,8 @@
 
   <div class="field">
     <%= required_field_label form, :summary %>
-    <%= form.text_field :summary, id: :task_summary %>
+    <%= form.text_field :summary, id: :task_summary,
+                        autofocus: true %>
   </div>
 
   <%# TODO: add choices, not a choice, bub %>

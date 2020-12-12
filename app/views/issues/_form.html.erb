@@ -30,7 +30,8 @@
 
   <div class="field">
     <%= required_field_label form, :summary %>
-    <%= form.text_field :summary, id: :issue_summary %>
+    <%= form.text_field :summary, id: :issue_summary,
+                        autofocus: true %>
   </div>
 
   <div class="field">
