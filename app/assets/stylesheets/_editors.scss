@@ -90,16 +90,26 @@ $editor-button-size: 3rem;
 }
 
 // scss-lint:disable SelectorFormat
-.CodeMirror {
-  border-radius: 0 0 $border-radius $border-radius;
-  border-color: $gray;
-  color: $ink;
+.EasyMDEContainer {
+  .CodeMirror {
+    border-radius: 0 0 $border-radius $border-radius;
+    border-color: $gray;
+    color: $ink;
 
-  // scss-lint:disable QualifyingElement
-  pre.CodeMirror-line-like {
-    color: $gray;
+    // scss-lint:disable QualifyingElement
+    pre.CodeMirror-line-like {
+      color: $gray;
+    }
+    // scss-lint:enable QualifyingElement
+
+    &.CodeMirror-focused {
+      border-color: $color-primary;
+    }
   }
-  // scss-lint:enable QualifyingElement
+
+  .CodeMirror-placeholder {
+    opacity: .8;
+  }
 
   .CodeMirror-code {
     .cm-header-1 {
@@ -108,14 +118,6 @@ $editor-button-size: 3rem;
       line-height: 1.3em;
     }
   }
-
-  &.CodeMirror-focused {
-    border-color: $color-primary;
-  }
-}
-
-.CodeMirror-placeholder {
-  opacity: .8;
 }
 // scss-lint:enable SelectorFormat
 
