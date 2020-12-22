@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add friendly_id/slug
-# TODO: add icon options
-# TODO: add image
-
 class Category < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :issues, through: :projects

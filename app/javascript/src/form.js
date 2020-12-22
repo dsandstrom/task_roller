@@ -1,7 +1,7 @@
 // https://github.com/rickharrison/validate.js
 import FormValidator from 'validate-js/validate';
 
-// FIXME: if rails validation error, adds div around input, breaks js
+// Issue #17
 
 export class Form {
   constructor(elem, editors = []) {
@@ -74,8 +74,6 @@ export class Form {
     const matches = value.match(/[^\s\t]+/);
     return matches != null;
   }
-
-  // TODO: add 'min_length[6]' for password edit
 
   options() {
     const matches = this.form.name.match(/^(\w+)_form$/);

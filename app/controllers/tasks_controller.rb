@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: allow reviewers to connect any task to issue, move to different issue
-# TODO: when issue, auto assign summary/description
-# TODO: add history page to show all progressions, approvals
-# TODO: allow creating issue/task from comment (another issue_connection?)
-# TODO: allow user to customize subscription notifications
-# TODO: when closed, lock description & assignees
-# TODO: add way to share issue/task url (copy to the clipboard, expandable)
-
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]
@@ -92,7 +84,6 @@ class TasksController < ApplicationController
       @issue_options = build_issue_options
     end
 
-    # TODO: change to just workers after allowing self-assigning
     def build_assignee_options
       %w[Worker Reviewer].map do |type|
         employees = User.employees(type).map { |u| [u.name_and_email, u.id] }

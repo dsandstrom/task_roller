@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Progression < ApplicationRecord
-  # TODO: use current_user's time zone
   TIME_ZONE = 'Pacific Time (US & Canada)'
 
   belongs_to :task

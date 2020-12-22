@@ -17,7 +17,6 @@ class FlashMessage {
   }
 
   // close the flash message after 10 secs, pause while mouse hovered over
-  // TODO: test on all browsers
   autoClose() {
     this.timeout = window.setTimeout(this.close, 10000);
 
@@ -35,12 +34,12 @@ class FlashMessage {
   // absolute allows you to scroll away from the message so it's not annoying
   // becomes static-like when scrolling up and sticks to the top of the page
   // TODO: make smoother when scrolling up (maybe set back to static)
+  // Issue #16
   watchScroll() {
     let top = this.elem.style.top || null;
 
     document.addEventListener('scroll', function(event) {
-      // TODO: use querySelectorAll
-      // multiple messages not really supported by the css anyways
+      // multiple messages not supported
       const currentElem = event.target.querySelector('.flash-message');
       if (!currentElem) return;
 

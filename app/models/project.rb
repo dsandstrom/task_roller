@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add friendly_id/slug
-# TODO: add icon options
-# TODO: add image
-# TODO: force moving issues/tasks before destroying
-# TODO: add way to archive (or use visible for that)
-# TODO: add name_and_tag for issue/task move form
-# TODO: allow branding (customize logo, page title, etc)
-
 class Project < ApplicationRecord
   belongs_to :category
   has_many :issues, dependent: :destroy

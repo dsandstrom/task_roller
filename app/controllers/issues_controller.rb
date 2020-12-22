@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add link to delete issue
-
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]

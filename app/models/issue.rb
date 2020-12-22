@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add CustomField/Value/Option for more issue/task attrs
-# TODO: add visible boolean (for moderation)
-# TODO: add closed statuses (rejected/invalid)
-# TODO: when closing issue, add dialog that confirms and allows adding a comment
-# TODO: allow reviewer+ to change project (any category)
-# TODO: add all_duplicates method and to filters
-# TODO: allow reopening issue by adding task
-# TODO: move subscribe buttons to headings
-
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
   STATUS_OPTIONS = {
@@ -110,7 +101,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .distinct
   end
 
-  # TODO: allow filtering by multiple statuses
   def self.filter_by_status(status)
     return all unless status
 

@@ -11,8 +11,6 @@ class UsersController < ApplicationController
     @unemployed = @users.unemployed
   end
 
-  # TODO: show tasks from reviews by user
-  # TODO: for reviewer+, show tasks ready for review
   def show; end
 
   def new; end

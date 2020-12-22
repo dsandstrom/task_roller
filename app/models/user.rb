@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: allow reviewers to create reviewers-, workers create reporters
-# TODO: add priority column to use for ordering
-# TODO: user subscription?
-# TODO: tasks from a user's open issues for reporters/show view
-# TODO: show if user unconfirmed
-
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
-  # TODO: allow github omniauth
   # Include default devise modules. Others available are:
   #    :timeoutable and :omniauthable
   devise :confirmable, :database_authenticatable, :lockable, :recoverable,
@@ -20,7 +13,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :assignments, through: :task_assignees, class_name: 'Task',
                          source: :task
   has_many :progressions, dependent: :destroy
-  # TODO: accomodate destroyed user issues/tasks
   has_many :issues
   has_many :tasks
   has_many :issue_comments

@@ -2,7 +2,6 @@
               html: { name: 'issue_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <%# TODO: add choices, not a choce, bub %>
   <% if user_options&.any? %>
     <div class="field">
       <%= form.label :user_id, 'Reporter' %>
