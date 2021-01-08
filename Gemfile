@@ -9,7 +9,7 @@ end
 
 ruby '2.7.2'
 
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1.0'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.2.3'
 # Use Puma as the app server
@@ -37,7 +37,7 @@ gem 'acts_as_list', '~> 0.9.10'
 
 gem 'redcarpet', '~> 3.4.0'
 
-gem 'cancancan', '~> 3.1.0'
+gem 'cancancan', '~> 3.2.0'
 gem 'devise', '~> 4.7.3'
 
 gem 'kaminari', '~> 1.2.1'
@@ -56,8 +56,8 @@ group :development, :test do
   gem 'guard-bundler', require: false
   gem 'guard-rails', '~> 0.8.1', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
-  gem 'rspec', '~> 3.7.0'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec', '~> 3.10'
+  gem 'rspec-rails', '~> 4.0'
   gem 'selenium-webdriver'
 end
 
