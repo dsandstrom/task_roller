@@ -1,7 +1,16 @@
 <header class="main-header">
   <div class="page">
-
     <% if current_user.present? %>
+      <div class="app-name-and-logo">
+        <p class="app-name">
+          <%= link_to 'Task Roller', main_app.root_path %>
+        </p>
+
+        <p class="app-logo">
+          <%= image_tag 'wheel.svg' %>
+        </p>
+      </div>
+
       <div class="menu">
         <%= menu_link 'Dashboard', main_app.root_path %>
         <% if can?(:read, Category) %>
@@ -16,15 +25,14 @@
         <% end %>
       </div>
 
-      <div class="app-name-and-logo">
-        <p class="app-name">
-          <%= link_to 'Task Roller', main_app.root_path %>
-        </p>
-
-        <p class="app-logo">
-          <%= image_tag 'wheel.svg' %>
-        </p>
+      <div class="user-link">
+        <%= link_to user_path(current_user) do %>
+          <%= content_tag :span, current_user.name_or_email %>
+          <i class="icon-arrow-down"></i>
+        <% end %>
       </div>
+
+      <%= user_dropdown(current_user) %>
     <% else %>
       <div class="app-name-and-logo">
         <p class="app-name">
@@ -37,14 +45,4 @@
       </div>
     <% end %>
   </div>
-
-  <% if current_user.present? %>
-    <div class="page">
-      <div class="user-info">
-        <%= link_to current_user.name, current_user %>
-        (<%= current_user.email %>) |
-        <%= link_to 'log out', destroy_user_session_path, method: :delete %>
-      </div>
-    </div>
-  <% end %>
 </header>

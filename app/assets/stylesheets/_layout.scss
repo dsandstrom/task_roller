@@ -24,6 +24,7 @@ body {
 .menu {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   margin: 0 -.5rem .5rem;
 
   p {
@@ -56,7 +57,6 @@ body {
 }
 
 .app-name {
-  order: 2;
   color: $color-secondary;
   font-size: 2.5rem;
   font-weight: bold;
@@ -67,11 +67,19 @@ body {
 }
 
 .app-logo {
-  order: 1;
   width: 3rem;
   height: 3rem;
   margin-right: .2rem;
   margin-bottom: 0;
+}
+
+.user-link {
+  white-space: nowrap;
+
+  i {
+    position: relative;
+    top: .25rem;
+  }
 }
 
 @include breakpoint(medium up) {
@@ -82,7 +90,6 @@ body {
   }
 
   .app-name {
-    order: 1;
     border-right: 1rem solid transparent;
   }
 
@@ -92,12 +99,9 @@ body {
     margin: 0 1rem 0 0;
   }
 
-  .menu {
-    order: 3;
-  }
-
-  .logo {
-    order: 2;
+  .user-link {
+    flex-grow: 1;
+    text-align: right;
   }
 }
 
@@ -190,5 +194,19 @@ hr {
 .category-header {
   .breadcrumbs {
     margin-bottom: 1rem;
+  }
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  padding: 1rem;
+  border: 1px solid $light-gray;
+  border-radius: $border-radius;
+  background: $white;
+
+  span {
+    display: block;
+    line-height: 2;
   }
 }
