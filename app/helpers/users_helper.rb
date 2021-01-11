@@ -31,6 +31,17 @@ module UsersHelper
     @new_reporter ||= User.new(employee_type: 'Reporter')
   end
 
+  def user_dropdown(user)
+    links = user_nav_links(user)
+    links += [['Log Out', destroy_user_session_path,
+               { method: :delete, class: 'destroy-link' }]]
+    links = navitize(links).map { |l| content_tag(:span, l) }
+
+    content_tag :div, class: 'user-dropdown' do
+      safe_join(links)
+    end
+  end
+
   private
 
     def user_nav(user)
@@ -50,7 +61,7 @@ module UsersHelper
       end
       return links unless can?(:update, user)
 
-      links.append ['Settings', edit_user_path(user), { class: 'destroy-link' }]
+      links.append ['Settings', edit_user_path(user)]
     end
 
     def user_page_title(user)
