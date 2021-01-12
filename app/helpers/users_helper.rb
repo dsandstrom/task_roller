@@ -36,8 +36,10 @@ module UsersHelper
     links += [['Log Out', destroy_user_session_path,
                { method: :delete, class: 'destroy-link' }]]
     links = navitize(links).map { |l| content_tag(:span, l) }
+    options = { class: 'dropdown-menu user-dropdown',
+                data: { link: 'user-dropdown-link' } }
 
-    content_tag :div, class: 'user-dropdown' do
+    content_tag :div, options do
       safe_join(links)
     end
   end

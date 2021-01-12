@@ -25,11 +25,11 @@
         <% end %>
       </div>
 
-      <div class="user-link">
-        <%= link_to user_path(current_user) do %>
-          <%= content_tag :span, current_user.name_or_email %>
-          <i class="icon-arrow-down"></i>
-        <% end %>
+      <div class="user-name">
+        <%= link_to current_user.name_or_email,
+                    user_path(current_user),
+                    class: 'dropdown-link user-dropdown-link',
+                    title: 'User Menu' %>
       </div>
 
       <%= user_dropdown(current_user) %>

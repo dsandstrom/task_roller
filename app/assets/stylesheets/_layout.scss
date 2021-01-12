@@ -1,6 +1,13 @@
+$page-padding: 3%;
+
 body {
   margin: 0;
   background: $white;
+}
+
+form,
+hr {
+  max-width: 70rem;
 }
 
 .main-container {
@@ -19,6 +26,16 @@ body {
   padding: 1rem 0;
   background: $pearl;
   color: $ink;
+
+  .page {
+    // dropdown container
+    position: relative;
+  }
+
+  .user-name {
+    text-align: right;
+    white-space: nowrap;
+  }
 }
 
 .menu {
@@ -73,15 +90,6 @@ body {
   margin-bottom: 0;
 }
 
-.user-link {
-  white-space: nowrap;
-
-  i {
-    position: relative;
-    top: .25rem;
-  }
-}
-
 @include breakpoint(medium up) {
   .main-header > .page {
     display: flex;
@@ -99,9 +107,10 @@ body {
     margin: 0 1rem 0 0;
   }
 
-  .user-link {
-    flex-grow: 1;
-    text-align: right;
+  .main-header {
+    .user-name {
+      flex-grow: 1;
+    }
   }
 }
 
@@ -120,7 +129,7 @@ body {
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 3%;
+  padding: 0 $page-padding;
 }
 
 .columns {
@@ -140,11 +149,6 @@ body {
       height: 100%;
     }
   }
-}
-
-form,
-hr {
-  max-width: 70rem;
 }
 
 @include breakpoint(large up) {
@@ -197,13 +201,53 @@ hr {
   }
 }
 
-.user-dropdown {
+.dropdown-link {
+  &::after {
+    content: '\e022';
+    position: relative;
+    top: .25rem;
+    padding-left: .25rem;
+    font-family: 'task-roller';
+  }
+
+  &.active {
+    &::after {
+      content: '\e021';
+    }
+  }
+}
+
+.dropdown-menu {
+  display: none;
   position: absolute;
-  right: 0;
+  z-index: 2;
+  margin-top: 1rem;
   padding: 1rem;
   border: 1px solid $light-gray;
   border-radius: $border-radius;
   background: $white;
+  box-shadow: 0 4px 8px rgba($gray, .2);
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    top: -1rem;
+    right: 1.5rem;
+    width: 0;
+    height: 0;
+    border-right: 1rem solid transparent;
+    border-bottom: 1rem solid $white;
+    border-left: 1rem solid transparent;
+  }
+
+  &.active {
+    display: block;
+  }
+}
+
+.user-dropdown {
+  right: $page-padding;
 
   span {
     display: block;
