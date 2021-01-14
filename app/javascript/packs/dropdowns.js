@@ -53,8 +53,16 @@ class Dropdown {
   }
 }
 
+var dropdowns = [];
 document.addEventListener('turbolinks:load', function() {
   for (var elem of document.querySelectorAll('.dropdown-menu')) {
-    new Dropdown(elem);
+    dropdowns.push(new Dropdown(elem));
   }
+})
+// close any current dropdowns
+document.addEventListener('turbolinks:visit', function() {
+  for (var dropdown of dropdowns) {
+    dropdown.toggleOff();
+  }
+  dropdowns = [];
 })
