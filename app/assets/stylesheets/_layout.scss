@@ -265,7 +265,7 @@ hr {
   position: absolute;
   z-index: 2;
   margin-top: 1rem;
-  padding: 1rem;
+  padding: .5rem 0;
   border: 1px solid $light-gray;
   border-radius: $border-radius;
   background: $white;
@@ -287,15 +287,26 @@ hr {
   &.active {
     display: block;
   }
+
+  a,
+  span {
+    display: block;
+    padding: 0 1rem;
+    line-height: 2;
+  }
+
+  .divider {
+    border-top: 1px solid $light-gray;
+  }
+
+  .user-email {
+    color: $dark-gray;
+    font-size: 80%;
+  }
 }
 
 .user-dropdown {
   right: $page-padding;
-
-  span {
-    display: block;
-    line-height: 2;
-  }
 }
 
 .image-wrapper {

@@ -105,7 +105,11 @@ module ApplicationHelper
 
     def navitize(links)
       links.map do |value, url, options = {}|
-        link_to_unless_current(value, url, options)
+        if current_page?(url)
+          content_tag :span, value, options.merge(class: 'current-page')
+        else
+          link_to(value, url, options)
+        end
       end
     end
 end
