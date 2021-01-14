@@ -246,7 +246,7 @@ hr {
 
 .dropdown-link {
   &::after {
-    content: '\e022';
+    content: '\e010';
     position: relative;
     top: .25rem;
     padding-left: .25rem;
@@ -255,7 +255,7 @@ hr {
 
   &.active {
     &::after {
-      content: '\e021';
+      content: '\e02a';
     }
   }
 }
