@@ -12,25 +12,27 @@
 
     <p>Issues can have five statuses:</p>
     <dl>
-      <dt class="color-green">Open</dt>
+      <dt id="issue-status-open" class="color-green">Open</dt>
       <dd>
         Issues can be opened to ask a question, bring up a problem, or to
         simply group up tasks
       </dd>
 
-      <dt class="color-yellow">Being Worked On</dt>
-      <dd>One or more tasks have been assigned to address Issue</dd>
+      <dt id="issue-status-being-worked-on" class="color-yellow">
+        Being Worked On
+      </dt>
+      <dd>One or more tasks have been assigned to address the Issue</dd>
 
-      <dt class="color-red">Addressed</dt>
-      <dd>The assigned tasks are complete which closes Issue</dd>
+      <dt id="issue-status-addressed" class="color-red">Addressed</dt>
+      <dd>The assigned tasks are complete which closes the Issue</dd>
 
-      <dt class="color-red">Resolved</dt>
+      <dt id="issue-status-resolved" class="color-red">Resolved</dt>
       <dd>
         The User that opened the Issue has acknowleged the question was
         answered or there's no longer a problem
       </dd>
 
-      <dt class="color-red">Closed</dt>
+      <dt id="issue-status-closed" class="color-red">Closed</dt>
       <dd>
         Issue marked a duplicate or invalid
       </dd>
@@ -46,24 +48,27 @@
 
     <p>Tasks can have six statuses:</p>
     <dl>
-      <dt class="color-green">Open</dt>
+      <dt id="task-status-open" class="color-green">Open</dt>
       <dd>
         Tasks can be opened to address a specific issue or completely separate
       </dd>
 
-      <dt class="color-blue">Assigned</dt>
-      <dd>One or more users were assigned to work on Task</dd>
+      <dt id="task-status-assigned" class="color-blue">Assigned</dt>
+      <dd>One or more users were assigned to work on the Task</dd>
 
-      <dt class="color-yellow">In Progress</dt>
-      <dd>An assigned user has started progress on Task</dd>
+      <dt id="task-status-in-progress" class="color-yellow">In Progress</dt>
+      <dd>An assigned user has started progress on the Task</dd>
 
-      <dt class="color-purple">In Review</dt>
-      <dd>An assinged user has put Task for review</dd>
+      <dt id="task-status-in-review" class="color-purple">In Review</dt>
+      <dd>An assigned user has put the Task up for review</dd>
 
-      <dt class="color-red">Complete</dt>
-      <dd>Task approved by an reviwer which closes it and marks connected Issue resolved</dd>
+      <dt id="task-status-complete" class="color-red">Complete</dt>
+      <dd>
+        Task approved by a reviewer which closes it and marks connected Issue
+        <%= link_to 'Addressed', '#issue-status-addressed' %>
+      </dd>
 
-      <dt class="color-red">Closed</dt>
+      <dt id="task-status-closed" class="color-red">Closed</dt>
       <dd>Task marked a duplicate or invalid</dd>
     </dl>
 
