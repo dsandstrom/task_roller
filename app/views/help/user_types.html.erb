@@ -1,0 +1,35 @@
+<%= help_header 'User Types' %>
+
+<div class="columns">
+  <div class="column">
+    <p>
+      There are four user types available. Here is a short description of each:
+    </p>
+
+    <%= content_tag :h3, 'Admins', id: 'admins' %>
+    <p>
+      One or two people responsible for the initial app setup and user
+      management. They have the same abilities as
+      <%= link_to 'reviewers', '#reviewers' %>, but they can also
+      edit/remove other people's issues, tasks, comments, etc.
+    </p>
+
+    <%= content_tag :h3, 'Reviewers', id: 'reviewers' %>
+    <p>
+      Basically, the project managers. They can do some app setup like create
+      Categories and Projects. However, their main responsibility is managing
+      issues and tasks.
+    </p>
+
+    <%= content_tag :h3, 'Workers', id: 'workers' %>
+    <p>
+      The busy bees working on tasks. In addition, they can report issues and
+      self-assign tasks.
+    </p>
+
+    <%= content_tag :h3, 'Reporters', id: 'reporters' %>
+    <p>
+      Everyone else can open issues, add comments, and see activity.
+    </p>
+  </div>
+</div>

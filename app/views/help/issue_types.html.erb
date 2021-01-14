@@ -1,0 +1,29 @@
+<%= help_header 'Issue & Task Types' %>
+
+<div class="columns">
+  <div class="column">
+    <p>
+      Issues and Tasks are grouped by <strong>types</strong> (eg. Bug, Feature
+      Request, Question), which are added and updated by <%= link_to 'admins',
+      user_types_help_path(anchor: 'admins') %>. Several color and icon options
+      available to add and customize:
+    </p>
+
+    <h3>Color Options</h3>
+    <% issue_type_color_options.each do |title, name| %>
+      <% klass = "issue-type-tag roller-type-color-#{name}" %>
+      <%= content_tag :span, class: klass do %>
+        <%= content_tag(:span, title) %>
+      <% end %>
+    <% end %>
+
+    <h3>Icon Options</h3>
+    <% issue_type_icon_options.each do |title, name| %>
+      <% klass = "issue-type-tag roller-type-color-default" %>
+      <%= content_tag :span, class: klass do %>
+        <%= content_tag :i, '', class: "icon-#{name}" %>
+        <%= title %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

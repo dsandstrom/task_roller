@@ -1,0 +1,74 @@
+<%= help_header 'Status Workflows' %>
+
+<p>
+  Issues and Tasks have slightly different <strong>status</strong> options, but
+  their <strong>workflows</strong> can still be connected. See below for a
+  description of each option and a visualiziation of their workflows:
+</p>
+
+<div class="columns">
+  <div class="half-column">
+    <%= content_tag :h3, 'Issue Status Workflow' %>
+
+    <p>Issues can have five statuses:</p>
+    <dl>
+      <dt class="color-green">Open</dt>
+      <dd>
+        Issues can be opened to ask a question, bring up a problem, or to
+        simply group up tasks
+      </dd>
+
+      <dt class="color-yellow">Being Worked On</dt>
+      <dd>One or more tasks have been assigned to address Issue</dd>
+
+      <dt class="color-red">Addressed</dt>
+      <dd>The assigned tasks are complete which closes Issue</dd>
+
+      <dt class="color-red">Resolved</dt>
+      <dd>
+        The User that opened the Issue has acknowleged the question was
+        answered or there's no longer a problem
+      </dd>
+
+      <dt class="color-red">Closed</dt>
+      <dd>
+        Issue marked a duplicate or invalid
+      </dd>
+    </dl>
+
+    <div class="image-wrapper">
+      <%= image_tag 'issue-workflow.svg' %>
+    </div>
+  </div>
+
+  <div class="half-column">
+    <%= content_tag :h3, 'Task Status Workflow' %>
+
+    <p>Tasks can have six statuses:</p>
+    <dl>
+      <dt class="color-green">Open</dt>
+      <dd>
+        Tasks can be opened to address a specific issue or completely separate
+      </dd>
+
+      <dt class="color-blue">Assigned</dt>
+      <dd>One or more users were assigned to work on Task</dd>
+
+      <dt class="color-yellow">In Progress</dt>
+      <dd>An assigned user has started progress on Task</dd>
+
+      <dt class="color-purple">In Review</dt>
+      <dd>An assinged user has put Task for review</dd>
+
+      <dt class="color-red">Complete</dt>
+      <dd>Task approved by an reviwer which closes it and marks connected Issue resolved</dd>
+
+      <dt class="color-red">Closed</dt>
+      <dd>Task marked a duplicate or invalid</dd>
+    </dl>
+
+    <div class="image-wrapper">
+      <%= image_tag 'task-workflow.svg' %>
+    </div>
+  </div>
+</div>

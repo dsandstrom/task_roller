@@ -17,6 +17,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         as: :user_employee_type
   delete 'users/:user_id/employee_type' => 'employee_types#destroy'
 
+  get 'help' => 'help#index', as: :help
+  get 'help/workflows' => 'help#workflows', as: :workflows_help
+  get 'help/issue_types' => 'help#issue_types', as: :issue_types_help
+  get 'help/user_types' => 'help#user_types', as: :user_types_help
+
   resources :categories, except: :show do
     collection { get :archived }
 
