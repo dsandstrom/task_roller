@@ -115,14 +115,43 @@ hr {
 }
 
 .main-footer {
-  margin-top: 2rem;
+  margin-top: 3rem;
   padding: 1rem 0;
   background: $ink;
   color: $color-tertiary;
 
+  h3,
+  h4,
+  h5,
+  h6,
+  .app-logo {
+    margin: 2rem 0 1rem;
+    color: $gray;
+  }
+
   p {
     margin: 0;
     text-align: center;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      color: $color-quinary;
+      font-size: 85%;
+    }
+  }
+
+  a {
+    color: $light-gray;
+
+    &:hover,
+    &:focus {
+      color: $color-secondary;
+    }
   }
 }
 
@@ -175,6 +204,16 @@ hr {
 
     .column {
       flex: 0 1 72rem;
+    }
+  }
+
+  .main-footer {
+    .columns {
+      justify-content: space-between;
+
+      .column {
+        flex: 0 1 auto;
+      }
     }
   }
 }

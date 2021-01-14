@@ -1,5 +1,40 @@
 <footer class="main-footer">
   <div class="page">
-    <p>yo</p>
+    <div class="columns">
+      <div class="column columns">
+        <div class="column">
+          <p class="app-logo">
+            <%= image_tag 'wheel.svg' %>
+          </p>
+        </div>
+
+        <div class="column">
+          <h6>Task Roller</h6>
+          <ul>
+            <li>
+              <%= link_to 'Source Code',
+                          'https://github.com/dsandstrom/task_roller',
+                          target: '_blank' %>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column">
+        <h6>Help Pages</h6>
+        <ul>
+          <li>
+            <%= link_to_unless_current 'Issue & Task Types',
+                                       issue_types_help_path %>
+          </li>
+          <li>
+            <%= link_to_unless_current 'User Types', user_types_help_path %>
+          </li>
+          <li>
+            <%= link_to_unless_current 'Status Workflows', workflows_help_path %>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </footer>
