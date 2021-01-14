@@ -133,12 +133,6 @@ hr {
 }
 
 .columns {
-  .first-column {
-    > h3 {
-      margin-top: 2.5rem;
-    }
-  }
-
   .second-column {
     margin: 4rem 0 2rem;
 
@@ -157,7 +151,9 @@ hr {
     margin: 0 -1rem;
 
     .first-column,
-    .second-column {
+    .second-column,
+    .half-column,
+    .column {
       border: 0 solid transparent;
       border-width: 0 1rem;
     }
@@ -171,6 +167,14 @@ hr {
       flex: 0 0 30rem;
       order: 2;
       margin-top: 0;
+    }
+
+    .half-column {
+      flex: 0 1 50%;
+    }
+
+    .column {
+      flex: 0 1 72rem;
     }
   }
 }
@@ -253,4 +257,8 @@ hr {
     display: block;
     line-height: 2;
   }
+}
+
+.image-wrapper {
+  text-align: center;
 }
