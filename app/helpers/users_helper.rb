@@ -32,18 +32,15 @@ module UsersHelper
   end
 
   def user_dropdown(user)
-    user_links = user_nav_links(user)
-    auth_links = [['Log Out', destroy_user_session_path,
-                   { method: :delete, class: 'destroy-link' }]]
     options = { class: 'dropdown-menu user-dropdown',
                 data: { link: 'user-dropdown-link' } }
 
     content_tag :div, options do
       concat content_tag :span, user.email, class: 'user-email'
       concat content_tag :span, '', class: 'divider'
-      concat safe_join(navitize(user_links))
+      concat safe_join(navitize(user_nav_links(user)))
       concat content_tag :span, '', class: 'divider'
-      concat safe_join(navitize(auth_links))
+      concat safe_join(navitize(log_out_link))
     end
   end
 
@@ -106,5 +103,10 @@ module UsersHelper
         concat user_breadcrumbs
         concat content_tag(:h1, heading)
       end
+    end
+
+    def log_out_link
+      [['Log Out', destroy_user_session_path,
+        { method: :delete, class: 'destroy-link' }]]
     end
 end
