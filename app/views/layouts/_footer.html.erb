@@ -20,37 +20,39 @@
         </div>
       </div>
 
-      <div class="column">
-        <h6>Help Pages</h6>
-        <ul>
-          <li>
-            <%= link_to_unless_current 'Issue & Task Types',
-                                       issue_types_help_path %>
-          </li>
-          <li>
-            <%= link_to_unless_current 'User Types',
-                                       user_types_help_path %>
-          </li>
-          <li>
-            <%= link_to_unless_current 'Status Workflows',
-                                       workflows_help_path %>
-          </li>
-        </ul>
-      </div>
+      <% if user_signed_in? %>
+        <div class="column">
+          <h6>Help Pages</h6>
+          <ul>
+            <li>
+              <%= link_to_unless_current 'Issue & Task Types',
+                                         issue_types_help_path %>
+            </li>
+            <li>
+              <%= link_to_unless_current 'User Types',
+                                         user_types_help_path %>
+            </li>
+            <li>
+              <%= link_to_unless_current 'Status Workflows',
+                                         workflows_help_path %>
+            </li>
+          </ul>
+        </div>
 
-      <div class="column">
-        <h6>Navigation</h6>
-        <ul>
-          <li>
-            <%= link_to_unless_current 'Home',
-                                       root_path %>
-          </li>
-          <li>
-            <%= link_to_unless_current 'Sitemap',
-                                       sitemap_path %>
-          </li>
-        </ul>
+        <div class="column">
+          <h6>Navigation</h6>
+          <ul>
+            <li>
+              <%= link_to_unless_current 'Home',
+                                         root_path %>
+            </li>
+            <li>
+              <%= link_to_unless_current 'Sitemap',
+                                         sitemap_path %>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </footer>
