@@ -46,13 +46,13 @@ For issues, I suggest: "Bug", "Suggestion", and "Question". For tasks: "Bug",
 Issues can have five statuses: Open, Being Worked On, Addressed, Resolved, and
 Closed. Here is the basic status workflow:
 
-![Issue Workflow](./readme_svgs/issue-workflow.svg)
+![Issue Workflow](./app/assets/images/issue-workflow.svg)
 
 #### Task Status Workflow
 Tasks can have six statuses: Open, Assigned, In Progress, In Review, Complete,
 and Closed. Here is the basic status workflow:
 
-![Task Workflow](./readme_svgs/task-workflow.svg)
+![Task Workflow](./app/assets/images/task-workflow.svg)
 
 ## Local Setup
 
