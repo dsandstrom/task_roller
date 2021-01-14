@@ -1,1 +1,63 @@
 <h1>Sitemap</h1>
+
+<ul>
+  <li><%= link_to 'Home', root_path %></li>
+
+  <li>
+    <%= link_to 'Help Pages', help_path %>
+    <ul>
+      <li><%= link_to 'Issue & Task Types', issue_types_help_path %></li>
+      <li><%= link_to 'User Types', user_types_help_path %></li>
+      <li><%= link_to 'Status Workflows', workflows_help_path %></li>
+    </ul>
+  </li>
+
+  <% if can?(:read, IssueType) %>
+    <li><%= link_to 'Issue & Task Type Settings', main_app.issue_types_path %></li>
+  <% end %>
+
+  <li>
+    <%= link_to_if can?(:read, Category),
+                   'Categories', categories_path %>
+
+    <ul>
+      <% @categories.each do |category| %>
+        <li>
+          <% if can?(:read, category) %>
+            <%= link_to category.name, category_path(category) %>
+
+            <ul>
+              <% category.projects.all_visible.each do |project| %>
+                <li>
+                  <%= link_to_if can?(:read, project),
+                                 project.name, project_path(project) %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <%= category.name %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
+
+  <li>
+    <%= link_to_if can?(:read, User), 'Users', users_path %>
+
+    <ul>
+      <li>
+        <%= link_to current_user.name_or_email, user_path(current_user) %>
+      </li>
+      <li>
+        <%= link_to 'Reported Issues', user_issues_path(current_user) %>
+      </li>
+      <li>
+        <%= link_to 'Created Tasks', user_tasks_path(current_user) %>
+      </li>
+      <li>
+        <%= link_to 'User Settings', edit_user_path(current_user) %>
+      </li>
+    </ul>
+  </li>
+</ul>

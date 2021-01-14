@@ -109,6 +109,10 @@ h1 {
 
 li {
   margin-bottom: .5rem;
+
+  > ul {
+    margin-top: .5rem;
+  }
 }
 
 code {

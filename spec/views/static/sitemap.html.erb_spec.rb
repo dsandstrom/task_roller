@@ -3,6 +3,13 @@
 require "rails_helper"
 
 RSpec.describe "static/sitemap", type: :view do
+  let(:user) { Fabricate(:user) }
+
+  before do
+    assign(:categories, [Fabricate(:category)])
+    enable_can(view, user)
+  end
+
   it "renders page" do
     render
 

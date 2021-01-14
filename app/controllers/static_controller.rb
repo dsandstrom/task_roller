@@ -5,5 +5,7 @@ class StaticController < ApplicationController
 
   def unauthorized; end
 
-  def sitemap; end
+  def sitemap
+    @categories = Category.all_visible
+  end
 end
