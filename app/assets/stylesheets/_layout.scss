@@ -24,7 +24,7 @@ hr {
 
 .main-header {
   padding: 1rem 0;
-  background: $pearl;
+  background: $color-quaternary;
   color: $ink;
 
   .page {
@@ -35,6 +35,38 @@ hr {
   .user-name {
     text-align: right;
     white-space: nowrap;
+  }
+}
+
+.page-header {
+  padding: 1rem 0 0;
+  border-bottom: 2px solid $light-gray;
+  background-color: $pearl;
+
+  .user-nav {
+    display: flex;
+    margin: 0 0 -2px;
+
+    a,
+    .current-page {
+      display: block;
+      padding: 0 1rem;
+      border-bottom: 2px solid transparent;
+      line-height: 3;
+    }
+
+    a {
+      &:hover,
+      &:focus {
+        border-color: $color-secondary;
+        color: $color-secondary;
+      }
+    }
+
+    .current-page {
+      border-color: $color-quinary;
+      color: $color-quinary;
+    }
   }
 }
 
@@ -52,13 +84,19 @@ hr {
 
   a {
     padding: .2rem .6rem;
+    color: $light-gray;
     font-size: 1.8rem;
-    font-weight: bold;
+    // font-weight: bold;
     text-transform: uppercase;
 
     &.current-page {
       opacity: .7;
       color: $color-tertiary;
+    }
+
+    &:hover,
+    &:focus {
+      color: $color-secondary;
     }
   }
 }
@@ -79,7 +117,12 @@ hr {
   font-weight: bold;
 
   a {
-    color: $ink;
+    color: $gray;
+
+    &:hover,
+    &:focus {
+      color: $color-secondary;
+    }
   }
 }
 

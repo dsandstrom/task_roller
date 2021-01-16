@@ -20,7 +20,6 @@
           <%= menu_link 'Users', main_app.users_path %>
         <% end %>
         <% if can?(:read, IssueType) %>
-          <p class="divider">|</p>
           <%= menu_link 'App Setup', main_app.issue_types_path %>
         <% end %>
       </div>
@@ -46,3 +45,13 @@
     <% end %>
   </div>
 </header>
+
+<% if content_for? :header %>
+  <header class="page-header">
+    <div class="page">
+      <%= yield :header %>
+    </div>
+  </header>
+<% end %>
+
+<% flash_messages if defined?(flash_messages) %>

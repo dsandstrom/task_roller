@@ -6,7 +6,8 @@ module UsersHelper
 
     link = link_to_unless_current(user.name_or_email, user)
     user_page_title(user)
-    content_tag :header, class: 'user-header' do
+
+    content_for :header do
       concat user_breadcrumbs
       concat content_tag(:h1, link)
       concat user_nav(user)
@@ -48,7 +49,7 @@ module UsersHelper
 
     def user_nav(user)
       content_tag :p, class: 'user-nav' do
-        safe_join(navitize(user_nav_links(user)), divider_with_spaces)
+        safe_join(navitize(user_nav_links(user)))
       end
     end
 
@@ -99,7 +100,7 @@ module UsersHelper
     def new_user_header(user)
       heading =
         "New #{user.employee_type&.present? ? user.employee_type : 'User'}"
-      content_tag :header, class: 'user-header' do
+      content_for :header do
         concat user_breadcrumbs
         concat content_tag(:h1, heading)
       end
