@@ -1,15 +1,6 @@
 <%= category_index_header %>
 
 <header class="categories-header">
-  <% if can?(:create, Category) %>
-    <p>
-      <%= link_to new_category_path,
-                  class: 'button button-success button-clear' do %>
-        <i class="icon-plus"></i>
-        Add Category
-      <% end %>
-    </p>
-  <% end %>
 </header>
 
 <div class="categories">

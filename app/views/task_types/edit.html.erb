@@ -1,6 +1,8 @@
 <%= enable_page_title "Task Type: #{@task_type.name}" %>
 
-<h1>Edit Task Type</h1>
+<%= content_for :header do %>
+  <h1>Edit Task Type</h1>
+<% end %>
 
 <%= render 'form', task_type: @task_type %>
 

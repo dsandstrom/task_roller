@@ -1,6 +1,8 @@
 <%= enable_page_title "Issue Type: #{@issue_type.name}" %>
 
-<h1>Edit Issue Type</h1>
+<%= content_for :header do %>
+  <h1>Edit Issue Type</h1>
+<% end %>
 
 <%= render 'form', issue_type: @issue_type %>
 

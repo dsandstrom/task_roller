@@ -14,7 +14,8 @@ module RollerTypesHelper
   def task_type_tag(task_type)
     return unless task_type
 
-    roller_type_tag task_type, "task-type-tag #{roller_type_color(task_type)}"
+    roller_type_tag task_type,
+                    "task-type-tag #{roller_type_color(task_type)}"
   end
 
   def issue_type_icon_tag(issue_type)

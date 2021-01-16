@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "projects/index", type: :view do
+  let(:subject) { "projects/index" }
   let(:category) { Fabricate(:category) }
 
   before(:each) do
@@ -38,7 +39,7 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "renders name" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select "h1", @category.name
       end
 
@@ -58,13 +59,13 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "renders edit category link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders new project link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: new_project_url)
       end
@@ -181,61 +182,6 @@ RSpec.describe "projects/index", type: :view do
 
   context "for a reviewer" do
     let(:current_user) { Fabricate(:user_reviewer) }
-    let(:category_issues_subscription) do
-      Fabricate(:category_issues_subscription, category: @category,
-                                               user: current_user)
-    end
-    let(:category_tasks_subscription) do
-      Fabricate(:category_tasks_subscription, category: @category,
-                                              user: current_user)
-    end
-
-    before { enable_can(view, current_user) }
-
-    context "when category has projects, issues, and tasks" do
-      let(:project) { Fabricate(:project, category: @category) }
-      let(:issue) { Fabricate(:issue, project: project) }
-      let(:task) { Fabricate(:task, project: project) }
-
-      before do
-        @projects = assign(:projects, [project])
-        @issues = assign(:issues, page([issue]))
-        @tasks = assign(:tasks, page([task]))
-        assign(:issue_subscription, category_issues_subscription)
-        assign(:task_subscription, category_tasks_subscription)
-      end
-
-      it "renders a list of projects" do
-        render
-        assert_select "#project-#{project.id}.project"
-      end
-
-      it "renders a list of issues" do
-        render
-        assert_select "#issue-#{issue.id}.issue"
-      end
-
-      it "renders a list of tasks" do
-        render
-        assert_select "#task-#{task.id}.task"
-      end
-
-      it "renders edit category link" do
-        render
-
-        expect(rendered).to have_link(nil, href: edit_url)
-      end
-
-      it "renders new project link" do
-        render
-
-        expect(rendered).to have_link(nil, href: new_project_url)
-      end
-    end
-  end
-
-  context "for a reviewer" do
-    let(:current_user) { Fabricate(:user_reviewer) }
     let(:project) { Fabricate(:project, category: category) }
     let(:issue) { Fabricate(:issue, project: project) }
     let(:task) { Fabricate(:task, project: project) }
@@ -275,13 +221,13 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "renders edit category link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders new project link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: new_project_url)
       end
@@ -289,14 +235,14 @@ RSpec.describe "projects/index", type: :view do
 
     context "when subscribed to category issues" do
       it "doesn't render new issue subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_issues_subscriptions_path(@category)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy issue subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_issues_subscription_path(@category,
                                                 category_issues_subscription)
@@ -316,7 +262,7 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "renders new issue subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_issues_subscriptions_path(@category)
         assert_select "a[href='#{url}'][data-method='post']"
@@ -325,14 +271,14 @@ RSpec.describe "projects/index", type: :view do
 
     context "when subscribed to category tasks" do
       it "doesn't render new task subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_tasks_subscriptions_path(@category)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy task subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_tasks_subscription_path(@category,
                                                category_tasks_subscription)
@@ -352,7 +298,7 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "renders new task subscription link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = category_tasks_subscriptions_path(@category)
         assert_select "a[href='#{url}'][data-method='post']"
@@ -372,7 +318,7 @@ RSpec.describe "projects/index", type: :view do
       end
 
       it "doesn't render new project link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).not_to have_link(nil, href: new_project_url)
       end
@@ -422,13 +368,13 @@ RSpec.describe "projects/index", type: :view do
         end
 
         it "doesn't render edit category link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           expect(rendered).not_to have_link(nil, href: edit_url)
         end
 
         it "doesn't render new project link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           expect(rendered).not_to have_link(nil, href: new_project_url)
         end

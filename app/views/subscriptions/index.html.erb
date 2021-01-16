@@ -1,10 +1,12 @@
 <%= enable_page_title 'Dashboard' %>
 
-<div id="dashboard-<%= current_user.id %>" class="dashboard">
+<%= content_for :header do %>
   <h1>Dashboard</h1>
 
   <%= dashboard_nav %>
+<% end %>
 
+<div id="dashboard-<%= current_user.id %>" class="dashboard">
   <%# TODO: show active subscriptions %>
   <% if @active_assignments.none? && @open_tasks.none? && @unresolved_issues.none? %>
       <p>

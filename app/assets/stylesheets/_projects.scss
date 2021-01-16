@@ -66,6 +66,13 @@
   justify-content: flex-start;
   margin-bottom: 0;
 
+  .tag,
+  .status-tag,
+  .issue-type-tag,
+  .task-type-tag {
+    margin-bottom: 1rem;
+  }
+
   .tag {
     @include tag;
     margin-bottom: 1rem;

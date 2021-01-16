@@ -9,10 +9,21 @@ module IssuesHelper
     return unless category
 
     items = [issue_header_breadcrumbs(category, project), issue_title(issue),
-             project_tags(issue.project), issue_tags(issue),
-             issue_page_title(issue)].compact
-    content_tag :header, class: 'issue-header' do
+             project_and_issue_tags(issue)].compact
+
+    issue_page_title(issue)
+    content_for :header do
       safe_join(items)
+    end
+  end
+
+  def project_and_issue_tags(issue)
+    project = issue.project
+    tags = [project_invisible_tag(project), project_internal_tag(project),
+            issue_type_tag(issue.issue_type), issue_status_tag(issue)].compact
+
+    content_tag :div, class: 'project-tags issue-tags' do
+      safe_join(tags)
     end
   end
 
@@ -68,8 +79,7 @@ module IssuesHelper
 
     def issue_title(issue)
       content_tag :div, class: 'issue-title' do
-        concat content_tag :h1, issue_title_heading(issue),
-                           class: 'issue-heading'
+        content_tag :h1, issue_title_heading(issue), class: 'issue-heading'
       end
     end
 
@@ -112,6 +122,7 @@ module IssuesHelper
       color = option[:color]
       return unless color
 
-      content_tag :span, value, class: "status-tag roller-type-color-#{color}"
+      content_tag :span, value,
+                  class: "status-tag roller-type-color-#{color}"
     end
 end

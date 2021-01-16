@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "issues/show", type: :view do
+  let(:subject) { "issues/show" }
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
@@ -30,7 +31,7 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, issue) }
 
       it "renders issue's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".issue-heading", @issue.heading
       end
 
@@ -109,7 +110,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".issue-heading", @issue.heading
       end
     end
@@ -123,7 +124,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".issue-heading", @issue.heading
       end
     end
@@ -679,7 +680,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders issue's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".issue-heading", @issue.heading
       end
 
@@ -1144,7 +1145,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders issue's heading" do
-          render
+          render template: subject, layout: "layouts/application"
           assert_select ".issue-heading", @issue.heading
         end
 
@@ -1292,7 +1293,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders issue's heading" do
-          render
+          render template: subject, layout: "layouts/application"
           assert_select ".issue-heading", @issue.heading
         end
 

@@ -19,8 +19,8 @@ module UsersHelper
              ['Subscribed Issues', issue_subscriptions_path],
              ['Subscribed Tasks', task_subscriptions_path]]
 
-    content_tag :p, class: 'user-nav' do
-      safe_join(navitize(links), divider_with_spaces)
+    content_tag :p, class: 'page-nav user-nav' do
+      safe_join(navitize(links))
     end
   end
 
@@ -48,7 +48,7 @@ module UsersHelper
   private
 
     def user_nav(user)
-      content_tag :p, class: 'user-nav' do
+      content_tag :p, class: 'page-nav user-nav' do
         safe_join(navitize(user_nav_links(user)))
       end
     end

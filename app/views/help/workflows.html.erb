@@ -10,6 +10,10 @@
   <div class="half-column">
     <%= content_tag :h3, 'Issue Status Workflow' %>
 
+    <div class="image-wrapper">
+      <%= image_tag 'issue-workflow.svg' %>
+    </div>
+
     <p>Issues can have five statuses:</p>
     <dl>
       <dt id="issue-status-open" class="color-green">Open</dt>
@@ -37,14 +41,14 @@
         Issue marked a duplicate or invalid
       </dd>
     </dl>
-
-    <div class="image-wrapper">
-      <%= image_tag 'issue-workflow.svg' %>
-    </div>
   </div>
 
   <div class="half-column">
     <%= content_tag :h3, 'Task Status Workflow' %>
+
+    <div class="image-wrapper">
+      <%= image_tag 'task-workflow.svg' %>
+    </div>
 
     <p>Tasks can have six statuses:</p>
     <dl>
@@ -71,9 +75,5 @@
       <dt id="task-status-closed" class="color-red">Closed</dt>
       <dd>Task marked a duplicate or invalid</dd>
     </dl>
-
-    <div class="image-wrapper">
-      <%= image_tag 'task-workflow.svg' %>
-    </div>
   </div>
 </div>

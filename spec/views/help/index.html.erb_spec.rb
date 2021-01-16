@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "help/index", type: :view do
   it "renders links" do
-    render
+    render template: subject, layout: "layouts/application"
 
     expect(rendered).to have_link(nil, href: issue_types_help_path)
     expect(rendered).to have_link(nil, href: user_types_help_path)

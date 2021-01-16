@@ -35,6 +35,16 @@ hr {
   .user-name {
     text-align: right;
     white-space: nowrap;
+
+    a {
+      color: $light-gray;
+
+      &:hover,
+      &:focus {
+        border-color: $color-secondary;
+        color: $color-secondary;
+      }
+    }
   }
 }
 
@@ -43,7 +53,7 @@ hr {
   border-bottom: 2px solid $light-gray;
   background-color: $pearl;
 
-  .user-nav {
+  .page-nav {
     display: flex;
     margin: 0 0 -2px;
 
@@ -86,17 +96,20 @@ hr {
     padding: .2rem .6rem;
     color: $light-gray;
     font-size: 1.8rem;
-    // font-weight: bold;
     text-transform: uppercase;
-
-    &.current-page {
-      opacity: .7;
-      color: $color-tertiary;
-    }
 
     &:hover,
     &:focus {
       color: $color-secondary;
+    }
+
+    &.current-page {
+      color: $color-quinary;
+
+      &:hover,
+      &:focus {
+        color: $color-quinary;
+      }
     }
   }
 }
@@ -353,5 +366,7 @@ hr {
 }
 
 .image-wrapper {
+  margin-bottom: 2.5rem;
+  padding: 1rem;
   text-align: center;
 }

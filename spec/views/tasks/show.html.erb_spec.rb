@@ -5,6 +5,7 @@
 require "rails_helper"
 
 RSpec.describe "tasks/show", type: :view do
+  let(:subject) { "tasks/show" }
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:task) { Fabricate(:task, project: project) }
@@ -37,7 +38,7 @@ RSpec.describe "tasks/show", type: :view do
       let(:url) { task_task_comments_url(@task) }
 
       it "renders task's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".task-heading", @task.heading
       end
 
@@ -171,7 +172,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".task-heading", @task.heading
       end
     end
@@ -892,7 +893,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders task's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".task-heading", @task.heading
       end
 
@@ -1633,7 +1634,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders task's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".task-heading", @task.heading
       end
 
@@ -2181,7 +2182,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "renders task's heading" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select ".task-heading", @task.heading
       end
 

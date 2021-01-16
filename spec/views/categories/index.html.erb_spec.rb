@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "categories/index", type: :view do
+  let(:subject) { "categories/index" }
   let(:first_category) { Fabricate(:category) }
   let(:second_category) { Fabricate(:category) }
 
@@ -30,7 +31,7 @@ RSpec.describe "categories/index", type: :view do
     end
 
     it "renders new category link" do
-      render
+      render template: subject, layout: "layouts/application"
 
       expect(rendered).to have_link(nil, href: new_category_path)
     end
@@ -54,7 +55,7 @@ RSpec.describe "categories/index", type: :view do
     end
 
     it "render new category link" do
-      render
+      render template: subject, layout: "layouts/application"
 
       expect(rendered).to have_link(nil, href: new_category_path)
     end
@@ -83,7 +84,7 @@ RSpec.describe "categories/index", type: :view do
       end
 
       it "doesn't render a new category link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).not_to have_link(nil, href: new_category_path)
       end

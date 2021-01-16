@@ -9,11 +9,11 @@ module CategoriesHelper
   end
 
   def category_header(category, options = {})
-    content_tag :header, class: 'category-header' do
-      content_tag :div, class: 'columns' do
-        concat category_header_first_column(category)
-        concat category_header_second_column(category, options)
-      end
+    columns = [category_header_first_column(category),
+               category_header_second_column(category, options)]
+    content_for :header do
+      concat content_tag(:div, safe_join(columns), class: 'columns')
+      concat category_nav(category)
     end
   end
 
@@ -26,7 +26,7 @@ module CategoriesHelper
   def category_index_header
     enable_page_title categories_heading
 
-    content_tag :header, class: 'category-index-header' do
+    content_for :header do
       concat content_tag(:h1, categories_heading)
       concat categories_nav if can?(:read, invisible_category)
     end
@@ -54,8 +54,8 @@ module CategoriesHelper
         links << ['Add Category', new_category_path, { class: 'create-link' }]
       end
 
-      content_tag :p, class: 'category-nav' do
-        safe_join(navitize(links), divider_with_spaces)
+      content_tag :p, class: 'page-nav category-nav' do
+        safe_join(navitize(links))
       end
     end
 
@@ -81,8 +81,8 @@ module CategoriesHelper
     end
 
     def category_nav(category)
-      content_tag :p, class: 'category-nav' do
-        safe_join(navitize(category_nav_links(category)), divider_with_spaces)
+      content_tag :p, class: 'page-nav category-nav' do
+        safe_join(navitize(category_nav_links(category)))
       end
     end
 
@@ -111,7 +111,7 @@ module CategoriesHelper
     def new_project_link(category)
       return unless can?(:create, new_project(category))
 
-      ['New Project', new_category_project_path(category),
+      ['Add Project', new_category_project_path(category),
        { class: 'create-link' }]
     end
 
@@ -134,7 +134,6 @@ module CategoriesHelper
         concat breadcrumbs(category_breadcrumb_pages(category))
         concat content_tag(:h1, link_to_unless_current(category.name, url))
         concat category_tags(category)
-        concat category_nav(category)
         concat category_page_title(category)
       end
     end

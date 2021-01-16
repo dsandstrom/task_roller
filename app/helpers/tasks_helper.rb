@@ -9,10 +9,21 @@ module TasksHelper
     return unless category
 
     items = [breadcrumbs(task_header_pages(task)), task_header_title(task),
-             project_tags(project), task_page_title(task)].compact
+             project_and_task_tags(task)].compact
 
-    content_tag :header, class: 'task-header' do
+    task_page_title(task)
+    content_for :header do
       safe_join(items)
+    end
+  end
+
+  def project_and_task_tags(task)
+    project = task.project
+    tags = [project_invisible_tag(project), project_internal_tag(project),
+            task_type_tag(task.task_type), task_status_tag(task)].compact
+
+    content_tag :div, class: 'project-tags task-tags' do
+      safe_join(tags)
     end
   end
 
@@ -65,9 +76,7 @@ module TasksHelper
       end
 
       content_tag :div, class: 'task-title' do
-        concat content_tag :h1, heading, class: 'task-heading'
-        concat task_type_tag task.task_type
-        concat task_status_tag task
+        content_tag :h1, heading, class: 'task-heading'
       end
     end
 

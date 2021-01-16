@@ -3,16 +3,6 @@
 
 <header class="category-projects-header">
   <h2>Projects</h2>
-
-  <% if can?(:create, new_project(@category)) %>
-    <p>
-      <%= link_to new_category_project_path(@category),
-                  class: 'button button-success button-clear' do %>
-        <i class="icon-plus"></i>
-        Add Project
-      <% end %>
-    </p>
-  <% end %>
 </header>
 
 <div class="category-projects">
