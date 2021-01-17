@@ -4,69 +4,32 @@
   <h1>Users</h1>
 <% end %>
 
-<header class="users-header">
-  <h2 class="users-heading">Admins</h2>
-  <p class="users-new-button">
-    <%= render 'new_user_button', employee_type: 'Admin' %>
-  </p>
-</header>
+<h2 class="users-heading">Admins</h2>
 <div class="users admins">
-  <% if @admins.any? %>
-    <%= render @admins %>
-  <% else %>
-    <p class="no-user">none</p>
-  <% end %>
+  <%= render 'new_user_button', employee_type: 'Admin' %>
+  <%= render @admins %>
 </div>
 
-<header class="users-header">
-  <h2 class="users-heading">Reviewers</h2>
-  <p class="users-new-button">
-    <%= render 'new_user_button', employee_type: 'Reviewer' %>
-  </p>
-</header>
+<h2 class="users-heading">Reviewers</h2>
 <div class="users reviewers">
-  <% if @reviewers.any? %>
-    <%= render @reviewers %>
-  <% else %>
-    <p class="no-user">none</p>
-  <% end %>
+  <%= render 'new_user_button', employee_type: 'Reviewer' %>
+  <%= render @reviewers %>
 </div>
 
-<header class="users-header">
-  <h2 class="users-heading">Workers</h2>
-  <p class="users-new-button">
-    <%= render 'new_user_button', employee_type: 'Worker' %>
-  </p>
-</header>
+<h2 class="users-heading">Workers</h2>
 <div class="users workers">
-  <% if @workers.any? %>
-    <%= render @workers %>
-  <% else %>
-    <p class="no-user">none</p>
-  <% end %>
+  <%= render 'new_user_button', employee_type: 'Worker' %>
+  <%= render @workers %>
 </div>
 
-<header class="users-header">
-  <h2 class="users-heading">Reporters</h2>
-  <p class="users-new-button">
-    <%= render 'new_user_button', employee_type: 'Reporter' %>
-  </p>
-</header>
+<h2 class="users-heading">Reporters</h2>
 <div class="users reporters">
-  <% if @reporters.any? %>
-    <%= render @reporters %>
-  <% else %>
-    <p class="no-user">none</p>
-  <% end %>
+  <%= render 'new_user_button', employee_type: 'Reporter' %>
+  <%= render @reporters %>
 </div>
 
 <% if @unemployed&.any? %>
-  <header class="users-header">
-    <h2 class="users-heading">Inactive</h2>
-    <p class="users-new-button">
-      <%= render 'new_user_button', employee_type: nil %>
-    </p>
-  </header>
+  <h2 class="users-heading">Inactive</h2>
   <div class="users unemployed">
     <%= render @unemployed %>
   </div>
