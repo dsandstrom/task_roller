@@ -106,6 +106,33 @@
   }
 }
 
+.issues-header,
+.tasks-header {
+  margin-bottom: .5rem;
+
+  h2 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .button {
+    margin: 0;
+  }
+}
+
+@include breakpoint(small only) {
+  .issues-header,
+  .tasks-header {
+    .button {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
+
 @include breakpoint(medium up) {
   .projects,
   .category-projects {
@@ -165,6 +192,7 @@
   .issues-header,
   .tasks-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
   }
 }
