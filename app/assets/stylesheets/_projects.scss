@@ -81,9 +81,7 @@
 
 .projects-header,
 .categories-header,
-.category-projects-header,
-.issues-header,
-.tasks-header {
+.category-projects-header {
   padding: 1.5rem 2rem;
   border-radius: $border-radius $border-radius 0 0;
   background-color: $dark-blue;
@@ -168,16 +166,6 @@
   .tasks-header {
     display: flex;
     justify-content: space-between;
-
-    h2 {
-      margin-right: auto;
-      margin-bottom: 0;
-      line-height: 1.2;
-    }
-
-    p {
-      margin-bottom: 0;
-    }
   }
 }
 

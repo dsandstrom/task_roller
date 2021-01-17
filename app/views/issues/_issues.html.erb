@@ -1,10 +1,21 @@
-<div class="issues">
-  <% if issues.any? || searching? %>
-    <%= render 'issues/filter_form', issues: issues %>
-    <%= render issues %>
-  <% else %>
-    <p class="no-issue">None yet</p>
-  <% end %>
-</div>
+<div class="columns">
+  <div class="second-column">
+    <% if issues.any? || searching? %>
+      <%= render 'issues/filter_form', issues: issues %>
+    <% end %>
+  </div>
 
-<%= render 'shared/simple_page_links', collection: issues %>
+  <div class="first-column">
+    <% if issues.any? || searching? %>
+      <%= render 'shared/page_links', collection: issues %>
+
+      <div class="issues">
+        <%= render issues %>
+      </div>
+
+      <%= render 'shared/simple_page_links', collection: issues %>
+    <% else %>
+      <p class="no-issue">None yet</p>
+    <% end %>
+  </div>
+</div>

@@ -1,6 +1,8 @@
-.devise-links {
+.devise-links,
+.filters-wrapper {
   padding: 1rem;
   border: 1px solid $light-gray;
+  border-radius: $border-radius;
   background-color: $off-white;
 
   p {
@@ -15,5 +17,9 @@
   h3 {
     margin: 0 0 1rem;
     color: $color-quinary;
+  }
+
+  form {
+    margin: 0 0 .5rem;
   }
 }

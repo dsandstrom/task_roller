@@ -3,7 +3,9 @@ path ||= request.path
 return unless path
 %>
 
-<div class="task">
+<div class="filters-wrapper">
+  <h3>Filters</h3>
+
   <%= form_tag path, method: :get, class: "task-filter-form" do %>
     <%= render 'tasks/status_filter_field' %>
     <%= render 'shared/order_filter_field' %>
@@ -16,6 +18,4 @@ return unless path
       <%= submit_tag 'Filter' %>
     </div>
   <% end %>
-
-  <%= render 'shared/page_links', collection: tasks %>
 </div>

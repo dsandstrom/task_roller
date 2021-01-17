@@ -3,7 +3,9 @@
   return unless index_path
 %>
 
-<div class="issue">
+<div class="filters-wrapper">
+  <h3>Filters</h3>
+
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <%= render 'issues/status_filter_field' %>
     <%= render 'shared/order_filter_field' %>
@@ -16,6 +18,4 @@
       <%= submit_tag 'Filter' %>
     </div>
   <% end %>
-
-  <%= render 'shared/page_links', collection: issues %>
 </div>
