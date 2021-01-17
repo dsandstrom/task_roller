@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "projects/show", type: :view do
+  let(:subject) { "projects/show" }
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:first_issue) { Fabricate(:issue, project: project) }
@@ -38,25 +39,25 @@ RSpec.describe "projects/show", type: :view do
       end
 
       it "renders name" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select "h1", @project.name
       end
 
       it "renders edit project link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders new issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_project_issue_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders new task link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_project_task_path(@project)
         expect(rendered).to have_link(nil, href: url)
@@ -136,20 +137,20 @@ RSpec.describe "projects/show", type: :view do
       end
 
       it "renders edit project link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: edit_url)
       end
 
       it "renders new issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_project_issue_path(@project)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders new task link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_project_task_path(@project)
         expect(rendered).to have_link(nil, href: url)
@@ -180,14 +181,14 @@ RSpec.describe "projects/show", type: :view do
           before { assign(:issue_subscription, issue_subscription) }
 
           it "renders unsubscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscription_path(project, issue_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -205,7 +206,7 @@ RSpec.describe "projects/show", type: :view do
           end
 
           it "renders subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscriptions_path(project)
             assert_select "a[data-method='post'][href='#{url}']"
@@ -221,14 +222,14 @@ RSpec.describe "projects/show", type: :view do
 
         context "and subscribed to the project issues" do
           it "renders unsubscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscription_path(project, issue_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -246,7 +247,7 @@ RSpec.describe "projects/show", type: :view do
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_issues_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -259,14 +260,14 @@ RSpec.describe "projects/show", type: :view do
           before { assign(:task_subscription, task_subscription) }
 
           it "renders unsubscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscription_path(project, task_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -284,7 +285,7 @@ RSpec.describe "projects/show", type: :view do
           end
 
           it "renders subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscriptions_path(project)
             assert_select "a[data-method='post'][href='#{url}']"
@@ -300,14 +301,14 @@ RSpec.describe "projects/show", type: :view do
 
         context "and subscribed to the project tasks" do
           it "renders unsubscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscription_path(project, task_subscription)
             assert_select "a[data-method='delete'][href='#{url}']"
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -325,7 +326,7 @@ RSpec.describe "projects/show", type: :view do
           end
 
           it "doesn't render subscribe link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = project_tasks_subscriptions_path(project)
             expect(rendered).not_to have_link(nil, href: url)
@@ -358,20 +359,20 @@ RSpec.describe "projects/show", type: :view do
         end
 
         it "doesn't render the edit project link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           expect(rendered).not_to have_link(nil, href: edit_url)
         end
 
         it "renders new issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_project_issue_path(@project)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render new task link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_project_task_path(@project)
           expect(rendered).not_to have_link(nil, href: url)

@@ -142,9 +142,9 @@
 
 .user-edit-links {
   margin: 2.5rem 0;
-  padding: 2.5rem 0;
-  border: 1px solid $light-gray;
-  border-width: 1px 0;
+  padding: 2.5rem 0 0;
+  border: 0 solid $light-gray;
+  border-top-width: 1px;
 
   h2,
   h3 {

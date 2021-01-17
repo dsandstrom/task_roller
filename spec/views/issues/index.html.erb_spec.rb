@@ -244,7 +244,7 @@ RSpec.describe "issues/index", type: :view do
         end
 
         it "renders new issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_project_issue_path(project)
           expect(rendered).to have_link(nil, href: url)

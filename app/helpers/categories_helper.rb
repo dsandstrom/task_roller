@@ -148,7 +148,7 @@ module CategoriesHelper
       return unless buttons&.any?
 
       content_tag :div, class: 'second-column' do
-        content_tag :p, safe_join(buttons)
+        content_tag :div, safe_join(buttons)
       end
     end
 end

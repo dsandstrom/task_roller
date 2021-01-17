@@ -63,6 +63,7 @@ hr {
       padding: 0 1rem;
       border-bottom: 2px solid transparent;
       line-height: 3;
+      white-space: nowrap;
     }
 
     a {
@@ -219,13 +220,12 @@ hr {
 
 .columns {
   .second-column {
-    margin: 4rem 0 2rem;
-
     .devise-links {
       display: flex;
       flex-direction: column;
       align-content: stretch;
       height: 100%;
+      margin-bottom: 2.5rem;
     }
   }
 }

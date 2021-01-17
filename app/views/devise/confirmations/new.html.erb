@@ -7,7 +7,9 @@
     end
 %>
 
-<h1>Resend Confirmation Instructions</h1>
+<%= content_for :header do %>
+  <h1>Resend Confirmation Instructions</h1>
+<% end %>
 
 <%= form_for(resource, as: resource_name,
                        url: confirmation_path(resource_name),

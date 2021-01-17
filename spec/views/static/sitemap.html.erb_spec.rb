@@ -11,7 +11,7 @@ RSpec.describe "static/sitemap", type: :view do
   end
 
   it "renders page" do
-    render
+    render template: subject, layout: "layouts/application"
 
     assert_select "h1", "Sitemap"
   end

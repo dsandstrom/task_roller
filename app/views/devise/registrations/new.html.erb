@@ -1,4 +1,6 @@
-<h1>Sign Up</h1>
+<%= content_for :header do %>
+  <h1>Sign Up</h1>
+<% end %>
 
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),

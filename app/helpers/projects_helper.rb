@@ -24,11 +24,12 @@ module ProjectsHelper
     category = project.category
     return unless category
 
-    content_tag :header, class: 'project-header' do
-      content_tag :div, class: 'columns' do
-        concat project_header_first_column(project)
-        concat project_header_second_column(project, options)
-      end
+    pages = [project_header_first_column(project),
+             project_header_second_column(project, options)]
+
+    content_for :header do
+      concat content_tag(:div, safe_join(pages), class: 'columns')
+      concat project_nav(project)
     end
   end
 
@@ -53,8 +54,8 @@ module ProjectsHelper
     end
 
     def project_nav(project)
-      content_tag :p, class: 'project-nav' do
-        safe_join(navitize(project_nav_links(project)), divider_with_spaces)
+      content_tag :p, class: 'page-nav project-nav' do
+        safe_join(navitize(project_nav_links(project)))
       end
     end
 
@@ -109,7 +110,6 @@ module ProjectsHelper
         concat breadcrumbs(project_breadcrumb_pages(project))
         concat content_tag(:h1, project_header_heading(project))
         concat project_tags(project)
-        concat project_nav(project)
         concat project_page_title(project)
       end
     end
@@ -126,7 +126,7 @@ module ProjectsHelper
       return unless buttons&.any?
 
       content_tag :div, class: 'second-column' do
-        content_tag :p, safe_join(buttons)
+        content_tag :div, safe_join(buttons)
       end
     end
 end
