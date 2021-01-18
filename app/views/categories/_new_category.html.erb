@@ -1,0 +1,9 @@
+<% return unless can?(:create, Category) %>
+
+<div class="category new-category">
+  <%= link_to new_category_path,
+              class: 'button button-success button-clear' do %>
+    <i class="icon-plus"></i>
+    Add Category
+  <% end %>
+</div>

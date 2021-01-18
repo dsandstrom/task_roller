@@ -1,12 +1,6 @@
 <%= category_index_header %>
 
-<header class="categories-header">
-</header>
-
 <div class="categories">
-  <% if @categories.any? %>
-    <%= render @categories %>
-  <% else %>
-    <p class="no-category">none</p>
-  <% end %>
+  <%= render @categories %>
+  <%= render 'new_category' %>
 </div>

@@ -20,39 +20,33 @@ tasks_count =
 %>
 
 <div id="category-<%= category.id %>" class="category">
-  <div class="category-name-and-tags">
-    <h3 class="category-name">
-      <%= link_to category.name, category_projects_path(category) %>
-    </h3>
-    <%= category_tags(category) %>
-  </div>
+  <h3 class="category-name">
+    <%= link_to category.name, category_projects_path(category) %>
+  </h3>
+  <%= category_tags(category) %>
 
-  <div class="category-counts">
-    <%= content_tag :p, pluralize(projects_count, 'Project'),
+  <p class="category-counts">
+    <%= content_tag :span, pluralize(projects_count, 'Project'),
                         class: 'category-project-count' %>
-
-    <p class="category-issues-link">
-      <%= link_to_if can?(:read, Issue),
-                     pluralize(issues_count, 'Issue'),
-                     category_issues_path(category) %>
-    </p>
-
-    <p class="category-tasks-link">
-      <%= link_to_if can?(:read, Task),
-                     pluralize(tasks_count, 'Task'),
-                     category_tasks_path(category) %>
-    </p>
-  </div>
+    <%= divider %>
+    <%= link_to_if can?(:read, Issue),
+                   pluralize(issues_count, 'Issue'),
+                   category_issues_path(category) %>
+    <%= divider %>
+    <%= link_to_if can?(:read, Task),
+                   pluralize(tasks_count, 'Task'),
+                   category_tasks_path(category) %>
+  </p>
 
   <p class="category-links">
+    <% if can?(:update, category) %>
+      <%= link_to 'Edit', edit_category_path(category),
+                  class: 'button button-clear' %>
+    <% end %>
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },
                   class: 'button button-clear button-warning' %>
-    <% end %>
-    <% if can?(:update, category) %>
-      <%= link_to 'Edit', edit_category_path(category),
-                  class: 'button button-clear' %>
     <% end %>
   </p>
 </div>
