@@ -29,6 +29,14 @@
   </div>
 
   <div class="second-column"></div>
+
+  <div class="second-column">
+    <div class="devise-links">
+      <h3>Helpful Links</h3>
+      <%= content_tag :p, link_to("Change Name",
+                      edit_user_path(@user)) %>
+    </div>
+  </div>
 </div>
 
 <p><%= link_to 'Back', :back %></p>

@@ -1,18 +1,18 @@
 <%= user_header @user %>
 
+<h2>
+  Edit
+    <% if @user == current_user %>
+      Profile
+    <% elsif @user.employee_type.blank? %>
+      User
+    <% else %>
+      <%= @user.employee_type %>
+    <% end %>
+</h2>
+
 <div class="columns">
   <div class="first-column">
-    <h2>
-      Edit
-        <% if @user == current_user %>
-          Profile
-        <% elsif @user.employee_type.blank? %>
-          User
-        <% else %>
-          <%= @user.employee_type %>
-        <% end %>
-    </h2>
-
     <%= render 'form', user: @user %>
   </div>
   <div class="second-column">
@@ -20,7 +20,7 @@
       <%- if respond_to?(:edit_user_registration_path) %>
         <div class="devise-links">
           <h3>Advanced</h3>
-          <%= content_tag :p, link_to('Change your password',
+          <%= content_tag :p, link_to('Change Password',
                                       edit_user_registration_path) %>
         </div>
       <% end %>
