@@ -19,20 +19,16 @@ tasks_count =
 %>
 
 <div id="project-<%= project.id %>" class="project">
-  <header class="project-name-and-tags">
-    <% unless category_page?(category) %>
-      <%= breadcrumbs [[category.name, category_projects_path(category)]] %>
-    <% end %>
+  <% unless category_page?(category) %>
+    <%= breadcrumbs [[category.name, category_projects_path(category)]] %>
+  <% end %>
 
-    <h3 class="project-name">
-      <%= link_to_if can?(:read, project),
-                     project.name, project_path(project) %>
-    </h3>
+  <h3 class="project-name">
+    <%= link_to_if can?(:read, project),
+                   project.name, project_path(project) %>
+  </h3>
 
-    <p class="project-tags">
-      <%= project_invisible_tag(project) %><%= internal_tag(project) %>
-    </p>
-  </header>
+  <p class="project-tags"><%= project_invisible_tag(project) %><%= internal_tag(project) %></p>
 
   <% unless @category %>
     <p class="project-category">
@@ -42,29 +38,25 @@ tasks_count =
   <% end %>
 
   <div class="project-counts">
-    <p class="project-issues-link">
-      <%= link_to_if can?(:read, Issue),
-                     pluralize(issues_count, 'Issue'),
-                     project_issues_path(project) %>
-    </p>
-
-    <p class="project-tasks-link">
-      <%= link_to_if can?(:read, Task),
-                     pluralize(tasks_count, 'Task'),
-                     project_tasks_path(project) %>
-    </p>
+    <%= link_to_if can?(:read, Issue),
+                   pluralize(issues_count, 'Issue'),
+                   project_issues_path(project) %>
+    <%= divider %>
+    <%= link_to_if can?(:read, Task),
+                   pluralize(tasks_count, 'Task'),
+                   project_tasks_path(project) %>
   </div>
 
-  <p class="project-links">
-    <% if can?(:destroy, project) %>
-      <%= link_to 'Delete',
-                  project_path(project),
-                  method: :delete, data: { confirm: 'Are you sure?' },
-                  class: 'button button-outline button-warning' %>
-    <% end %>
+  <div class="project-links">
     <% if can?(:update, project) %>
       <%= link_to 'Edit', edit_project_path(project),
                   class: 'button button-clear' %>
     <% end %>
-  </p>
+    <% if can?(:destroy, project) %>
+      <%= link_to 'Delete',
+                  project_path(project),
+                  method: :delete, data: { confirm: 'Are you sure?' },
+                  class: 'button button-clear button-warning' %>
+    <% end %>
+  </div>
 </div>

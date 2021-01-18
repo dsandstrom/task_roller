@@ -8,9 +8,10 @@
 <div class="category-projects">
   <% if @projects.any? %>
     <%= render @projects %>
-  <% else %>
+  <% elsif !can?(:create, new_project(@category)) %>
     <p class="no-project">None yet</p>
   <% end %>
+  <%= render 'new_project', category: @category %>
 </div>
 
 <header class="issues-header">

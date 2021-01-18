@@ -1,4 +1,6 @@
-.categories {
+.categories,
+.category-projects,
+.projects {
   margin-bottom: 4rem;
 
   h3,
@@ -7,11 +9,18 @@
   }
 
   .category,
-  .no-category {
+  .no-category,
+  .new-category,
+  .project,
+  .no-project,
+  .new-project {
     padding: 1.5rem 0;
   }
 
-  .category {
+  .category,
+  .project,
+  .new-category,
+  .new-project {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -21,16 +30,25 @@
       margin: 0;
     }
 
-    .category-name {
+    .category-name,
+    .project-name,
+    .category-counts,
+    .project-counts {
       margin-bottom: 1rem;
     }
 
-    .category-tags {
+    .category-tags,
+    .project-tags {
       justify-content: center;
+
+      &:empty {
+        display: none;
+      }
     }
   }
 
-  .new-category {
+  .new-category,
+  .new-project {
     a {
       display: flex;
       flex-direction: column;
@@ -41,15 +59,21 @@
     }
 
     i {
-      margin: -1rem 0;
+      margin-top: 1rem;
+      margin-bottom: -1rem;
       font-size: 3rem;
     }
   }
 }
 
 @include breakpoint(small only) {
-  .categories {
-    .category {
+  .categories,
+  .category-projects,
+  .projects {
+    .category,
+    .project,
+    .new-category,
+    .new-project {
       // add top border to all except the first
       &:nth-child(n + 2) {
         padding-top: 2rem;
@@ -60,12 +84,17 @@
 }
 
 @include breakpoint(medium up) {
-  .categories {
+  .categories,
+  .category-projects,
+  .projects {
     display: grid;
     grid-column-gap: 2rem;
     grid-template-columns: 1fr 1fr;
 
-    .category {
+    .category,
+    .project,
+    .new-category,
+    .new-project {
       margin-bottom: 2rem;
       padding-right: 1rem;
       padding-left: 1rem;
@@ -76,7 +105,30 @@
 }
 
 @include breakpoint(large up) {
-  .categories {
+  .categories,
+  .category-projects,
+  .projects {
     grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.category-tags,
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0;
+
+  .tag,
+  .status-tag,
+  .issue-type-tag,
+  .task-type-tag {
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    @include tag;
+    margin-bottom: 1rem;
   }
 }

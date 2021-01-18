@@ -1,7 +1,8 @@
 <% return unless can?(:create, User.new(employee_type: employee_type)) %>
 
 <div class="new-user">
-  <%= link_to new_user_path(user: { employee_type: employee_type }) do %>
+  <%= link_to new_user_path(user: { employee_type: employee_type }),
+              class: 'button button-success button-clear' do %>
     <i class="icon-person-add"></i>
     Add <%= employee_type %>
   <% end %>

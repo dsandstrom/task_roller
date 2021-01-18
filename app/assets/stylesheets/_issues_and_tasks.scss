@@ -39,6 +39,12 @@
   .task-header {
     margin-bottom: .5rem;
 
+    h2,
+    p,
+    .button {
+      margin: 0;
+    }
+
     .issue-summary,
     .task-summary {
       display: flex;
@@ -215,5 +221,34 @@
     &:first-child {
       margin: 0;
     }
+  }
+}
+
+.issues-header,
+.tasks-header {
+  margin: 1rem 0 0;
+
+  p,
+  .button {
+    margin: 0;
+  }
+}
+
+@include breakpoint(small only) {
+  .issues-header,
+  .tasks-header {
+    .button {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
+
+@include breakpoint(medium up) {
+  .issues-header,
+  .tasks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }

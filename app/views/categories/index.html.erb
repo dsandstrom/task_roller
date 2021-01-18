@@ -1,6 +1,10 @@
 <%= category_index_header %>
 
 <div class="categories">
-  <%= render @categories %>
+  <% if @categories.any? %>
+    <%= render @categories %>
+  <% elsif !can?(:create, Category) %>
+    <p class="no-category">None yet</p>
+  <% end %>
   <%= render 'new_category' %>
 </div>
