@@ -30,6 +30,7 @@
 
 .users {
   .user {
+    padding: 1.5rem 1rem 1rem;
     text-align: center;
 
     h3,
@@ -38,9 +39,12 @@
       margin: 0;
     }
 
-    .user-name,
-    .user-email {
+    .user-name {
       margin: 0 0 1rem;
+    }
+
+    .user-links {
+      margin-top: 1rem;
     }
   }
 
@@ -56,11 +60,15 @@
 
 @include breakpoint(small only) {
   .users {
+    margin-bottom: 3rem;
+
     .user {
+      padding-right: 0;
+      padding-left: 0;
+
       // add top border to all except the first
       &:nth-child(n + 3) {
         margin-top: 1rem;
-        padding-top: 2rem;
         border-top: 1px solid $light-gray;
       }
     }
@@ -93,8 +101,6 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 2rem;
-      padding-right: 1rem;
-      padding-left: 1rem;
       border: 1px solid $light-gray;
       border-radius: $border-radius;
     }
