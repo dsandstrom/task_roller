@@ -138,6 +138,13 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get 'auth/edit' => 'users/registrations#edit', as: :edit_user_registration
     put 'auth' => 'users/registrations#update', as: :user_registration
   end
+
+  namespace :api do
+    namespace :v1 do
+      post 'github' => 'webhooks#github'
+    end
+  end
+
   get '/sitemap' => 'static#sitemap', as: :sitemap
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'subscriptions#index'
