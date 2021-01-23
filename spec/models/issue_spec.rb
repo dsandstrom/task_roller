@@ -28,6 +28,8 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to respond_to(:category) }
   it { is_expected.to respond_to(:tasks_count) }
   it { is_expected.to respond_to(:open_tasks_count) }
+  it { is_expected.to respond_to(:github_id) }
+  it { is_expected.to respond_to(:github_url) }
 
   it { is_expected.to validate_presence_of(:summary) }
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
