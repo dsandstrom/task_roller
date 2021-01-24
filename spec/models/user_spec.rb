@@ -14,6 +14,8 @@ RSpec.describe User, type: :model do
   it { is_expected.to respond_to(:name) }
   it { is_expected.to respond_to(:email) }
   it { is_expected.to respond_to(:employee_type) }
+  it { is_expected.to respond_to(:github_id) }
+  it { is_expected.to respond_to(:github_url) }
 
   it { is_expected.to have_many(:issues) }
   it { is_expected.to have_many(:issue_comments) }
