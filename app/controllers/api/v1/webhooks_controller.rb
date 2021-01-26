@@ -2,7 +2,6 @@
 
 # TODO: allow customizing which project, issue_type
 # TODO: import comments?
-# TODO: add link to github issue
 
 module Api
   module V1

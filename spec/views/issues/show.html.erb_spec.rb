@@ -1117,6 +1117,22 @@ RSpec.describe "issues/show", type: :view do
         end
       end
     end
+
+    context "when issue has a github connection" do
+      let(:project) { Fabricate(:project, category: category) }
+      let(:issue) do
+        Fabricate(:issue, project: project,
+                          github_url: "https://github.com/user/repo")
+      end
+
+      before { @issue = assign(:issue, issue) }
+
+      it "renders github issue link" do
+        render
+
+        expect(rendered).to have_link(nil, href: "https://github.com/user/repo")
+      end
+    end
   end
 
   %w[worker reporter].each do |employee_type|
