@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # TODO: allow customizing which project, issue_type
+# TODO: import comments?
+# TODO: add link to github issue
 
 module Api
   module V1
@@ -10,7 +12,7 @@ module Api
 
       # POST /api/v1/github
       def github
-        find_or_create_issue!
+        find_or_create_issue! if payload
         head :ok
       rescue ActiveRecord::RecordInvalid
         logger.info "GitHub issue can't be created. Issue is invalid:"

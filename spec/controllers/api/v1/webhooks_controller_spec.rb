@@ -149,6 +149,30 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     context "when secret matches" do
       before { ENV["GITHUB_SECRET"] = github_secret }
 
+      context "test request" do
+        let(:params) do
+          { "name" => "Test", "repository" => { "name" => "Test" } }
+        end
+
+        before do
+          code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                         github_secret,
+                                         params.to_query)
+          request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
+        end
+
+        it "doesn't create a new app issue" do
+          expect do
+            post :github, params: params
+          end.not_to change(Issue, :count)
+        end
+
+        it "returns a success response" do
+          post :github, params: params
+          expect(response).to be_successful
+        end
+      end
+
       context "action is 'opened'" do
         before do
           code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
