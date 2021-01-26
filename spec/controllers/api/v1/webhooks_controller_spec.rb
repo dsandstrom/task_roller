@@ -181,25 +181,14 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             end.to change(Issue, :count).by(1)
           end
 
-          it "sets issue summary" do
+          it "sets issue attributes" do
             post :github, params: issue_open_params
             issue = Issue.last
             expect(issue).not_to be_nil
             expect(issue.summary).to eq("New Issue API Test")
-          end
-
-          it "sets issue description" do
-            post :github, params: issue_open_params
-            issue = Issue.last
-            expect(issue).not_to be_nil
             expect(issue.description).to eq("Testing api")
-          end
-
-          it "sets issue github_id" do
-            post :github, params: issue_open_params
-            issue = Issue.last
-            expect(issue).not_to be_nil
             expect(issue.github_id).to eq(1234)
+            expect(issue.github_user_id).to eq(4321)
           end
         end
 
@@ -281,10 +270,8 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
         end
 
         context "and user exists" do
-          before do
-            Fabricate(:user_reviewer,
-                      github_id: issue_open_params["issue"]["user"]["id"])
-          end
+          before { Fabricate(:user_reviewer, email: "noreply@task-roller.net") }
+
           it "doesn't create a new user" do
             expect do
               post :github, params: issue_open_params
@@ -301,27 +288,6 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
           it "returns a success response" do
             post :github, params: issue_open_params
             expect(response).to be_successful
-          end
-        end
-
-        context "and new user is invalid" do
-          before do
-            issue_open_params["issue"]["user"]["login"] = nil
-            code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
-                                           github_secret,
-                                           issue_open_params.to_query)
-            request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
-          end
-
-          it "doesn't create a new issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Issue, :count)
-          end
-
-          it "returns an error response" do
-            post :github, params: issue_open_params
-            expect(response).to have_http_status(:unprocessable_entity)
           end
         end
 
