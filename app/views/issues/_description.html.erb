@@ -3,10 +3,10 @@
     <p><span class="issue-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
 
     <% if @issue.github_url.present? %>
-        <p class="issue-github-connection">
-          <%= link_to "Imported from GitHub", @issue.github_url,
-                      target: '_blank' %>
-        </p>
+      <p class="issue-github-connection">
+        <%= link_to "Imported from GitHub", @issue.github_url,
+                    target: '_blank' %>
+      </p>
     <% end %>
   </header>
 
