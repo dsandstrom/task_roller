@@ -96,7 +96,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     end
 
     context "when secret is not set in the app" do
-      before { ENV["GITHUB_SECRET"] = nil }
+      before { ENV["GITHUB_WEBHOOK_SECRET"] = nil }
 
       context "action is 'opened'" do
         before do
@@ -114,7 +114,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     end
 
     context "when secret not sent in payload" do
-      before { ENV["GITHUB_SECRET"] = github_secret }
+      before { ENV["GITHUB_WEBHOOK_SECRET"] = github_secret }
 
       context "action is 'opened'" do
         before do
@@ -129,7 +129,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     end
 
     context "when secret sent is wrong" do
-      before { ENV["GITHUB_SECRET"] = github_secret }
+      before { ENV["GITHUB_WEBHOOK_SECRET"] = github_secret }
 
       context "action is 'opened'" do
         before do
@@ -147,7 +147,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     end
 
     context "when secret matches" do
-      before { ENV["GITHUB_SECRET"] = github_secret }
+      before { ENV["GITHUB_WEBHOOK_SECRET"] = github_secret }
 
       context "test request" do
         let(:params) do

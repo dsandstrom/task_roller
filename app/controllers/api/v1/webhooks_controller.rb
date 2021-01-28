@@ -23,7 +23,7 @@ module Api
       private
 
         def app_secret
-          @app_secret ||= ENV['GITHUB_SECRET']
+          @app_secret ||= ENV['GITHUB_WEBHOOK_SECRET']
         end
 
         def request_signature
