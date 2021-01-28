@@ -276,7 +276,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
           it "creates a new user" do
             expect do
               post :github, params: issue_open_params
-            end.to change(User.reporters, :count).by(1)
+            end.to change(User, :count).by(1)
           end
 
           it "sets issue user_id" do
