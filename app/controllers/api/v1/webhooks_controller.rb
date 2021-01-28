@@ -3,12 +3,12 @@
 # TODO: allow customizing which project, issue_type
 # TODO: import comments?
 # TODO: create user without employee_type and email, save username as name
+# TODO: save github user without email
 
 module Api
   module V1
     class WebhooksController < ActionController::API
       before_action :verify_github_signature
-      DEFAULT_USER_EMAIL = 'noreply@task-roller.net'
 
       # POST /api/v1/github
       def github
@@ -39,11 +39,15 @@ module Api
         end
 
         def github_user
-          User.find_by(email: DEFAULT_USER_EMAIL) ||
-            User.create!(email: DEFAULT_USER_EMAIL, name: 'Import Bot',
-                         employee_type: 'Reporter')
+          User.find_by(github_id: user_payload[:id]) ||
+            User.create!(github_id: user_payload[:id],
+                         github_url: user_payload[:html_url],
+                         name: user_payload[:login],
+                         employee_type: 'Reporter',
+                         email: 'test@email.com')
         rescue ActiveRecord::RecordInvalid
-          logger.info "GitHub issue can't be created. User is invalid!"
+          logger.info "GitHub issue can't be created. User is invalid:"
+          logger.info user_payload.inspect
           nil
         end
 
@@ -60,17 +64,14 @@ module Api
             category&.projects&.find_or_create_by(name: 'Uncategorized')
         end
 
-        def new_issue_params
-          @new_issue_params ||=
-            { github_id: payload[:id], github_url: payload[:html_url],
-              github_user_id: user_payload[:id], issue_type: issue_type,
-              user: github_user, summary: payload[:title],
-              description: payload[:body] }
-        end
-
         def find_or_create_issue!
           Issue.find_by(github_id: payload[:id]) ||
-            project.issues.create!(new_issue_params)
+            project.issues.create!(github_id: payload[:id],
+                                   github_url: payload[:html_url],
+                                   issue_type: issue_type,
+                                   user: github_user,
+                                   summary: payload[:title],
+                                   description: payload[:body])
         end
 
         def verify_github_signature
