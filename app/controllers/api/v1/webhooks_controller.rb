@@ -2,6 +2,7 @@
 
 # TODO: allow customizing which project, issue_type
 # TODO: import comments?
+# TODO: create user without employee_type and email, save username as name
 
 module Api
   module V1
