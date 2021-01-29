@@ -4,6 +4,26 @@
 # TODO: import comments?
 # TODO: watch for commits to start/finish tasks
 
+# issue types
+# tags (client related, guest, host)
+
+# one place to put all issues
+
+# general search
+# all issues, filter by category/project
+# change statuses by list
+
+# duplicate of
+# related issue?
+# show comments for all issues?
+
+# comments
+
+# upload screenshots
+
+# ux person to review?
+# pay for users to use
+
 module Api
   module V1
     class WebhooksController < ActionController::API
