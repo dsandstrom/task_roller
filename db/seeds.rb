@@ -6,6 +6,7 @@
 
 # TODO: approve, disapprove, close current issues/tasks
 # make it look like action is happening to older issues
+# TODO: move class to separate file so can just create issue/task types
 
 require 'faker'
 
