@@ -39,6 +39,10 @@ gem 'redcarpet', '~> 3.5.1'
 
 gem 'cancancan', '~> 3.2.0'
 gem 'devise', '~> 4.7.3'
+# gem 'omniauth', '~> 1.0.0.pr2'
+
+# 2.0 supported by devise?
+gem 'omniauth-github', '~> 1.0'
 
 gem 'kaminari', '~> 1.2.1'
 
