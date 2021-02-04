@@ -608,6 +608,48 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".new_with_session" do
+    let(:example_user) { Fabricate.build(:user) }
+    let(:params) { {} }
+    let(:session) do
+      {
+        "devise.github_data" => {
+          "email" => example_user.email,
+          "extra" => { "raw_info" => OpenStruct.new }
+        }
+      }
+    end
+
+    context "when no users" do
+      it "retuns nil" do
+        expect(User.new_with_session(params, session)).to be_a_new(User)
+      end
+    end
+
+    context "when a user doesn't match" do
+      before { Fabricate(:user_reviewer) }
+
+      it "retuns a new user" do
+        user = User.new_with_session(params, session)
+        expect(user).to be_a_new(User)
+        expect(user.email).to eq(example_user.email)
+      end
+    end
+
+    context "when a user matches" do
+      before do
+        Fabricate(:user_reviewer)
+        example_user.save
+      end
+
+      it "retuns a new user" do
+        user = User.new_with_session(params, session)
+        expect(user).to be_a_new(User)
+        expect(user.email).to eq(example_user.email)
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#admin?" do
