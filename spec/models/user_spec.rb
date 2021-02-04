@@ -467,6 +467,147 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".from_omniauth" do
+    let(:example_user) { Fabricate.build(:user) }
+
+    context "when no users" do
+      context "when invalid environment" do
+        let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+
+        it "doesn't create a new user" do
+          expect do
+            User.from_omniauth(env)
+          end.not_to change(User, :count)
+        end
+
+        it "returns nil" do
+          user = User.from_omniauth(env)
+          expect(user).to be_nil
+        end
+      end
+
+      context "when invalid user data" do
+        let(:env) { OpenStruct.new(uid: 1234) }
+
+        it "doesn't create a new user" do
+          expect do
+            User.from_omniauth(env)
+          end.not_to change(User, :count)
+        end
+
+        it "returns nil" do
+          user = User.from_omniauth(env)
+          expect(user).to be_nil
+        end
+      end
+
+      context "when valid omniauth env" do
+        let(:env) do
+          OpenStruct.new(
+            uid: 1234,
+            info: OpenStruct.new(name: example_user.name,
+                                 email: example_user.email,
+                                 nickname: "username")
+          )
+        end
+
+        it "creates a new user" do
+          expect do
+            User.from_omniauth(env)
+          end.to change(User, :count).by(1)
+        end
+
+        it "sets user attributes" do
+          user = User.from_omniauth(env)
+          expect(user.persisted?).to eq(true)
+          expect(user.name).to eq(example_user.name)
+          expect(user.email).to eq(example_user.email)
+          expect(user.employee_type).to eq("Reporter")
+          expect(user.confirmed?).to eq(true)
+          expect(user.github_id).to eq(1234)
+          expect(user.github_url).to eq("username")
+        end
+      end
+    end
+
+    context "when users" do
+      context "when invalid user" do
+        let!(:existing_user) { Fabricate(:user_reviewer, github_id: 1234) }
+
+        let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+
+        it "doesn't create a new user" do
+          expect do
+            User.from_omniauth(env)
+          end.not_to change(User, :count)
+        end
+
+        it "returns nil" do
+          user = User.from_omniauth(env)
+          expect(user).to be_nil
+        end
+      end
+
+      context "when valid omniauth env" do
+        context "when a matching user exists" do
+          let!(:existing_user) { Fabricate(:user_reviewer, github_id: 1234) }
+          let(:env) do
+            OpenStruct.new(
+              uid: 1234,
+              info: OpenStruct.new(name: existing_user.name,
+                                   email: existing_user.email,
+                                   nickname: "username")
+            )
+          end
+
+          it "doesn't create a new user" do
+            expect do
+              User.from_omniauth(env)
+            end.not_to change(User, :count)
+          end
+
+          it "returns a new user" do
+            user = User.from_omniauth(env)
+            expect(user.persisted?).to eq(true)
+            expect(user.name).to eq(existing_user.name)
+            expect(user.email).to eq(existing_user.email)
+            expect(user.employee_type).to eq(existing_user.employee_type)
+            expect(user.confirmed?).to eq(true)
+            expect(user.github_id).to eq(1234)
+          end
+        end
+
+        context "when new user data" do
+          let(:env) do
+            OpenStruct.new(
+              uid: 1234,
+              info: OpenStruct.new(name: example_user.name,
+                                   email: example_user.email,
+                                   nickname: "username")
+            )
+          end
+
+          it "creates a new user" do
+            expect do
+              User.from_omniauth(env)
+            end.to change(User, :count).by(1)
+          end
+
+          it "returns a new user" do
+            user = User.from_omniauth(env)
+            expect(user.persisted?).to eq(true)
+            expect(user.name).to eq(example_user.name)
+            expect(user.email).to eq(example_user.email)
+            expect(user.employee_type).to eq("Reporter")
+            expect(user.confirmed?).to eq(true)
+            expect(user.github_id).to eq(1234)
+            expect(user.github_url).to eq("username")
+          end
+        end
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#admin?" do

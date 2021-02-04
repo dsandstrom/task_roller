@@ -113,6 +113,29 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     ENV['USER_REGISTRATION'] == 'enabled'
   end
 
+  # https://github.com/heartcombo/devise/wiki/OmniAuth:-Overview
+  # This method tries to find an existing user by the provider and uid fields.
+  # If no user is found, a new one is created with a random password and some
+  # extra information. Note that the first_or_create method automatically sets
+  # the provider and uid fields when creating a new user. The first_or_create!
+  # method operates similarly, except that it will raise an Exception if the
+  # user record fails validation.
+  # TODO: rename gitub_url to github_username?
+  def self.from_omniauth(auth)
+    return unless auth.uid.present? && auth.info
+
+    where(github_id: auth.uid).first_or_create do |user|
+      attrs = { github_url: auth.info.nickname, email: auth.info.email,
+                employee_type: 'Reporter', name: auth.info.name }
+      user.assign_attributes(attrs)
+      # user.image = auth.info.image # assuming the user model has an image
+      # If you are using confirmable and the provider(s) you use validate
+      # emails, uncomment the line below to skip the confirmation emails.
+      # sets confirmed_at
+      user.skip_confirmation!
+    end
+  end
+
   # INSTANCE
 
   def admin?
@@ -270,9 +293,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
     # override to be able to create without a password
+    # or to allow sign in with github only
     def password_required?
       if @password_required_.nil?
-        @password_required_ = confirmed? ? super : false
+        @password_required_ = github_id.present? || !confirmed? ? false : super
       end
       @password_required_
     end
