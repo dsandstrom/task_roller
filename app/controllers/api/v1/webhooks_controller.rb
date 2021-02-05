@@ -73,7 +73,7 @@ module Api
 
         def user_params
           @user_params ||=
-            { github_id: user_payload[:id], github_url: user_payload[:html_url],
+            { github_id: user_payload[:id], github_url: user_payload[:login],
               name: user_payload[:login] }
         end
 

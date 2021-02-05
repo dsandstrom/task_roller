@@ -121,6 +121,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # method operates similarly, except that it will raise an Exception if the
   # user record fails validation.
   # TODO: rename gitub_url to github_username?
+  # FIXME: allow existing confirmed user to connect to github
   def self.from_omniauth(auth)
     return unless auth.uid.present? && auth.info
 
