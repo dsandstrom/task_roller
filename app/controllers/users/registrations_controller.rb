@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: allow users without passwords (github), to add one
+
 module Users
   class RegistrationsController < Devise::RegistrationsController
     before_action :configure_sign_up_params, only: :create
