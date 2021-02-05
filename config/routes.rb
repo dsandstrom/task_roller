@@ -128,8 +128,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   # https://github.com/heartcombo/devise/wiki/
   # How-To:-Allow-users-to-edit-their-password
-  devise_for :users, path: 'auth', skip: :registrations,
-                     controllers: { confirmations: 'users/confirmations' }
+  # FIXME: omniauth uses /auth/auth/
+  devise_for :users,
+             path: 'auth', skip: :registrations,
+             controllers: { confirmations: 'users/confirmations',
+                            omniauth_callbacks: 'users/omniauth_callbacks' }
   devise_scope :user do
     get 'auth/sign_up' => 'users/registrations#new', as: :new_user_registration
     post 'auth' => 'users/registrations#create', as: :user_registrations
