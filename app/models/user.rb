@@ -147,7 +147,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def self.new_with_session(params, session)
     super.tap do |user|
       data = session['devise.github_data']
-      if data && session['devise.github_data']['extra']['raw_info']
+      if data
         next if user.email.present?
 
         user.email = data['email']
