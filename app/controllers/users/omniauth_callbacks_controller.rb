@@ -27,10 +27,24 @@ module Users
         @omniauth_payload ||= request.env['omniauth.auth']
       end
 
+      def sign_in_failure_message
+        @sign_in_failure_message ||= 'Unable to sign in with GitHub'
+      end
+
       def verify_registration_allowed
         return if User.allow_registration?
 
         redirect_to :unauthorized
+      end
+
+      def log_errors_and_redirect
+        # Removing extra as it can overflow some session stores
+        # `except` doesn't work
+        %i[extra all_email urls].each { |key| omniauth_payload.delete(key) }
+        session['devise.github_data'] = omniauth_payload
+        logger.info 'Unable to create user from GitHub:'
+        logger.info @user.errors.messages.inspect
+        redirect_to new_user_session_url, alert: sign_in_failure_message
       end
 
       def create_from_github
@@ -43,9 +57,7 @@ module Users
             set_flash_message(:notice, :success, kind: 'Github')
           end
         else
-          # Removing extra as it can overflow some session stores
-          session['devise.github_data'] = omniauth_payload.except(:extra)
-          redirect_to new_user_registration_url
+          log_errors_and_redirect
         end
       end
   end

@@ -14,6 +14,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
     before do
       allow(auth_env).to receive(:except) { self }
+      allow(auth_env).to receive(:delete) { self }
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @request.env["omniauth.auth"] = auth_env
     end
@@ -32,12 +33,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
           context "that doesn't match an existing user" do
             it "creates a new user" do
               expect do
-                post :github
+                get :github
               end.to change(User, :count).by(1)
             end
 
             it "redirects to root" do
-              post :github
+              get :github
               expect(response).to redirect_to(:root)
             end
           end
@@ -50,12 +51,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
             it "doesn't create a new user" do
               expect do
-                post :github
+                get :github
               end.not_to change(User, :count)
             end
 
             it "redirects to root" do
-              post :github
+              get :github
               expect(response).to redirect_to(:root)
             end
           end
@@ -69,12 +70,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
             it "doesn't create a new user" do
               expect do
-                post :github
+                get :github
               end.not_to change(User, :count)
             end
 
             it "redirects to sign_in" do
-              post :github
+              get :github
               expect(response).to redirect_to(:new_user_session)
             end
           end
@@ -89,13 +90,13 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
           it "doesn't create a new user" do
             expect do
-              post :github
+              get :github
             end.not_to change(User, :count)
           end
 
-          it "redirects to registration" do
-            post :github
-            expect(response).to redirect_to(:new_user_registration)
+          it "redirects to sign_in" do
+            get :github
+            expect(response).to redirect_to(:new_user_session)
           end
         end
       end
@@ -112,12 +113,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
         it "doesn't create a new user" do
           expect do
-            post :github
+            get :github
           end.not_to change(User, :count)
         end
 
         it "redirects to unauthorized" do
-          post :github
+          get :github
           expect_to_be_unauthorized(response)
         end
       end
@@ -132,12 +133,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
           context "that doesn't match an existing user" do
             it "doesn't create a new user" do
               expect do
-                post :github
+                get :github
               end.not_to change(User, :count)
             end
 
             it "redirects to unauthorized" do
-              post :github
+              get :github
               expect_to_be_unauthorized(response)
             end
           end
@@ -150,12 +151,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
             it "doesn't create a new user" do
               expect do
-                post :github
+                get :github
               end.not_to change(User, :count)
             end
 
             it "redirects to unauthorized" do
-              post :github
+              get :github
               expect_to_be_unauthorized(response)
             end
           end
@@ -165,12 +166,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
             it "doesn't create a new user" do
               expect do
-                post :github
+                get :github
               end.not_to change(User, :count)
             end
 
             it "redirects to unauthorized" do
-              post :github
+              get :github
               expect_to_be_unauthorized(response)
             end
           end
@@ -185,12 +186,12 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
           it "doesn't create a new user" do
             expect do
-              post :github
+              get :github
             end.not_to change(User, :count)
           end
 
           it "redirects to unauthorized" do
-            post :github
+            get :github
             expect_to_be_unauthorized(response)
           end
         end
