@@ -16,9 +16,8 @@ module Users
       create_from_github
     end
 
-    # not sure if I need to overload it
     def failure
-      redirect_to :root
+      redirect_to :new_user_session, alert: sign_in_failure_message
     end
 
     private
