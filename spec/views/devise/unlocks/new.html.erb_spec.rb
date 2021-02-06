@@ -9,19 +9,49 @@ RSpec.describe "devise/unlocks/new", type: :view do
     enable_devise_user(view)
   end
 
-  it "renders new session form" do
-    render
+  context "when allowing registration" do
+    before { allow(User).to receive(:allow_registration?) { true } }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "input[name=?]", "user[email]"
+    it "renders new session form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "input[name=?]", "user[email]"
+      end
+    end
+
+    it "renders links" do
+      render template: "devise/unlocks/new", layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_user_session_path)
+      expect(rendered).to have_link(nil, href: new_user_password_path)
+      expect(rendered).to have_link(nil, href: new_user_confirmation_path)
+      expect(rendered).to have_link(nil, href: new_user_registration_path)
+      expect(rendered)
+        .to have_link(nil, href: user_github_omniauth_authorize_path)
     end
   end
 
-  it "renders links" do
-    render template: subject, layout: "layouts/application"
+  context "when disallowing registration" do
+    before { allow(User).to receive(:allow_registration?) { false } }
 
-    expect(rendered).to have_link(nil, href: new_user_session_path)
-    expect(rendered).to have_link(nil, href: new_user_password_path)
-    expect(rendered).to have_link(nil, href: new_user_confirmation_path)
+    it "renders new session form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "input[name=?]", "user[email]"
+      end
+    end
+
+    it "rendrs links" do
+      render template: "devise/unlocks/new", layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_user_session_path)
+      expect(rendered).to have_link(nil, href: new_user_password_path)
+      expect(rendered).to have_link(nil, href: new_user_confirmation_path)
+      expect(rendered).not_to have_link(nil, href: new_user_registration_path)
+      expect(rendered)
+        .not_to have_link(nil, href: user_github_omniauth_authorize_path)
+    end
   end
 end
