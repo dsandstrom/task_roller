@@ -38,11 +38,14 @@ gem 'acts_as_list', '~> 0.9.10'
 gem 'redcarpet', '~> 3.5.1'
 
 gem 'cancancan', '~> 3.2.0'
-gem 'devise', '~> 4.7.3'
-# gem 'omniauth', '~> 1.0.0.pr2'
-
-# 2.0 supported by devise?
-gem 'omniauth-github', '~> 1.0'
+# omniauth 2.0 support
+# branch merged to master, wait for > 4.7.3
+gem 'devise', git: 'https://github.com/heartcombo/devise',
+              ref: '1bb5fcbbecfb9452e194341e030fdc1d364f6ee4'
+gem 'omniauth-github', '~> 2.0'
+# required for omniauth 2.0
+# https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
+gem 'omniauth-rails_csrf_protection', '~> 1.0'
 
 gem 'kaminari', '~> 1.2.1'
 
