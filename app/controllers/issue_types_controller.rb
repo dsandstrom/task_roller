@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: allow reviewer to create/edit, but not destroy
+
 class IssueTypesController < ApplicationController
   load_and_authorize_resource
 
