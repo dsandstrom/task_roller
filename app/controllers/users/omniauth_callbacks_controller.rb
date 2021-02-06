@@ -39,8 +39,7 @@ module Users
 
       def log_errors_and_redirect
         # Removing extra as it can overflow some session stores
-        # `except` doesn't work
-        %i[extra all_email urls].each { |key| omniauth_payload.delete(key) }
+        %i[extra all_emails urls].each { |key| omniauth_payload.delete(key) }
         session['devise.github_data'] = omniauth_payload
         logger.info 'Unable to create user from GitHub:'
         logger.info @user.errors.messages.inspect

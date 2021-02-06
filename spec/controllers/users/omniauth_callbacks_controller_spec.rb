@@ -5,16 +5,20 @@ require "rails_helper"
 RSpec.describe Users::OmniauthCallbacksController, type: :controller do
   describe "POST #github" do
     let(:example_user) { Fabricate.build(:user_reviewer) }
-    let(:auth_env) { double("env") }
 
     let(:user_env) do
-      OpenStruct.new(email: example_user.email, name: example_user.name,
-                     nickname: "username")
+      OmniAuth::AuthHash.new(email: example_user.email, name: example_user.name,
+                             nickname: "username")
+    end
+
+    let(:auth_env) do
+      OmniAuth::AuthHash.new(uid: 1234, info: user_env,
+                             extra: OmniAuth::AuthHash.new,
+                             all_emails: OmniAuth::AuthHash.new,
+                             urls: OmniAuth::AuthHash.new)
     end
 
     before do
-      allow(auth_env).to receive(:except) { self }
-      allow(auth_env).to receive(:delete) { self }
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @request.env["omniauth.auth"] = auth_env
     end
@@ -25,11 +29,6 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
       context "for a guest" do
         context "when valid environment" do
-          before do
-            allow(auth_env).to receive(:uid) { 1234 }
-            allow(auth_env).to receive(:info) { user_env }
-          end
-
           context "that doesn't match an existing user" do
             it "creates a new user" do
               expect do
@@ -82,16 +81,21 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
         end
 
         context "when invalid env" do
-          before do
-            user_env.email = nil
-            allow(auth_env).to receive(:uid) { 1234 }
-            allow(auth_env).to receive(:info) { user_env }
+          let(:user_env) do
+            OmniAuth::AuthHash.new(email: nil, name: example_user.name,
+                                   nickname: "username")
           end
 
           it "doesn't create a new user" do
             expect do
               get :github
             end.not_to change(User, :count)
+          end
+
+          it "copies payload to session" do
+            get :github
+            expect(session["devise.github_data"]).not_to be_nil
+            expect(session["devise.github_data"]["extra"]).to be_nil
           end
 
           it "redirects to sign_in" do
