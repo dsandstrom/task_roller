@@ -1,11 +1,30 @@
 $editor-button-size: 3rem;
 
 .editor-toolbar {
-  padding: 0 1rem;
+  padding: .5rem 1rem;
   border-radius: $border-radius $border-radius 0 0;
   border-color: $gray;
   opacity: 1;
   background: $off-white;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.disabled-for-preview {
+    border-color: $light-gray;
+
+    // scss-lint:disable ImportantRule
+    button {
+      &:not(.no-disable) {
+        opacity: .5;
+        background: transparent;
+        color: $gray !important;
+        pointer-events: none;
+      }
+    }
+    // scss-lint:enable ImportantRule
+  }
 
   button {
     width: $editor-button-size;
@@ -53,39 +72,18 @@ $editor-button-size: 3rem;
         content: '';
       }
     }
+
+    i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   i {
     &.separator {
       margin: 0 .5rem;
     }
-  }
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &::before {
-    margin-bottom: .5rem;
-  }
-
-  &::after {
-    margin-top: .5rem;
-  }
-
-  &.disabled-for-preview {
-    border-color: $light-gray;
-
-    // scss-lint:disable ImportantRule
-    button {
-      &:not(.no-disable) {
-        opacity: .5;
-        background: transparent;
-        color: $gray !important;
-        pointer-events: none;
-      }
-    }
-    // scss-lint:enable ImportantRule
   }
 }
 
