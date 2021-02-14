@@ -11,7 +11,7 @@ businesses. Issues are opened to report problems, offer suggestions, and ask
 questions. While Tasks are created to address Issues.
 
 ## Live App
-Please feel free to check out a live version of the app and [report issues](http://production.task-roller.net).
+Please feel free to check out a live version of the app and [report issues](https://production.task-roller.net).
 
 ## User Types
 There are four available user types. Here is a short description of each:
