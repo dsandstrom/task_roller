@@ -285,6 +285,41 @@ RSpec.describe Issue, type: :model do
       end
     end
 
+    context "when :query" do
+      context "is ''" do
+        let!(:issue) { Fabricate(:issue) }
+
+        it "returns all issues" do
+          expect(Issue.filter_by(query: "")).to eq([issue])
+        end
+      end
+
+      context "is 'beta'" do
+        let!(:issue) { Fabricate(:issue, summary: "Beta Problem") }
+
+        before { Fabricate(:issue) }
+
+        it "returns matching issues" do
+          expect(Issue.filter_by(query: "beta")).to eq([issue])
+        end
+      end
+    end
+
+    context "when :status and :query" do
+      context "is 'open' and 'gamma'" do
+        let!(:issue) { Fabricate(:open_issue, summary: "Gamma Good") }
+
+        before do
+          Fabricate(:closed_issue, summary: "Closed gamma")
+          Fabricate(:open_issue)
+        end
+
+        it "returns matching issue" do
+          expect(Issue.filter_by(status: "open", query: "gamma")).to eq([issue])
+        end
+      end
+    end
+
     context "when :order" do
       context "is unset" do
         it "orders by updated_at desc" do
@@ -420,6 +455,74 @@ RSpec.describe Issue, type: :model do
       it "returns all project issues" do
         issue = Fabricate(:issue, project: project)
         expect(project.issues.filter_by(status: "all")).to eq([issue])
+      end
+    end
+  end
+
+  describe ".filter_by_string" do
+    context "when no issues" do
+      it "returns []" do
+        expect(Issue.filter_by_string("alpha")).to eq([])
+      end
+    end
+
+    context "when issues" do
+      context "and query is ''" do
+        let!(:issue) { Fabricate(:issue) }
+
+        it "returns all issues" do
+          expect(Issue.filter_by_string("")).to eq([issue])
+        end
+      end
+
+      context "and query matches an issue's summary" do
+        let!(:issue) { Fabricate(:issue, summary: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:issue, summary: "Beta Gamma")
+        end
+
+        it "returns one issue" do
+          expect(Issue.filter_by_string("alpha")).to eq([issue])
+        end
+      end
+
+      context "and query matches an issue's description" do
+        let!(:issue) { Fabricate(:issue, description: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:issue, description: "Beta Gamma")
+        end
+
+        it "returns one issue" do
+          expect(Issue.filter_by_string("alpha")).to eq([issue])
+        end
+      end
+
+      context "and query doesn't match an issue" do
+        before do
+          Fabricate(:issue, description: "Beta Gamma")
+        end
+
+        it "returns none" do
+          expect(Issue.filter_by_string("alpha")).to eq([])
+        end
+      end
+
+      context "and query matches one issue's summary, another's description" do
+        let!(:first_issue) { Fabricate(:issue, summary: "Alpha Beta Gamma") }
+        let!(:second_issue) do
+          Fabricate(:issue, description: "Alpha Beta Gamma")
+        end
+
+        before do
+          Fabricate(:issue, description: "Beta Gamma")
+        end
+
+        it "returns both issues" do
+          expect(Issue.filter_by_string("alpha"))
+            .to contain_exactly(first_issue, second_issue)
+        end
       end
     end
   end
