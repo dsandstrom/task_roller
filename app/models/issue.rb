@@ -95,9 +95,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_non_closed.where(resolutions_query, true)
   end
 
-  # TODO: allow filter by text
   def self.filter_by(filters = {})
     filter_by_status(filters[:status])
+      .filter_by_type(filters[:type_id])
       .filter_by_string(filters[:query])
       .order(build_order_param(filters[:order]))
       .distinct
@@ -118,6 +118,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     where('issues.summary ILIKE :query OR issues.description ILIKE :query',
           query: "%#{query}%")
+  end
+
+  def self.filter_by_type(issue_type_id)
+    return all if issue_type_id.blank?
+    return none unless IssueType.find_by(id: issue_type_id)
+
+    where(issue_type_id: issue_type_id)
   end
 
   # used by .filter

@@ -305,6 +305,27 @@ RSpec.describe Issue, type: :model do
       end
     end
 
+    context "when :type_id" do
+      context "is blank" do
+        let!(:issue) { Fabricate(:issue) }
+
+        it "returns all issues" do
+          expect(Issue.filter_by(type_id: "")).to eq([issue])
+        end
+      end
+
+      context "is not blank" do
+        let(:issue_type) { Fabricate(:issue_type) }
+        let!(:issue) { Fabricate(:issue, issue_type: issue_type) }
+
+        before { Fabricate(:issue) }
+
+        it "returns matching issues" do
+          expect(Issue.filter_by(type_id: issue_type.id)).to eq([issue])
+        end
+      end
+    end
+
     context "when :status and :query" do
       context "is 'open' and 'gamma'" do
         let!(:issue) { Fabricate(:open_issue, summary: "Gamma Good") }
@@ -522,6 +543,52 @@ RSpec.describe Issue, type: :model do
         it "returns both issues" do
           expect(Issue.filter_by_string("alpha"))
             .to contain_exactly(first_issue, second_issue)
+        end
+      end
+    end
+  end
+
+  describe ".filter_by_type" do
+    let(:issue_type) { Fabricate(:issue_type) }
+
+    context "when no issues" do
+      it "returns []" do
+        expect(Issue.filter_by_type(issue_type.id)).to eq([])
+      end
+    end
+
+    context "when issues" do
+      context "and type filter is blank" do
+        let!(:issue) { Fabricate(:issue) }
+
+        it "returns all" do
+          expect(Issue.filter_by_type("")).to eq([issue])
+        end
+      end
+
+      context "and type filter matches an issue" do
+        let!(:issue) { Fabricate(:issue, issue_type: issue_type) }
+
+        before { Fabricate(:issue) }
+
+        it "returns match" do
+          expect(Issue.filter_by_type(issue_type.id)).to eq([issue])
+        end
+      end
+
+      context "and type filter doesn't match an issue" do
+        before { Fabricate(:issue) }
+
+        it "returns none" do
+          expect(Issue.filter_by_type(issue_type.id)).to eq([])
+        end
+      end
+
+      context "and type filter is invalid" do
+        before { Fabricate(:issue) }
+
+        it "returns none" do
+          expect(Issue.filter_by_type("invalid")).to eq([])
         end
       end
     end

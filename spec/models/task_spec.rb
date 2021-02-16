@@ -409,6 +409,27 @@ RSpec.describe Task, type: :model do
       end
     end
 
+    context "when :type_id" do
+      context "is blank" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all tasks" do
+          expect(Task.filter_by(type_id: "")).to eq([task])
+        end
+      end
+
+      context "is not blank" do
+        let(:task_type) { Fabricate(:task_type) }
+        let!(:task) { Fabricate(:task, task_type: task_type) }
+
+        before { Fabricate(:task) }
+
+        it "returns matching tasks" do
+          expect(Task.filter_by(type_id: task_type.id)).to eq([task])
+        end
+      end
+    end
+
     context "when :status and :query" do
       context "is 'open' and 'gamma'" do
         let!(:task) { Fabricate(:open_task, summary: "Gamma Good") }
@@ -613,6 +634,52 @@ RSpec.describe Task, type: :model do
         it "returns both tasks" do
           expect(Task.filter_by_string("alpha"))
             .to contain_exactly(first_task, second_task)
+        end
+      end
+    end
+  end
+
+  describe ".filter_by_type" do
+    let(:task_type) { Fabricate(:task_type) }
+
+    context "when no tasks" do
+      it "returns []" do
+        expect(Task.filter_by_type(task_type.id)).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      context "and type filter is blank" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all" do
+          expect(Task.filter_by_type("")).to eq([task])
+        end
+      end
+
+      context "and type filter matches an task" do
+        let!(:task) { Fabricate(:task, task_type: task_type) }
+
+        before { Fabricate(:task) }
+
+        it "returns match" do
+          expect(Task.filter_by_type(task_type.id)).to eq([task])
+        end
+      end
+
+      context "and type filter doesn't match an task" do
+        before { Fabricate(:task) }
+
+        it "returns none" do
+          expect(Task.filter_by_type(task_type.id)).to eq([])
+        end
+      end
+
+      context "and type filter is invalid" do
+        before { Fabricate(:task) }
+
+        it "returns none" do
+          expect(Task.filter_by_type("invalid")).to eq([])
         end
       end
     end

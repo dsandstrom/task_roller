@@ -102,6 +102,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def self.filter_by(filters = {})
     includes(task_assignees: :assignee, issue: :user)
       .filter_by_status(filters[:status])
+      .filter_by_type(filters[:type_id])
       .filter_by_string(filters[:query])
       .filter_by_assigned_id(filters[:assigned])
       .order(build_order_param(filters[:order]))
@@ -150,6 +151,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 %w[asc desc].include?(direction)
 
     "tasks.#{column}_at #{direction}"
+  end
+
+  def self.filter_by_type(task_type_id)
+    return all if task_type_id.blank?
+    return none unless TaskType.find_by(id: task_type_id)
+
+    where(task_type_id: task_type_id)
   end
 
   def self.all_visible
