@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
 
     def build_filters
       filters = {}
-      %i[status order].each do |param|
+      %i[status order query].each do |param|
         filters[param] = params[param]
       end
       filters

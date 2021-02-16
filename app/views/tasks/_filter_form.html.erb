@@ -7,6 +7,7 @@ return unless path
   <h3>Filters</h3>
 
   <%= form_tag path, method: :get, class: "task-filter-form" do %>
+    <%= render 'shared/string_filter_field' %>
     <%= render 'tasks/status_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 
