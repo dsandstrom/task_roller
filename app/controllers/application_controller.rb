@@ -36,6 +36,9 @@ class ApplicationController < ActionController::Base
       %i[status order query].each do |param|
         filters[param] = params[param]
       end
+      if filters[:query].present?
+        filters[:query] = filters[:query].truncate(80, omission: '')
+      end
       filters
     end
 
