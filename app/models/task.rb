@@ -101,19 +101,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: order open issues first by default
   def self.filter_by(filters = {})
     includes(task_assignees: :assignee, issue: :user)
-      .apply_filters(filters)
+      .filter_by_status(filters[:status])
+      .filter_by_string(filters[:query])
+      .filter_by_assigned_id(filters[:assigned])
       .order(build_order_param(filters[:order]))
       .distinct
   end
 
-  # used by .filter
-  def self.apply_filters(filters)
-    tasks = all
-    tasks = tasks.filter_by_status(filters[:status])
-    tasks.filter_by_assigned_id(filters[:assigned])
-  end
-
-  # used by .filter
+  # used by .filter_by
   def self.filter_by_status(status)
     return all unless status
 
@@ -123,7 +118,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     send("all_#{status}")
   end
 
-  # used by .filter
+  # used by .filter_by
   def self.filter_by_assigned_id(assigned_id)
     return all if assigned_id.blank?
 
@@ -136,7 +131,16 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
-  # used by .filter
+  # used by .filter_by
+  # TODO: search text in associated comments too (comments.body)
+  def self.filter_by_string(query)
+    return all if query.blank?
+
+    where('tasks.summary ILIKE :query OR tasks.description ILIKE :query',
+          query: "%#{query}%")
+  end
+
+  # used by .filter_by
   def self.build_order_param(order)
     return DEFAULT_ORDER if order.blank?
 

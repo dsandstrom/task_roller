@@ -389,6 +389,41 @@ RSpec.describe Task, type: :model do
       end
     end
 
+    context "when :query" do
+      context "is ''" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all tasks" do
+          expect(Task.filter_by(query: "")).to eq([task])
+        end
+      end
+
+      context "is 'beta'" do
+        let!(:task) { Fabricate(:task, summary: "Beta Problem") }
+
+        before { Fabricate(:task) }
+
+        it "returns matching tasks" do
+          expect(Task.filter_by(query: "beta")).to eq([task])
+        end
+      end
+    end
+
+    context "when :status and :query" do
+      context "is 'open' and 'gamma'" do
+        let!(:task) { Fabricate(:open_task, summary: "Gamma Good") }
+
+        before do
+          Fabricate(:closed_task, summary: "Closed gamma")
+          Fabricate(:open_task)
+        end
+
+        it "returns matching task" do
+          expect(Task.filter_by(status: "open", query: "gamma")).to eq([task])
+        end
+      end
+    end
+
     context "when :order" do
       context "is unset" do
         it "orders by updated_at desc" do
@@ -511,6 +546,74 @@ RSpec.describe Task, type: :model do
       it "returns all" do
         task = Fabricate(:task)
         expect(Task.filter_by).to eq([task])
+      end
+    end
+  end
+
+  describe ".filter_by_string" do
+    context "when no tasks" do
+      it "returns []" do
+        expect(Task.filter_by_string("alpha")).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      context "and query is ''" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all tasks" do
+          expect(Task.filter_by_string("")).to eq([task])
+        end
+      end
+
+      context "and query matches an task's summary" do
+        let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:task, summary: "Beta Gamma")
+        end
+
+        it "returns one task" do
+          expect(Task.filter_by_string("alpha")).to eq([task])
+        end
+      end
+
+      context "and query matches an task's description" do
+        let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns one task" do
+          expect(Task.filter_by_string("alpha")).to eq([task])
+        end
+      end
+
+      context "and query doesn't match an task" do
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns none" do
+          expect(Task.filter_by_string("alpha")).to eq([])
+        end
+      end
+
+      context "and query matches one task's summary, another's description" do
+        let!(:first_task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+        let!(:second_task) do
+          Fabricate(:task, description: "Alpha Beta Gamma")
+        end
+
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns both tasks" do
+          expect(Task.filter_by_string("alpha"))
+            .to contain_exactly(first_task, second_task)
+        end
       end
     end
   end
