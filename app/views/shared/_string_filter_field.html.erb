@@ -1,4 +1,4 @@
 <div class="field">
-  <%= label_tag :query %>
-  <%= text_field_tag :query, params[:query] %>
+  <%= label_tag :query, 'Text Query', class: 'hide' %>
+  <%= text_field_tag :query, params[:query], placeholder: 'text search' %>
 </div>
