@@ -33,6 +33,9 @@
     <% end %>
 
     <% if can?(:destroy, review) %>
+      <% if can?(:approve, review) %>
+        <%= divider %>
+      <% end %>
       <% confirm = 'Are you sure you want to cancel the review?' %>
       <%= link_to 'cancel review',
                   task_review_path(task, review),
