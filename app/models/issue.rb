@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# FIXME: issue closure for invalid issue, not closed
+# issue user destroyed, add closure, shows as open
+
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
   STATUS_OPTIONS = {
