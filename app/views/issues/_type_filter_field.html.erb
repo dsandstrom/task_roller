@@ -1,0 +1,25 @@
+<div class="field">
+  <%= label_tag :type_id %>
+
+  <div id="issue_type_labels" class="issue-filter-options">
+    <%= label_tag :type_id_all,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :type_id, :all,
+                           (params[:type_id].blank? ||
+                             params[:type_id] == 'all') %>
+      All
+    <% end %>
+
+    <% IssueType.all.each do |issue_type| %>
+      <%
+        klass = roller_radio_button_label_class(issue_type)
+      %>
+
+      <%= label_tag "type_id_#{issue_type.id}", class: klass do %>
+        <%= radio_button_tag :type_id, issue_type.id,
+                             params[:type_id] == issue_type.id.to_s %>
+        <%= issue_type.name %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

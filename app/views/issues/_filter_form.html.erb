@@ -9,6 +9,7 @@
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <%= render 'shared/string_filter_field' %>
     <%= render 'issues/status_filter_field' %>
+    <%= render 'issues/type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 
     <% if searching? %>
