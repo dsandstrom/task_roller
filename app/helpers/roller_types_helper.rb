@@ -32,10 +32,14 @@ module RollerTypesHelper
                          "task-type-icon #{roller_type_color(task_type)}"
   end
 
+  def icon(name)
+    content_tag :i, '', class: "icon-#{name}"
+  end
+
   def roller_type_icon(roller_type)
     return unless roller_type
 
-    content_tag :i, '', class: "icon-#{roller_type.icon}"
+    icon(roller_type.icon)
   end
 
   def issue_type_icon_options

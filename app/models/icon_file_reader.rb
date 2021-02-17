@@ -3,8 +3,8 @@
 class IconFileReader
   FONT_FILE = Rails.root.join('app', 'assets', 'fonts', 'task-roller.svg')
   RESERVED_ICON_NAMES =
-    %w[alert arrow-down arrow-left arrow-right arrow-up checkmark close delete
-       eye eye-disabled hamburger heart heart-outline thumbsup thumbsdown
+    %w[alert arrow-down arrow-left arrow-right arrow-up buffer checkmark close
+       delete eye eye-disabled hamburger heart heart-outline thumbsup thumbsdown
        person person-add person-group plus bold italic code header strikethrough
        link quote unordered-list ordered-list split arrow-expand earth].freeze
 

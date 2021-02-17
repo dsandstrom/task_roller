@@ -7,6 +7,7 @@
       <%= radio_button_tag :type_id, :all,
                            (params[:type_id].blank? ||
                              params[:type_id] == 'all') %>
+      <%= icon "buffer" %>
       All
     <% end %>
 
@@ -16,6 +17,7 @@
       <%= label_tag "type_id_#{task_type.id}", class: klass do %>
         <%= radio_button_tag :type_id, task_type.id,
                              params[:type_id] == task_type.id.to_s %>
+        <%= task_type_icon_tag(task_type) %>
         <%= task_type.name %>
       <% end %>
     <% end %>

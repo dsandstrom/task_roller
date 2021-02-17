@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe IconFileReader, type: :model do
   let(:icon_options) do
-    %w[backspace buffer bug bulb calendar cart fireball flask fork-repo gear
+    %w[backspace bug bulb calendar cart fireball flask fork-repo gear
        globe help image money network notifications options paintbucket plane
        pull-request ribbon scissors settings share speakerphone stopwatch
        textsms trophy umbrella]
