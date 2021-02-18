@@ -76,6 +76,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :task_subscriptions, only: :index
   resources :issue_subscriptions, only: :index
 
+  get 'search' => 'searches#new', as: :search
+  get 'search/results' => 'searches#index', as: :search_results
+
   %w[issue task].each do |roller|
     get "/#{roller}_connections/:source_id/new" => "#{roller}_connections#new",
         as: "new_#{roller}_connection"

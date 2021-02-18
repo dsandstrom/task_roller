@@ -1,0 +1,25 @@
+<%= search_header 'Results' %>
+
+<div class="columns">
+  <div class="second-column">
+    <div class="filters-wrapper">
+      <h3>Filters</h3>
+
+      <%= render 'searches/form', results: @results %>
+    </div>
+  </div>
+
+  <div class="first-column">
+    <% if @results.any? || searching? %>
+      <%= render 'shared/page_links', collection: @results %>
+
+      <div class="tasks issues">
+        <%= render @results %>
+      </div>
+
+      <%= render 'shared/simple_page_links', collection: @results %>
+    <% else %>
+      <p class="no-task no-issue">None found</p>
+    <% end %>
+  </div>
+</div>
