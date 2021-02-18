@@ -21,13 +21,16 @@ tasks_count =
 
 <div id="category-<%= category.id %>" class="category">
   <h3 class="category-name">
-    <%= link_to category.name, category_projects_path(category) %>
+    <%= link_to_if can?(:read, category),
+                   category.name,
+                   category_projects_path(category) %>
   </h3>
   <%= category_tags(category) %>
 
   <p class="category-counts">
-    <%= content_tag :span, pluralize(projects_count, 'Project'),
-                        class: 'category-project-count' %>
+    <%= link_to_if can?(:read, category),
+                   pluralize(projects_count, 'Project'),
+                   category_projects_path(category) %>
     <%= divider %>
     <%= link_to_if can?(:read, Issue),
                    pluralize(issues_count, 'Issue'),
