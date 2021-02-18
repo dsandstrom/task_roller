@@ -102,7 +102,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def self.filter_by(filters = {})
     includes(task_assignees: :assignee, issue: :user)
       .filter_by_status(filters[:status])
-      .filter_by_type(filters[:type_id])
+      .filter_by_type(filters[:task_type_id])
       .filter_by_string(filters[:query])
       .filter_by_assigned_id(filters[:assigned])
       .order(build_order_param(filters[:order]))

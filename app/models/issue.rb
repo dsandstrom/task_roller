@@ -100,7 +100,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def self.filter_by(filters = {})
     filter_by_status(filters[:status])
-      .filter_by_type(filters[:type_id])
+      .filter_by_type(filters[:issue_type_id])
       .filter_by_string(filters[:query])
       .order(build_order_param(filters[:order]))
       .distinct

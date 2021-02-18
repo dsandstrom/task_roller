@@ -305,12 +305,12 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context "when :type_id" do
+    context "when :issue_type_id" do
       context "is blank" do
         let!(:issue) { Fabricate(:issue) }
 
         it "returns all issues" do
-          expect(Issue.filter_by(type_id: "")).to eq([issue])
+          expect(Issue.filter_by(issue_type_id: "")).to eq([issue])
         end
       end
 
@@ -321,7 +321,7 @@ RSpec.describe Issue, type: :model do
         before { Fabricate(:issue) }
 
         it "returns matching issues" do
-          expect(Issue.filter_by(type_id: issue_type.id)).to eq([issue])
+          expect(Issue.filter_by(issue_type_id: issue_type.id)).to eq([issue])
         end
       end
     end

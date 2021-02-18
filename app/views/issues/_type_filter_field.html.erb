@@ -1,12 +1,12 @@
 <div class="field">
-  <%= label_tag :type_id %>
+  <%= label_tag :issue_type_id %>
 
   <div id="issue_type_labels" class="issue-filter-options">
-    <%= label_tag :type_id_all,
+    <%= label_tag :issue_type_id_all,
                   class: roller_radio_button_label_class('brown') do %>
-      <%= radio_button_tag :type_id, :all,
-                           (params[:type_id].blank? ||
-                             params[:type_id] == 'all') %>
+      <%= radio_button_tag :issue_type_id, :all,
+                           (params[:issue_type_id].blank? ||
+                             params[:issue_type_id] == 'all') %>
       <%= icon "buffer" %>
       All
     <% end %>
@@ -16,9 +16,9 @@
         klass = roller_radio_button_label_class(issue_type)
       %>
 
-      <%= label_tag "type_id_#{issue_type.id}", class: klass do %>
-        <%= radio_button_tag :type_id, issue_type.id,
-                             params[:type_id] == issue_type.id.to_s %>
+      <%= label_tag "issue_type_id_#{issue_type.id}", class: klass do %>
+        <%= radio_button_tag :issue_type_id, issue_type.id,
+                             params[:issue_type_id] == issue_type.id.to_s %>
         <%= issue_type_icon_tag(issue_type) %>
         <%= issue_type.name %>
       <% end %>

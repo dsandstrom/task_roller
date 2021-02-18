@@ -5,8 +5,8 @@
     <%= label_tag :type_all,
                   class: roller_radio_button_label_class('brown') do %>
       <%= radio_button_tag :type, :all,
-                           (params[:type].blank? ||
-                              params[:type] == 'all') %>
+                           (params[:type] != 'issues' &&
+                            params[:type] != 'tasks') %>
       Both
     <% end %>
 
@@ -24,4 +24,11 @@
       Tasks
     <% end %>
   </div>
+
+  <% case params[:type] %>
+  <% when 'issues' %>
+    <%= render 'issues/type_filter_field' %>
+  <% when 'tasks' %>
+    <%= render 'tasks/type_filter_field' %>
+  <% end %>
 </div>

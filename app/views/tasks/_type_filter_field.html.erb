@@ -1,12 +1,12 @@
 <div class="field">
-  <%= label_tag :type_id %>
+  <%= label_tag :task_type_id %>
 
   <div id="task_type_labels" class="task-filter-options">
-    <%= label_tag :type_id_all,
+    <%= label_tag :task_type_id_all,
                   class: roller_radio_button_label_class('brown') do %>
-      <%= radio_button_tag :type_id, :all,
-                           (params[:type_id].blank? ||
-                             params[:type_id] == 'all') %>
+      <%= radio_button_tag :task_type_id, :all,
+                           (params[:task_type_id].blank? ||
+                             params[:task_type_id] == 'all') %>
       <%= icon "buffer" %>
       All
     <% end %>
@@ -14,9 +14,9 @@
     <% TaskType.all.each do |task_type| %>
       <% klass = roller_radio_button_label_class(task_type) %>
 
-      <%= label_tag "type_id_#{task_type.id}", class: klass do %>
-        <%= radio_button_tag :type_id, task_type.id,
-                             params[:type_id] == task_type.id.to_s %>
+      <%= label_tag "task_type_id_#{task_type.id}", class: klass do %>
+        <%= radio_button_tag :task_type_id, task_type.id,
+                             params[:task_type_id] == task_type.id.to_s %>
         <%= task_type_icon_tag(task_type) %>
         <%= task_type.name %>
       <% end %>

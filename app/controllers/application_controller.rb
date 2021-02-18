@@ -4,6 +4,8 @@
 # TODO: test redirect to login if non-employee
 
 class ApplicationController < ActionController::Base
+  FILTER_OPTIONS = %i[status type issue_type_id task_type_id order query].freeze
+
   protect_from_forgery with: :exception
 
   before_action :authenticate_user!
@@ -33,10 +35,11 @@ class ApplicationController < ActionController::Base
 
     def build_filters
       filters = {}
-      %i[status type type_id order query].each do |param|
+      FILTER_OPTIONS.each do |param|
         filters[param] = params[param]
       end
-      filters[:type_id] = nil if filters[:type_id] == 'all'
+      filters[:issue_type_id] = nil if filters[:issue_type_id] == 'all'
+      filters[:task_type_id] = nil if filters[:task_type_id] == 'all'
       if filters[:query].present?
         filters[:query] = filters[:query].truncate(80, omission: '')
       end

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
+  PER_PAGE = 10
   before_action :authorize_search
   before_action :verify_filters, only: :index
 
   def index
-    @results = Kaminari.paginate_array(issues_and_tasks)
-                       .page(params[:page]).per(10)
+    @results = Kaminari.paginate_array(issues_and_tasks).page(params[:page])
+                       .per(PER_PAGE)
   end
 
   def new; end

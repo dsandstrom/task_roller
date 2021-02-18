@@ -409,12 +409,12 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "when :type_id" do
+    context "when :task_type_id" do
       context "is blank" do
         let!(:task) { Fabricate(:task) }
 
         it "returns all tasks" do
-          expect(Task.filter_by(type_id: "")).to eq([task])
+          expect(Task.filter_by(task_type_id: "")).to eq([task])
         end
       end
 
@@ -425,7 +425,7 @@ RSpec.describe Task, type: :model do
         before { Fabricate(:task) }
 
         it "returns matching tasks" do
-          expect(Task.filter_by(type_id: task_type.id)).to eq([task])
+          expect(Task.filter_by(task_type_id: task_type.id)).to eq([task])
         end
       end
     end
