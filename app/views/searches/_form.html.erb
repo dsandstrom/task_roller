@@ -1,6 +1,7 @@
 <%= form_tag search_results_path,
              method: :get, class: "task-filter-form" do %>
   <%= render 'shared/string_filter_field' %>
+  <%= render 'searches/type_field' %>
   <%#= render 'tasks/status_filter_field' %>
   <%#= render 'tasks/type_filter_field' %>
   <%= render 'shared/order_filter_field' %>

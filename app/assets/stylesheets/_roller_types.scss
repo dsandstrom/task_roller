@@ -5,7 +5,8 @@
 .issue-issue-type-options,
 .task-task-type-options,
 .issue-filter-options,
-.task-filter-options {
+.task-filter-options,
+.search-filter-options {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -.5rem;
@@ -45,7 +46,8 @@
 .task-task-type-options,
 .issue-issue-type-options,
 .issue-filter-options,
-.task-filter-options {
+.task-filter-options,
+.search-filter-options {
   margin-bottom: 1rem;
 
   label {

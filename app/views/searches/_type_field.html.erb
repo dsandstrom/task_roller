@@ -1,0 +1,27 @@
+<div class="field">
+  <%= label_tag :type %>
+
+  <div id="search_type_labels" class="search-filter-options">
+    <%= label_tag :type_all,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :type, :all,
+                           (params[:type].blank? ||
+                              params[:type] == 'all') %>
+      Both
+    <% end %>
+
+    <%= label_tag :type_issues,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :type, :issues,
+                           params[:type] == 'issues' %>
+      Issues
+    <% end %>
+
+    <%= label_tag :type_tasks,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :type, :tasks,
+                           params[:type] == 'tasks' %>
+      Tasks
+    <% end %>
+  </div>
+</div>
