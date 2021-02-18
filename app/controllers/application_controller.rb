@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
 
     def build_filters
       filters = {}
-      %i[status type_id order query].each do |param|
+      %i[status type type_id order query].each do |param|
         filters[param] = params[param]
       end
       filters[:type_id] = nil if filters[:type_id] == 'all'

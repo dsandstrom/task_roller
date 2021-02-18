@@ -14,13 +14,21 @@ class SearchesController < ApplicationController
   private
 
     def issues_and_tasks
-      @issues_and_tasks ||= combined_order(build_tasks + build_issues)
+      @issues_and_tasks ||=
+        case filters[:type]
+        when 'issues'
+          build_issues
+        when 'tasks'
+          build_tasks
+        else
+          combined_sort(build_tasks + build_issues)
+        end
     end
 
     # TODO: use union?
     # TODO: add issue/task filter
     # TODO: show other filters if issue/task set
-    def combined_order(items)
+    def combined_sort(items)
       items.sort do |a, b|
         case filters[:order]
         when 'created,asc'
