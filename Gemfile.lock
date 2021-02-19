@@ -328,6 +328,9 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    scenic (1.5.4)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     scss_lint (0.59.0)
       sass (~> 3.5, >= 3.5.5)
     scss_lint_reporter_junit (0.1.2)
@@ -409,6 +412,7 @@ DEPENDENCIES
   rspec_junit_formatter (~> 0.4.1)
   rubocop (~> 1.4.2)
   sass-rails (~> 6.0)
+  scenic (~> 1.5)
   scss_lint (~> 0.59)
   scss_lint_reporter_junit (~> 0.1)
   selenium-webdriver

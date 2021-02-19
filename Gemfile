@@ -53,6 +53,10 @@ gem 'faker', '~> 2.14', require: false
 
 gem 'rollbar', '~> 3.1'
 
+# https://github.com/scenic-views/scenic
+# combine issues/tasks for searching
+gem 'scenic', '~> 1.5'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console
