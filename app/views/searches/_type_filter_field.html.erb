@@ -24,11 +24,14 @@
       Tasks
     <% end %>
   </div>
-
-  <% case params[:type] %>
-  <% when 'issues' %>
-    <%= render 'issues/type_filter_field' %>
-  <% when 'tasks' %>
-    <%= render 'tasks/type_filter_field' %>
-  <% end %>
 </div>
+
+
+<% case params[:type] %>
+<% when 'issues' %>
+  <%= render 'issues/issue_type_filter_field' %>
+  <%= render 'issues/status_filter_field' %>
+<% when 'tasks' %>
+  <%= render 'tasks/task_type_filter_field' %>
+  <%= render 'tasks/status_filter_field' %>
+<% end %>
