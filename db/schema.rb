@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_26_202936) do
+ActiveRecord::Schema.define(version: 2021_02_19_011014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -262,4 +262,34 @@ ActiveRecord::Schema.define(version: 2021_01_26_202936) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+
+  create_view "search_results", sql_definition: <<-SQL
+      SELECT issues.id,
+      issues.summary,
+      issues.description,
+      issues.closed,
+      issues.opened_at,
+      issues.issue_type_id,
+      issues.user_id,
+      issues.project_id,
+      NULL::integer AS issue_id,
+      'Issue'::text AS class_name,
+      issues.created_at,
+      issues.updated_at
+     FROM issues
+  UNION
+   SELECT tasks.id,
+      tasks.summary,
+      tasks.description,
+      tasks.closed,
+      tasks.opened_at,
+      tasks.task_type_id AS issue_type_id,
+      tasks.user_id,
+      tasks.project_id,
+      tasks.issue_id,
+      'Task'::text AS class_name,
+      tasks.created_at,
+      tasks.updated_at
+     FROM tasks;
+  SQL
 end
