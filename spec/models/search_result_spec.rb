@@ -33,6 +33,127 @@ RSpec.describe SearchResult, type: :model do
 
   # CLASS
 
+  describe ".filter_by_string" do
+    context "when no tasks" do
+      it "returns []" do
+        expect(SearchResult.filter_by_string("alpha")).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      context "and query is ''" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all tasks" do
+          search_results = SearchResult.filter_by(query: "")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(task.id)
+        end
+      end
+
+      context "and query matches an task's summary" do
+        let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:task, summary: "Beta Gamma")
+        end
+
+        it "returns one task" do
+          search_results = SearchResult.filter_by(query: "alpha")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(task.id)
+        end
+      end
+
+      context "and query matches an task's description" do
+        let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
+
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns one task" do
+          search_results = SearchResult.filter_by(query: "alpha")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(task.id)
+        end
+      end
+
+      context "and query doesn't match an task" do
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns none" do
+          expect(SearchResult.filter_by_string("alpha")).to eq([])
+        end
+      end
+
+      context "and query matches one task's summary, another's description" do
+        let!(:first_task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+        let!(:second_task) do
+          Fabricate(:task, description: "Alpha Beta Gamma")
+        end
+
+        before do
+          Fabricate(:task, description: "Beta Gamma")
+        end
+
+        it "returns both tasks" do
+          search_results = SearchResult.filter_by(query: "alpha")
+          expect(search_results.count).to eq(2)
+
+          assert search_results.any? do |search_result|
+            search_result.id == first_task.id
+          end
+          assert search_results.any? do |search_result|
+            search_result.id == second_task.id
+          end
+        end
+      end
+    end
+  end
+
+  describe ".filter_by" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+
+    context "when no search_results" do
+      it "returns []" do
+        expect(SearchResult.filter_by(order: "created,desc")).to eq([])
+      end
+    end
+
+    context "when :query" do
+      context "is ''" do
+        let!(:task) { Fabricate(:task) }
+
+        it "returns all search_results" do
+          search_results = SearchResult.filter_by(query: "")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(task.id)
+        end
+      end
+
+      context "is 'beta'" do
+        let!(:task) { Fabricate(:task, summary: "Beta Problem") }
+
+        before { Fabricate(:task) }
+
+        it "returns matching search_results" do
+          search_results = SearchResult.filter_by(query: "beta")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(task.id)
+        end
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#issue?" do

@@ -3,6 +3,8 @@
 # TODO: preload project, category, user
 
 class SearchResult < ApplicationRecord
+  DEFAULT_ORDER = 'search_results.updated_at desc'
+
   self.primary_key = :id
 
   belongs_to :user
@@ -15,6 +17,32 @@ class SearchResult < ApplicationRecord
   belongs_to :issue_type, foreign_key: :type_id
   has_many :task_assignees, foreign_key: :task_id
   has_many :assignees, through: :task_assignees
+
+  # CLASS
+
+  def self.filter_by(filters = {})
+    filter_by_string(filters[:query])
+      .order(build_order_param(filters[:order]))
+      .distinct
+  end
+
+  def self.filter_by_string(query)
+    return all if query.blank?
+
+    where('summary ILIKE :query OR description ILIKE :query',
+          query: "%#{query}%")
+  end
+
+  def self.build_order_param(order)
+    return DEFAULT_ORDER if order.blank?
+
+    column, direction = order.split(',')
+    return DEFAULT_ORDER unless direction &&
+                                %w[created updated].include?(column) &&
+                                %w[asc desc].include?(direction)
+
+    "#{column}_at #{direction}"
+  end
 
   # INSTANCE
 
