@@ -5,6 +5,8 @@ require "cancan/matchers"
 
 RSpec.describe Ability do
   describe "Issue model" do
+    let(:no_user_issue) { Fabricate.build(:issue, user_id: nil) }
+
     describe "for an admin" do
       let(:category) { Fabricate(:category) }
       let(:project) { Fabricate(:project, category: category) }
@@ -28,6 +30,16 @@ RSpec.describe Ability do
 
               context "when doesn't belong to them" do
                 let(:issue) { Fabricate(:issue, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.to be_able_to(:update, issue) }
+                it { is_expected.to be_able_to(:destroy, issue) }
+                it { is_expected.to be_able_to(:move, issue) }
+              end
+
+              context "when user_id is nil" do
+                let(:issue) { no_user_issue }
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
@@ -284,6 +296,16 @@ RSpec.describe Ability do
 
               context "when doesn't belong to them" do
                 let(:issue) { Fabricate(:issue, project: project) }
+
+                it { is_expected.not_to be_able_to(:create, issue) }
+                it { is_expected.to be_able_to(:read, issue) }
+                it { is_expected.not_to be_able_to(:update, issue) }
+                it { is_expected.not_to be_able_to(:destroy, issue) }
+                it { is_expected.to be_able_to(:move, issue) }
+              end
+
+              context "when user_id is nil" do
+                let(:issue) { no_user_issue }
 
                 it { is_expected.not_to be_able_to(:create, issue) }
                 it { is_expected.to be_able_to(:read, issue) }
@@ -555,6 +577,16 @@ RSpec.describe Ability do
 
                 context "when doesn't belong to them" do
                   let(:issue) { Fabricate(:issue, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, issue) }
+                  it { is_expected.to be_able_to(:read, issue) }
+                  it { is_expected.not_to be_able_to(:update, issue) }
+                  it { is_expected.not_to be_able_to(:destroy, issue) }
+                  it { is_expected.not_to be_able_to(:move, issue) }
+                end
+
+                context "when user_id is nil" do
+                  let(:issue) { no_user_issue }
 
                   it { is_expected.not_to be_able_to(:create, issue) }
                   it { is_expected.to be_able_to(:read, issue) }
@@ -949,6 +981,16 @@ RSpec.describe Ability do
 
                 context "when doesn't belong to them" do
                   let(:issue) { Fabricate(:issue, project: project) }
+
+                  it { is_expected.not_to be_able_to(:create, issue) }
+                  it { is_expected.to be_able_to(:read, issue) }
+                  it { is_expected.not_to be_able_to(:update, issue) }
+                  it { is_expected.not_to be_able_to(:destroy, issue) }
+                  it { is_expected.not_to be_able_to(:move, issue) }
+                end
+
+                context "when user_id is nil" do
+                  let(:issue) { no_user_issue }
 
                   it { is_expected.not_to be_able_to(:create, issue) }
                   it { is_expected.to be_able_to(:read, issue) }
