@@ -46,6 +46,27 @@ hr {
       }
     }
   }
+
+  .search-filter-form {
+    display: flex;
+    margin: 0 1rem;
+
+    input,
+    .button,
+    .actions {
+      margin: 0;
+    }
+
+    // scss-lint:disable QualifyingElement
+    input[type='text'] {
+      background-color: $light-gray;
+
+      &:focus {
+        background-color: $off-white;
+      }
+    }
+    // scss-lint:enable QualifyingElement
+  }
 }
 
 .page-header {

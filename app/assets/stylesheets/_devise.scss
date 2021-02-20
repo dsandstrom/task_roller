@@ -22,4 +22,10 @@
   form {
     margin: 0 0 .5rem;
   }
+
+  // scss-lint:disable QualifyingElement
+  input[type='text']:focus {
+    background-color: $white;
+  }
+  // scss-lint:enable QualifyingElement
 }
