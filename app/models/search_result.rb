@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: preload project, category, user
-
 class SearchResult < ApplicationRecord
   DEFAULT_ORDER = 'search_results.updated_at desc'
 

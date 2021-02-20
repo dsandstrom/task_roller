@@ -38,13 +38,17 @@ class SearchesController < ApplicationController
 
     def build_issues_and_tasks
       SearchResult.accessible_by(current_ability).filter_by(filters)
+                  .preload(:project, :user, :issue, :assignees,
+                           project: :category)
     end
 
     def build_tasks
       Task.accessible_by(current_ability).filter_by(filters)
+          .preload(:project, :user, :issue, :assignees, project: :category)
     end
 
     def build_issues
       Issue.accessible_by(current_ability).filter_by(filters)
+           .preload(:project, :user, project: :category)
     end
 end
