@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: update issue/task filters
+# TODO: search categories and projects
+
 class SearchesController < ApplicationController
   before_action :authorize_search
   before_action :verify_filters, only: :index
