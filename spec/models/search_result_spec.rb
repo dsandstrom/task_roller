@@ -3,9 +3,7 @@
 require "rails_helper"
 
 RSpec.describe SearchResult, type: :model do
-  before do
-    @search_result = SearchResult.new()
-  end
+  before { @search_result = SearchResult.new }
 
   subject { @search_result }
 

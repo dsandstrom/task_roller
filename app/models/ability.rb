@@ -22,7 +22,7 @@ class Ability
     return unless user && user.employee_type.present?
 
     [CategoryAbility, ProjectAbility, UserAbility, IssueAbility,
-     TaskAbility].each do |klass|
+     TaskAbility, SearchResultAbility].each do |klass|
       ability = klass.new(ability: self, user: user)
       ability.activate
     end
