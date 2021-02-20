@@ -5,19 +5,21 @@
     <div class="filters-wrapper">
       <h3>Filters</h3>
 
-      <%= render 'searches/form', results: @results %>
+      <%= render 'searches/form', results: @search_results %>
     </div>
   </div>
 
   <div class="first-column">
-    <% if @results.any? || searching? %>
-      <%= render 'shared/page_links', collection: @results %>
+    <% if @search_results.any? || searching? %>
+      <%= render 'shared/page_links',
+                 collection: @search_results %>
 
-      <div class="tasks issues">
-        <%= render @results %>
+      <div class="issues tasks">
+        <%= render @search_results %>
       </div>
 
-      <%= render 'shared/simple_page_links', collection: @results %>
+      <%= render 'shared/simple_page_links',
+                 collection: @search_results %>
     <% else %>
       <p class="no-task no-issue">None found</p>
     <% end %>

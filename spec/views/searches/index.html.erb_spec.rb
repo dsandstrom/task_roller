@@ -10,8 +10,8 @@ RSpec.describe "searches/index", type: :view do
 
     before { enable_can(view, current_user) }
 
-    context "when results" do
-      before { assign(:results, page([issue, task])) }
+    context "when search_results" do
+      before { assign(:search_results, page([issue, task])) }
 
       it "renders issues" do
         render
@@ -26,8 +26,8 @@ RSpec.describe "searches/index", type: :view do
       end
     end
 
-    context "when no results" do
-      before { assign(:results, page([])) }
+    context "when no search_results" do
+      before { assign(:search_results, page([])) }
 
       it "doesn't render issues and tasks" do
         render

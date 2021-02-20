@@ -1,0 +1,5 @@
+<% if search_result.issue? %>
+  <%= render 'issues/issue', issue: search_result %>
+<% elsif search_result.task? %>
+  <%= render 'tasks/task', task: search_result %>
+<% end %>
