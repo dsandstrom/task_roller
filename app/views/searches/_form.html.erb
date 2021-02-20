@@ -4,10 +4,6 @@
   <%= render 'searches/type_filter_field' %>
   <%= render 'shared/order_filter_field' %>
 
-  <% if searching? %>
-    <p><%= link_to 'Reset', search_path %></p>
-  <% end %>
-
   <div class="actions">
     <%= submit_tag 'Filter' %>
   </div>

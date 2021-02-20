@@ -252,11 +252,11 @@ RSpec.describe Task, type: :model do
 
     context "when no tasks" do
       it "returns []" do
-        expect(Task.filter_by(status: "all")).to eq([])
+        expect(Task.filter_by(task_status: "all")).to eq([])
       end
     end
 
-    context "when :status" do
+    context "when :task_status" do
       let(:in_review_task) { Fabricate(:open_task, project: project) }
       let(:in_progress_task) { Fabricate(:open_task, project: project) }
       let(:assigned_task) { Fabricate(:open_task, project: project) }
@@ -286,7 +286,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'in_review'" do
         it "returns open tasks that have a current pending review" do
-          results = Task.filter_by(status: "in_review")
+          results = Task.filter_by(task_status: "in_review")
           expect(results.count).to eq(1)
           expect(results).to match_array(Task.all_in_review)
         end
@@ -294,7 +294,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'in_progress'" do
         it "returns open tasks that have an unfinished progression" do
-          results = Task.filter_by(status: "in_progress")
+          results = Task.filter_by(task_status: "in_progress")
           expect(results.count).to eq(1)
           expect(results).to match_array(category.tasks.all_in_progress)
         end
@@ -302,7 +302,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'assigned'" do
         it "returns open assigned tasks" do
-          results = Task.filter_by(status: "assigned")
+          results = Task.filter_by(task_status: "assigned")
           expect(results.count).to eq(2)
           expect(results).to match_array(category.tasks.all_assigned)
         end
@@ -310,7 +310,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'open'" do
         it "returns open, reopened, pending, in review, in progress" do
-          results = Task.filter_by(status: "open")
+          results = Task.filter_by(task_status: "open")
           expect(results.count).to eq(6)
           expect(results).to match_array(category.tasks.all_open)
         end
@@ -318,7 +318,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'approved'" do
         it "returns closed tasks that have an approved current review" do
-          results = Task.filter_by(status: "approved")
+          results = Task.filter_by(task_status: "approved")
           expect(results.count).to eq(1)
           expect(results).to match_array(category.tasks.all_approved)
         end
@@ -326,7 +326,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'closed'" do
         it "returns approved/unapproved closed tasks" do
-          results = Task.filter_by(status: "closed")
+          results = Task.filter_by(task_status: "closed")
           expect(results.count).to eq(2)
           expect(results).to match_array(category.tasks.all_closed)
         end
@@ -334,7 +334,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'unassigned'" do
         it "returns unassigned tasks" do
-          results = Task.filter_by(status: "unassigned")
+          results = Task.filter_by(task_status: "unassigned")
           expect(results.count).to eq(1)
           expect(results).to match_array(category.tasks.all_unassigned)
         end
@@ -342,7 +342,7 @@ RSpec.describe Task, type: :model do
 
       context "is set as 'all'" do
         it "returns all category tasks" do
-          tasks = Task.filter_by(status: "all")
+          tasks = Task.filter_by(task_status: "all")
           expect(tasks.count).to eq(8)
           expect(tasks).to match_array(category.tasks)
         end
@@ -430,7 +430,7 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "when :status and :query" do
+    context "when :task_status and :query" do
       context "is 'open' and 'gamma'" do
         let!(:task) { Fabricate(:open_task, summary: "Gamma Good") }
 
@@ -440,7 +440,8 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns matching task" do
-          expect(Task.filter_by(status: "open", query: "gamma")).to eq([task])
+          expect(Task.filter_by(task_status: "open", query: "gamma"))
+            .to eq([task])
         end
       end
     end
@@ -559,7 +560,7 @@ RSpec.describe Task, type: :model do
 
         2.times { Fabricate(:task_assignee, task: task) }
 
-        expect(Task.filter_by(status: "assigned")).to eq([task])
+        expect(Task.filter_by(task_status: "assigned")).to eq([task])
       end
     end
 

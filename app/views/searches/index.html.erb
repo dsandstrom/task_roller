@@ -3,7 +3,13 @@
 <div class="columns">
   <div class="second-column">
     <div class="filters-wrapper">
-      <h3>Filters</h3>
+      <div class="heading-and-link">
+        <h3>Filters</h3>
+
+        <% if searching? %>
+          <%= link_to 'reset', search_path %>
+        <% end %>
+      </div>
 
       <%= render 'searches/form', results: @search_results %>
     </div>

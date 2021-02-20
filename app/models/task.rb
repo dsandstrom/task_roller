@@ -101,7 +101,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # TODO: order open issues first by default
   def self.filter_by(filters = {})
     includes(task_assignees: :assignee, issue: :user)
-      .filter_by_status(filters[:status])
+      .filter_by_status(filters[:task_status])
       .filter_by_type(filters[:task_type_id])
       .filter_by_string(filters[:query])
       .filter_by_assigned_id(filters[:assigned])

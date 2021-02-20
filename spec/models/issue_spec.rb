@@ -204,11 +204,11 @@ RSpec.describe Issue, type: :model do
   describe ".filter_by" do
     context "when no issues" do
       it "returns []" do
-        expect(Issue.filter_by(status: "open")).to eq([])
+        expect(Issue.filter_by(issue_status: "open")).to eq([])
       end
     end
 
-    context "when :status" do
+    context "when :issue_status" do
       context "is set as 'open'" do
         let!(:issue) { Fabricate(:open_issue) }
 
@@ -217,7 +217,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns non-closed issues" do
-          expect(Issue.filter_by(status: "open")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "open")).to eq([issue])
         end
       end
 
@@ -229,7 +229,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns non-closed issues" do
-          expect(Issue.filter_by(status: "closed")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "closed")).to eq([issue])
         end
       end
 
@@ -242,7 +242,8 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns issues with open tasks" do
-          expect(Issue.filter_by(status: "being_worked_on")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "being_worked_on"))
+            .to eq([issue])
         end
       end
 
@@ -256,7 +257,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns issues with approved tasks" do
-          expect(Issue.filter_by(status: "addressed")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "addressed")).to eq([issue])
         end
       end
 
@@ -270,7 +271,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns issues with approved tasks" do
-          expect(Issue.filter_by(status: "resolved")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "resolved")).to eq([issue])
         end
       end
 
@@ -279,7 +280,7 @@ RSpec.describe Issue, type: :model do
         let!(:closed_issue) { Fabricate(:closed_issue) }
 
         it "returns open and closed issues" do
-          issues = Issue.filter_by(status: "all")
+          issues = Issue.filter_by(issue_status: "all")
           expect(issues).to contain_exactly(open_issue, closed_issue)
         end
       end
@@ -326,7 +327,7 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context "when :status and :query" do
+    context "when :issue_status and :query" do
       context "is 'open' and 'gamma'" do
         let!(:issue) { Fabricate(:open_issue, summary: "Gamma Good") }
 
@@ -336,7 +337,8 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns matching issue" do
-          expect(Issue.filter_by(status: "open", query: "gamma")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "open", query: "gamma"))
+            .to eq([issue])
         end
       end
     end
@@ -351,7 +353,7 @@ RSpec.describe Issue, type: :model do
             second_issue.touch
           end
 
-          expect(Issue.filter_by(status: "all"))
+          expect(Issue.filter_by(issue_status: "all"))
             .to eq([first_issue, second_issue])
         end
       end
@@ -457,7 +459,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns it once" do
-        expect(Issue.filter_by(status: "addressed")).to eq([issue])
+        expect(Issue.filter_by(issue_status: "addressed")).to eq([issue])
       end
     end
 
@@ -475,7 +477,7 @@ RSpec.describe Issue, type: :model do
 
       it "returns all project issues" do
         issue = Fabricate(:issue, project: project)
-        expect(project.issues.filter_by(status: "all")).to eq([issue])
+        expect(project.issues.filter_by(issue_status: "all")).to eq([issue])
       end
     end
   end

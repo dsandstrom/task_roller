@@ -1,12 +1,12 @@
 <div class="field">
-  <%= label_tag :status %>
+  <%= label_tag :task_status %>
 
   <div id="task_status_labels" class="task-filter-options">
-    <%= label_tag :status_all,
+    <%= label_tag :task_status_all,
                   class: roller_radio_button_label_class('brown') do %>
-      <%= radio_button_tag :status, :all,
-                           (params[:status].blank? ||
-                             params[:status] == 'all') %>
+      <%= radio_button_tag :task_status, :all,
+                           (params[:task_status].blank? ||
+                            params[:task_status] == 'all') %>
       All
     <% end %>
 
@@ -17,9 +17,9 @@
         klass = roller_radio_button_label_class(color)
       %>
 
-      <%= label_tag "status_#{status}", class: klass do %>
-        <%= radio_button_tag :status, status,
-                             params[:status] == status.to_s %>
+      <%= label_tag "task_status_#{status}", class: klass do %>
+        <%= radio_button_tag :task_status, status,
+                             params[:task_status] == status.to_s %>
         <%= status.to_s.titleize %>
       <% end %>
     <% end %>

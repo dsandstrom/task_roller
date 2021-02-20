@@ -27,11 +27,12 @@
 </div>
 
 
-<% case params[:type] %>
-<% when 'issues' %>
+<div class="issue-filters <%= 'hide' unless params[:type] == 'issues' %>">
   <%= render 'issues/issue_type_filter_field' %>
   <%= render 'issues/status_filter_field' %>
-<% when 'tasks' %>
+</div>
+
+<div class="task-filters <%= 'hide' unless params[:type] == 'tasks' %>">
   <%= render 'tasks/task_type_filter_field' %>
   <%= render 'tasks/status_filter_field' %>
-<% end %>
+</div>
