@@ -8,11 +8,11 @@ class SearchResult < ApplicationRecord
   belongs_to :user
   belongs_to :project
   delegate :category, to: :project
-  # TODO: if issue
-  belongs_to :task_type
-  # TODO: if task
   belongs_to :issue
-  belongs_to :issue_type
+  # TODO: if issue
+  belongs_to :task_type, foreign_key: :type_id
+  # TODO: if task
+  belongs_to :issue_type, foreign_key: :type_id
   has_many :task_assignees, foreign_key: :task_id
   has_many :assignees, through: :task_assignees
 end

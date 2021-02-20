@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_19_011014) do
+ActiveRecord::Schema.define(version: 2021_02_20_042228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,7 +269,7 @@ ActiveRecord::Schema.define(version: 2021_02_19_011014) do
       issues.description,
       issues.closed,
       issues.opened_at,
-      issues.issue_type_id,
+      issues.issue_type_id AS type_id,
       issues.user_id,
       issues.project_id,
       NULL::integer AS issue_id,
@@ -283,7 +283,7 @@ ActiveRecord::Schema.define(version: 2021_02_19_011014) do
       tasks.description,
       tasks.closed,
       tasks.opened_at,
-      tasks.task_type_id AS issue_type_id,
+      tasks.task_type_id AS type_id,
       tasks.user_id,
       tasks.project_id,
       tasks.issue_id,
