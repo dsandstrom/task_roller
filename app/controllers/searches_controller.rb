@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: update issue/task filters
 # TODO: search categories and projects
 
 class SearchesController < ApplicationController

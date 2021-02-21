@@ -47,7 +47,7 @@ hr {
     }
   }
 
-  .search-filter-form {
+  .search-form {
     display: flex;
     margin: 0 1rem;
 
@@ -69,7 +69,7 @@ hr {
   }
 }
 
-.search-filter-form {
+.search-form {
   .issue-filters,
   .task-filters {
     &.hide {
