@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_20_042228) do
+ActiveRecord::Schema.define(version: 2021_02_23_014850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,10 +101,12 @@ ActiveRecord::Schema.define(version: 2021_02_20_042228) do
     t.integer "github_id"
     t.string "github_url"
     t.integer "github_user_id"
+    t.string "status", default: "open", null: false
     t.index ["closed"], name: "index_issues_on_closed"
     t.index ["github_id"], name: "index_issues_on_github_id", unique: true
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
     t.index ["project_id"], name: "index_issues_on_project_id"
+    t.index ["status"], name: "index_issues_on_status"
     t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
@@ -224,9 +226,11 @@ ActiveRecord::Schema.define(version: 2021_02_20_042228) do
     t.datetime "updated_at", null: false
     t.boolean "closed", default: false, null: false
     t.datetime "opened_at", precision: 6
+    t.string "status", default: "open", null: false
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
+    t.index ["status"], name: "index_tasks_on_status"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
