@@ -8,6 +8,8 @@ RSpec.describe "issues/show", type: :view do
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
   let(:closed_issue) { Fabricate(:closed_issue, project: project) }
+  let(:duplicate_issue) { Fabricate(:duplicate_issue, project: project) }
+  let(:resolved_issue) { Fabricate(:resolved_issue, project: project) }
 
   before { @project = project }
 
@@ -270,9 +272,10 @@ RSpec.describe "issues/show", type: :view do
 
     context "when issue closed with a duplicate" do
       before do
-        @issue = assign(:issue, closed_issue)
-        issue_connection = Fabricate(:issue_connection, source: @issue)
-        @source_connection = assign(:source_connection, issue_connection)
+        @issue = assign(:issue, duplicate_issue)
+        @source_connection =
+          assign(:source_connection, duplicate_issue.source_connection)
+        expect(@source_connection).not_to be_nil
       end
 
       it "renders source_connection" do
@@ -331,11 +334,12 @@ RSpec.describe "issues/show", type: :view do
     end
 
     context "when issue is resolved" do
-      let(:issue) { Fabricate(:closed_issue, project: @project) }
+      let(:issue) { Fabricate(:resolved_issue, project: @project) }
 
       before do
         @issue = assign(:issue, issue)
-        @resolution = Fabricate(:resolution, issue: issue, user: @issue.user)
+        @resolution = @issue.current_resolution
+        expect(@resolution).not_to be_nil
       end
 
       it "renders resolution" do
@@ -374,12 +378,9 @@ RSpec.describe "issues/show", type: :view do
     end
 
     context "when issue is addressed" do
-      let(:issue) { Fabricate(:closed_issue, project: @project) }
+      let(:issue) { Fabricate(:addressed_issue, project: @project) }
 
-      before do
-        @issue = assign(:issue, issue)
-        Fabricate(:approved_task, issue: issue)
-      end
+      before { @issue = assign(:issue, issue) }
 
       it "doesn't render disapprove resolution link" do
         render
@@ -494,8 +495,10 @@ RSpec.describe "issues/show", type: :view do
         let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
 
         before do
-          @issue = assign(:issue, closed_issue)
-          @source_connection = assign(:source_connection, issue_connection)
+          @issue = assign(:issue, duplicate_issue)
+          @source_connection =
+            assign(:source_connection, @issue.source_connection)
+          expect(@source_connection).not_to be_nil
         end
 
         it "renders source_connection" do
@@ -597,11 +600,11 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "and closed with a source_connection" do
-        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
-
         before do
-          @issue = assign(:issue, closed_issue)
-          @source_connection = assign(:source_connection, issue_connection)
+          @issue = assign(:issue, duplicate_issue)
+          @source_connection =
+            assign(:source_connection, @issue.source_connection)
+          expect(@source_connection).not_to be_nil
         end
 
         it "renders source_connection" do
@@ -629,8 +632,9 @@ RSpec.describe "issues/show", type: :view do
 
       context "and is closed with resolution" do
         before do
-          @issue = assign(:issue, closed_issue)
-          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+          @issue = assign(:issue, resolved_issue)
+          @resolution = @issue.current_resolution
+          expect(@resolution).not_to be_nil
         end
 
         it "renders resolution" do
@@ -732,9 +736,10 @@ RSpec.describe "issues/show", type: :view do
 
     context "when a source_connection" do
       before do
-        @issue = assign(:issue, issue)
-        issue_connection = Fabricate(:issue_connection, source: @issue)
-        @source_connection = assign(:source_connection, issue_connection)
+        @issue = assign(:issue, duplicate_issue)
+        @source_connection = assign(:source_connection,
+                                    @issue.source_connection)
+        expect(@source_connection).not_to be_nil
       end
 
       it "renders a list of issue_connections" do
@@ -823,8 +828,9 @@ RSpec.describe "issues/show", type: :view do
 
     context "when issue is resolved" do
       before do
-        @issue = assign(:issue, closed_issue)
-        @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+        @issue = assign(:issue, resolved_issue)
+        @resolution = @issue.current_resolution
+        expect(@resolution).not_to be_nil
       end
 
       it "renders resolution" do
@@ -842,12 +848,9 @@ RSpec.describe "issues/show", type: :view do
     end
 
     context "when issue is addressed" do
-      let(:issue) { Fabricate(:closed_issue, project: @project) }
+      let(:issue) { Fabricate(:addressed_issue, project: @project) }
 
-      before do
-        @issue = assign(:issue, issue)
-        Fabricate(:approved_task, issue: issue)
-      end
+      before { @issue = assign(:issue, issue) }
 
       it "doesn't render disapprove resolution link" do
         render
@@ -880,9 +883,9 @@ RSpec.describe "issues/show", type: :view do
 
     context "when issue closed with a duplicate" do
       before do
-        @issue = assign(:issue, closed_issue)
-        issue_connection = Fabricate(:issue_connection, source: @issue)
-        @source_connection = assign(:source_connection, issue_connection)
+        @issue = assign(:issue, duplicate_issue)
+        @source_connection = @issue.source_connection
+        expect(@source_connection).not_to be_nil
       end
 
       it "renders link to issue_connection target" do
@@ -991,11 +994,11 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "and closed with a source_connection" do
-        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
-
         before do
-          @issue = assign(:issue, closed_issue)
-          @source_connection = assign(:source_connection, issue_connection)
+          @issue = assign(:issue, duplicate_issue)
+          @source_connection = assign(:source_connection,
+                                      @issue.source_connection)
+          expect(@source_connection).not_to be_nil
         end
 
         it "renders source_connection" do
@@ -1016,8 +1019,9 @@ RSpec.describe "issues/show", type: :view do
 
       context "and is closed with resolution" do
         before do
-          @issue = assign(:issue, closed_issue)
-          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+          @issue = assign(:issue, resolved_issue)
+          @resolution = @issue.current_resolution
+          expect(@resolution).not_to be_nil
         end
 
         it "renders resolution" do
@@ -1074,11 +1078,11 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "and closed with a source_connection" do
-        let(:issue_connection) { Fabricate(:issue_connection, source: @issue) }
-
         before do
-          @issue = assign(:issue, closed_issue)
-          @source_connection = assign(:source_connection, issue_connection)
+          @issue = assign(:issue, duplicate_issue)
+          @source_connection = assign(:source_connection,
+                                      @issue.source_connection)
+          expect(@source_connection).not_to be_nil
         end
 
         it "renders source_connection" do
@@ -1099,8 +1103,9 @@ RSpec.describe "issues/show", type: :view do
 
       context "and is closed with resolution" do
         before do
-          @issue = assign(:issue, closed_issue)
-          @resolution = Fabricate(:resolution, issue: @issue, user: @issue.user)
+          @issue = assign(:issue, resolved_issue)
+          @resolution = @issue.current_resolution
+          expect(@resolution).not_to be_nil
         end
 
         it "renders resolution" do
@@ -1223,13 +1228,10 @@ RSpec.describe "issues/show", type: :view do
 
         context "is addressed" do
           let(:issue) do
-            Fabricate(:closed_issue, project: @project, user: current_user)
+            Fabricate(:addressed_issue, project: @project, user: current_user)
           end
 
-          before do
-            @issue = assign(:issue, issue)
-            Fabricate(:approved_task, issue: issue)
-          end
+          before { @issue = assign(:issue, issue) }
 
           it "renders disapprove resolution link" do
             render
@@ -1255,13 +1257,13 @@ RSpec.describe "issues/show", type: :view do
 
         context "is resolved" do
           let(:issue) do
-            Fabricate(:closed_issue, project: @project, user: current_user)
+            Fabricate(:resolved_issue, project: @project, user: current_user)
           end
 
           before do
             @issue = assign(:issue, issue)
-            @resolution =
-              Fabricate(:resolution, issue: issue, user: current_user)
+            @resolution = @issue.current_resolution
+            expect(@resolution).not_to be_nil
           end
 
           it "renders resolution" do
@@ -1417,9 +1419,9 @@ RSpec.describe "issues/show", type: :view do
 
       context "when a source_connection" do
         before do
-          @issue = assign(:issue, issue)
-          issue_connection = Fabricate(:issue_connection, source: @issue)
-          @source_connection = assign(:source_connection, issue_connection)
+          @issue = assign(:issue, duplicate_issue)
+          @source_connection = assign(:source_connection,
+                                      @issue.source_connection)
         end
 
         it "renders a list of issue_connections" do

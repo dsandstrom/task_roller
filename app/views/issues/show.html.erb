@@ -7,7 +7,8 @@
                       render(@subscription, issue: @issue),
                       class: "issue-subscription-wrapper" %>
 
-      <% if @issue.addressed? %>
+      <% case @issue.status %>
+      <% when 'addressed' %>
         <% if can?(:create, new_resolution(@issue)) %>
           <%= content_for :actions do %>
             <p>
@@ -17,7 +18,7 @@
             </p>
           <% end %>
         <% end %>
-      <% elsif @issue.current_resolution %>
+      <% when 'resolved' %>
         <% if can?(:destroy, @issue.current_resolution) %>
           <section class="issue-resolution">
             <h4 class="issue-column-title">Resolution</h4>
@@ -25,7 +26,7 @@
             <%= render @issue.current_resolution, issue: @issue %>
           </section>
         <% end %>
-      <% elsif @issue.unresolved? %>
+      <% when 'open', 'being_worked_on' %>
         <% if can?(:create, new_resolution(@issue)) %>
           <%= content_for :actions do %>
             <p>
@@ -55,7 +56,7 @@
         <% end %>
       </section>
 
-      <% if @issue.duplicate? %>
+      <% if @issue.status == 'duplicate' %>
         <section class="issue-duplicatee">
           <h4 class="issue-column-title">Duplicate Of</h4>
           <%= render @source_connection %>
@@ -131,7 +132,7 @@
           <%= render partial: 'issues/history',
                      collection: @issue.history_feed %>
 
-          <% if @issue.addressed? %>
+          <% if @issue.status == 'addressed' %>
             <dt>Tasks</dt>
             <%= content_tag :dd,
                             "addressed issue: #{format_date @issue.addressed_at}",
