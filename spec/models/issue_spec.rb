@@ -30,6 +30,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to respond_to(:open_tasks_count) }
   it { is_expected.to respond_to(:github_id) }
   it { is_expected.to respond_to(:github_url) }
+  it { is_expected.to respond_to(:status) }
 
   it { is_expected.to validate_presence_of(:summary) }
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
@@ -38,6 +39,25 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:issue_type_id) }
   it { is_expected.to validate_presence_of(:project_id) }
+
+  describe "#status" do
+    context "when a valid value" do
+      %w[open being_worked_on addressed resolved duplicate
+         closed].each do |value|
+        before { subject.status = value }
+
+        it { is_expected.to be_valid }
+      end
+    end
+
+    context "when an invalid value" do
+      ["notopen", nil, "", "being worked on"].each do |value|
+        before { subject.status = value }
+
+        it { is_expected.not_to be_valid }
+      end
+    end
+  end
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:issue_type) }

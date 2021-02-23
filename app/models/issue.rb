@@ -47,6 +47,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :issue_type, presence: true, if: :issue_type_id
   validates :project_id, presence: true
   validates :project, presence: true, if: :project_id
+  validates :status, inclusion: { in: STATUS_OPTIONS.keys.map(&:to_s) }
 
   after_create :set_opened_at
 
