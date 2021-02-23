@@ -18,6 +18,16 @@ Fabricator(:closed_issue, from: :issue) do
   status 'closed'
 end
 
+Fabricator(:being_worked_on_issue, from: :open_issue) do
+  status 'being_worked_on'
+
+  after_create do |issue|
+    return if issue.tasks.any?
+
+    Fabricate(:task, issue: issue)
+  end
+end
+
 Fabricator(:addressed_issue, from: :closed_issue) do
   status 'addressed'
 

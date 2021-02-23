@@ -95,7 +95,8 @@ RSpec.describe Issue, type: :model do
 
     before do
       Fabricate(:closed_issue)
-      Fabricate(:task, issue: Fabricate(:issue))
+      Fabricate(:being_worked_on_issue)
+      Fabricate(:closed_issue, status: "open")
     end
 
     it "returns non-closed issues without a task" do
@@ -126,14 +127,12 @@ RSpec.describe Issue, type: :model do
   end
 
   describe ".all_being_worked_on" do
-    let(:issue) { Fabricate(:issue) }
+    let(:issue) { Fabricate(:being_worked_on_issue) }
 
     before do
-      Fabricate(:task, issue: issue)
-
       Fabricate(:issue) # no tasks
-      Fabricate(:closed_task, issue: Fabricate(:issue))
-      Fabricate(:open_task, issue: Fabricate(:closed_issue))
+      Fabricate(:addressed_issue)
+      Fabricate(:being_worked_on_issue, closed: true)
     end
 
     it "returns open issues with an open task" do
@@ -142,32 +141,19 @@ RSpec.describe Issue, type: :model do
   end
 
   describe ".all_addressed" do
-    let(:issue) { Fabricate(:closed_issue) }
-    let(:pending_issue) { Fabricate(:closed_issue) }
-    let(:reopened_issue) { Fabricate(:closed_issue) }
+    let(:issue) { Fabricate(:addressed_issue) }
+    let(:pending_issue) { Fabricate(:addressed_issue) }
+    let(:reopened_issue) { Fabricate(:addressed_issue) }
 
     before do
-      Fabricate(:approved_task, issue: issue)
-      Fabricate(:approved_task, issue: pending_issue)
-      Fabricate(:approved_task, issue: reopened_issue)
-      Fabricate(:closed_task, issue: issue)
-
       Fabricate(:pending_resolution, issue: pending_issue)
       Timecop.freeze(1.day.ago) do
         Fabricate(:approved_resolution, issue: reopened_issue)
       end
 
-      Fabricate(:approved_task, issue: Fabricate(:open_issue))
-      Fabricate(:open_task, issue: Fabricate(:closed_issue))
-      Fabricate(:closed_task, issue: Fabricate(:closed_issue))
-
-      open_task_issue = Fabricate(:closed_issue)
-      Fabricate(:approved_task, issue: open_task_issue)
-      Fabricate(:open_task, issue: open_task_issue)
-
-      resolved_issue = Fabricate(:closed_issue)
-      Fabricate(:approved_task, issue: resolved_issue)
-      Fabricate(:approved_resolution, issue: resolved_issue)
+      Fabricate(:issue)
+      Fabricate(:resolved_issue)
+      Fabricate(:being_worked_on_issue, closed: true)
     end
 
     it "returns closed/unresolved issues with no open tasks" do
@@ -177,10 +163,10 @@ RSpec.describe Issue, type: :model do
   end
 
   describe ".all_resolved" do
-    let(:issue) { Fabricate(:closed_issue) }
+    let(:issue) { Fabricate(:resolved_issue) }
 
     before do
-      Fabricate(:approved_resolution, issue: issue)
+      # Fabricate(:approved_resolution, issue: issue)
       Fabricate(:pending_resolution)
       Fabricate(:disapproved_resolution)
 
@@ -195,29 +181,6 @@ RSpec.describe Issue, type: :model do
 
     it "returns issues with current approved resolutions" do
       expect(Issue.all_resolved).to eq([issue])
-    end
-  end
-
-  describe ".all_unresolved" do
-    let!(:open_issue) { Fabricate(:open_issue) }
-    let(:reopened_issue) { Fabricate(:open_issue) }
-    let(:pending_issue) { Fabricate(:open_issue) }
-    let(:disapproved_issue) { Fabricate(:open_issue) }
-    let(:approved_issue) { Fabricate(:open_issue) }
-
-    before do
-      Fabricate(:approved_resolution, issue: approved_issue)
-      Fabricate(:pending_resolution, issue: pending_issue)
-      Fabricate(:disapproved_resolution, issue: disapproved_issue)
-
-      Timecop.freeze(1.day.ago) do
-        Fabricate(:approved_resolution, issue: reopened_issue)
-      end
-    end
-
-    it "returns open issues without a  current approved resolution" do
-      issues = [open_issue, reopened_issue, pending_issue, disapproved_issue]
-      expect(Issue.all_unresolved).to match_array(issues)
     end
   end
 
@@ -254,7 +217,7 @@ RSpec.describe Issue, type: :model do
       end
 
       context "is set as 'being_worked_on'" do
-        let(:issue) { Fabricate(:open_issue) }
+        let(:issue) { Fabricate(:being_worked_on_issue) }
 
         before do
           Fabricate(:open_task, issue: issue)
@@ -268,10 +231,9 @@ RSpec.describe Issue, type: :model do
       end
 
       context "is set as 'addressed'" do
-        let(:issue) { Fabricate(:closed_issue) }
+        let(:issue) { Fabricate(:addressed_issue) }
 
         before do
-          Fabricate(:approved_task, issue: issue)
           Fabricate(:open_issue)
           Fabricate(:open_task, issue: Fabricate(:issue))
         end
@@ -282,10 +244,9 @@ RSpec.describe Issue, type: :model do
       end
 
       context "is set as 'resolved'" do
-        let(:issue) { Fabricate(:closed_issue) }
+        let(:issue) { Fabricate(:resolved_issue) }
 
         before do
-          Fabricate(:approved_resolution, issue: issue)
           Fabricate(:open_issue)
           Fabricate(:pending_resolution, issue: Fabricate(:issue))
         end
@@ -472,11 +433,9 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when issue has 2 approved tasks" do
-      let(:issue) { Fabricate(:closed_issue) }
+      let(:issue) { Fabricate(:addressed_issue) }
 
-      before do
-        2.times { Fabricate(:approved_task, issue: issue) }
-      end
+      before { Fabricate(:approved_task, issue: issue) }
 
       it "returns it once" do
         expect(Issue.filter_by(issue_status: "addressed")).to eq([issue])
@@ -817,7 +776,7 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe "#working_on?" do
+  describe "#open_tasks?" do
     context "for a open issue" do
       context "and has an open task" do
         let(:issue) { Fabricate(:open_issue) }
@@ -825,7 +784,7 @@ RSpec.describe Issue, type: :model do
         before { Fabricate(:open_task, issue: issue) }
 
         it "returns true" do
-          expect(issue.working_on?).to eq(true)
+          expect(issue.send(:open_tasks?)).to eq(true)
         end
       end
 
@@ -834,7 +793,7 @@ RSpec.describe Issue, type: :model do
         let(:task) { Fabricate(:closed_task, issue: issue) }
 
         it "returns false" do
-          expect(issue.working_on?).to eq(false)
+          expect(issue.send(:open_tasks?)).to eq(false)
         end
       end
     end
@@ -846,7 +805,7 @@ RSpec.describe Issue, type: :model do
         before { Fabricate(:open_task, issue: issue) }
 
         it "returns true" do
-          expect(issue.working_on?).to eq(false)
+          expect(issue.send(:open_tasks?)).to eq(false)
         end
       end
 
@@ -857,18 +816,18 @@ RSpec.describe Issue, type: :model do
         before { Fabricate(:approved_review, task: task) }
 
         it "returns false" do
-          expect(issue.working_on?).to eq(false)
+          expect(issue.send(:open_tasks?)).to eq(false)
         end
       end
     end
   end
 
-  describe "#addressed?" do
+  describe "#tasks_approved?" do
     let(:issue) { Fabricate(:closed_issue) }
 
     context "with no tasks" do
       it "returns false" do
-        expect(issue.addressed?).to eq(false)
+        expect(issue.send(:tasks_approved?)).to eq(false)
       end
     end
 
@@ -876,7 +835,7 @@ RSpec.describe Issue, type: :model do
       before { Fabricate(:approved_task, issue: issue) }
 
       it "returns true" do
-        expect(issue.addressed?).to eq(true)
+        expect(issue.send(:tasks_approved?)).to eq(true)
       end
     end
 
@@ -887,7 +846,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns true" do
-        expect(issue.addressed?).to eq(true)
+        expect(issue.send(:tasks_approved?)).to eq(true)
       end
     end
 
@@ -897,7 +856,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns false" do
-        expect(issue.addressed?).to eq(false)
+        expect(issue.send(:tasks_approved?)).to eq(false)
       end
     end
 
@@ -908,18 +867,18 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns false" do
-        expect(issue.addressed?).to eq(false)
+        expect(issue.send(:tasks_approved?)).to eq(false)
       end
     end
 
     context "when issue resolved" do
       before do
         Fabricate(:approved_task, issue: issue)
-        allow(issue).to receive(:resolved?) { true }
+        allow(issue).to receive(:resolution_approved?) { true }
       end
 
       it "returns false" do
-        expect(issue.addressed?).to eq(false)
+        expect(issue.send(:tasks_approved?)).to eq(false)
       end
     end
 
@@ -930,7 +889,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns false" do
-        expect(issue.addressed?).to eq(false)
+        expect(issue.send(:tasks_approved?)).to eq(false)
       end
     end
 
@@ -941,17 +900,17 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns true" do
-        expect(issue.addressed?).to eq(true)
+        expect(issue.send(:tasks_approved?)).to eq(true)
       end
     end
   end
 
-  describe "#resolved?" do
+  describe "#resolution_approved?" do
     let(:issue) { Fabricate(:closed_issue) }
 
     context "with no resolutions" do
       it "returns false" do
-        expect(issue.resolved?).to eq(false)
+        expect(issue.send(:resolution_approved?)).to eq(false)
       end
     end
 
@@ -962,7 +921,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns true" do
-          expect(issue.resolved?).to eq(true)
+          expect(issue.send(:resolution_approved?)).to eq(true)
         end
       end
 
@@ -972,7 +931,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns false" do
-          expect(issue.resolved?).to eq(false)
+          expect(issue.send(:resolution_approved?)).to eq(false)
         end
       end
 
@@ -982,7 +941,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns false" do
-          expect(issue.resolved?).to eq(false)
+          expect(issue.send(:resolution_approved?)).to eq(false)
         end
       end
     end
@@ -996,7 +955,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns false" do
-        expect(issue.resolved?).to eq(false)
+        expect(issue.send(:resolution_approved?)).to eq(false)
       end
     end
 
@@ -1009,7 +968,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns false" do
-        expect(issue.resolved?).to eq(false)
+        expect(issue.send(:resolution_approved?)).to eq(false)
       end
     end
 
@@ -1025,7 +984,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns true" do
-        expect(issue.resolved?).to eq(true)
+        expect(issue.send(:resolution_approved?)).to eq(true)
       end
     end
   end
@@ -1074,14 +1033,14 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe "#duplicate?" do
+  describe "#source_connection?" do
     let(:issue) { Fabricate(:issue) }
 
     context "when target_issue_connection" do
       before { Fabricate(:issue_connection, target: issue) }
 
       it "returns false" do
-        expect(issue.duplicate?).to eq(false)
+        expect(issue.send(:source_connection?)).to eq(false)
       end
     end
 
@@ -1089,34 +1048,40 @@ RSpec.describe Issue, type: :model do
       before { Fabricate(:issue_connection, source: issue) }
 
       it "returns true" do
-        expect(issue.duplicate?).to eq(true)
+        expect(issue.send(:source_connection?)).to eq(true)
       end
     end
   end
 
-  describe "#status" do
+  describe "#update_status" do
     context "when closed is false" do
       context "and no tasks" do
-        let(:issue) { Fabricate(:issue) }
+        let(:issue) { Fabricate(:issue, status: "closed") }
 
         before do
-          allow(issue).to receive(:working_on?) { false }
+          allow(issue).to receive(:open_tasks?) { false }
         end
 
         it "returns 'open'" do
-          expect(issue.status).to eq("open")
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("open")
         end
       end
 
-      context "and working_on? returns true" do
+      context "and open_tasks? returns true" do
         let(:issue) { Fabricate(:issue) }
 
         before do
-          allow(issue).to receive(:working_on?) { true }
+          allow(issue).to receive(:open_tasks?) { true }
         end
 
-        it "returns 'being worked on'" do
-          expect(issue.status).to eq("being worked on")
+        it "returns 'open'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("being worked on")
         end
       end
     end
@@ -1124,56 +1089,73 @@ RSpec.describe Issue, type: :model do
     context "when closed is true" do
       let(:issue) { Fabricate(:closed_issue) }
 
+      before { issue.update_attribute :status, "almostclosed" }
+
       context "and without tasks" do
         before do
-          allow(issue).to receive(:addressed?) { false }
+          allow(issue).to receive(:tasks_approved?) { false }
         end
 
-        it "returns 'closed'" do
-          expect(issue.status).to eq("closed")
+        it "changes status to 'closed'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("closed")
         end
       end
 
-      context "and addressed? returns true" do
+      context "and tasks_approved? returns true" do
         before do
-          allow(issue).to receive(:addressed?) { true }
-          allow(issue).to receive(:resolved?) { false }
+          allow(issue).to receive(:tasks_approved?) { true }
+          allow(issue).to receive(:resolution_approved?) { false }
         end
 
-        it "returns 'addressed'" do
-          expect(issue.status).to eq("addressed")
+        it "changes status to 'addressed'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("addressed")
         end
       end
 
       context "and resolved? returns true" do
         before do
-          allow(issue).to receive(:addressed?) { false }
-          allow(issue).to receive(:resolved?) { true }
+          allow(issue).to receive(:tasks_approved?) { false }
+          allow(issue).to receive(:resolution_approved?) { true }
         end
 
-        it "returns 'resolved'" do
-          expect(issue.status).to eq("resolved")
+        it "changes status to 'resolved'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("resolved")
         end
       end
 
-      context "and addressed?, resolved? return false" do
+      context "and tasks_approved?, resolved? return false" do
         before do
-          allow(issue).to receive(:addressed?) { false }
-          allow(issue).to receive(:resolved?) { false }
+          allow(issue).to receive(:tasks_approved?) { false }
+          allow(issue).to receive(:resolution_approved?) { false }
         end
 
-        it "returns 'closed'" do
-          expect(issue.status).to eq("closed")
+        it "changes status to 'closed'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("closed")
         end
       end
 
       context "and duplicate? returns true" do
         before do
-          allow(issue).to receive(:duplicate?) { true }
+          allow(issue).to receive(:source_connection?) { true }
         end
 
-        it "returns 'duplicate'" do
-          expect(issue.status).to eq("duplicate")
+        it "changes status to 'duplicate'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("duplicate")
         end
       end
     end

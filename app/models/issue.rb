@@ -61,42 +61,20 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
-  # no tasks
   def self.all_open
-    all_non_closed.where(tasks_count: 0)
+    where(closed: false, status: 'open')
   end
 
-  # with open tasks
   def self.all_being_worked_on
-    all_non_closed.where.not(open_tasks_count: 0)
+    where(closed: false, status: 'being_worked_on')
   end
 
-  # all tasks closed, any approved
-  # no approved resolution, but can have an open resolution
-  # TODO: resolution counter cache?
   def self.all_addressed
-    resolutions_query =
-      'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
-      'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
-    all_closed.joins(tasks: :reviews).left_joins(:resolutions)
-              .where('reviews.approved = ?', true).where(open_tasks_count: 0)
-              .where(resolutions_query, true)
+    where(closed: true, status: 'addressed')
   end
 
-  # current resolution approved
   def self.all_resolved
-    query =
-      'resolutions.approved = ? AND resolutions.created_at > issues.opened_at'
-    all_closed.joins(:resolutions).where(query, true)
-  end
-
-  # no current approved resolution
-  # use all_addressed
-  def self.all_unresolved
-    resolutions_query =
-      'issues.id NOT IN (SELECT DISTINCT(issue_id) FROM resolutions WHERE ' \
-      'resolutions.approved = ? AND resolutions.created_at > issues.opened_at)'
-    all_non_closed.where(resolutions_query, true)
+    where(closed: true, status: 'resolved')
   end
 
   def self.filter_by(filters = {})
@@ -207,50 +185,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @current_resolution ||= current_resolutions.order(created_at: :desc).first
   end
 
-  # - closed
-  #   - all tasks closed, any approved = 'addressed'
-  #   - resolution approval open = 'addressed'
-  #   - resolution approval rejected = 'unresolved'
-  #   - resolution approved -> 'resolved'
-  #   - all tasks closed but none approved = invalid, won't fix
-  #   - no tasks = invalid or won't fix
-  # - open
-  #   - no tasks or no approved tasks = 'open'
-  #   - tasks open = 'being worked on'
-  def status
-    @status ||=
-      if closed?
-        closed_status
-      else
-        open_status
-      end
-  end
-
-  def working_on?
-    return @working_on unless @working_on.nil?
-
-    @working_on = open? && open_tasks.any?
-  end
-
-  def addressed?
-    return @addressed unless @addressed.nil?
-
-    @addressed =
-      !resolved? && closed && open_tasks.none? &&
-      tasks.any?(&:approved?)
-  end
-
-  def resolved?
-    return @resolved unless @resolved.nil?
-
-    @resolved =
-      if current_resolution
-        current_resolution.approved?
-      else
-        false
-      end
-  end
-
   def unresolved?
     return @unresolved unless @unresolved.nil?
 
@@ -292,15 +226,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).reorder(addressed_at: :desc).first&.addressed_at
   end
 
-  def duplicate?
-    @duplicate_ = source_connection.present? if @duplicate_.nil?
-    @duplicate_
-  end
-
   # feed of closures, reopenings, duplicate, tasks, resolutions
   # TODO: add addressed_at (hardcoded on show right now)
   def history_feed
     @history_feed ||= build_history_feed
+  end
+
+  def update_status
+    update_attribute :status, build_status
   end
 
   private
@@ -311,24 +244,76 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       update_column :opened_at, updated_at
     end
 
-    def open_status
-      if working_on?
-        'being worked on'
+    # - closed
+    #   - all tasks closed, any approved = 'addressed'
+    #   - resolution approval open = 'addressed'
+    #   - resolution approval rejected = 'unresolved'
+    #   - resolution approved -> 'resolved'
+    #   - all tasks closed but none approved = invalid, won't fix
+    #   - no tasks = invalid or won't fix
+    # - open
+    #   - no tasks or no approved tasks = 'open'
+    #   - tasks open = 'being worked on'
+    def build_status
+      if closed?
+        build_closed_status
+      else
+        build_open_status
+      end
+    end
+
+    def build_open_status
+      if open_tasks?
+        'being_worked_on'
       else
         'open'
       end
     end
 
-    def closed_status
-      if resolved?
+    def build_closed_status
+      if resolution_approved?
         'resolved'
-      elsif addressed?
+      elsif tasks_approved?
         'addressed'
-      elsif duplicate?
+      elsif source_connection?
         'duplicate'
       else
         'closed'
       end
+    end
+
+    def open_tasks?
+      return @open_tasks_ unless @open_tasks_.nil?
+
+      @open_tasks_ = open? && open_tasks.any?
+    end
+
+    # all tasks closed, any approved
+    # no approved resolution, but can have an open resolution
+    def tasks_approved?
+      return @tasks_approved unless @tasks_approved.nil?
+
+      @tasks_approved =
+        !resolution_approved? && closed && open_tasks.none? &&
+        tasks.any?(&:approved?)
+    end
+
+    # current resolution approved
+    def resolution_approved?
+      return @resolution_approved unless @resolution_approved.nil?
+
+      @resolution_approved =
+        if current_resolution
+          current_resolution.approved?
+        else
+          false
+        end
+    end
+
+    def source_connection?
+      return @source_connection_ unless @source_connection_.nil?
+
+      @source_connection_ = source_connection.present?
     end
 
     def build_history_feed
