@@ -7,6 +7,7 @@
       <%= radio_button_tag :issue_status, :all,
                            (params[:issue_status].blank? ||
                             params[:issue_status] == 'all') %>
+      <%= icon "buffer" %>
       All
     <% end %>
 
