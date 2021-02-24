@@ -1062,11 +1062,15 @@ RSpec.describe Issue, type: :model do
           allow(issue).to receive(:open_tasks?) { false }
         end
 
-        it "returns 'open'" do
+        it "changes status to 'open'" do
           expect do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("open")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
         end
       end
 
@@ -1077,11 +1081,15 @@ RSpec.describe Issue, type: :model do
           allow(issue).to receive(:open_tasks?) { true }
         end
 
-        it "returns 'open'" do
+        it "changes status to 'being_worked_on'" do
           expect do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("being_worked_on")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
         end
       end
     end
@@ -1102,6 +1110,10 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
       end
 
       context "and tasks_approved? returns true" do
@@ -1115,6 +1127,10 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("addressed")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
         end
       end
 
@@ -1130,6 +1146,10 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("resolved")
         end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
       end
 
       context "and tasks_approved?, resolved? return false" do
@@ -1144,6 +1164,10 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
       end
 
       context "and duplicate? returns true" do
@@ -1156,6 +1180,10 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("duplicate")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
         end
       end
     end
@@ -1178,6 +1206,10 @@ RSpec.describe Issue, type: :model do
           issue.reload
         end.to change(issue, :status).to("closed")
       end
+
+      it "returns true" do
+        expect(issue.close).to eq(true)
+      end
     end
 
     context "when closed" do
@@ -1195,6 +1227,10 @@ RSpec.describe Issue, type: :model do
           issue.close
           issue.reload
         end.not_to change(issue, :status)
+      end
+
+      it "returns true" do
+        expect(issue.close).to eq(true)
       end
     end
   end
@@ -1227,6 +1263,10 @@ RSpec.describe Issue, type: :model do
           issue.reload
         end.to change(issue, :opened_at)
       end
+
+      it "returns true" do
+        expect(issue.reopen).to eq(true)
+      end
     end
 
     context "when open" do
@@ -1255,6 +1295,10 @@ RSpec.describe Issue, type: :model do
           issue.reopen
           issue.reload
         end.to change(issue, :opened_at)
+      end
+
+      it "returns true" do
+        expect(issue.reopen).to eq(true)
       end
     end
   end
