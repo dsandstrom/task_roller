@@ -123,7 +123,7 @@ module IssuesHelper
       color = option[:color]
       return unless color
 
-      content_tag :span, value,
+      content_tag :span, value.titleize,
                   class: "status-tag roller-type-color-#{color}"
     end
 end
