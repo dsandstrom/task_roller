@@ -1177,6 +1177,18 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(worker.task_subscriptions, :count).by(1)
               end
             end
+
+            context "when first task for a issue" do
+              before { valid_attributes.merge! issue_id: issue.id }
+
+              it "updates issue status" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                  issue.reload
+                end.to change(issue, :status).to("being_worked_on")
+              end
+            end
           end
 
           context "with invalid params" do
@@ -1428,6 +1440,16 @@ RSpec.describe TasksController, type: :controller do
                                      task: new_attributes }
               url = task_url(task)
               expect(response).to redirect_to(url)
+            end
+
+            it "updates the requested task's issue" do
+              task = Fabricate(:task, project: project, user: current_user,
+                                      issue: issue)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+                issue.reload
+              end.to change(issue, :status).to("being_worked_on")
             end
           end
 
