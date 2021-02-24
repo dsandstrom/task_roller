@@ -193,10 +193,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def close
     update closed: true
+    update_status
   end
 
   def reopen
     update closed: false, opened_at: Time.now
+    update_status
   end
 
   def subscribe_user(subscriber = nil)

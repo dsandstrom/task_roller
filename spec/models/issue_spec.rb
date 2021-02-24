@@ -1081,7 +1081,7 @@ RSpec.describe Issue, type: :model do
           expect do
             issue.update_status
             issue.reload
-          end.to change(issue, :status).to("being worked on")
+          end.to change(issue, :status).to("being_worked_on")
         end
       end
     end
@@ -1171,16 +1171,30 @@ RSpec.describe Issue, type: :model do
           issue.reload
         end.to change(issue, :closed).to(true)
       end
+
+      it "changes status to 'closed'" do
+        expect do
+          issue.close
+          issue.reload
+        end.to change(issue, :status).to("closed")
+      end
     end
 
     context "when closed" do
       let(:issue) { Fabricate(:closed_issue) }
 
-      it "doesn't change issue" do
+      it "doesn't change closed" do
         expect do
           issue.close
           issue.reload
         end.not_to change(issue, :closed)
+      end
+
+      it "doesn't change status" do
+        expect do
+          issue.close
+          issue.reload
+        end.not_to change(issue, :status)
       end
     end
   end
@@ -1200,6 +1214,13 @@ RSpec.describe Issue, type: :model do
         end.to change(issue, :closed).to(false)
       end
 
+      it "changes status to 'open'" do
+        expect do
+          issue.reopen
+          issue.reload
+        end.to change(issue, :status).to("open")
+      end
+
       it "changes opened_at" do
         expect do
           issue.reopen
@@ -1215,11 +1236,18 @@ RSpec.describe Issue, type: :model do
         issue.update opened_at: 1.week.ago
       end
 
-      it "doesn't change issue" do
+      it "doesn't change closed" do
         expect do
           issue.reopen
           issue.reload
         end.not_to change(issue, :closed)
+      end
+
+      it "doesn't change status" do
+        expect do
+          issue.reopen
+          issue.reload
+        end.not_to change(issue, :status)
       end
 
       it "changes opened_at" do
