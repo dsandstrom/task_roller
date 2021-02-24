@@ -56,6 +56,7 @@ class Resolution < ApplicationRecord
     return false unless issue.valid?
 
     update(approved: false) && issue.reopen
+    issue.update_status
   end
 
   def status
