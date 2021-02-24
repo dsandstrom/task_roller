@@ -1236,7 +1236,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "for their own Issue" do
         context "with valid params" do
-          it "updates the requested issue" do
+          it "updates the requested issue summary" do
             issue = Fabricate(:issue, project: project, user: admin)
 
             expect do
@@ -1244,6 +1244,18 @@ RSpec.describe IssuesController, type: :controller do
                                      issue: new_attributes }
               issue.reload
             end.to change(issue, :summary).to("New Summary")
+          end
+
+          it "updates the requested issue status" do
+            issue = Fabricate(:issue, project: project, user: admin)
+            issue.update_attribute :closed, true
+            Fabricate(:approved_resolution, issue: issue)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :status).to("resolved")
           end
 
           it "redirects to the issue" do

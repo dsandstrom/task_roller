@@ -54,6 +54,7 @@ class IssuesController < ApplicationController
 
   def update
     if @issue.update(issue_params)
+      @issue.update_status
       redirect_to @issue, success: 'Issue was successfully updated.'
     else
       set_form_options
