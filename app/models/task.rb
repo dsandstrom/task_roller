@@ -238,8 +238,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish
 
-    close_issue
     update closed: true
+    close_issue
   end
 
   # TODO: show outdated reviews in history

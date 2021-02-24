@@ -1549,6 +1549,8 @@ RSpec.describe Task, type: :model do
       let(:issue) { Fabricate(:open_issue) }
       let(:task) { Fabricate(:open_task, issue: issue) }
 
+      before { Fabricate(:approved_review, task: task) }
+
       context "that has no other tasks" do
         it "changes closed to true" do
           expect do
@@ -1562,6 +1564,13 @@ RSpec.describe Task, type: :model do
             task.close
             issue.reload
           end.to change(issue, :closed).to(true)
+        end
+
+        it "changes the issues's status to 'addressed'" do
+          expect do
+            task.close
+            issue.reload
+          end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
@@ -1586,6 +1595,13 @@ RSpec.describe Task, type: :model do
           end.not_to change(issue, :closed)
         end
 
+        it "doesn't change the issues's status" do
+          expect do
+            task.close
+            issue.reload
+          end.not_to change(issue, :status)
+        end
+
         it "returns true" do
           expect(task.close).to eq(true)
         end
@@ -1606,6 +1622,13 @@ RSpec.describe Task, type: :model do
             task.close
             issue.reload
           end.to change(issue, :closed).to(true)
+        end
+
+        it "changes the issues's status to 'addressed'" do
+          expect do
+            task.close
+            issue.reload
+          end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
