@@ -4,17 +4,19 @@
 %>
 
 <div class="filters-wrapper">
-  <h3>Filters</h3>
+  <div class="heading-and-link">
+    <h3>Filters</h3>
+
+    <% if searching? %>
+      <%= link_to 'reset', index_path %>
+    <% end %>
+  </div>
 
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <%= render 'shared/string_filter_field' %>
     <%= render 'issues/status_filter_field' %>
     <%= render 'issues/issue_type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
-
-    <% if searching? %>
-      <p><%= link_to 'Clear filters', index_path %></p>
-    <% end %>
 
     <div class="actions">
       <%= submit_tag 'Filter' %>

@@ -4,17 +4,19 @@ return unless path
 %>
 
 <div class="filters-wrapper">
-  <h3>Filters</h3>
+  <div class="heading-and-link">
+    <h3>Filters</h3>
+
+    <% if searching? %>
+      <%= link_to 'reset', path %>
+    <% end %>
+  </div>
 
   <%= form_tag path, method: :get, class: "task-filter-form" do %>
     <%= render 'shared/string_filter_field' %>
     <%= render 'tasks/status_filter_field' %>
     <%= render 'tasks/task_type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
-
-    <% if searching? %>
-      <p><%= link_to 'Clear filters', path %></p>
-    <% end %>
 
     <div class="actions">
       <%= submit_tag 'Filter' %>
