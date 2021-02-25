@@ -166,7 +166,6 @@ RSpec.describe Issue, type: :model do
     let(:issue) { Fabricate(:resolved_issue) }
 
     before do
-      # Fabricate(:approved_resolution, issue: issue)
       Fabricate(:pending_resolution)
       Fabricate(:disapproved_resolution)
 
