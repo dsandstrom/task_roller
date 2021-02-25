@@ -121,6 +121,7 @@ module TasksHelper
       color = option[:color]
       return unless color
 
-      content_tag :span, value, class: "status-tag roller-type-color-#{color}"
+      content_tag :span, value.titleize,
+                  class: "status-tag roller-type-color-#{color}"
     end
 end

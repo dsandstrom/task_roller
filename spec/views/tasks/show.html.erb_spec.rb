@@ -10,6 +10,10 @@ RSpec.describe "tasks/show", type: :view do
   let(:project) { Fabricate(:project, category: category) }
   let(:task) { Fabricate(:task, project: project) }
   let(:closed_task) { Fabricate(:closed_task, project: project) }
+  let(:in_review_task) { Fabricate(:in_review_task, project: project) }
+  let(:duplicate_task) { Fabricate(:duplicate_task, project: project) }
+  let(:approved_task) { Fabricate(:approved_task, project: project) }
+  let(:pending_task) { Fabricate(:pending_task, project: project) }
 
   before(:each) { @category = assign(:category, category) }
 
@@ -152,7 +156,7 @@ RSpec.describe "tasks/show", type: :view do
     end
 
     context "when task is open" do
-      let(:task) { Fabricate(:task) }
+      let(:task) { Fabricate(:open_task) }
 
       before { @task = assign(:task, task) }
 
@@ -258,8 +262,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is in review" do
       before do
-        @task = assign(:task, task)
-        @review = assign(:review, Fabricate(:pending_review, task: @task))
+        @task = assign(:task, in_review_task)
+        @review = assign(:review, @task.current_review)
       end
 
       it "renders approval link" do
@@ -326,9 +330,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is closed with source_connection" do
       before do
-        @task = assign(:task, closed_task)
-        @source_connection =
-          assign(:source_connection, Fabricate(:task_connection, source: @task))
+        @task = assign(:task, duplicate_task)
+        @source_connection = assign(:source_connection, @task.source_connection)
       end
 
       it "renders link to target task" do
@@ -370,9 +373,9 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is closed with approved review" do
       before do
-        @task = assign(:task, closed_task)
+        @task = assign(:task, approved_task)
         assign(:user, @task.user)
-        @review = assign(:review, Fabricate(:approved_review, task: @task))
+        @review = assign(:review, @task.current_review)
       end
 
       it "doesn't render a new task connection link" do
@@ -571,11 +574,11 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when a pending review" do
       before do
-        @task = assign(:task, task)
+        @task = assign(:task, in_review_task)
         @user = assign(:user, @task.user)
         @task.assignees << @task.user
         assign(:assignees, [@user])
-        @review = assign(:review, Fabricate(:pending_review, task: @task))
+        @review = assign(:review, @task.current_review)
       end
 
       it "doesn't render destroy review link" do
@@ -711,6 +714,7 @@ RSpec.describe "tasks/show", type: :view do
       context "and in review" do
         before do
           @review = assign(:review, Fabricate(:pending_review, task: @task))
+          @task.update_status
         end
 
         it "renders approval link" do
@@ -740,9 +744,9 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, closed_task)
-          task_connection = Fabricate(:task_connection, source: @task)
-          @source_connection = assign(:source_connection, task_connection)
+          @task = assign(:task, duplicate_task)
+          @source_connection = assign(:source_connection,
+                                      @task.source_connection)
         end
 
         it "renders link to target task" do
@@ -818,6 +822,7 @@ RSpec.describe "tasks/show", type: :view do
       context "and in review" do
         before do
           @review = assign(:review, Fabricate(:pending_review, task: @task))
+          @task.update_status
         end
 
         it "renders approval link" do
@@ -847,9 +852,8 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, closed_task)
-          task_connection = Fabricate(:task_connection, source: @task)
-          @source_connection = assign(:source_connection, task_connection)
+          @task = assign(:task, duplicate_task)
+          @source_connection = assign(:source_connection, @task.source_connection)
         end
 
         it "renders link to target task" do
@@ -965,9 +969,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, task)
-        @source_connection = assign(:source_connection,
-                                    Fabricate(:task_connection, source: @task))
+        @task = assign(:task, duplicate_task)
+        @source_connection = assign(:source_connection, @task.source_connection)
       end
 
       it "renders link to target task" do
@@ -1081,10 +1084,10 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when a pending review" do
       before do
-        @task = assign(:task, task)
+        @task = assign(:task, in_review_task)
         @task.assignees << @task.user
         assign(:assignees, [@task.user])
-        @review = assign(:review, Fabricate(:pending_review, task: @task))
+        @review = assign(:review, @task.current_review)
       end
 
       it "doesn't render destroy review link" do
@@ -1273,6 +1276,7 @@ RSpec.describe "tasks/show", type: :view do
 
           before do
             @source_connection = assign(:source_connection, source_connection)
+            task.update_status
           end
 
           it "doesn't render close link" do
@@ -1404,9 +1408,8 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, closed_task)
-          task_connection = Fabricate(:task_connection, source: @task)
-          @source_connection = assign(:source_connection, task_connection)
+          @task = assign(:task, duplicate_task)
+          @source_connection = assign(:source_connection, @task.source_connection)
         end
 
         it "renders link to target task" do
@@ -1524,6 +1527,7 @@ RSpec.describe "tasks/show", type: :view do
         before do
           @task = assign(:task, task)
           @review = assign(:review, Fabricate(:pending_review, task: @task))
+          @task.update_status
         end
 
         it "renders approval link" do
@@ -1553,9 +1557,9 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, closed_task)
-          task_connection = Fabricate(:task_connection, source: @task)
-          @source_connection = assign(:source_connection, task_connection)
+          @task = assign(:task, duplicate_task)
+          @source_connection = assign(:source_connection,
+                                      @task.source_connection)
         end
 
         it "renders link to target task" do
@@ -1806,6 +1810,7 @@ RSpec.describe "tasks/show", type: :view do
       context "with a pending review" do
         before do
           @review = assign(:review, Fabricate(:pending_review, task: @task))
+          @task.update_status
         end
 
         it "doesn't render destroy review link" do
@@ -1942,6 +1947,7 @@ RSpec.describe "tasks/show", type: :view do
       context "with a pending review" do
         before do
           @review = assign(:review, Fabricate(:pending_review, task: @task))
+          @task.update_status
         end
 
         it "doesn't render destroy review link" do
@@ -2054,9 +2060,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, task)
-        @source_connection = assign(:source_connection,
-                                    Fabricate(:task_connection, source: @task))
+        @task = assign(:task, duplicate_task)
+        @source_connection = assign(:source_connection, @task.source_connection)
       end
 
       it "renders link to target task" do
@@ -2253,9 +2258,8 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, task)
-        @source_connection = assign(:source_connection,
-                                    Fabricate(:task_connection, source: @task))
+        @task = assign(:task, duplicate_task)
+        @source_connection = assign(:source_connection, @task.source_connection)
       end
 
       it "renders link to target task" do

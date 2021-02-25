@@ -11,7 +11,7 @@
       All
     <% end %>
 
-    <% %i[open unassigned assigned in_progress in_review approved
+    <% %i[open assigned in_progress in_review approved duplicate
           closed].each do |status| %>
       <%
         color = Task::STATUS_OPTIONS[status][:color]

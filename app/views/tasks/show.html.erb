@@ -151,7 +151,7 @@
             </p>
           <% end %>
         <% end %>
-      <% elsif @task.closed? && !@task.source_connection %>
+      <% elsif @task.closed? %>
         <% if can?(:create, new_task_reopening(@task)) %>
           <%= content_for :actions do %>
             <p>
