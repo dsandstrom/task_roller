@@ -241,7 +241,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def update_status
-    update_attribute :status, build_status
+    update_column :status, build_status
   end
 
   private

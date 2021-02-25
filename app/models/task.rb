@@ -313,7 +313,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def update_status
-    update_attribute :status, build_status
+    update_column :status, build_status
   end
 
   private
