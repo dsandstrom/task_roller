@@ -88,6 +88,13 @@ RSpec.describe TaskClosuresController, type: :controller do
             end.to change(task, :closed).to(true)
           end
 
+          it "changes the requested task's status" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+              task.reload
+            end.to change(task, :status).to("closed")
+          end
+
           it "redirects to the created task_closure" do
             post :create, params: { task_id: task.to_param }
             expect(response).to redirect_to(task)

@@ -92,6 +92,14 @@ RSpec.describe TaskConnectionsController, type: :controller do
             end.to change(source_task, :closed).to(true)
           end
 
+          it "changes the source task's status" do
+            expect do
+              post :create, params: { source_id: source_task.to_param,
+                                      task_connection: valid_attributes }
+              source_task.reload
+            end.to change(source_task, :status).to("duplicate")
+          end
+
           it "redirects to the created task_connection" do
             post :create, params: { source_id: source_task.to_param,
                                     task_connection: valid_attributes }
@@ -156,7 +164,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:source_task) { Fabricate(:closed_task, project: project) }
+    let(:source_task) { Fabricate(:duplicate_task, project: project) }
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
@@ -184,6 +192,14 @@ RSpec.describe TaskConnectionsController, type: :controller do
           expect do
             delete :destroy, params: { id: task_connection.to_param }
           end.to change(source_task.reopenings, :count).by(1)
+        end
+
+        it "changes the source_task's status" do
+          task_connection = Fabricate(:task_connection, source: source_task)
+          expect do
+            delete :destroy, params: { id: task_connection.to_param }
+            source_task.reload
+          end.to change(source_task, :status).to("open")
         end
 
         it "redirects to the task_connections list" do

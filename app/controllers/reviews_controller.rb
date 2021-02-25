@@ -20,6 +20,7 @@ class ReviewsController < ApplicationController
 
   def destroy
     @review.destroy
+    @task.update_status
     redirect_back fallback_location: @task,
                   notice: 'Review was successfully destroyed.'
   end

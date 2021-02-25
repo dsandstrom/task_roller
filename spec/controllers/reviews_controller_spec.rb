@@ -118,6 +118,13 @@ RSpec.describe ReviewsController, type: :controller do
               end.to change(current_user.reviews, :count).by(1)
             end
 
+            it "updates request task's status" do
+              expect do
+                post :create, params: { task_id: task.to_param }
+                task.reload
+              end.to change(task, :status).to("in_review")
+            end
+
             it "redirects to the task" do
               post :create, params: { task_id: task.to_param }
               expect(response).to redirect_to(path)
@@ -178,6 +185,8 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:task) { Fabricate(:task, project: project, status: "in_review") }
+
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -185,12 +194,23 @@ RSpec.describe ReviewsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when their review is pending and task open" do
+          before { task.assignees << current_user }
+
           it "destroys the requested review" do
             review = Fabricate(:pending_review, task: task, user: current_user)
             expect do
               delete :destroy, params: { task_id: task.to_param,
                                          id: review.to_param }
             end.to change(Review, :count).by(-1)
+          end
+
+          it "updates request task's status" do
+            review = Fabricate(:pending_review, task: task, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: review.to_param }
+              task.reload
+            end.to change(task, :status).to("assigned")
           end
 
           it "redirects to the reviews list" do
@@ -204,6 +224,8 @@ RSpec.describe ReviewsController, type: :controller do
 
         context "when task is closed" do
           let(:task) { Fabricate(:closed_task, project: project) }
+
+          before { task.assignees << current_user }
 
           it "doesn't destroy the requested review" do
             review = Fabricate(:review, task: task, user: current_user)
@@ -326,6 +348,15 @@ RSpec.describe ReviewsController, type: :controller do
             end.to change(review, :user_id).to(current_user.id)
           end
 
+          it "updates the requested tasks's status" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              put :approve, params: { task_id: task.to_param,
+                                      id: review.to_param }
+              task.reload
+            end.to change(task, :status).to("approved")
+          end
+
           it "subscribes the reviewer" do
             review = Fabricate(:pending_review, task: task)
             expect do
@@ -393,6 +424,8 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "PUT #disapprove" do
+    let(:task) { Fabricate(:task, project: project, status: "in_review") }
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -416,6 +449,15 @@ RSpec.describe ReviewsController, type: :controller do
                                          id: review.to_param }
               review.reload
             end.to change(review, :user_id).to(current_user.id)
+          end
+
+          it "updates the requested tasks's status" do
+            review = Fabricate(:pending_review, task: task)
+            expect do
+              put :disapprove, params: { task_id: task.to_param,
+                                         id: review.to_param }
+              task.reload
+            end.to change(task, :status).to("open")
           end
 
           it "subscribes the reviewer" do

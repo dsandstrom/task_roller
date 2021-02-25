@@ -122,6 +122,14 @@ RSpec.describe TaskAssigneesController, type: :controller do
               end.to change(current_user.task_assignees, :count).by(1)
             end
 
+            it "updates the requested task's status" do
+              task = Fabricate(:task, project: project)
+              expect do
+                post :create, params: { task_id: task.to_param }
+                task.reload
+              end.to change(task, :status).to("assigned")
+            end
+
             it "redirects to the task" do
               task = Fabricate(:task, project: project)
               url = task_path(task)
@@ -330,7 +338,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:task) { Fabricate(:task) }
+    let(:task) { Fabricate(:task, status: "assigned") }
 
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
@@ -346,6 +354,16 @@ RSpec.describe TaskAssigneesController, type: :controller do
               delete :destroy, params: { task_id: task.to_param,
                                          id: task_assignee.to_param }
             end.to change(current_user.task_assignees, :count).by(-1)
+          end
+
+          it "changes the requested task's status" do
+            task_assignee =
+              Fabricate(:task_assignee, task: task, assignee: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+              task.reload
+            end.to change(task, :status).to("open")
           end
 
           it "redirects to the task_assignees list" do

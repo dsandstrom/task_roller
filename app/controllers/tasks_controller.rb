@@ -42,6 +42,7 @@ class TasksController < ApplicationController
   def update
     if @task.update(task_params)
       @task.subscribe_assignees
+      @task.update_status
       @task.issue&.update_status
       redirect_to @task, success: 'Task was successfully updated.'
     else

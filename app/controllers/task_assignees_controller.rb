@@ -13,6 +13,7 @@ class TaskAssigneesController < ApplicationController
 
     if @task_assignee.save
       @task.subscribe_user(current_user)
+      @task.update_status
       redirect_to @task, notice: 'Assigned to task.'
     else
       render :new
@@ -21,6 +22,7 @@ class TaskAssigneesController < ApplicationController
 
   def destroy
     @task_assignee.destroy
+    @task.update_status
     redirect_to @task, notice: 'Unassigned from task.'
   end
 end

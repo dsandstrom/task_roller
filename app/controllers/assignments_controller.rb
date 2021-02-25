@@ -13,6 +13,7 @@ class AssignmentsController < ApplicationController
 
   def update
     if @task.update(task_params)
+      @task.update_status
       @task.subscribe_assignees
       redirect_to @task, notice: 'Task assignment was successfully updated.'
     else

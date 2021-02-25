@@ -1325,13 +1325,23 @@ RSpec.describe TasksController, type: :controller do
 
         context "when their task" do
           context "with valid params" do
-            it "updates the requested task" do
+            it "updates the requested task's summary" do
               task = Fabricate(:task, project: project, user: current_user)
               expect do
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
                 task.reload
               end.to change(task, :summary).to("New Summary")
+            end
+
+            it "updates the requested task's status" do
+              task = Fabricate(:task, project: project, user: current_user)
+              Fabricate(:progression, task: task)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.to change(task, :status).to("in_progress")
             end
 
             it "redirects to the task" do

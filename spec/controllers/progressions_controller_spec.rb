@@ -80,6 +80,13 @@ RSpec.describe ProgressionsController, type: :controller do
               end.to change(task.progressions, :count).by(1)
             end
 
+            it "changes the task status" do
+              expect do
+                post :create, params: { task_id: task.to_param }
+                task.reload
+              end.to change(task, :status).to("in_progress")
+            end
+
             it "redirects to the task" do
               post :create, params: { task_id: task.to_param }
               expect(response).to redirect_to(path)
@@ -141,6 +148,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
   describe "PUT #finish" do
     let(:new_user) { Fabricate(:user_worker) }
+    let(:task) { Fabricate(:open_task, status: "in_progress") }
     let(:path) { task_path(task) }
 
     %w[admin reviewer worker].each do |employee_type|
@@ -162,6 +170,16 @@ RSpec.describe ProgressionsController, type: :controller do
                                          id: progression.to_param }
                 progression.reload
               end.to change(progression, :finished).to(true)
+            end
+
+            it "updates the requested task's status" do
+              progression =
+                Fabricate(:progression, task: task, user: current_user)
+              expect do
+                patch :finish, params: { task_id: task.to_param,
+                                         id: progression.to_param }
+                task.reload
+              end.to change(task, :status).to("assigned")
             end
 
             it "redirects to the task" do
@@ -272,6 +290,7 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:task) { Fabricate(:open_task, status: "in_progress") }
     let(:path) { task_path(task) }
 
     %w[admin].each do |employee_type|
@@ -286,6 +305,15 @@ RSpec.describe ProgressionsController, type: :controller do
             delete :destroy, params: { task_id: task.to_param,
                                        id: progression.to_param }
           end.to change(Progression, :count).by(-1)
+        end
+
+        it "updates the requested task" do
+          progression = Fabricate(:progression, task: task)
+          expect do
+            delete :destroy, params: { task_id: task.to_param,
+                                       id: progression.to_param }
+            task.reload
+          end.to change(task, :status).to("open")
         end
 
         it "redirects to task" do

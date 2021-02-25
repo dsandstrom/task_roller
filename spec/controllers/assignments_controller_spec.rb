@@ -154,6 +154,15 @@ RSpec.describe AssignmentsController, type: :controller do
               end.to change(task, :assignee_ids)
             end
 
+            it "updates the requested task's status" do
+              task = Fabricate(:task, project: project)
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: valid_attributes }
+                task.reload
+              end.to change(task, :status).to("assigned")
+            end
+
             it "subscribes the assignees" do
               task = Fabricate(:task, project: project)
               expect do

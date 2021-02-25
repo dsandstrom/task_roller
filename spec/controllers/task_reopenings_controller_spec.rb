@@ -62,6 +62,13 @@ RSpec.describe TaskReopeningsController, type: :controller do
             end.to change(task, :closed).to(false)
           end
 
+          it "changes the requested task's status" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+              task.reload
+            end.to change(task, :status).to("open")
+          end
+
           it "redirects to the created task_reopening" do
             post :create, params: { task_id: task.to_param }
             expect(response).to redirect_to(task)
