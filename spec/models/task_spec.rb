@@ -56,6 +56,25 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:closures) }
   it { is_expected.to have_many(:reopenings) }
 
+  describe "#status" do
+    context "when a valid value" do
+      %w[open assigned in_progress in_review approved duplicate
+         closed].each do |value|
+        before { subject.status = value }
+
+        it { is_expected.to be_valid }
+      end
+    end
+
+    context "when an invalid value" do
+      ["notopen", nil, "", "in progress"].each do |value|
+        before { subject.status = value }
+
+        it { is_expected.not_to be_valid }
+      end
+    end
+  end
+
   # CLASS
 
   describe ".all_non_closed" do

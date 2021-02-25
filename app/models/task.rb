@@ -52,6 +52,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :task_type, presence: true, if: :task_type_id
   validates :project_id, presence: true
   validates :project, presence: true, if: :project_id
+  validates :status, inclusion: { in: STATUS_OPTIONS.keys.map(&:to_s) }
 
   after_create :set_opened_at
   after_save :update_issue_counts
