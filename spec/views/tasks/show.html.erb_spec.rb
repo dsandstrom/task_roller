@@ -853,7 +853,8 @@ RSpec.describe "tasks/show", type: :view do
       context "and is closed with source_connection" do
         before do
           @task = assign(:task, duplicate_task)
-          @source_connection = assign(:source_connection, @task.source_connection)
+          @source_connection = assign(:source_connection,
+                                      @task.source_connection)
         end
 
         it "renders link to target task" do
@@ -1409,7 +1410,8 @@ RSpec.describe "tasks/show", type: :view do
       context "and is closed with source_connection" do
         before do
           @task = assign(:task, duplicate_task)
-          @source_connection = assign(:source_connection, @task.source_connection)
+          @source_connection = assign(:source_connection,
+                                      @task.source_connection)
         end
 
         it "renders link to target task" do
