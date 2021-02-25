@@ -224,6 +224,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     @addressed_at ||=
       approved_tasks
+      .joins(:reviews)
+      .where('reviews.approved = ?', true)
       .select('tasks.id, MAX(reviews.updated_at) AS addressed_at')
       .group(:id).reorder(addressed_at: :desc).first&.addressed_at
   end

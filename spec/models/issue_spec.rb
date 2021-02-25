@@ -1612,10 +1612,9 @@ RSpec.describe Issue, type: :model do
 
     context "when 1 approved task" do
       it "returns it's review date" do
-        task = Fabricate(:closed_task, issue: issue)
-        review = Fabricate(:approved_review, task: task)
+        task = Fabricate(:approved_task, issue: issue)
 
-        expect(issue.addressed_at).to eq(review.updated_at)
+        expect(issue.addressed_at).to eq(task.current_review.updated_at)
       end
     end
 
@@ -1626,6 +1625,7 @@ RSpec.describe Issue, type: :model do
           task = Fabricate(:approved_task, issue: issue)
         end
         Fabricate(:disapproved_review, task: task)
+        task.update_status
       end
 
       it "returns nil" do
@@ -1640,6 +1640,7 @@ RSpec.describe Issue, type: :model do
           task = Fabricate(:disapproved_task, issue: issue)
         end
         review = Fabricate(:approved_review, task: task)
+        task.update_status
 
         expect(issue.addressed_at).to eq(review.updated_at)
       end
@@ -1657,6 +1658,7 @@ RSpec.describe Issue, type: :model do
           review = Fabricate(:approved_review, task: task)
         end
         Fabricate(:in_review_task, issue: issue)
+        task.update_status
 
         expect(issue.addressed_at).to eq(review.updated_at)
       end
@@ -1666,15 +1668,11 @@ RSpec.describe Issue, type: :model do
       it "returns latest review date" do
         first_task = nil
         Timecop.freeze(2.days.ago) do
-          first_task = Fabricate(:closed_task, issue: issue)
+          first_task = Fabricate(:approved_task, issue: issue)
         end
-        Timecop.freeze(1.day.ago) do
-          Fabricate(:approved_review, task: first_task)
-        end
-        second_task = Fabricate(:closed_task, issue: issue)
-        review = Fabricate(:approved_review, task: second_task)
+        second_task = Fabricate(:approved_task, issue: issue)
 
-        expect(issue.addressed_at).to eq(review.updated_at)
+        expect(issue.addressed_at).to eq(second_task.current_review.updated_at)
       end
     end
   end

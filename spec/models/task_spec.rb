@@ -58,12 +58,12 @@ RSpec.describe Task, type: :model do
 
   # CLASS
 
-  describe ".all_open" do
+  describe ".all_non_closed" do
     context "when no tasks" do
       before { Task.destroy_all }
 
       it "returns []" do
-        expect(Task.all_open).to eq([])
+        expect(Task.all_non_closed).to eq([])
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns the open one" do
-        expect(Task.all_open).to eq([task])
+        expect(Task.all_non_closed).to eq([task])
       end
     end
   end
@@ -125,6 +125,9 @@ RSpec.describe Task, type: :model do
         reopened_task.reopen
 
         Fabricate(:closed_task)
+
+        task.update_status
+        reopened_task.update_status
       end
 
       it "returns open tasks that have a current pending review" do
@@ -150,6 +153,7 @@ RSpec.describe Task, type: :model do
         Fabricate(:finished_progression,
                   task: Fabricate(:open_task))
         Fabricate(:closed_task)
+        task.update_status
       end
 
       it "returns open tasks that have an unfinished progression" do
@@ -185,34 +189,14 @@ RSpec.describe Task, type: :model do
         Fabricate(:pending_review, task: in_review_task)
 
         Fabricate(:closed_task).assignees << worker
+
+        task.update_status
+        in_progress_task.update_status
+        in_review_task.update_status
       end
 
       it "returns open assigned tasks" do
         expect(Task.all_assigned).to eq([task])
-      end
-    end
-  end
-
-  describe ".all_unassigned" do
-    context "when no tasks" do
-      before { Task.destroy_all }
-
-      it "returns []" do
-        expect(Task.all_unassigned).to eq([])
-      end
-    end
-
-    context "when tasks" do
-      let(:task) { Fabricate(:open_task) }
-
-      before do
-        assigned_task = Fabricate(:open_task)
-        assigned_task.assignees << worker
-        Fabricate(:closed_task)
-      end
-
-      it "returns unassigned" do
-        expect(Task.all_unassigned).to eq([task])
       end
     end
   end
@@ -237,10 +221,35 @@ RSpec.describe Task, type: :model do
           reopened_task = Fabricate(:approved_task)
         end
         reopened_task.reopen
+
+        task.update_status
       end
 
       it "returns closed tasks that have an approved current review" do
         expect(Task.all_approved).to eq([task])
+      end
+    end
+  end
+
+  describe ".all_duplicate" do
+    context "when no tasks" do
+      before { Task.destroy_all }
+
+      it "returns []" do
+        expect(Task.all_duplicate).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      let!(:task) { Fabricate(:duplicate_task) }
+
+      before do
+        Fabricate(:open_task)
+        Fabricate(:closed_task)
+      end
+
+      it "returns closed tasks that have an approved current review" do
+        expect(Task.all_duplicate).to eq([task])
       end
     end
   end
@@ -257,31 +266,28 @@ RSpec.describe Task, type: :model do
     end
 
     context "when :task_status" do
-      let(:in_review_task) { Fabricate(:open_task, project: project) }
-      let(:in_progress_task) { Fabricate(:open_task, project: project) }
+      let(:in_review_task) { Fabricate(:in_review_task, project: project) }
+      let(:in_progress_task) { Fabricate(:in_progress_task, project: project) }
+      let(:unassigned_task) { Fabricate(:open_task, project: project) }
       let(:assigned_task) { Fabricate(:open_task, project: project) }
       let(:approved_task) { Fabricate(:approved_task, project: project) }
-      let(:finished_task) { Fabricate(:open_task, project: project) }
-      let(:reopened_task) { Fabricate(:task, project: project) }
+      let(:finished_task) { Fabricate(:finished_task, project: project) }
+      let(:reopened_task) { Fabricate(:closed_task, project: project) }
+      let(:closed_task) { Fabricate(:closed_task, project: project) }
 
       before do
         _unassigned_task = Fabricate(:open_task, project: project)
 
         tasks = [assigned_task, in_review_task, in_progress_task,
-                 approved_task, finished_task, reopened_task]
+                 approved_task, finished_task, reopened_task, closed_task]
         tasks.each do |task|
           task.assignees << worker
+          task.update_status
         end
-        Fabricate(:pending_review, task: in_review_task)
-        Fabricate(:progression, task: in_progress_task)
-        Fabricate(:finished_progression, task: finished_task)
-        Fabricate(:pending_review, task: reopened_task)
 
         Timecop.freeze(Time.now + 2.days) do
           reopened_task.reopen
         end
-
-        Fabricate(:closed_task, project: project).assignees << worker
       end
 
       context "is set as 'in_review'" do
@@ -303,15 +309,15 @@ RSpec.describe Task, type: :model do
       context "is set as 'assigned'" do
         it "returns open assigned tasks" do
           results = Task.filter_by(task_status: "assigned")
-          expect(results.count).to eq(2)
+          expect(results.count).to eq(3)
           expect(results).to match_array(category.tasks.all_assigned)
         end
       end
 
       context "is set as 'open'" do
-        it "returns open, reopened, pending, in review, in progress" do
+        it "returns unassigned tasks" do
           results = Task.filter_by(task_status: "open")
-          expect(results.count).to eq(6)
+          expect(results.count).to eq(1)
           expect(results).to match_array(category.tasks.all_open)
         end
       end
@@ -329,14 +335,6 @@ RSpec.describe Task, type: :model do
           results = Task.filter_by(task_status: "closed")
           expect(results.count).to eq(2)
           expect(results).to match_array(category.tasks.all_closed)
-        end
-      end
-
-      context "is set as 'unassigned'" do
-        it "returns unassigned tasks" do
-          results = Task.filter_by(task_status: "unassigned")
-          expect(results.count).to eq(1)
-          expect(results).to match_array(category.tasks.all_unassigned)
         end
       end
 
@@ -559,6 +557,7 @@ RSpec.describe Task, type: :model do
         task = Fabricate(:task)
 
         2.times { Fabricate(:task_assignee, task: task) }
+        task.update_status
 
         expect(Task.filter_by(task_status: "assigned")).to eq([task])
       end
@@ -906,421 +905,327 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#in_review?" do
-    context "when closed is false" do
-      context "and has a pending review" do
-        let(:task) { Fabricate(:open_task) }
-        let(:user) { Fabricate(:user_worker) }
+    context "when status is 'in_review'" do
+      before { subject.status = "in_review" }
 
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-          Fabricate(:pending_review, task: task)
-        end
-
-        it "returns true" do
-          expect(task.in_review?).to eq(true)
-        end
-      end
-
-      context "and has an approved review" do
-        let(:task) { Fabricate(:open_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-          Fabricate(:approved_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_review?).to eq(false)
-        end
-      end
-
-      context "and has a disapproved review" do
-        let(:task) { Fabricate(:open_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-          Fabricate(:disapproved_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_review?).to eq(false)
-        end
-      end
-
-      context "and has a pending review before opened_at" do
-        let(:task) { Fabricate(:open_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-          Timecop.freeze(1.day.ago) do
-            Fabricate(:pending_review, task: task)
-          end
-        end
-
-        it "returns false" do
-          expect(task.in_review?).to eq(false)
-        end
+      it "returns true" do
+        expect(subject.in_review?).to eq(true)
       end
     end
 
-    context "when closed is true" do
-      context "and has a pending review" do
-        let(:task) { Fabricate(:closed_task) }
-        let(:user) { Fabricate(:user_worker) }
+    context "when status is something else" do
+      before { subject.status = "something" }
 
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-          Fabricate(:pending_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_review?).to eq(false)
-        end
-      end
-    end
-  end
-
-  describe "#in_progress?" do
-    context "for a open task" do
-      context "and has an unfinished progression" do
-        let(:task) { Fabricate(:open_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:unfinished_progression, task: task)
-        end
-
-        it "returns true" do
-          expect(task.in_progress?).to eq(true)
-        end
-      end
-
-      context "and has a finished progression" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:finished_progression, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_progress?).to eq(false)
-        end
-      end
-
-      context "and task has a pending review" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:unfinished_progression, task: task)
-          Fabricate(:pending_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_progress?).to eq(false)
-        end
-      end
-    end
-
-    context "for a closed task" do
-      context "and has an unfinished progression" do
-        let(:task) { Fabricate(:closed_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:unfinished_progression, task: task)
-        end
-
-        it "returns false" do
-          expect(task.in_progress?).to eq(false)
-        end
-      end
-    end
-  end
-
-  describe "#unassigned?" do
-    context "for a open task" do
-      context "and a user is not assigned" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        it "returns true" do
-          expect(task.unassigned?).to eq(true)
-        end
-      end
-
-      context "and a user is assigned" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before { task.assignees << user }
-
-        it "returns false" do
-          expect(task.unassigned?).to eq(false)
-        end
-      end
-
-      context "and task has a pending review" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:pending_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.unassigned?).to eq(false)
-        end
-      end
-
-      context "and task has a unfinished progression" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:unfinished_progression, task: task)
-        end
-
-        it "returns false" do
-          expect(task.unassigned?).to eq(false)
-        end
-      end
-    end
-
-    context "when closed is true" do
-      context "and has a pending review" do
-        let(:task) { Fabricate(:closed_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        it "returns false" do
-          expect(task.unassigned?).to eq(false)
-        end
-      end
-    end
-  end
-
-  describe "#assigned?" do
-    context "for a open task" do
-      context "and a user is not assigned" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        it "returns false" do
-          expect(task.assigned?).to eq(false)
-        end
-      end
-
-      context "and a user is assigned" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before { task.assignees << user }
-
-        it "returns true" do
-          expect(task.assigned?).to eq(true)
-        end
-      end
-
-      context "and task has a pending review" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:pending_review, task: task)
-        end
-
-        it "returns false" do
-          expect(task.assigned?).to eq(false)
-        end
-      end
-
-      context "and task has a unfinished progression" do
-        let(:task) { Fabricate(:task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before do
-          task.assignees << user
-          Fabricate(:unfinished_progression, task: task)
-        end
-
-        it "returns false" do
-          expect(task.assigned?).to eq(false)
-        end
-      end
-    end
-
-    context "when closed is true" do
-      context "and has a pending review" do
-        let(:task) { Fabricate(:closed_task) }
-        let(:user) { Fabricate(:user_worker) }
-
-        before { task.assignees << user }
-
-        it "returns false" do
-          expect(task.assigned?).to eq(false)
-        end
+      it "returns false" do
+        expect(subject.in_review?).to eq(false)
       end
     end
   end
 
   describe "#approved?" do
-    let(:task) { Fabricate(:task) }
-
-    context "when no reviews" do
-      it "returns false" do
-        expect(task.approved?).to eq(false)
-      end
-    end
-
-    context "when approved review" do
-      before { Fabricate(:approved_review, task: task) }
+    context "when status is 'approved'" do
+      before { subject.status = "approved" }
 
       it "returns true" do
-        expect(task.approved?).to eq(true)
+        expect(subject.approved?).to eq(true)
       end
     end
 
-    context "when disapproved review" do
-      before { Fabricate(:disapproved_review, task: task) }
+    context "when status is something else" do
+      before { subject.status = "something" }
 
       it "returns false" do
-        expect(task.approved?).to eq(false)
+        expect(subject.approved?).to eq(false)
+      end
+    end
+  end
+
+  describe "#in_progress?" do
+    context "when status is 'in_progress'" do
+      before { subject.status = "in_progress" }
+
+      it "returns true" do
+        expect(subject.in_progress?).to eq(true)
+      end
+    end
+
+    context "when status is something else" do
+      before { subject.status = "something" }
+
+      it "returns false" do
+        expect(subject.in_progress?).to eq(false)
+      end
+    end
+  end
+
+  describe "#assigned?" do
+    context "when status is 'assigned'" do
+      before { subject.status = "assigned" }
+
+      it "returns true" do
+        expect(subject.assigned?).to eq(true)
+      end
+    end
+
+    context "when status is something else" do
+      before { subject.status = "something" }
+
+      it "returns false" do
+        expect(subject.assigned?).to eq(false)
+      end
+    end
+  end
+
+  describe "#unassigned?" do
+    context "when status is 'open'" do
+      before { subject.status = "open" }
+
+      it "returns true" do
+        expect(subject.unassigned?).to eq(true)
+      end
+    end
+
+    context "when status is something else" do
+      before { subject.status = "something" }
+
+      it "returns false" do
+        expect(subject.unassigned?).to eq(false)
       end
     end
   end
 
   describe "#duplicate?" do
-    let(:task) { Fabricate(:task) }
+    context "when status is 'duplicate'" do
+      before { subject.status = "duplicate" }
 
-    context "when target_task_connection" do
-      before { Fabricate(:task_connection, target: task) }
-
-      it "returns false" do
-        expect(task.duplicate?).to eq(false)
+      it "returns true" do
+        expect(subject.duplicate?).to eq(true)
       end
     end
 
-    context "when source_connection" do
-      before { Fabricate(:task_connection, source: task) }
+    context "when status is something else" do
+      before { subject.status = "something" }
 
-      it "returns true" do
-        expect(task.duplicate?).to eq(true)
+      it "returns false" do
+        expect(subject.duplicate?).to eq(false)
       end
     end
   end
 
-  describe "#status" do
-    context "when closed is false" do
-      context "and no assignees, progressions, and reviews" do
-        let(:task) { Fabricate(:task) }
+  describe "#build_status" do
+    context "when no assignees, progressions, and reviews" do
+      context "and closed is false" do
+        let(:task) { Fabricate(:open_task) }
 
-        before do
-          allow(task).to receive(:in_review?) { false }
-          allow(task).to receive(:in_progress?) { false }
-          allow(task).to receive(:assigned?) { false }
-        end
-
-        it "returns 'unassigned'" do
-          expect(task.status).to eq("unassigned")
+        it "returns 'open'" do
+          expect(task.send(:build_status)).to eq("open")
         end
       end
 
-      context "and in_review? returns true" do
-        let(:task) { Fabricate(:task) }
+      context "and closed is true" do
+        let(:task) { Fabricate(:closed_task) }
 
-        before do
-          allow(task).to receive(:in_review?) { true }
-          allow(task).to receive(:in_progress?) { true }
-          allow(task).to receive(:assigned?) { true }
-        end
-
-        it "returns 'in review'" do
-          expect(task.status).to eq("in review")
-        end
-      end
-
-      context "and in_progress? returns true" do
-        let(:task) { Fabricate(:task) }
-
-        before do
-          allow(task).to receive(:in_review?) { false }
-          allow(task).to receive(:in_progress?) { true }
-          allow(task).to receive(:assigned?) { true }
-        end
-
-        it "returns 'in progress'" do
-          expect(task.status).to eq("in progress")
-        end
-      end
-
-      context "and assigned? returns true" do
-        let(:task) { Fabricate(:task) }
-
-        before do
-          allow(task).to receive(:in_review?) { false }
-          allow(task).to receive(:in_progress?) { false }
-          allow(task).to receive(:assigned?) { true }
-        end
-
-        it "returns 'assigned'" do
-          expect(task.status).to eq("assigned")
+        it "returns 'closed'" do
+          expect(task.send(:build_status)).to eq("closed")
         end
       end
     end
 
-    context "when closed is true" do
-      let(:task) { Fabricate(:closed_task) }
+    context "when a user is assigned" do
+      let(:user) { Fabricate(:user_worker) }
 
-      context "and approved? returns false" do
-        before do
-          allow(task).to receive(:approved?) { false }
+      context "and task is open" do
+        let(:task) { Fabricate(:open_task) }
+
+        before { task.assignees << user }
+
+        it "returns 'assigned'" do
+          expect(task.send(:build_status)).to eq("assigned")
         end
+      end
+
+      context "and task is closed" do
+        let(:task) { Fabricate(:closed_task) }
+
+        before { task.assignees << user }
 
         it "returns 'closed'" do
-          expect(task.status).to eq("closed")
+          expect(task.send(:build_status)).to eq("closed")
+        end
+      end
+    end
+
+    context "when progressions" do
+      context "for a open task" do
+        context "and has an unfinished progression" do
+          let(:task) { Fabricate(:open_task) }
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:unfinished_progression, task: task)
+          end
+
+          it "returns 'in_progress'" do
+            expect(task.send(:build_status)).to eq("in_progress")
+          end
+        end
+
+        context "and has a finished progression" do
+          let(:task) { Fabricate(:task) }
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+          end
+
+          it "returns 'assigned'" do
+            expect(task.send(:build_status)).to eq("assigned")
+          end
         end
       end
 
-      context "and approved? returns true" do
-        before do
-          allow(task).to receive(:approved?) { true }
+      context "for a closed task" do
+        context "and has an unfinished progression" do
+          let(:task) { Fabricate(:closed_task) }
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:unfinished_progression, task: task)
+          end
+
+          it "returns 'closed'" do
+            expect(task.send(:build_status)).to eq("closed")
+          end
+        end
+      end
+    end
+
+    context "when reviews" do
+      context "when closed is false" do
+        let(:task) { Fabricate(:open_task) }
+
+        context "and has a pending review" do
+          let(:task) { Fabricate(:open_task) }
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:pending_review, task: task)
+          end
+
+          it "returns 'in_review'" do
+            expect(task.send(:build_status)).to eq("in_review")
+          end
         end
 
-        it "returns 'approved'" do
-          expect(task.status).to eq("approved")
+        context "and has an approved review" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:approved_review, task: task)
+          end
+
+          it "returns 'assigned'" do
+            expect(task.send(:build_status)).to eq("assigned")
+          end
+        end
+
+        context "and has a disapproved review" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:disapproved_review, task: task)
+          end
+
+          it "returns 'assigned'" do
+            expect(task.send(:build_status)).to eq("assigned")
+          end
+        end
+
+        context "and has a pending review before opened_at" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Timecop.freeze(1.day.ago) do
+              Fabricate(:pending_review, task: task)
+            end
+          end
+
+          it "returns 'assigned'" do
+            expect(task.send(:build_status)).to eq("assigned")
+          end
         end
       end
 
-      context "and duplicate? returns true" do
-        before do
-          allow(task).to receive(:duplicate?) { true }
+      context "when closed is true" do
+        let(:task) { Fabricate(:closed_task) }
+
+        context "and has a pending review" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:pending_review, task: task)
+          end
+
+          it "returns 'assigned'" do
+            expect(task.send(:build_status)).to eq("closed")
+          end
         end
 
-        it "returns 'duplicate'" do
-          expect(task.status).to eq("duplicate")
+        context "and has an approved review" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:approved_review, task: task)
+          end
+
+          it "returns 'approved'" do
+            expect(task.send(:build_status)).to eq("approved")
+          end
+        end
+
+        context "and has a disapproved review" do
+          let(:user) { Fabricate(:user_worker) }
+
+          before do
+            task.assignees << user
+            Fabricate(:finished_progression, task: task)
+            Fabricate(:disapproved_review, task: task)
+          end
+
+          it "returns 'closed'" do
+            expect(task.send(:build_status)).to eq("closed")
+          end
         end
       end
+    end
+  end
 
-      context "and unassigned" do
-        it "returns 'closed'" do
-          expect(task.status).to eq("closed")
-        end
+  describe "#update_status" do
+    let(:task) { Fabricate(:task) }
+
+    context "when build_status returns something" do
+      before { allow(task).to receive(:build_status) { "something" } }
+
+      it "changes status" do
+        expect do
+          task.update_status
+          task.reload
+        end.to change(task, :status).to("something")
       end
     end
   end
@@ -1447,7 +1352,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when an unfinished progression" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:in_progress_task) }
       let!(:progression) { Fabricate(:unfinished_progression, task: task) }
 
       it "changes closed to true" do
@@ -1493,7 +1398,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when an unfinished and invalid progression" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:in_progress_task) }
       let(:progression) { Fabricate(:unfinished_progression, task: task) }
 
       before do
@@ -1660,6 +1565,13 @@ RSpec.describe Task, type: :model do
         end.to change(task, :opened_at)
       end
 
+      it "changes status" do
+        expect do
+          task.reopen
+          task.reload
+        end.to change(task, :status).to("open")
+      end
+
       context "with a closed issue" do
         let(:issue) { Fabricate(:closed_issue) }
 
@@ -1711,15 +1623,26 @@ RSpec.describe Task, type: :model do
 
   describe "#finish" do
     context "when an unfinished progression" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:in_progress_task) }
 
-      it "changes it's finished to true" do
+      before { task.assignees << Fabricate(:user) }
+
+      it "changes progression's finished to true" do
         progression = Fabricate(:unfinished_progression, task: task)
 
         expect do
           task.finish
           progression.reload
         end.to change(progression, :finished).to(true)
+      end
+
+      it "changes tasks's status" do
+        Fabricate(:unfinished_progression, task: task)
+
+        expect do
+          task.finish
+          task.reload
+        end.to change(task, :status).to("assigned")
       end
 
       it "returns true" do
@@ -1738,6 +1661,22 @@ RSpec.describe Task, type: :model do
 
       it "returns true" do
         expect(task.finish).to eq(true)
+      end
+    end
+
+    context "when invalid progression" do
+      let(:task) { Fabricate(:open_task) }
+      let(:progression) { Fabricate(:unfinished_progression, task: task) }
+
+      before do
+        # make previous progression invalid
+        invalid = Fabricate(:progression, task: task)
+        invalid.update_columns finished: false, finished_at: nil
+        progression.update_column :user_id, invalid.user_id
+      end
+
+      it "returns false" do
+        expect(task.finish).to eq(false)
       end
     end
   end

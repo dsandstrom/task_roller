@@ -4,7 +4,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
   STATUS_OPTIONS = {
     open: { color: 'green' },
-    unassigned: { color: 'purple' },
     assigned: { color: 'blue' },
     in_progress: { color: 'yellow' },
     in_review: { color: 'purple' },
@@ -59,7 +58,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # CLASS
 
-  def self.all_open
+  def self.all_non_closed
     where(closed: false)
   end
 
@@ -67,35 +66,29 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
-  def self.all_in_review
-    where('reviews.created_at > tasks.opened_at AND reviews.approved IS NULL')
-      .joins(:reviews)
-  end
-
-  def self.all_in_progress
-    where('progressions.finished = ?', false).joins(:progressions)
+  def self.all_open
+    all_non_closed.where(status: 'open')
   end
 
   def self.all_assigned
-    no_reviews = 'reviews.task_id IS NULL OR '\
-                 'reviews.created_at < tasks.opened_at'
-    no_progresions = 'progressions.task_id IS NULL OR '\
-                     'progressions.finished_at < tasks.opened_at'
-
-    all_open
-      .joins(:task_assignees).left_joins(:reviews, :progressions)
-      .where(no_reviews).where(no_progresions)
+    all_non_closed.where(status: 'assigned')
   end
 
-  def self.all_unassigned
-    no_assignees = 'task_assignees.task_id IS NULL'
-    all_open.left_joins(:task_assignees).where(no_assignees)
+  def self.all_in_progress
+    all_non_closed.where(status: 'in_progress')
+  end
+
+  def self.all_in_review
+    all_non_closed.where(status: 'in_review')
   end
 
   # TODO: change to all_completed
   def self.all_approved
-    where('reviews.created_at > tasks.opened_at AND reviews.approved = ?', true)
-      .joins(:reviews)
+    all_closed.where(status: 'approved')
+  end
+
+  def self.all_duplicate
+    all_closed.where(status: 'duplicate')
   end
 
   # TODO: order open issues first by default
@@ -215,41 +208,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
   end
 
-  # - closed
-  # - open
-  #   - reviews open = 'in review'
-  #   - progressions unfinished = 'in progress'
-  #   - any assignees = 'assigned'
-  #   - unassigned
-  def status
-    @status ||=
-      if closed?
-        closed_status
-      else
-        open_status
-      end
-  end
-
-  def finish
-    progressions&.unfinished&.all?(&:finish)
-  end
-
-  def close
-    reviews.pending.each { |r| r.update(approved: false) }
-    return false unless finish
-
-    update closed: true
-    close_issue
-  end
-
-  # TODO: show outdated reviews in history
-  def reopen
-    return false unless update(closed: false, opened_at: Time.now)
-    return true unless issue&.closed?
-
-    issue.reopen
-  end
-
   def concluded_reviews
     if @concluded_reviews.instance_of?(ActiveRecord::AssociationRelation)
       return @concluded_reviews
@@ -270,62 +228,27 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @current_review ||= current_reviews.order(created_at: :desc).first
   end
 
-  def in_review?
-    @in_review_ = open? && current_reviews.pending.any? if @in_review_.nil?
-    @in_review_
+  def finish
+    progressions&.unfinished&.all?(&:finish) && update_status
   end
 
-  def in_progress?
-    if @in_progress_.nil?
-      @in_progress_ =
-        if in_review?
-          false
-        else
-          open? && progressions.unfinished.any?
-        end
-    end
-    @in_progress_
+  def close
+    reviews.pending.each { |r| r.update(approved: false) }
+    return false unless finish
+
+    update closed: true
+    update_status
+    close_issue
   end
 
-  def assigned?
-    if @assigned_.nil?
-      @assigned_ =
-        if in_review? || in_progress?
-          false
-        else
-          open? && assignees.any?
-        end
-    end
-    @assigned_
-  end
+  # TODO: show outdated reviews in history
+  def reopen
+    return false unless update(closed: false, opened_at: Time.now)
 
-  def unassigned?
-    if @unassigned_.nil?
-      @unassigned_ =
-        if assigned? || in_review? || in_progress?
-          false
-        else
-          open?
-        end
-    end
-    @unassigned_
-  end
+    update_status
+    return true unless issue&.closed?
 
-  def approved?
-    if @approved_.nil?
-      @approved_ =
-        if current_review.blank?
-          false
-        else
-          current_review.approved?
-        end
-    end
-    @approved_
-  end
-
-  def duplicate?
-    @duplicate_ = source_connection.present? if @duplicate_.nil?
-    @duplicate_
+    issue.reopen
   end
 
   def subscribe_user(subscriber = nil)
@@ -362,28 +285,92 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @siblings ||= issue&.tasks&.where&.not(id: id)
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
+  def in_review?
+    @in_review_ ||= status == 'in_review'
+  end
+
+  def in_progress?
+    @in_progress_ ||= status == 'in_progress'
+  end
+
+  def assigned?
+    @assigned_ ||= status == 'assigned'
+  end
+
+  def unassigned?
+    @unassigned_ ||= status == 'open'
+  end
+
+  def approved?
+    @approved_ ||= status == 'approved'
+  end
+
+  def duplicate?
+    @duplicate_ ||= status == 'duplicate'
+  end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
+
+  def update_status
+    update_attribute :status, build_status
+  end
+
   private
 
+    # - closed
+    # - open
+    #   - reviews open = 'in review'
+    #   - progressions unfinished = 'in progress'
+    #   - any assignees = 'assigned'
+    #   - unassigned
+    def build_status
+      if closed?
+        closed_status
+      else
+        open_status
+      end
+    end
+
     def open_status
-      if in_review?
-        'in review'
-      elsif in_progress?
-        'in progress'
-      elsif assigned?
+      if any_pending_reviews?
+        'in_review'
+      elsif unfinished_progressions?
+        'in_progress'
+      elsif any_assignees?
         'assigned'
       else
-        'unassigned'
+        'open'
       end
     end
 
     def closed_status
-      if approved?
+      if approved_review?
         'approved'
-      elsif duplicate?
+      elsif source_connection?
         'duplicate'
       else
         'closed'
       end
+    end
+
+    def any_pending_reviews?
+      open? && current_reviews.pending.any?
+    end
+
+    def unfinished_progressions?
+      open? && progressions.unfinished.any?
+    end
+
+    def any_assignees?
+      open? && assignees.any?
+    end
+
+    def approved_review?
+      current_review&.approved?
+    end
+
+    def source_connection?
+      source_connection.present?
     end
 
     def finish_assignee_progressions(assignee)
@@ -409,7 +396,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def update_issue_counts
       return unless issue
 
-      issue.update_column :open_tasks_count, issue.tasks.all_open.count
+      issue.update_column :open_tasks_count, issue.tasks.all_non_closed.count
     end
 
     # TODO: add assigned, or progressions grouped by user

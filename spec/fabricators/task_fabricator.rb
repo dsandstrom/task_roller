@@ -19,6 +19,22 @@ end
 
 Fabricator(:in_progress_task, from: :open_task) do
   status 'in_progress'
+
+  after_create do |task|
+    return if task.progressions.any?
+
+    Fabricate(:unfinished_progression, task: task)
+  end
+end
+
+Fabricator(:finished_task, from: :open_task) do
+  status 'assigned'
+
+  after_create do |task|
+    return if task.progressions.any?
+
+    Fabricate(:finished_progression, task: task)
+  end
 end
 
 Fabricator(:in_review_task, from: :open_task) do
