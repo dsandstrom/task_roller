@@ -60,8 +60,4 @@ class SearchResult < ApplicationRecord
   def short_summary
     @short_summary ||= summary&.truncate(70)
   end
-
-  def status
-    # TODO: hardcode status in issues/tasks, and update with callbacks
-  end
 end
