@@ -14,24 +14,44 @@ end
 
 Fabricator(:closed_task, from: :task) do
   closed true
+  status 'closed'
 end
 
-Fabricator(:pending_task, from: :task) do
-  closed false
+Fabricator(:in_progress_task, from: :open_task) do
+  status 'in_progress'
 end
 
-Fabricator(:approved_task, from: :task) do
-  closed true
+Fabricator(:in_review_task, from: :open_task) do
+  status 'in_review'
 
   after_create do |task|
+    return if task.current_review
+
+    Fabricate(:pending_review, task: task)
+  end
+end
+
+Fabricator(:approved_task, from: :closed_task) do
+  status 'approved'
+
+  after_create do |task|
+    return if task.current_review
+
     Fabricate(:approved_review, task: task)
   end
 end
 
-Fabricator(:disapproved_task, from: :task) do
-  closed true
+Fabricator(:disapproved_task, from: :closed_task) do
+  status 'open'
 
   after_create do |task|
+    return if task.current_review
+
     Fabricate(:disapproved_review, task: task)
   end
+end
+
+Fabricator(:duplicate_task, from: :closed_task) do
+  status 'duplicate'
+  source_connection { Fabricate(:task_connection) }
 end

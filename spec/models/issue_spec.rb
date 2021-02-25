@@ -1328,10 +1328,10 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns pending tasks created after opened_at" do
-        task = Fabricate(:pending_task, issue: issue)
-        Fabricate(:pending_task)
+        task = Fabricate(:in_review_task, issue: issue)
+        Fabricate(:in_review_task)
         Timecop.freeze(2.weeks.ago) do
-          Fabricate(:pending_task, issue: issue)
+          Fabricate(:in_review_task, issue: issue)
         end
 
         expect(issue.current_tasks).to eq([task])
@@ -1578,7 +1578,7 @@ RSpec.describe Issue, type: :model do
     context "when tasks" do
       it "returns all approved" do
         task = Fabricate(:approved_task, issue: issue)
-        Fabricate(:pending_task, issue: issue)
+        Fabricate(:in_review_task, issue: issue)
 
         expect(issue.approved_tasks).to eq([task])
       end
@@ -1651,12 +1651,12 @@ RSpec.describe Issue, type: :model do
         review = nil
         Timecop.freeze(2.days.ago) do
           task = Fabricate(:closed_task, issue: issue)
-          Fabricate(:pending_task, issue: issue)
+          Fabricate(:in_review_task, issue: issue)
         end
         Timecop.freeze(1.day.ago) do
           review = Fabricate(:approved_review, task: task)
         end
-        Fabricate(:pending_task, issue: issue)
+        Fabricate(:in_review_task, issue: issue)
 
         expect(issue.addressed_at).to eq(review.updated_at)
       end
