@@ -11,7 +11,7 @@
       All
     <% end %>
 
-    <% %i[open being_worked_on addressed resolved
+    <% %i[open being_worked_on addressed resolved duplicate
           closed].each do |status| %>
       <%
         color = Issue::STATUS_OPTIONS[status][:color]

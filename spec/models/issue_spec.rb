@@ -184,6 +184,29 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".all_duplicate" do
+    context "when no issues" do
+      before { Issue.destroy_all }
+
+      it "returns []" do
+        expect(Issue.all_duplicate).to eq([])
+      end
+    end
+
+    context "when issues" do
+      let!(:issue) { Fabricate(:duplicate_issue) }
+
+      before do
+        Fabricate(:open_issue)
+        Fabricate(:closed_issue)
+      end
+
+      it "returns closed issues that have an approved current review" do
+        expect(Issue.all_duplicate).to eq([issue])
+      end
+    end
+  end
+
   describe ".filter_by" do
     context "when no issues" do
       it "returns []" do

@@ -77,6 +77,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true, status: 'resolved')
   end
 
+  def self.all_duplicate
+    where(closed: true, status: 'duplicate')
+  end
+
   def self.filter_by(filters = {})
     filter_by_status(filters[:issue_status])
       .filter_by_type(filters[:issue_type_id])
