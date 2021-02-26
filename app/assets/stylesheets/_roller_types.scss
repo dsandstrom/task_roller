@@ -1,3 +1,5 @@
+$tag-border-radius: 2 * $border-radius;
+
 .issue-type-color-options,
 .issue-type-icon-options,
 .task-type-color-options,
@@ -83,7 +85,7 @@
 .task-type-icon-option {
   margin-right: .5rem;
   padding: .2rem .4rem;
-  border-radius: 2 * $border-radius;
+  border-radius: $tag-border-radius;
   color: $color-quaternary;
   font-size: 1.4rem;
   font-weight: bold;
@@ -224,6 +226,36 @@ a {
     .issue-type-icon-option,
     .task-type-icon-option {
       opacity: .75;
+    }
+  }
+}
+
+.status-button {
+  display: flex;
+  padding: 0;
+
+  .status-value,
+  .status-dropdown-link {
+    padding: .2rem .5rem;
+  }
+
+  .status-value {
+    border-right: 1px solid rgba($black, .2);
+  }
+
+  .status-dropdown-link {
+    border-left: 1px solid rgba($white, .2);
+    border-top-right-radius: $tag-border-radius;
+    border-bottom-right-radius: $tag-border-radius;
+
+    i {
+      color: $white;
+    }
+
+    &:hover,
+    &.active {
+      border-left-color: rgba($black, .2);
+      background-color: rgba($black, .2);
     }
   }
 }

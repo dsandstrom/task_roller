@@ -344,8 +344,7 @@ hr {
   &::after {
     content: '\e010';
     position: relative;
-    top: .25rem;
-    padding-left: .25rem;
+    top: .2rem;
     font-family: 'task-roller';
   }
 
@@ -356,12 +355,23 @@ hr {
   }
 }
 
+.user-dropdown-link {
+  &::after {
+    padding-left: .25rem;
+  }
+}
+
+.status-dropdown-link {
+  &::after {
+    color: $white;
+  }
+}
+
 .dropdown-menu {
   display: none;
   position: absolute;
   z-index: 2;
   margin-top: 1rem;
-  padding: .5rem 0;
   border: 1px solid $light-gray;
   border-radius: $border-radius;
   background: $white;
@@ -398,6 +408,15 @@ hr {
   .user-email {
     color: $dark-gray;
     font-size: 80%;
+  }
+
+  .dropdown-menu-container {
+    padding: 0 .5rem;
+    border-bottom: 1px solid $light-gray;
+
+    &:last-child {
+      border-bottom-width: 0;
+    }
   }
 }
 
