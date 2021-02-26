@@ -103,13 +103,13 @@ module ApplicationHelper
       first.year == second.year
     end
 
-    def navitize(links)
+    def navitize(links, link_options = {})
       links.map do |value, url, options = {}|
+        options.merge! link_options
         if current_page?(url)
-          content_tag :span, value, options.merge(class: 'current-page')
-        else
-          link_to(value, url, options)
+          options[:class] = "#{options[:class]} current-page"
         end
+        link_to value, url, options
       end
     end
 end

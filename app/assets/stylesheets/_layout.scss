@@ -97,26 +97,25 @@ hr {
     display: flex;
     margin: 0 0 -2px;
 
-    a,
-    .current-page {
+    a {
       display: block;
       padding: 0 1rem;
       border-bottom: 2px solid transparent;
       line-height: 3;
       white-space: nowrap;
+
+      &.current-page {
+        border-color: $color-quinary;
+        color: $color-quinary;
+      }
     }
 
-    a {
+    a:not(.current-page) {
       &:hover,
       &:focus {
         border-color: $color-secondary;
         color: $color-secondary;
       }
-    }
-
-    .current-page {
-      border-color: $color-quinary;
-      color: $color-quinary;
     }
   }
 }
@@ -340,11 +339,25 @@ hr {
   }
 }
 
+.image-wrapper {
+  margin-bottom: 2.5rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.turbolinks-progress-bar {
+  height: 4px;
+  background-color: $color-quinary;
+}
+
 .dropdown-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &::after {
     content: '\e010';
     position: relative;
-    top: .2rem;
     font-family: 'task-roller';
   }
 
@@ -386,7 +399,7 @@ hr {
     width: 0;
     height: 0;
     border-right: 1rem solid transparent;
-    border-bottom: 1rem solid $white;
+    border-bottom: 1rem solid $off-white;
     border-left: 1rem solid transparent;
   }
 
@@ -394,15 +407,27 @@ hr {
     display: block;
   }
 
-  a,
   span {
     display: block;
     padding: 0 1rem;
     line-height: 2;
   }
 
+  a {
+    display: block;
+  }
+
   .divider {
     border-top: 1px solid $light-gray;
+  }
+
+  .button {
+    margin: .5rem;
+
+    &.current-page {
+      color: $color-quinary;
+      pointer-events: none;
+    }
   }
 
   .user-email {
@@ -411,7 +436,6 @@ hr {
   }
 
   .dropdown-menu-container {
-    padding: 0 .5rem;
     border-bottom: 1px solid $light-gray;
 
     &:last-child {
@@ -420,17 +444,13 @@ hr {
   }
 }
 
-.user-dropdown {
-  right: $page-padding;
-}
-
-.image-wrapper {
-  margin-bottom: 2.5rem;
-  padding: 1rem;
+.dropdown-menu-title {
+  background-color: $off-white;
+  color: $dark-gray;
+  font-size: 80%;
   text-align: center;
 }
 
-.turbolinks-progress-bar {
-  height: 4px;
-  background-color: $color-quinary;
+.user-dropdown {
+  right: $page-padding;
 }
