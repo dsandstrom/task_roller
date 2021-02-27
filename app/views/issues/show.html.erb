@@ -61,34 +61,6 @@
           <h4 class="issue-column-title">Duplicate Of</h4>
           <%= render @source_connection %>
         </section>
-      <% elsif @issue.open? %>
-        <% if can?(:create, new_issue_connection(@issue)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'mark as duplicate and close',
-                          new_issue_connection_path(@issue),
-                          class: 'destroy-link' %>
-            </p>
-          <% end %>
-        <% end %>
-
-        <% if can?(:create, new_issue_closure(@issue)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'mark invalid and close',
-                          issue_closures_path(@issue), method: :post,
-                          class: 'destroy-link' %>
-            </p>
-          <% end %>
-        <% end %>
-      <% elsif can?(:create, new_issue_reopening(@issue)) %>
-        <%= content_for :actions do %>
-          <p>
-            <%= link_to 'reopen issue',
-                        issue_reopenings_path(@issue), method: :post,
-                        class: 'destroy-link' %>
-          </p>
-        <% end %>
       <% end %>
 
       <% if @duplicates.any? %>

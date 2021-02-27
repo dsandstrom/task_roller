@@ -173,25 +173,27 @@ module IssuesHelper
       links = []
       if issue.open?
         if can?(:create, new_issue_connection(issue))
-          links << link_to('mark as duplicate and close',
-                           new_issue_connection_path(issue))
+          links << link_to('Mark as Duplicate',
+                           new_issue_connection_path(issue),
+                           class: 'button button-clear')
         end
         if can?(:create, new_issue_closure(issue))
-          links << link_to('mark invalid and close', issue_closures_path(issue),
-                           method: :post)
+          links << link_to('Close Issue', issue_closures_path(issue),
+                           method: :post, class: 'button button-clear')
         end
       end
-      if issue.closed? && can?(:create, new_issue_reopening(issue))
-        links << link_to('reopen issue', issue_reopenings_path(issue),
-                         method: :post)
-      end
-      if can?(:move, issue)
-        links << link_to('move to a different project',
-                         new_issue_move_path(issue))
+      if issue.closed?
+        if issue.source_connection
+          # TODO: add destroy connection link
+        elsif can?(:create, new_issue_reopening(issue))
+          links << link_to('Reopen Issue', issue_reopenings_path(issue),
+                           method: :post, class: 'button button-clear')
+        end
       end
       return if links.none?
 
-      content_tag :div, class: 'dropdown-menu-container status-admin-actions' do
+      klass = 'dropdown-menu-container status-reviewer-actions'
+      content_tag :div, class: klass do
         concat content_tag :span, 'Review Actions', class: 'dropdown-menu-title'
         concat safe_join(links)
       end
@@ -200,14 +202,14 @@ module IssuesHelper
     def issue_status_user_actions(issue)
       links = []
       if issue.status == 'addressed' && can?(:create, new_resolution(issue))
-        links << link_to('report issue was not fixed and reopen',
+        links << link_to('Report Issue not Fixed',
                          disapprove_issue_resolutions_path(issue),
-                         method: :post)
+                         method: :post, class: 'button button-clear')
       elsif issue.status == 'open' || issue.status == 'being_worked_on'
         if can?(:create, new_resolution(issue))
-          links << link_to('mark resolved and close',
+          links << link_to('Mark Resolved',
                            approve_issue_resolutions_path(issue),
-                           method: :post, class: 'destroy-link')
+                           method: :post, class: 'button button-clear')
         end
       end
       return if links.none?

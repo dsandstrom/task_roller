@@ -58,7 +58,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders new connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_issue_connection_path(@issue)
         expect(rendered).to have_link(nil, href: url)
@@ -256,14 +256,14 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, issue) }
 
       it "renders close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render open issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -287,28 +287,28 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "doesn't render new connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_issue_connection_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render open issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -319,14 +319,14 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, closed_issue) }
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
@@ -349,28 +349,28 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "doesn't render disapprove resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = disapprove_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render approve resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = approve_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_resolution_path(@issue, @resolution)
         assert_select "a[data-method='delete'][href='#{url}']"
       end
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -383,28 +383,28 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, issue) }
 
       it "doesn't render disapprove resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = disapprove_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render approve resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = approve_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -469,7 +469,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).to have_link(nil, href: url)
@@ -484,7 +484,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           assert_select "a[href='#{url}'][data-method='post']"
@@ -510,14 +510,14 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders destroy connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
@@ -577,7 +577,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).to have_link(nil, href: url)
@@ -592,7 +592,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           assert_select "a[href='#{url}'][data-method='post']"
@@ -616,14 +616,14 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders destroy connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
@@ -644,14 +644,14 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders destroy resolution link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_resolution_path(@issue, @resolution)
           assert_select "a[data-method='delete'][href='#{url}']"
         end
 
         it "renders reopen issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_reopenings_path(@issue)
           assert_select "a[href='#{url}'][data-method='post']"
@@ -709,7 +709,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders new connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_issue_connection_path(@issue)
         expect(rendered).to have_link(nil, href: url)
@@ -751,14 +751,14 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "doesn't render new connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = new_issue_connection_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders destroy connection link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
@@ -812,14 +812,14 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, issue) }
 
       it "renders close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render open issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -840,7 +840,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "doesn't render destroy resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_resolution_path(@issue, @resolution)
         expect(rendered).not_to have_link(nil, href: url)
@@ -853,28 +853,28 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, issue) }
 
       it "doesn't render disapprove resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = disapprove_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render approve resolution link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = approve_issue_resolutions_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -889,21 +889,21 @@ RSpec.describe "issues/show", type: :view do
       end
 
       it "renders link to issue_connection target" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_path(@source_connection.target)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render open issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
@@ -914,14 +914,14 @@ RSpec.describe "issues/show", type: :view do
       before { @issue = assign(:issue, closed_issue) }
 
       it "doesn't render close issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders reopen issue link" do
-        render
+        render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
         assert_select "a[href='#{url}'][data-method='post']"
@@ -971,7 +971,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).to have_link(nil, href: url)
@@ -986,7 +986,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           assert_select "a[href='#{url}'][data-method='post']"
@@ -1010,7 +1010,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders destroy connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
@@ -1031,7 +1031,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders reopen issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_reopenings_path(@issue)
           assert_select "a[href='#{url}'][data-method='post']"
@@ -1055,7 +1055,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1070,7 +1070,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1094,7 +1094,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render destroy connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1115,7 +1115,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render reopen issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_reopenings_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1186,14 +1186,14 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "renders approve resolution link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = approve_issue_resolutions_path(@issue)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render disapprove resolution link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = disapprove_issue_resolutions_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1208,7 +1208,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1273,28 +1273,28 @@ RSpec.describe "issues/show", type: :view do
           end
 
           it "doesn't render disapprove resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = disapprove_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render approve resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = approve_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render destroy resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = issue_resolution_path(@issue, @resolution)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render open issue link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
@@ -1331,21 +1331,21 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render approve resolution link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = approve_issue_resolutions_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render close issue link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
@@ -1365,14 +1365,14 @@ RSpec.describe "issues/show", type: :view do
           end
 
           it "doesn't render disapprove resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = disapprove_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render open issue link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
@@ -1395,21 +1395,21 @@ RSpec.describe "issues/show", type: :view do
           end
 
           it "doesn't render disapprove resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = disapprove_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render approve resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = approve_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render destroy resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = issue_resolution_path(@issue, @resolution)
             expect(rendered).not_to have_link(nil, href: url)
@@ -1433,14 +1433,14 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render new connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = new_issue_connection_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render destroy connection link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
