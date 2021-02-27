@@ -27,11 +27,6 @@ hr {
   background: $color-quaternary;
   color: $ink;
 
-  .page {
-    // dropdown container
-    position: relative;
-  }
-
   .user-name {
     text-align: right;
     white-space: nowrap;
@@ -449,8 +444,4 @@ hr {
   color: $dark-gray;
   font-size: 80%;
   text-align: center;
-}
-
-.user-dropdown {
-  right: $page-padding;
 }

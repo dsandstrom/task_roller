@@ -41,8 +41,11 @@ class Dropdown {
   toggle() {
     const top = this.link.offsetTop;
     const height = this.link.offsetHeight;
+    const coords = this.link.getBoundingClientRect();
+    const right = window.innerWidth - coords.left - (coords.width / 2);
 
     this.dropdown.style.top = `${top + height}px`;
+    this.dropdown.style.right = `${right}px`;
     this.dropdown.classList.toggle('active');
     this.link.classList.toggle('active');
   }
