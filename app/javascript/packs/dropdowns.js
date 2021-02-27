@@ -1,6 +1,7 @@
 class Dropdown {
   constructor(elem) {
     this.dropdown = elem;
+    this.activeClass = 'active';
     const linkSelector = elem.dataset.link;
     this.link = document.querySelector(`.${linkSelector}`);
     if (!this.valid()) {
@@ -39,20 +40,28 @@ class Dropdown {
   }
 
   toggle() {
-    const top = this.link.offsetTop;
-    const height = this.link.offsetHeight;
-    const coords = this.link.getBoundingClientRect();
-    const right = window.innerWidth - coords.left - (coords.width / 2);
-
-    this.dropdown.style.top = `${top + height}px`;
-    this.dropdown.style.right = `${right}px`;
-    this.dropdown.classList.toggle('active');
-    this.link.classList.toggle('active');
+    this.dropdown.style.top = this.positionTop();
+    this.dropdown.style.right = this.positionRight();
+    this.dropdown.classList.toggle(this.activeClass);
+    this.link.classList.toggle(this.activeClass);
   }
 
   toggleOff() {
-    this.dropdown.classList.remove('active');
-    this.link.classList.remove('active');
+    this.dropdown.classList.remove(this.activeClass);
+    this.link.classList.remove(this.activeClass);
+  }
+
+  positionTop() {
+    const top = this.link.offsetTop;
+    const height = this.link.offsetHeight;
+    return `${top + height}px`;
+  }
+
+  positionRight() {
+    const left = this.link.offsetLeft;
+    const width = this.link.offsetWidth;
+    const windowWidth = window.innerWidth;
+    return `${windowWidth - (left + width)}px`;
   }
 }
 
