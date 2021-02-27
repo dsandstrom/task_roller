@@ -5,18 +5,23 @@ require "rails_helper"
 RSpec.describe "reviews/edit", type: :view do
   let(:project) { Fabricate(:project) }
 
-  before do
-    @task = assign(:task, Fabricate(:task, project: project))
-    @review = assign(:review, Fabricate(:review, task: @task))
-  end
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
 
-  let(:url) { task_review_url(@task, @review) }
+    before(:each) do
+      enable_can(view, current_user)
+      @task = assign(:task, Fabricate(:task, project: project))
+      @review = assign(:review, Fabricate(:review, task: @task))
+    end
 
-  it "renders new review form" do
-    render
+    let(:url) { task_review_url(@task, @review) }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "select[name=?]", "review[user_id]"
+    it "renders new review form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "select[name=?]", "review[user_id]"
+      end
     end
   end
 end

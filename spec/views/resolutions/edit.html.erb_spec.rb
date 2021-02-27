@@ -5,18 +5,23 @@ require "rails_helper"
 RSpec.describe "resolutions/edit", type: :view do
   let(:project) { Fabricate(:project) }
 
-  before do
-    @issue = assign(:issue, Fabricate(:issue, project: project))
-    @resolution = assign(:resolution, Fabricate(:resolution, issue: @issue))
-  end
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
 
-  let(:url) { issue_resolution_url(@issue, @resolution) }
+    before(:each) do
+      enable_can(view, current_user)
+      @issue = assign(:issue, Fabricate(:issue, project: project))
+      @resolution = assign(:resolution, Fabricate(:resolution, issue: @issue))
+    end
 
-  it "renders new resolution form" do
-    render
+    let(:url) { issue_resolution_url(@issue, @resolution) }
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "select[name=?]", "resolution[user_id]"
+    it "renders new resolution form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "select[name=?]", "resolution[user_id]"
+      end
     end
   end
 end

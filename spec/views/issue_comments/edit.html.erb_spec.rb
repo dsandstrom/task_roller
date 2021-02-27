@@ -11,16 +11,21 @@ RSpec.describe "issue_comments/edit", type: :view do
 
   let(:url) { issue_issue_comment_url(issue, issue_comment) }
 
-  before(:each) do
-    assign(:issue, issue)
-    assign(:issue_comment, issue_comment)
-  end
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
 
-  it "renders the edit issue_comment form" do
-    render
+    before(:each) do
+      enable_can(view, current_user)
+      assign(:issue, issue)
+      assign(:issue_comment, issue_comment)
+    end
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "textarea[name=?]", "issue_comment[body]"
+    it "renders the edit issue_comment form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "textarea[name=?]", "issue_comment[body]"
+      end
     end
   end
 end

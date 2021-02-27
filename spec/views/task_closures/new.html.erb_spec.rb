@@ -6,14 +6,19 @@ RSpec.describe "task_closures/new", type: :view do
   let(:task) { Fabricate(:task) }
   let(:path) { task_closures_path(task) }
 
-  before(:each) do
-    assign(:task, task)
-    assign(:task_closure, TaskClosure.new(task: task))
-  end
+  context "for an admin" do
+    let(:current_user) { Fabricate(:user_admin) }
 
-  it "renders new task_closure form" do
-    render
+    before(:each) do
+      enable_can(view, current_user)
+      assign(:task, task)
+      assign(:task_closure, TaskClosure.new(task: task))
+    end
 
-    assert_select "form[action=?][method=?]", path, "post"
+    it "renders new task_closure form" do
+      render
+
+      assert_select "form[action=?][method=?]", path, "post"
+    end
   end
 end
