@@ -63,7 +63,7 @@ module RollerTypesHelper
     def roller_type_tag(roller_type, css_class)
       content_tag :span, class: css_class do
         concat roller_type_icon(roller_type)
-        concat content_tag(:span, roller_type.name)
+        concat content_tag(:span, roller_type.name, class: 'type-value')
       end
     end
 

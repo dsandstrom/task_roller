@@ -83,17 +83,22 @@ $tag-border-radius: 2 * $border-radius;
 .task-type-tag,
 .issue-type-icon-option,
 .task-type-icon-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin-right: .5rem;
-  padding: .2rem .4rem;
+  padding: 0;
   border-radius: $tag-border-radius;
   color: $color-quaternary;
   font-size: 1.4rem;
   font-weight: bold;
   white-space: nowrap;
 
-  span {
-    margin-left: .3rem;
-    white-space: nowrap;
+  span,
+  i,
+  .dropdown-link {
+    padding: .2rem .5rem;
   }
 
   i {
@@ -104,6 +109,31 @@ $tag-border-radius: 2 * $border-radius;
   [class*=" icon-"] {
     position: relative;
     bottom: -2px;
+  }
+
+  .type-value {
+    padding-left: 0;
+  }
+
+  .dropdown-link {
+    border-right: 1px solid transparent;
+    border-left: 1px solid rgba($white, .2);
+    border-top-right-radius: $tag-border-radius;
+    border-bottom-right-radius: $tag-border-radius;
+
+    &::after {
+      color: $white;
+    }
+
+    &:hover,
+    &.active {
+      border-left-color: transparent;
+      background-color: rgba($black, .2);
+    }
+
+    i {
+      color: $white;
+    }
   }
 }
 
@@ -232,38 +262,8 @@ a {
 
 .issue-type-button,
 .status-button {
-  display: flex;
-  padding: 0;
-
-  .dropdown-link,
-  .issue-type-value,
-  .status-value {
-    padding: .2rem .5rem;
-  }
-
-  .issue-type-value,
+  .type-value,
   .status-value {
     border-right: 1px solid rgba($black, .2);
-  }
-
-  .dropdown-link {
-    border-right: 1px solid transparent;
-    border-left: 1px solid rgba($white, .2);
-    border-top-right-radius: $tag-border-radius;
-    border-bottom-right-radius: $tag-border-radius;
-
-    &::after {
-      color: $white;
-    }
-
-    &:hover,
-    &.active {
-      border-left-color: transparent;
-      background-color: rgba($black, .2);
-    }
-
-    i {
-      color: $white;
-    }
   }
 }
