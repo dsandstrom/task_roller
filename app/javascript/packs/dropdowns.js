@@ -45,9 +45,11 @@ class Dropdown {
     this.dropdown.style.left = null;
     this.dropdown.classList.toggle(this.activeClass);
     this.link.classList.toggle(this.activeClass);
+    this.dropdown.classList.remove('dropdown-menu-left');
     if (this.dropdown.offsetLeft < 0) {
       this.dropdown.style.right = null;
-      this.dropdown.style.left = '2px';
+      this.dropdown.style.left = this.positionLeft();
+      this.dropdown.classList.add('dropdown-menu-left');
     }
   }
 
@@ -67,6 +69,11 @@ class Dropdown {
     const width = this.link.offsetWidth;
     const windowWidth = window.innerWidth;
     return `${windowWidth - (left + width + 15)}px`;
+  }
+
+  positionLeft() {
+    const left = this.link.offsetLeft;
+    return `${left - 15}px`;
   }
 }
 

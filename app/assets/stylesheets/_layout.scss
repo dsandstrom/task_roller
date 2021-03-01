@@ -392,6 +392,13 @@ hr {
     border-left: 1rem solid transparent;
   }
 
+  &.dropdown-menu-left {
+    &::after {
+      right: initial;
+      left: 1.5rem;
+    }
+  }
+
   &.active {
     display: block;
   }
