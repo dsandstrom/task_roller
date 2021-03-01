@@ -61,7 +61,7 @@ class Dropdown {
     const left = this.link.offsetLeft;
     const width = this.link.offsetWidth;
     const windowWidth = window.innerWidth;
-    return `${windowWidth - (left + width)}px`;
+    return `${windowWidth - (left + width + 15)}px`;
   }
 }
 
