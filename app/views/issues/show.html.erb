@@ -8,16 +8,6 @@
                       class: "issue-subscription-wrapper" %>
 
       <% case @issue.status %>
-      <% when 'addressed' %>
-        <% if can?(:create, new_resolution(@issue)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'report issue was not fixed and reopen',
-                          disapprove_issue_resolutions_path(@issue),
-                          method: :post, class: 'destroy-link' %>
-            </p>
-          <% end %>
-        <% end %>
       <% when 'resolved' %>
         <% if can?(:destroy, @issue.current_resolution) %>
           <section class="issue-resolution">
