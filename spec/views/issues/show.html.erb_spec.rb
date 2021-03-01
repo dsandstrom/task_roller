@@ -1221,7 +1221,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render move issue link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: new_issue_move_path(@issue))
         end
@@ -1234,21 +1234,21 @@ RSpec.describe "issues/show", type: :view do
           before { @issue = assign(:issue, issue) }
 
           it "renders disapprove resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = disapprove_issue_resolutions_path(@issue)
             expect(rendered).to have_link(nil, href: url)
           end
 
           it "doesn't render approve resolution link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = approve_issue_resolutions_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
           end
 
           it "doesn't render open issue link" do
-            render
+            render template: subject, layout: "layouts/application"
 
             url = issue_reopenings_path(@issue)
             expect(rendered).not_to have_link(nil, href: url)
@@ -1324,7 +1324,7 @@ RSpec.describe "issues/show", type: :view do
         end
 
         it "doesn't render the edit link" do
-          render
+          render template: subject, layout: "layouts/application"
 
           url = edit_issue_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)

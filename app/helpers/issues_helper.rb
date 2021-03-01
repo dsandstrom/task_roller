@@ -183,8 +183,18 @@ module IssuesHelper
         end
       end
       if issue.closed?
-        if issue.source_connection
-          # TODO: add destroy connection link
+        connection = issue.source_connection
+        if connection
+          if can?(:destroy, connection)
+            confirm = 'Are you sure you want to remove the connection to '\
+                      "\"#{connection.target.short_summary}\" and reopen "\
+                      'this issue?'
+
+            links << link_to('Reopen Issue',
+                             connection,
+                             method: :delete, class: 'button button-clear',
+                             data: { confirm: confirm })
+          end
         elsif can?(:create, new_issue_reopening(issue))
           links << link_to('Reopen Issue', issue_reopenings_path(issue),
                            method: :post, class: 'button button-clear')
