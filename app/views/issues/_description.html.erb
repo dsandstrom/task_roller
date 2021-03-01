@@ -11,10 +11,4 @@
   </header>
 
   <%= content_tag :main, issue.description_html.html_safe %>
-
-  <% if can?(:update, issue) %>
-    <footer>
-      <p><%= link_to 'edit', edit_issue_path(issue) %></p>
-    </footer>
-  <% end %>
 </div>

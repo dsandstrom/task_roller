@@ -63,18 +63,6 @@
         </section>
       <% end %>
 
-      <% if can?(:move, @issue) %>
-        <%= content_for :actions do %>
-          <p>
-            <%= link_to 'move to a different project',
-                        new_issue_move_path(@issue),
-                        class: 'secondary-link' %>
-          </p>
-        <% end %>
-      <% end %>
-
-      <%= render 'actions', issue: @issue %>
-
       <section class="issue-history">
         <h4 class="issue-column-title">History</h4>
 

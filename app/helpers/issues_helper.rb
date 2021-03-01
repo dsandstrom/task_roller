@@ -20,7 +20,7 @@ module IssuesHelper
   def project_and_issue_tags(issue)
     project = issue.project
     tags = [project_invisible_tag(project), project_internal_tag(project),
-            issue_type_tag(issue.issue_type),
+            issue_type_button(issue), issue_dropdown(issue),
             issue_status_button(issue), issue_status_dropdown(issue)].compact
 
     content_tag :div, class: 'project-tags issue-tags' do
@@ -150,10 +150,32 @@ module IssuesHelper
       end
     end
 
+    def issue_type_button(issue)
+      issue_type = issue.issue_type
+      return unless issue_type
+
+      klass = "issue-type-tag #{roller_type_color(issue_type)}"
+      parts = [content_tag(:span, issue_type.name, class: 'issue-type-value')]
+      dropdown = issue_dropdown(issue)
+      if dropdown
+        parts << issue_type_dropdown_link
+        klass += ' issue-type-button'
+      end
+      content_tag :span, class: klass do
+        safe_join(parts)
+      end
+    end
+
     def issue_status_dropdown_link
       link_to '', 'javascript:void(0)',
               class: 'dropdown-link status-dropdown-link',
               title: 'Change Status'
+    end
+
+    def issue_type_dropdown_link
+      link_to '', 'javascript:void(0)',
+              class: 'dropdown-link issue-type-dropdown-link',
+              title: 'Edit Issue'
     end
 
     def issue_status_dropdown(issue)
@@ -162,6 +184,19 @@ module IssuesHelper
 
       containers = [issue_status_user_actions(issue),
                     issue_status_reviewer_actions(issue)].compact
+      return unless containers.any?
+
+      content_tag :div, options do
+        safe_join(containers)
+      end
+    end
+
+    def issue_dropdown(issue)
+      options = { class: 'dropdown-menu issue-dropdown',
+                  data: { link: 'issue-type-dropdown-link' } }
+
+      containers = [issue_user_actions(issue),
+                    issue_reviewer_actions(issue)].compact
       return unless containers.any?
 
       content_tag :div, options do
@@ -227,6 +262,32 @@ module IssuesHelper
       content_tag :div, class: 'dropdown-menu-container status-user-actions' do
         concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
         concat safe_join(links)
+      end
+    end
+
+    def issue_reviewer_actions(issue)
+      links = []
+      if can?(:move, issue) && !current_page?(move_issue_path(issue))
+        links << ['Move to Different Project', move_issue_path(issue)]
+      end
+      return if links.none?
+
+      content_tag :div, class: 'dropdown-menu-container issue-user-actions' do
+        concat content_tag :span, 'Review Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
+      end
+    end
+
+    def issue_user_actions(issue)
+      links = []
+      if can?(:update, issue) && !current_page?(edit_issue_path(issue))
+        links << ['Edit Issue', edit_issue_path(issue)]
+      end
+      return if links.none?
+
+      content_tag :div, class: 'dropdown-menu-container issue-user-actions' do
+        concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
       end
     end
 end

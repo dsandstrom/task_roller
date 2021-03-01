@@ -230,26 +230,29 @@ a {
   }
 }
 
+.issue-type-button,
 .status-button {
   display: flex;
   padding: 0;
 
-  .status-value,
-  .status-dropdown-link {
+  .dropdown-link,
+  .issue-type-value,
+  .status-value {
     padding: .2rem .5rem;
   }
 
+  .issue-type-value,
   .status-value {
     border-right: 1px solid rgba($black, .2);
   }
 
-  .status-dropdown-link {
+  .dropdown-link {
     border-right: 1px solid transparent;
     border-left: 1px solid rgba($white, .2);
     border-top-right-radius: $tag-border-radius;
     border-bottom-right-radius: $tag-border-radius;
 
-    i {
+    &::after {
       color: $white;
     }
 
@@ -257,6 +260,10 @@ a {
     &.active {
       border-left-color: transparent;
       background-color: rgba($black, .2);
+    }
+
+    i {
+      color: $white;
     }
   }
 }
