@@ -42,8 +42,13 @@ class Dropdown {
   toggle() {
     this.dropdown.style.top = this.positionTop();
     this.dropdown.style.right = this.positionRight();
+    this.dropdown.style.left = null;
     this.dropdown.classList.toggle(this.activeClass);
     this.link.classList.toggle(this.activeClass);
+    if (this.dropdown.offsetLeft < 0) {
+      this.dropdown.style.right = null;
+      this.dropdown.style.left = '2px';
+    }
   }
 
   toggleOff() {
