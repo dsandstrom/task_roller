@@ -282,10 +282,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def build_closed_status
       if resolution_approved?
         'resolved'
-      elsif tasks_approved?
-        'addressed'
       elsif source_connection?
         'duplicate'
+      elsif tasks_approved?
+        'addressed'
       else
         'closed'
       end
