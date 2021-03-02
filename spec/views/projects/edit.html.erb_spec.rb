@@ -11,8 +11,8 @@ RSpec.describe "projects/edit", type: :view do
     @project = assign(:project, Fabricate(:project, category: @category))
   end
 
-  context "for a reporter" do
-    let(:current_user) { Fabricate(:user_reporter) }
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
     before { enable_can(view, current_user) }
 

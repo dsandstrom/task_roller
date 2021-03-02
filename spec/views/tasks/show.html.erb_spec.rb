@@ -65,7 +65,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: new_task_connection_path(@task))
       end
@@ -82,7 +82,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders move task link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_task_move_path(@task))
       end
     end
@@ -161,7 +161,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "renders close link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_closures_path(@task)
         assert_select "a[href='#{url}'][data-method='post']"
       end
@@ -267,30 +267,36 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders approval link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: approve_task_review_path(@task, @review))
       end
 
       it "renders disapproval link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: disapprove_task_review_path(@task, @review))
       end
 
       it "renders edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
+      it "doesn't render new task connection link" do
+        render template: subject, layout: "layouts/application"
+        expect(rendered)
+          .not_to have_link(nil, href: new_task_connection_path(@task))
+      end
+
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
@@ -302,7 +308,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: new_task_connection_path(@task))
       end
@@ -316,13 +322,13 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_reopenings_path(@task)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
@@ -342,30 +348,30 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders destroy link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
 
       it "doesn't render a new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: new_task_connection_path(@task))
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
@@ -379,29 +385,29 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render a new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: new_task_connection_path(@task))
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "renders reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
@@ -430,18 +436,18 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
@@ -455,24 +461,24 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "renders edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
     end
@@ -508,13 +514,13 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(
           @task,
           progression: { user_id: @task.user_id }
@@ -538,7 +544,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(
           @task,
           progression: { user_id: @task.user_id }
@@ -547,13 +553,13 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
@@ -567,7 +573,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
     end
@@ -582,30 +588,30 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
 
       it "renders approve review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = approve_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders disapprove review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
@@ -657,7 +663,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "renders edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -669,18 +675,18 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "renders close link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_closures_path(@task)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "renders a new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: new_task_connection_path(@task))
       end
@@ -700,12 +706,12 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
         end
 
         it "doesn't render new task assignment link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
@@ -718,13 +724,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders approval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders disapproval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -737,7 +743,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
         end
       end
@@ -757,7 +763,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders destroy link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
         end
@@ -771,7 +777,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "renders edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -783,18 +789,18 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "renders close link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_closures_path(@task)
         assert_select "a[href='#{url}'][data-method='post']"
       end
 
       it "renders a new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: new_task_connection_path(@task))
       end
@@ -814,7 +820,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
         end
       end
@@ -826,13 +832,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders approval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders disapproval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -845,7 +851,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
         end
       end
@@ -865,7 +871,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders destroy link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
         end
@@ -912,30 +918,30 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = new_task_connection_path(@task)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "doesn't render new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       it "renders move task link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_task_move_path(@task))
       end
     end
@@ -957,12 +963,12 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "doesn't render new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
@@ -982,7 +988,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders destroy link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
       end
@@ -996,7 +1002,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "renders link to source task" do
-        render
+        render template: subject, layout: "layouts/application"
         source = @target_connection.source
         url = task_path(source)
         expect(rendered).to have_link(nil, href: url)
@@ -1011,24 +1017,24 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the progression" do
-        render
+        render template: subject, layout: "layouts/application"
         assert_select "#progression_#{@progression.id}", count: 0
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(
           @task,
           progression: { user_id: @task.user_id }
@@ -1050,7 +1056,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(
           @task,
           progression: { user_id: @task.user_id }
@@ -1059,13 +1065,13 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
@@ -1078,7 +1084,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
     end
@@ -1092,24 +1098,24 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
 
       it "renders approve review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = approve_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
       end
 
       it "renders disapprove review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
       end
@@ -1207,13 +1213,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_reopenings_path(@task))
         end
 
         it "doesn't render close link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_closures_path(@task))
         end
@@ -1225,12 +1231,12 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
         end
 
         it "doesn't render close link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_closures_path(@task))
         end
@@ -1246,7 +1252,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders close link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_closures_path(@task))
         end
       end
@@ -1260,13 +1266,13 @@ RSpec.describe "tasks/show", type: :view do
 
         context "without a duplicate" do
           it "doesn't render close link" do
-            render
+            render template: subject, layout: "layouts/application"
             expect(rendered)
               .not_to have_link(nil, href: task_closures_path(@task))
           end
 
           it "renders open link" do
-            render
+            render template: subject, layout: "layouts/application"
             expect(rendered)
               .to have_link(nil, href: task_reopenings_path(@task))
           end
@@ -1281,13 +1287,13 @@ RSpec.describe "tasks/show", type: :view do
           end
 
           it "doesn't render close link" do
-            render
+            render template: subject, layout: "layouts/application"
             expect(rendered)
               .not_to have_link(nil, href: task_closures_path(@task))
           end
 
           it "doesn't render open link" do
-            render
+            render template: subject, layout: "layouts/application"
             expect(rendered)
               .not_to have_link(nil, href: task_reopenings_path(@task))
           end
@@ -1310,7 +1316,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render edit link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = edit_task_path(@task)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -1335,13 +1341,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render close link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_closures_path(@task)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render a new task connection link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: new_task_connection_path(@task))
         end
@@ -1363,13 +1369,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: edit_assignment_path(@task))
         end
 
         it "doesn't render new task assignment link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
@@ -1382,15 +1388,21 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render approval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render disapproval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
+        end
+
+        it "doesn't render new task connection link" do
+          render template: subject, layout: "layouts/application"
+          expect(rendered)
+            .not_to have_link(nil, href: new_task_connection_path(@task))
         end
       end
 
@@ -1401,7 +1413,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_reopenings_path(@task))
         end
@@ -1415,14 +1427,14 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders link to target task" do
-          render
+          render template: subject, layout: "layouts/application"
           target = @source_connection.target
           url = task_path(target)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render destroy link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_connection_path(@source_connection)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -1439,7 +1451,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render new task_subscription link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_subscriptions_path(@task))
         end
@@ -1452,7 +1464,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render destroy task_subscription link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_task_subscription_path(@task, @subscription)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -1474,7 +1486,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders edit link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = edit_task_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -1487,18 +1499,18 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
         end
 
         it "renders close link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_closures_path(@task)
           assert_select "a[href='#{url}'][data-method='post']"
         end
 
         it "renders a new task connection link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .to have_link(nil, href: new_task_connection_path(@task))
         end
@@ -1520,7 +1532,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
         end
       end
@@ -1533,13 +1545,13 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders approval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders disapproval link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -1552,7 +1564,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders reopen link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reopenings_path(@task))
         end
       end
@@ -1572,7 +1584,7 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders destroy link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
         end
@@ -1654,30 +1666,30 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = new_task_connection_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render edit task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "renders new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       it "doesn't render move task link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
       end
     end
@@ -1688,13 +1700,13 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_reopenings_path(@task))
       end
 
       it "doesn't render new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
@@ -1724,43 +1736,43 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders the finish link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = finish_task_progression_path(@task, @progression)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_reviews_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render destroy progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
         it "doesn't render the new progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progressions_path(@task)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render edit task assignments link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: edit_assignment_path(@task))
         end
 
         it "doesn't render new task assignment link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
 
         it "doesn't render destroy task_assignee link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_task_assignee_path(@task, task_assignee)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -1778,25 +1790,25 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders the new progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progressions_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render the finish link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = finish_task_progression_path(@task, @progression)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render destroy progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
         it "renders destroy task_assignee link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_task_assignee_path(@task, task_assignee)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -1804,7 +1816,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "with no review" do
         it "renders new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reviews_path(@task))
         end
       end
@@ -1816,36 +1828,36 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render destroy review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_review_path(@task, @review)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
         it "doesn't render new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
         end
 
         it "doesn't render approve review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render disapprove review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render new task assignment link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
 
         it "doesn't render destroy task_assignee link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_task_assignee_path(@task, task_assignee)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -1885,25 +1897,25 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render the finish link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = finish_task_progression_path(@task, @progression)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_reviews_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders the new progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progressions_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "renders destroy task_assignee link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_task_assignee_path(@task, task_assignee)
           expect(rendered).to have_link(nil, href: url)
         end
@@ -1921,19 +1933,19 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "renders the new progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progressions_path(@task)
           expect(rendered).to have_link(nil, href: url)
         end
 
         it "doesn't render the finish link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = finish_task_progression_path(@task, @progression)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render destroy progression link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_progression_path(@task, @progression)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
@@ -1941,7 +1953,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "with no review" do
         it "renders new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).to have_link(nil, href: task_reviews_path(@task))
         end
       end
@@ -1953,30 +1965,30 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render destroy review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_review_path(@task, @review)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
         it "doesn't render new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
         end
 
         it "doesn't render approve review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render disapprove review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render new task assignment link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
         end
@@ -2000,32 +2012,32 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_reviews_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "renders new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       it "renders new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: task_task_assignees_path(@task))
       end
 
       context "with no review" do
         it "doesn't render new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
         end
       end
@@ -2036,24 +2048,24 @@ RSpec.describe "tasks/show", type: :view do
         end
 
         it "doesn't render destroy review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = task_review_path(@task, @review)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
 
         it "doesn't render new review link" do
-          render
+          render template: subject, layout: "layouts/application"
           expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
         end
 
         it "doesn't render approve review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = approve_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "doesn't render disapprove review link" do
-          render
+          render template: subject, layout: "layouts/application"
           url = disapprove_task_review_path(@task, @review)
           expect(rendered).not_to have_link(nil, href: url)
         end
@@ -2074,7 +2086,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
@@ -2104,24 +2116,24 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
 
       it "doesn't render approve review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = approve_task_review_path(@task, @review)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render disapprove review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).not_to have_link(nil, href: url)
       end
@@ -2160,7 +2172,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end
@@ -2212,36 +2224,36 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render new task connection link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = new_task_connection_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render new task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_task_assignees_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render edit task assignment link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_assignment_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
 
       it "doesn't render edit link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = edit_task_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render move task link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
       end
     end
@@ -2252,7 +2264,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render reopen link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_reopenings_path(@task))
       end
@@ -2272,7 +2284,7 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_connection_path(@source_connection)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
@@ -2307,37 +2319,37 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_reviews_path(@task, review: { user_id: @task.user_id })
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "doesn't render new task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
@@ -2357,37 +2369,37 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render the new progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progressions_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render the finish link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = finish_task_progression_path(@task, @progression)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_reviews_path(@task)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render destroy progression link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_progression_path(@task, @progression)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render edit task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
 
       it "doesn't render new task assignments link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered)
           .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
@@ -2397,7 +2409,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
     end
@@ -2409,24 +2421,24 @@ RSpec.describe "tasks/show", type: :view do
       end
 
       it "doesn't render destroy review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = task_review_path(@task, @review)
         assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
       end
 
       it "doesn't render new review link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_reviews_path(@task))
       end
 
       it "doesn't render approve review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = approve_task_review_path(@task, @review)
         expect(rendered).not_to have_link(nil, href: url)
       end
 
       it "doesn't render disapprove review link" do
-        render
+        render template: subject, layout: "layouts/application"
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).not_to have_link(nil, href: url)
       end
@@ -2465,7 +2477,7 @@ RSpec.describe "tasks/show", type: :view do
       before { @task = assign(:task, task) }
 
       it "doesn't render close link" do
-        render
+        render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: task_closures_path(@task))
       end
     end

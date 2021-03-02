@@ -6,15 +6,20 @@ RSpec.describe "reviews/new", type: :view do
   let(:task) { assign(:task, Fabricate(:task)) }
   let(:url) { task_reviews_url(task) }
 
-  before do
-    assign(:review, task.reviews.build)
-  end
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-  it "renders new review form" do
-    render
+    before do
+      enable_can(view, current_user)
+      assign(:review, task.reviews.build)
+    end
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "select[name=?]", "review[user_id]"
+    it "renders new review form" do
+      render
+
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "select[name=?]", "review[user_id]"
+      end
     end
   end
 end

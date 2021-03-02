@@ -6,15 +6,20 @@ RSpec.describe "task_connections/new", type: :view do
   let(:task) { Fabricate(:task) }
   let(:path) { task_connections_path(task) }
 
-  before(:each) do
-    assign(:task_connection, TaskConnection.new(source: task))
-  end
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-  it "renders new task_connection form" do
-    render
+    before do
+      enable_can(view, current_user)
+      assign(:task_connection, TaskConnection.new(source: task))
+    end
 
-    assert_select "form[action=?][method=?]", path, "post" do
-      assert_select "select[name=?]", "task_connection[target_id]"
+    it "renders new task_connection form" do
+      render
+
+      assert_select "form[action=?][method=?]", path, "post" do
+        assert_select "select[name=?]", "task_connection[target_id]"
+      end
     end
   end
 end

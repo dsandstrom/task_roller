@@ -131,50 +131,7 @@
 
           <%= render @source_connection %>
         </section>
-      <% elsif @task.open? && !@task.in_review? %>
-        <% if can?(:create, new_task_connection(@task)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'mark as duplicate and close',
-                          new_task_connection_path(@task),
-                          class: 'destroy-link' %>
-            </p>
-          <% end %>
-        <% end %>
-
-        <% if can?(:create, new_task_closure(@task)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'mark invalid and close',
-                          task_closures_path(@task), method: :post,
-                          class: 'destroy-link' %>
-            </p>
-          <% end %>
-        <% end %>
-      <% elsif @task.closed? %>
-        <% if can?(:create, new_task_reopening(@task)) %>
-          <%= content_for :actions do %>
-            <p>
-              <%= link_to 'reopen task',
-                          task_reopenings_path(@task), method: :post,
-                          class: 'create-link' %>
-            </p>
-          <% end %>
-        <% end %>
       <% end %>
-
-
-      <% if can?(:move, @task) %>
-        <%= content_for :actions do %>
-          <p>
-            <%= link_to 'move to a different project',
-                        new_task_move_path(@task),
-                        class: 'secondary-link' %>
-          </p>
-        <% end %>
-      <% end %>
-
-      <%= render 'actions', task: @task %>
 
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">

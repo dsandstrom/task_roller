@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module TasksHelper
+module TasksHelper # rubocop:disable Metrics/ModuleLength
   def task_header(task)
     project = task.project
     return unless project
@@ -19,12 +19,17 @@ module TasksHelper
 
   def project_and_task_tags(task)
     project = task.project
-    tags = [project_invisible_tag(project), project_internal_tag(project),
-            task_type_tag(task.task_type), task_status_tag(task)].compact
 
-    content_tag :div, class: 'project-tags task-tags' do
-      safe_join(tags)
-    end
+    edit_dropdown = task_edit_dropdown(task)
+    status_dropdown = task_status_dropdown(task)
+
+    type_button = task_type_button(task, with_dropdown: edit_dropdown.present?)
+    status_button =
+      task_status_button(task, with_dropdown: status_dropdown.present?)
+    tags = [project_invisible_tag(project), project_internal_tag(project),
+            type_button, status_button, edit_dropdown, status_dropdown].compact
+
+    content_tag :span, safe_join(tags), class: 'project-tags task-tags'
   end
 
   def task_tags(task)
@@ -121,7 +126,168 @@ module TasksHelper
       color = option[:color]
       return unless color
 
-      content_tag :span, value.titleize,
-                  class: "status-tag roller-type-color-#{color}"
+      content_tag :span, class: "status-tag roller-type-color-#{color}" do
+        content_tag :span, value.titleize, class: 'status-value'
+      end
+    end
+
+    def task_status_color(value)
+      option = Task::STATUS_OPTIONS[value.parameterize.underscore.to_sym]
+      return unless option
+
+      option[:color]
+    end
+
+    def task_status_button(task, with_dropdown: false)
+      value = task.status
+      return unless value
+
+      klass = "status-tag roller-type-color-#{task_status_color(value)}"
+      parts = [content_tag(:span, value.titleize, class: 'status-value')]
+      if with_dropdown
+        parts << status_dropdown_link
+        klass += ' status-button'
+      end
+      content_tag :span, safe_join(parts), class: klass
+    end
+
+    def task_type_button(task, with_dropdown: false)
+      task_type = task.task_type
+      return unless task_type
+
+      klass = "task-type-tag #{roller_type_color(task_type)}"
+      parts = [roller_type_icon(task_type),
+               content_tag(:span, task_type.name, class: 'type-value')]
+      if with_dropdown
+        parts << task_type_dropdown_link
+        klass += ' task-type-button'
+      end
+      content_tag :span, safe_join(parts), class: klass
+    end
+
+    def task_type_dropdown_link
+      link_to '', 'javascript:void(0)',
+              class: 'dropdown-link task-type-dropdown-link',
+              title: 'Edit Task'
+    end
+
+    def task_status_dropdown(task)
+      options = { class: 'dropdown-menu status-dropdown',
+                  data: { link: 'status-dropdown-link' } }
+
+      containers = [task_status_user_container(task),
+                    task_status_reviewer_container(task)].compact
+      return unless containers.any?
+
+      content_tag :div, options do
+        safe_join(containers)
+      end
+    end
+
+    def task_status_reviewer_container(task)
+      links = task_status_reviewer_links(task)
+      return unless links&.any?
+
+      klass = 'dropdown-menu-container status-reviewer-actions'
+      content_tag :div, class: klass do
+        concat content_tag :span, 'Review Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
+      end
+    end
+
+    # TODO: add reviews
+    def task_open_status_reviewer_links(task)
+      return if task.in_review?
+
+      links = []
+      if can?(:create, new_task_connection(task))
+        links << ['Mark as Duplicate', new_task_connection_path(task)]
+      end
+      if can?(:create, new_task_closure(task))
+        links << ['Close Task', task_closures_path(task),
+                  { method: :post }]
+      end
+      links
+    end
+
+    def task_connection_links(connection)
+      return unless can?(:destroy, connection)
+
+      confirm = 'Are you sure you want to remove the connection to '\
+                "\"#{connection.target.short_summary}\" and reopen "\
+                'this task?'
+
+      [['Reopen Task', connection,
+        { method: :delete, data: { confirm: confirm } }]]
+    end
+
+    def task_closed_status_reviewer_links(task)
+      connection = task.source_connection
+      if connection
+        task_connection_links(connection)
+      elsif can?(:create, new_task_reopening(task))
+        [['Reopen Task', task_reopenings_path(task),
+          { method: :post }]]
+      end
+    end
+
+    def task_status_reviewer_links(task)
+      if task.open?
+        task_open_status_reviewer_links(task)
+      else
+        task_closed_status_reviewer_links(task)
+      end
+    end
+
+    def task_status_user_container(task)
+      links = task_status_user_links(task)
+      return unless links
+
+      content_tag :div, class: 'dropdown-menu-container status-user-actions' do
+        concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
+      end
+    end
+
+    # TODO: add assignments
+    def task_status_user_links(task); end
+
+    def task_edit_dropdown(task)
+      options = { class: 'dropdown-menu task-dropdown',
+                  data: { link: 'task-type-dropdown-link' } }
+
+      containers = [task_user_container(task),
+                    task_reviewer_container(task)].compact
+      return unless containers.any?
+
+      content_tag :div, options do
+        safe_join(containers)
+      end
+    end
+
+    def task_reviewer_container(task)
+      links = []
+      if can?(:move, task) && !current_page?(move_task_path(task))
+        links << ['Move to Different Project', move_task_path(task)]
+      end
+      return if links.none?
+
+      content_tag :div, class: 'dropdown-menu-container task-user-actions' do
+        concat content_tag :span, 'Review Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
+      end
+    end
+
+    def task_user_container(task)
+      links = []
+      if can?(:update, task) && !current_page?(edit_task_path(task))
+        links << ['Edit Task', edit_task_path(task)]
+      end
+      return if links.none?
+
+      content_tag :div, class: 'dropdown-menu-container task-user-actions' do
+        concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
+        concat safe_join(navitize(links, class: 'button button-clear'))
+      end
     end
 end

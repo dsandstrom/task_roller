@@ -6,14 +6,21 @@ RSpec.describe "task_assignees/new", type: :view do
   let(:task) { Fabricate(:task) }
   let(:path) { task_task_assignees_path(task) }
 
-  before(:each) do
-    assign(:task, task)
-    assign(:task_assignee, TaskAssignee.new(task: task))
-  end
+  let(:url) { task_path(@task) }
 
-  it "renders new task_assignee form" do
-    render
+  context "for a reviewer" do
+    let(:current_user) { Fabricate(:user_reviewer) }
 
-    assert_select "form[action=?][method=?]", path, "post"
+    before do
+      enable_can(view, current_user)
+      assign(:task, task)
+      assign(:task_assignee, TaskAssignee.new(task: task))
+    end
+
+    it "renders new task_assignee form" do
+      render
+
+      assert_select "form[action=?][method=?]", path, "post"
+    end
   end
 end

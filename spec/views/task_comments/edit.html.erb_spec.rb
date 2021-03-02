@@ -11,16 +11,19 @@ RSpec.describe "task_comments/edit", type: :view do
 
   let(:url) { task_task_comment_url(task, task_comment) }
 
-  before(:each) do
-    assign(:task, task)
-    assign(:task_comment, task_comment)
-  end
+  context "for the user" do
+    before do
+      enable_can(view, user)
+      assign(:task, task)
+      assign(:task_comment, task_comment)
+    end
 
-  it "renders the edit task_comment form" do
-    render
+    it "renders the edit task_comment form" do
+      render
 
-    assert_select "form[action=?][method=?]", url, "post" do
-      assert_select "textarea[name=?]", "task_comment[body]"
+      assert_select "form[action=?][method=?]", url, "post" do
+        assert_select "textarea[name=?]", "task_comment[body]"
+      end
     end
   end
 end

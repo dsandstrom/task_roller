@@ -148,7 +148,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
       klass = "status-tag roller-type-color-#{issue_status_color(value)}"
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
       if with_dropdown
-        parts << issue_status_dropdown_link
+        parts << status_dropdown_link
         klass += ' status-button'
       end
       content_tag :span, safe_join(parts), class: klass
@@ -168,7 +168,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
       content_tag :span, safe_join(parts), class: klass
     end
 
-    def issue_status_dropdown_link
+    def status_dropdown_link
       link_to '', 'javascript:void(0)',
               class: 'dropdown-link status-dropdown-link',
               title: 'Change Status'
