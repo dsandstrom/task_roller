@@ -105,7 +105,7 @@ module ApplicationHelper
 
     def navitize(links, link_options = {})
       links.map do |value, url, options = {}|
-        options.merge! link_options
+        options.reverse_merge! link_options
         if current_page?(url)
           options[:class] = "#{options[:class]} current-page"
         end

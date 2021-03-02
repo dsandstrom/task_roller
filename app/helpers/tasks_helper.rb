@@ -232,7 +232,9 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_reviewer_links(task)
-      if task.open?
+      if task.in_review?
+        task_in_review_status_reviewer_links(task)
+      elsif task.open?
         task_open_status_reviewer_links(task)
       else
         task_closed_status_reviewer_links(task)
@@ -240,8 +242,6 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_user_container(task)
-      return if task.closed? || task.in_review?
-
       links = task_status_user_links(task)
       return unless links&.any?
 
@@ -252,6 +252,47 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_user_links(task)
+      if task.closed?
+        # task_closed_status_user_links(task)
+      elsif !task.in_review?
+        task_open_status_user_links(task)
+      else
+        task_in_review_status_user_links(task)
+      end
+    end
+
+    def task_in_review_status_reviewer_links(task)
+      review = task.current_review
+      return unless review
+
+      links = []
+      if can?(:approve, review)
+        links <<
+          ['approve', approve_task_review_path(task, review),
+           { method: :patch, class: 'button button-clear button-success' }]
+      end
+      if can?(:disapprove, review)
+        links <<
+          ['disapprove', disapprove_task_review_path(task, review),
+           { method: :patch, class: 'button button-clear button-warning' }]
+      end
+      links
+    end
+
+    def task_in_review_status_user_links(task)
+      review = task.current_review
+      return unless review
+
+      links = []
+      if can?(:destroy, review)
+        confirm = 'Are you sure you want to cancel the review?'
+        links << ['cancel review', task_review_path(task, review),
+                  { method: :delete, data: { confirm: confirm } }]
+      end
+      links
+    end
+
+    def task_open_status_user_links(task)
       links = []
       task_assignee = task.task_assignees.find_by(assignee_id: current_user.id)
       if task_assignee
@@ -263,8 +304,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
           links << ['Unassign Myself',
                     task_task_assignee_path(task, task_assignee),
-                    { method: :delete, data: { confirm: confirm },
-                      class: "task_assignee-#{task_assignee.id}" }]
+                    { method: :delete, data: { confirm: confirm } }]
         end
       elsif can?(:create, new_task_assignee(task))
         links << ['Assign Myself', task_task_assignees_path(task),
