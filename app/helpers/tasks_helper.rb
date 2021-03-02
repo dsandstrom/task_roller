@@ -252,12 +252,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_user_links(task)
-      if task.closed?
-        # task_closed_status_user_links(task)
-      elsif !task.in_review?
-        task_open_status_user_links(task)
-      else
+      if task.in_review?
         task_in_review_status_user_links(task)
+      elsif task.open?
+        task_open_status_user_links(task)
       end
     end
 
@@ -267,14 +265,12 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
       links = []
       if can?(:approve, review)
-        links <<
-          ['approve', approve_task_review_path(task, review),
-           { method: :patch, class: 'button button-clear button-success' }]
+        links << ['approve', approve_task_review_path(task, review),
+                  { method: :patch, class: 'button-success' }]
       end
       if can?(:disapprove, review)
-        links <<
-          ['disapprove', disapprove_task_review_path(task, review),
-           { method: :patch, class: 'button button-clear button-warning' }]
+        links << ['disapprove', disapprove_task_review_path(task, review),
+                  { method: :patch, class: 'button-warning' }]
       end
       links
     end
