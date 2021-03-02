@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module IssuesHelper
+module IssuesHelper # rubocop:disable Metrics/ModuleLength
   def issue_header(issue)
     project = issue.project
     return unless project
@@ -19,13 +19,18 @@ module IssuesHelper
 
   def project_and_issue_tags(issue)
     project = issue.project
-    tags = [project_invisible_tag(project), project_internal_tag(project),
-            issue_type_button(issue), issue_dropdown(issue),
-            issue_status_button(issue), issue_status_dropdown(issue)].compact
 
-    content_tag :div, class: 'project-tags issue-tags' do
-      safe_join(tags)
-    end
+    edit_dropdown = issue_edit_dropdown(issue)
+    status_dropdown = issue_status_dropdown(issue)
+
+    type_button =
+      issue_type_button(issue, with_dropdown: edit_dropdown.present?)
+    status_button =
+      issue_status_button(issue, with_dropdown: status_dropdown.present?)
+
+    tags = [project_invisible_tag(project), project_internal_tag(project),
+            type_button, status_button, edit_dropdown, status_dropdown].compact
+    content_tag :span, safe_join(tags), class: 'project-tags issue-tags'
   end
 
   def issue_tags(issue)
@@ -124,46 +129,43 @@ module IssuesHelper
       color = option[:color]
       return unless color
 
-      content_tag :span, value.titleize,
-                  class: "status-tag roller-type-color-#{color}"
+      content_tag :span, class: "status-tag roller-type-color-#{color}" do
+        content_tag :span, value.titleize, class: 'status-value'
+      end
     end
 
-    def issue_status_button(issue)
-      value = issue.status
-      return unless value
-
+    def issue_status_color(value)
       option = Issue::STATUS_OPTIONS[value.parameterize.underscore.to_sym]
       return unless option
 
-      color = option[:color]
-      return unless color
+      option[:color]
+    end
 
-      klass = "status-tag roller-type-color-#{color}"
+    def issue_status_button(issue, with_dropdown: false)
+      value = issue.status
+      return unless value
+
+      klass = "status-tag roller-type-color-#{issue_status_color(value)}"
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
-      dropdown = issue_status_dropdown(issue)
-      if dropdown
+      if with_dropdown
         parts << issue_status_dropdown_link
         klass += ' status-button'
       end
-      content_tag :span, class: klass do
-        safe_join(parts)
-      end
+      content_tag :span, safe_join(parts), class: klass
     end
 
-    def issue_type_button(issue)
+    def issue_type_button(issue, with_dropdown: false)
       issue_type = issue.issue_type
       return unless issue_type
 
       klass = "issue-type-tag #{roller_type_color(issue_type)}"
-      parts = [content_tag(:span, issue_type.name, class: 'issue-type-value')]
-      dropdown = issue_dropdown(issue)
-      if dropdown
+      parts = [roller_type_icon(issue_type),
+               content_tag(:span, issue_type.name, class: 'type-value')]
+      if with_dropdown
         parts << issue_type_dropdown_link
         klass += ' issue-type-button'
       end
-      content_tag :span, class: klass do
-        safe_join(parts)
-      end
+      content_tag :span, safe_join(parts), class: klass
     end
 
     def issue_status_dropdown_link
@@ -182,8 +184,8 @@ module IssuesHelper
       options = { class: 'dropdown-menu status-dropdown',
                   data: { link: 'status-dropdown-link' } }
 
-      containers = [issue_status_user_actions(issue),
-                    issue_status_reviewer_actions(issue)].compact
+      containers = [issue_status_user_container(issue),
+                    issue_status_reviewer_container(issue)].compact
       return unless containers.any?
 
       content_tag :div, options do
@@ -191,12 +193,12 @@ module IssuesHelper
       end
     end
 
-    def issue_dropdown(issue)
+    def issue_edit_dropdown(issue)
       options = { class: 'dropdown-menu issue-dropdown',
                   data: { link: 'issue-type-dropdown-link' } }
 
-      containers = [issue_user_actions(issue),
-                    issue_reviewer_actions(issue)].compact
+      containers = [issue_user_container(issue),
+                    issue_reviewer_container(issue)].compact
       return unless containers.any?
 
       content_tag :div, options do
@@ -204,68 +206,84 @@ module IssuesHelper
       end
     end
 
-    def issue_status_reviewer_actions(issue)
+    def issue_open_status_reviewer_links(issue)
       links = []
-      if issue.open?
-        if can?(:create, new_issue_connection(issue))
-          links << link_to('Mark as Duplicate',
-                           new_issue_connection_path(issue),
-                           class: 'button button-clear')
-        end
-        if can?(:create, new_issue_closure(issue))
-          links << link_to('Close Issue', issue_closures_path(issue),
-                           method: :post, class: 'button button-clear')
-        end
+      if can?(:create, new_issue_connection(issue))
+        links << ['Mark as Duplicate', new_issue_connection_path(issue)]
       end
-      if issue.closed?
-        connection = issue.source_connection
-        if connection
-          if can?(:destroy, connection)
-            confirm = 'Are you sure you want to remove the connection to '\
-                      "\"#{connection.target.short_summary}\" and reopen "\
-                      'this issue?'
+      if can?(:create, new_issue_closure(issue))
+        links << ['Close Issue', issue_closures_path(issue),
+                  { method: :post }]
+      end
+      links
+    end
 
-            links << link_to('Reopen Issue',
-                             connection,
-                             method: :delete, class: 'button button-clear',
-                             data: { confirm: confirm })
-          end
-        elsif can?(:create, new_issue_reopening(issue))
-          links << link_to('Reopen Issue', issue_reopenings_path(issue),
-                           method: :post, class: 'button button-clear')
-        end
+    def issue_connection_links(connection)
+      return unless can?(:destroy, connection)
+
+      confirm = 'Are you sure you want to remove the connection to '\
+                "\"#{connection.target.short_summary}\" and reopen "\
+                'this issue?'
+
+      [['Reopen Issue', connection,
+        { method: :delete, data: { confirm: confirm } }]]
+    end
+
+    def issue_closed_status_reviewer_links(issue)
+      connection = issue.source_connection
+      if connection
+        issue_connection_links(connection)
+      elsif can?(:create, new_issue_reopening(issue))
+        [['Reopen Issue', issue_reopenings_path(issue),
+          { method: :post }]]
       end
-      return if links.none?
+    end
+
+    def issue_status_reviewer_links(issue)
+      if issue.open?
+        issue_open_status_reviewer_links(issue)
+      else
+        issue_closed_status_reviewer_links(issue)
+      end
+    end
+
+    def issue_status_reviewer_container(issue)
+      links = issue_status_reviewer_links(issue)
+      return unless links&.any?
 
       klass = 'dropdown-menu-container status-reviewer-actions'
       content_tag :div, class: klass do
         concat content_tag :span, 'Review Actions', class: 'dropdown-menu-title'
-        concat safe_join(links)
+        concat safe_join(navitize(links, class: 'button button-clear'))
       end
     end
 
-    def issue_status_user_actions(issue)
-      links = []
-      if issue.status == 'addressed' && can?(:create, new_resolution(issue))
-        links << link_to('Report Issue not Fixed',
-                         disapprove_issue_resolutions_path(issue),
-                         method: :post, class: 'button button-clear')
-      elsif issue.status == 'open' || issue.status == 'being_worked_on'
-        if can?(:create, new_resolution(issue))
-          links << link_to('Mark Resolved',
-                           approve_issue_resolutions_path(issue),
-                           method: :post, class: 'button button-clear')
-        end
+    def issue_status_user_links(issue)
+      return unless can?(:create, new_resolution(issue))
+
+      options = %w[addressed open being_worked_on]
+      return unless options.any? { |status| issue.status == status }
+
+      if issue.status == 'addressed'
+        [['Report Issue not Fixed', disapprove_issue_resolutions_path(issue),
+          { method: :post }]]
+      else
+        [['Mark Resolved', approve_issue_resolutions_path(issue),
+          { method: :post }]]
       end
-      return if links.none?
+    end
+
+    def issue_status_user_container(issue)
+      links = issue_status_user_links(issue)
+      return unless links
 
       content_tag :div, class: 'dropdown-menu-container status-user-actions' do
         concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
-        concat safe_join(links)
+        concat safe_join(navitize(links, class: 'button button-clear'))
       end
     end
 
-    def issue_reviewer_actions(issue)
+    def issue_reviewer_container(issue)
       links = []
       if can?(:move, issue) && !current_page?(move_issue_path(issue))
         links << ['Move to Different Project', move_issue_path(issue)]
@@ -278,7 +296,7 @@ module IssuesHelper
       end
     end
 
-    def issue_user_actions(issue)
+    def issue_user_container(issue)
       links = []
       if can?(:update, issue) && !current_page?(edit_issue_path(issue))
         links << ['Edit Issue', edit_issue_path(issue)]
