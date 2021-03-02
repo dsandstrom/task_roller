@@ -934,11 +934,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
-      it "doesn't render new task assignment link" do
-        render template: subject, layout: "layouts/application"
-        expect(rendered)
-          .not_to have_link(nil, href: task_task_assignees_path(@task))
-      end
+      # it "doesn't render new task assignment link" do
+      #   render template: subject, layout: "layouts/application"
+      #   expect(rendered)
+      #     .not_to have_link(nil, href: task_task_assignees_path(@task))
+      # end
 
       it "renders move task link" do
         render template: subject, layout: "layouts/application"
@@ -967,11 +967,12 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
-      it "doesn't render new task assignment link" do
-        render template: subject, layout: "layouts/application"
-        expect(rendered)
-          .not_to have_link(nil, href: task_task_assignees_path(@task))
-      end
+      # self assign link is visible
+      # it "doesn't render new task assignment link" do
+      #   render template: subject, layout: "layouts/application"
+      #   expect(rendered)
+      #     .not_to have_link(nil, href: task_task_assignees_path(@task))
+      # end
     end
 
     context "when task has a source_connection" do

@@ -27,13 +27,6 @@
                               id: 'task_assignment_link',
                               class: 'secondary-link' %>
                 </p>
-              <% elsif can?(:create, new_task_assignee(@task)) %>
-                <p>
-                  <%= link_to "self assign",
-                              task_task_assignees_path(@task),
-                              method: :post,
-                              class: 'create-link' %>
-                </p>
               <% end %>
             <% end %>
           <% else %>
@@ -47,12 +40,6 @@
                               edit_assignment_path(@task),
                               id: 'task_assignment_link',
                               class: 'secondary-link' %>
-                <% elsif can?(:create, new_task_assignee(@task)) %>
-                  <%= divider %>
-                  <%= link_to "self assign",
-                              task_task_assignees_path(@task),
-                              method: :post,
-                              class: 'create-link' %>
                 <% end %>
               <% end %>
             </p>
@@ -79,12 +66,6 @@
                   <%= divider %>
                   <%= render @task_assignee, task: @task %>
                 <% end %>
-              <% end %>
-
-              <% if can?(:create, new_review(@task)) %>
-                <%= divider %>
-                <%= link_to 'mark complete', task_reviews_path(@task),
-                            method: :post, class: 'secondary-link' %>
               <% end %>
             </p>
           <% end %>

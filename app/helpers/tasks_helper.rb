@@ -240,8 +240,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_user_container(task)
+      return if task.closed? || task.in_review?
+
       links = task_status_user_links(task)
-      return unless links
+      return unless links&.any?
 
       content_tag :div, class: 'dropdown-menu-container status-user-actions' do
         concat content_tag :span, 'User Actions', class: 'dropdown-menu-title'
@@ -249,8 +251,31 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    # TODO: add assignments
-    def task_status_user_links(task); end
+    def task_status_user_links(task)
+      links = []
+      task_assignee = task.task_assignees.find_by(assignee_id: current_user.id)
+      if task_assignee
+        progressions =
+          task.progressions.unfinished.where(user_id: current_user.id)
+        if progressions.none? && can?(:destroy, task_assignee)
+          confirm =
+            "Are you sure you want to unassign yourself from #{task.heading}?"
+
+          links << ['Unassign Myself',
+                    task_task_assignee_path(task, task_assignee),
+                    { method: :delete, data: { confirm: confirm },
+                      class: "task_assignee-#{task_assignee.id}" }]
+        end
+      elsif can?(:create, new_task_assignee(task))
+        links << ['Assign Myself', task_task_assignees_path(task),
+                  { method: :post }]
+      end
+      if can?(:create, new_review(task))
+        links << ['Mark Complete', task_reviews_path(task),
+                  { method: :post }]
+      end
+      links
+    end
 
     def task_edit_dropdown(task)
       options = { class: 'dropdown-menu task-dropdown',
