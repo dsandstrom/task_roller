@@ -82,11 +82,12 @@ $tag-border-radius: 2 * $border-radius;
 .issue-type-tag,
 .task-type-tag,
 .issue-type-icon-option,
-.task-type-icon-option {
+.task-type-icon-option,
+.issue-tag,
+.task-tag {
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-right: .5rem;
   padding: 0;
   border-radius: $tag-border-radius;
@@ -137,20 +138,12 @@ $tag-border-radius: 2 * $border-radius;
   }
 }
 
-.task-type-icon,
-.issue-type-icon {
-  [class^="icon-"],
-  [class*=" icon-"] {
-    position: relative;
-    bottom: -1px;
-    font-weight: bold;
-  }
-}
-
 .status-tag,
 .issue-type-tag,
 .task-type-tag,
-.roller-radio-button-label {
+.roller-radio-button-label,
+.issue-tag,
+.task-tag {
   &.roller-type-color-green,
   &.roller-type-color-yellow,
   &.roller-type-color-red,
@@ -195,6 +188,16 @@ $tag-border-radius: 2 * $border-radius;
   &.roller-type-color-yellow {
     border-color: $dark-yellow;
     background-color: $yellow;
+  }
+}
+
+.task-type-icon,
+.issue-type-icon {
+  [class^="icon-"],
+  [class*=" icon-"] {
+    position: relative;
+    bottom: -1px;
+    font-weight: bold;
   }
 }
 
@@ -262,9 +265,11 @@ a {
 
 .issue-type-button,
 .task-type-button,
-.status-button {
+.status-button,
+.task-button {
   .type-value,
-  .status-value {
+  .status-value,
+  .assign-value {
     border-right: 1px solid rgba($black, .2);
   }
 }
