@@ -1,17 +1,3 @@
 <span id="progression_<%= progression.id %>" class="progression">
-  <% if progression.finished? %>
-    <%= "#{progression.start_date}-#{progression.finish_date}" %>
-  <% elsif can?(:finish, progression) %>
-    <%= link_to 'pause task',
-                finish_task_progression_path(task, progression),
-                method: :patch, class: 'destroy-link' %>
-  <% end %>
-
-  <% if can?(:destroy, progression) %>
-    <%= divider %>
-    <%= link_to 'delete', task_progression_path(task, progression),
-                method: :delete, data: { confirm: 'Are you sure?' },
-                class: 'secondary-link' %>
-
-  <% end %>
+  <%= "#{progression.start_date}-#{progression.finish_date}" %>
 </span>

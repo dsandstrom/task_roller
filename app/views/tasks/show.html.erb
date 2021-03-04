@@ -49,27 +49,6 @@
             <%= render 'assignments/form', task: @task %>
           <% end %>
 
-          <% unless @task.in_review? %>
-            <p>
-              <% if @progressions.any? %>
-                <%= render partial: 'shared/progression',
-                           collection: @progressions,
-                           locals: { task: @task } %>
-              <% else %>
-                <% if can?(:create, new_progression(@task)) %>
-                  <%= link_to 'start task',
-                              task_progressions_path(@task),
-                              method: :post, class: 'create-link' %>
-                <% end %>
-
-                <% if @task_assignee && can?(:destroy, @task_assignee) %>
-                  <%= divider %>
-                  <%= render @task_assignee, task: @task %>
-                <% end %>
-              <% end %>
-            </p>
-          <% end %>
-
           <% if @task.in_review? %>
             <%= render 'reviews/pending',
                        review: @task.current_review %>
@@ -118,9 +97,10 @@
       <section class="task-history-wrapper">
         <dl class="task-history">
           <% if @user %>
-            <%= content_tag :dt, link_to_if(can?(:read, @user),
-                                            @user.name_or_email,
-                                            user_tasks_path(@user)) %>
+            <%= content_tag :dt,
+                            link_to_if(can?(:read, @user),
+                                       @user.name_or_email,
+                                       user_tasks_path(@user)) %>
           <% end %>
           <%= content_tag :dd, "opened: #{format_date @task.created_at}",
                           class: 'task-created-at' %>

@@ -1733,7 +1733,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "renders the progression" do
           render
-          assert_select "#progression_#{@progression.id}"
+          assert_select "#assignee-progressions-#{@progression.user_id}"
         end
 
         it "renders the finish link" do
