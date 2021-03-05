@@ -9,7 +9,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     return unless category
 
     items = [breadcrumbs(task_header_pages(task)), task_header_title(task),
-             project_and_task_tags(task)].compact
+             project_and_task_tags(project, task)].compact
 
     task_page_title(task)
     content_for :header do
@@ -17,18 +17,14 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
   end
 
-  def project_and_task_tags(task)
-    project = task.project
-
+  def project_and_task_tags(project, task)
     assign_dropdown = task_assign_dropdown(task)
     edit_dropdown = task_edit_dropdown(task)
     status_dropdown = task_status_dropdown(task)
 
-    assign_button =
-      task_assign_button(task, with_dropdown: assign_dropdown.present?)
-    status_button =
-      task_status_button(task, with_dropdown: status_dropdown.present?)
-    type_button = task_type_button(task, with_dropdown: edit_dropdown.present?)
+    assign_button = task_assign_button(task, dropdown: assign_dropdown.present?)
+    status_button = task_status_button(task, dropdown: status_dropdown.present?)
+    type_button = task_type_button(task, dropdown: edit_dropdown.present?)
     tags = [project_invisible_tag(project), project_internal_tag(project),
             type_button, status_button, assign_button, assign_dropdown,
             edit_dropdown, status_dropdown].compact
@@ -37,8 +33,8 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
   end
 
   def task_tags(task)
-    tags = [task_type_button(task, with_dropdown: false),
-            task_status_button(task, with_dropdown: false)]
+    tags = [task_type_button(task, dropdown: false),
+            task_status_button(task, dropdown: false)]
 
     content_tag :div, class: 'task-tags' do
       safe_join(tags)
@@ -128,28 +124,28 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       option[:color]
     end
 
-    def task_status_button(task, with_dropdown: false)
+    def task_status_button(task, dropdown: false)
       value = task.status
       return unless value
 
       klass =
         "task-tag task-status-tag roller-type-color-#{task_status_color(value)}"
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
-      if with_dropdown
+      if dropdown
         parts << status_dropdown_link
         klass += ' status-button'
       end
       content_tag :span, safe_join(parts), class: klass
     end
 
-    def task_type_button(task, with_dropdown: false)
+    def task_type_button(task, dropdown: false)
       task_type = task.task_type
       return unless task_type
 
       klass = "task-type-tag #{roller_type_color(task_type)}"
       parts = [roller_type_icon(task_type),
                content_tag(:span, task_type.name, class: 'type-value')]
-      if with_dropdown
+      if dropdown
         parts << task_type_dropdown_link
         klass += ' task-type-button'
       end
@@ -224,7 +220,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
     def task_status_reviewer_links(task)
       if task.in_review?
-        task_in_review_status_reviewer_links(task)
+        review = task.current_review
+        return unless review
+
+        task_review_links(task, review)
       elsif task.open?
         task_open_status_reviewer_links(task)
       else
@@ -243,15 +242,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_status_user_links(task)
-      if task.in_review?
-        task_in_review_status_user_links(task)
-      end
+      task_in_review_status_user_links(task) if task.in_review?
     end
 
-    def task_in_review_status_reviewer_links(task)
-      review = task.current_review
-      return unless review
-
+    def task_review_links(task, review)
       links = []
       if can?(:approve, review)
         links << ['approve', approve_task_review_path(task, review),
@@ -279,45 +273,63 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def task_assign_links(task)
-      return if task.closed? || task.in_review?
-
-      links = []
+      links = task_new_review_links(task) || []
       task_assignee = task.task_assignees.find_by(assignee_id: current_user.id)
-
-      if can?(:create, new_review(task))
-        links << ['Mark Complete', task_reviews_path(task),
-                  { method: :post, class: 'button-success' }]
-      end
-
       if task_assignee
-        progression =
-          task.progressions.unfinished.find_by(user_id: current_user.id)
-        if progression
-          if can?(:finish, progression)
-            links << ['pause task',
-                      finish_task_progression_path(task, progression),
-                      { method: :patch }]
-          end
-        else
-          if can?(:create, new_progression(task))
-            links << ['start task', task_progressions_path(task),
-                      { method: :post }]
-          end
-          if can?(:destroy, task_assignee)
-            confirm =
-              "Are you sure you want to unassign yourself from #{task.heading}?"
-
-            links << ['Unassign Myself',
-                      task_task_assignee_path(task, task_assignee),
-                      { method: :delete, data: { confirm: confirm },
-                        class: 'button-warning' }]
-          end
-        end
+        task_assignee_and_progression_links(task, task_assignee)
+          .each { |l| links << l }
       elsif can?(:create, new_task_assignee(task))
         links << ['Assign Myself', task_task_assignees_path(task),
                   { method: :post }]
       end
 
+      links
+    end
+
+    def task_assignee_and_progression_links(task, task_assignee)
+      progression =
+        task.progressions.unfinished.find_by(user_id: current_user.id)
+      if progression
+        task_progression_links(task, progression)
+      else
+        task_assignee_links(task, task_assignee)
+      end
+    end
+
+    def task_progression_links(task, progression)
+      return unless can?(:finish, progression)
+
+      [['pause task', finish_task_progression_path(task, progression),
+        { method: :patch }]]
+    end
+
+    def task_new_progression_link(task)
+      ['start task', task_progressions_path(task), { method: :post }]
+    end
+
+    def task_new_review_links(task)
+      return unless can?(:create, new_review(task))
+
+      [['Mark Complete', task_reviews_path(task),
+        { method: :post, class: 'button-success' }]]
+    end
+
+    def task_unassign_link(task, task_assignee)
+      confirm =
+        "Are you sure you want to unassign yourself from #{task.heading}?"
+
+      ['Unassign Myself', task_task_assignee_path(task, task_assignee),
+       { method: :delete, data: { confirm: confirm }, class: 'button-warning' }]
+    end
+
+    def task_assignee_links(task, task_assignee)
+      links = []
+      if can?(:create, new_progression(task))
+        links << task_new_progression_link(task)
+      end
+      if can?(:destroy, task_assignee)
+        links << task_unassign_link(task, task_assignee)
+      end
       links
     end
 
@@ -360,24 +372,25 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    def task_assign_button(task, with_dropdown: false)
+    def task_assign_button_value(task)
       task_assignee = task.task_assignees.find_by(assignee_id: current_user.id)
       progression =
         task.progressions.unfinished.find_by(user_id: current_user.id)
 
       if progression
-        value = 'In Progress to Me'
-        color = 'yellow'
+        ['In Progress to Me', 'yellow']
       elsif task_assignee
-        value = 'Assigned to Me'
-        color = 'green'
+        ['Assigned to Me', 'green']
       else
-        value = 'Not Assigned to Me'
-        color = 'default'
+        ['Not Assigned to Me', 'default']
       end
+    end
+
+    def task_assign_button(task, dropdown: false)
+      value, color = task_assign_button_value(task)
       klass = "task-tag task-assign-tag roller-type-color-#{color}"
       parts = [content_tag(:span, value, class: 'assign-value')]
-      if with_dropdown
+      if dropdown
         parts << task_assign_dropdown_link
         klass += ' task-button assign-button'
       end
@@ -388,7 +401,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       options = { class: 'dropdown-menu assign-dropdown',
                   data: { link: 'task-assign-dropdown-link' } }
 
-      links = task_assign_links(task)
+      links = task_assign_links(task) if task.open? && !task.in_review?
       return unless links&.any?
 
       content_tag :div, options do
