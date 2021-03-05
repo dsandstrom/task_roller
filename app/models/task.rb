@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add 'assigned to you' status?
+
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
   STATUS_OPTIONS = {
