@@ -21,6 +21,7 @@ class TaskAssigneesController < ApplicationController
   end
 
   def destroy
+    current_user.task_progressions(@task).unfinished.each(&:finish)
     @task_assignee.destroy
     @task.update_status
     redirect_to @task, notice: 'Unassigned from task.'

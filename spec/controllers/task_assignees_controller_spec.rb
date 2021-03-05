@@ -366,6 +366,29 @@ RSpec.describe TaskAssigneesController, type: :controller do
             end.to change(task, :status).to("open")
           end
 
+          it "finishes requested task's progressions" do
+            task_assignee =
+              Fabricate(:task_assignee, task: task, assignee: current_user)
+            progression =
+              Fabricate(:unfinished_progression, task: task, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+              progression.reload
+            end.to change(progression, :finished).to(true)
+          end
+
+          it "doesn't finish different task progressions" do
+            task_assignee =
+              Fabricate(:task_assignee, task: task, assignee: current_user)
+            progression = Fabricate(:unfinished_progression, user: current_user)
+            expect do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_assignee.to_param }
+              progression.reload
+            end.not_to change(progression, :finished)
+          end
+
           it "redirects to the task_assignees list" do
             task_assignee =
               Fabricate(:task_assignee, task: task, assignee: current_user)
