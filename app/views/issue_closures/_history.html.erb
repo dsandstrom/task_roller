@@ -1,7 +1,0 @@
-<% value = "closed issue: #{format_date history.created_at}" %>
-
-<%= content_tag :dt, history.user&.name_or_email,
-                class: 'issue-closure-user' %>
-<%= content_tag :dd, value,
-                class: 'issue-closure',
-                id: "issue-closure-#{history.id}" %>

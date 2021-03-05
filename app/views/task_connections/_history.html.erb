@@ -1,9 +1,0 @@
-<%
-  value = "marked as duplicate (##{history.target_id}): "\
-          "#{format_date history.created_at}"
-%>
-
-<%= content_tag :dt, history.user&.name_or_email,
-                class: 'task-connection-user' %>
-<%= content_tag :dd, value,
-                class: "task-connection-#{history.id}" %>

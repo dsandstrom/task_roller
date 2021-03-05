@@ -1,1 +1,9 @@
-<%= render 'shared/issue', issue: issue_connection.target %>
+<%
+  value = "marked as duplicate (##{issue_connection.target_id}): "\
+          "#{format_date issue_connection.created_at}"
+%>
+
+<%= content_tag :dt, issue_connection.user&.name_or_email,
+                class: 'issue-connection-user' %>
+<%= content_tag :dd, value,
+                class: "issue-connection-#{issue_connection.id}" %>

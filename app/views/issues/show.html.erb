@@ -46,10 +46,10 @@
         <% end %>
       </section>
 
-      <% if @issue.status == 'duplicate' %>
+      <% if @source_connection %>
         <section class="issue-duplicatee">
           <h4 class="issue-column-title">Duplicate Of</h4>
-          <%= render @source_connection %>
+          <%= render 'shared/issue', issue: @source_connection.target %>
         </section>
       <% end %>
 

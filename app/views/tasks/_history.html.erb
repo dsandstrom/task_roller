@@ -1,11 +1,11 @@
 <% if history.is_a?(TaskReopening) %>
-  <%= render 'task_reopenings/history', history: history %>
+  <%= render history %>
 <% elsif history.is_a?(TaskClosure) %>
-  <%= render 'task_closures/history', history: history %>
+  <%= render history %>
 <% elsif history.is_a?(Review) %>
   <%= render history %>
 <% elsif history.is_a?(TaskConnection) %>
-  <%= render 'task_connections/history', history: history %>
+  <%= render history %>
 <% elsif history.is_a?(Task) %>
   <%
     title = nil

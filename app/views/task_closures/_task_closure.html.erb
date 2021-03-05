@@ -1,13 +1,10 @@
-<% if can?(:destroy, task_closure) %>
-  <%
-    confirm = "Are you sure you want to remove the closure for "\
-              task_closure.task.heading
-  %>
+<%
+  value = "closed (##{task_closure.task_id}): "\
+          "#{format_date task_closure.created_at}"
+%>
 
-  <p>
-    <%= link_to 'remove closure',
-                 task_closure_path(task_closure.task, task_closure),
-                 method: :delete, class: 'destroy-link',
-                 data: { confirm: confirm } %>
-  </p>
-<% end %>
+<%= content_tag :dt, task_closure.user&.name_or_email,
+                class: 'task-closure-user' %>
+<%= content_tag :dd, value,
+                class: 'task-closure',
+                id: "task-closure-#{task_closure.id}" %>

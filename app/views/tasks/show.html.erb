@@ -85,11 +85,11 @@
         </section>
       <% end %>
 
-      <% if @task.duplicate? %>
+      <% if @source_connection %>
         <section class="task-duplicatee">
           <h4 class="task-column-title">Duplicate Of</h4>
 
-          <%= render @source_connection %>
+          <%= render 'shared/task', task: @source_connection.target %>
         </section>
       <% end %>
 

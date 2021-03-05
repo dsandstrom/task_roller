@@ -1,13 +1,7 @@
-<% if can?(:destroy, issue_reopening) %>
-  <%
-    confirm = "Are you sure you want to remove the reopening for "\
-              issue_reopening.issue.heading
-  %>
+<% value = "reopened issue: #{format_date issue_reopening.created_at}" %>
 
-  <p>
-    <%= link_to 'remove reopening',
-                 issue_reopening_path(issue_reopening.issue, issue_reopening),
-                 method: :delete, class: 'destroy-link',
-                 data: { confirm: confirm } %>
-  </p>
-<% end %>
+<%= content_tag :dt, issue_reopening.user&.name_or_email,
+                class: 'issue-reopening-user' %>
+<%= content_tag :dd, value,
+                class: "issue-reopening",
+                id: "issue-reopening-#{issue_reopening.id}" %>

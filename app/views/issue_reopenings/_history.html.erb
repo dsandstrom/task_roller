@@ -1,7 +1,0 @@
-<% value = "reopened issue: #{format_date history.created_at}" %>
-
-<%= content_tag :dt, history.user&.name_or_email,
-                class: 'issue-reopening-user' %>
-<%= content_tag :dd, value,
-                class: "issue-reopening",
-                id: "issue-reopening-#{history.id}" %>
