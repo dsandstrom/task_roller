@@ -1,0 +1,4 @@
+# ./spec/mailers/previews/.rubocop.yml
+
+inherit_from:
+  - ../../../.rubocop.yml

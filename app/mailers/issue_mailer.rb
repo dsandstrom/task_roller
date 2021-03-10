@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class IssueMailer < ApplicationMailer
-  # TODO: show old status too
   def status_change
     @issue = params[:issue]
     @user = params[:user]
+    @old_status = params[:old_status]
+
     options = { to: @user.email }
     options[:subject] = "Task Roller Update for Issue##{@issue.id}"
 

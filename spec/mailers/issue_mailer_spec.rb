@@ -7,7 +7,10 @@ RSpec.describe IssueMailer, type: :mailer do
   let(:user) { Fabricate(:user) }
 
   describe "#status_change" do
-    let(:mail) { IssueMailer.with(issue: issue, user: user).status_change }
+    let(:mail) do
+      IssueMailer.with(issue: issue, user: user, old_status: "closed")
+                 .status_change
+    end
 
     it "renders the headers" do
       expect(mail.from).to eq(["noreply@task-roller.net"])

@@ -5,8 +5,12 @@
 <h1>
   Status for
   <%= link_to "Issue##{ @issue.id}", url, target: '_blank' %>
-  changed to "<%= @issue.status.titleize %>"
+  changed
 </h1>
+
+<p>
+  Status: <%= @old_status.titleize %> -> <%= @issue.status.titleize %>
+</p>
 
 <p>
   Issue Summary: <%= @issue.summary %>
