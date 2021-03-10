@@ -89,6 +89,8 @@ $editor-button-size: 3rem;
 
 // scss-lint:disable SelectorFormat
 .EasyMDEContainer {
+  margin-bottom: 1.5rem;
+
   .CodeMirror {
     border-radius: 0 0 $border-radius $border-radius;
     border-color: $gray;

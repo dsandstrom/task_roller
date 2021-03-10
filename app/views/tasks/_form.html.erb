@@ -18,12 +18,6 @@
     </div>
   </div>
 
-  <div class="field">
-    <%= required_field_label form, :summary %>
-    <%= form.text_field :summary, id: :task_summary,
-                        autofocus: true %>
-  </div>
-
   <% if issue_options&.any? %>
     <div class="field">
       <%= form.label :issue_id, 'Linked Issue' %>
@@ -33,6 +27,17 @@
                       { id: :task_issue_id } %>
     </div>
   <% end %>
+
+  <div class="field">
+    <%= required_field_label form, :summary %>
+    <%= form.text_field :summary, id: :task_summary,
+                        autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= required_field_label form, :description %>
+    <%= form.text_area :description, id: :task_description %>
+  </div>
 
   <% if assignee_options&.any? %>
     <% if assignee_options.instance_of?(Hash) %>
@@ -51,11 +56,6 @@
       </div>
     <% end %>
   <% end %>
-
-  <div class="field">
-    <%= required_field_label form, :description %>
-    <%= form.text_area :description, id: :task_description %>
-  </div>
 
   <div class="actions">
     <%= form.submit %>
