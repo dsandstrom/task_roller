@@ -1,0 +1,17 @@
+<% url = issue_url(@issue) %>
+
+<p>Task Roller Update:</p>
+
+<h1>
+  Status for
+  <%= link_to "Issue##{ @issue.id}", url, target: '_blank' %>
+  changed to "<%= @issue.status.titleize %>"
+</h1>
+
+<p>
+  Issue Summary: <%= @issue.summary %>
+</p>
+
+<p>
+  <%= link_to 'Visit Issue', url, target: '_blank' %>
+</p>
