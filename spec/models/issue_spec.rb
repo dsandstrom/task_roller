@@ -1091,6 +1091,19 @@ RSpec.describe Issue, type: :model do
           end.to change(issue, :status).to("open")
         end
 
+        it "emails subscribers" do
+          subscriber = Fabricate(:user_reporter)
+          non_subscriber = Fabricate(:user_reporter)
+          issue.subscribers << subscriber
+
+          expect(IssueMailer).to receive(:status_change)
+            .with(user: subscriber, issue: issue, old_status: "closed")
+          expect(IssueMailer).not_to receive(:status_change)
+            .with(user: non_subscriber)
+
+          issue.update_status
+        end
+
         it "returns true" do
           expect(issue.update_status).to eq(true)
         end
@@ -1108,6 +1121,33 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("being_worked_on")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
+      end
+
+      context "and is originally open" do
+        let(:issue) { Fabricate(:issue, status: "open") }
+
+        before do
+          allow(issue).to receive(:open_tasks?) { false }
+        end
+
+        it "doesn't change status" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.not_to change(issue, :status)
+        end
+
+        it "doesn't email subscribers" do
+          issue.subscribers << reporter
+
+          expect(IssueMailer).not_to receive(:status_change)
+
+          issue.update_status
         end
 
         it "returns true" do

@@ -242,7 +242,17 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def update_status
-    update_column :status, build_status
+    old_status = status
+    new_status = build_status
+    return true if old_status == new_status
+
+    update_column :status, new_status
+    subscribers.each do |subscriber|
+      IssueMailer.status_change(issue: self, user: subscriber,
+                                old_status: old_status)
+      # TODO: .deliver_later
+    end
+    true
   end
 
   private
