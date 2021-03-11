@@ -314,6 +314,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
+  # TODO: send mail to subscribers
   def update_status
     update_column :status, build_status
   end
