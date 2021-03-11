@@ -24,6 +24,10 @@ gem 'webpacker', '~> 5.1'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
+# Active Job backend
+# https://github.com/brandonhilkert/sucker_punch
+gem 'sucker_punch', '~> 3.0'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
