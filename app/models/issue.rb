@@ -247,15 +247,20 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return true if old_status == new_status
 
     update_column :status, new_status
-    subscribers.each do |subscriber|
-      options = { issue: self, user: subscriber, old_status: old_status }
-      IssueMailer.with(options).status_change.deliver_now
-      # TODO: .deliver_later
-    end
-    true
+    notify_of_status_change(old_status)
   end
 
   private
+
+    # TODO: except current_user (user who changed the status)
+    def notify_of_status_change(old_status)
+      subscribers.each do |subscriber|
+        options = { issue: self, user: subscriber, old_status: old_status }
+        IssueMailer.with(options).status_change.deliver_later
+        # TODO: .deliver_later
+      end
+      true
+    end
 
     def set_opened_at
       return if opened_at.present? || created_at.nil?
