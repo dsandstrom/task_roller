@@ -257,7 +257,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       subscribers.each do |subscriber|
         options = { issue: self, user: subscriber, old_status: old_status }
         IssueMailer.with(options).status_change.deliver_later
-        # TODO: .deliver_later
       end
       true
     end

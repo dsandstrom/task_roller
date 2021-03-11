@@ -1097,7 +1097,7 @@ RSpec.describe Issue, type: :model do
 
           expect do
             issue.update_status
-          end.to change(ActionMailer::Base.deliveries, :count).by(1)
+          end.to have_enqueued_job.on_queue("mailers")
         end
 
         it "returns true" do
