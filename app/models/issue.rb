@@ -252,15 +252,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   private
 
-    # TODO: except current_user (user who changed the status)
-    def notify_of_status_change(old_status)
-      subscribers.each do |subscriber|
-        options = { issue: self, user: subscriber, old_status: old_status }
-        IssueMailer.with(options).status_change.deliver_later
-      end
-      true
-    end
-
     def set_opened_at
       return if opened_at.present? || created_at.nil?
 
@@ -346,5 +337,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
+    end
+
+    # TODO: except current_user (user who changed the status)
+    def notify_of_status_change(old_status)
+      subscribers.each do |subscriber|
+        options = { issue: self, user: subscriber, old_status: old_status }
+        IssueMailer.with(options).status_change.deliver_later
+      end
+      true
     end
 end
