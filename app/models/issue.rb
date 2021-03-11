@@ -248,8 +248,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     update_column :status, new_status
     subscribers.each do |subscriber|
-      IssueMailer.status_change(issue: self, user: subscriber,
-                                old_status: old_status)
+      options = { issue: self, user: subscriber, old_status: old_status }
+      IssueMailer.with(options).status_change.deliver_now
       # TODO: .deliver_later
     end
     true

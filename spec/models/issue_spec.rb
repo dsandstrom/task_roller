@@ -1091,17 +1091,13 @@ RSpec.describe Issue, type: :model do
           end.to change(issue, :status).to("open")
         end
 
-        it "emails subscribers" do
-          subscriber = Fabricate(:user_reporter)
-          non_subscriber = Fabricate(:user_reporter)
-          issue.subscribers << subscriber
+        it "delivers emails" do
+          issue.subscribers << reporter
+          Fabricate(:user_reporter)
 
-          expect(IssueMailer).to receive(:status_change)
-            .with(user: subscriber, issue: issue, old_status: "closed")
-          expect(IssueMailer).not_to receive(:status_change)
-            .with(user: non_subscriber)
-
-          issue.update_status
+          expect do
+            issue.update_status
+          end.to change(ActionMailer::Base.deliveries, :count).by(1)
         end
 
         it "returns true" do
