@@ -241,13 +241,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @history_feed ||= build_history_feed
   end
 
-  def update_status
+  def update_status(current_user = nil)
     old_status = status
     new_status = build_status
     return true if old_status == new_status
 
     update_column :status, new_status
-    notify_of_status_change(old_status)
+    options = { old_status: old_status }
+    options[:current_user] = current_user if current_user.present?
+    notify_of_status_change(options)
   end
 
   private
@@ -339,10 +341,20 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       feed.flatten.sort_by(&:created_at)
     end
 
-    # TODO: except current_user (user who changed the status)
-    def notify_of_status_change(old_status)
-      subscribers.each do |subscriber|
-        options = { issue: self, user: subscriber, old_status: old_status }
+    def subscribers_except(current_user)
+      if current_user
+        subscribers.where.not(id: current_user.id)
+      else
+        subscribers
+      end
+    end
+
+    def notify_of_status_change(options)
+      options[:issue] = self
+      current_user = options.delete(:current_user)
+
+      subscribers_except(current_user).each do |subscriber|
+        options[:user] = subscriber
         IssueMailer.with(options).status_change.deliver_later
       end
       true

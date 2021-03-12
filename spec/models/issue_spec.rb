@@ -1100,6 +1100,15 @@ RSpec.describe Issue, type: :model do
           end.to have_enqueued_job.on_queue("mailers")
         end
 
+        it "doesn't deliver to given user" do
+          issue.subscribers << reporter
+          Fabricate(:user_reporter)
+
+          expect do
+            issue.update_status(reporter)
+          end.not_to have_enqueued_job
+        end
+
         it "returns true" do
           expect(issue.update_status).to eq(true)
         end
@@ -1141,9 +1150,9 @@ RSpec.describe Issue, type: :model do
         it "doesn't email subscribers" do
           issue.subscribers << reporter
 
-          expect(IssueMailer).not_to receive(:status_change)
-
-          issue.update_status
+          expect do
+            issue.update_status
+          end.not_to have_enqueued_job
         end
 
         it "returns true" do
