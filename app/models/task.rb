@@ -235,23 +235,23 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish) && update_status
   end
 
-  def close
+  def close(current_user = nil)
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish
 
     update closed: true
     update_status
-    close_issue
+    close_issue(current_user)
   end
 
   # TODO: show outdated reviews in history
-  def reopen
+  def reopen(current_user = nil)
     return false unless update(closed: false, opened_at: Time.now)
 
     update_status
     return true unless issue&.closed?
 
-    issue.reopen
+    issue.reopen(current_user)
   end
 
   def subscribe_user(subscriber = nil)
@@ -391,10 +391,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       issue.open_tasks.where('tasks.id != ?', id).none?
     end
 
-    def close_issue
+    def close_issue(current_user = nil)
       return true unless issue && last_task_for_issue?
 
-      issue.close
+      issue.close(current_user)
     end
 
     def update_issue_counts

@@ -11,7 +11,7 @@ class IssueConnectionsController < ApplicationController
     notice = 'Issue was successfully closed and marked as a duplicate.'
 
     if @issue_connection.save
-      @issue_connection.source.close
+      @issue_connection.source.close(current_user)
       @issue_connection.subscribe_user
       redirect_to @issue_connection.source, notice: notice
     else
@@ -25,7 +25,7 @@ class IssueConnectionsController < ApplicationController
     authorize! :read, issue
 
     if @issue_connection.destroy
-      issue.reopen
+      issue.reopen(current_user)
       issue.reopenings.create(user_id: current_user.id)
     end
     redirect_to issue, notice: notice

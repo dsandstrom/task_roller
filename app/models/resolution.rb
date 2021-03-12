@@ -48,15 +48,14 @@ class Resolution < ApplicationRecord
   def approve
     return false unless issue.valid?
 
-    update(approved: true) && issue.close
+    update(approved: true) && issue.close(user)
   end
 
   # TODO: should Resolution#disapprove re-open the issue or wait for reviewer
   def disapprove
     return false unless issue.valid?
 
-    update(approved: false) && issue.reopen
-    issue.update_status
+    update(approved: false) && issue.reopen(user)
   end
 
   def status

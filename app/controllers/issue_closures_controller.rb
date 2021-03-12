@@ -10,7 +10,7 @@ class IssueClosuresController < ApplicationController
     notice = 'Issue was successfully closed.'
 
     if @issue_closure.save
-      @issue.close
+      @issue.close(current_user)
       @issue_closure.subscribe_user
       redirect_to @issue, notice: notice
     else

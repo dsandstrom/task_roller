@@ -1389,7 +1389,7 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns true" do
-        expect(task.close).to eq(true)
+        expect(task.close(worker)).to eq(true)
       end
     end
 
@@ -1572,7 +1572,7 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to false" do
         expect do
-          task.reopen
+          task.reopen(worker)
           task.reload
         end.to change(task, :closed).to(false)
       end

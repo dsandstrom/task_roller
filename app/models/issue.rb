@@ -196,14 +196,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @unresolved = open? && current_resolutions.none?
   end
 
-  def close
+  def close(current_user = nil)
     update closed: true
-    update_status
+    update_status(current_user)
   end
 
-  def reopen
+  def reopen(current_user = nil)
     update closed: false, opened_at: Time.now
-    update_status
+    update_status(current_user)
   end
 
   def subscribe_user(subscriber = nil)

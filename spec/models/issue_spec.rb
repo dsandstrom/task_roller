@@ -1275,7 +1275,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns true" do
-        expect(issue.close).to eq(true)
+        expect(issue.close(reporter)).to eq(true)
       end
     end
 
@@ -1332,7 +1332,7 @@ RSpec.describe Issue, type: :model do
       end
 
       it "returns true" do
-        expect(issue.reopen).to eq(true)
+        expect(issue.reopen(reporter)).to eq(true)
       end
     end
 
