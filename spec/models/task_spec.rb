@@ -1655,13 +1655,13 @@ RSpec.describe Task, type: :model do
         end.to change(progression, :finished).to(true)
       end
 
-      it "changes tasks's status" do
+      it "doesn't change tasks's status" do
         Fabricate(:unfinished_progression, task: task)
 
         expect do
           task.finish
           task.reload
-        end.to change(task, :status).to("assigned")
+        end.not_to change(task, :status)
       end
 
       it "returns true" do

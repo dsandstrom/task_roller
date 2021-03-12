@@ -11,6 +11,7 @@ class ReviewsController < ApplicationController
   def create
     if @review.save
       @task.finish
+      @task.update_status
       redirect_back fallback_location: @task,
                     notice: 'Review was successfully created.'
     else

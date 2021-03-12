@@ -232,7 +232,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def finish
-    progressions&.unfinished&.all?(&:finish) && update_status
+    progressions&.unfinished&.all?(&:finish)
   end
 
   def close(current_user = nil)
