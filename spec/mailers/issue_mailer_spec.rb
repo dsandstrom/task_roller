@@ -8,7 +8,8 @@ RSpec.describe IssueMailer, type: :mailer do
 
   describe "#status_change" do
     let(:mail) do
-      IssueMailer.with(issue: issue, user: user, old_status: "closed")
+      IssueMailer.with(issue: issue, user: user, old_status: "closed",
+                       new_status: "open")
                  .status_change
     end
 

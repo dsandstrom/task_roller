@@ -15,7 +15,8 @@ class IssueNotification < ApplicationRecord
   belongs_to :issue
 
   def send_email
-    options = { issue: issue, user: user, old_status: details }
+    options = { issue: issue, user: user }
+    options[:old_status], options[:new_status] = details&.split(',')
     IssueMailer.with(options).status_change.deliver_later
   end
 end

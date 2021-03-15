@@ -48,10 +48,22 @@ RSpec.describe IssueNotification, type: :model do
   describe "#send_email" do
     let(:issue_notification) { Fabricate(:issue_notification) }
 
-    it "enqueues email" do
-      expect do
-        issue_notification.send_email
-      end.to have_enqueued_job.on_queue("mailers")
+    context "when details is blank" do
+      it "enqueues email" do
+        expect do
+          issue_notification.send_email
+        end.to have_enqueued_job.on_queue("mailers")
+      end
+    end
+
+    context "when details is 'old,new'" do
+      before { issue_notification.details = "old,new" }
+
+      it "enqueues email" do
+        expect do
+          issue_notification.send_email
+        end.to have_enqueued_job.on_queue("mailers")
+      end
     end
   end
 end

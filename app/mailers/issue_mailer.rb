@@ -5,6 +5,7 @@ class IssueMailer < ApplicationMailer
     @issue = params[:issue]
     @user = params[:user]
     @old_status = params[:old_status]
+    @new_status = params[:new_status]
 
     options = { to: @user.email }
     options[:subject] = "Task Roller Update for Issue##{@issue.id}"

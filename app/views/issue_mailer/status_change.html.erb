@@ -1,20 +1,29 @@
 <% url = issue_url(@issue) %>
 
-<p>Task Roller Update:</p>
-
 <h1>
   Status for
   <%= link_to "Issue##{ @issue.id}", url, target: '_blank' %>
   changed
 </h1>
 
+<hr>
+
+<h2>Changes</h2>
 <p>
-  Status: <%= @old_status.titleize %> -> <%= @issue.status.titleize %>
+  Status:
+  <%= content_tag :span, @old_status.titleize,
+                  class: 'issue-status issue-old-status' %>
+  ->
+  <%= content_tag :span, @new_status.titleize,
+                  class: 'issue-status issue-new-status' %>
 </p>
 
-<p>
-  Issue Summary: <%= @issue.summary %>
-</p>
+<hr>
+
+<h2>Issue Details</h2>
+<%= content_tag :h3, @issue.summary, class: 'issue-summary' %>
+<%= content_tag :div, @issue.description_html.html_safe,
+                class: 'issue-description' %>
 
 <p>
   <%= link_to 'Visit Issue', url, target: '_blank' %>
