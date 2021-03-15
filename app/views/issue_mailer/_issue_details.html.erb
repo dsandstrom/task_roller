@@ -1,0 +1,4 @@
+<h2>Issue Details</h2>
+<%= content_tag :h3, issue.summary, class: 'issue-summary' %>
+<%= content_tag :div, issue.description_html.html_safe,
+                class: 'issue-description' %>

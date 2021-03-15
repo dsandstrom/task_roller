@@ -7,4 +7,10 @@ class IssueMailerPreview < ActionMailer::Preview
                      new_status: 'open')
                .status_change
   end
+
+  def comment
+    IssueMailer.with(issue: Issue.last, user: User.last,
+                     comment: IssueComment.last)
+               .comment
+  end
 end

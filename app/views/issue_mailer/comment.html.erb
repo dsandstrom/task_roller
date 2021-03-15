@@ -1,0 +1,20 @@
+<% url = issue_url(@issue, anchor: "comment-#{@comment.id}") %>
+
+<h1>
+  New Comment for
+  <%= link_to "Issue##{ @issue.id}", url, target: '_blank' %>
+</h1>
+
+<hr>
+
+<%= content_tag :h2, "Comment from #{@comment.user.name_or_email}" %>
+<%= content_tag :div, @comment.body_html.html_safe,
+                class: 'comment-body' %>
+
+<hr>
+
+<%= render 'issue_details', issue: @issue %>
+
+<p>
+  <%= link_to 'Visit Issue', url, target: '_blank' %>
+</p>
