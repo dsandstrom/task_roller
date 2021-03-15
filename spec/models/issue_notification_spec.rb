@@ -46,23 +46,79 @@ RSpec.describe IssueNotification, type: :model do
   it { is_expected.to belong_to(:issue) }
 
   describe "#send_email" do
-    let(:issue_notification) { Fabricate(:issue_notification) }
+    context "for a status change" do
+      context "when details is blank" do
+        let(:issue_notification) do
+          Fabricate(:issue_status_notification, issue: issue, user: user,
+                                                details: nil)
+        end
 
-    context "when details is blank" do
-      it "enqueues email" do
-        expect do
-          issue_notification.send_email
-        end.to have_enqueued_job.on_queue("mailers")
+        it "doesn't enqueue email" do
+          expect do
+            issue_notification.send_email
+          end.not_to have_enqueued_job
+        end
+      end
+
+      context "when details is 'old,new'" do
+        let(:issue_notification) do
+          Fabricate(:issue_status_notification, issue: issue, user: user,
+                                                details: "old,new")
+        end
+
+        it "enqueues email" do
+          expect do
+            issue_notification.send_email
+          end.to have_enqueued_job.on_queue("mailers").with(
+            "IssueMailer", "status", "deliver_now",
+            args: [], params: { issue: issue, user: user, old_status: "old",
+                                new_status: "new" }
+          )
+        end
       end
     end
 
-    context "when details is 'old,new'" do
-      before { issue_notification.details = "old,new" }
+    context "for a new issue" do
+      let(:issue_notification) do
+        Fabricate(:issue_new_notification, issue: issue, user: user)
+      end
 
       it "enqueues email" do
         expect do
           issue_notification.send_email
-        end.to have_enqueued_job.on_queue("mailers")
+        end.to have_enqueued_job.on_queue("mailers").with(
+          "IssueMailer", "new", "deliver_now",
+          args: [], params: { issue: issue, user: user }
+        )
+      end
+    end
+
+    context "for a new comment" do
+      let(:issue_notification) do
+        Fabricate(:issue_comment_notification, issue: issue, user: user)
+      end
+
+      it "enqueues email" do
+        expect do
+          issue_notification.send_email
+        end.to have_enqueued_job.on_queue("mailers").with(
+          "IssueMailer", "comment", "deliver_now",
+          args: [], params: { issue: issue, user: user }
+        )
+      end
+    end
+
+    context "for an invalid event" do
+      let(:issue_notification) do
+        Fabricate(:issue_notification, issue: issue, user: user)
+      end
+
+      before { issue_notification.update_column :event, "invalid" }
+
+      it "doesn't enqueue email" do
+        expect do
+          issue_notification.send_email
+        end.not_to have_enqueued_job
       end
     end
   end

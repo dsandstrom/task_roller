@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: send email after creation
-
 class IssueNotification < ApplicationRecord
   EVENT_OPTIONS = %w[comment new status].freeze
 
@@ -15,8 +13,14 @@ class IssueNotification < ApplicationRecord
   belongs_to :issue
 
   def send_email
+    return unless valid?
+
     options = { issue: issue, user: user }
-    options[:old_status], options[:new_status] = details&.split(',')
-    IssueMailer.with(options).status_change.deliver_later
+    if event == 'status'
+      options[:old_status], options[:new_status] = details&.split(',')
+    end
+    return unless options.all? { |_, value| value.present? }
+
+    IssueMailer.with(options).send(event).deliver_later
   end
 end

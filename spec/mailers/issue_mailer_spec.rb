@@ -7,11 +7,11 @@ RSpec.describe IssueMailer, type: :mailer do
   let(:user) { Fabricate(:user) }
   let(:comment) { Fabricate(:issue_comment, issue: issue) }
 
-  describe "#status_change" do
+  describe "#status" do
     let(:mail) do
       IssueMailer.with(issue: issue, user: user, old_status: "closed",
                        new_status: "open")
-                 .status_change
+                 .status
     end
 
     it "renders the headers" do

@@ -1,0 +1,14 @@
+<% url = issue_url(@issue) %>
+
+<h1>
+  New
+  <%= link_to "Issue##{ @issue.id}", url, target: '_blank' %>
+</h1>
+
+<hr>
+
+<%= render 'issue_details', issue: @issue %>
+
+<p>
+  <%= link_to 'Visit Issue', url, target: '_blank' %>
+</p>

@@ -2,10 +2,10 @@
 
 # Preview all emails at http://localhost:3000/rails/mailers/issue_mailer
 class IssueMailerPreview < ActionMailer::Preview
-  def status_change
+  def status
     IssueMailer.with(issue: Issue.first, user: User.first, old_status: 'closed',
                      new_status: 'open')
-               .status_change
+               .status
   end
 
   def comment

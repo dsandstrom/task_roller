@@ -12,7 +12,8 @@ class IssueMailer < ApplicationMailer
     mail(options)
   end
 
-  def status_change
+  # TODO: rename to status?
+  def status
     set_instance_variables
     @old_status = params[:old_status]
     @new_status = params[:new_status]
