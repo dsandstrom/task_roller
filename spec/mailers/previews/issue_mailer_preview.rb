@@ -13,4 +13,8 @@ class IssueMailerPreview < ActionMailer::Preview
                      comment: IssueComment.last)
                .comment
   end
+
+  def new
+    IssueMailer.with(issue: Issue.all[-2], user: User.all[-2]).new
+  end
 end

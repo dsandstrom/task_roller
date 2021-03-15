@@ -3,6 +3,15 @@
 class IssueMailer < ApplicationMailer
   attr_accessor :issue, :user
 
+  def new
+    set_instance_variables
+
+    options = { to: @user.email }
+    options[:subject] = subject('New')
+
+    mail(options)
+  end
+
   def status_change
     set_instance_variables
     @old_status = params[:old_status]
