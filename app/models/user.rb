@@ -37,6 +37,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :task_closures
   has_many :issue_reopenings
   has_many :task_reopenings
+  has_many :issue_notifications, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }

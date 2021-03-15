@@ -47,6 +47,7 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:task_closures) }
   it { is_expected.to have_many(:issue_reopenings) }
   it { is_expected.to have_many(:task_reopenings) }
+  it { is_expected.to have_many(:issue_notifications).dependent(:destroy) }
 
   it { is_expected.to be_valid }
   it { is_expected.to validate_presence_of(:name) }

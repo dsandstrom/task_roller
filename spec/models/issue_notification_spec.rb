@@ -44,4 +44,14 @@ RSpec.describe IssueNotification, type: :model do
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:issue) }
+
+  describe "#send_email" do
+    let(:issue_notification) { Fabricate(:issue_notification) }
+
+    it "enqueues email" do
+      expect do
+        issue_notification.send_email
+      end.to have_enqueued_job.on_queue("mailers")
+    end
+  end
 end

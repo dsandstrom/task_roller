@@ -41,6 +41,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                          source: :user
   has_many :closures, class_name: 'IssueClosure'
   has_many :reopenings, class_name: 'IssueReopening'
+  has_many :notifications, class_name: 'IssueNotification', dependent: :destroy
 
   validates :summary, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2000 }
@@ -352,13 +353,16 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def notify_of_status_change(options)
-      options[:issue] = self
       current_user = options.delete(:current_user)
+      attrs = { event: 'status', details: "#{options[:old_status]},#{status}" }
 
       subscribers_except(current_user).each do |subscriber|
-        options[:user] = subscriber
-        IssueMailer.with(options).status_change.deliver_later
+        notification = notifications.create!(attrs.merge(user: subscriber))
+        notification.send_email
       end
       true
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.debug "IssueNotification invalid:\n#{e.inspect}"
+      false
     end
 end

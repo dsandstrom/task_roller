@@ -75,6 +75,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:target_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
+  it { is_expected.to have_many(:notifications).dependent(:destroy) }
 
   # CLASS
 
@@ -1252,6 +1253,33 @@ RSpec.describe Issue, type: :model do
         it "returns true" do
           expect(issue.update_status).to eq(true)
         end
+      end
+    end
+
+    context "when invalid notification" do
+      let(:issue) { Fabricate(:open_issue) }
+      let(:issue) { Fabricate(:issue, status: "closed") }
+
+      before do
+        issue.subscribers << reporter
+        allow(issue).to receive(:open_tasks?) { false }
+        issue.update_column :status, "a" * 256
+      end
+
+      it "doesn't raise an error" do
+        expect do
+          issue.update_status
+        end.not_to raise_error
+      end
+
+      it "doesn't send an email" do
+        expect do
+          issue.update_status
+        end.not_to have_enqueued_job
+      end
+
+      it "returns false" do
+        expect(issue.update_status).to eq(false)
       end
     end
   end

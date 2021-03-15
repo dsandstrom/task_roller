@@ -3,5 +3,5 @@
 Fabricator(:issue_notification) do
   issue
   user
-  event 'new_comment'
+  event 'new'
 end
