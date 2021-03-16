@@ -1836,4 +1836,40 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#notify_of_comment" do
+    let(:issue) { Fabricate(:issue) }
+    let(:comment) { Fabricate(:issue_comment, issue: issue) }
+    let(:user) { Fabricate(:user_reporter) }
+    let(:current_user) { Fabricate(:user_reporter) }
+
+    before do
+      issue.subscribers << reporter
+      issue.subscribers << comment.user
+      Fabricate(:user_reporter)
+    end
+
+    it "creates one notification" do
+      issue.subscribers << current_user
+      expect do
+        issue.notify_of_comment(comment: comment, current_user: current_user)
+      end.to change(IssueNotification, :count).by(1)
+    end
+
+    it "creates notification" do
+      issue.notify_of_comment(comment: comment)
+
+      notification = IssueNotification.last
+      expect(notification).not_to be_nil
+
+      expect(notification.event).to eq("comment")
+      expect(notification.details).to eq(comment.to_param)
+    end
+
+    it "enqueues one email" do
+      expect do
+        issue.notify_of_comment(comment: comment)
+      end.to have_enqueued_job.on_queue("mailers")
+    end
+  end
 end

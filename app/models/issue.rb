@@ -256,6 +256,21 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     notify_subscribers(options)
   end
 
+  def notify_of_comment(options)
+    comment = options.delete(:comment)
+    return unless comment
+
+    options[:details] = comment.to_param
+    options[:current_user] =
+      if options[:current_user]
+        [options[:current_user], comment.user]
+      else
+        comment.user
+      end
+
+    notify_subscribers(options.merge(event: 'comment'))
+  end
+
   private
 
     def set_opened_at
@@ -345,9 +360,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       feed.flatten.sort_by(&:created_at)
     end
 
-    def subscribers_except(current_user)
-      if current_user
-        subscribers.where.not(id: current_user.id)
+    def subscribers_except(users)
+      if users
+        if users.is_a?(Array)
+          subscribers.where.not(id: users.map(&:id))
+        else
+          subscribers.where.not(id: users.id)
+        end
       else
         subscribers
       end
