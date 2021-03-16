@@ -4,7 +4,7 @@
 # issue user destroyed, add closure, shows as open
 # FIXME: if issue is addressed, reopened, marked duplicate -> still addressed
 # TODO: notify when issue created
-# TODO: commment notification
+# TODO: comment notification
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
@@ -143,6 +143,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # INSTANCE
 
+  # TODO: shortened version for IssueMailer?
   def description_html
     @description_html ||= (RollerMarkdown.new.render(description) || '')
   end
@@ -250,9 +251,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return true if old_status == new_status
 
     update_column :status, new_status
-    options = { old_status: old_status }
+    options = { event: 'status', details: "#{old_status},#{new_status}" }
     options[:current_user] = current_user if current_user.present?
-    notify_of_status_change(options)
+    notify_subscribers(options)
   end
 
   private
@@ -352,12 +353,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
     end
 
-    def notify_of_status_change(options)
+    def notify_subscribers(options)
       current_user = options.delete(:current_user)
-      attrs = { event: 'status', details: "#{options[:old_status]},#{status}" }
-
       subscribers_except(current_user).each do |subscriber|
-        notification = notifications.create!(attrs.merge(user: subscriber))
+        notification = notifications.create!(options.merge(user: subscriber))
         notification.send_email
       end
       true
