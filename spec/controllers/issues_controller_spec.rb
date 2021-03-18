@@ -1163,6 +1163,14 @@ RSpec.describe IssuesController, type: :controller do
             end.to change(current_user.issues, :count).by(1)
           end
 
+          it "sets new Issue status as 'open'" do
+            post :create, params: { project_id: project.to_param,
+                                    issue: valid_attributes }
+            issue = Issue.last
+            expect(issue).not_to be_nil
+            expect(issue.status).to eq("open")
+          end
+
           it "creates a new IssueSubscription" do
             expect do
               post :create, params: { project_id: project.to_param,

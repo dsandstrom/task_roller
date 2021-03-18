@@ -7,7 +7,7 @@
 
   <% if show_status %>
     <%= divider %>
-    <%= content_tag :strong, issue.status.titleize,
+    <%= content_tag :strong, issue.status&.titleize,
                     class: 'issue-status' %>
   <% end %>
 </p>

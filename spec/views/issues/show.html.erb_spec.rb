@@ -191,6 +191,25 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "issues's status is nil" do
+      let(:issue) { Fabricate(:issue, project: project, status: nil) }
+      let(:nil_issue) { Fabricate(:issue, project: project, status: nil) }
+      let(:issue_connection) do
+        Fabricate(:issue_connection, source: issue, target: nil_issue)
+      end
+
+      before do
+        @issue = assign(:issue, issue)
+        @source_connection = assign(:source_connection, issue_connection)
+      end
+
+      it "renders without errors" do
+        expect do
+          render template: subject, layout: "layouts/application"
+        end.not_to raise_error
+      end
+    end
+
     context "when comments" do
       before do
         @issue = assign(:issue, issue)
