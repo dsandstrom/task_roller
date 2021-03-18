@@ -50,8 +50,14 @@ RSpec.describe Issue, type: :model do
       end
     end
 
+    context "when value is nil" do
+      before { subject.status = nil }
+
+      it { is_expected.to be_valid }
+    end
+
     context "when an invalid value" do
-      ["notopen", nil, "", "being worked on"].each do |value|
+      ["notopen", "", "being worked on"].each do |value|
         before { subject.status = value }
 
         it { is_expected.not_to be_valid }

@@ -6,6 +6,7 @@ Fabricator(:issue) do
   issue_type
   user
   project
+  status 'open'
 end
 
 Fabricator(:open_issue, from: :issue) do
