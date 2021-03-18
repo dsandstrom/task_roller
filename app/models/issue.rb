@@ -248,11 +248,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def update_status(current_user = nil)
     old_status = status
-    new_status = build_status
-    return true if old_status == new_status
+    update_column :status, build_status
+    return true if old_status == status
 
-    update_column :status, new_status
-    options = { event: 'status', details: "#{old_status},#{new_status}" }
+    options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
     notify_subscribers(options)
   end
@@ -383,5 +382,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.debug "IssueNotification invalid:\n#{e.inspect}"
       false
+    end
+
+    def notification_options(old_status)
+      if old_status.present?
+        { event: 'status', details: "#{old_status},#{status}" }
+      else
+        { event: 'new' }
+      end
     end
 end

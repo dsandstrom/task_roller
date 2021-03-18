@@ -1166,6 +1166,29 @@ RSpec.describe Issue, type: :model do
           expect(issue.update_status).to eq(true)
         end
       end
+
+      context "and is originally nil status" do
+        let(:issue) { Fabricate(:issue, status: nil) }
+
+        it "changes status to 'open'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("open")
+        end
+
+        it "emails subscribers" do
+          issue.subscribers << reporter
+
+          expect do
+            issue.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
+      end
     end
 
     context "when closed is true" do
