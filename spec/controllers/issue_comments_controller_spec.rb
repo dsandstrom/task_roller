@@ -138,10 +138,15 @@ RSpec.describe IssueCommentsController, type: :controller do
               expect do
                 post :create, params: { issue_id: issue.to_param,
                                         issue_comment: valid_attributes }
-              end.to have_enqueued_job.on_queue("mailers").with(
-                "IssueMailer", "comment", "deliver_now",
-                args: [], params: { issue: issue, user: user_reporter }
-              )
+              end.to(have_enqueued_job.with do |mailer, action, time, options|
+                # IssueComment.last is nil unless you add another block
+                expect(mailer).to eq("IssueMailer")
+                expect(action).to eq("comment")
+                expect(time).to eq("deliver_now")
+                expect(options)
+                  .to eq(args: [], params: { issue: issue, user: user_reporter,
+                                             comment: IssueComment.last })
+              end)
             end
           end
         end
