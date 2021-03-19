@@ -16,4 +16,5 @@ end
 
 Fabricator(:issue_comment_notification, from: :issue_notification) do
   event 'comment'
+  issue_comment
 end

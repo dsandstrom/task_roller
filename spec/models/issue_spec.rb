@@ -1892,7 +1892,7 @@ RSpec.describe Issue, type: :model do
       expect(notification).not_to be_nil
 
       expect(notification.event).to eq("comment")
-      expect(notification.details).to eq(comment.to_param)
+      expect(notification.issue_comment).to eq(comment)
     end
 
     it "enqueues one email" do

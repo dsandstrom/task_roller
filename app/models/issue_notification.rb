@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add comment_id?
-
 class IssueNotification < ApplicationRecord
   EVENT_OPTIONS = %w[comment new status].freeze
 
@@ -13,6 +11,7 @@ class IssueNotification < ApplicationRecord
 
   belongs_to :user
   belongs_to :issue
+  belongs_to :issue_comment, optional: true
 
   def send_email
     return unless valid?
@@ -33,7 +32,7 @@ class IssueNotification < ApplicationRecord
       when 'status'
         options[:old_status], options[:new_status] = details&.split(',')
       when 'comment'
-        options[:comment] = IssueComment.find_by_id(details) if details.present?
+        options[:comment] = issue_comment
       end
       options
     end

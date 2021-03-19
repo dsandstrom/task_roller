@@ -17,6 +17,7 @@ RSpec.describe IssueNotification, type: :model do
 
   it { is_expected.to respond_to(:issue_id) }
   it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:issue_comment_id) }
   it { is_expected.to respond_to(:event) }
   it { is_expected.to respond_to(:details) }
 
@@ -44,6 +45,7 @@ RSpec.describe IssueNotification, type: :model do
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:issue) }
+  it { is_expected.to belong_to(:issue_comment) }
 
   describe "#send_email" do
     context "for a status change" do
@@ -98,7 +100,7 @@ RSpec.describe IssueNotification, type: :model do
 
       let(:issue_notification) do
         Fabricate(:issue_comment_notification, issue: issue, user: user,
-                                               details: comment.to_param)
+                                               issue_comment: comment)
       end
 
       it "enqueues email" do
@@ -128,7 +130,7 @@ RSpec.describe IssueNotification, type: :model do
     context "for an invalid comment" do
       let(:issue_notification) do
         Fabricate(:issue_comment_notification, issue: issue, user: user,
-                                               details: "nope")
+                                               issue_comment: nil)
       end
 
       it "doesn't enqueue email" do

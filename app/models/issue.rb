@@ -260,7 +260,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     comment = options.delete(:comment)
     return unless comment
 
-    options[:details] = comment.to_param
+    options[:issue_comment] = comment
     options[:current_user] =
       if options[:current_user]
         [options[:current_user], comment.user]
