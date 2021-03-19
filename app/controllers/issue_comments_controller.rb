@@ -11,6 +11,7 @@ class IssueCommentsController < ApplicationController
   def create
     if @issue_comment.save
       @issue_comment.subscribe_user
+      @issue_comment.notify_subscribers
       redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
     else
       render :new

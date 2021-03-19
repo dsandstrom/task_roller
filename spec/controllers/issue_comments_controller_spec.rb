@@ -118,6 +118,31 @@ RSpec.describe IssueCommentsController, type: :controller do
                                         issue_comment: valid_attributes }
               end.not_to change(IssueSubscription, :count)
             end
+
+            it "doesn't send an email" do
+              expect do
+                post :create, params: { issue_id: issue.to_param,
+                                        issue_comment: valid_attributes }
+              end.not_to have_enqueued_job
+            end
+          end
+
+          context "when someone else subscribed to issue" do
+            let(:user_reporter) { Fabricate(:user_reporter) }
+
+            before do
+              Fabricate(:issue_subscription, issue: issue, user: user_reporter)
+            end
+
+            it "sends an email" do
+              expect do
+                post :create, params: { issue_id: issue.to_param,
+                                        issue_comment: valid_attributes }
+              end.to have_enqueued_job.on_queue("mailers").with(
+                "IssueMailer", "comment", "deliver_now",
+                args: [], params: { issue: issue, user: user_reporter }
+              )
+            end
           end
         end
 
