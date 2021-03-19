@@ -116,4 +116,88 @@ RSpec.describe IssueComment, type: :model do
       end
     end
   end
+
+  describe "#notify_subscribers" do
+    context "when issue has subscribers" do
+      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+      before { issue.subscribers << user }
+
+      it "creates notification" do
+        expect do
+          issue_comment.notify_subscribers
+        end.to change(issue.notifications, :count).by(1)
+      end
+
+      it "sends email" do
+        expect do
+          issue_comment.notify_subscribers
+        end.to have_enqueued_job.on_queue("mailers")
+      end
+    end
+
+    context "when user subscribed to issue" do
+      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+      before { issue.subscribers << issue_comment.user }
+
+      it "doesn't create notification" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to change(IssueNotification, :count)
+      end
+
+      it "doesn't send email" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to have_enqueued_job
+      end
+    end
+
+    context "when issue doesn't have subscribers" do
+      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
+      it "doesn't create notification" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to change(IssueNotification, :count)
+      end
+
+      it "doesn't send email" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to have_enqueued_job
+      end
+    end
+
+    context "when no issue" do
+      let(:issue_comment) { Fabricate(:issue_comment) }
+
+      before do
+        issue.subscribers << user
+        issue_comment.issue_id = nil
+      end
+
+      it "doesn't raise error" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to raise_error
+      end
+    end
+
+    context "when no user" do
+      let(:issue_comment) { Fabricate(:issue_comment) }
+
+      before do
+        issue.subscribers << user
+        issue_comment.user_id = nil
+      end
+
+      it "doesn't raise error" do
+        expect do
+          issue_comment.notify_subscribers
+        end.not_to raise_error
+      end
+    end
+  end
 end
