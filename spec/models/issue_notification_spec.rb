@@ -94,8 +94,11 @@ RSpec.describe IssueNotification, type: :model do
     end
 
     context "for a new comment" do
+      let(:comment) { Fabricate(:issue_comment, issue: issue) }
+
       let(:issue_notification) do
-        Fabricate(:issue_comment_notification, issue: issue, user: user)
+        Fabricate(:issue_comment_notification, issue: issue, user: user,
+                                               details: comment.to_param)
       end
 
       it "enqueues email" do
@@ -103,7 +106,7 @@ RSpec.describe IssueNotification, type: :model do
           issue_notification.send_email
         end.to have_enqueued_job.on_queue("mailers").with(
           "IssueMailer", "comment", "deliver_now",
-          args: [], params: { issue: issue, user: user }
+          args: [], params: { issue: issue, user: user, comment: comment }
         )
       end
     end
@@ -114,6 +117,19 @@ RSpec.describe IssueNotification, type: :model do
       end
 
       before { issue_notification.update_column :event, "invalid" }
+
+      it "doesn't enqueue email" do
+        expect do
+          issue_notification.send_email
+        end.not_to have_enqueued_job
+      end
+    end
+
+    context "for an invalid comment" do
+      let(:issue_notification) do
+        Fabricate(:issue_comment_notification, issue: issue, user: user,
+                                               details: "nope")
+      end
 
       it "doesn't enqueue email" do
         expect do
