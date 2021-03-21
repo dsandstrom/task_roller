@@ -7,8 +7,10 @@
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
     "highlight.js": "^10.4.1",
+    "is-svg": "^4.2.2",
     "milligram": "^1.4.0",
     "normalize.css": "^8.0.1",
+    "ssri": "^8.0.1",
     "turbolinks": "^5.2.0",
     "validate-js": "^2.0.1"
   },
