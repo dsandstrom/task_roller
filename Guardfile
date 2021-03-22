@@ -44,6 +44,7 @@ group :frontend do
     watch(/\.env(\.\w+(\.\w+)?)?/)
     watch(%r{^(config|lib)/.*})
     watch(%r{app/assets/fonts/*})
+    watch(%r{spec/mailers/previews/})
   end
 
   guard 'livereload', apply_css_live: false do
