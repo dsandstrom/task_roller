@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_22_000422) do
+ActiveRecord::Schema.define(version: 2021_03_22_013848) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -248,7 +248,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_000422) do
     t.datetime "updated_at", null: false
     t.boolean "closed", default: false, null: false
     t.datetime "opened_at", precision: 6
-    t.string "status", default: "open", null: false
+    t.string "status"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
