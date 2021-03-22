@@ -55,6 +55,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:subscribers) }
   it { is_expected.to have_many(:closures) }
   it { is_expected.to have_many(:reopenings) }
+  it { is_expected.to have_many(:notifications).dependent(:destroy) }
 
   describe "#status" do
     context "when a valid value" do
