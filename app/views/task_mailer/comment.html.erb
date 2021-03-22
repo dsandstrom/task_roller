@@ -1,0 +1,20 @@
+<% url = task_url(@task, anchor: "comment-#{@comment.id}") %>
+
+<h1>
+  New Comment for
+  <%= link_to "Task##{ @task.id}", url, target: '_blank' %>
+</h1>
+
+<hr>
+
+<%= content_tag :h2, "Comment from #{@comment.user.name_or_email}" %>
+<%= content_tag :div, @comment.body_html.html_safe,
+                class: 'comment-body' %>
+
+<hr>
+
+<%= render 'details', task: @task %>
+
+<p>
+  <%= link_to 'Visit Task', url, target: '_blank' %>
+</p>

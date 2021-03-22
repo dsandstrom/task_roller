@@ -1,0 +1,27 @@
+<% url = task_url(@task) %>
+
+<h1>
+  Status for
+  <%= link_to "Task##{ @task.id}", url, target: '_blank' %>
+  changed
+</h1>
+
+<hr>
+
+<h2>Changes</h2>
+<p>
+  Status:
+  <%= content_tag :span, @old_status.titleize,
+                  class: 'task-status task-old-status' %>
+  ->
+  <%= content_tag :span, @new_status.titleize,
+                  class: 'task-status task-new-status' %>
+</p>
+
+<hr>
+
+<%= render 'details', task: @task %>
+
+<p>
+  <%= link_to 'Visit Task', url, target: '_blank' %>
+</p>

@@ -1,0 +1,14 @@
+<% url = task_url(@task) %>
+
+<h1>
+  New
+  <%= link_to "Task##{ @task.id}", url, target: '_blank' %>
+</h1>
+
+<hr>
+
+<%= render 'details', task: @task %>
+
+<p>
+  <%= link_to 'Visit Task', url, target: '_blank' %>
+</p>

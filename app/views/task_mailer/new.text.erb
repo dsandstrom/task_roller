@@ -1,0 +1,9 @@
+<% url = task_url(@task) %>
+
+New <%= "Task##{ @task.id}" %>
+
+---
+
+<%= render 'details', task: @task %>
+
+Visit at: <%= url %>

@@ -1,0 +1,15 @@
+<% url = task_url(@task) %>
+
+Status for <%= "Task##{ @task.id}" %> changed
+
+---
+
+Changes
+-
+Status: <%= @old_status.titleize %> -> <%= @new_status.titleize %>
+
+---
+
+<%= render 'details', task: @task %>
+
+Visit at: <%= url %>

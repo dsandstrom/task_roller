@@ -1,0 +1,15 @@
+<% url = task_url(@task, anchor: "comment-#{@comment.id}") %>
+
+New Comment for <%= "Task##{ @task.id}" %>
+
+---
+
+<%= "Comment from #{@comment.user.name_or_email}" %>
+-
+<%= @comment.body %>
+
+---
+
+<%= render 'details', task: @task %>
+
+Visit at <%= url %>
