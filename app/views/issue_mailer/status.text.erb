@@ -1,0 +1,15 @@
+<% url = issue_url(@issue) %>
+
+Status for <%= "Issue##{ @issue.id}" %> changed
+
+---
+
+Changes
+-
+Status: <%= @old_status.titleize %> -> <%= @new_status.titleize %>
+
+--
+
+<%= render 'details', issue: @issue %>
+
+Visit at: <%= url %>

@@ -1,0 +1,15 @@
+<% url = issue_url(@issue, anchor: "comment-#{@comment.id}") %>
+
+New Comment for <%= "Issue##{ @issue.id}" %>
+
+---
+
+<%= "Comment from #{@comment.user.name_or_email}" %>
+-
+<%= @comment.body %>
+
+---
+
+<%= render 'details', issue: @issue %>
+
+Visit at: <%= url %>

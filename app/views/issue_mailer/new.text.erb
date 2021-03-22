@@ -1,0 +1,9 @@
+<% url = issue_url(@issue) %>
+
+New <%= "Issue##{ @issue.id}" %>
+
+---
+
+<%= render 'details', issue: @issue %>
+
+Visit at: <%= url %>
