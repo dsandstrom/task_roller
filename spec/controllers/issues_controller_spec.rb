@@ -1199,6 +1199,13 @@ RSpec.describe IssuesController, type: :controller do
                                         issue: valid_attributes }
               end.to change(user.issue_subscriptions, :count).by(1)
             end
+
+            it "sends email to subscribers" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        issue: valid_attributes }
+              end.to have_enqueued_job.on_queue("mailers")
+            end
           end
 
           context "when someone subscribed to project" do

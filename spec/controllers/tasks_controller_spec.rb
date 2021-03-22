@@ -1170,6 +1170,13 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(TaskSubscription, :count).by(2)
               end
 
+              it "sends email to subscribers" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to have_enqueued_job.on_queue("mailers")
+              end
+
               it "creates a new worker TaskSubscription" do
                 expect do
                   post :create, params: { project_id: project.to_param,
