@@ -6,6 +6,7 @@ Fabricator(:task) do
   task_type
   user { Fabricate(:user_reviewer) }
   project
+  status 'open'
 end
 
 Fabricator(:open_task, from: :task) do

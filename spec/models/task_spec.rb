@@ -67,8 +67,14 @@ RSpec.describe Task, type: :model do
       end
     end
 
+    context "when nil" do
+      before { subject.status = nil }
+
+      it { is_expected.to be_valid }
+    end
+
     context "when an invalid value" do
-      ["notopen", nil, "", "in progress"].each do |value|
+      ["notopen", "", "in progress"].each do |value|
         before { subject.status = value }
 
         it { is_expected.not_to be_valid }
@@ -1236,16 +1242,142 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#update_status" do
-    let(:task) { Fabricate(:task) }
+    context "when status is originally nil" do
+      let(:task) { Fabricate(:task, status: nil) }
+      let(:subscriber) { Fabricate(:user_worker) }
 
-    context "when build_status returns something" do
-      before { allow(task).to receive(:build_status) { "something" } }
+      before { task.subscribers << subscriber }
+
+      context "and stays nil" do
+        before { allow(task).to receive(:build_status) { nil } }
+
+        it "doesn't change status" do
+          expect do
+            task.update_status
+            task.reload
+          end.not_to change(task, :status)
+        end
+
+        it "doesn't email subscribers" do
+          expect do
+            task.update_status
+          end.not_to have_enqueued_job
+        end
+      end
+
+      context "and changes to 'open'" do
+        before { allow(task).to receive(:build_status) { "open" } }
+
+        it "changes status" do
+          expect do
+            task.update_status
+            task.reload
+          end.to change(task, :status).to("open")
+        end
+
+        it "delivers emails" do
+          expect do
+            task.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "creates TaskNotification" do
+          expect do
+            task.update_status
+          end.to change(TaskNotification, :count).by(1)
+        end
+      end
+
+      context "and changes to 'closed'" do
+        before { allow(task).to receive(:build_status) { "closed" } }
+
+        it "changes status" do
+          expect do
+            task.update_status
+            task.reload
+          end.to change(task, :status).to("closed")
+        end
+
+        it "delivers email" do
+          expect do
+            task.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "creates TaskNotification" do
+          expect do
+            task.update_status
+          end.to change(TaskNotification, :count).by(1)
+        end
+      end
+    end
+
+    context "when status is originally 'open'" do
+      let(:task) { Fabricate(:task, status: "open") }
+      let(:subscriber) { Fabricate(:user_worker) }
+
+      before { task.subscribers << subscriber }
+
+      context "and stays 'open'" do
+        before { allow(task).to receive(:build_status) { "open" } }
+
+        it "doesn't change status" do
+          expect do
+            task.update_status
+            task.reload
+          end.not_to change(task, :status)
+        end
+
+        it "doesn't email subscribers" do
+          expect do
+            task.update_status
+          end.not_to have_enqueued_job
+        end
+      end
+
+      context "and changes to 'in_progress'" do
+        before { allow(task).to receive(:build_status) { "in_progress" } }
+
+        it "changes status" do
+          expect do
+            task.update_status
+            task.reload
+          end.to change(task, :status).to("in_progress")
+        end
+
+        it "delivers email" do
+          expect do
+            task.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "creates TaskNotification" do
+          expect do
+            task.update_status
+          end.to change(TaskNotification, :count).by(1)
+        end
+      end
+    end
+
+    context "when given current_user" do
+      let(:task) { Fabricate(:task, status: "open") }
+      let(:subscriber) { Fabricate(:user_worker) }
+
+      before { task.subscribers << subscriber }
+
+      before { allow(task).to receive(:build_status) { "in_progress" } }
 
       it "changes status" do
         expect do
-          task.update_status
+          task.update_status(subscriber)
           task.reload
-        end.to change(task, :status).to("something")
+        end.to change(task, :status).to("in_progress")
+      end
+
+      it "doesn't email current_user" do
+        expect do
+          task.update_status(subscriber)
+        end.not_to have_enqueued_job
       end
     end
   end
@@ -2090,6 +2222,42 @@ RSpec.describe Task, type: :model do
           expect(task.siblings).to eq([sibling])
         end
       end
+    end
+  end
+
+  describe "#notify_of_comment" do
+    let(:task) { Fabricate(:task) }
+    let(:comment) { Fabricate(:task_comment, task: task) }
+    let(:user) { Fabricate(:user_reporter) }
+    let(:current_user) { Fabricate(:user_reporter) }
+
+    before do
+      task.subscribers << worker
+      task.subscribers << comment.user
+      Fabricate(:user_reporter)
+    end
+
+    it "creates one notification" do
+      task.subscribers << current_user
+      expect do
+        task.notify_of_comment(comment: comment, current_user: current_user)
+      end.to change(TaskNotification, :count).by(1)
+    end
+
+    it "creates notification" do
+      task.notify_of_comment(comment: comment)
+
+      notification = TaskNotification.last
+      expect(notification).not_to be_nil
+
+      expect(notification.event).to eq("comment")
+      expect(notification.task_comment).to eq(comment)
+    end
+
+    it "enqueues one email" do
+      expect do
+        task.notify_of_comment(comment: comment)
+      end.to have_enqueued_job.on_queue("mailers")
     end
   end
 end

@@ -55,7 +55,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :task_type, presence: true, if: :task_type_id
   validates :project_id, presence: true
   validates :project, presence: true, if: :project_id
-  validates :status, inclusion: { in: STATUS_OPTIONS.keys.map(&:to_s) }
+  validates :status, inclusion: { in: STATUS_OPTIONS.keys.map(&:to_s) },
+                     allow_nil: true
 
   after_create :set_opened_at
   after_save :update_issue_counts
@@ -315,9 +316,29 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
-  # TODO: send mail to subscribers
-  def update_status
+  def update_status(current_user = nil)
+    old_status = status
     update_column :status, build_status
+    return true if old_status == status
+
+    options = notification_options(old_status)
+    options[:current_user] = current_user if current_user.present?
+    notify_subscribers(options)
+  end
+
+  def notify_of_comment(options)
+    comment = options.delete(:comment)
+    return unless comment
+
+    options[:task_comment] = comment
+    options[:current_user] =
+      if options[:current_user]
+        [options[:current_user], comment.user]
+      else
+        comment.user
+      end
+
+    notify_subscribers(options.merge(event: 'comment'))
   end
 
   private
@@ -404,6 +425,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       issue.update_column :open_tasks_count, issue.tasks.all_non_closed.count
     end
 
+    def subscribers_except(users)
+      if users
+        if users.is_a?(Array)
+          subscribers.where.not(id: users.map(&:id))
+        else
+          subscribers.where.not(id: users.id)
+        end
+      else
+        subscribers
+      end
+    end
+
     # TODO: add assigned, or progressions grouped by user
     def build_history_feed
       feed = []
@@ -412,5 +445,25 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
+    end
+
+    def notify_subscribers(options)
+      current_user = options.delete(:current_user)
+      subscribers_except(current_user).each do |subscriber|
+        notification = notifications.create!(options.merge(user: subscriber))
+        notification.send_email
+      end
+      true
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.debug "TaskNotification invalid:\n#{e.inspect}"
+      false
+    end
+
+    def notification_options(old_status)
+      if old_status.present?
+        { event: 'status', details: "#{old_status},#{status}" }
+      else
+        { event: 'new' }
+      end
     end
 end
