@@ -18,7 +18,6 @@ RSpec.describe IssueNotification, type: :model do
   it { is_expected.to respond_to(:issue_id) }
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:issue_comment_id) }
-  it { is_expected.to respond_to(:event) }
   it { is_expected.to respond_to(:details) }
 
   it { is_expected.to validate_presence_of(:issue_id) }
