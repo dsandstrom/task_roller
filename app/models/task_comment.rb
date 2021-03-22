@@ -21,4 +21,8 @@ class TaskComment < ApplicationRecord
   def body_html
     @body_html ||= (RollerMarkdown.new.render(body) || '')
   end
+
+  def notify_subscribers
+    task&.notify_of_comment(comment: self)
+  end
 end

@@ -116,4 +116,88 @@ RSpec.describe TaskComment, type: :model do
       end
     end
   end
+
+  describe "#notify_subscribers" do
+    context "when task has subscribers" do
+      let(:task_comment) { Fabricate(:task_comment, task: task) }
+
+      before { task.subscribers << user }
+
+      it "creates notification" do
+        expect do
+          task_comment.notify_subscribers
+        end.to change(task.notifications, :count).by(1)
+      end
+
+      it "sends email" do
+        expect do
+          task_comment.notify_subscribers
+        end.to have_enqueued_job.on_queue("mailers")
+      end
+    end
+
+    context "when user subscribed to task" do
+      let(:task_comment) { Fabricate(:task_comment, task: task) }
+
+      before { task.subscribers << task_comment.user }
+
+      it "doesn't create notification" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to change(TaskNotification, :count)
+      end
+
+      it "doesn't send email" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to have_enqueued_job
+      end
+    end
+
+    context "when task doesn't have subscribers" do
+      let(:task_comment) { Fabricate(:task_comment, task: task) }
+
+      it "doesn't create notification" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to change(TaskNotification, :count)
+      end
+
+      it "doesn't send email" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to have_enqueued_job
+      end
+    end
+
+    context "when no task" do
+      let(:task_comment) { Fabricate(:task_comment) }
+
+      before do
+        task.subscribers << user
+        task_comment.task_id = nil
+      end
+
+      it "doesn't raise error" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to raise_error
+      end
+    end
+
+    context "when no user" do
+      let(:task_comment) { Fabricate(:task_comment) }
+
+      before do
+        task.subscribers << user
+        task_comment.user_id = nil
+      end
+
+      it "doesn't raise error" do
+        expect do
+          task_comment.notify_subscribers
+        end.not_to raise_error
+      end
+    end
+  end
 end

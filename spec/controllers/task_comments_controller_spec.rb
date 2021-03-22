@@ -109,6 +109,13 @@ RSpec.describe TaskCommentsController, type: :controller do
                                         task_comment: valid_attributes }
               end.not_to change(TaskSubscription, :count)
             end
+
+            it "doesn't send an email" do
+              expect do
+                post :create, params: { task_id: task.to_param,
+                                        task_comment: valid_attributes }
+              end.not_to have_enqueued_job
+            end
           end
 
           context "when not already subscribed to the task" do
@@ -119,6 +126,28 @@ RSpec.describe TaskCommentsController, type: :controller do
                 post :create, params: { task_id: task.to_param,
                                         task_comment: valid_attributes }
               end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when someone else subscribed to task" do
+            let(:user_reporter) { Fabricate(:user_reporter) }
+
+            before do
+              Fabricate(:task_subscription, task: task, user: user_reporter)
+            end
+
+            it "sends an email" do
+              expect do
+                post :create, params: { task_id: task.to_param,
+                                        task_comment: valid_attributes }
+              end.to(have_enqueued_job.with do |mailer, action, time, options|
+                expect(mailer).to eq("TaskMailer")
+                expect(action).to eq("comment")
+                expect(time).to eq("deliver_now")
+                expect(options)
+                  .to eq(args: [], params: { task: task, user: user_reporter,
+                                             comment: TaskComment.last })
+              end)
             end
           end
         end

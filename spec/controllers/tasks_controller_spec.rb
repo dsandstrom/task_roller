@@ -1174,7 +1174,13 @@ RSpec.describe TasksController, type: :controller do
                 expect do
                   post :create, params: { project_id: project.to_param,
                                           task: valid_attributes }
-                end.to have_enqueued_job.on_queue("mailers")
+                end.to(have_enqueued_job.with do |mailer, action, time, options|
+                  expect(mailer).to eq("TaskMailer")
+                  expect(action).to eq("new")
+                  expect(time).to eq("deliver_now")
+                  expect(options)
+                    .to eq(args: [], params: { task: Task.last, user: worker })
+                end)
               end
 
               it "creates a new worker TaskSubscription" do
