@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: show notifications in partials
+# TODO: add views
+
 class IssueNotification < ApplicationRecord
   EVENT_OPTIONS = %w[comment new status].freeze
 
