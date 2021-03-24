@@ -11,7 +11,8 @@
   remote = false if remote.nil?
 %>
 
-<%= form_with(model: task_comment, url: url, local: true, data: { remote: remote },
+<%= form_with(model: task_comment, url: url, local: true,
+              data: { remote: remote },
               html: { name: 'task_comment_form',
                       novalidate: 'novalidate',
                       remote: remote }) do |form| %>
@@ -27,9 +28,15 @@
                     class: 'button' %>
 
     <% if remote %>
-      <%= link_to 'reset', task_task_comment_path(task, task_comment),
-                  id: 'comment_reset_link',
-                  remote: remote %>
+      <% if task_comment.persisted? %>
+        <%= link_to 'reset', task_task_comment_path(task, task_comment),
+                    id: 'comment_reset_link',
+                    remote: remote %>
+      <% else %>
+        <%= link_to 'reset', task_path(task),
+                    id: 'comment_reset_link',
+                    remote: remote %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

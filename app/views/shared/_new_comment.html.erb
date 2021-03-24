@@ -1,14 +1,20 @@
 <% return unless can?(:create, comment) %>
 
-<div class="comment">
+<div id="new_comment" class="comment new-comment">
   <header>
     <p>Add Comment:</p>
   </header>
 
   <% if object.is_a?(Task) %>
-    <%= render 'task_comments/form',
-               task: object, task_comment: comment,
-               user_options: user_options %>
+    <main></main>
+
+    <footer>
+      <p>
+        <%= link_to 'new',
+                    new_task_task_comment_path(object),
+                    remote: true %>
+      </p>
+    </footer>
   <% else %>
     <%= render 'issue_comments/form',
                issue: object, issue_comment: comment,

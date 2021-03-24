@@ -20,6 +20,11 @@ class TasksController < ApplicationController
   def show
     set_user_resources
     set_task_resources
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def new

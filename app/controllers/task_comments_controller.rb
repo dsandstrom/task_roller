@@ -4,7 +4,12 @@ class TaskCommentsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :comments
 
-  def new; end
+  def new
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
 
   def edit
     respond_to do |format|
@@ -26,9 +31,9 @@ class TaskCommentsController < ApplicationController
     if @task_comment.save
       @task_comment.subscribe_user
       @task_comment.notify_subscribers
-      redirect_to redirect_url
+      create_success
     else
-      render :new
+      create_failure
     end
   end
 
@@ -53,6 +58,20 @@ class TaskCommentsController < ApplicationController
 
     def task_comment_params
       params.require(:task_comment).permit(:body)
+    end
+
+    def create_success
+      respond_to do |format|
+        format.html { redirect_to redirect_url }
+        format.js { render :show }
+      end
+    end
+
+    def create_failure
+      respond_to do |format|
+        format.html { render :new }
+        format.js { render :new }
+      end
     end
 
     def update_success

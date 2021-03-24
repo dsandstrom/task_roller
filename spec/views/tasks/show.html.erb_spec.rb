@@ -56,12 +56,11 @@ RSpec.describe "tasks/show", type: :view do
         assert_select ".task-user", @task.user.name_or_email
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "renders new task connection link" do
@@ -668,10 +667,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
 
-      it "doesn't render new task_comment form" do
+      it "doesn't render new task_comment link" do
         render
 
-        assert_select "form[action=?]", form_url, count: 0
+        expect(rendered)
+          .not_to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "renders edit task assignments link" do
@@ -782,10 +782,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: url)
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        assert_select "form[action=?][method=?]", form_url, "post"
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "renders edit task assignments link" do
@@ -908,13 +909,11 @@ RSpec.describe "tasks/show", type: :view do
         assert_select ".task-heading", @task.heading
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        url = task_task_comments_url(@task)
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "doesn't render edit link" do
@@ -1322,11 +1321,11 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).not_to have_link(nil, href: url)
         end
 
-        it "doesn't render new task_comment form" do
+        it "doesn't render new task_comment link" do
           render
 
-          form_url = task_task_comments_url(@task)
-          assert_select "form[action=?]", form_url, count: 0
+          expect(rendered)
+            .not_to have_link(nil, href: new_task_task_comment_path(@task))
         end
 
         it "doesn't render edit task assignments link" do
@@ -1492,11 +1491,11 @@ RSpec.describe "tasks/show", type: :view do
           expect(rendered).to have_link(nil, href: url)
         end
 
-        it "renders new task_comment form" do
+        it "renders new task_comment link" do
           render
 
-          form_url = task_task_comments_url(@task)
-          assert_select "form[action=?][method=?]", form_url, "post"
+          expect(rendered)
+            .to have_link(nil, href: new_task_task_comment_path(@task))
         end
 
         it "renders edit task assignments link" do
@@ -1657,13 +1656,11 @@ RSpec.describe "tasks/show", type: :view do
         assert_select ".task-heading", @task.heading
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        url = task_task_comments_url(@task)
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "doesn't render new task connection link" do
@@ -2003,13 +2000,11 @@ RSpec.describe "tasks/show", type: :view do
         @assignees = assign(:assignees, [@task.user])
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        url = task_task_comments_url(@task)
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "doesn't render edit link" do
@@ -2206,22 +2201,11 @@ RSpec.describe "tasks/show", type: :view do
         assert_select ".task-heading", @task.heading
       end
 
-      it "renders new task_comment form" do
+      it "renders new task_comment link" do
         render
 
-        url = task_task_comments_url(@task)
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
-      end
-
-      it "renders new task_comment form" do
-        render
-
-        url = task_task_comments_url(@task)
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "task_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_task_task_comment_path(@task))
       end
 
       it "doesn't render new task connection link" do

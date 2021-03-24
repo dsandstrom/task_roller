@@ -1,0 +1,7 @@
+var openComments = document.querySelectorAll('.comment.with-form');
+for (var i = 0; i < openComments.length; i++) {
+  var openComment = openComments[i];
+
+  openComment.classList.remove('with-form');
+  openComment.classList.add('with-hidden-form');
+}
