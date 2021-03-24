@@ -24,16 +24,55 @@ RSpec.describe TaskCommentsController, type: :controller do
     end
   end
 
+  describe "GET #show" do
+    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+      context "for a #{employee_type}" do
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
+
+        context "when html request" do
+          it "returns a success response" do
+            task_comment = Fabricate(:task_comment, task: task)
+            url = task_url(task, anchor: "comment-#{task_comment.id}")
+            get :show, params: { task_id: task.to_param,
+                                 id: task_comment.to_param }
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "when js request" do
+          it "returns a success response" do
+            task_comment = Fabricate(:task_comment, task: task)
+            get :show, params: { task_id: task.to_param,
+                                 id: task_comment.to_param },
+                       xhr: true
+            expect(response).to be_successful
+          end
+        end
+      end
+    end
+  end
+
   describe "GET #edit" do
     context "for an admin" do
       before { sign_in(admin) }
 
       context "for their own TaskComment" do
-        it "returns a success response" do
-          task_comment = Fabricate(:task_comment, task: task, user: admin)
-          get :edit, params: { task_id: task.to_param,
-                               id: task_comment.to_param }
-          expect(response).to be_successful
+        context "when html request" do
+          it "returns a success response" do
+            task_comment = Fabricate(:task_comment, task: task, user: admin)
+            get :edit, params: { task_id: task.to_param,
+                                 id: task_comment.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when js request" do
+          it "returns a success response" do
+            task_comment = Fabricate(:task_comment, task: task, user: admin)
+            get :edit, params: { task_id: task.to_param,
+                                 id: task_comment.to_param }, xhr: true
+            expect(response).to be_successful
+          end
         end
       end
 
@@ -171,34 +210,69 @@ RSpec.describe TaskCommentsController, type: :controller do
 
       context "for their own TaskComment" do
         context "with valid params" do
-          it "updates the requested task_comment" do
-            task_comment = Fabricate(:task_comment, task: task, user: admin)
-            expect do
+          context "when html request" do
+            it "updates the requested task_comment" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              expect do
+                put :update, params: { task_id: task.to_param,
+                                       id: task_comment.to_param,
+                                       task_comment: new_attributes }
+                task_comment.reload
+              end.to change(task_comment, :body).to("New body")
+            end
+
+            it "redirects to the task_comment" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              url =
+                task_url(task, anchor: "comment-#{task_comment.id}")
               put :update, params: { task_id: task.to_param,
                                      id: task_comment.to_param,
                                      task_comment: new_attributes }
-              task_comment.reload
-            end.to change(task_comment, :body).to("New body")
+              expect(response).to redirect_to(url)
+            end
           end
 
-          it "redirects to the task_comment" do
-            task_comment = Fabricate(:task_comment, task: task, user: admin)
-            url =
-              task_url(task, anchor: "comment-#{task_comment.id}")
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
-                                   task_comment: new_attributes }
-            expect(response).to redirect_to(url)
+          context "when js request" do
+            it "updates the requested task_comment" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              expect do
+                put :update, params: { task_id: task.to_param,
+                                       id: task_comment.to_param,
+                                       task_comment: new_attributes }, xhr: true
+                task_comment.reload
+              end.to change(task_comment, :body).to("New body")
+            end
+
+            it "redirects to the task_comment" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              put :update, params: { task_id: task.to_param,
+                                     id: task_comment.to_param,
+                                     task_comment: new_attributes }, xhr: true
+              expect(response).to be_successful
+            end
           end
         end
 
         context "with invalid params" do
-          it "returns a success response ('edit' template)" do
-            task_comment = Fabricate(:task_comment, task: task, user: admin)
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
-                                   task_comment: invalid_attributes }
-            expect(response).to be_successful
+          context "when html request" do
+            it "returns a success response ('edit' template)" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              put :update, params: { task_id: task.to_param,
+                                     id: task_comment.to_param,
+                                     task_comment: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when js request" do
+            it "returns a success response ('edit' template)" do
+              task_comment = Fabricate(:task_comment, task: task, user: admin)
+              put :update, params: { task_id: task.to_param,
+                                     id: task_comment.to_param,
+                                     task_comment: invalid_attributes },
+                           xhr: true
+              expect(response).to be_successful
+            end
           end
         end
       end

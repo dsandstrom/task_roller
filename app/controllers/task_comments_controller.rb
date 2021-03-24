@@ -6,7 +6,21 @@ class TaskCommentsController < ApplicationController
 
   def new; end
 
-  def edit; end
+  def edit
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def show
+    respond_to do |format|
+      format.html do
+        redirect_to task_path(@task, anchor: "comment-#{@task_comment.id}")
+      end
+      format.js
+    end
+  end
 
   def create
     if @task_comment.save
@@ -20,9 +34,9 @@ class TaskCommentsController < ApplicationController
 
   def update
     if @task_comment.update(task_comment_params)
-      redirect_to redirect_url, notice: 'Comment was successfully updated.'
+      update_success
     else
-      render :edit
+      update_failure
     end
   end
 
@@ -39,5 +53,21 @@ class TaskCommentsController < ApplicationController
 
     def task_comment_params
       params.require(:task_comment).permit(:body)
+    end
+
+    def update_success
+      respond_to do |format|
+        format.html do
+          redirect_to redirect_url, notice: 'Comment was successfully updated.'
+        end
+        format.js { render :show }
+      end
+    end
+
+    def update_failure
+      respond_to do |format|
+        format.html { render :edit }
+        format.js { render :show }
+      end
     end
 end

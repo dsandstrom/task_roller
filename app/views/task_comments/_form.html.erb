@@ -8,10 +8,13 @@
     else
       task_task_comments_url(task)
     end
+  remote = false if remote.nil?
 %>
 
-<%= form_with(model: task_comment, url: url, local: true,
-              html: { name: 'task_comment_form', novalidate: 'novalidate' }) do |form| %>
+<%= form_with(model: task_comment, url: url, local: true, data: { remote: remote },
+              html: { name: 'task_comment_form',
+                      novalidate: 'novalidate',
+                      remote: remote }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">
@@ -22,5 +25,11 @@
   <div class="actions">
     <%= form.submit comment_button_text(task_comment),
                     class: 'button' %>
+
+    <% if remote %>
+      <%= link_to 'reset', task_task_comment_path(task, task_comment),
+                  id: 'comment_reset_link',
+                  remote: remote %>
+    <% end %>
   </div>
 <% end %>
