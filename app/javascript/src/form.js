@@ -1,7 +1,7 @@
 // https://github.com/rickharrison/validate.js
 import FormValidator from 'validate-js/validate';
 
-// Issue #17
+// https://production.task-roller.net/issues/17
 
 export class Form {
   constructor(elem, editors = []) {
