@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: search categories and projects
+# TODO: allow searching by id
 
 class SearchesController < ApplicationController
   before_action :authorize_search
