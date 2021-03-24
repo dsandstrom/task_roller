@@ -4,6 +4,8 @@ require "rails_helper"
 
 RSpec.describe TaskClosuresController, type: :controller do
   let(:task) { Fabricate(:open_task) }
+  let(:current_user) { Fabricate(:user_reporter) }
+  let(:subscriber) { Fabricate(:user_reporter) }
 
   describe "GET #new" do
     %w[admin].each do |employee_type|
@@ -72,6 +74,14 @@ RSpec.describe TaskClosuresController, type: :controller do
               post :create, params: { task_id: task.to_param }
               task.reload
             end.to change(task.closures, :count).by(1)
+          end
+
+          it "sends email to subscribers" do
+            task.subscribers << current_user
+            task.subscribers << subscriber
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.to have_enqueued_job.on_queue("mailers")
           end
 
           it "creates a new TaskSubscription for the current_user" do

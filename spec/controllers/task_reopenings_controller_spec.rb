@@ -4,6 +4,8 @@ require "rails_helper"
 
 RSpec.describe TaskReopeningsController, type: :controller do
   let(:task) { Fabricate(:closed_task) }
+  let(:current_user) { Fabricate(:user_reporter) }
+  let(:subscriber) { Fabricate(:user_reporter) }
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
@@ -67,6 +69,14 @@ RSpec.describe TaskReopeningsController, type: :controller do
               post :create, params: { task_id: task.to_param }
               task.reload
             end.to change(task, :status).to("open")
+          end
+
+          it "sends email to subscribers" do
+            task.subscribers << current_user
+            task.subscribers << subscriber
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.to have_enqueued_job.on_queue("mailers")
           end
 
           it "redirects to the created task_reopening" do
