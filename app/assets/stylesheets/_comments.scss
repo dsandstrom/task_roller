@@ -43,10 +43,6 @@
   }
 
   .comment {
-    margin: 0 0 1rem;
-    padding: 0;
-    border: 1px solid $light-gray;
-
     &:first-child {
       border-radius: $border-radius $border-radius 0 0;
     }
@@ -130,5 +126,69 @@
       background: $off-white;
       color: $black;
     }
+  }
+}
+
+.comment {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 1px solid $light-gray;
+
+  &.with-form {
+    border-width: 0;
+    border-color: $dark-gray;
+
+    footer,
+    .field-label-and-message {
+      display: none;
+    }
+
+    main,
+    form {
+      padding: 0;
+    }
+
+    header {
+      border: 0 solid $gray;
+      border-width: 1px 1px 0;
+    }
+
+    // scss-lint:disable SelectorFormat
+    .editor-toolbar,
+    .EasyMDEContainer .CodeMirror,
+    .button {
+      border-radius: 0;
+    }
+    // scss-lint:enable SelectorFormat
+
+    textarea {
+      margin: 0;
+    }
+
+    .actions {
+      margin: 0;
+      border: 1px solid $gray;
+      border-width: 0 1px 1px;
+
+      a {
+        padding: 0 1rem;
+      }
+    }
+
+    .comment-body {
+      display: none;
+    }
+  }
+
+  &.with-hidden-form {
+    form {
+      display: none;
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
