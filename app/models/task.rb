@@ -242,7 +242,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return false unless finish
 
     update closed: true
-    update_status
+    update_status(current_user)
     close_issue(current_user)
   end
 
@@ -250,7 +250,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def reopen(current_user = nil)
     return false unless update(closed: false, opened_at: Time.now)
 
-    update_status
+    update_status(current_user)
     return true unless issue&.closed?
 
     issue.reopen(current_user)

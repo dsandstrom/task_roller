@@ -1481,6 +1481,9 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#close" do
+    let(:current_user) { Fabricate(:user_reporter) }
+    let(:subscriber) { Fabricate(:user_reporter) }
+
     context "when open" do
       let(:task) { Fabricate(:open_task) }
 
@@ -1489,6 +1492,21 @@ RSpec.describe Task, type: :model do
           task.close
           task.reload
         end.to change(task, :closed).to(true)
+      end
+
+      it "changes the tasks's status to 'closed'" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :status).to("closed")
+      end
+
+      it "sends email to subscribers" do
+        task.subscribers << current_user
+        task.subscribers << subscriber
+        expect do
+          task.close(current_user)
+        end.to have_enqueued_job.on_queue("mailers")
       end
     end
 
@@ -1500,6 +1518,20 @@ RSpec.describe Task, type: :model do
           task.close
           task.reload
         end.not_to change(task, :closed)
+      end
+
+      it "doesn't change the tasks's status" do
+        expect do
+          task.close
+          task.reload
+        end.not_to change(task, :status)
+      end
+
+      it "doesn't send email to subscribers" do
+        task.subscribers << subscriber
+        expect do
+          task.close
+        end.not_to have_enqueued_job
       end
     end
 
@@ -1519,6 +1551,13 @@ RSpec.describe Task, type: :model do
           task.close
           progression.reload
         end.to change(progression, :finished).to(true)
+      end
+
+      it "changes the tasks's status to 'closed'" do
+        expect do
+          task.close
+          task.reload
+        end.to change(task, :status).to("closed")
       end
 
       it "returns true" do
@@ -1696,6 +1735,9 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#reopen" do
+    let(:current_user) { Fabricate(:user_reporter) }
+    let(:subscriber) { Fabricate(:user_reporter) }
+
     context "when closed" do
       let(:task) { Fabricate(:closed_task) }
 
@@ -1722,6 +1764,14 @@ RSpec.describe Task, type: :model do
           task.reopen
           task.reload
         end.to change(task, :status).to("open")
+      end
+
+      it "sends email to subscribers" do
+        task.subscribers << current_user
+        task.subscribers << subscriber
+        expect do
+          task.reopen(current_user)
+        end.to have_enqueued_job.on_queue("mailers")
       end
 
       context "with a closed issue" do
