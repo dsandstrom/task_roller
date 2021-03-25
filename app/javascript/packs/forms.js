@@ -17,8 +17,13 @@ const initMarkdownEditors = function (event) {
   editorNames.forEach((name, i) => {
     document.getElementsByName(name).forEach((element) => {
       if (!element.classList.contains('with-editor')) {
-        currentEditors.push(new MarkdownEditor(element));
+        let editor = new MarkdownEditor(element);
+
+        currentEditors.push(editor);
         element.classList.add('with-editor');
+        if (element.dataset.autofocus == 'true') {
+          editor.codemirror.focus();
+        }
       }
     });
   });

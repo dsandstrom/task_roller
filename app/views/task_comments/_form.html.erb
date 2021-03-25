@@ -6,6 +6,7 @@
       task_task_comments_url(task)
     end
   remote = false if remote.nil?
+  autofocus = !task_comment.persisted? if autofocus.nil?
 %>
 
 <%= form_with(model: task_comment, url: url, local: true,
@@ -16,7 +17,8 @@
 
   <div class="field">
     <%= required_field_label form, :body %>
-    <%= form.text_area :body, id: :task_comment_body  %>
+    <%= form.text_area :body, id: :task_comment_body,
+                       data: { autofocus: autofocus }  %>
   </div>
 
   <div class="actions">

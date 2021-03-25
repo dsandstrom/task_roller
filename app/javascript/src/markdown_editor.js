@@ -29,6 +29,7 @@ export class MarkdownEditor {
   constructor(elem) {
     this.elem = elem;
     this.editor = new EasyMDE(this.options());
+    return this.editor;
   }
 
   options() {
