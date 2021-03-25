@@ -2,15 +2,17 @@ var showCommentId = 'comment-' + <%= @task_comment.id %>;
 var showComment = document.getElementById(showCommentId);
 
 if (showComment) {
-  showComment.outerHTML = "<%= j render('shared/comment', object: @task, comment: @task_comment) %>";
+  showComment.outerHTML = "<%= j render('shared/comment.html', object: @task, comment: @task_comment) %>";
 } else {
   var container = document.querySelector('.comments');
   var newComment = document.getElementById('new_comment');
 
   if (newComment) {
-    newComment.outerHTML = "<%= j render('shared/comment', object: @task, comment: @task_comment) %>";
+    newComment.outerHTML = "<%= j render('shared/comment.html', object: @task, comment: @task_comment) %>";
   }
   if (container) {
-    container.innerHTML += "<%= j render('shared/new_comment', object: @task, comment: new_task_comment(@task)) %>";
+    container.innerHTML += "<%= j render('shared/new_comment.html', object: @task, comment: new_task_comment(@task)) %>";
   }
 }
+
+initCommentForms();

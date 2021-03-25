@@ -4,26 +4,44 @@ class IssueCommentsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :comments
 
-  def new; end
+  def new
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
 
-  def edit; end
+  def edit
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def show
+    respond_to do |format|
+      format.html do
+        redirect_to issue_path(@issue, anchor: "comment-#{@issue_comment.id}")
+      end
+      format.js
+    end
+  end
 
   def create
     if @issue_comment.save
       @issue_comment.subscribe_user
       @issue_comment.notify_subscribers
-      redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
+      create_success
     else
-      render :new
+      create_failure
     end
   end
 
   def update
     if @issue_comment.update(issue_comment_params)
-      redirect_to issue_url(@issue, anchor: "comment-#{@issue_comment.id}"),
-                  notice: 'Comment was successfully updated.'
+      update_success
     else
-      render :edit
+      update_failure
     end
   end
 
@@ -37,5 +55,40 @@ class IssueCommentsController < ApplicationController
 
     def issue_comment_params
       params.require(:issue_comment).permit(:body)
+    end
+
+    def redirect_url
+      @redirect_url ||=
+        issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
+    end
+
+    def create_success
+      respond_to do |format|
+        format.html { redirect_to redirect_url }
+        format.js { render :show }
+      end
+    end
+
+    def create_failure
+      respond_to do |format|
+        format.html { render :new }
+        format.js { render :new }
+      end
+    end
+
+    def update_success
+      respond_to do |format|
+        format.html do
+          redirect_to redirect_url, notice: 'Comment was successfully updated.'
+        end
+        format.js { render :show }
+      end
+    end
+
+    def update_failure
+      respond_to do |format|
+        format.html { render :edit }
+        format.js { render :show }
+      end
     end
 end

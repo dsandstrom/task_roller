@@ -42,12 +42,11 @@ RSpec.describe "issues/show", type: :view do
         assert_select ".issue-description main", @issue.description
       end
 
-      it "renders new issue_comment form" do
+      it "renders new issue_comment link" do
         render
 
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "issue_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_issue_issue_comment_path(@issue))
       end
 
       it "renders edit link" do
@@ -473,11 +472,11 @@ RSpec.describe "issues/show", type: :view do
       context "and open" do
         before { @issue = assign(:issue, issue) }
 
-        it "renders new issue_comment form" do
+        it "renders new issue_comment link" do
           render
 
-          url = issue_issue_comments_url(issue)
-          assert_select "form[action=?][method=?]", url, "post"
+          expect(rendered)
+            .to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "renders edit link" do
@@ -581,11 +580,11 @@ RSpec.describe "issues/show", type: :view do
       context "and open" do
         before { @issue = assign(:issue, issue) }
 
-        it "doesn't render new issue_comment form" do
+        it "doesn't render new issue_comment link" do
           render
 
-          url = issue_issue_comments_url(issue)
-          assert_select "form[action=?]", url, count: 0
+          expect(rendered)
+            .not_to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "renders edit link" do
@@ -712,12 +711,11 @@ RSpec.describe "issues/show", type: :view do
         assert_select ".issue-description main", @issue.description
       end
 
-      it "renders new issue_comment form" do
+      it "renders new issue_comment link" do
         render
 
-        assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "textarea[name=?]", "issue_comment[body]"
-        end
+        expect(rendered)
+          .to have_link(nil, href: new_issue_issue_comment_path(@issue))
       end
 
       it "doesn't render the edit link" do
@@ -982,11 +980,11 @@ RSpec.describe "issues/show", type: :view do
       context "and open" do
         before { @issue = assign(:issue, issue) }
 
-        it "renders new issue_comment form" do
+        it "renders new issue_comment link" do
           render
 
-          url = issue_issue_comments_url(issue)
-          assert_select "form[action=?][method=?]", url, "post"
+          expect(rendered)
+            .to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "renders new connection link" do
@@ -1066,11 +1064,11 @@ RSpec.describe "issues/show", type: :view do
       context "and open" do
         before { @issue = assign(:issue, issue) }
 
-        it "doesn't render new issue_comment form" do
+        it "doesn't render new issue_comment link" do
           render
 
-          url = issue_issue_comments_url(issue)
-          assert_select "form[action=?]", url, count: 0
+          expect(rendered)
+            .not_to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "doesn't render new connection link" do
@@ -1189,12 +1187,11 @@ RSpec.describe "issues/show", type: :view do
           assert_select ".issue-heading", @issue.heading
         end
 
-        it "renders new issue_comment form" do
+        it "renders new issue_comment link" do
           render
 
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "issue_comment[body]"
-          end
+          expect(rendered)
+            .to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "renders edit link" do
@@ -1334,12 +1331,11 @@ RSpec.describe "issues/show", type: :view do
           assert_select ".issue-heading", @issue.heading
         end
 
-        it "renders new issue_comment form" do
+        it "renders new issue_comment link" do
           render
 
-          assert_select "form[action=?][method=?]", url, "post" do
-            assert_select "textarea[name=?]", "issue_comment[body]"
-          end
+          expect(rendered)
+            .to have_link(nil, href: new_issue_issue_comment_path(@issue))
         end
 
         it "doesn't render the edit link" do

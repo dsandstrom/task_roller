@@ -16,9 +16,18 @@ RSpec.describe TaskCommentsController, type: :controller do
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
-        it "returns a success response" do
-          get :new, params: { task_id: task.to_param }
-          expect(response).to be_successful
+        context "when html request" do
+          it "returns a success response" do
+            get :new, params: { task_id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when js request" do
+          it "returns a success response" do
+            get :new, params: { task_id: task.to_param }, xhr: true
+            expect(response).to be_successful
+          end
         end
       end
     end
@@ -358,22 +367,46 @@ RSpec.describe TaskCommentsController, type: :controller do
         end
 
         context "for someone else's TaskComment" do
-          it "doesn't update the requested task_comment" do
-            task_comment = Fabricate(:task_comment, task: task)
-            expect do
+          context "when html request" do
+            it "doesn't update the requested task_comment" do
+              task_comment = Fabricate(:task_comment, task: task)
+              expect do
+                put :update, params: { task_id: task.to_param,
+                                       id: task_comment.to_param,
+                                       task_comment: new_attributes }
+                task_comment.reload
+              end.not_to change(task_comment, :body)
+            end
+
+            it "should be unauthorized" do
+              task_comment = Fabricate(:task_comment, task: task)
               put :update, params: { task_id: task.to_param,
                                      id: task_comment.to_param,
                                      task_comment: new_attributes }
-              task_comment.reload
-            end.not_to change(task_comment, :body)
+              expect_to_be_unauthorized(response)
+            end
           end
 
-          it "should be unauthorized" do
-            task_comment = Fabricate(:task_comment, task: task)
-            put :update, params: { task_id: task.to_param,
-                                   id: task_comment.to_param,
-                                   task_comment: new_attributes }
-            expect_to_be_unauthorized(response)
+          context "when js request" do
+            it "doesn't update the requested task_comment" do
+              task_comment = Fabricate(:task_comment, task: task)
+              expect do
+                put :update, params: { task_id: task.to_param,
+                                       id: task_comment.to_param,
+                                       task_comment: new_attributes },
+                             xhr: true
+                task_comment.reload
+              end.not_to change(task_comment, :body)
+            end
+
+            it "should be unauthorized" do
+              task_comment = Fabricate(:task_comment, task: task)
+              put :update, params: { task_id: task.to_param,
+                                     id: task_comment.to_param,
+                                     task_comment: new_attributes },
+                           xhr: true
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end

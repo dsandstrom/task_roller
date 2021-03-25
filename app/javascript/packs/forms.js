@@ -24,6 +24,13 @@ const initMarkdownEditors = function (event) {
   });
 }
 
+const syntaxHighlight = function (event) {
+  // syntax highlight
+  for (var block of document.querySelectorAll('.comment pre code')) {
+    hljs.highlightElement(block);
+  }
+}
+
 document.addEventListener('turbolinks:load', function(event) {
   initMarkdownEditors(event);
 
@@ -34,10 +41,7 @@ document.addEventListener('turbolinks:load', function(event) {
     new Form(form, currentEditors);
   }
 
-  // syntax highlight
-  for (var block of document.querySelectorAll('.comment pre code')) {
-    hljs.highlightBlock(block);
-  }
+  syntaxHighlight();
 
   // toggle hidden sidebar forms
   for (let [linkId, formId] of hiddenForms) {
@@ -51,6 +55,7 @@ document.addEventListener('turbolinks:load', function(event) {
 
 document.addEventListener('custom:reset-forms', function(event) {
   initMarkdownEditors(event);
+  syntaxHighlight();
 });
 
 document.addEventListener('turbolinks:visit', function() {

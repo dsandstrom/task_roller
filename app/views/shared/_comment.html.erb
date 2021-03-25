@@ -30,7 +30,8 @@
         <% else %>
           <% if can?(:update, comment) %>
             <%= link_to 'edit',
-                        edit_issue_issue_comment_path(object, comment) %>
+                        edit_issue_issue_comment_path(object, comment),
+                        remote: true %>
           <% end %>
           <% if can?(:destroy, comment) %>
             <%= divider %>

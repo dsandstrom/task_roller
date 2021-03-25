@@ -38,7 +38,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :issues, only: %i[show edit update] do
-    resources :issue_comments, except: %i[index show]
+    resources :issue_comments, except: :index
     resources :issue_subscriptions, only: %i[new create destroy]
     resources :resolutions, only: %i[new create destroy] do
       collection do
@@ -50,7 +50,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   resources :tasks, only: %i[show edit update] do
     resources :task_assignees, only: %i[new create destroy]
-    resources :task_comments, except: %i[index]
+    resources :task_comments, except: :index
     resources :task_subscriptions, only: %i[new create destroy]
     resources :progressions, only: %i[new create destroy] do
       member do

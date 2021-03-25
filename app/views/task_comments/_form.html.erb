@@ -1,7 +1,4 @@
 <%
-  # TODO: allow to edit comment in place
-  # load form partial with ajax
-  # TODO: allow destroy comment with ajax
   url =
     if task_comment.persisted?
       task_task_comment_url(task, task_comment)
@@ -14,8 +11,7 @@
 <%= form_with(model: task_comment, url: url, local: true,
               data: { remote: remote },
               html: { name: 'task_comment_form',
-                      novalidate: 'novalidate',
-                      remote: remote }) do |form| %>
+                      novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
   <div class="field">

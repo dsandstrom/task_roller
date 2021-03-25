@@ -9,7 +9,7 @@ if (comment) {
   } else {
     var container = comment.querySelector('main');
     if (container) {
-      container.innerHTML += "<%= j render('task_comments/form', task: @task, task_comment: @task_comment, remote: true) %>";
+      container.innerHTML += "<%= j render('issue_comments/form', issue: @issue, issue_comment: @issue_comment, remote: true) %>";
     }
   }
 

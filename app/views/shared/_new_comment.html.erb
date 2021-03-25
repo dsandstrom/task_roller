@@ -5,19 +5,19 @@
     <p>Add Comment:</p>
   </header>
 
-  <% if object.is_a?(Task) %>
-    <main></main>
+  <main></main>
 
-    <footer>
-      <p>
+  <footer>
+    <p>
+      <% if object.is_a?(Task) %>
         <%= link_to 'new',
                     new_task_task_comment_path(object),
                     remote: true %>
-      </p>
-    </footer>
-  <% else %>
-    <%= render 'issue_comments/form',
-               issue: object, issue_comment: comment,
-               user_options: user_options %>
-  <% end %>
+      <% else %>
+        <%= link_to 'new',
+                    new_issue_issue_comment_path(object),
+                    remote: true %>
+      <% end %>
+    </p>
+  </footer>
 </div>

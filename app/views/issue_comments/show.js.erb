@@ -1,0 +1,18 @@
+var showCommentId = 'comment-' + <%= @issue_comment.id %>;
+var showComment = document.getElementById(showCommentId);
+
+if (showComment) {
+  showComment.outerHTML = "<%= j render('shared/comment.html', object: @issue, comment: @issue_comment, format: 'html') %>";
+} else {
+  var container = document.querySelector('.comments');
+  var newComment = document.getElementById('new_comment');
+
+  if (newComment) {
+    newComment.outerHTML = "<%= j render('shared/comment.html', object: @issue, comment: @issue_comment) %>";
+  }
+  if (container) {
+    container.innerHTML += "<%= j render('shared/new_comment.html', object: @issue, comment: new_issue_comment(@issue)) %>";
+  }
+}
+
+initCommentForms();

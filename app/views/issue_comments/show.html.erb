@@ -1,0 +1,28 @@
+<%= issue_header(@issue) %>
+
+<h2>
+  Comment from
+  <span class="comment-user"><%= @issue_comment.user ? @issue_comment.user.name_or_email : User.destroyed_name %></span>
+</h2>
+
+<p>
+  <strong class="comment-dates"><%= formatted_dates @issue_comment %></strong>
+</p>
+
+<%= content_tag :div, @issue_comment.body_html.html_safe,
+                class: 'comment-body' %>
+
+<p>
+  <% if can?(:update, @issue_comment) %>
+    <%= link_to 'edit',
+                edit_issue_issue_comment_path(@issue, @issue_comment) %>
+  <% end %>
+
+  <% if can?(:destroy, @issue_comment) %>
+    <%= divider %>
+    <%= link_to 'delete',
+                issue_issue_comment_path(@issue, @issue_comment),
+                method: :delete, class: 'destroy-link',
+                data: { confirm: 'Are you sure?' } %>
+  <% end %>
+</p>
