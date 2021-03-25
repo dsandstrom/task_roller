@@ -16,3 +16,7 @@ if (comment) {
   comment.classList.add('with-form');
   initCommentForms();
 }
+
+document.querySelectorAll('.new-comment-form.hidden-form').forEach((element, i) => {
+  element.classList.remove('hidden-form')
+});

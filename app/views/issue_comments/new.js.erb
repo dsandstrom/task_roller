@@ -1,5 +1,9 @@
 <%= render 'shared/comment.js.erb' %>
 
+document.getElementsByName('new_comment_form').forEach((element, i) => {
+  element.classList.add('hidden-form');
+});
+
 var commentId = 'new_comment';
 var comment = document.getElementById(commentId);
 

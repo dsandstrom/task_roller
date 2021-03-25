@@ -6,6 +6,7 @@
       issue_issue_comments_url(issue)
     end
   remote = false if remote.nil?
+  autofocus = !issue_comment.persisted? if autofocus.nil?
 %>
 
 <%= form_with(model: issue_comment, url: url, local: true,
@@ -16,7 +17,8 @@
 
   <div class="field">
     <%= required_field_label form, :body %>
-    <%= form.text_area :body, id: :issue_comment_body %>
+    <%= form.text_area :body, id: :issue_comment_body,
+                       data: { autofocus: autofocus }  %>
   </div>
 
   <div class="actions">

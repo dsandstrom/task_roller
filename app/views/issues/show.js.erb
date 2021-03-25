@@ -1,0 +1,6 @@
+<%= render 'shared/comment.js' %>
+
+var newComment = document.getElementById('new_comment');
+if (newComment) {
+  newComment.outerHTML = "<%= j render('shared/new_comment.html', object: @issue, comment: new_issue_comment(@issue)) %>";
+}
