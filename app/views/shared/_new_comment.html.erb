@@ -1,23 +1,31 @@
 <% return unless can?(:create, comment) %>
 
+<%
+url =
+  if object.is_a?(Task)
+    new_task_task_comment_path(object)
+  else
+    new_issue_issue_comment_path(object)
+  end
+%>
+
 <div id="new_comment" class="comment new-comment">
   <header>
     <p>Add Comment:</p>
   </header>
 
-  <main></main>
+  <main>
+    <%= form_tag url, method: :get, name: 'new_comment_form',
+                      class: 'new-comment-form',
+                      remote: true do %>
+      <%= text_area_tag :new_comment_body, nil,
+                        id: 'new_comment_body',
+                        name: 'new_comment[body]',
+                        data: { url: url },
+                        onfocus: "this.parentNode.requestSubmit();" %>
+    <% end %>
+  </main>
 
   <footer>
-    <p>
-      <% if object.is_a?(Task) %>
-        <%= link_to 'new',
-                    new_task_task_comment_path(object),
-                    remote: true %>
-      <% else %>
-        <%= link_to 'new',
-                    new_issue_issue_comment_path(object),
-                    remote: true %>
-      <% end %>
-    </p>
   </footer>
 </div>

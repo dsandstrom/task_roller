@@ -37,6 +37,19 @@
     margin: 0;
     padding: .5rem 1rem 1.2rem;
 
+    &.new-comment-form {
+      margin: 0;
+      padding: 0;
+
+      textarea {
+        resize: none;
+      }
+
+      &.hidden-form {
+        display: none;
+      }
+    }
+
     .button {
       margin-bottom: 0;
     }
@@ -181,7 +194,7 @@
   }
 
   &.with-hidden-form {
-    form {
+    form:not(.new-comment-form) {
       display: none;
     }
   }
