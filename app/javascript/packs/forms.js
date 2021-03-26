@@ -16,9 +16,11 @@ hiddenForms.set('task_assignment_link', 'task_assignment_form');
 const initMarkdownEditors = function (event) {
   editorNames.forEach((name, i) => {
     document.getElementsByName(name).forEach((element) => {
-      // FIXME: when editor already attached, still allow to autofocus
-      if (!element.classList.contains('with-editor')) {
-        let editor = new MarkdownEditor(element);
+      let editor = currentEditor(element);
+      if (editor) {
+        editor.codemirror.focus();
+      } else {
+        editor = new MarkdownEditor(element);
 
         currentEditors.push(editor);
         element.classList.add('with-editor');
@@ -28,6 +30,10 @@ const initMarkdownEditors = function (event) {
       }
     });
   });
+}
+
+const currentEditor = function (element) {
+  return currentEditors.find(e => e.element == element);
 }
 
 const syntaxHighlight = function (event) {
