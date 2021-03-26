@@ -90,7 +90,10 @@ class IssueCommentsController < ApplicationController
     def update_failure
       respond_to do |format|
         format.html { render :edit }
-        format.js { render :show }
+        format.js do
+          @issue_comment.reload
+          render :show
+        end
       end
     end
 end
