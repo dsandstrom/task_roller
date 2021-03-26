@@ -177,7 +177,7 @@ export class Form {
 
     this.editors.forEach((editor) => {
       // https://codemirror.net/doc/manual.html
-      editor.editor.codemirror.on("changes", function(codemirror, changes) {
+      editor.codemirror.on("changes", function(codemirror, changes) {
         form.validateField(codemirror.getTextArea(), codemirror.doc.getValue());
         form.afterValidate(form.validator.errors, codemirror);
       });
