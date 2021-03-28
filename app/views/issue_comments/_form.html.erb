@@ -9,8 +9,7 @@
   autofocus = !issue_comment.persisted? if autofocus.nil?
 %>
 
-<%= form_with(model: issue_comment, url: url, local: true,
-              data: { remote: remote },
+<%= form_with(model: issue_comment, url: url, local: !remote,
               html: { name: 'issue_comment_form',
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>

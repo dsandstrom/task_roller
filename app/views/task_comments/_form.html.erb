@@ -9,7 +9,7 @@
   autofocus = !task_comment.persisted? if autofocus.nil?
 %>
 
-<%= form_with(model: task_comment, url: url, local: true,
+<%= form_with(model: task_comment, url: url, local: !remote,
               html: { name: 'task_comment_form',
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>

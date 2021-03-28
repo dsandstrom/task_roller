@@ -214,14 +214,17 @@ export class Form {
     }
   }
 
-  afterValidate(errors, _event) {
+  afterValidate(errors, event) {
     this.clearErrors();
-    if (!errors.length) return;
+    if (!errors.length) return true;
 
     for (let error of errors) {
       this.displayError(error);
     }
-    return true;
+    if (event.type == 'submit') {
+      event.stopImmediatePropagation();
+    }
+    return false;
   }
 
   focus() {
