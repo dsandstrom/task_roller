@@ -3,8 +3,6 @@ import {HiddenForm} from 'src/hidden_form';
 import hljs from 'highlight.js';
 
 let currentForms = [];
-const editorNames = ['issue_comment[body]', 'issue[description]',
-                     'task_comment[body]', 'task[description]'];
 const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'issue_form', 'category_form', 'project_form',
                    'task_form', 'task_comment_form', 'issue_comment_form',
