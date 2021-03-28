@@ -17,7 +17,7 @@
 
   <div class="field">
     <%= required_field_label form, :body %>
-    <%= form.text_area :body, id: :task_comment_body,
+    <%= form.text_area :body, id: "task_comment_body_#{task_comment.id}",
                        data: { autofocus: autofocus }  %>
   </div>
 
