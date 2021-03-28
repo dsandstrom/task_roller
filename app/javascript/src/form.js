@@ -1,20 +1,28 @@
 // https://github.com/rickharrison/validate.js
 import FormValidator from 'validate-js/validate';
+import {MarkdownEditor} from 'src/markdown_editor';
 
 // https://production.task-roller.net/issues/17
 
 export class Form {
-  constructor(elem, editors = []) {
-    this.afterValidate = this.afterValidate.bind(this);
+  constructor(elem) {
+    this.editorNames = ['issue_comment[body]', 'issue[description]',
+                        'task_comment[body]', 'task[description]'];
+    this.editors = [];
     this.form = elem;
-    this.editors = editors;
     this.button = this.form.querySelector("[type='submit']");
     if (!this.button) return;
 
+    this.afterValidate = this.afterValidate.bind(this);
+    this.initEditors()
     this.validator = this.initValidator();
     this.fields = this.validator.fields;
     this.watchInputs();
     this.watchEditors();
+  }
+
+  currentEditor(element) {
+    return this.editors.find(e => e.element == element);
   }
 
   initValidator() {
@@ -70,7 +78,7 @@ export class Form {
     return elem;
   }
 
-  validateTextarea(value, _param, _field) {
+  validateTextarea(value, _param, field) {
     const matches = value.match(/[^\s\t]+/);
     return matches != null;
   }
@@ -172,6 +180,21 @@ export class Form {
     });
   }
 
+  initEditors() {
+    const form = this.form;
+    this.editorNames.forEach((name, i) => {
+      form.querySelectorAll('[name="' + name + '"]').forEach((element) => {
+        const editor = new MarkdownEditor(element);
+
+        this.editors.push(editor);
+        element.classList.add('with-editor');
+        if (element.dataset.autofocus == 'true') {
+          editor.codemirror.focus();
+        }
+      });
+    });
+  }
+
   watchEditors() {
     const form = this;
 
@@ -199,5 +222,11 @@ export class Form {
       this.displayError(error);
     }
     return true;
+  }
+
+  focus() {
+    this.editors.forEach((editor, i) => {
+      editor.codemirror.focus();
+    });
   }
 };

@@ -1,9 +1,8 @@
-import {MarkdownEditor} from 'src/markdown_editor';
 import {Form} from 'src/form';
 import {HiddenForm} from 'src/hidden_form';
 import hljs from 'highlight.js';
 
-let currentEditors = [];
+let currentForms = [];
 const editorNames = ['issue_comment[body]', 'issue[description]',
                      'task_comment[body]', 'task[description]'];
 const formNames = ['issue_type_form', 'task_type_form', 'user_form',
@@ -13,27 +12,24 @@ const formNames = ['issue_type_form', 'task_type_form', 'user_form',
 let hiddenForms = new Map();
 hiddenForms.set('task_assignment_link', 'task_assignment_form');
 
-const initMarkdownEditors = function (event) {
-  editorNames.forEach((name, i) => {
+const initForms = function (event) {
+  formNames.forEach((name, i) => {
     document.getElementsByName(name).forEach((element) => {
-      let editor = currentEditor(element);
-      if (editor) {
-        editor.codemirror.focus();
+      let form = currentForm(element);
+      if (form) {
+        form.focus();
       } else {
-        editor = new MarkdownEditor(element);
+        form = new Form(element);
 
-        currentEditors.push(editor);
-        element.classList.add('with-editor');
-        if (element.dataset.autofocus == 'true') {
-          editor.codemirror.focus();
-        }
+        currentForms.push(form);
+        element.classList.add('with-validation');
       }
     });
   });
 }
 
-const currentEditor = function (element) {
-  return currentEditors.find(e => e.element == element);
+const currentForm = function (element) {
+  return currentForms.find(form => form.form == element);
 }
 
 const syntaxHighlight = function (event) {
@@ -44,15 +40,7 @@ const syntaxHighlight = function (event) {
 }
 
 document.addEventListener('turbolinks:load', function(event) {
-  initMarkdownEditors(event);
-
-  // add validation to forms
-  for (let form of document.querySelectorAll('form')) {
-    if (!formNames.includes(form.name)) continue;
-
-    new Form(form, currentEditors);
-  }
-
+  initForms(event);
   syntaxHighlight();
 
   // toggle hidden sidebar forms
@@ -66,7 +54,7 @@ document.addEventListener('turbolinks:load', function(event) {
 });
 
 document.addEventListener('custom:reset-forms', function(event) {
-  initMarkdownEditors(event);
+  initForms(event);
   syntaxHighlight();
 });
 

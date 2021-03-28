@@ -10,7 +10,6 @@
 %>
 
 <%= form_with(model: task_comment, url: url, local: true,
-              data: { remote: remote },
               html: { name: 'task_comment_form',
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
