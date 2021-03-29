@@ -86,10 +86,7 @@ class TaskCommentsController < ApplicationController
     def update_failure
       respond_to do |format|
         format.html { render :edit }
-        format.js do
-          @task_comment.reload
-          render :show
-        end
+        format.js { render :edit }
       end
     end
 end

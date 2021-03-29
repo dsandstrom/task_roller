@@ -143,16 +143,30 @@
 }
 
 .comment {
+  position: relative;
   margin: 0 0 1rem;
   padding: 0;
   border: 1px solid $light-gray;
+
+  .field-label-and-message {
+    label {
+      display: none;
+    }
+  }
+
+  .field-message {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    color: transparent;
+  }
 
   &.with-form {
     border-width: 0;
     border-color: $dark-gray;
 
-    footer,
-    .field-label-and-message {
+    footer {
       display: none;
     }
 

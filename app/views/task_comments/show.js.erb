@@ -4,8 +4,8 @@ var showComment = document.getElementById(showCommentId);
 if (showComment) {
   showComment.outerHTML = "<%= j render('shared/comment.html', object: @task, comment: @task_comment) %>";
 } else {
-  var container = document.querySelector('.comments');
-  var newComment = document.getElementById('new_comment');
+  let container = document.querySelector('.comments');
+  let newComment = document.getElementById('new_comment');
 
   if (newComment) {
     newComment.outerHTML = "<%= j render('shared/comment.html', object: @task, comment: @task_comment) %>";

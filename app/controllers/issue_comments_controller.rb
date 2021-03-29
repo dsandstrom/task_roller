@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: comment form validation
-
 class IssueCommentsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :comments
@@ -90,10 +88,7 @@ class IssueCommentsController < ApplicationController
     def update_failure
       respond_to do |format|
         format.html { render :edit }
-        format.js do
-          @issue_comment.reload
-          render :show
-        end
+        format.js { render :edit }
       end
     end
 end
