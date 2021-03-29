@@ -248,6 +248,12 @@ body {
 }
 
 .columns {
+  .first-column,
+  .second-column {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   .second-column {
     .devise-links {
       display: flex;

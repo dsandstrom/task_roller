@@ -124,10 +124,6 @@
       font-size: 2rem;
       font-weight: bold;
     }
-
-    *:last-child {
-      margin-bottom: 0;
-    }
   }
 
   &.issue-description,
@@ -185,6 +181,10 @@
     .EasyMDEContainer .CodeMirror,
     .button {
       border-radius: 0;
+    }
+
+    .EasyMDEContainer {
+      margin-bottom: 0;
     }
     // scss-lint:enable SelectorFormat
 

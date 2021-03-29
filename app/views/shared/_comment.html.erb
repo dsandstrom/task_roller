@@ -1,4 +1,4 @@
-<blockquote id="comment-<%= comment.id %>" class="comment">
+<div id="comment-<%= comment.id %>" class="comment">
   <header>
     <p><span class="comment-user"><%= comment.user ? comment.user.name_or_email : User.destroyed_name %></span>:</p>
     <p class="comment-dates">
@@ -44,4 +44,4 @@
       </p>
     </footer>
   <% end %>
-</blockquote>
+</div>
