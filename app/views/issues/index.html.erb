@@ -1,10 +1,10 @@
 <% if @source.is_a?(Project) %>
-  <%= project_header @source, subscriptions: [@subscription] %>
+  <%= project_header @source %>
   <header class="issues-header">
     <h2>Project Issues</h2>
   </header>
 <% elsif @source.is_a?(Category) %>
-  <%= category_header @source, subscriptions: [@subscription] %>
+  <%= category_header @source %>
   <header class="issues-header">
     <h2>Category Issues</h2>
   </header>

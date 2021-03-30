@@ -14,7 +14,6 @@ class IssuesController < ApplicationController
     authorize! :read, @source
 
     @issues = build_issues
-    @subscription = build_subscription
   end
 
   def show
@@ -105,11 +104,5 @@ class IssuesController < ApplicationController
       end
       issues.accessible_by(current_ability).filter_by(build_filters)
             .page(params[:page])
-    end
-
-    def build_subscription
-      return unless @source.is_a?(Category) || @source.is_a?(Project)
-
-      @source.issues_subscription(current_user, init: true)
     end
 end

@@ -9,12 +9,6 @@ RSpec.describe "tasks/index", type: :view do
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
-    let(:category_tasks_subscription) do
-      Fabricate(:category_tasks_subscription, category: category, user: admin)
-    end
-    let(:project_tasks_subscription) do
-      Fabricate(:project_tasks_subscription, project: project, user: admin)
-    end
 
     before { enable_can(view, admin) }
 
@@ -32,7 +26,6 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         assign(:source, category)
         assign(:tasks, page([first_task, second_task]))
-        assign(:subscription, category_tasks_subscription)
       end
 
       it "renders a list of tasks" do
@@ -47,41 +40,6 @@ RSpec.describe "tasks/index", type: :view do
         show_url = issue_path(issue)
         expect(rendered).to have_link(nil, href: show_url)
       end
-
-      context "and subscribed to tasks" do
-        it "renders unsubscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_tasks_subscription_path(category,
-                                                 category_tasks_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-
-        it "doesn't render subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_tasks_subscriptions_path(category)
-          expect(rendered).not_to have_link(url)
-        end
-      end
-
-      context "and not subscribed to tasks" do
-        let(:category_tasks_subscription) do
-          Fabricate.build(:category_tasks_subscription, category: category,
-                                                        user: admin)
-        end
-
-        before do
-          admin.category_tasks_subscriptions.destroy_all
-        end
-
-        it "renders subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_tasks_subscriptions_path(category)
-          assert_select "a[data-method='post'][href='#{url}']"
-        end
-      end
     end
 
     context "when project" do
@@ -92,7 +50,6 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         assign(:source, project)
         assign(:tasks, page([first_task, second_task]))
-        assign(:subscription, project_tasks_subscription)
       end
 
       it "renders new task link" do
@@ -113,41 +70,6 @@ RSpec.describe "tasks/index", type: :view do
         show_url = issue_path(issue)
         expect(rendered).to have_link(nil, href: show_url)
       end
-
-      context "and subscribed to tasks" do
-        it "renders unsubscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_tasks_subscription_path(project,
-                                                project_tasks_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-
-        it "doesn't render subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_tasks_subscriptions_path(project)
-          expect(rendered).not_to have_link(url)
-        end
-      end
-
-      context "and not subscribed to tasks" do
-        let(:project_tasks_subscription) do
-          Fabricate.build(:project_tasks_subscription, project: project,
-                                                       user: admin)
-        end
-
-        before do
-          admin.project_tasks_subscriptions.destroy_all
-        end
-
-        it "renders subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_tasks_subscriptions_path(project)
-          assert_select "a[data-method='post'][href='#{url}']"
-        end
-      end
     end
 
     context "when user" do
@@ -159,7 +81,6 @@ RSpec.describe "tasks/index", type: :view do
       before(:each) do
         assign(:source, user)
         assign(:tasks, page([first_task, second_task]))
-        assign(:subscription, project_tasks_subscription)
       end
 
       it "renders a list of tasks" do
@@ -215,14 +136,6 @@ RSpec.describe "tasks/index", type: :view do
   %w[reviewer].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
-      let(:category_tasks_subscription) do
-        Fabricate(:category_tasks_subscription, category: category,
-                                                user: current_user)
-      end
-      let(:project_tasks_subscription) do
-        Fabricate(:project_tasks_subscription, project: project,
-                                               user: current_user)
-      end
 
       before { enable_can(view, current_user) }
 
@@ -236,7 +149,6 @@ RSpec.describe "tasks/index", type: :view do
         before(:each) do
           assign(:source, project)
           assign(:tasks, page([first_task, second_task]))
-          assign(:subscription, project_tasks_subscription)
         end
 
         it "renders new task link" do
@@ -286,14 +198,6 @@ RSpec.describe "tasks/index", type: :view do
   %w[worker reporter].each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
-      let(:category_tasks_subscription) do
-        Fabricate(:category_tasks_subscription, category: category,
-                                                user: current_user)
-      end
-      let(:project_tasks_subscription) do
-        Fabricate(:project_tasks_subscription, project: project,
-                                               user: current_user)
-      end
 
       before { enable_can(view, current_user) }
 
@@ -307,7 +211,6 @@ RSpec.describe "tasks/index", type: :view do
         before(:each) do
           assign(:source, project)
           assign(:tasks, page([first_task, second_task]))
-          assign(:subscription, project_tasks_subscription)
         end
 
         it "doesn't render new task link" do

@@ -9,12 +9,6 @@ RSpec.describe "issues/index", type: :view do
 
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
-    let(:category_issues_subscription) do
-      Fabricate(:category_issues_subscription, category: category, user: admin)
-    end
-    let(:project_issues_subscription) do
-      Fabricate(:project_issues_subscription, project: project, user: admin)
-    end
 
     before { enable_can(view, admin) }
 
@@ -29,7 +23,6 @@ RSpec.describe "issues/index", type: :view do
       before(:each) do
         assign(:source, category)
         assign(:issues, page([first_issue, second_issue]))
-        assign(:subscription, category_issues_subscription)
       end
 
       it "renders a list of issues" do
@@ -41,41 +34,6 @@ RSpec.describe "issues/index", type: :view do
         expect(rendered)
           .to have_link(nil, href: user_issues_path(second_issue.user))
       end
-
-      context "and subscribed to issues" do
-        it "renders unsubscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_issues_subscription_path(category,
-                                                  category_issues_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-
-        it "doesn't render subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_issues_subscriptions_path(category)
-          expect(rendered).not_to have_link(url)
-        end
-      end
-
-      context "and not subscribed to issues" do
-        let(:category_issues_subscription) do
-          Fabricate.build(:category_issues_subscription, category: category,
-                                                         user: admin)
-        end
-
-        before do
-          admin.category_issues_subscriptions.destroy_all
-        end
-
-        it "renders subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = category_issues_subscriptions_path(category)
-          assert_select "a[data-method='post'][href='#{url}']"
-        end
-      end
     end
 
     context "when project" do
@@ -85,7 +43,6 @@ RSpec.describe "issues/index", type: :view do
       before(:each) do
         assign(:source, project)
         assign(:issues, page([first_issue, second_issue]))
-        assign(:subscription, project_issues_subscription)
       end
 
       it "renders a list of issues" do
@@ -104,41 +61,6 @@ RSpec.describe "issues/index", type: :view do
 
         url = new_project_issue_path(project)
         expect(rendered).to have_link(nil, href: url)
-      end
-
-      context "and subscribed to issues" do
-        it "renders unsubscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_issues_subscription_path(project,
-                                                 project_issues_subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
-        end
-
-        it "doesn't render subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_issues_subscriptions_path(project)
-          expect(rendered).not_to have_link(url)
-        end
-      end
-
-      context "and not subscribed to issues" do
-        let(:project_issues_subscription) do
-          Fabricate.build(:project_issues_subscription, project: project,
-                                                        user: admin)
-        end
-
-        before do
-          admin.project_issues_subscriptions.destroy_all
-        end
-
-        it "renders subscribe link" do
-          render template: subject, layout: "layouts/application"
-
-          url = project_issues_subscriptions_path(project)
-          assert_select "a[data-method='post'][href='#{url}']"
-        end
       end
     end
 
@@ -214,14 +136,6 @@ RSpec.describe "issues/index", type: :view do
         Fabricate(:issue, project: project, user: current_user)
       end
       let(:second_issue) { Fabricate(:issue, project: project) }
-      let(:category_issues_subscription) do
-        Fabricate(:category_issues_subscription, category: category,
-                                                 user: current_user)
-      end
-      let(:project_issues_subscription) do
-        Fabricate(:project_issues_subscription, project: project,
-                                                user: current_user)
-      end
 
       before { enable_can(view, current_user) }
 
@@ -229,7 +143,6 @@ RSpec.describe "issues/index", type: :view do
         before(:each) do
           assign(:source, project)
           assign(:issues, page([first_issue, second_issue]))
-          assign(:subscription, project_issues_subscription)
         end
 
         it "renders a list of issues" do

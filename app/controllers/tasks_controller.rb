@@ -14,7 +14,6 @@ class TasksController < ApplicationController
     authorize! :read, @source
 
     @tasks = build_tasks
-    @subscription = build_subscription
   end
 
   def show
@@ -115,12 +114,6 @@ class TasksController < ApplicationController
       end
       tasks.accessible_by(current_ability).filter_by(build_filters)
            .page(params[:page])
-    end
-
-    def build_subscription
-      return unless @source.is_a?(Project) || @source.is_a?(Category)
-
-      @source.tasks_subscription(current_user, init: true)
     end
 
     def set_user_resources
