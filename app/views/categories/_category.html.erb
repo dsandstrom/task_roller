@@ -18,6 +18,12 @@ tasks_count =
   else
     category.tasks.count
   end
+issue_subscription =
+  category.category_issues_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
+task_subscription =
+  category.category_tasks_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
 %>
 
 <div id="category-<%= category.id %>" class="category">
@@ -52,5 +58,10 @@ tasks_count =
                   method: :delete, data: { confirm: 'Are you sure?' },
                   class: 'button button-clear button-warning' %>
     <% end %>
+  </p>
+
+  <p class="subscription-links">
+    <%= render issue_subscription %>
+    <%= render task_subscription %>
   </p>
 </div>

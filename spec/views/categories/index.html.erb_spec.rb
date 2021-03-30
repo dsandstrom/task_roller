@@ -59,6 +59,44 @@ RSpec.describe "categories/index", type: :view do
 
       expect(rendered).to have_link(nil, href: new_category_path)
     end
+
+    context "when subscribed to second category" do
+      let!(:issues_subscription) do
+        Fabricate(:category_issues_subscription, category: second_category,
+                                                 user: reviewer)
+      end
+      let!(:tasks_subscription) do
+        Fabricate(:category_tasks_subscription, category: second_category,
+                                                user: reviewer)
+      end
+
+      it "renders subscribe links" do
+        render
+
+        first_issues_url = category_issues_subscriptions_path(first_category)
+        first_tasks_url = category_tasks_subscriptions_path(first_category)
+        second_issues_url = category_issues_subscriptions_path(second_category)
+        second_tasks_url = category_tasks_subscriptions_path(second_category)
+
+        expect(rendered).to have_link(nil, href: first_issues_url)
+        expect(rendered).to have_link(nil, href: first_tasks_url)
+        expect(rendered).not_to have_link(nil, href: second_issues_url)
+        expect(rendered).not_to have_link(nil, href: second_tasks_url)
+      end
+
+      it "renders unsubscribe links" do
+        render
+
+        second_issues_url =
+          category_issues_subscription_path(second_category,
+                                            issues_subscription)
+        second_tasks_url =
+          category_tasks_subscription_path(second_category, tasks_subscription)
+
+        assert_select "a[data-method='delete'][href='#{second_issues_url}']"
+        assert_select "a[data-method='delete'][href='#{second_tasks_url}']"
+      end
+    end
   end
 
   %w[worker reporter].each do |employee_type|
