@@ -16,6 +16,12 @@ tasks_count =
   else
     project.tasks.count
   end
+issue_subscription =
+  project.project_issues_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
+task_subscription =
+  project.project_tasks_subscriptions
+          .find_or_initialize_by(user_id: current_user.id)
 %>
 
 <div id="project-<%= project.id %>" class="project">
@@ -59,4 +65,9 @@ tasks_count =
                   class: 'button button-clear button-warning' %>
     <% end %>
   </div>
+
+  <p class="subscription-links">
+    <%= render issue_subscription %>
+    <%= render task_subscription %>
+  </p>
 </div>

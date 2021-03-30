@@ -10,8 +10,6 @@ class ProjectsController < ApplicationController
     @projects = @projects.all_visible if @category.visible?
     @issues = build_issues
     @tasks = build_tasks
-    @issue_subscription = build_issue_subscription
-    @task_subscription = build_task_subscription
   end
 
   def archived
@@ -23,8 +21,6 @@ class ProjectsController < ApplicationController
   def show
     @issues = build_issues
     @tasks = build_tasks
-    @issue_subscription = build_issue_subscription
-    @task_subscription = build_task_subscription
   end
 
   def new; end
@@ -79,26 +75,6 @@ class ProjectsController < ApplicationController
       elsif @project
         @project.tasks.accessible_by(current_ability)
                 .order(updated_at: :desc).limit(3)
-      end
-    end
-
-    def build_task_subscription
-      if @category
-        @category.category_tasks_subscriptions
-                 .find_or_initialize_by(user_id: current_user.id)
-      elsif @project
-        @project.project_tasks_subscriptions
-                .find_or_initialize_by(user_id: current_user.id)
-      end
-    end
-
-    def build_issue_subscription
-      if @category
-        @category.category_issues_subscriptions
-                 .find_or_initialize_by(user_id: current_user.id)
-      elsif @project
-        @project.project_issues_subscriptions
-                .find_or_initialize_by(user_id: current_user.id)
       end
     end
 end
