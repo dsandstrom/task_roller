@@ -22,12 +22,15 @@
   .new-category,
   .new-project {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
     text-align: center;
 
     .category-links,
-    .project-links {
+    .project-links,
+    .subscription-links {
       margin-top: 1rem;
     }
 
@@ -35,18 +38,37 @@
       margin: 0;
     }
 
-    .category-name,
-    .project-name {
-      margin-bottom: 1rem;
-    }
+    .tag {
+      margin: 0;
+      font-size: 1.2rem;
 
-    .category-tags,
-    .project-tags {
-      justify-content: center;
-
-      &:empty {
-        display: none;
+      &:nth-child(n + 2) {
+        margin-left: .5rem;
       }
+    }
+  }
+
+  .category-tags,
+  .project-tags {
+    position: absolute;
+    top: 0;
+    right: 0;
+    justify-content: center;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .category-name,
+  .project-name {
+    margin-bottom: 1rem;
+    padding: 2rem .5rem;
+    background-color: $off-white;
+    text-decoration: underline;
+
+    a {
+      color: $ink;
     }
   }
 
@@ -66,52 +88,6 @@
       margin-bottom: -1rem;
       font-size: 3rem;
     }
-  }
-}
-
-@include breakpoint(small only) {
-  .categories,
-  .category-projects,
-  .projects {
-    .category,
-    .project,
-    .new-category,
-    .new-project {
-      // add top border to all except the first
-      &:nth-child(n + 2) {
-        padding-top: 2rem;
-        border-top: 1px solid $light-gray;
-      }
-    }
-  }
-}
-
-@include breakpoint(medium up) {
-  .categories,
-  .category-projects,
-  .projects {
-    display: grid;
-    grid-column-gap: 2rem;
-    grid-template-columns: 1fr 1fr;
-
-    .category,
-    .project,
-    .new-category,
-    .new-project {
-      margin-bottom: 2rem;
-      padding-right: 1rem;
-      padding-left: 1rem;
-      border: 1px solid $light-gray;
-      border-radius: $border-radius;
-    }
-  }
-}
-
-@include breakpoint(large up) {
-  .categories,
-  .category-projects,
-  .projects {
-    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
@@ -135,5 +111,76 @@
   .tag {
     @include tag;
     margin-bottom: 1rem;
+  }
+}
+
+.subscription-links {
+  a {
+    border-radius: 0;
+  }
+}
+
+@include breakpoint(small only) {
+  .categories,
+  .category-projects,
+  .projects {
+    .category,
+    .project,
+    .new-category,
+    .new-project {
+      // add top border to all except the first
+      &:nth-child(n + 2) {
+        padding-top: 2rem;
+        border-top: 1px solid $light-gray;
+      }
+    }
+  }
+
+  .subscription-links {
+    a {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+@include breakpoint(medium up) {
+  .categories,
+  .category-projects,
+  .projects {
+    display: grid;
+    grid-column-gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+
+    .category,
+    .project,
+    .new-category,
+    .new-project {
+      margin-bottom: 2rem;
+      padding: 0;
+      border: 1px solid $light-gray;
+      border-radius: $border-radius;
+    }
+  }
+
+  .subscription-links {
+    display: flex;
+    align-items: center;
+
+    a {
+      display: block;
+      flex: 0 0 50%;
+      padding-right: .5rem;
+      padding-left: .5rem;
+      border-radius: 0;
+    }
+  }
+}
+
+@include breakpoint(large up) {
+  .categories,
+  .category-projects,
+  .projects {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
