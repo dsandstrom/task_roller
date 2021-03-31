@@ -5,8 +5,12 @@
 .projects {
   margin-bottom: 4rem;
 
-  h3,
-  p {
+  .category-name,
+  .project-name,
+  .category-tags,
+  .project-tags,
+  .category-counts,
+  .project-counts {
     margin: 0;
   }
 
@@ -27,7 +31,6 @@
     position: relative;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
     text-align: center;
 
     .category-links,
@@ -64,13 +67,19 @@
 
   .category-name,
   .project-name {
-    margin-bottom: 1rem;
+    margin: 0 0 1rem;
     padding: 2rem .5rem;
     background-color: $off-white;
     text-decoration: underline;
 
     a {
       color: $ink;
+
+      &:hover,
+      &:focus {
+        color: $color-secondary;
+
+      }
     }
   }
 
@@ -117,6 +126,10 @@
 }
 
 .subscription-links {
+  position: relative;
+  z-index: 1;
+  margin: 0 -1px -1px;
+
   a {
     border-radius: 0;
   }
