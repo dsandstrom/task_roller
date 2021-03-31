@@ -166,7 +166,7 @@ RSpec.describe SearchResult, type: :model do
         end
       end
 
-      context "is similar to an issue id" do
+      context "is 'issue-123'" do
         let!(:issue) { Fabricate(:issue) }
 
         before { Fabricate(:issue) }
@@ -176,6 +176,44 @@ RSpec.describe SearchResult, type: :model do
           expect(search_results.count).to eq(1)
           search_result = search_results.first
           expect(search_result.id).to eq(issue.id)
+        end
+      end
+
+      context "is 'issue#123'" do
+        let!(:issue) { Fabricate(:issue) }
+
+        before { Fabricate(:issue) }
+
+        it "returns matching search_results" do
+          search_results = SearchResult.filter_by(query: "issue##{issue.id}")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(issue.id)
+        end
+      end
+
+      context "is 'issue #123'" do
+        let!(:issue) { Fabricate(:issue) }
+        let(:task) { Fabricate(:task) }
+
+        before do
+          Fabricate(:issue)
+          Fabricate(:task, summary: "Task for Issue ##{issue.id}")
+        end
+
+        it "returns matching issues" do
+          search_results = SearchResult.filter_by(query: "issue ##{issue.id}")
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(issue.id)
+        end
+
+        it "returns matching tasks assigned to issue" do
+          task.update issue_id: issue.id
+
+          search_results = SearchResult.filter_by(query: "issue ##{issue.id}")
+          expect(search_results.count).to eq(2)
+          expect(search_results.map(&:id)).to contain_exactly(issue.id, task.id)
         end
       end
 

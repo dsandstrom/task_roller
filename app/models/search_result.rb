@@ -20,10 +20,9 @@ class SearchResult < ApplicationRecord
 
   # TODO: find categories & projects
   # TODO: search issue's tasks and task's issues
+  # TODO: if "issue-123", search issues
   def self.filter_by(filters = {})
     id, query = split_id(filters[:query])
-    # TODO: if "issue-123", search issues
-    query = query.gsub(/(issue|task)[\s\-]?/, '') if query
     results = filter_by_id(id)
     results = results.filter_by_string(query)
 
@@ -33,7 +32,7 @@ class SearchResult < ApplicationRecord
   def self.filter_by_id(query)
     return all if query.blank?
 
-    where(id: query.to_i)
+    where('id = :id OR issue_id = :id', id: query.to_i)
   end
 
   def self.filter_by_string(query)
@@ -58,7 +57,7 @@ class SearchResult < ApplicationRecord
     return unless query
 
     number = query[/\d+/]
-    query = query.sub(/\s?\d+\s?/, '') if number
+    query = query.sub(/(issue|task)?\s?[#-]?\d+\s?/, '') if number
     [number, query]
   end
 
