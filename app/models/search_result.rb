@@ -18,10 +18,22 @@ class SearchResult < ApplicationRecord
 
   # CLASS
 
+  # TODO: find categories & projects
+  # TODO: search issue's tasks and task's issues
   def self.filter_by(filters = {})
-    filter_by_string(filters[:query])
-      .order(build_order_param(filters[:order]))
-      .distinct
+    id, query = split_id(filters[:query])
+    # TODO: if "issue-123", search issues
+    query = query.gsub(/(issue|task)[\s\-]?/, '') if query
+    results = filter_by_id(id)
+    results = results.filter_by_string(query)
+
+    results.order(build_order_param(filters[:order])).distinct
+  end
+
+  def self.filter_by_id(query)
+    return all if query.blank?
+
+    where(id: query.to_i)
   end
 
   def self.filter_by_string(query)
@@ -40,6 +52,14 @@ class SearchResult < ApplicationRecord
                                 %w[asc desc].include?(direction)
 
     "#{column}_at #{direction}"
+  end
+
+  def self.split_id(query)
+    return unless query
+
+    number = query[/\d+/]
+    query = query.sub(/\s?\d+\s?/, '') if number
+    [number, query]
   end
 
   # INSTANCE
