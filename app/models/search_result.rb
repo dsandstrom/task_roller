@@ -29,12 +29,6 @@ class SearchResult < ApplicationRecord
     results.order(build_order_param(filters[:order])).distinct
   end
 
-  def self.filter_by_id(query)
-    return all if query.blank?
-
-    where('id = :id OR issue_id = :id', id: query.to_i)
-  end
-
   def self.filter_by_string(query)
     return all if query.blank?
 
@@ -59,6 +53,12 @@ class SearchResult < ApplicationRecord
     number = query[/\d+/]
     query = query.sub(/(issue|task)?\s?[#-]?\d+\s?/i, '') if number
     [number&.to_i, query]
+  end
+
+  private_class_method def self.filter_by_id(query)
+    return all if query.blank?
+
+    where('id = :id OR issue_id = :id', id: query.to_i)
   end
 
   # INSTANCE
