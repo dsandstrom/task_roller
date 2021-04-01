@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: search categories and projects
 # TODO: carry over search params to links, so a link back can be added
 
 class SearchesController < ApplicationController
