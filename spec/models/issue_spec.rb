@@ -314,6 +314,16 @@ RSpec.describe Issue, type: :model do
           expect(Issue.filter_by(query: "beta")).to eq([issue])
         end
       end
+
+      context "is a number" do
+        let!(:issue) { Fabricate(:issue) }
+
+        before { Fabricate(:issue) }
+
+        it "returns matching issues with that id" do
+          expect(Issue.filter_by(query: issue.id.to_s)).to eq([issue])
+        end
+      end
     end
 
     context "when :issue_type_id" do
@@ -599,6 +609,41 @@ RSpec.describe Issue, type: :model do
 
         it "returns none" do
           expect(Issue.filter_by_type("invalid")).to eq([])
+        end
+      end
+    end
+  end
+
+  describe ".filter_by_id" do
+    let(:task) { Fabricate(:task) }
+    let!(:wrong_issue) { Fabricate(:issue) }
+
+    context "when no issues" do
+      it "returns []" do
+        expect(Issue.filter_by_id(task.id.to_s)).to eq([])
+      end
+    end
+
+    context "when issues" do
+      context "and word given" do
+        let!(:issue) { Fabricate(:issue, summary: "alpha") }
+
+        it "returns none" do
+          expect(Issue.filter_by_id("alpha")).to eq([])
+        end
+      end
+
+      context "and given blank" do
+        it "returns all" do
+          expect(Issue.filter_by_id("")).to eq([wrong_issue])
+        end
+      end
+
+      context "and number given" do
+        let!(:issue) { Fabricate(:issue, summary: "Original") }
+
+        it "returns issues with that id" do
+          expect(Issue.filter_by_id(issue.id.to_s)).to eq([issue])
         end
       end
     end

@@ -97,12 +97,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # TODO: order open issues first by default
-  # TODO: filter by id
   def self.filter_by(filters = {})
+    id, query = SearchResult.split_id(filters[:query])
+
     includes(task_assignees: :assignee, issue: :user)
       .filter_by_status(filters[:task_status])
       .filter_by_type(filters[:task_type_id])
-      .filter_by_string(filters[:query])
+      .filter_by_id(id)
+      .filter_by_string(query)
       .filter_by_assigned_id(filters[:assigned])
       .order(build_order_param(filters[:order]))
       .distinct
@@ -157,6 +159,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return none unless TaskType.find_by(id: task_type_id)
 
     where(task_type_id: task_type_id)
+  end
+
+  # TODO: include tasks thru task_connections, but order id match first
+  def self.filter_by_id(query)
+    return all if query.blank?
+
+    where(id: query.to_i)
   end
 
   def self.all_visible

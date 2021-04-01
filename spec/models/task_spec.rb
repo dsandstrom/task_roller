@@ -431,6 +431,16 @@ RSpec.describe Task, type: :model do
           expect(Task.filter_by(query: "beta")).to eq([task])
         end
       end
+
+      context "is a number" do
+        let!(:task) { Fabricate(:task) }
+
+        before { Fabricate(:task) }
+
+        it "returns matching tasks" do
+          expect(Task.filter_by(query: task.id.to_s)).to eq([task])
+        end
+      end
     end
 
     context "when :task_type_id" do
@@ -706,6 +716,41 @@ RSpec.describe Task, type: :model do
 
         it "returns none" do
           expect(Task.filter_by_type("invalid")).to eq([])
+        end
+      end
+    end
+  end
+
+  describe ".filter_by_id" do
+    let(:issue) { Fabricate(:issue) }
+    let!(:wrong_task) { Fabricate(:task) }
+
+    context "when no tasks" do
+      it "returns []" do
+        expect(Task.filter_by_id(issue.id.to_s)).to eq([])
+      end
+    end
+
+    context "when tasks" do
+      context "and word given" do
+        let!(:task) { Fabricate(:task, summary: "alpha") }
+
+        it "returns none" do
+          expect(Task.filter_by_id("alpha")).to eq([])
+        end
+      end
+
+      context "and given blank" do
+        it "returns all" do
+          expect(Task.filter_by_id("")).to eq([wrong_task])
+        end
+      end
+
+      context "and number given" do
+        let!(:task) { Fabricate(:task, summary: "Original") }
+
+        it "returns tasks with that id" do
+          expect(Task.filter_by_id(task.id.to_s)).to eq([task])
         end
       end
     end

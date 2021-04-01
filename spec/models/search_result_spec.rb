@@ -245,6 +245,62 @@ RSpec.describe SearchResult, type: :model do
     end
   end
 
+  describe ".split_id" do
+    context "when given nil" do
+      it "returns nil" do
+        expect(SearchResult.split_id(nil)).to be_nil
+      end
+    end
+
+    context "when given ''" do
+      it "returns [nil, '']" do
+        expect(SearchResult.split_id("")).to eq([nil, ""])
+      end
+    end
+
+    context "when given ' '" do
+      it "returns [nil, ' ']" do
+        expect(SearchResult.split_id(" ")).to eq([nil, " "])
+      end
+    end
+
+    context "when given '12'" do
+      it "returns [12, '']" do
+        expect(SearchResult.split_id("12")).to eq([12, ""])
+      end
+    end
+
+    context "when given '12 alpha'" do
+      it "returns [12, 'alpha']" do
+        expect(SearchResult.split_id("12 alpha")).to eq([12, "alpha"])
+      end
+    end
+
+    context "when given 'issue#12 alpha'" do
+      it "returns [12, 'alpha']" do
+        expect(SearchResult.split_id("issue#12 alpha")).to eq([12, "alpha"])
+      end
+    end
+
+    context "when given 'issue-12 alpha'" do
+      it "returns [12, 'alpha']" do
+        expect(SearchResult.split_id("issue-12 alpha")).to eq([12, "alpha"])
+      end
+    end
+
+    context "when given 'issue #12 alpha'" do
+      it "returns [12, 'alpha']" do
+        expect(SearchResult.split_id("issue #12 alpha")).to eq([12, "alpha"])
+      end
+    end
+
+    context "when given 'Task#12 alpha'" do
+      it "returns [12, 'alpha']" do
+        expect(SearchResult.split_id("Task#12 alpha")).to eq([12, "alpha"])
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#issue?" do

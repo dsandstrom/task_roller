@@ -57,8 +57,8 @@ class SearchResult < ApplicationRecord
     return unless query
 
     number = query[/\d+/]
-    query = query.sub(/(issue|task)?\s?[#-]?\d+\s?/, '') if number
-    [number, query]
+    query = query.sub(/(issue|task)?\s?[#-]?\d+\s?/i, '') if number
+    [number&.to_i, query]
   end
 
   # INSTANCE

@@ -84,11 +84,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true, status: 'duplicate')
   end
 
-  # TODO: filter by id
   def self.filter_by(filters = {})
+    id, query = SearchResult.split_id(filters[:query])
+
     filter_by_status(filters[:issue_status])
       .filter_by_type(filters[:issue_type_id])
-      .filter_by_string(filters[:query])
+      .filter_by_id(id)
+      .filter_by_string(query)
       .order(build_order_param(filters[:order]))
       .distinct
   end
@@ -115,6 +117,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return none unless IssueType.find_by(id: issue_type_id)
 
     where(issue_type_id: issue_type_id)
+  end
+
+  # TODO: include issues thru issue_connections, but order id match first
+  def self.filter_by_id(query)
+    return all if query.blank?
+
+    where(id: query.to_i)
   end
 
   # used by .filter
