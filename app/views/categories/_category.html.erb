@@ -1,11 +1,12 @@
 <%
-# TODO: add links to projects
-projects_count =
+# TODO: show relavant notifications (category issue/task changed)
+projects =
   if category.visible?
-    category.projects.all_visible.accessible_by(current_ability).count
+    category.projects.all_visible.accessible_by(current_ability)
   else
-    category.projects.count
+    category.projects
   end
+projects_count = projects.count
 issues_count =
   if category.visible?
     category.issues.all_visible.accessible_by(current_ability).count
@@ -24,6 +25,9 @@ issue_subscription =
 task_subscription =
   category.category_tasks_subscriptions
           .find_or_initialize_by(user_id: current_user.id)
+project_links = projects.map do |project|
+  link_to_if can?(:read, project), content_tag(:strong, project.name)
+end
 %>
 
 <div id="category-<%= category.id %>" class="category">
@@ -34,11 +38,13 @@ task_subscription =
   </h3>
   <%= category_tags(category) %>
 
+  <p class="category-project-links">
+    <%= pluralize(projects_count, 'Project') %><% if project_links.any? %>:
+      <%= safe_join(project_links, ', ') %>
+    <% end %>
+  </p>
+
   <p class="category-counts">
-    <%= link_to_if can?(:read, category),
-                   pluralize(projects_count, 'Project'),
-                   category_projects_path(category) %>
-    <%= divider %>
     <%= link_to_if can?(:read, Issue),
                    pluralize(issues_count, 'Issue'),
                    category_issues_path(category) %>
