@@ -1,5 +1,15 @@
+<%
+  placeholder ||=
+    case params[:type]
+    when 'issues', 'tasks'
+      params[:type]
+    else
+      'issues & tasks'
+    end
+  placeholder = "search #{placeholder}"
+%>
+
 <div class="field">
   <%= label_tag :query, 'Text Query', class: 'hide' %>
-  <%= text_field_tag :query, params[:query],
-                     placeholder: 'search' %>
+  <%= text_field_tag :query, params[:query], placeholder: placeholder %>
 </div>

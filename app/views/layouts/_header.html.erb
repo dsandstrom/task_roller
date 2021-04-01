@@ -28,7 +28,8 @@
         <%= form_tag search_results_path,
                      method: :get, class: "search-form" do %>
           <%= hidden_field_tag :order, 'updated,desc' %>
-          <%= render 'shared/string_filter_field' %>
+          <%= render 'shared/string_filter_field',
+                     placeholder: 'issues & tasks' %>
         <% end %>
       </div>
 
