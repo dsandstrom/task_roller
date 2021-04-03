@@ -10,20 +10,24 @@
     </p>
 
     <h3>Color Options</h3>
-    <% issue_type_color_options.each do |title, name| %>
-      <% klass = "issue-type-tag roller-type-color-#{name}" %>
-      <%= content_tag :span, class: klass do %>
-        <%= content_tag(:span, title) %>
+    <div class="category-tags">
+      <% issue_type_color_options.each do |title, name| %>
+        <% klass = "issue-type-tag roller-type-color-#{name}" %>
+        <%= content_tag :span, class: klass do %>
+          <%= content_tag(:span, title) %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
 
     <h3>Icon Options</h3>
-    <% issue_type_icon_options.each do |title, name| %>
-      <% klass = "issue-type-tag roller-type-color-default" %>
-      <%= content_tag :span, class: klass do %>
-        <%= content_tag :i, '', class: "icon-#{name}" %>
-        <%= title %>
+    <div class="category-tags">
+      <% issue_type_icon_options.each do |title, name| %>
+        <% klass = "issue-type-tag roller-type-color-default" %>
+        <%= content_tag :span, class: klass do %>
+          <%= content_tag :i, '', class: "icon-#{name}" %>
+          <%= title %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 </div>
