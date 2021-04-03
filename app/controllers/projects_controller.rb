@@ -8,8 +8,6 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = @projects.all_visible if @category.visible?
-    @issues = build_issues
-    @tasks = build_tasks
   end
 
   def archived
@@ -45,8 +43,7 @@ class ProjectsController < ApplicationController
 
   def destroy
     @project.destroy
-    redirect_to category_projects_url(@category),
-                notice: 'Project was successfully destroyed.'
+    redirect_to @category, notice: 'Project was successfully destroyed.'
   end
 
   private

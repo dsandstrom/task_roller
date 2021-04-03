@@ -545,7 +545,7 @@ RSpec.describe ProjectsController, type: :controller do
         project = Fabricate(:project, category: category)
         delete :destroy, params: { category_id: category.to_param,
                                    id: project.to_param }
-        expect(response).to redirect_to(category_projects_url(category))
+        expect(response).to redirect_to(category)
       end
     end
 
