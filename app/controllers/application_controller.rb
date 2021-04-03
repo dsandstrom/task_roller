@@ -5,7 +5,7 @@
 
 class ApplicationController < ActionController::Base
   FILTER_OPTIONS = %i[issue_status task_status type issue_type_id task_type_id
-                      order query].freeze
+                      project_ids order query].freeze
 
   protect_from_forgery with: :exception
 

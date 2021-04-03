@@ -22,10 +22,13 @@ class SearchResult < ApplicationRecord
   # TODO: search issue's tasks and task's issues
   # TODO: if "issue-123", search issues
   def self.filter_by(filters = {})
+    project_ids = filters[:project_ids]
+    return none if project_ids&.none?
+
     id, query = split_id(filters[:query])
     results = filter_by_id(id)
     results = results.filter_by_string(query)
-
+                     .filter_by_projects(filters[:project_ids])
     results.order(build_order_param(filters[:order])).distinct
   end
 
@@ -34,6 +37,13 @@ class SearchResult < ApplicationRecord
 
     where('summary ILIKE :query OR description ILIKE :query',
           query: "%#{query}%")
+  end
+
+  def self.filter_by_projects(project_ids)
+    return none if project_ids == []
+    return all if project_ids.blank?
+
+    where(project_id: project_ids)
   end
 
   def self.build_order_param(order)

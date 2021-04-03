@@ -118,6 +118,39 @@ RSpec.describe SearchResult, type: :model do
     end
   end
 
+  describe ".filter_by_projects" do
+    let(:project) { Fabricate(:project) }
+    let!(:project_issue) { Fabricate(:issue, project: project) }
+    let!(:wrong_project_issue) { Fabricate(:issue) }
+
+    context "when given nil" do
+      it "returns all" do
+        expect(SearchResult.filter_by_projects(nil).map(&:id))
+          .to contain_exactly(project_issue.id, wrong_project_issue.id)
+      end
+    end
+
+    context "when given ''" do
+      it "returns all" do
+        expect(SearchResult.filter_by_projects("").map(&:id))
+          .to contain_exactly(project_issue.id, wrong_project_issue.id)
+      end
+    end
+
+    context "when given []" do
+      it "returns none" do
+        expect(SearchResult.filter_by_projects([])).to eq([])
+      end
+    end
+
+    context "when given a project id" do
+      it "returns results from that project only" do
+        expect(SearchResult.filter_by_projects([project.id]).map(&:id))
+          .to contain_exactly(project_issue.id)
+      end
+    end
+  end
+
   describe ".filter_by" do
     let(:category) { Fabricate(:category) }
     let(:project) { Fabricate(:project, category: category) }
@@ -240,6 +273,34 @@ RSpec.describe SearchResult, type: :model do
           expect(search_results.count).to eq(1)
           search_result = search_results.first
           expect(search_result.id).to eq(task.id)
+        end
+      end
+    end
+
+    context "when :project_ids" do
+      let(:project) { Fabricate(:project) }
+
+      context "is nil" do
+        let!(:issue) { Fabricate(:issue) }
+
+        it "returns any project issue" do
+          search_results = SearchResult.filter_by(project_ids: nil)
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(issue.id)
+        end
+      end
+
+      context "contains a project id" do
+        let!(:issue) { Fabricate(:issue, project: project) }
+
+        before { Fabricate(:issue) }
+
+        it "returns issues from the project only" do
+          search_results = SearchResult.filter_by(project_ids: [project.id])
+          expect(search_results.count).to eq(1)
+          search_result = search_results.first
+          expect(search_result.id).to eq(issue.id)
         end
       end
     end
