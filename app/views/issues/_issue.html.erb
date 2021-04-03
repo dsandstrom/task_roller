@@ -12,7 +12,7 @@
           if category_page?(category)
             [[project.name, project]]
           else
-            [[category.name, category_projects_path(category)],
+            [[category.name, category_path(category)],
              [project.name, project]]
           end
       %>

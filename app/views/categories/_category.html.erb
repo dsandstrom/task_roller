@@ -26,15 +26,14 @@ task_subscription =
   category.category_tasks_subscriptions
           .find_or_initialize_by(user_id: current_user.id)
 project_links = projects.map do |project|
-  link_to_if can?(:read, project), content_tag(:strong, project.name)
+  link_to_if can?(:read, project), content_tag(:strong, project.name), project
 end
 %>
 
 <div id="category-<%= category.id %>" class="category">
   <h3 class="category-name">
     <%= link_to_if can?(:read, category),
-                   category.name,
-                   category_projects_path(category) %>
+                   category.name, category %>
   </h3>
   <%= category_tags(category) %>
 

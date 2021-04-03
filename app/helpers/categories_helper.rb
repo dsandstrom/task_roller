@@ -49,12 +49,8 @@ module CategoriesHelper
     end
 
     def categories_nav
-      links =
-        [['Active', categories_path],
-         ['Archived', archived_categories_path, { class: 'secondary-link' }]]
-      if can?(:create, Category)
-        links << ['Add Category', new_category_path, { class: 'create-link' }]
-      end
+      links = [['Active', categories_path],
+               ['Archived', archived_categories_path]]
 
       content_tag :p, class: 'page-nav category-nav' do
         safe_join(navitize(links))
@@ -89,11 +85,10 @@ module CategoriesHelper
     end
 
     def category_nav_links(category)
-      [['Category', category_projects_path(category)],
+      [['Category', category_path(category)],
        ['Issues', category_issues_path(category)],
        ['Tasks', category_tasks_path(category)],
-       archived_projects_link(category), new_project_link(category),
-       edit_category_link(category)].compact
+       archived_projects_link(category), edit_category_link(category)].compact
     end
 
     def archived_projects_link(category)
@@ -110,13 +105,6 @@ module CategoriesHelper
       ['Settings', edit_category_path(category), { class: 'destroy-link' }]
     end
 
-    def new_project_link(category)
-      return unless can?(:create, new_project(category))
-
-      ['Add Project', new_category_project_path(category),
-       { class: 'create-link' }]
-    end
-
     def invisible_category
       @invisible_category ||= Category.new(visible: false)
     end
@@ -130,7 +118,7 @@ module CategoriesHelper
     end
 
     def category_header_first_column(category)
-      url = category_projects_path(category)
+      url = category_path(category)
 
       content_tag :div, class: 'first-column' do
         concat breadcrumbs(category_breadcrumb_pages(category))

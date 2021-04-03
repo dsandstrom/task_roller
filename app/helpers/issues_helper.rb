@@ -91,7 +91,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
 
     def issue_header_breadcrumbs(category, project)
       pages = []
-      pages << [category.name, category_projects_path(category)]
+      pages << [category.name, category_path(category)]
       pages << ['Category Issues', category_issues_path(category)]
       pages << project_breadcrumb_item(project)
       pages << ['Project Issues', project_issues_path(project)]

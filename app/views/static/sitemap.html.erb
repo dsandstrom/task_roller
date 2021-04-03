@@ -26,7 +26,7 @@
       <% @categories.each do |category| %>
         <li>
           <% if can?(:read, category) %>
-            <%= link_to category.name, category_projects_path(category) %>
+            <%= link_to category.name, category_path(category) %>
 
             <ul>
               <% category.projects.all_visible.each do |project| %>

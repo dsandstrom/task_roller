@@ -26,7 +26,7 @@ task_subscription =
 
 <div id="project-<%= project.id %>" class="project">
   <% unless category_page?(category) %>
-    <%= breadcrumbs [[category.name, category_projects_path(category)]] %>
+    <%= breadcrumbs [[category.name, category_path(category)]] %>
   <% end %>
 
   <h3 class="project-name">

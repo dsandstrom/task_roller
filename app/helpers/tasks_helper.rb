@@ -91,7 +91,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       category = task.category
       return unless category
 
-      [[category.name, category_projects_path(category)],
+      [[category.name, category_path(category)],
        ['Category Tasks', category_tasks_path(category)],
        project_breadcrumb_item(project),
        ['Project Tasks', project_tasks_path(project)]]

@@ -13,7 +13,7 @@ module ProjectsHelper
     return unless category
 
     pages = category_breadcrumb_pages(category)
-    pages << [category.name, category_projects_path(category)]
+    pages << [category.name, category_path(category)]
     if category.visible? && !project.visible?
       pages << ['Archived Projects', archived_category_projects_path(category)]
     end
