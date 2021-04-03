@@ -13,7 +13,7 @@ return unless path
   </div>
 
   <%= form_tag path, method: :get, class: "task-filter-form" do %>
-    <%= render 'shared/string_filter_field' %>
+    <%= render 'shared/string_filter_field', placeholder: 'tasks' %>
     <%= render 'tasks/status_filter_field' %>
     <%= render 'tasks/task_type_filter_field' %>
     <%= render 'shared/order_filter_field' %>

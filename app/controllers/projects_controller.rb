@@ -17,8 +17,14 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @issues = build_issues
-    @tasks = build_tasks
+    case params[:type]
+    when 'issues'
+      redirect_to project_issues_path(@project, params: filters)
+    when 'tasks'
+      redirect_to project_tasks_path(@project, params: filters)
+    else
+      @search_results = build_search_results.page(params[:page])
+    end
   end
 
   def new; end
@@ -52,26 +58,13 @@ class ProjectsController < ApplicationController
       params.require(:project).permit(:category_id, :name, :visible, :internal)
     end
 
-    def build_issues
-      if @category
-        issues = @category.issues
-        issues = issues.all_visible if @category.visible?
-        issues.accessible_by(current_ability)
-              .order(updated_at: :desc).limit(3)
-      elsif @project
-        @project.issues.accessible_by(current_ability)
-                .order(updated_at: :desc).limit(3)
-      end
+    def filters
+      @filters ||= build_filters.merge(project_ids: [@project.id])
     end
 
-    def build_tasks
-      if @category
-        tasks = @category.tasks
-        tasks = tasks.all_visible if @category.visible?
-        tasks.accessible_by(current_ability).order(updated_at: :desc).limit(3)
-      elsif @project
-        @project.tasks.accessible_by(current_ability)
-                .order(updated_at: :desc).limit(3)
-      end
+    def build_search_results
+      SearchResult.accessible_by(current_ability).filter_by(filters)
+                  .preload(:project, :user, :issue, :assignees,
+                           project: :category)
     end
 end

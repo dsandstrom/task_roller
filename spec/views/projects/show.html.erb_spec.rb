@@ -24,8 +24,8 @@ RSpec.describe "projects/show", type: :view do
 
     context "when tasks and issues" do
       before(:each) do
-        @issues = [first_issue, second_issue]
-        @tasks = [first_task, second_task]
+        issues_and_tasks = [first_issue, first_task, second_issue, second_task]
+        @search_results = assign(:search_results, page(issues_and_tasks))
       end
 
       it "renders name" do
@@ -78,8 +78,7 @@ RSpec.describe "projects/show", type: :view do
       before(:each) do
         first_task.task_type.destroy
         first_task.reload
-        @issues = []
-        @tasks = [first_task]
+        @search_results = assign(:search_results, page([first_task]))
         Fabricate(:task_type)
       end
 
@@ -93,8 +92,7 @@ RSpec.describe "projects/show", type: :view do
       before do
         first_issue.issue_type.destroy
         first_issue.reload
-        @issues = [first_issue]
-        @tasks = []
+        @search_results = assign(:search_results, page([first_issue]))
         Fabricate(:issue_type)
       end
 
@@ -112,8 +110,8 @@ RSpec.describe "projects/show", type: :view do
 
     context "when tasks and issues" do
       before(:each) do
-        @issues = [first_issue, second_issue]
-        @tasks = [first_task, second_task]
+        issues_and_tasks = [first_issue, first_task, second_issue, second_task]
+        @search_results = assign(:search_results, page(issues_and_tasks))
       end
 
       it "renders edit project link" do
@@ -166,8 +164,9 @@ RSpec.describe "projects/show", type: :view do
 
       context "when tasks and issues" do
         before(:each) do
-          @issues = [first_issue, second_issue]
-          @tasks = [first_task, second_task]
+          issues_and_tasks =
+            [first_issue, first_task, second_issue, second_task]
+          @search_results = assign(:search_results, page(issues_and_tasks))
         end
 
         it "doesn't render the edit project link" do

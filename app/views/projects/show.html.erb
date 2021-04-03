@@ -1,33 +1,44 @@
 <%= project_header @project %>
 
-<header class="issues-header">
-  <h2>Latest Issues</h2>
-  <p>
-    <%= link_to 'View Project Issues',
-                project_issues_path(@project),
-                class: 'button button-clear' %>
-  </p>
-</header>
-<div class="issues">
-  <% if @issues.any? %>
-    <%= render @issues %>
-  <% else %>
-    <p class="no-issue">None yet</p>
-  <% end %>
-</div>
+<div class="columns">
+  <div class="second-column">
+    <div class="filters-wrapper">
+      <div class="heading-and-link">
+        <h3>Filters</h3>
 
-<header class="tasks-header">
-  <h2>Latest Tasks</h2>
-  <p>
-    <%= link_to 'View Project Tasks',
-                project_tasks_path(@project),
-                class: 'button button-clear' %>
-  </p>
-</header>
-<div class="tasks">
-  <% if @tasks.any? %>
-    <%= render @tasks %>
-  <% else %>
-    <p class="no-task">None yet</p>
-  <% end %>
+        <% if searching? %>
+          <%= link_to 'reset', @category %>
+        <% end %>
+      </div>
+
+      <%= form_tag @category,
+                   method: :get, class: "search-form",
+                   id: "search_form" do %>
+        <%= render 'shared/string_filter_field' %>
+        <%= render 'searches/type_filter_field' %>
+        <%= render 'shared/order_filter_field' %>
+
+        <div class="actions">
+          <%= submit_tag 'Filter' %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+  <div class="first-column">
+    <% if @search_results.any? || searching? %>
+      <%= render 'shared/page_links',
+                 collection: @search_results %>
+
+      <div class="issues tasks">
+        <%= render @search_results %>
+      </div>
+
+      <%= render 'shared/simple_page_links',
+                 collection: @search_results %>
+    <% else %>
+      <p class="no-task no-issue">None found</p>
+    <% end %>
+  </div>
 </div>

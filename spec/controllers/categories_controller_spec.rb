@@ -46,45 +46,183 @@ RSpec.describe CategoriesController, type: :controller do
   end
 
   describe "GET #show" do
-    %w[admin reviewer worker reporter].each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type}")) }
 
-        context "when no filters" do
+        context "for a visible & external category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when no filters" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'all'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "all" }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'issues'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "issues",
+                                   issue_status: "open" }
+              url = category_issues_path(category, type: "issues",
+                                                   issue_status: "open")
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "when type filter is 'tasks'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "tasks",
+                                   task_status: "closed", invalid: "invalid" }
+              url = category_tasks_path(category, type: "tasks",
+                                                  task_status: "closed")
+              expect(response).to redirect_to(url)
+            end
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
           it "returns a success response" do
-            category = Fabricate(:category)
             get :show, params: { id: category.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when type filter is 'all'" do
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
           it "returns a success response" do
-            category = Fabricate(:category)
-            get :show, params: { id: category.to_param, type: "all" }
+            get :show, params: { id: category.to_param }
+            expect(response).to be_successful
+          end
+        end
+      end
+
+      context "for a worker" do
+        before { sign_in(Fabricate(:user_worker)) }
+
+        context "for a visible & external category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when no filters" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'all'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "all" }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'issues'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "issues",
+                                   issue_status: "open" }
+              url = category_issues_path(category, type: "issues",
+                                                   issue_status: "open")
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "when type filter is 'tasks'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "tasks",
+                                   task_status: "closed", invalid: "invalid" }
+              url = category_tasks_path(category, type: "tasks",
+                                                  task_status: "closed")
+              expect(response).to redirect_to(url)
+            end
+          end
+        end
+
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
+          it "returns a success response" do
+            get :show, params: { id: category.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when type filter is 'issues'" do
-          it "returns a success response" do
-            category = Fabricate(:category)
-            get :show, params: { id: category.to_param, type: "issues",
-                                 issue_status: "open" }
-            url = category_issues_path(category, type: "issues",
-                                                 issue_status: "open")
-            expect(response).to redirect_to(url)
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          it "redirects to unauthorized" do
+            get :show, params: { id: category.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+
+      context "for a reporter" do
+        before { sign_in(Fabricate(:user_reporter)) }
+
+        context "for a visible & external category" do
+          let(:category) { Fabricate(:category) }
+
+          context "when no filters" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'all'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "all" }
+              expect(response).to be_successful
+            end
+          end
+
+          context "when type filter is 'issues'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "issues",
+                                   issue_status: "open" }
+              url = category_issues_path(category, type: "issues",
+                                                   issue_status: "open")
+              expect(response).to redirect_to(url)
+            end
+          end
+
+          context "when type filter is 'tasks'" do
+            it "returns a success response" do
+              get :show, params: { id: category.to_param, type: "tasks",
+                                   task_status: "closed", invalid: "invalid" }
+              url = category_tasks_path(category, type: "tasks",
+                                                  task_status: "closed")
+              expect(response).to redirect_to(url)
+            end
           end
         end
 
-        context "when type filter is 'tasks'" do
-          it "returns a success response" do
-            category = Fabricate(:category)
-            get :show, params: { id: category.to_param, type: "tasks",
-                                 task_status: "closed", invalid: "invalid" }
-            url = category_tasks_path(category, type: "tasks",
-                                                task_status: "closed")
-            expect(response).to redirect_to(url)
+        context "for an internal category" do
+          let(:category) { Fabricate(:internal_category) }
+
+          it "redirects to unauthorized" do
+            get :show, params: { id: category.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "for an invisible category" do
+          let(:category) { Fabricate(:invisible_category) }
+
+          it "redirects to unauthorized" do
+            get :show, params: { id: category.to_param }
+            expect_to_be_unauthorized(response)
           end
         end
       end
