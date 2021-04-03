@@ -22,7 +22,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get 'help/issue_types' => 'help#issue_types', as: :issue_types_help
   get 'help/user_types' => 'help#user_types', as: :user_types_help
 
-  resources :categories, except: :show do
+  resources :categories do
     collection { get :archived }
 
     resources :tasks, only: :index

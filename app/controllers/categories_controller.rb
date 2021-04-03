@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: auto submit filters form on change
+# TODO: should changing type, change form url
+
 class CategoriesController < ApplicationController
   load_and_authorize_resource except: :archived
 
@@ -13,14 +16,26 @@ class CategoriesController < ApplicationController
     @categories = Category.all_invisible.accessible_by(current_ability)
   end
 
+  def show
+    @projects = @category.projects.all_visible.accessible_by(current_ability)
+
+    case params[:type]
+    when 'issues'
+      redirect_to category_issues_path(@category, params: filters)
+    when 'tasks'
+      redirect_to category_tasks_path(@category, params: filters)
+    else
+      @search_results = build_search_results.page(params[:page])
+    end
+  end
+
   def new; end
 
   def edit; end
 
   def create
     if @category.save
-      redirect_to category_projects_url(@category),
-                  notice: 'Category was successfully created.'
+      redirect_to @category, notice: 'Category was successfully created.'
     else
       render :new
     end
@@ -43,5 +58,15 @@ class CategoriesController < ApplicationController
 
     def category_params
       params.require(:category).permit(:name, :visible, :internal)
+    end
+
+    def filters
+      @filters ||= build_filters.merge(project_ids: @projects.map(&:id))
+    end
+
+    def build_search_results
+      SearchResult.accessible_by(current_ability).filter_by(filters)
+                  .preload(:project, :user, :issue, :assignees,
+                           project: :category)
     end
 end

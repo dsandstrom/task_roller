@@ -45,6 +45,52 @@ RSpec.describe CategoriesController, type: :controller do
     end
   end
 
+  describe "GET #show" do
+    %w[admin reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { sign_in(Fabricate("user_#{employee_type}")) }
+
+        context "when no filters" do
+          it "returns a success response" do
+            category = Fabricate(:category)
+            get :show, params: { id: category.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when type filter is 'all'" do
+          it "returns a success response" do
+            category = Fabricate(:category)
+            get :show, params: { id: category.to_param, type: "all" }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when type filter is 'issues'" do
+          it "returns a success response" do
+            category = Fabricate(:category)
+            get :show, params: { id: category.to_param, type: "issues",
+                                 issue_status: "open" }
+            url = category_issues_path(category, type: "issues",
+                                                 issue_status: "open")
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "when type filter is 'tasks'" do
+          it "returns a success response" do
+            category = Fabricate(:category)
+            get :show, params: { id: category.to_param, type: "tasks",
+                                 task_status: "closed", invalid: "invalid" }
+            url = category_tasks_path(category, type: "tasks",
+                                                task_status: "closed")
+            expect(response).to redirect_to(url)
+          end
+        end
+      end
+    end
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
@@ -109,8 +155,7 @@ RSpec.describe CategoriesController, type: :controller do
 
           it "redirects to the created category" do
             post :create, params: { category: valid_attributes }
-            expect(response)
-              .to redirect_to(category_projects_url(Category.last))
+            expect(response).to redirect_to(Category.last)
           end
         end
 

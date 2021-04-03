@@ -1,0 +1,70 @@
+<%= category_header @category %>
+
+<% unless searching? %>
+  <header class="category-projects-header">
+    <h2>Projects</h2>
+  </header>
+
+  <div class="category-projects">
+    <% if @projects.any? %>
+      <%= render @projects %>
+    <% elsif !can?(:create, new_project(@category)) %>
+      <p class="no-project">None yet</p>
+    <% end %>
+    <%= render 'projects/new_project', category: @category %>
+  </div>
+<% end %>
+
+<header class="category-issues-header">
+  <h2>
+    <% case params[:type] %>
+    <% when 'issues', 'tasks' %>
+      <%= params[:type].titleize %>
+    <% else %>
+      Issues & Tasks
+    <% end %>
+  </h2>
+</header>
+
+<div class="columns">
+  <div class="second-column">
+    <div class="filters-wrapper">
+      <div class="heading-and-link">
+        <h3>Filters</h3>
+
+        <% if searching? %>
+          <%= link_to 'reset', @category %>
+        <% end %>
+      </div>
+
+      <%= form_tag @category,
+                   method: :get, class: "search-form",
+                   id: "search_form" do %>
+        <%= render 'shared/string_filter_field' %>
+        <%= render 'searches/type_filter_field' %>
+        <%= render 'shared/order_filter_field' %>
+
+        <div class="actions">
+          <%= submit_tag 'Filter' %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+  <div class="first-column">
+    <% if @search_results.any? || searching? %>
+      <%= render 'shared/page_links',
+                 collection: @search_results %>
+
+      <div class="issues tasks">
+        <%= render @search_results %>
+      </div>
+
+      <%= render 'shared/simple_page_links',
+                 collection: @search_results %>
+    <% else %>
+      <p class="no-task no-issue">None found</p>
+    <% end %>
+  </div>
+</div>
