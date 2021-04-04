@@ -36,7 +36,8 @@
 
     .category-links,
     .project-links,
-    .category-buttons {
+    .category-buttons,
+    .project-buttons {
       margin-top: 1rem;
     }
 
@@ -54,24 +55,27 @@
     }
   }
 
-  .category-stat-wrapper {
+  .category-stat-wrapper,
+  .project-stat-wrapper {
     // display: flex;
-    align-items: center;
     // justify-content: center;
     display: grid;
     grid-template-columns: 5em auto;
+    align-items: center;
     margin-bottom: 1rem;
     padding: 0 1rem;
     line-height: 1.4;
   }
 
-  .category-stat {
+  .category-stat,
+  .project-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .category-stat-number {
+  .category-stat-number,
+  .project-stat-number {
     margin-bottom: .5rem;
     padding: .5rem 1rem;
     border-radius: 5rem;
@@ -84,7 +88,8 @@
     line-height: 2rem;
   }
 
-  .category-stat-name {
+  .category-stat-name,
+  .project-stat-name {
     color: $gray;
     font-size: 80%;
     text-transform: uppercase;
@@ -96,7 +101,8 @@
     }
   }
 
-  .category-stat-content {
+  .category-stat-content,
+  .project-stat-content {
     position: relative;
     margin-left: 1rem;
     padding-left: 1rem;
@@ -204,7 +210,8 @@
   }
 }
 
-.category-buttons {
+.category-buttons,
+.project-buttons {
   display: flex;
   align-items: center;
   justify-content: stretch;
@@ -236,7 +243,8 @@
     }
   }
 
-  .category-buttons {
+  .category-buttons,
+  .project-buttons {
     position: relative;
     z-index: 1;
     margin: 0 -1px -1px;
