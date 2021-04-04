@@ -20,7 +20,8 @@
   .project,
   .no-project,
   .new-project {
-    padding: 1.5rem 0;
+    margin-bottom: 1rem;
+    border: 1px solid $light-gray;
   }
 
   .category,
@@ -35,7 +36,7 @@
 
     .category-links,
     .project-links,
-    .subscription-links {
+    .category-buttons {
       margin-top: 1rem;
     }
 
@@ -53,9 +54,76 @@
     }
   }
 
-  .category-project-links {
+  .category-stat-wrapper {
+    // display: flex;
+    align-items: center;
+    // justify-content: center;
+    display: grid;
+    grid-template-columns: 5em auto;
     margin-bottom: 1rem;
+    padding: 0 1rem;
     line-height: 1.4;
+  }
+
+  .category-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .category-stat-number {
+    margin-bottom: .5rem;
+    padding: .5rem 1rem;
+    border-radius: 5rem;
+    // background-color: $dark-gray;
+    // color: $off-white;
+    color: $ink;
+    font-family: $code-font;
+    font-size: 120%;
+    font-weight: bold;
+    line-height: 2rem;
+  }
+
+  .category-stat-name {
+    color: $gray;
+    font-size: 80%;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus {
+      color: $ink;
+    }
+  }
+
+  .category-stat-content {
+    position: relative;
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid $light-gray;
+    text-align: left;
+
+    // triangle
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -.55rem;
+      width: 0;
+      height: 0;
+      margin-top: -.55rem;
+      border-top: .55rem solid transparent;
+      border-right: .55rem solid $light-gray;
+      border-bottom: .55rem solid transparent;
+    }
+
+    &:empty {
+      display: none;
+    }
+
+    a {
+      white-space: nowrap;
+    }
   }
 
   .category-tags,
@@ -72,10 +140,16 @@
 
   .category-name,
   .project-name {
+    position: relative;
     margin: 0 0 1rem;
-    padding: 2rem .5rem;
+    padding: 2rem 2.5rem;
+    border-bottom: 1px solid $light-gray;
     background-color: $off-white;
     text-decoration: underline;
+
+    h3 {
+      margin: 0;
+    }
 
     a {
       color: $ink;
@@ -130,37 +204,16 @@
   }
 }
 
-.subscription-links {
-  position: relative;
-  z-index: 1;
-  margin: 0 -1px -1px;
+.category-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  padding: 0 1.5rem;
+  column-gap: 1rem;
 
   a {
-    border-radius: 0;
-  }
-}
-
-@include breakpoint(small only) {
-  .categories,
-  .category-projects,
-  .projects {
-    .category,
-    .project,
-    .new-category,
-    .new-project {
-      // add top border to all except the first
-      &:nth-child(n + 2) {
-        padding-top: 2rem;
-        border-top: 1px solid $light-gray;
-      }
-    }
-  }
-
-  .subscription-links {
-    a {
-      display: block;
-      width: 100%;
-    }
+    display: block;
+    width: 100%;
   }
 }
 
@@ -178,20 +231,19 @@
     .new-project {
       margin-bottom: 2rem;
       padding: 0;
-      border: 1px solid $light-gray;
+      border-width: 1px;
       border-radius: $border-radius;
     }
   }
 
-  .subscription-links {
-    display: flex;
-    align-items: center;
+  .category-buttons {
+    position: relative;
+    z-index: 1;
+    margin: 0 -1px -1px;
+    padding: 0;
+    column-gap: 0;
 
     a {
-      display: block;
-      flex: 0 0 50%;
-      padding-right: .5rem;
-      padding-left: .5rem;
       border-radius: 0;
     }
   }

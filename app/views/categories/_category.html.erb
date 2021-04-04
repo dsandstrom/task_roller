@@ -19,10 +19,10 @@ tasks_count =
   else
     category.tasks.count
   end
-issue_subscription =
+issues_subscription =
   category.category_issues_subscriptions
           .find_or_initialize_by(user_id: current_user.id)
-task_subscription =
+tasks_subscription =
   category.category_tasks_subscriptions
           .find_or_initialize_by(user_id: current_user.id)
 project_links = projects.map do |project|
@@ -37,36 +37,91 @@ end
   </h3>
   <%= category_tags(category) %>
 
-  <p class="category-project-links">
-    <%= pluralize(projects_count, 'Project') %><% if project_links.any? %>:
-      <%= safe_join(project_links, ', ') %>
-    <% end %>
-  </p>
+  <div class="category-stats">
+    <div class="category-stat-wrapper category-projects-wrapper">
+      <p class="category-stat category-projects-count">
+        <%= content_tag :span, projects_count, class: 'category-stat-number' %>
+        <%= link_to_if can?(:read, Project),
+                       'Project'.pluralize(projects_count),
+                       category_projects_path(category),
+                       class: 'category-stat-name' %>
+      </p>
 
-  <p class="category-counts">
-    <%= link_to_if can?(:read, Issue),
-                   pluralize(issues_count, 'Issue'),
-                   category_issues_path(category) %>
-    <%= divider %>
-    <%= link_to_if can?(:read, Task),
-                   pluralize(tasks_count, 'Task'),
-                   category_tasks_path(category) %>
-  </p>
+      <% if project_links.any? %>
+        <%= content_tag :p, safe_join(project_links, ', '),
+                        class: 'category-stat-content category-projects-links' %>
+      <% end %>
+    </div>
 
-  <p class="category-links">
+    <div class="category-stat-wrapper">
+      <p class="category-stat category-issues-count">
+        <%= content_tag :span, issues_count, class: 'category-stat-number' %>
+        <%= link_to_if can?(:read, Issue),
+                       'Issue'.pluralize(issues_count),
+                       category_issues_path(category),
+                       class: 'category-stat-name' %>
+      </p>
+
+      <% if issues_subscription.persisted? %>
+        <% if can?(:destroy, issues_subscription) %>
+          <div class="category-stat-content">
+            <% url = category_issues_subscription_path(category,
+                                                       issues_subscription) %>
+
+            <%= link_to ' ', url,
+                        method: :delete,
+                        class: 'button button-success button-clear button-unsubscribe' %>
+          </div>
+        <% end %>
+      <% elsif can?(:create, issues_subscription) %>
+        <div class="category-stat-content">
+          <%= link_to 'auto-subscribe',
+                      category_issues_subscriptions_path(category),
+                      method: :post, class: 'button button-clear' %>
+        </div>
+      <% end %>
+    </div>
+
+
+    <div class="category-stat-wrapper">
+      <p class="category-stat category-tasks-count">
+        <%= content_tag :span, tasks_count, class: 'category-stat-number' %>
+        <%= link_to_if can?(:read, Task),
+                       'Task'.pluralize(tasks_count),
+                       category_tasks_path(category),
+                       class: 'category-stat-name' %>
+      </p>
+
+      <% if tasks_subscription.persisted? %>
+        <% if can?(:destroy, tasks_subscription) %>
+          <div class="category-stat-content">
+            <% url = category_tasks_subscription_path(category,
+                                                       tasks_subscription) %>
+
+            <%= link_to ' ', url,
+                        method: :delete,
+                        class: 'button button-success button-clear button-unsubscribe' %>
+          </div>
+        <% end %>
+      <% elsif can?(:create, tasks_subscription) %>
+        <div class="category-stat-content">
+          <%= link_to 'auto-subscribe',
+                      category_tasks_subscriptions_path(category),
+                      method: :post, class: 'button button-clear' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="category-buttons">
     <% if can?(:update, category) %>
       <%= link_to 'Edit', edit_category_path(category),
-                  class: 'button button-clear' %>
+                  class: 'button button-outline' %>
     <% end %>
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
                   method: :delete, data: { confirm: 'Are you sure?' },
-                  class: 'button button-clear button-warning' %>
+                  class: 'button button-outline button-warning' %>
     <% end %>
-  </p>
-
-  <p class="subscription-links">
-    <%= render issue_subscription %>
-    <%= render task_subscription %>
   </p>
 </div>
