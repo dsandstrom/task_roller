@@ -1,3 +1,57 @@
 <div id="user-detail-<%= @user.id %>" class="user-detail">
   <%= user_header @user %>
+
+  <% if @active_assignments.none? && @open_tasks.none? && @unresolved_issues.none? %>
+      <p>
+        No active issues/tasks
+      </p>
+  <% end %>
+
+  <% if @active_assignments&.any? %>
+    <div class="user-assignments">
+      <header class="tasks-header">
+        <h2>Active Assignments</h2>
+        <p>
+          <%= link_to 'View All Assigned Tasks',
+                      user_assignments_path(current_user),
+                      class: 'button button-clear' %>
+        </p>
+      </header>
+      <div class="tasks">
+        <%= render @active_assignments %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @open_tasks.any? %>
+    <div class="user-tasks">
+      <header class="tasks-header">
+        <h2>Open Tasks</h2>
+        <p>
+          <%= link_to 'View All Created Tasks',
+                      user_tasks_path(current_user),
+                      class: 'button button-clear' %>
+        </p>
+      </header>
+      <div class="tasks">
+        <%= render @open_tasks %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @unresolved_issues.any? %>
+    <div class="user-issues">
+      <header class="issues-header">
+        <h2>Unresolved Issues</h2>
+        <p>
+          <%= link_to 'View All Reported Issues',
+                      user_issues_path(current_user),
+                      class: 'button button-clear' %>
+        </p>
+      </header>
+      <div class="issues">
+        <%= render @unresolved_issues %>
+      </div>
+    </div>
+  <% end %>
 </div>

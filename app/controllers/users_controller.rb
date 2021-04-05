@@ -2,6 +2,10 @@
 
 class UsersController < ApplicationController
   load_and_authorize_resource
+  load_resource :active_assignments, through: :user, singleton: true,
+                                     only: :show
+  load_resource :open_tasks, through: :user, singleton: true, only: :show
+  load_resource :unresolved_issues, through: :user, singleton: true, only: :show
 
   def index
     @admins = @users.admins
@@ -11,7 +15,13 @@ class UsersController < ApplicationController
     @unemployed = @users.unemployed
   end
 
-  def show; end
+  def show
+    @unresolved_issues =
+      @unresolved_issues.all_visible.accessible_by(current_ability)
+    @open_tasks = @open_tasks.all_visible.accessible_by(current_ability)
+    @active_assignments =
+      @active_assignments.all_visible.accessible_by(current_ability)
+  end
 
   def new; end
 
