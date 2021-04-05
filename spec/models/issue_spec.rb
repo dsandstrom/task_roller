@@ -855,18 +855,51 @@ RSpec.describe Issue, type: :model do
       context "and has an open task" do
         let(:issue) { Fabricate(:open_issue) }
 
-        before { Fabricate(:open_task, issue: issue) }
+        before do
+          Fabricate(:open_task, issue: issue)
+          issue.update_status
+        end
 
         it "returns true" do
           expect(issue.send(:open_tasks?)).to eq(true)
         end
       end
 
-      context "and has a closed task" do
+      context "and has a in_progress task" do
         let(:issue) { Fabricate(:issue) }
-        let(:task) { Fabricate(:closed_task, issue: issue) }
+
+        before do
+          Fabricate(:in_progress_task, issue: issue)
+          issue.update_status
+        end
+
+        it "returns true" do
+          expect(issue.send(:open_tasks?)).to eq(true)
+        end
+      end
+
+      context "and has a in_review task" do
+        let(:issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:in_review_task, issue: issue)
+          issue.update_status
+        end
 
         it "returns false" do
+          expect(issue.send(:open_tasks?)).to eq(true)
+        end
+      end
+
+      context "and has a closed task" do
+        let(:issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:closed_task, issue: issue)
+          issue.update_status
+        end
+
+        it "returns true" do
           expect(issue.send(:open_tasks?)).to eq(false)
         end
       end
@@ -876,7 +909,10 @@ RSpec.describe Issue, type: :model do
       context "and has an open task" do
         let(:issue) { Fabricate(:closed_issue) }
 
-        before { Fabricate(:open_task, issue: issue) }
+        before do
+          Fabricate(:open_task, issue: issue)
+          issue.update_status
+        end
 
         it "returns true" do
           expect(issue.send(:open_tasks?)).to eq(false)
@@ -887,7 +923,10 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:issue) }
         let(:task) { Fabricate(:closed_task, issue: issue) }
 
-        before { Fabricate(:approved_review, task: task) }
+        before do
+          Fabricate(:approved_review, task: task)
+          issue.update_status
+        end
 
         it "returns false" do
           expect(issue.send(:open_tasks?)).to eq(false)
