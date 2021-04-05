@@ -251,7 +251,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @active_assignments ||=
       assignments
       .left_joins(:progressions, :reviews, :comments).references(:comments)
-      .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
+      .all_non_closed.select(ACTIVE_ASSIGNMENTS_QUERY)
       .where('task_comments.id IS NULL OR task_comments.user_id != ?', id)
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
@@ -294,7 +294,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def open_tasks
     @open_tasks ||=
       tasks
-      .all_open.select(OPEN_TASKS_QUERY)
+      .all_non_closed.select(OPEN_TASKS_QUERY)
       .left_joins(:progressions, :reviews, :comments).references(:comments)
       .where('task_comments.id IS NULL OR task_comments.user_id != ?', id)
       .group(:id).order(OPENS_TASKS_ORDER)

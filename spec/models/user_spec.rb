@@ -1055,6 +1055,7 @@ RSpec.describe User, type: :model do
       before do
         closed_task.assignees << user
         open_task.assignees << user
+        open_task.update_status
       end
 
       it "returns open tasks" do
@@ -1063,10 +1064,13 @@ RSpec.describe User, type: :model do
     end
 
     context "when user has a shared assignment" do
+      let(:another_user) { Fabricate(:user_worker) }
+
       before do
         Fabricate(:task_assignee, task: open_task, assignee: user)
-        Fabricate(:task_assignee, task: open_task)
-        Fabricate(:progression, task: open_task)
+        Fabricate(:task_assignee, task: open_task, assignee: another_user)
+        Fabricate(:progression, task: open_task, user: another_user)
+        open_task.update_status
       end
 
       it "returns open tasks" do
@@ -1093,6 +1097,7 @@ RSpec.describe User, type: :model do
       it "orders tasks by in progress, with progressions, assigned" do
         tasks = [in_progress_task, paused_task, assigned_task,
                  in_review_task]
+        tasks.each(&:update_status)
         expect(user.active_assignments).to match_array(tasks)
         expect(user.active_assignments).to eq(tasks)
       end
@@ -1109,7 +1114,9 @@ RSpec.describe User, type: :model do
           task.assignees << user
         end
 
-        expect(user.active_assignments).to eq([first_task, second_task])
+        tasks = [first_task, second_task]
+        tasks.each(&:update_status)
+        expect(user.active_assignments).to eq(tasks)
       end
     end
 
@@ -1131,7 +1138,9 @@ RSpec.describe User, type: :model do
         end
         Fabricate(:finished_progression, task: first_task, user: user)
 
-        expect(user.active_assignments).to eq([first_task, second_task])
+        tasks = [first_task, second_task]
+        tasks.each(&:update_status)
+        expect(user.active_assignments).to eq(tasks)
       end
     end
 
@@ -1156,7 +1165,9 @@ RSpec.describe User, type: :model do
         end
         Fabricate(:task_comment, task: second_task, user: user)
 
-        expect(user.active_assignments).to eq([first_task, second_task])
+        tasks = [first_task, second_task]
+        tasks.each(&:update_status)
+        expect(user.active_assignments).to eq(tasks)
       end
     end
   end
@@ -1202,6 +1213,7 @@ RSpec.describe User, type: :model do
       it "orders by in_review, in_progress, assigned, open" do
         open_task = Fabricate(:open_task, user: user, summary: "Open")
         tasks = [in_review_task, in_progress_task, assigned_task, open_task]
+        tasks.each(&:update_status)
         expect(user.open_tasks).to eq(tasks)
       end
     end
@@ -1222,6 +1234,7 @@ RSpec.describe User, type: :model do
         Fabricate(:task_comment, task: second_task, user: user)
 
         tasks = [first_task, second_task]
+        tasks.each(&:update_status)
         expect(user.open_tasks).to eq(tasks)
       end
 
@@ -1239,6 +1252,7 @@ RSpec.describe User, type: :model do
         Fabricate(:progression, task: first_task)
 
         tasks = [first_task, second_task]
+        tasks.each(&:update_status)
         expect(user.open_tasks).to eq(tasks)
       end
     end
