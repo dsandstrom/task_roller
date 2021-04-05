@@ -992,8 +992,10 @@ RSpec.describe User, type: :model do
         open_issue = Fabricate(:open_issue, user: user)
         being_worked_on_issue = Fabricate(:open_issue, user: user)
         Fabricate(:open_task, issue: being_worked_on_issue)
+        being_worked_on_issue.update_status
         addressed_issue = Fabricate(:open_issue, user: user)
         Fabricate(:approved_task, issue: addressed_issue)
+        addressed_issue.update_status
         Fabricate(:closed_issue, user: user)
 
         expect(user.unresolved_issues)
@@ -1008,7 +1010,9 @@ RSpec.describe User, type: :model do
         end
         first_issue = Fabricate(:open_issue, user: user)
 
-        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+        issues = [first_issue, second_issue]
+        issues.each(&:update_status)
+        expect(user.unresolved_issues).to eq(issues)
       end
 
       it "orders by other user comments.created_at desc" do
@@ -1023,7 +1027,9 @@ RSpec.describe User, type: :model do
         end
         Fabricate(:issue_comment, issue: second_issue, user: user)
 
-        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+        issues = [first_issue, second_issue]
+        issues.each(&:update_status)
+        expect(user.unresolved_issues).to eq(issues)
       end
 
       it "orders by open_tasks_count, tasks_count" do
@@ -1035,7 +1041,9 @@ RSpec.describe User, type: :model do
         Fabricate(:open_task, issue: first_issue)
         2.times { Fabricate(:closed_task, issue: second_issue) }
 
-        expect(user.unresolved_issues).to eq([first_issue, second_issue])
+        issues = [first_issue, second_issue]
+        issues.each(&:update_status)
+        expect(user.unresolved_issues).to eq(issues)
       end
     end
   end
