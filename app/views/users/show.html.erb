@@ -13,7 +13,7 @@
         <h2>Active Assignments</h2>
         <p>
           <%= link_to 'View All Assigned Tasks',
-                      user_assignments_path(current_user),
+                      user_assignments_path(@user),
                       class: 'button button-clear' %>
         </p>
       </header>
@@ -29,7 +29,7 @@
         <h2>Open Tasks</h2>
         <p>
           <%= link_to 'View All Created Tasks',
-                      user_tasks_path(current_user),
+                      user_tasks_path(@user),
                       class: 'button button-clear' %>
         </p>
       </header>
@@ -45,7 +45,7 @@
         <h2>Unresolved Issues</h2>
         <p>
           <%= link_to 'View All Reported Issues',
-                      user_issues_path(current_user),
+                      user_issues_path(@user),
                       class: 'button button-clear' %>
         </p>
       </header>
