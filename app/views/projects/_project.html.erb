@@ -43,74 +43,77 @@ tasks_subscription =
     </p>
   <% end %>
 
-  <div class="project-stats">
-    <div class="project-stat-wrapper">
-      <p class="project-stat project-issues-count">
+  <div class="accordion project-accordion">
+    <div class="accordion-menu">
+      <a href="javascript:void(0)" class="project-stat active"
+         data-content-name="project_issues_content">
         <%= content_tag :span, issues_count, class: 'project-stat-number' %>
-        <%= link_to_if can?(:read, Issue),
-                       'Issue'.pluralize(issues_count),
-                       project_issues_path(project),
-                       class: 'project-stat-name' %>
-      </p>
+        <%= content_tag :span, 'Issue'.pluralize(issues_count),
+                        class: 'project-stat-name' %>
+      </a>
 
-      <% if issues_subscription.persisted? %>
-        <% if can?(:destroy, issues_subscription) %>
-          <div class="project-stat-content">
+      <a href="javascript:void(0)" class="project-stat"
+         data-content-name="project_tasks_content">
+        <%= content_tag :span, tasks_count, class: 'project-stat-number' %>
+        <%= content_tag :span, 'Task'.pluralize(tasks_count),
+                        class: 'project-stat-name' %>
+      </a>
+    </div>
+
+    <div class="accordion-contents">
+      <div name="project_issues_content" class="accordion-content active">
+        <% if issues_subscription.persisted? %>
+          <% if can?(:destroy, issues_subscription) %>
             <% url = project_issues_subscription_path(project,
-                                                      issues_subscription) %>
+                                                       issues_subscription) %>
 
             <%= link_to ' ', url,
                         method: :delete,
                         class: 'button button-success button-clear button-unsubscribe' %>
-          </div>
-        <% end %>
-      <% elsif project&.category&.subscribed_to_issues?(current_user) %>
-        <div class="project-stat-content">
+          <% end %>
+        <% elsif project&.category&.subscribed_to_issues?(current_user) %>
           <%= link_to 'subscribed', 'javascript:void(0)',
                       class: 'button button-success button-clear button-disabled' %>
-        </div>
-      <% elsif can?(:create, issues_subscription) %>
-        <div class="project-stat-content">
+        <% elsif can?(:create, issues_subscription) %>
           <%= link_to 'auto-subscribe',
                       project_issues_subscriptions_path(project),
                       method: :post, class: 'button button-clear' %>
-        </div>
-      <% end %>
-    </div>
+        <% end %>
 
+        <p>
+          <%= link_to_if can?(:read, project),
+                         'View All',
+                         project_issues_path(project),
+                         class: 'button button-clear' %>
+        </p>
+      </div>
 
-    <div class="project-stat-wrapper">
-      <p class="project-stat project-tasks-count">
-        <%= content_tag :span, tasks_count, class: 'project-stat-number' %>
-        <%= link_to_if can?(:read, Task),
-                       'Task'.pluralize(tasks_count),
-                       project_tasks_path(project),
-                       class: 'project-stat-name' %>
-      </p>
-
-      <% if tasks_subscription.persisted? %>
-        <% if can?(:destroy, tasks_subscription) %>
-          <div class="project-stat-content">
+      <div name="project_tasks_content" class="accordion-content">
+        <% if tasks_subscription.persisted? %>
+          <% if can?(:destroy, tasks_subscription) %>
             <% url = project_tasks_subscription_path(project,
                                                        tasks_subscription) %>
 
             <%= link_to ' ', url,
                         method: :delete,
                         class: 'button button-success button-clear button-unsubscribe' %>
-          </div>
-        <% end %>
-      <% elsif project&.category&.subscribed_to_tasks?(current_user) %>
-        <div class="project-stat-content">
+          <% end %>
+        <% elsif project&.category&.subscribed_to_tasks?(current_user) %>
           <%= link_to 'subscribed', 'javascript:void(0)',
                       class: 'button button-success button-clear button-disabled' %>
-        </div>
-      <% elsif can?(:create, tasks_subscription) %>
-        <div class="project-stat-content">
+        <% elsif can?(:create, tasks_subscription) %>
           <%= link_to 'auto-subscribe',
                       project_tasks_subscriptions_path(project),
                       method: :post, class: 'button button-clear' %>
-        </div>
-      <% end %>
+        <% end %>
+
+        <p>
+          <%= link_to_if can?(:read, project),
+                         'View All',
+                         project_tasks_path(project),
+                         class: 'button button-clear' %>
+        </p>
+      </div>
     </div>
   </div>
 

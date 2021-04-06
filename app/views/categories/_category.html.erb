@@ -39,21 +39,21 @@ end
 
   <div class="accordion category-accordion">
     <div class="accordion-menu">
-      <a href="javascript:void(0)" class="accordion-menu-item category-stat active"
+      <a href="javascript:void(0)" class="category-stat active"
          data-content-name="category_projects_content">
         <%= content_tag :span, projects_count, class: 'category-stat-number' %>
         <%= content_tag :span, 'Project'.pluralize(projects_count),
                         class: 'category-stat-name' %>
       </a>
 
-      <a href="javascript:void(0)" class="accordion-menu-item category-stat"
+      <a href="javascript:void(0)" class="category-stat"
          data-content-name="category_issues_content">
         <%= content_tag :span, issues_count, class: 'category-stat-number' %>
         <%= content_tag :span, 'Issue'.pluralize(issues_count),
                         class: 'category-stat-name' %>
       </a>
 
-      <a href="javascript:void(0)" class="accordion-menu-item category-stat"
+      <a href="javascript:void(0)" class="category-stat"
          data-content-name="category_tasks_content">
         <%= content_tag :span, tasks_count, class: 'category-stat-number' %>
         <%= content_tag :span, 'Task'.pluralize(tasks_count),
@@ -97,7 +97,7 @@ end
         <% end %>
 
         <p>
-          <%= link_to_if can?(:read, Project),
+          <%= link_to_if can?(:read, category),
                          'View All',
                          category_issues_path(category),
                          class: 'button button-clear' %>
@@ -121,7 +121,7 @@ end
         <% end %>
 
         <p>
-          <%= link_to_if can?(:read, Project),
+          <%= link_to_if can?(:read, category),
                          'View All',
                          category_tasks_path(category),
                          class: 'button button-clear' %>
