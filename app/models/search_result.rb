@@ -65,6 +65,12 @@ class SearchResult < ApplicationRecord
     [number&.to_i, query]
   end
 
+  def self.all_visible
+    joins(:project, project: :category)
+      .where('projects.visible = :visible AND categories.visible = :visible',
+             visible: true)
+  end
+
   private_class_method def self.filter_by_id(query)
     return all if query.blank?
 

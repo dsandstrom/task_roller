@@ -362,6 +362,28 @@ RSpec.describe SearchResult, type: :model do
     end
   end
 
+  describe ".all_visible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: category)
+    end
+    let(:invisible_category_project) do
+      Fabricate(:project, category: invisible_category)
+    end
+
+    before do
+      Fabricate(:task, project: invisible_project)
+      Fabricate(:task, project: invisible_category_project)
+    end
+
+    it "returns tasks from visible projects from visible categories" do
+      task = Fabricate(:task, project: project)
+      expect(SearchResult.all_visible.map(&:id)).to eq([task.id])
+    end
+  end
+
   # INSTANCE
 
   describe "#issue?" do
