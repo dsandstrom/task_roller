@@ -30,7 +30,7 @@ module CategoriesHelper
 
     content_for :header do
       concat content_tag(:h1, categories_heading)
-      concat categories_nav if can?(:read, invisible_category)
+      concat dashboard_nav
     end
   end
 
@@ -48,12 +48,12 @@ module CategoriesHelper
         end
     end
 
-    def categories_nav
-      links = [['Active', categories_path],
-               ['Archived', archived_categories_path]]
-
-      content_tag :p, class: 'page-nav category-nav' do
-        safe_join(navitize(links))
+    def categories_links
+      if can?(:read, invisible_category)
+        [['Active Categories', categories_path],
+         ['Archived Categories', archived_categories_path]]
+      else
+        [['Categories', categories_path]]
       end
     end
 

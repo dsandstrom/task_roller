@@ -14,10 +14,22 @@ module UsersHelper
     end
   end
 
+  def users_header
+    enable_page_title 'Users'
+
+    content_for :header do
+      concat content_tag(:h1, 'Users')
+      concat dashboard_nav
+    end
+  end
+
   def dashboard_nav
-    links = [['Dashboard', root_path],
-             ['Subscribed Issues', issue_subscriptions_path],
-             ['Subscribed Tasks', task_subscriptions_path]]
+    links = [['Dashboard', root_path]]
+    categories_links.each do |link|
+      links << link
+    end
+    links << ['Users', users_path]
+    links << ['App Setup', issue_types_path] if can?(:read, IssueType)
 
     content_tag :p, class: 'page-nav user-nav' do
       safe_join(navitize(links))

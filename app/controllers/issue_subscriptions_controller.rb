@@ -1,16 +1,8 @@
 # frozen_string_literal: true
 
 class IssueSubscriptionsController < ApplicationController
-  load_and_authorize_resource only: :index
-  load_and_authorize_resource :issue, except: :index
-  load_and_authorize_resource through: :issue, except: :index
-
-  def index
-    # fetch the issues thru the subscriptions to block invisible/internal
-    @subscribed_issues =
-      Issue.where(id: @issue_subscriptions.map(&:issue_id))
-           .filter_by(build_filters).page(params[:page])
-  end
+  load_and_authorize_resource :issue
+  load_and_authorize_resource through: :issue
 
   def new; end
 

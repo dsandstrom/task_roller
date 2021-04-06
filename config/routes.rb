@@ -73,8 +73,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         as: :reposition_task_type
 
   resources :assignments, only: %i[edit update]
-  resources :task_subscriptions, only: :index
-  resources :issue_subscriptions, only: :index
 
   get 'search' => 'searches#new', as: :search
   get 'search/results' => 'searches#index', as: :search_results
