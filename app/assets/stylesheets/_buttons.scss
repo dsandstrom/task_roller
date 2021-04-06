@@ -67,6 +67,40 @@
     }
   }
 
+  &.button-secondary {
+    &:not(.button-clear) {
+      border-color: $color-tertiary;
+      background-color: $color-tertiary;
+    }
+
+    &.button-outline {
+      background-color: transparent;
+      color: $color-tertiary;
+    }
+
+    &.button-clear {
+      color: $color-tertiary;
+    }
+
+    &:focus,
+    &:hover {
+      &:not(.button-clear) {
+        border-color: $color-secondary;
+        background-color: $color-secondary;
+      }
+
+      &.button-outline {
+        border-color: $color-secondary;
+        background-color: transparent;
+        color: $color-secondary;
+      }
+
+      &.button-clear {
+        color: $color-secondary;
+      }
+    }
+  }
+
   &.button-unsubscribe {
     &::before {
       content: 'Subscribed';
