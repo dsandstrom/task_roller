@@ -4,8 +4,23 @@ class Accordion {
     this.links = elem.querySelectorAll('.accordion-menu a');
     this.contents = elem.querySelectorAll('.accordion-contents > *');
     if (!this.links.length) return;
+    this.activateFromHash();
 
     this.watchLinks();
+  }
+
+  activateFromHash() {
+    let urlHash = window.location.hash;
+
+    if (urlHash) {
+      let accordion = this;
+
+      this.links.forEach((link, i) => {
+        if (link.hash == urlHash) {
+          accordion.activate(link);
+        }
+      });
+    }
   }
 
   watchLinks() {
@@ -17,18 +32,20 @@ class Accordion {
         if (event.target.tagName != 'A') {
           currentLink = currentLink.parentNode;
         }
-        let contentName = currentLink.dataset.contentName;
-        if (!contentName) return;
 
-        let content = accordion.elem.querySelector('[name="' + contentName + '"]');
-        if (!content) return;
-
-        accordion.activate(currentLink, content)
+        accordion.activate(currentLink);
+        event.stopPropagation();
       })
     });
   }
 
-  activate(link, content) {
+  activate(link) {
+    let contentName = link.dataset.contentName;
+    if (!contentName) return;
+
+    let content = this.elem.querySelector('[name="' + contentName + '"]');
+    if (!content) return;
+
     this.links.forEach((otherLink, i) => {
       otherLink.classList.remove('active');
     });
