@@ -18,6 +18,7 @@ class Accordion {
       this.links.forEach((link, i) => {
         if (link.hash == urlHash) {
           accordion.activate(link);
+          return;
         }
       });
     }

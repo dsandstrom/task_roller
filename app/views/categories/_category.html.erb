@@ -39,26 +39,29 @@ end
 
   <div class="accordion category-accordion">
     <div class="accordion-menu">
-      <a href="javascript:void(0)" class="category-stat active"
-         data-content-name="category_projects_content">
-        <%= content_tag :span, projects_count, class: 'category-stat-number' %>
+      <%= link_to "#category-projects-#{category.id}",
+                  class: "stat active",
+                  data: { content_name: "category_projects_content" } do %>
+        <%= content_tag :span, projects_count, class: 'stat-number' %>
         <%= content_tag :span, 'Project'.pluralize(projects_count),
-                        class: 'category-stat-name' %>
-      </a>
+                        class: 'stat-name' %>
+      <% end %>
 
-      <a href="javascript:void(0)" class="category-stat"
-         data-content-name="category_issues_content">
-        <%= content_tag :span, issues_count, class: 'category-stat-number' %>
+      <%= link_to "#category-issues-#{category.id}",
+                  class: "stat",
+                  data: { content_name: "category_issues_content" } do %>
+        <%= content_tag :span, issues_count, class: 'stat-number' %>
         <%= content_tag :span, 'Issue'.pluralize(issues_count),
-                        class: 'category-stat-name' %>
-      </a>
+                        class: 'stat-name' %>
+      <% end %>
 
-      <a href="javascript:void(0)" class="category-stat"
-         data-content-name="category_tasks_content">
-        <%= content_tag :span, tasks_count, class: 'category-stat-number' %>
+      <%= link_to "#category-tasks-#{category.id}",
+                  class: "stat",
+                  data: { content_name: "category_tasks_content" } do %>
+        <%= content_tag :span, tasks_count, class: 'stat-number' %>
         <%= content_tag :span, 'Task'.pluralize(tasks_count),
-                        class: 'category-stat-name' %>
-      </a>
+                        class: 'stat-name' %>
+      <% end %>
     </div>
 
     <div class="accordion-contents">

@@ -46,15 +46,13 @@
     }
   }
 
-  .category-stat,
-  .project-stat {
+  .stat {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .category-stat-number,
-  .project-stat-number {
+  .stat-number {
     margin-bottom: -.5rem;
     padding: .5rem 1rem;
     border-radius: 5rem;
@@ -65,8 +63,7 @@
     line-height: 2rem;
   }
 
-  .category-stat-name,
-  .project-stat-name {
+  .stat-name {
     color: $gray;
     font-size: 80%;
     text-transform: uppercase;
@@ -190,7 +187,7 @@
       border-color: $color-secondary;
       background-color: $off-white;
 
-      .category-stat-name {
+      .stat-name {
         color: $dark-gray;
       }
     }
@@ -213,11 +210,11 @@
         border-bottom: .55rem solid transparent;
       }
 
-      .category-stat-number {
+      .stat-number {
         color: $color-quinary;
       }
 
-      .category-stat-name {
+      .stat-name {
         color: $dark-gray;
       }
     }

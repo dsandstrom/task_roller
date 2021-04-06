@@ -45,19 +45,21 @@ tasks_subscription =
 
   <div class="accordion project-accordion">
     <div class="accordion-menu">
-      <a href="javascript:void(0)" class="project-stat active"
-         data-content-name="project_issues_content">
-        <%= content_tag :span, issues_count, class: 'project-stat-number' %>
+      <%= link_to "#project-issues-#{project.id}",
+                  class: "stat active",
+                  data: { content_name: "project_issues_content" } do %>
+        <%= content_tag :span, issues_count, class: 'stat-number' %>
         <%= content_tag :span, 'Issue'.pluralize(issues_count),
-                        class: 'project-stat-name' %>
-      </a>
+                        class: 'stat-name' %>
+      <% end %>
 
-      <a href="javascript:void(0)" class="project-stat"
-         data-content-name="project_tasks_content">
-        <%= content_tag :span, tasks_count, class: 'project-stat-number' %>
+      <%= link_to "#project-tasks-#{project.id}",
+                  class: "stat",
+                  data: { content_name: "project_tasks_content" } do %>
+        <%= content_tag :span, tasks_count, class: 'stat-number' %>
         <%= content_tag :span, 'Task'.pluralize(tasks_count),
-                        class: 'project-stat-name' %>
-      </a>
+                        class: 'stat-name' %>
+      <% end %>
     </div>
 
     <div class="accordion-contents">
