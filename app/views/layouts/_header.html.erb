@@ -12,15 +12,14 @@
       </div>
 
       <div class="menu">
-        <%= menu_link 'Dashboard', main_app.root_path %>
-        <% if can?(:read, Category) %>
-          <%= menu_link 'Categories', main_app.categories_path %>
-        <% end %>
-        <% if can?(:read, User) %>
-          <%= menu_link 'Users', main_app.users_path %>
-        <% end %>
-        <% if can?(:read, IssueType) %>
-          <%= menu_link 'App Setup', main_app.issue_types_path %>
+        <% @project ||= @source if @source && @source.is_a?(Project)  %>
+        <% if @project %>
+          <% if can?(:create, new_issue(@project)) %>
+            <%= menu_link 'Report Issue', new_project_issue_path(@project) %>
+          <% end %>
+          <% if can?(:create, new_task(@project)) %>
+            <%= menu_link 'Plan Task', new_project_task_path(@project) %>
+          <% end %>
         <% end %>
       </div>
 

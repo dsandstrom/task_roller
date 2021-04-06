@@ -61,21 +61,8 @@ module ProjectsHelper
 
     def project_nav_links(project)
       [['Project', project], ['Issues', project_issues_path(project)],
-       ['Tasks', project_tasks_path(project)], new_project_issue_link(project),
-       new_project_task_link(project), edit_project_link(project)].compact
-    end
-
-    def new_project_issue_link(project)
-      return unless can?(:create, new_issue(project))
-
-      ['Report Issue', new_project_issue_path(project),
-       { class: 'create-link' }]
-    end
-
-    def new_project_task_link(project)
-      return unless can?(:create, new_task(project))
-
-      ['Plan Task', new_project_task_path(project), { class: 'create-link' }]
+       ['Tasks', project_tasks_path(project)],
+       edit_project_link(project)].compact
     end
 
     def edit_project_link(project)

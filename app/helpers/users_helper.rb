@@ -62,7 +62,6 @@ module UsersHelper
       end
     end
 
-    # TODO: rename Profile to Dashboard?
     def user_nav_links(user)
       links = [['Profile', user_path(user)],
                ['Reported Issues', user_issues_path(user)]]
