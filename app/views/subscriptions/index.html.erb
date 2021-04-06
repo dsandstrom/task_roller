@@ -1,64 +1,52 @@
-<%= enable_page_title 'Dashboard' %>
+<%= enable_page_title 'Subscriptions' %>
 
 <%= content_for :header do %>
-  <h1>Dashboard</h1>
+  <h1>Issue & Task Subscriptions</h1>
 
   <%= dashboard_nav %>
 <% end %>
 
 <div id="dashboard-<%= current_user.id %>" class="dashboard">
-  <%# TODO: show active subscriptions %>
-  <% if @active_assignments.none? && @open_tasks.none? && @unresolved_issues.none? %>
-      <p>
-        No active issues/tasks
-      </p>
-  <% end %>
+  <div class="columns">
+    <div class="second-column">
+      <div class="filters-wrapper">
+        <div class="heading-and-link">
+          <h3>Filters</h3>
 
-  <% if @active_assignments&.any? %>
-    <div class="user-assignments">
-      <header class="tasks-header">
-        <h2>Assigned Tasks</h2>
-        <p>
-          <%= link_to 'View All Assigned Tasks',
-                      user_assignments_path(current_user),
-                      class: 'button button-clear' %>
-        </p>
-      </header>
-      <div class="tasks">
-        <%= render @active_assignments %>
+          <% if searching? %>
+            <%= link_to 'reset', root_path %>
+          <% end %>
+        </div>
+
+
+        <%= form_tag root_path,
+                     method: :get, class: "search-form",
+                     id: "search_form" do %>
+          <%= render 'shared/string_filter_field' %>
+          <%= render 'searches/type_filter_field' %>
+          <%= render 'shared/order_filter_field' %>
+
+          <div class="actions">
+            <%= submit_tag 'Filter' %>
+          </div>
+        <% end %>
       </div>
     </div>
-  <% end %>
 
-  <% if @open_tasks.any? %>
-    <div class="user-tasks">
-      <header class="tasks-header">
-        <h2>Open Tasks</h2>
-        <p>
-          <%= link_to 'View All Created Tasks',
-                      user_tasks_path(current_user),
-                      class: 'button button-clear' %>
-        </p>
-      </header>
-      <div class="tasks">
-        <%= render @open_tasks %>
-      </div>
-    </div>
-  <% end %>
+    <div class="first-column">
+      <% if @subscriptions.any? || searching? %>
+        <%= render 'shared/page_links',
+                   collection: @subscriptions %>
 
-  <% if @unresolved_issues.any? %>
-    <div class="user-issues">
-      <header class="issues-header">
-        <h2>Unresolved Issues</h2>
-        <p>
-          <%= link_to 'View All Reported Issues',
-                      user_issues_path(current_user),
-                      class: 'button button-clear' %>
-        </p>
-      </header>
-      <div class="issues">
-        <%= render @unresolved_issues %>
-      </div>
+        <div class="issues tasks">
+          <%= render @subscriptions %>
+        </div>
+
+        <%= render 'shared/simple_page_links',
+                   collection: @subscriptions %>
+      <% else %>
+        <p class="no-task no-issue">None found</p>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>

@@ -24,7 +24,7 @@ module UsersHelper
   end
 
   def dashboard_nav
-    links = [['Dashboard', root_path]]
+    links = [['Subscriptions', root_path]]
     categories_links.each do |link|
       links << link
     end

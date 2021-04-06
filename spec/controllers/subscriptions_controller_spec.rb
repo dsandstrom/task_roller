@@ -8,14 +8,29 @@ RSpec.describe SubscriptionsController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
-        before { sign_in(current_user) }
+        before do
+          sign_in(current_user)
+          Fabricate(:issue_subscription, user: current_user)
+          Fabricate(:task_subscription, user: current_user)
+        end
 
-        context "when users" do
+        context "when type is nil" do
           it "returns a success response" do
-            Fabricate(:issue, user: current_user)
-            Fabricate(:task, user: current_user)
-            Fabricate(:task_assignee, assignee: current_user)
             get :index
+            expect(response).to be_successful
+          end
+        end
+
+        context "when type is 'issues'" do
+          it "returns a success response" do
+            get :index, params: { type: "issues" }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when type is 'tasks'" do
+          it "returns a success response" do
+            get :index, params: { type: "tasks" }
             expect(response).to be_successful
           end
         end

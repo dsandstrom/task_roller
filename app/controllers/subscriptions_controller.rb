@@ -4,15 +4,44 @@
 
 class SubscriptionsController < ApplicationController
   authorize_resource :issue_subscription
-  load_resource :active_assignments, through: :current_user, singleton: true
-  load_resource :open_tasks, through: :current_user, singleton: true
-  load_resource :unresolved_issues, through: :current_user, singleton: true
 
   def index
-    @unresolved_issues =
-      @unresolved_issues.all_visible.accessible_by(current_ability)
-    @open_tasks = @open_tasks.all_visible.accessible_by(current_ability)
-    @active_assignments =
-      @active_assignments.all_visible.accessible_by(current_ability)
+    @subscriptions = build.all_visible.accessible_by(current_ability)
+                          .filter_by(filters).page(params[:page])
   end
+
+  private
+
+    def filters
+      @filters ||= build_filters
+    end
+
+    def build
+      case filters[:type]
+      when 'issues'
+        build_issues
+      when 'tasks'
+        build_tasks
+      else
+        build_issues_and_tasks
+      end
+    end
+
+    def build_issues_and_tasks
+      current_user
+        .subscriptions
+        .preload(:project, :user, :issue, :assignees, project: :category)
+    end
+
+    def build_tasks
+      current_user
+        .subscribed_tasks
+        .preload(:project, :user, :issue, :assignees, project: :category)
+    end
+
+    def build_issues
+      current_user
+        .subscribed_issues
+        .preload(:project, :user, project: :category)
+    end
 end
