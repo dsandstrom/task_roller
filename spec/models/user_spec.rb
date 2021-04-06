@@ -1351,4 +1351,34 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#subscriptions" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:task) { Fabricate(:task) }
+    let(:issue) { Fabricate(:issue) }
+
+    context "when no task_subscriptions" do
+      before { Fabricate(:task_subscription, task: task) }
+
+      it "returns []" do
+        expect(user.subscriptions).to eq([])
+      end
+    end
+
+    context "when a task_subscription" do
+      before { Fabricate(:task_subscription, task: task, user: user) }
+
+      it "returns task" do
+        expect(user.subscriptions.map(&:id)).to eq([task.id])
+      end
+    end
+
+    context "when a issue_subscription" do
+      before { Fabricate(:issue_subscription, issue: issue, user: user) }
+
+      it "returns issue" do
+        expect(user.subscriptions.map(&:id)).to eq([issue.id])
+      end
+    end
+  end
 end

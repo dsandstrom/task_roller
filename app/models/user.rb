@@ -300,6 +300,13 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(OPENS_TASKS_ORDER)
   end
 
+  def subscriptions
+    query = '(search_results.class_name = ? AND search_results.id IN (?)) OR '\
+            '(search_results.class_name = ? AND search_results.id IN (?))'
+    SearchResult.where(query, 'Task', subscribed_tasks.map(&:id),
+                       'Issue', subscribed_issues.map(&:id))
+  end
+
   # block non-employees from devise
   def active_for_authentication?
     super && employee?
