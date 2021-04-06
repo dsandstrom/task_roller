@@ -7,11 +7,11 @@
         <h3>Filters</h3>
 
         <% if searching? %>
-          <%= link_to 'reset', @category %>
+          <%= link_to 'reset', @project %>
         <% end %>
       </div>
 
-      <%= form_tag @category,
+      <%= form_tag @project,
                    method: :get, class: "search-form",
                    id: "search_form" do %>
         <%= render 'shared/string_filter_field' %>
@@ -22,7 +22,6 @@
           <%= submit_tag 'Filter' %>
         </div>
       <% end %>
-
     </div>
   </div>
 
