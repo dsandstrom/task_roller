@@ -19,7 +19,6 @@
   .no-project,
   .new-project {
     margin-bottom: 1rem;
-    border: 1px solid $light-gray;
   }
 
   .category,
@@ -30,6 +29,7 @@
     position: relative;
     flex-direction: column;
     justify-content: space-between;
+    border: 1px solid $light-gray;
     text-align: center;
 
     .button {
