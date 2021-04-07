@@ -187,6 +187,7 @@
   }
 }
 
+.category-stats,
 .project-stats {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -235,6 +236,30 @@
     &:hover {
       .stat-number {
         color: $color-danger-hover;
+      }
+    }
+  }
+
+  .blue-link {
+    .stat-number {
+      color: $light-blue;
+    }
+
+    &:hover {
+      .stat-number {
+        color: darken($light-blue, 12%);
+      }
+    }
+  }
+
+  .purple-link {
+    .stat-number {
+      color: $lavender;
+    }
+
+    &:hover {
+      .stat-number {
+        color: darken($lavender, 12%);
       }
     }
   }

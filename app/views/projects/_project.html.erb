@@ -24,6 +24,8 @@ tasks =
 tasks_count = tasks.count
 open_tasks_count = tasks.all_open.count
 in_progress_tasks_count = tasks.all_in_progress.count
+assigned_tasks_count = tasks.all_assigned.count
+in_review_tasks_count = tasks.all_in_review.count
 closed_tasks_count = tasks.all_closed.count
 
 issues_subscription =
@@ -77,22 +79,19 @@ tasks_subscription =
         <% if issues_count > 0 %>
           <p class="project-stats">
             <%= link_to project_issues_path(project, issue_status: 'open'),
-                        class: "stat green-link",
-                        data: { content_name: "project_issues_content" } do %>
+                        class: "stat green-link" do %>
               <%= content_tag :span, open_issues_count, class: 'stat-number' %>
               <%= content_tag :span, 'Open', class: 'stat-name' %>
             <% end %>
 
             <%= link_to project_issues_path(project, issue_status: 'being_worked_on'),
-                        class: "stat yellow-link",
-                        data: { content_name: "project_issues_content" } do %>
+                        class: "stat yellow-link" do %>
               <%= content_tag :span, being_worked_on_issues_count, class: 'stat-number' %>
               <%= content_tag :span, 'Working On', class: 'stat-name' %>
             <% end %>
 
             <%= link_to project_issues_path(project, issue_status: 'closed'),
-                        class: "stat red-link",
-                        data: { content_name: "project_issues_content" } do %>
+                        class: "stat red-link" do %>
               <%= content_tag :span, closed_issues_count, class: 'stat-number' %>
               <%= content_tag :span, 'Closed', class: 'stat-name' %>
             <% end %>
@@ -105,7 +104,6 @@ tasks_subscription =
                            class: 'button button-clear' %>
           </p>
         <% else %>
-
           <p>
             <%= link_to_if can?(:read, project),
                            'Visit Issues',
@@ -121,22 +119,31 @@ tasks_subscription =
         <% if tasks_count > 0 %>
           <p class="project-stats">
             <%= link_to project_tasks_path(project, task_status: 'open'),
-                        class: "stat green-link",
-                        data: { content_name: "project_tasks_content" } do %>
+                        class: "stat green-link" do %>
               <%= content_tag :span, open_tasks_count, class: 'stat-number' %>
               <%= content_tag :span, 'Open', class: 'stat-name' %>
             <% end %>
 
+            <%= link_to project_tasks_path(project, task_status: 'assigned'),
+                        class: "stat blue-link" do %>
+              <%= content_tag :span, assigned_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Assigned', class: 'stat-name' %>
+            <% end %>
+
             <%= link_to project_tasks_path(project, task_status: 'in_progress'),
-                        class: "stat yellow-link",
-                        data: { content_name: "project_tasks_content" } do %>
+                        class: "stat yellow-link" do %>
               <%= content_tag :span, in_progress_tasks_count, class: 'stat-number' %>
               <%= content_tag :span, 'Progress', class: 'stat-name' %>
             <% end %>
 
+            <%= link_to project_tasks_path(project, task_status: 'in_review'),
+                        class: "stat purple-link" do %>
+              <%= content_tag :span, in_review_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Review', class: 'stat-name' %>
+            <% end %>
+
             <%= link_to project_tasks_path(project, task_status: 'closed'),
-                        class: "stat red-link",
-                        data: { content_name: "project_tasks_content" } do %>
+                        class: "stat red-link" do %>
               <%= content_tag :span, closed_tasks_count, class: 'stat-number' %>
               <%= content_tag :span, 'Closed', class: 'stat-name' %>
             <% end %>

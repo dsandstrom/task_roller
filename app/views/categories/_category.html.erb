@@ -7,18 +7,30 @@ projects =
     category.projects
   end
 projects_count = projects.count
-issues_count =
+issues =
   if category.visible?
-    category.issues.all_visible.accessible_by(current_ability).count
+    category.issues.all_visible
   else
-    category.issues.count
+    category.issues
   end
-tasks_count =
+issues_count = issues.count
+open_issues_count = issues.all_open.count
+being_worked_on_issues_count = issues.all_being_worked_on.count
+closed_issues_count = issues.all_closed.count
+
+tasks =
   if category.visible?
-    category.tasks.all_visible.accessible_by(current_ability).count
+    category.tasks.all_visible
   else
-    category.tasks.count
+    category.tasks
   end
+tasks_count = tasks.count
+open_tasks_count = tasks.all_open.count
+in_progress_tasks_count = tasks.all_in_progress.count
+assigned_tasks_count = tasks.all_assigned.count
+in_review_tasks_count = tasks.all_in_review.count
+closed_tasks_count = tasks.all_closed.count
+
 issues_subscription =
   category.category_issues_subscriptions
           .find_or_initialize_by(user_id: current_user.id)
@@ -84,25 +96,97 @@ end
       </div>
 
       <div name="category_issues_content" class="accordion-content">
-        <%= render issues_subscription, button_class: 'button-clear' %>
+        <% if issues_count > 0 %>
+          <p class="category-stats">
+            <%= link_to category_issues_path(category, issue_status: 'open'),
+                        class: "stat green-link" do %>
+              <%= content_tag :span, open_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Open', class: 'stat-name' %>
+            <% end %>
 
-        <p>
-          <%= link_to_if can?(:read, category),
-                         'View All',
-                         category_issues_path(category),
-                         class: 'button button-clear' %>
-        </p>
+            <%= link_to category_issues_path(category, issue_status: 'being_worked_on'),
+                        class: "stat yellow-link" do %>
+              <%= content_tag :span, being_worked_on_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Working On', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to category_issues_path(category, issue_status: 'closed'),
+                        class: "stat red-link" do %>
+              <%= content_tag :span, closed_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Closed', class: 'stat-name' %>
+            <% end %>
+          </p>
+
+          <p>
+            <%= link_to_if can?(:read, category),
+                           'View All Issues',
+                           category_issues_path(category),
+                           class: 'button button-clear' %>
+          </p>
+        <% else %>
+
+          <p>
+            <%= link_to_if can?(:read, category),
+                           'Visit Issues',
+                           category_tasks_path(category),
+                           class: 'button button-clear' %>
+          </p>
+        <% end %>
+
+        <%= render issues_subscription, button_class: 'button-clear' %>
       </div>
 
       <div name="category_tasks_content" class="accordion-content">
-        <%= render tasks_subscription, button_class: 'button-clear' %>
+        <% if tasks_count > 0 %>
+          <p class="category-stats">
+            <%= link_to category_tasks_path(category, task_status: 'open'),
+                        class: "stat green-link" do %>
+              <%= content_tag :span, open_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Open', class: 'stat-name' %>
+            <% end %>
 
-        <p>
-          <%= link_to_if can?(:read, category),
-                         'View All',
-                         category_tasks_path(category),
-                         class: 'button button-clear' %>
-        </p>
+            <%= link_to category_tasks_path(category, task_status: 'assigned'),
+                        class: "stat blue-link" do %>
+              <%= content_tag :span, assigned_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Assigned', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to category_tasks_path(category, task_status: 'in_progress'),
+                        class: "stat yellow-link" do %>
+              <%= content_tag :span, in_progress_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Progress', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to category_tasks_path(category, task_status: 'in_review'),
+                        class: "stat purple-link" do %>
+              <%= content_tag :span, in_review_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Review', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to category_tasks_path(category, task_status: 'closed'),
+                        class: "stat red-link" do %>
+              <%= content_tag :span, closed_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Closed', class: 'stat-name' %>
+            <% end %>
+          </p>
+
+          <p>
+            <%= link_to_if can?(:read, category),
+                           'View All Tasks',
+                           category_tasks_path(category),
+                           class: 'button button-clear' %>
+          </p>
+        <% else %>
+
+          <p>
+            <%= link_to_if can?(:read, category),
+                           'Visit Tasks',
+                           category_tasks_path(category),
+                           class: 'button button-clear' %>
+          </p>
+        <% end %>
+
+        <%= render tasks_subscription, button_class: 'button-clear' %>
       </div>
     </div>
   </div>
