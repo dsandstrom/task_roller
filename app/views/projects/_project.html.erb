@@ -4,12 +4,16 @@ unless category
   return content_tag(:p, content_tag(:code, 'App Error: No Category'))
 end
 
-issues_count =
+issues =
   if project.totally_visible?
-    project.issues.all_visible.count
+    project.issues.all_visible
   else
-    project.issues.count
+    project.issues
   end
+issues_count = issues.count
+open_issues_count = issues.all_open.count
+being_worked_on_issues_count = issues.all_being_worked_on.count
+closed_issues_count = issues.all_closed.count
 tasks_count =
   if project.totally_visible?
     project.tasks.all_visible.count
@@ -64,7 +68,30 @@ tasks_subscription =
 
     <div class="accordion-contents">
       <div name="project_issues_content" class="accordion-content active">
-        <%= render issues_subscription, button_class: 'button-clear' %>
+        <% if issues_count > 0 %>
+          <p class="project-stats">
+            <%= link_to project_issues_path(project, issue_status: 'open'),
+                        class: "stat green-link",
+                        data: { content_name: "project_issues_content" } do %>
+              <%= content_tag :span, open_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Open', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to project_issues_path(project, issue_status: 'being_worked_on'),
+                        class: "stat yellow-link",
+                        data: { content_name: "project_issues_content" } do %>
+              <%= content_tag :span, being_worked_on_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Working On', class: 'stat-name' %>
+            <% end %>
+
+            <%= link_to project_issues_path(project, issue_status: 'closed'),
+                        class: "stat red-link",
+                        data: { content_name: "project_issues_content" } do %>
+              <%= content_tag :span, closed_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Closed', class: 'stat-name' %>
+            <% end %>
+          </p>
+        <% end %>
 
         <p>
           <%= link_to_if can?(:read, project),
@@ -72,6 +99,8 @@ tasks_subscription =
                          project_issues_path(project),
                          class: 'button button-clear' %>
         </p>
+
+        <%= render issues_subscription, button_class: 'button-clear' %>
       </div>
 
       <div name="project_tasks_content" class="accordion-content">
