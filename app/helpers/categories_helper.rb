@@ -20,8 +20,7 @@ module CategoriesHelper
   def category_page?(category)
     pages = [category_path(category), category_tasks_path(category),
              category_issues_path(category), category_path(category),
-             category_projects_path(category),
-             archived_category_projects_path(category)]
+             category_projects_path(category)]
     pages.any? { |path| current_page?(path) }
   end
 
@@ -46,15 +45,6 @@ module CategoriesHelper
         else
           'Categories'
         end
-    end
-
-    def categories_links
-      if can?(:read, invisible_category)
-        [['Active Categories', categories_path],
-         ['Archived Categories', archived_categories_path]]
-      else
-        [['Categories', categories_path]]
-      end
     end
 
     def category_page_title(category)
@@ -106,11 +96,11 @@ module CategoriesHelper
     end
 
     def category_breadcrumb_pages(category)
-      if category.visible?
-        [['Categories', categories_path]]
-      else
-        [['Archived Categories', archived_categories_path]]
+      pages = [['Categories', categories_path]]
+      unless category.visible?
+        pages << ['Archived Categories', archived_categories_path]
       end
+      pages
     end
 
     def category_header_first_column(category)

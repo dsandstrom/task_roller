@@ -25,9 +25,7 @@ module UsersHelper
 
   def dashboard_nav
     links = [['Subscriptions', root_path]]
-    categories_links.each do |link|
-      links << link
-    end
+    links << ['Categories', categories_path]
     links << ['Users', users_path]
     links << ['App Setup', issue_types_path] if can?(:read, IssueType)
 

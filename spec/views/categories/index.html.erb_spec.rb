@@ -35,6 +35,24 @@ RSpec.describe "categories/index", type: :view do
 
       expect(rendered).to have_link(nil, href: new_category_path)
     end
+
+    context "when an archived category" do
+      it "renders archived categories link" do
+        Fabricate(:invisible_category)
+
+        render
+
+        expect(rendered).to have_link(nil, href: archived_categories_path)
+      end
+    end
+
+    context "when no archived categories" do
+      it "doesn't render archived categories link" do
+        render
+
+        expect(rendered).not_to have_link(nil, href: archived_categories_path)
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -58,6 +76,24 @@ RSpec.describe "categories/index", type: :view do
       render template: subject, layout: "layouts/application"
 
       expect(rendered).to have_link(nil, href: new_category_path)
+    end
+
+    context "when an archived category" do
+      it "renders archived categories link" do
+        Fabricate(:invisible_category)
+
+        render
+
+        expect(rendered).to have_link(nil, href: archived_categories_path)
+      end
+    end
+
+    context "when no archived categories" do
+      it "doesn't render archived categories link" do
+        render
+
+        expect(rendered).not_to have_link(nil, href: archived_categories_path)
+      end
     end
 
     context "when subscribed to second category" do
@@ -125,6 +161,14 @@ RSpec.describe "categories/index", type: :view do
         render template: subject, layout: "layouts/application"
 
         expect(rendered).not_to have_link(nil, href: new_category_path)
+      end
+
+      it "doesn't render archived categories link" do
+        Fabricate(:invisible_category)
+
+        render
+
+        expect(rendered).not_to have_link(nil, href: archived_categories_path)
       end
     end
   end
