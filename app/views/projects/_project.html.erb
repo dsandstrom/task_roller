@@ -64,23 +64,7 @@ tasks_subscription =
 
     <div class="accordion-contents">
       <div name="project_issues_content" class="accordion-content active">
-        <% if issues_subscription.persisted? %>
-          <% if can?(:destroy, issues_subscription) %>
-            <% url = project_issues_subscription_path(project,
-                                                       issues_subscription) %>
-
-            <%= link_to ' ', url,
-                        method: :delete,
-                        class: 'button button-success button-clear button-unsubscribe' %>
-          <% end %>
-        <% elsif project&.category&.subscribed_to_issues?(current_user) %>
-          <%= link_to 'subscribed', 'javascript:void(0)',
-                      class: 'button button-success button-clear button-disabled' %>
-        <% elsif can?(:create, issues_subscription) %>
-          <%= link_to 'auto-subscribe',
-                      project_issues_subscriptions_path(project),
-                      method: :post, class: 'button button-clear' %>
-        <% end %>
+        <%= render issues_subscription, button_class: 'button-clear' %>
 
         <p>
           <%= link_to_if can?(:read, project),
@@ -91,23 +75,7 @@ tasks_subscription =
       </div>
 
       <div name="project_tasks_content" class="accordion-content">
-        <% if tasks_subscription.persisted? %>
-          <% if can?(:destroy, tasks_subscription) %>
-            <% url = project_tasks_subscription_path(project,
-                                                       tasks_subscription) %>
-
-            <%= link_to ' ', url,
-                        method: :delete,
-                        class: 'button button-success button-clear button-unsubscribe' %>
-          <% end %>
-        <% elsif project&.category&.subscribed_to_tasks?(current_user) %>
-          <%= link_to 'subscribed', 'javascript:void(0)',
-                      class: 'button button-success button-clear button-disabled' %>
-        <% elsif can?(:create, tasks_subscription) %>
-          <%= link_to 'auto-subscribe',
-                      project_tasks_subscriptions_path(project),
-                      method: :post, class: 'button button-clear' %>
-        <% end %>
+        <%= render tasks_subscription, button_class: 'button-clear' %>
 
         <p>
           <%= link_to_if can?(:read, project),

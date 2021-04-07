@@ -84,20 +84,7 @@ end
       </div>
 
       <div name="category_issues_content" class="accordion-content">
-        <% if issues_subscription.persisted? %>
-          <% if can?(:destroy, issues_subscription) %>
-            <% url = category_issues_subscription_path(category,
-                                                       issues_subscription) %>
-
-            <%= link_to ' ', url,
-                        method: :delete,
-                        class: 'button button-success button-clear button-unsubscribe' %>
-          <% end %>
-        <% elsif can?(:create, issues_subscription) %>
-          <%= link_to 'auto-subscribe',
-                      category_issues_subscriptions_path(category),
-                      method: :post, class: 'button button-clear' %>
-        <% end %>
+        <%= render issues_subscription, button_class: 'button-clear' %>
 
         <p>
           <%= link_to_if can?(:read, category),
@@ -108,20 +95,7 @@ end
       </div>
 
       <div name="category_tasks_content" class="accordion-content">
-        <% if tasks_subscription.persisted? %>
-          <% if can?(:destroy, tasks_subscription) %>
-            <% url = category_tasks_subscription_path(category,
-                                                       tasks_subscription) %>
-
-            <%= link_to ' ', url,
-                        method: :delete,
-                        class: 'button button-success button-clear button-unsubscribe' %>
-          <% end %>
-        <% elsif can?(:create, tasks_subscription) %>
-          <%= link_to 'auto-subscribe',
-                      category_tasks_subscriptions_path(category),
-                      method: :post, class: 'button button-clear' %>
-        <% end %>
+        <%= render tasks_subscription, button_class: 'button-clear' %>
 
         <p>
           <%= link_to_if can?(:read, category),

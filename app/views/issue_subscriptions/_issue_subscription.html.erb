@@ -3,9 +3,11 @@
 
   <%= link_to '', issue_issue_subscription_path(issue, issue_subscription),
               method: :delete,
-              class: 'button button-success button-unsubscribe' %>
+              class: 'button button-success button-unsubscribe',
+              data: { disable_with: '' } %>
 <% elsif issue && can?(:create, issue_subscription) %>
   <%= link_to 'Subscribe to issue',
               issue_issue_subscriptions_path(issue),
-              method: :post, class: 'button button-outline' %>
+              method: :post, class: 'button button-outline',
+              data: { disable_with: 'Subscribing' } %>
 <% end %>

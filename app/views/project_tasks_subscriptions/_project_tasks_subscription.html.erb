@@ -1,20 +1,25 @@
 <%
   project ||= project_tasks_subscription.project
   return unless project
+
+  button_class ||= ''
+  button_class = "button #{button_class}"
 %>
 
 <% if project_tasks_subscription.persisted? %>
   <% return unless can?(:destroy, project_tasks_subscription) %>
 
-  <%= link_to ' Tasks',
+  <%= link_to 'Auto-Subscribed',
               project_tasks_subscription_path(project, project_tasks_subscription),
               method: :delete,
-              class: 'button button-success button-unsubscribe' %>
+              class: "#{button_class} button-success button-disble-subscribe",
+              data: { disable_with: 'Unsubscribing' } %>
 <% elsif project&.category&.subscribed_to_tasks?(current_user) %>
   <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
-              class: 'button button-success button-disabled' %>
+              class: "#{button_class} button-success button-disabled" %>
 <% elsif can?(:create, project_tasks_subscription) %>
-  <%= link_to 'Subscribe to Tasks',
+  <%= link_to 'Auto-Subscribe to New Tasks',
               project_tasks_subscriptions_path(project),
-              method: :post, class: 'button button-outline' %>
+              method: :post, class: button_class,
+              data: { disable_with: 'Subscribing' } %>
 <% end %>
