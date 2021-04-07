@@ -20,7 +20,8 @@ module CategoriesHelper
   def category_page?(category)
     pages = [category_path(category), category_tasks_path(category),
              category_issues_path(category), category_path(category),
-             category_projects_path(category)]
+             category_projects_path(category),
+             archived_category_projects_path(category)]
     pages.any? { |path| current_page?(path) }
   end
 

@@ -193,6 +193,10 @@
   align-items: baseline;
   column-gap: .5rem;
 
+  .stat {
+    font-size: 1.3rem;
+  }
+
   a:hover {
     .stat-name {
       color: $dark-gray;
