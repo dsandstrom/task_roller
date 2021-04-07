@@ -229,10 +229,14 @@
 }
 
 .issues-header,
-.tasks-header {
+.tasks-header,
+.category-projects-header {
   margin: 1rem 0 0;
 
-  p,
+  p {
+    margin-bottom: 1rem;
+  }
+
   .button {
     margin: 0;
   }
@@ -240,7 +244,8 @@
 
 @include breakpoint(small only) {
   .issues-header,
-  .tasks-header {
+  .tasks-header ,
+  .category-projects-header {
     .button {
       padding-right: 0;
       padding-left: 0;
@@ -250,9 +255,14 @@
 
 @include breakpoint(medium up) {
   .issues-header,
-  .tasks-header {
+  .tasks-header ,
+  .category-projects-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
   }
 }

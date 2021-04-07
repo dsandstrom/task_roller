@@ -3,6 +3,14 @@
 <% unless searching? %>
   <header class="category-projects-header">
     <h2>Projects</h2>
+    <% if @category.visible? && can?(:read, invisible_project(@category)) &&
+          @category.projects.all_invisible.any? %>
+      <p>
+        <%= link_to 'View Archived Projects',
+                    archived_category_projects_path(@category),
+                    class: 'button button-clear' %>
+      </p>
+    <% end %>
   </header>
 
   <div class="category-projects">

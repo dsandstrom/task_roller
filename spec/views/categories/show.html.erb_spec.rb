@@ -40,6 +40,28 @@ RSpec.describe "categories/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_url)
       end
 
+      context "when category has an archived project" do
+        before { Fabricate(:invisible_project, category: category) }
+
+        it "renders archived projects link" do
+          render
+
+          url = archived_category_projects_path(@category)
+          expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "when category doesn't have an archived project" do
+        before { Fabricate(:invisible_project) }
+
+        it "doesn't render archived projects link" do
+          render
+
+          url = archived_category_projects_path(@category)
+          expect(rendered).not_to have_link(nil, href: url)
+        end
+      end
+
       it "renders a list of issues" do
         other_issue =
           Fabricate(:issue, project: Fabricate(:project, category: category))
@@ -146,6 +168,15 @@ RSpec.describe "categories/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           expect(rendered).not_to have_link(nil, href: edit_url)
+        end
+
+        it "doesn't render archived projects link" do
+          Fabricate(:invisible_project, category: category)
+
+          render
+
+          url = archived_category_projects_path(category)
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         it "renders a list of issues" do

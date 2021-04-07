@@ -88,15 +88,7 @@ module CategoriesHelper
       [['Category', category_path(category)],
        ['Issues', category_issues_path(category)],
        ['Tasks', category_tasks_path(category)],
-       archived_projects_link(category), edit_category_link(category)].compact
-    end
-
-    def archived_projects_link(category)
-      return unless category.visible? && can?(:read, invisible_category) &&
-                    category.projects.all_invisible.any?
-
-      ['Archived Projects', archived_category_projects_path(category),
-       { class: 'secondary-link' }]
+       edit_category_link(category)].compact
     end
 
     def edit_category_link(category)
@@ -107,6 +99,10 @@ module CategoriesHelper
 
     def invisible_category
       @invisible_category ||= Category.new(visible: false)
+    end
+
+    def invisible_project(category)
+      category.projects.build(visible: false)
     end
 
     def category_breadcrumb_pages(category)
