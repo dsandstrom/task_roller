@@ -265,7 +265,7 @@ body {
   }
 }
 
-@include breakpoint(large up) {
+@include breakpoint(medium up) {
   .columns {
     display: flex;
     margin: 0 -1rem;
