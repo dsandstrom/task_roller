@@ -1,6 +1,6 @@
 <%= category_header @category %>
 
-<% unless searching? %>
+<% unless searching? || params[:page].present? %>
   <header class="category-projects-header">
     <h2>Projects</h2>
     <% if @category.visible? && can?(:read, invisible_project(@category)) &&
