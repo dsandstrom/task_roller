@@ -1,10 +1,12 @@
 .categories,
 .category-projects,
-.projects {
+.projects,
+.users {
   margin-bottom: 4rem;
 
   .category-name,
   .project-name,
+  .user-name,
   .category-tags,
   .project-tags,
   .category-counts,
@@ -17,14 +19,18 @@
   .new-category,
   .project,
   .no-project,
-  .new-project {
+  .new-project,
+  .user,
+  .new-user {
     margin-bottom: 1rem;
   }
 
   .category,
   .project,
   .new-category,
-  .new-project {
+  .new-project,
+  .user,
+  .new-user {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -83,7 +89,8 @@
   }
 
   .category-name,
-  .project-name {
+  .project-name,
+  .user-name {
     position: relative;
     padding: 2rem 2.5rem;
     border-bottom: 1px solid $light-gray;
@@ -106,7 +113,8 @@
   }
 
   .new-category,
-  .new-project {
+  .new-project,
+  .new-user {
     a {
       display: flex;
       flex-direction: column;
@@ -120,6 +128,18 @@
       margin-top: 1rem;
       margin-bottom: -1rem;
       font-size: 3rem;
+    }
+  }
+
+  .user-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem 1rem;
+
+    > p:last-child {
+      margin: 0;
     }
   }
 }
@@ -148,7 +168,8 @@
 }
 
 .category-buttons,
-.project-buttons {
+.project-buttons,
+.user-buttons {
   display: flex;
   position: relative;
   z-index: 1;
@@ -237,24 +258,39 @@
     display: block;
     height: 100%;
   }
+
+  .button {
+    line-height: 1.5;
+    white-space: normal;
+
+  }
 }
 
 @include breakpoint(medium up) {
   .categories,
   .category-projects,
-  .projects {
+  .projects,
+  .users {
     display: grid;
     grid-column-gap: 2rem;
     grid-template-columns: 1fr 1fr;
 
     .category,
     .project,
+    .user,
     .new-category,
-    .new-project {
+    .new-project,
+    .new-user {
       margin-bottom: 2rem;
       padding: 0;
       border-width: 1px;
       border-radius: $border-radius;
+    }
+
+    .new-category,
+    .new-project,
+    .new-user {
+      order: 1;
     }
   }
 }
@@ -262,7 +298,8 @@
 @include breakpoint(large up) {
   .categories,
   .category-projects,
-  .projects {
+  .projects,
+  .users {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }

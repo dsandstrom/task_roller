@@ -1,16 +1,18 @@
-<div id="user-<%= user.id %>" class="user">
+<section id="user-<%= user.id %>" class="user">
   <h3 class="user-name">
     <%= link_to_if can?(:read, user), user.name, user %>
   </h3>
 
-  <p class="user-email">
-    <code><%= user.email %></code>
-  </p>
+  <main class="user-content">
+    <p class="user-email">
+      <code><%= user.email %></code>
+    </p>
+  </main>
 
   <% if can?(:update, user) %>
-    <div class="user-links">
-      <%= link_to 'Edit', edit_user_path(user),
-                  class: 'button button-clear' %>
+    <div class="user-buttons">
+      <%= link_to 'Settings', edit_user_path(user),
+                  class: 'button button-outline' %>
     </div>
   <% end %>
-</div>
+</section>
