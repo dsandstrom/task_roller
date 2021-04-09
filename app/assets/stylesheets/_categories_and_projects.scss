@@ -337,12 +337,6 @@
     display: block;
     height: 100%;
   }
-
-  .button {
-    line-height: 1.5;
-    white-space: normal;
-
-  }
 }
 
 @include breakpoint(medium up) {
