@@ -1,9 +1,6 @@
 <%
   project ||= project_issues_subscription.project
   return unless project
-
-  button_class ||= ''
-  button_class = "button #{button_class}"
 %>
 
 <% if project_issues_subscription.persisted? %>
@@ -12,16 +9,25 @@
   <% url = project_issues_subscription_path(project,
                                             project_issues_subscription) %>
 
-  <%= link_to 'Auto-Subscribed', url,
-              method: :delete,
-              class: "#{button_class} button-success button-disable-subscribe",
-              data: { disable_with: 'Unsubscribing' } %>
+  <div class="button-wrapper">
+    <%= link_to 'Subscribed',
+                url,
+                method: :delete,
+                class: 'button button-success button-disabled' %>
+    <%= link_to url,
+                method: :delete,
+                class: 'button button-success button-unsubscribe button-icon',
+                title: 'Unsubscribe',
+                data: { disable_with: '...' } do %>
+      <%= icon('close') %>
+    <% end %>
+  </div>
 <% elsif project&.category&.subscribed_to_issues?(current_user) %>
   <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
-              class: "#{button_class} button-success button-disabled" %>
+              class: "button button-success button-clear button-wrap button-disabled" %>
 <% elsif can?(:create, project_issues_subscription) %>
   <%= link_to 'Auto-Subscribe to New Issues',
               project_issues_subscriptions_path(project),
-              method: :post, class: button_class,
+              method: :post, class: 'button button-clear button-wrap',
               data: { disable_with: 'Subscribing' } %>
 <% end %>
