@@ -139,7 +139,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
         end
 
-        context "when js request", focus: true do
+        context "when js request" do
           context "when their issue_subscription" do
             it "destroys the requested issue_subscription" do
               issue_subscription =

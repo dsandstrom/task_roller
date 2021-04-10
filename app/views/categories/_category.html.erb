@@ -133,7 +133,10 @@ end
           </p>
         <% end %>
 
-        <%= render issues_subscription %>
+        <%= content_tag :section,
+                        render(issues_subscription),
+                        class: "issues-subscription-wrapper",
+                        id: "issues_subscription_for_#{category.id}" %>
       </div>
 
       <div name="category_tasks_content" class="accordion-content">
@@ -186,7 +189,10 @@ end
           </p>
         <% end %>
 
-        <%= render tasks_subscription %>
+        <%= content_tag :section,
+                        render(tasks_subscription),
+                        class: "tasks-subscription-wrapper",
+                        id: "tasks_subscription_for_#{category.id}" %>
       </div>
     </div>
   </div>

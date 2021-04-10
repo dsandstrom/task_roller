@@ -139,7 +139,7 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
               expect do
                 delete :destroy, params: { project_id: project.to_param,
                                            id: subscription.to_param }
-              end.not_to change(IssueSubscription, :count)
+              end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "should be unauthorized" do
@@ -185,7 +185,7 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
                 delete :destroy, params: { project_id: project.to_param,
                                            id: subscription.to_param },
                                  xhr: true
-              end.not_to change(IssueSubscription, :count)
+              end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "should be unauthorized" do

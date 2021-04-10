@@ -18,6 +18,7 @@
                 method: :delete,
                 class: 'button button-success button-unsubscribe button-icon',
                 title: 'Unsubscribe',
+                remote: true,
                 data: { disable_with: '...' } do %>
       <%= icon('close') %>
     <% end %>
@@ -26,5 +27,6 @@
   <%= link_to 'Auto-Subscribe to New Issues',
               category_issues_subscriptions_path(category),
               method: :post, class: 'button button-wrap button-clear',
+              remote: true,
               data: { disable_with: 'Subscribing' } %>
 <% end %>
