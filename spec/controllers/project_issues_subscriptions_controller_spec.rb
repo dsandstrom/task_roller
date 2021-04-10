@@ -29,35 +29,73 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "with valid params" do
-          it "creates a new ProjectIssuesSubscription" do
-            expect do
+        context "when html request" do
+          context "with valid params" do
+            it "creates a new ProjectIssuesSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param }
+              end.to change(current_user.project_issues_subscriptions, :count)
+                .by(1)
+            end
+
+            it "redirects to the requested project" do
               post :create, params: { project_id: project.to_param }
-            end.to change(current_user.project_issues_subscriptions, :count)
-              .by(1)
+              expect(response).to redirect_to(project)
+            end
           end
 
-          it "redirects to the requested project" do
-            post :create, params: { project_id: project.to_param }
-            expect(response).to redirect_to(project)
+          context "with invalid params" do
+            before do
+              Fabricate(:project_issues_subscription, project: project,
+                                                      user: current_user)
+            end
+
+            it "doesn't create a new ProjectIssuesSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param }
+              end.not_to change(ProjectIssuesSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "with invalid params" do
-          before do
-            Fabricate(:project_issues_subscription, project: project,
-                                                    user: current_user)
+        context "when js request" do
+          context "with valid params" do
+            it "creates a new ProjectIssuesSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param },
+                              xhr: true
+              end.to change(current_user.project_issues_subscriptions, :count)
+                .by(1)
+            end
+
+            it "renders :show" do
+              post :create, params: { project_id: project.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
 
-          it "doesn't create a new ProjectIssuesSubscription" do
-            expect do
-              post :create, params: { project_id: project.to_param }
-            end.not_to change(ProjectIssuesSubscription, :count)
-          end
+          context "with invalid params" do
+            before do
+              Fabricate(:project_issues_subscription, project: project,
+                                                      user: current_user)
+            end
 
-          it "renders new" do
-            post :create, params: { project_id: project.to_param }
-            expect(response).to be_successful
+            it "doesn't create a new ProjectIssuesSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param },
+                              xhr: true
+              end.not_to change(ProjectIssuesSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { project_id: project.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
         end
       end
@@ -71,44 +109,93 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their project_issues_subscription" do
-          it "destroys the requested project_issues_subscription" do
-            subscription =
-              Fabricate(:project_issues_subscription, project: project,
-                                                      user: current_user)
-            expect do
+        context "when html request" do
+          context "when their project_issues_subscription" do
+            it "destroys the requested project_issues_subscription" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project,
+                                                        user: current_user)
+              expect do
+                delete :destroy, params: { project_id: project.to_param,
+                                           id: subscription.to_param }
+              end.to change(current_user.project_issues_subscriptions, :count)
+                .by(-1)
+            end
+
+            it "redirects to the requested project" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project,
+                                                        user: current_user)
               delete :destroy, params: { project_id: project.to_param,
                                          id: subscription.to_param }
-            end.to change(current_user.project_issues_subscriptions, :count)
-              .by(-1)
+              expect(response).to redirect_to(project)
+            end
           end
 
-          it "redirects to the requested project" do
-            subscription =
-              Fabricate(:project_issues_subscription, project: project,
-                                                      user: current_user)
-            delete :destroy, params: { project_id: project.to_param,
-                                       id: subscription.to_param }
-            expect(response).to redirect_to(project)
+          context "when someone else's project_issues_subscription" do
+            it "doesn't destroys the requested project_issues_subscription" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project)
+              expect do
+                delete :destroy, params: { project_id: project.to_param,
+                                           id: subscription.to_param }
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project)
+              delete :destroy, params: { project_id: project.to_param,
+                                         id: subscription.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 
-        context "when someone else's project_issues_subscription" do
-          it "doesn't destroys the requested project_issues_subscription" do
-            subscription =
-              Fabricate(:project_issues_subscription, project: project)
-            expect do
+        context "when js request" do
+          context "when their project_issues_subscription" do
+            it "destroys the requested project_issues_subscription" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project,
+                                                        user: current_user)
+              expect do
+                delete :destroy, params: { project_id: project.to_param,
+                                           id: subscription.to_param },
+                                 xhr: true
+              end.to change(current_user.project_issues_subscriptions, :count)
+                .by(-1)
+            end
+
+            it "renders :new" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project,
+                                                        user: current_user)
               delete :destroy, params: { project_id: project.to_param,
-                                         id: subscription.to_param }
-            end.not_to change(IssueSubscription, :count)
+                                         id: subscription.to_param },
+                               xhr: true
+              expect(response).to be_successful
+            end
           end
 
-          it "should be unauthorized" do
-            subscription =
-              Fabricate(:project_issues_subscription, project: project)
-            delete :destroy, params: { project_id: project.to_param,
-                                       id: subscription.to_param }
-            expect_to_be_unauthorized(response)
+          context "when someone else's project_issues_subscription" do
+            it "doesn't destroys the requested project_issues_subscription" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project)
+              expect do
+                delete :destroy, params: { project_id: project.to_param,
+                                           id: subscription.to_param },
+                                 xhr: true
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              subscription =
+                Fabricate(:project_issues_subscription, project: project)
+              delete :destroy, params: { project_id: project.to_param,
+                                         id: subscription.to_param },
+                               xhr: true
+              expect(response).to have_http_status(:forbidden)
+            end
           end
         end
       end

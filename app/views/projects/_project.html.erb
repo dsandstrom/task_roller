@@ -112,7 +112,10 @@ tasks_subscription =
           </p>
         <% end %>
 
-        <%= render issues_subscription %>
+        <%= content_tag :section,
+                        render(issues_subscription),
+                        class: "issues-subscription-wrapper",
+                        id: "issues_subscription_for_#{project.id}" %>
       </div>
 
       <div name="project_tasks_content" class="accordion-content">
@@ -165,7 +168,10 @@ tasks_subscription =
           </p>
         <% end %>
 
-        <%= render tasks_subscription %>
+        <%= content_tag :section,
+                        render(tasks_subscription),
+                        class: "tasks-subscription-wrapper",
+                        id: "tasks_subscription_for_#{project.id}" %>
       </div>
     </div>
   </div>

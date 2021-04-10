@@ -17,6 +17,7 @@
                 method: :delete,
                 class: 'button button-success button-unsubscribe button-icon',
                 title: 'Unsubscribe',
+                remote: true,
                 data: { disable_with: '...' } do %>
       <%= icon('close') %>
     <% end %>
@@ -28,5 +29,6 @@
   <%= link_to 'Auto-Subscribe to New Tasks',
               project_tasks_subscriptions_path(project),
               method: :post, class: 'button button-clear button-wrap',
+              remote: true,
               data: { disable_with: 'Subscribing' } %>
 <% end %>
