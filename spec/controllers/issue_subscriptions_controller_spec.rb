@@ -27,33 +27,67 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "with valid params" do
-          it "creates a new IssueSubscription" do
-            expect do
+        context "when html request" do
+          context "with valid params" do
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the requested issue" do
               post :create, params: { issue_id: issue.to_param }
-            end.to change(current_user.issue_subscriptions, :count).by(1)
+              expect(response).to redirect_to(issue)
+            end
           end
 
-          it "redirects to the requested issue" do
-            post :create, params: { issue_id: issue.to_param }
-            expect(response).to redirect_to(issue)
+          context "with invalid params" do
+            before do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
+            it "doesn't create a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { issue_id: issue.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "with invalid params" do
-          before do
-            Fabricate(:issue_subscription, issue: issue, user: current_user)
+        context "when js request" do
+          context "with valid params" do
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }, xhr: true
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
+            it "renders :show" do
+              post :create, params: { issue_id: issue.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
 
-          it "doesn't create a new IssueSubscription" do
-            expect do
-              post :create, params: { issue_id: issue.to_param }
-            end.not_to change(IssueSubscription, :count)
-          end
+          context "with invalid params" do
+            before do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
 
-          it "renders new" do
-            post :create, params: { issue_id: issue.to_param }
-            expect(response).to be_successful
+            it "doesn't create a new IssueSubscription" do
+              expect do
+                post :create, params: { issue_id: issue.to_param }, xhr: true
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { issue_id: issue.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
         end
       end
@@ -67,39 +101,83 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their issue_subscription" do
-          it "destroys the requested issue_subscription" do
-            issue_subscription =
-              Fabricate(:issue_subscription, issue: issue, user: current_user)
-            expect do
+        context "when html request" do
+          context "when their issue_subscription" do
+            it "destroys the requested issue_subscription" do
+              issue_subscription =
+                Fabricate(:issue_subscription, issue: issue, user: current_user)
+              expect do
+                delete :destroy, params: { issue_id: issue.to_param,
+                                           id: issue_subscription.to_param }
+              end.to change(current_user.issue_subscriptions, :count).by(-1)
+            end
+
+            it "redirects to the issue_subscriptions list" do
+              issue_subscription =
+                Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param }
-            end.to change(current_user.issue_subscriptions, :count).by(-1)
+              expect(response).to redirect_to(issue)
+            end
           end
 
-          it "redirects to the issue_subscriptions list" do
-            issue_subscription =
-              Fabricate(:issue_subscription, issue: issue, user: current_user)
-            delete :destroy, params: { issue_id: issue.to_param,
-                                       id: issue_subscription.to_param }
-            expect(response).to redirect_to(issue)
+          context "when someone else's issue_subscription" do
+            it "doesn't destroys the requested issue_subscription" do
+              issue_subscription = Fabricate(:issue_subscription, issue: issue)
+              expect do
+                delete :destroy, params: { issue_id: issue.to_param,
+                                           id: issue_subscription.to_param }
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              issue_subscription = Fabricate(:issue_subscription, issue: issue)
+              delete :destroy, params: { issue_id: issue.to_param,
+                                         id: issue_subscription.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 
-        context "when someone else's issue_subscription" do
-          it "doesn't destroys the requested issue_subscription" do
-            issue_subscription = Fabricate(:issue_subscription, issue: issue)
-            expect do
+        context "when js request", focus: true do
+          context "when their issue_subscription" do
+            it "destroys the requested issue_subscription" do
+              issue_subscription =
+                Fabricate(:issue_subscription, issue: issue, user: current_user)
+              expect do
+                delete :destroy, params: { issue_id: issue.to_param,
+                                           id: issue_subscription.to_param },
+                                 xhr: true
+              end.to change(current_user.issue_subscriptions, :count).by(-1)
+            end
+
+            it "renders :new" do
+              issue_subscription =
+                Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
-                                         id: issue_subscription.to_param }
-            end.not_to change(IssueSubscription, :count)
+                                         id: issue_subscription.to_param },
+                               xhr: true
+              expect(response).to be_successful
+            end
           end
 
-          it "should be unauthorized" do
-            issue_subscription = Fabricate(:issue_subscription, issue: issue)
-            delete :destroy, params: { issue_id: issue.to_param,
-                                       id: issue_subscription.to_param }
-            expect_to_be_unauthorized(response)
+          context "when someone else's issue_subscription" do
+            it "doesn't destroys the requested issue_subscription" do
+              issue_subscription = Fabricate(:issue_subscription, issue: issue)
+              expect do
+                delete :destroy, params: { issue_id: issue.to_param,
+                                           id: issue_subscription.to_param },
+                                 xhr: true
+              end.not_to change(IssueSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              issue_subscription = Fabricate(:issue_subscription, issue: issue)
+              delete :destroy, params: { issue_id: issue.to_param,
+                                         id: issue_subscription.to_param },
+                               xhr: true
+              expect(response).to have_http_status(:forbidden)
+            end
           end
         end
       end

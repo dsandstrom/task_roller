@@ -10,6 +10,7 @@
                 method: :delete,
                 class: 'button button-success button-unsubscribe button-icon',
                 title: 'Unsubscribe',
+                remote: true,
                 data: { disable_with: '...' } do %>
       <%= icon('close') %>
     <% end %>
@@ -18,5 +19,6 @@
   <%= link_to 'Subscribe to issue',
               issue_issue_subscriptions_path(issue),
               method: :post, class: 'button button-outline',
+              remote: true,
               data: { disable_with: 'Subscribing' } %>
 <% end %>

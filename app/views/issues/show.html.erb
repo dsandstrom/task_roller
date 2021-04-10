@@ -5,7 +5,8 @@
     <div class="issue-column first-column">
       <%= content_tag :section,
                       render(@subscription, issue: @issue),
-                      class: "issue-subscription-wrapper" %>
+                      class: "issue-subscription-wrapper",
+                      id: "issue_subscription_for_#{@issue.id}" %>
 
       <% case @issue.status %>
       <% when 'resolved' %>
