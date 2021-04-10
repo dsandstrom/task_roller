@@ -17,8 +17,12 @@
 %>
 
 <div id="task-<%= task.id %>" class="task">
-  <% if project && category %>
-    <header class="task-header">
+  <header class="task-header">
+    <h3 class="task-summary">
+      <%= link_to task.heading, task_path(task) %>
+    </h3>
+
+    <% if project && category %>
       <% unless project_page?(project) %>
         <%
           breadcrumb_pages =
@@ -31,52 +35,55 @@
         %>
         <%= breadcrumbs breadcrumb_pages %>
       <% end %>
+    <% end %>
+  </header>
 
-      <h3 class="task-summary">
-        <%= link_to task.heading, task_path(task) %>
-      </h3>
-    </header>
+  <main class="task-main">
+    <%= task_tags(task) %>
 
-    <main class="task-main">
-      <%= task_tags(task) %>
-
-      <% if assignees.any? %>
-        <p class="task-assignees">
-          Assigned to <%= safe_join(assignees, ', ') %>
-        </p>
-      <% end %>
-
-      <% if issue %>
-        <p class="task-issue">
-          Addresses
-          <%= link_to issue.heading, issue_path(issue) %>
-        </p>
-      <% end %>
-
-      <p class="task-dates">
-        Opened
-        <%= content_tag :strong, format_date(task.created_at),
-                        class: 'task-dates' %>
-        by
-        <% if user && can?(:read, user) %>
-          <%= link_to_unless_current user.name_or_email,
-                                     user_tasks_path(user),
-                                     class: 'task-user' %>
-        <% else %>
-          <%= content_tag :strong,
-                          (user&.name_or_email || User.destroyed_name),
-                          class: 'task-user' %>
-        <% end %>
-        <% if task.created_at != task.updated_at %>
-          <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
-        <% end %>
-
-        <% if can?(:update, task) %>
-          <%= divider %>
-          <%= link_to 'Edit', edit_task_path(task),
-                      class: 'secondary-link' %>
-        <% end %>
+    <% if assignees.any? %>
+      <p class="task-assignees">
+        Assigned to <%= safe_join(assignees, ', ') %>
       </p>
-    </main>
+    <% end %>
+
+    <p class="task-dates">
+      Opened
+      <%= content_tag :strong, format_date(task.created_at),
+                      class: 'task-dates' %>
+      by
+      <% if user && can?(:read, user) %>
+        <%= link_to_unless_current user.name_or_email,
+                                   user_tasks_path(user),
+                                   class: 'task-user' %>
+      <% else %>
+        <%= content_tag :strong,
+                        (user&.name_or_email || User.destroyed_name),
+                        class: 'task-user' %>
+      <% end %>
+      <% if task.created_at != task.updated_at %>
+        <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
+      <% end %>
+
+      <% if can?(:update, task) %>
+        <%= divider %>
+        <%= link_to 'Edit', edit_task_path(task),
+                    class: 'secondary-link' %>
+      <% end %>
+    </p>
+  </main>
+
+  <% if issue %>
+    <section class="task-issue" id="task-issue-<%= issue.id %>">
+      <div class="issue-container">
+        <%= issue_type_icon_tag(issue.issue_type) %>
+        <%= link_to_if can?(:read, issue),
+                       issue.heading, issue_path(issue) %>
+
+        <%= divider %>
+        <%= content_tag :strong, issue.status&.titleize,
+                        class: 'issue-status' %>
+      </div>
+    </section>
   <% end %>
 </div>

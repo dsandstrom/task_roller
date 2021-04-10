@@ -1,3 +1,9 @@
+$box-border-color: $light-gray;
+
+.filters-wrapper {
+  margin-bottom: 1.5rem;
+}
+
 .issues,
 .tasks {
   margin-bottom: 3rem;
@@ -12,6 +18,8 @@
   }
 
   main {
+    padding: 1rem;
+
     p {
       margin-bottom: .5rem;
 
@@ -22,39 +30,52 @@
   }
 
   .issue,
-  .no-issue,
-  .task,
-  .no-task {
-    padding: 1rem 0 1.5rem;
+  .task {
+    margin-bottom: .5rem;
+    border: 1px solid $box-border-color;
   }
 
-  .issue,
-  .task {
-    &:nth-child(n + 2) {
-      border-top: 1px solid $light-gray;
-    }
+  .task-issue,
+  .issue-task {
+    margin: 0;
+    padding: 0;
+    border: 0 solid $box-border-color;
+    border-width: 1px 0 0;
+    background-color: $off-white;
+  }
+
+  .issue-container {
+    margin-left: 1rem;
+    padding: .5rem;
+    border-left: 1px solid $box-border-color;
+    background-color: $white;
   }
 
   .issue-header,
   .task-header {
-    margin-bottom: .5rem;
+    margin: 0;
 
     h2,
     p,
     .button {
       margin: 0;
     }
-
-    .issue-summary,
-    .task-summary {
-      display: flex;
-      align-items: baseline;
-    }
   }
 
   .issue-summary,
   .task-summary {
-    margin-bottom: 0;
+    display: flex;
+    align-items: baseline;
+    margin: 0;
+    padding: 1rem;
+    border-bottom: 1px solid $box-border-color;
+    background-color: $off-white;
+
+    a {
+      color: $ink;
+      font-weight: bold;
+      text-decoration: underline;
+    }
   }
 
   .issue-tags,
@@ -157,7 +178,7 @@
     // hidden form
     form {
       padding: .5rem 1rem 1rem;
-      border: 1px solid $light-gray;
+      border: 1px solid $box-border-color;
     }
 
     input,
