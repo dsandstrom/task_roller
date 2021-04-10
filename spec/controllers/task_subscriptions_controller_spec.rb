@@ -27,33 +27,67 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "with valid params" do
-          it "creates a new TaskSubscription" do
-            expect do
+        context "when html request" do
+          context "with valid params" do
+            it "creates a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param }
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the requested task" do
               post :create, params: { task_id: task.to_param }
-            end.to change(current_user.task_subscriptions, :count).by(1)
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "redirects to the requested task" do
-            post :create, params: { task_id: task.to_param }
-            expect(response).to redirect_to(task)
+          context "with invalid params" do
+            before do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it "doesn't create a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param }
+              end.not_to change(TaskSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { task_id: task.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "with invalid params" do
-          before do
-            Fabricate(:task_subscription, task: task, user: current_user)
+        context "when js request" do
+          context "with valid params" do
+            it "creates a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param }, xhr: true
+              end.to change(current_user.task_subscriptions, :count).by(1)
+            end
+
+            it "renders :show" do
+              post :create, params: { task_id: task.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
 
-          it "doesn't create a new TaskSubscription" do
-            expect do
-              post :create, params: { task_id: task.to_param }
-            end.not_to change(TaskSubscription, :count)
-          end
+          context "with invalid params" do
+            before do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
 
-          it "renders new" do
-            post :create, params: { task_id: task.to_param }
-            expect(response).to be_successful
+            it "doesn't create a new TaskSubscription" do
+              expect do
+                post :create, params: { task_id: task.to_param }, xhr: true
+              end.not_to change(TaskSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { task_id: task.to_param }, xhr: true
+              expect(response).to be_successful
+            end
           end
         end
       end

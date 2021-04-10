@@ -5,7 +5,8 @@
     <div class="task-column first-column">
       <%= content_tag :section,
                       render(@subscription, task: @task),
-                      class: "task-subscription-wrapper" %>
+                      class: "task-subscription-wrapper",
+                      id: "subscription_for_#{@task.id}" %>
 
       <% if @task.open? %>
         <section class="task-assignees-wrapper">
