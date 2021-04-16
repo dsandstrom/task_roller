@@ -1,0 +1,29 @@
+<% user = issue.user %>
+
+<section id="task_issue_<%= issue.id %>" class="task-issue">
+  <div class="issue-container">
+    <div class="issue-summary-and-tags">
+      <h4 class="task-issue-summary">
+        <%= link_to_if(can?(:read, issue),
+                       safe_join([content_tag(:span, "Issue ##{issue.id}", class: 'issue-id'),
+                                  content_tag(:span, issue.summary)], ' '),
+                       issue_path(issue)) %>
+      </h4>
+
+      <p class="task-issue-tags">
+        <%= issue_type_icon_tag(issue.issue_type) %>
+        <%= issue_status_button(issue) %>
+      </p>
+    </div>
+
+    <dl class="issue-data">
+      <% if user %>
+        <dt>User</dt>
+        <dd>
+          <%= link_to_if(can?(:read, user), user.name_or_email,
+                         user_issues_path(user)) %>
+        </dd>
+      <% end %>
+    </dl>
+  </div>
+</section>

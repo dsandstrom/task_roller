@@ -1,10 +1,4 @@
 <div class="columns">
-  <div class="second-column">
-    <% if issues.any? || searching? %>
-      <%= render 'issues/filter_form', issues: issues %>
-    <% end %>
-  </div>
-
   <div class="first-column">
     <% if issues.any? || searching? %>
       <%= render 'shared/page_links', collection: issues %>
@@ -16,6 +10,12 @@
       <%= render 'shared/simple_page_links', collection: issues %>
     <% else %>
       <p class="no-issue">None yet</p>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <% if issues.any? || searching? %>
+      <%= render 'issues/filter_form', issues: issues %>
     <% end %>
   </div>
 </div>

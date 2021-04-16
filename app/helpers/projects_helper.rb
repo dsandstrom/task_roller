@@ -68,7 +68,7 @@ module ProjectsHelper
     def edit_project_link(project)
       return unless can?(:update, project)
 
-      ['Settings', edit_project_path(project), { class: 'destroy-link' }]
+      ['Settings', edit_project_path(project)]
     end
 
     def project_page_title(project)

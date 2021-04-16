@@ -3,87 +3,74 @@
   issue = task.issue
   project = task.project
   category = task.category
-  assignees = task.assignees.map do |assignee|
-    if can?(:read, assignee)
-      link_to_unless_current assignee.name_or_email,
-                             user_assignments_path(assignee),
-                             class: 'task-assignee'
-    else
-      content_tag :strong,
-                  (assignee&.name_or_email || User.destroyed_name),
-                  class: 'task-assignee'
-    end
-  end
+  assignees = task.assignees
 %>
 
 <div id="task-<%= task.id %>" class="task">
   <header class="task-header">
-    <h3 class="task-summary">
-      <%= link_to task.heading, task_path(task) %>
-    </h3>
+    <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
 
-    <% if project && category %>
-      <% unless project_page?(project) %>
-        <%
-          breadcrumb_pages =
-            if category_page?(category)
-              [[project.name, project]]
-            else
-              [[category.name, category_path(category)],
-               [project.name, project]]
-            end
-        %>
-        <%= breadcrumbs breadcrumb_pages %>
+    <%= content_tag :p, class: 'task-dates' do %>
+      <%= format_date(task.created_at) %>
+
+      <% if task.created_at != task.updated_at %>
+        (ed. <%= format_date(task.updated_at) %>)
       <% end %>
     <% end %>
   </header>
 
-  <main class="task-main">
-    <%= task_tags(task) %>
+  <main class="task-container">
+    <div class="task-summary-and-tags">
+      <h3 class="task-summary">
+        <%= link_to_if(can?(:read, task), task.summary, task_path(task)) %>
+      </h3>
 
-    <% if assignees.any? %>
-      <p class="task-assignees">
-        Assigned to <%= safe_join(assignees, ', ') %>
-      </p>
-    <% end %>
-
-    <p class="task-dates">
-      Opened
-      <%= content_tag :strong, format_date(task.created_at),
-                      class: 'task-dates' %>
-      by
-      <% if user && can?(:read, user) %>
-        <%= link_to_unless_current user.name_or_email,
-                                   user_tasks_path(user),
-                                   class: 'task-user' %>
-      <% else %>
-        <%= content_tag :strong,
-                        (user&.name_or_email || User.destroyed_name),
-                        class: 'task-user' %>
-      <% end %>
-      <% if task.created_at != task.updated_at %>
-        <%= content_tag :span, " (ed. #{format_date(task.updated_at)})" %>
-      <% end %>
+      <%# TODO: merge with edit %>
+      <%= task_tags(task) %>
 
       <% if can?(:update, task) %>
-        <%= divider %>
-        <%= link_to 'Edit', edit_task_path(task),
-                    class: 'secondary-link' %>
+        <p>
+          <%= link_to 'Edit', edit_task_path(task) %>
+        </p>
       <% end %>
-    </p>
+    </div>
+
+    <dl class="task-data">
+      <% if category && project %>
+        <% unless project_page?(project) %>
+          <% unless category_page?(category) %>
+            <dt>Category</dt>
+            <dd>
+              <%= link_to_if(can?(:read, category), category.name, category) %>
+            </dd>
+          <% end %>
+
+          <dt>Project</dt>
+          <dd>
+            <%= link_to_if(can?(:read, project), project.name, project) %>
+          </dd>
+        <% end %>
+      <% end %>
+
+      <dt>User</dt>
+      <dd class="task-user">
+        <% if user && can?(:read, user) %>
+          <%= link_to_unless_current user.name_or_email, user_tasks_path(user) %>
+        <% else %>
+          <%= user&.name_or_email || User.destroyed_name %>
+        <% end %>
+
+        <% if assignees.any? %>
+          <dt>Assigned</dt>
+          <dd class="task-assignees">
+            <%= render collection: assignees, partial: 'tasks/assignee' %>
+          </dd>
+        <% end %>
+      </dd>
+    </dl>
   </main>
 
   <% if issue %>
-    <section class="task-issue" id="task-issue-<%= issue.id %>">
-      <div class="issue-container">
-        <%= issue_type_icon_tag(issue.issue_type) %>
-        <%= link_to_if can?(:read, issue),
-                       issue.heading, issue_path(issue) %>
-
-        <%= divider %>
-        <%= content_tag :strong, issue.status&.titleize,
-                        class: 'issue-status' %>
-      </div>
-    </section>
+    <%= render 'tasks/issue', issue: issue %>
   <% end %>
 </div>

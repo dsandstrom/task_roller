@@ -85,7 +85,7 @@ module CategoriesHelper
     def edit_category_link(category)
       return unless can?(:update, category)
 
-      ['Settings', edit_category_path(category), { class: 'destroy-link' }]
+      ['Settings', edit_category_path(category)]
     end
 
     def invisible_category

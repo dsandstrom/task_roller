@@ -33,8 +33,8 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
   end
 
   def task_tags(task)
-    tags = [task_type_button(task, dropdown: false),
-            task_status_button(task, dropdown: false)]
+    tags = [task_status_button(task, dropdown: false),
+            task_type_button(task, dropdown: false)]
 
     content_tag :div, class: 'task-tags' do
       safe_join(tags)
@@ -129,7 +129,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       return unless value
 
       klass =
-        "task-tag task-status-tag roller-type-color-#{task_status_color(value)}"
+        "status-tag roller-type-color-#{task_status_color(value)}"
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
       if dropdown
         parts << status_dropdown_link
@@ -388,7 +388,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
     def task_assign_button(task, dropdown: false)
       value, color = task_assign_button_value(task)
-      klass = "task-tag task-assign-tag roller-type-color-#{color}"
+      klass = "task-assign-tag roller-type-color-#{color}"
       parts = [content_tag(:span, value, class: 'assign-value')]
       if dropdown
         parts << task_assign_dropdown_link

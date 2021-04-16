@@ -1,0 +1,37 @@
+<% user = task.user %>
+
+<section id="issue_task_<%= task.id %>" class="issue-task">
+  <div class="task-container">
+    <div class="task-summary-and-tags">
+      <h4 class="issue-task-summary">
+        <%= link_to_if(can?(:read, task),
+                       safe_join([content_tag(:span, "Task ##{task.id}", class: 'task-id'),
+                                  content_tag(:span, task.summary)], ' '),
+                       task_path(task)) %>
+      </h4>
+
+      <p class="issue-task-tags">
+        <%= task_type_icon_tag(task.task_type) %>
+        <%= task_status_button(task) %>
+      </p>
+    </div>
+
+    <dl class="task-data">
+      <% if user %>
+        <dt>User</dt>
+        <dd>
+          <%= link_to_if(can?(:read, user), user.name_or_email,
+                         user_tasks_path(user)) %>
+        </dd>
+      <% end %>
+
+      <% if task.assignees.any? %>
+        <dt>Assigned</dt>
+        <dd>
+          <%= render collection: task.assignees,
+                     partial: 'tasks/assignee' %>
+        </dd>
+      <% end %>
+    </dl>
+  </div>
+</section>

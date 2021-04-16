@@ -80,11 +80,10 @@ $tag-border-radius: 2 * $border-radius;
 
 .status-tag,
 .issue-type-tag,
+.task-assign-tag,
 .task-type-tag,
 .issue-type-icon-option,
-.task-type-icon-option,
-.issue-tag,
-.task-tag {
+.task-type-icon-option {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,10 +139,9 @@ $tag-border-radius: 2 * $border-radius;
 
 .status-tag,
 .issue-type-tag,
+.task-assign-tag,
 .task-type-tag,
-.roller-radio-button-label,
-.issue-tag,
-.task-tag {
+.roller-radio-button-label {
   &.roller-type-color-green,
   &.roller-type-color-yellow,
   &.roller-type-color-red,
@@ -188,6 +186,56 @@ $tag-border-radius: 2 * $border-radius;
   &.roller-type-color-yellow {
     border-color: $dark-yellow;
     background-color: $yellow;
+  }
+}
+
+.issue,
+.task {
+  .issue-type-tag,
+  .task-assign-tag,
+  .task-type-tag,
+  .status-tag,
+  .issue-status,
+  .task-status {
+    &.roller-type-color-default,
+    &.roller-type-color-blue,
+    &.roller-type-color-brown,
+    &.roller-type-color-green,
+    &.roller-type-color-yellow,
+    &.roller-type-color-red,
+    &.roller-type-color-purple {
+      i {
+        color: $gray;
+      }
+    }
+
+    &.roller-type-color-default {
+      color: $light-gray;
+    }
+
+    &.roller-type-color-blue {
+      color: $dark-blue;
+    }
+
+    &.roller-type-color-brown {
+      color: $brown;
+    }
+
+    &.roller-type-color-green {
+      color: $dark-green;
+    }
+
+    &.roller-type-color-purple {
+      color: $lavender;
+    }
+
+    &.roller-type-color-red {
+      color: $dark-red;
+    }
+
+    &.roller-type-color-yellow {
+      color: $dark-yellow;
+    }
   }
 }
 

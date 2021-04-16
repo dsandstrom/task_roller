@@ -1,10 +1,4 @@
 <div class="columns">
-  <div class="second-column">
-    <% if tasks.any? || searching? %>
-      <%= render 'tasks/filter_form', tasks: tasks %>
-    <% end %>
-  </div>
-
   <div class="first-column">
     <% if tasks.any? || searching? %>
       <%= render 'shared/page_links', collection: tasks %>
@@ -16,6 +10,12 @@
       <%= render 'shared/simple_page_links', collection: tasks %>
     <% else %>
       <p class="no-task">None yet</p>
+    <% end %>
+  </div>
+
+  <div class="second-column">
+    <% if tasks.any? || searching? %>
+      <%= render 'tasks/filter_form', tasks: tasks %>
     <% end %>
   </div>
 </div>

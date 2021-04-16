@@ -29,14 +29,14 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
       issue_status_button(issue, with_dropdown: status_dropdown.present?)
 
     tags = [project_invisible_tag(project), project_internal_tag(project),
-            type_button, status_button, edit_dropdown, status_dropdown].compact
+            status_button, type_button, edit_dropdown, status_dropdown].compact
     content_tag :span, safe_join(tags), class: 'project-tags issue-tags'
   end
 
   def issue_tags(issue)
-    tags = [issue_type_tag(issue.issue_type), issue_status_tag(issue)]
+    tags = [issue_status_tag(issue), issue_type_tag(issue.issue_type)]
 
-    content_tag :div, class: 'issue-tags' do
+    content_tag :p, class: 'issue-tags' do
       safe_join(tags)
     end
   end
