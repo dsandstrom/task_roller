@@ -31,6 +31,7 @@ RSpec.describe SearchResult, type: :model do
 
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignees) }
+  it { is_expected.to have_many(:tasks) }
 
   # CLASS
 

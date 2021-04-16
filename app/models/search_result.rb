@@ -15,6 +15,7 @@ class SearchResult < ApplicationRecord
   belongs_to :issue_type, foreign_key: :type_id
   has_many :task_assignees, foreign_key: :task_id
   has_many :assignees, through: :task_assignees
+  has_many :tasks, foreign_key: :issue_id
 
   # CLASS
 
