@@ -248,13 +248,13 @@ body {
 }
 
 .columns {
-  .first-column,
-  .second-column {
+  > .first-column,
+  > .second-column {
     overflow-x: hidden;
     overflow-y: auto;
   }
 
-  .second-column {
+  > .second-column {
     .devise-links {
       display: flex;
       flex-direction: column;
@@ -270,30 +270,30 @@ body {
     display: flex;
     margin: 0 -1rem;
 
-    .first-column,
-    .second-column,
-    .half-column,
-    .column {
+    > .first-column,
+    > .second-column,
+    > .half-column,
+    > .column {
       border: 0 solid transparent;
       border-width: 0 1rem;
     }
 
-    .first-column {
+    > .first-column {
       flex: 1 1 auto;
       order: 1;
     }
 
-    .second-column {
+    > .second-column {
       flex: 0 0 30rem;
       order: 2;
       margin-top: 0;
     }
 
-    .half-column {
+    > .half-column {
       flex: 0 1 50%;
     }
 
-    .column {
+    > .column {
       flex: 0 1 72rem;
     }
   }
@@ -302,7 +302,7 @@ body {
     .columns {
       justify-content: space-between;
 
-      .column {
+      > .column {
         flex: 0 1 auto;
       }
     }
