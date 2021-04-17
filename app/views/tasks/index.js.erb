@@ -1,0 +1,8 @@
+var issueTasksId = 'issue_' + <%= @source.id %> + '_tasks_wrapper';
+var issueTasks = document.getElementById(issueTasksId);
+if (issueTasks) {
+  issueTasks.innerHTML = "<%= j render(collection: @tasks, partial: 'issues/task') %>";
+  issueTasks.parentNode.querySelectorAll('.toggle-link').forEach((link) => {
+    link.classList.add('disabled');
+  });
+}

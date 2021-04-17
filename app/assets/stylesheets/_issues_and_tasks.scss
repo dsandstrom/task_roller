@@ -152,7 +152,8 @@ $box-border-color: $light-gray;
       color: $color-secondary;
     }
 
-    .issue-id {
+    .issue-id,
+    .tasks-count {
       font-weight: bold;
       text-decoration: underline;
     }

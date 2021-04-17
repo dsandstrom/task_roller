@@ -32,6 +32,15 @@
           <%= link_to 'Edit', edit_issue_path(issue) %>
         </p>
       <% end %>
+
+      <% if tasks.any? %>
+        <p>
+          <%= link_to issue_tasks_path(issue),
+                      remote: true, class: 'toggle-link' do %>
+            Preview <%= content_tag :span, pluralize(tasks.count, "Task"), class: 'tasks-count' %>
+          <% end %>
+        </p>
+      <% end %>
     </div>
 
     <dl class="issue-data">
@@ -67,8 +76,6 @@
   </main>
 
   <% if tasks.any? %>
-    <div class="issue-tasks">
-      <%= render collection: tasks, partial: 'issues/task' %>
-    </div>
+    <div id="issue_<%= issue.id %>_tasks_wrapper" class="issue-tasks-wrapper"></div>
   <% end %>
 </div>
