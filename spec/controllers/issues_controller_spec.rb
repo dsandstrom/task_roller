@@ -607,6 +607,8 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
+        before { sign_in(current_user) }
+
         context "when category/project are invisible and internal" do
           let(:category) do
             Fabricate(:category, visible: false, internal: true)
@@ -615,8 +617,6 @@ RSpec.describe IssuesController, type: :controller do
             Fabricate(:project, category: category, visible: false,
                                 internal: true)
           end
-
-          before { sign_in(current_user) }
 
           context "when someone else's issue" do
             it "returns a success response" do
@@ -634,12 +634,35 @@ RSpec.describe IssuesController, type: :controller do
             end
           end
         end
+
+        context "when task_id" do
+          context "for a html request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for a js request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param },
+                         xhr: true
+              expect(response).to be_successful
+            end
+          end
+        end
       end
     end
 
     %w[worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { sign_in(current_user) }
 
         context "when category is visible" do
           context "and external" do
@@ -653,8 +676,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: true,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -679,8 +700,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: true,
                                       internal: true)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -707,8 +726,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: false,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -741,8 +758,6 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { sign_in(current_user) }
-
                 context "when someone else's issue" do
                   it "returns a success response" do
                     issue = Fabricate(:issue, project: project)
@@ -766,8 +781,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: true,
                                       internal: true)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -794,8 +807,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: false,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -830,8 +841,6 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { sign_in(current_user) }
-
                 context "when someone else's issue" do
                   it "should be unauthorized" do
                     issue = Fabricate(:issue, project: project)
@@ -848,6 +857,27 @@ RSpec.describe IssuesController, type: :controller do
                   end
                 end
               end
+            end
+          end
+        end
+
+        context "when task_id" do
+          context "for a html request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for a js request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param },
+                         xhr: true
+              expect(response).to be_successful
             end
           end
         end
@@ -858,6 +888,8 @@ RSpec.describe IssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
+        before { sign_in(current_user) }
+
         context "when category is visible" do
           context "and external" do
             let(:category) do
@@ -870,8 +902,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: true,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "returns a success response" do
@@ -897,8 +927,6 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: true)
                 end
 
-                before { sign_in(current_user) }
-
                 context "when someone else's issue" do
                   it "should be unauthorized" do
                     issue = Fabricate(:issue, project: project)
@@ -923,8 +951,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: false,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -957,8 +983,6 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { sign_in(current_user) }
-
                 context "when someone else's issue" do
                   it "should be unauthorized" do
                     issue = Fabricate(:issue, project: project)
@@ -983,8 +1007,6 @@ RSpec.describe IssuesController, type: :controller do
                   Fabricate(:project, category: category, visible: false,
                                       internal: false)
                 end
-
-                before { sign_in(current_user) }
 
                 context "when someone else's issue" do
                   it "should be unauthorized" do
@@ -1019,8 +1041,6 @@ RSpec.describe IssuesController, type: :controller do
                                       internal: false)
                 end
 
-                before { sign_in(current_user) }
-
                 context "when someone else's issue" do
                   it "should be unauthorized" do
                     issue = Fabricate(:issue, project: project)
@@ -1037,6 +1057,27 @@ RSpec.describe IssuesController, type: :controller do
                   end
                 end
               end
+            end
+          end
+        end
+
+        context "when task_id" do
+          context "for a html request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for a js request" do
+            it "returns a success response" do
+              issue = Fabricate(:issue, project: project)
+              task = Fabricate(:task, project: project, issue: issue)
+              get :show, params: { id: issue.to_param, task_id: task.to_param },
+                         xhr: true
+              expect(response).to be_successful
             end
           end
         end

@@ -18,13 +18,21 @@ class IssuesController < ApplicationController
 
   def show
     @project = @issue.project
-    @comments = @issue.comments.includes(:user)
     @user = @issue.user
-    @source_connection = @issue.source_connection
-    @duplicates = @issue.duplicates
-    @source_connection = @issue.source_connection
-    @subscription =
-      @issue.issue_subscriptions.find_or_initialize_by(user_id: current_user.id)
+
+    respond_to do |format|
+      format.html do
+        @comments = @issue.comments.includes(:user)
+        @source_connection = @issue.source_connection
+        @duplicates = @issue.duplicates
+        @source_connection = @issue.source_connection
+        @subscription = @issue.issue_subscriptions
+                              .find_or_initialize_by(user_id: current_user.id)
+      end
+      format.js do
+        @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
+      end
+    end
   end
 
   def new
