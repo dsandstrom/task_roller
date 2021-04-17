@@ -17,18 +17,10 @@ class IssuesController < ApplicationController
   end
 
   def show
-    @project = @issue.project
     @user = @issue.user
 
     respond_to do |format|
-      format.html do
-        @comments = @issue.comments.includes(:user)
-        @source_connection = @issue.source_connection
-        @duplicates = @issue.duplicates
-        @source_connection = @issue.source_connection
-        @subscription = @issue.issue_subscriptions
-                              .find_or_initialize_by(user_id: current_user.id)
-      end
+      format.html { set_issue_variables }
       format.js do
         @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
       end
@@ -112,5 +104,15 @@ class IssuesController < ApplicationController
       end
       issues.accessible_by(current_ability).filter_by(build_filters)
             .page(params[:page])
+    end
+
+    def set_issue_variables
+      @project = @issue.project
+      @comments = @issue.comments.includes(:user)
+      @source_connection = @issue.source_connection
+      @duplicates = @issue.duplicates
+      @source_connection = @issue.source_connection
+      @subscription = @issue.issue_subscriptions
+                            .find_or_initialize_by(user_id: current_user.id)
     end
 end

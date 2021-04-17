@@ -72,14 +72,11 @@ class TasksController < ApplicationController
     end
 
     def build_source
-      if params[:user_id]
-        User.find(params[:user_id])
-      elsif params[:project_id]
-        Project.find(params[:project_id])
-      elsif params[:issue_id]
-        Issue.find(params[:issue_id])
-      else
-        Category.find(params[:category_id])
+      { user_id: User, project_id: Project, issue_id: Issue,
+        category_id: Category }.each do |key, model|
+        next unless params[key]
+
+        return model.find(params[key])
       end
     end
 
