@@ -1,6 +1,15 @@
-<%= render 'shared/comment.js' %>
-
 var newComment = document.getElementById('new_comment');
 if (newComment) {
+  <%= render 'shared/comment.js' %>
+
   newComment.outerHTML = "<%= j render('shared/new_comment.html', object: @issue, comment: new_issue_comment(@issue)) %>";
+}
+
+var taskIssueId = 'task_' + <%= @task.id %> + '_issue_' + <%= @issue.id %> + '_wrapper';
+var taskIssue = document.getElementById(taskIssueId);
+if (taskIssue) {
+  taskIssue.innerHTML = "<%= j render('tasks/issue.html', task: @task, issue: @issue) %>";
+  taskIssue.parentNode.querySelectorAll('.toggle-link').forEach((link) => {
+    link.classList.add('disabled');
+  });
 }

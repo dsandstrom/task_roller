@@ -125,6 +125,44 @@ $box-border-color: $light-gray;
   .task-type-icon {
     margin-right: .25rem;
   }
+
+  .task-issue,
+  .issue-task {
+    margin: 0;
+    padding: 0;
+    border-top: 1px dashed $light-gray;
+    background-color: $off-white;
+
+    .issue-container,
+    .task-container {
+      margin-left: 1rem;
+      border-left: 1px solid $box-border-color;
+      background-color: $white;
+    }
+  }
+
+  .toggle-link {
+    margin: 0 0 .5rem;
+    color: $color-tertiary;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+
+    &:hover,
+    &:focus {
+      color: $color-secondary;
+    }
+
+    .issue-id {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+}
+
+.toggle-link {
+  &.disabled {
+    display: none;
+  }
 }
 
 .issue-summary,
@@ -160,21 +198,6 @@ $box-border-color: $light-gray;
 
   .task-status {
     white-space: nowrap;
-  }
-}
-
-.task-issue,
-.issue-task {
-  margin: 0;
-  padding: 0;
-  border-top: 1px dashed $light-gray;
-  background-color: $off-white;
-
-  .issue-container,
-  .task-container {
-    margin-left: 1rem;
-    border-left: 1px solid $box-border-color;
-    background-color: $white;
   }
 }
 

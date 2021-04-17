@@ -9,6 +9,7 @@ var comment = document.getElementById(commentId);
 
 if (comment) {
   if (comment.classList.contains('with-hidden-form')) {
+    // invalid comment
     comment.classList.remove('with-hidden-form');
   } else {
     var container = comment.querySelector('main');

@@ -33,6 +33,15 @@
           <%= link_to 'Edit', edit_task_path(task) %>
         </p>
       <% end %>
+
+      <% if issue %>
+        <p>
+          <%= link_to task_issue_path(task, issue),
+                      remote: true, class: 'toggle-link' do %>
+            Preview <%= content_tag :span, "Issue ##{issue.id}", class: 'issue-id' %>
+          <% end %>
+        </p>
+      <% end %>
     </div>
 
     <dl class="task-data">
@@ -71,6 +80,6 @@
   </main>
 
   <% if issue %>
-    <%= render 'tasks/issue', issue: issue %>
+    <div id="task_<%= task.id %>_issue_<%= issue.id %>_wrapper" class="task-issue-wrapper"></div>
   <% end %>
 </div>

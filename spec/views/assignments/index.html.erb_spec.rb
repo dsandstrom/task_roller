@@ -40,8 +40,8 @@ RSpec.describe "assignments/index", type: :view do
         assert_select "#task-#{second_task.id}"
         second_url = edit_task_path(second_task)
         expect(rendered).to have_link(nil, href: second_url)
-        show_url = issue_path(issue)
-        expect(rendered).to have_link(nil, href: show_url)
+        issue_url = task_issue_path(second_task, issue)
+        expect(rendered).to have_link(nil, href: issue_url)
       end
     end
 
@@ -66,8 +66,8 @@ RSpec.describe "assignments/index", type: :view do
         assert_select "#task-#{second_task.id}"
         second_url = edit_task_path(second_task)
         expect(rendered).to have_link(nil, href: second_url)
-        show_url = issue_path(issue)
-        expect(rendered).to have_link(nil, href: show_url)
+        issue_url = task_issue_path(second_task, issue)
+        expect(rendered).to have_link(nil, href: issue_url)
       end
     end
 
@@ -122,8 +122,8 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          show_url = issue_path(issue)
-          expect(rendered).to have_link(nil, href: show_url)
+          issue_url = task_issue_path(second_task, issue)
+          expect(rendered).to have_link(nil, href: issue_url)
         end
       end
 
@@ -150,8 +150,8 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          show_url = issue_path(issue)
-          expect(rendered).to have_link(nil, href: show_url)
+          issue_url = task_issue_path(second_task, issue)
+          expect(rendered).to have_link(nil, href: issue_url)
         end
       end
     end
@@ -184,8 +184,8 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          show_url = issue_path(issue)
-          expect(rendered).to have_link(nil, href: show_url)
+          issue_url = task_issue_path(second_task, issue)
+          expect(rendered).to have_link(nil, href: issue_url)
         end
       end
 
@@ -210,8 +210,8 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          show_url = issue_path(issue)
-          expect(rendered).to have_link(nil, href: show_url)
+          issue_url = task_issue_path(second_task, issue)
+          expect(rendered).to have_link(nil, href: issue_url)
         end
       end
     end

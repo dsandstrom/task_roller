@@ -1,6 +1,7 @@
 <% user = issue.user %>
+<% return unless task  %>
 
-<section id="task_issue_<%= issue.id %>" class="task-issue">
+<section id="task_<%= task.id %>_issue_<%= issue.id %>" class="task-issue">
   <div class="issue-container">
     <div class="issue-summary-and-tags">
       <h4 class="task-issue-summary">
