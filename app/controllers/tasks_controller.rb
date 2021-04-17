@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# FIXME: when same task on page, issue gets added to first
+# TODO: show description in partial?
+
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]
