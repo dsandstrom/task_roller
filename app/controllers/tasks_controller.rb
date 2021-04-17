@@ -17,11 +17,11 @@ class TasksController < ApplicationController
   end
 
   def show
-    set_user_resources
-    set_task_resources
-
     respond_to do |format|
-      format.html
+      format.html do
+        set_user_resources
+        set_task_resources
+      end
       format.js
     end
   end
@@ -76,6 +76,8 @@ class TasksController < ApplicationController
         User.find(params[:user_id])
       elsif params[:project_id]
         Project.find(params[:project_id])
+      elsif params[:issue_id]
+        Issue.find(params[:issue_id])
       else
         Category.find(params[:category_id])
       end

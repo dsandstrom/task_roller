@@ -71,6 +71,26 @@ RSpec.describe TasksController, type: :controller do
           end
         end
       end
+
+      context "when issue" do
+        let(:issue) { Fabricate(:issue) }
+
+        context "for an html request" do
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "for a js request" do
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }, xhr: true
+            expect(response).to be_successful
+          end
+        end
+      end
     end
 
     context "for a reviewer" do
@@ -122,6 +142,26 @@ RSpec.describe TasksController, type: :controller do
             Fabricate(:task, user: user)
             get :index, params: { user_id: user.to_param }
             expect_to_be_unauthorized(response)
+          end
+        end
+      end
+
+      context "when issue" do
+        let(:issue) { Fabricate(:issue) }
+
+        context "for an html request" do
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "for a js request" do
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }, xhr: true
+            expect(response).to be_successful
           end
         end
       end
@@ -367,6 +407,26 @@ RSpec.describe TasksController, type: :controller do
             end
           end
         end
+
+        context "when issue" do
+          let(:issue) { Fabricate(:issue) }
+
+          context "for an html request" do
+            it "returns a success response" do
+              Fabricate(:task, issue: issue)
+              get :index, params: { issue_id: issue.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for a js request" do
+            it "returns a success response" do
+              Fabricate(:task, issue: issue)
+              get :index, params: { issue_id: issue.to_param }, xhr: true
+              expect(response).to be_successful
+            end
+          end
+        end
       end
     end
 
@@ -606,6 +666,26 @@ RSpec.describe TasksController, type: :controller do
               Fabricate(:task, user: user)
               get :index, params: { user_id: user.to_param }
               expect_to_be_unauthorized(response)
+            end
+          end
+        end
+
+        context "when issue" do
+          let(:issue) { Fabricate(:issue) }
+
+          context "for an html request" do
+            it "returns a success response" do
+              Fabricate(:task, issue: issue)
+              get :index, params: { issue_id: issue.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for a js request" do
+            it "returns a success response" do
+              Fabricate(:task, issue: issue)
+              get :index, params: { issue_id: issue.to_param }, xhr: true
+              expect(response).to be_successful
             end
           end
         end
