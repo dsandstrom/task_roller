@@ -4481,6 +4481,251 @@ RSpec.describe Ability do
     end
   end
 
+  describe "TaskNotification model" do
+    %i[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+        end
+      end
+    end
+
+    %i[worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+        end
+      end
+    end
+
+    %i[reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "for a totally visible task" do
+          let(:project) { Fabricate(:project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+
+          context "when doesn't belong to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an internal project" do
+          let(:project) { Fabricate(:internal_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a task from an invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+          let(:task) { Fabricate(:task, project: project) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.not_to be_able_to(:create, task_notification) }
+            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.not_to be_able_to(:update, task_notification) }
+            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+          end
+        end
+
+        context "for a closed task" do
+          let(:task) { Fabricate(:closed_task) }
+
+          context "when belongs to them" do
+            let(:task_notification) do
+              Fabricate(:task_notification, task: task, user: current_user)
+            end
+
+            it { is_expected.to be_able_to(:create, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:update, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
+          end
+        end
+      end
+    end
+  end
+
   describe "TaskReopening model" do
     %i[admin].each do |employee_type|
       context "for a #{employee_type}" do

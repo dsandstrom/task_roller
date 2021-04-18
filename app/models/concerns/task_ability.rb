@@ -51,10 +51,11 @@ class TaskAbility < BaseAbility
     end
 
     def activate_visible_abilities
-      ability.can %i[create update], TaskComment,
-                  user_id: user_id, task: Ability::VISIBLE_OPTIONS
-      ability.can :manage, TaskSubscription,
-                  user_id: user_id, task: Ability::VISIBLE_OPTIONS
+      options = { user_id: user_id, task: Ability::VISIBLE_OPTIONS }
+
+      ability.can %i[create update], TaskComment, options
+      ability.can :manage, TaskNotification, options
+      ability.can :manage, TaskSubscription, options
       ability.can %i[read update destroy], TaskAssignee,
                   assignee_id: user_id, task: Ability::VISIBLE_OPTIONS
       ability.can :create, TaskAssignee,
@@ -91,10 +92,11 @@ class TaskAbility < BaseAbility
     end
 
     def activate_external_abilities
-      ability.can %i[create update], TaskComment,
-                  user_id: user_id, task: Ability::EXTERNAL_OPTIONS
-      ability.can :manage, TaskSubscription,
-                  user_id: user_id, task: Ability::EXTERNAL_OPTIONS
+      options = { user_id: user_id, task: Ability::EXTERNAL_OPTIONS }
+
+      ability.can %i[create update], TaskComment, options
+      ability.can :manage, TaskNotification, options
+      ability.can :manage, TaskSubscription, options
     end
 
     def activate_external_read_abilities

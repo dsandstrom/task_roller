@@ -49,12 +49,13 @@ class IssueAbility < BaseAbility
     end
 
     def activate_visible_abilities
+      options = { user_id: user_id, issue: Ability::VISIBLE_OPTIONS }
+
       ability.can %i[create update], Issue,
                   user_id: user_id, project: Ability::VISIBLE_PROJECT_OPTIONS
-      ability.can %i[create update], IssueComment,
-                  user_id: user_id, issue: Ability::VISIBLE_OPTIONS
-      ability.can :manage, IssueSubscription,
-                  user_id: user_id, issue: Ability::VISIBLE_OPTIONS
+      ability.can %i[create update], IssueComment, options
+      ability.can :manage, IssueNotification, options
+      ability.can :manage, IssueSubscription, options
       ability.can :create, Resolution,
                   user_id: user_id,
                   issue: Ability::VISIBLE_OPTIONS.merge(user_id: user_id)
@@ -71,12 +72,13 @@ class IssueAbility < BaseAbility
     end
 
     def activate_external_abilities
+      options = { user_id: user_id, issue: Ability::EXTERNAL_OPTIONS }
+
       ability.can %i[create update], Issue,
                   user_id: user_id, project: Ability::EXTERNAL_PROJECT_OPTIONS
-      ability.can %i[create update], IssueComment,
-                  user_id: user_id, issue: Ability::EXTERNAL_OPTIONS
-      ability.can :manage, IssueSubscription,
-                  user_id: user_id, issue: Ability::EXTERNAL_OPTIONS
+      ability.can %i[create update], IssueComment, options
+      ability.can :manage, IssueNotification, options
+      ability.can :manage, IssueSubscription, options
       ability.can :create, Resolution,
                   user_id: user_id,
                   issue: Ability::EXTERNAL_OPTIONS.merge(user_id: user_id)
