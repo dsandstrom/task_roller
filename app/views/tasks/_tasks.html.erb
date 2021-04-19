@@ -1,8 +1,10 @@
+<% if tasks.any? || searching? %>
+  <%= render 'shared/page_links', collection: tasks %>
+<% end %>
+
 <div class="columns">
   <div class="first-column">
     <% if tasks.any? || searching? %>
-      <%= render 'shared/page_links', collection: tasks %>
-
       <div class="tasks">
         <%= render tasks %>
       </div>

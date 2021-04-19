@@ -1,5 +1,10 @@
 <%= search_header 'Results' %>
 
+<% if @search_results.any? || searching? %>
+  <%= render 'shared/page_links',
+             collection: @search_results %>
+<% end %>
+
 <div class="columns">
   <div class="second-column">
     <div class="filters-wrapper">
@@ -17,9 +22,6 @@
 
   <div class="first-column">
     <% if @search_results.any? || searching? %>
-      <%= render 'shared/page_links',
-                 collection: @search_results %>
-
       <div class="issues tasks">
         <%= render @search_results %>
       </div>

@@ -1,8 +1,10 @@
+<% if issues.any? || searching? %>
+  <%= render 'shared/page_links', collection: issues %>
+<% end %>
+
 <div class="columns">
   <div class="first-column">
     <% if issues.any? || searching? %>
-      <%= render 'shared/page_links', collection: issues %>
-
       <div class="issues">
         <%= render issues %>
       </div>
