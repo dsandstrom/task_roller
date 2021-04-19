@@ -24,9 +24,8 @@ module UsersHelper
   end
 
   def dashboard_nav
-    links = [['Subscriptions', root_path]]
-    links << ['Categories', categories_path]
-    links << ['Users', users_path]
+    links = [['Subscriptions', root_path], ['Categories', categories_path],
+             ['Users', users_path]]
     links << ['App Setup', issue_types_path] if can?(:read, IssueType)
 
     content_tag :p, class: 'page-nav user-nav' do
