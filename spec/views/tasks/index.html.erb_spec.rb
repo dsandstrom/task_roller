@@ -40,6 +40,16 @@ RSpec.describe "tasks/index", type: :view do
         issue_url = task_issue_path(second_task, issue)
         expect(rendered).to have_link(nil, href: issue_url)
       end
+
+      it "renders task_notification" do
+        Fabricate(:task_notification, task: first_task)
+        Fabricate(:task_notification, task: second_task, user: admin)
+        Fabricate(:task_notification, task: second_task, user: admin)
+
+        render
+        assert_select "#task-#{first_task.id} .task-notification", count: 0
+        assert_select "#task-#{second_task.id} .task-notification", count: 1
+      end
     end
 
     context "when project" do
@@ -170,6 +180,15 @@ RSpec.describe "tasks/index", type: :view do
           issue_url = task_issue_path(second_task, issue)
           expect(rendered).to have_link(nil, href: issue_url)
         end
+
+        it "renders task_notification" do
+          Fabricate(:task_notification, task: first_task)
+          Fabricate(:task_notification, task: second_task, user: current_user)
+
+          render
+          assert_select "#task-#{first_task.id} .task-notification", count: 0
+          assert_select "#task-#{second_task.id} .task-notification"
+        end
       end
 
       context "when a task user was cancelled" do
@@ -231,6 +250,15 @@ RSpec.describe "tasks/index", type: :view do
           expect(rendered).not_to have_link(nil, href: second_url)
           issue_url = task_issue_path(second_task, issue)
           expect(rendered).to have_link(nil, href: issue_url)
+        end
+
+        it "renders task_notification" do
+          Fabricate(:task_notification, task: first_task)
+          Fabricate(:task_notification, task: second_task, user: current_user)
+
+          render
+          assert_select "#task-#{first_task.id} .task-notification", count: 0
+          assert_select "#task-#{second_task.id} .task-notification"
         end
       end
 

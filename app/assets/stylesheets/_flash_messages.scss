@@ -2,6 +2,7 @@
   display: block;
   visibility: visible;
   position: fixed;
+  z-index: 1;
   top: 0;
   right: 0;
   margin: 2rem;
@@ -48,7 +49,8 @@
   box-shadow: 0 3px 15px 1px rgba($ink, .3);
 }
 
-.flash-message-close-link {
+.flash-message-close-link,
+.notification-close-link {
   position: absolute;
   top: 0;
   right: 0;

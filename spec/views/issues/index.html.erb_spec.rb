@@ -34,6 +34,16 @@ RSpec.describe "issues/index", type: :view do
         expect(rendered)
           .to have_link(nil, href: user_issues_path(second_issue.user))
       end
+
+      it "renders issue_notification" do
+        Fabricate(:issue_notification, issue: first_issue)
+        Fabricate(:issue_notification, issue: second_issue, user: admin)
+        Fabricate(:issue_notification, issue: second_issue, user: admin)
+
+        render
+        assert_select "#issue-#{first_issue.id} .issue-notification", count: 0
+        assert_select "#issue-#{second_issue.id} .issue-notification", count: 1
+      end
     end
 
     context "when project" do
@@ -161,6 +171,16 @@ RSpec.describe "issues/index", type: :view do
 
           url = new_project_issue_path(project)
           expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders issue_notification" do
+          Fabricate(:issue_notification, issue: first_issue)
+          Fabricate(:issue_notification, issue: second_issue,
+                                         user: current_user)
+
+          render
+          assert_select "#issue-#{first_issue.id} .issue-notification", count: 0
+          assert_select "#issue-#{second_issue.id} .issue-notification"
         end
       end
 

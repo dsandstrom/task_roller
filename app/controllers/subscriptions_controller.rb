@@ -5,6 +5,7 @@
 class SubscriptionsController < ApplicationController
   authorize_resource :issue_subscription
 
+  # TODO: sort by notifications first
   def index
     @subscriptions = build.all_visible.accessible_by(current_ability)
                           .filter_by(filters).page(params[:page])

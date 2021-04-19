@@ -3,6 +3,7 @@
   project = issue.project
   category = issue.category
   tasks = issue.tasks
+  notification = current_user.issue_notifications.where(issue_id: issue.id).last
 %>
 
 <div id="issue-<%= issue.id %>" class="issue">
@@ -24,6 +25,7 @@
     </h3>
   </header>
 
+  <%= render notification if notification %>
 
   <main class="issue-container">
     <div class="issue-tags-wrapper">
