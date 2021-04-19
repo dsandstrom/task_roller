@@ -4,27 +4,32 @@
   project = task.project
   category = task.category
   assignees = task.assignees
+  notification = current_user.task_notifications.where(task_id: task.id).last
 %>
 
 <div id="task-<%= task.id %>" class="task">
   <header class="task-header">
-    <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
+    <div class="header-box">
+      <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
 
-    <%= content_tag :p, class: 'task-dates' do %>
-      <%= format_date(task.created_at) %>
+      <%= content_tag :p, class: 'task-dates' do %>
+        <%= format_date(task.created_at) %>
 
-      <% if task.created_at != task.updated_at %>
-        (ed. <%= format_date(task.updated_at) %>)
+        <% if task.created_at != task.updated_at %>
+          (ed. <%= format_date(task.updated_at) %>)
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
+
+    <h3 class="task-summary">
+      <%= link_to_if(can?(:read, task), task.summary, task_path(task)) %>
+    </h3>
   </header>
 
-  <main class="task-container">
-    <div class="task-summary-and-tags">
-      <h3 class="task-summary">
-        <%= link_to_if(can?(:read, task), task.summary, task_path(task)) %>
-      </h3>
+  <%= render notification if notification %>
 
+  <main class="task-container">
+    <div class="task-tags-wrapper">
       <%# TODO: merge with edit %>
       <%= task_tags(task) %>
 

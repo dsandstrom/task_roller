@@ -7,23 +7,26 @@
 
 <div id="issue-<%= issue.id %>" class="issue">
   <header class="issue-header">
-    <%= content_tag(:p, "Issue ##{issue.id}", class: 'issue-id') %>
+    <div class="header-box">
+      <%= content_tag(:p, "Issue ##{issue.id}", class: 'issue-id') %>
 
-    <%= content_tag :p, class: 'issue-dates' do %>
-      <%= format_date(issue.created_at) %>
+      <%= content_tag :p, class: 'issue-dates' do %>
+        <%= format_date(issue.created_at) %>
 
-      <% if issue.created_at != issue.updated_at %>
-        (ed. <%= format_date(issue.updated_at) %>)
+        <% if issue.created_at != issue.updated_at %>
+          (ed. <%= format_date(issue.updated_at) %>)
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
+
+    <h3 class="issue-summary">
+      <%= link_to_if(can?(:read, issue), issue.summary, issue_path(issue)) %>
+    </h3>
   </header>
 
-  <main class="issue-container">
-    <div class="issue-summary-and-tags">
-      <h3 class="issue-summary">
-        <%= link_to_if(can?(:read, issue), issue.summary, issue_path(issue)) %>
-      </h3>
 
+  <main class="issue-container">
+    <div class="issue-tags-wrapper">
       <%# TODO: merge with edit %>
       <%= issue_tags(issue) %>
 

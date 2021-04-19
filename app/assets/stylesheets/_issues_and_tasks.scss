@@ -33,19 +33,24 @@ $box-border-color: $light-gray;
   .issue,
   .task {
     position: relative;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     border: 1px solid $box-border-color;
   }
 
   .issue-header,
   .task-header {
-    margin: 0;
+    margin: 0 0 .5rem;
 
     h2,
     p,
     .button {
       margin: 0;
     }
+  }
+
+  .issue-summary,
+  .task-summary {
+    margin: 0 .5rem;
   }
 
   .issue-tags,
@@ -110,6 +115,13 @@ $box-border-color: $light-gray;
       font-size: 1.2rem;
       font-weight: bold;
       text-transform: uppercase;
+    }
+  }
+
+  .issue-tags-wrapper,
+  .task-tags-wrapper {
+    p:last-child {
+      margin-bottom: 0;
     }
   }
 
@@ -390,10 +402,12 @@ $box-border-color: $light-gray;
 
 .issue-header,
 .task-header {
-  display: flex;
-  justify-content: space-between;
-  padding: .25rem .5rem;
-  background-color: $off-white;
+  .header-box {
+    display: flex;
+    justify-content: space-between;
+    padding: .25rem .5rem;
+    background-color: $off-white;
+  }
 
   .issue-id,
   .task-id {
@@ -471,10 +485,8 @@ $box-border-color: $light-gray;
 @include breakpoint(large up) {
   .issue-container,
   .task-container {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: flex-start;
-    column-gap: .5rem;
+    display: flex;
+    justify-content: space-between;
   }
 
   .issue-task,
