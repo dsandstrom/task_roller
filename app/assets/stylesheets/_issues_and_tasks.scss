@@ -322,7 +322,7 @@ $box-border-color: $light-gray;
   }
 }
 
-@include breakpoint(large up) {
+@include breakpoint(medium up) {
   .issue-columns,
   .task-columns {
     display: flex;
