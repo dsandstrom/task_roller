@@ -3,11 +3,4 @@
 <div id="issue_notification-<%= issue_notification.id %>"
      class="issue-notification">
   <%= render 'shared/notification', notification: issue_notification %>
-
-  <% if can?(:destroy, issue_notification) %>
-    <%= link_to "\u2716",
-                'javascript:void(0)',
-                method: :delete,
-                class: 'close-link notification-close-link' %>
-  <% end %>
 </div>
