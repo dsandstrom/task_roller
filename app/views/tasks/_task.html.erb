@@ -5,9 +5,12 @@
   category = task.category
   assignees = task.assignees
   notification = current_user.task_notifications.where(task_id: task.id).last
+
+  css_class = 'task'
+  css_class += ' with-notification' if notification
 %>
 
-<div id="task-<%= task.id %>" class="task">
+<%= content_tag :section, id: "task-#{task.id}", class: css_class do %>
   <header class="task-header">
     <div class="header-box">
       <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
@@ -87,4 +90,4 @@
   <% if issue %>
     <div id="task_<%= task.id %>_issue_<%= issue.id %>_wrapper" class="task-issue-wrapper"></div>
   <% end %>
-</div>
+<% end %>
