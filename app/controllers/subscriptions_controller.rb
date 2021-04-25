@@ -7,7 +7,7 @@ class SubscriptionsController < ApplicationController
 
   def index
     @subscriptions = build.all_visible.accessible_by(current_ability)
-                          .filter_by(filters).page(params[:page])
+    @subscriptions = @subscriptions.filter_by(filters).page(params[:page])
   end
 
   private
@@ -49,11 +49,11 @@ class SubscriptionsController < ApplicationController
       query = 'LEFT OUTER JOIN issue_notifications ON '\
               '(issue_notifications.issue_id = issues.id AND '\
               "issue_notifications.user_id = #{current_user.id})"
-      current_user
-        .subscribed_issues
-        .joins(query)
-        .select('issues.*')
-        .group(:id)
-        .preload(:project, :user, project: :category)
+      issues = current_user.subscribed_issues
+                           .joins(query).select('issues.*').group(:id)
+                           .preload(:project, :user, project: :category)
+      return issues unless params[:order] == 'updated,desc'
+
+      issues.order('COUNT(issue_notifications.id) DESC')
     end
 end

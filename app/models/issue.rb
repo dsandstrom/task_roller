@@ -130,9 +130,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return DEFAULT_ORDER if order.blank?
 
     column, direction = order.split(',')
-    if [column, direction] == %w[count desc]
-      return 'COUNT(issue_notifications.id) DESC, issues.updated_at DESC'
-    end
     return DEFAULT_ORDER unless direction &&
                                 %w[created updated].include?(column) &&
                                 %w[asc desc].include?(direction)
