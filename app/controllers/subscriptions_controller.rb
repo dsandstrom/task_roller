@@ -40,9 +40,16 @@ class SubscriptionsController < ApplicationController
     end
 
     def build_tasks
-      current_user
-        .subscribed_tasks
-        .preload(:project, :user, :issue, :assignees, project: :category)
+      query = 'LEFT OUTER JOIN task_notifications ON '\
+              '(task_notifications.task_id = tasks.id AND '\
+              "task_notifications.user_id = #{current_user.id})"
+      tasks = current_user.subscribed_tasks
+                          .joins(query).select('tasks.*').group(:id)
+                          .preload(:project, :user, :issue, :assignees,
+                                   project: :category)
+      return tasks unless params[:order] == 'updated,desc'
+
+      tasks.order('COUNT(task_notifications.id) DESC')
     end
 
     def build_issues

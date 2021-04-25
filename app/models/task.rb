@@ -107,7 +107,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .filter_by_string(query)
       .filter_by_assigned_id(filters[:assigned])
       .order(build_order_param(filters[:order]))
-      .distinct
   end
 
   # used by .filter_by
