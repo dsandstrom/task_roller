@@ -442,6 +442,24 @@ RSpec.describe Issue, type: :model do
         end
       end
 
+      context "is set as 'count,desc'" do
+        it "orders by count desc" do
+          first_issue = Fabricate(:issue)
+          second_issue = Fabricate(:issue)
+
+          Fabricate(:issue_notification, issue: first_issue)
+
+          options = { order: "count,desc" }
+          issues =
+            Issue.all
+                 .select("issues.*")
+                 .left_joins(:notifications)
+                 .group(:id)
+                 .filter_by(options)
+          expect(issues).to eq([first_issue, second_issue])
+        end
+      end
+
       context "is set as 'notupdated,desc'" do
         it "orders by updated_at desc" do
           second_issue = Fabricate(:issue)
