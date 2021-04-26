@@ -1383,4 +1383,352 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#subscribed_issues_with_notifications" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:first_issue) { Fabricate(:issue) }
+    let(:second_issue) { Fabricate(:issue) }
+
+    context "when no subscriptions" do
+      before { Fabricate(:issue_subscription, issue: first_issue) }
+
+      it "returns none" do
+        expect(user.subscribed_issues_with_notifications).to eq([])
+      end
+    end
+
+    context "when issue_subscription" do
+      before { Fabricate(:issue_subscription, issue: first_issue, user: user) }
+
+      it "returns it's issue" do
+        expect(user.subscribed_issues_with_notifications).to eq([first_issue])
+      end
+    end
+
+    context "when 2 issue_subscriptions" do
+      context "and order_by is not set" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscribed_issues_with_notifications
+                .order("updated_at desc")
+          ).to eq([second_issue, first_issue])
+        end
+      end
+
+      context "and order_by is false" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscribed_issues_with_notifications(order_by: false)
+                .order("updated_at desc")
+          ).to eq([second_issue, first_issue])
+        end
+      end
+
+      context "and order_by is true" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscribed_issues_with_notifications(order_by: true)
+                .order("updated_at desc")
+          ).to eq([first_issue, second_issue])
+        end
+      end
+    end
+  end
+
+  describe "#subscribed_tasks_with_notifications" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:first_task) { Fabricate(:task) }
+    let(:second_task) { Fabricate(:task) }
+
+    context "when no subscriptions" do
+      before { Fabricate(:task_subscription, task: first_task) }
+
+      it "returns none" do
+        expect(user.subscribed_tasks_with_notifications).to eq([])
+      end
+    end
+
+    context "when task_subscription" do
+      before { Fabricate(:task_subscription, task: first_task, user: user) }
+
+      it "returns it's task" do
+        expect(user.subscribed_tasks_with_notifications).to eq([first_task])
+      end
+    end
+
+    context "when 2 task_subscriptions" do
+      context "and order_by is not set" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscribed_tasks_with_notifications
+                .order("updated_at desc")
+          ).to eq([second_task, first_task])
+        end
+      end
+
+      context "and order_by is false" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscribed_tasks_with_notifications(order_by: false)
+                .order("updated_at desc")
+          ).to eq([second_task, first_task])
+        end
+      end
+
+      context "and order_by is true" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscribed_tasks_with_notifications(order_by: true)
+                .order("updated_at desc")
+          ).to eq([first_task, second_task])
+        end
+      end
+    end
+  end
+
+  describe "#subscriptions_with_notifications" do
+    let(:user) { Fabricate(:user_worker) }
+    let(:first_issue) { Fabricate(:issue) }
+    let(:second_issue) { Fabricate(:issue) }
+    let(:first_task) { Fabricate(:task) }
+    let(:second_task) { Fabricate(:task) }
+
+    context "when no subscriptions" do
+      before { Fabricate(:task_subscription, task: first_task) }
+
+      it "returns none" do
+        expect(user.subscriptions_with_notifications).to eq([])
+      end
+    end
+
+    context "when issue_subscription" do
+      before { Fabricate(:issue_subscription, issue: first_issue, user: user) }
+
+      it "returns it's issue" do
+        expect(user.subscriptions_with_notifications.map(&:id))
+          .to eq([first_issue.id])
+      end
+    end
+
+    context "when task_subscription" do
+      before { Fabricate(:task_subscription, task: first_task, user: user) }
+
+      it "returns it's task" do
+        expect(user.subscriptions_with_notifications.map(&:id))
+          .to eq([first_task.id])
+      end
+    end
+
+    context "when 2 issue_subscriptions" do
+      context "and order_by is not set" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscriptions_with_notifications
+                .order("updated_at desc").map(&:id)
+          ).to eq([second_issue.id, first_issue.id])
+        end
+      end
+
+      context "and order_by is false" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscriptions_with_notifications(order_by: false)
+                .order("updated_at desc").map(&:id)
+          ).to eq([second_issue.id, first_issue.id])
+        end
+      end
+
+      context "and order_by is true" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:issue_subscription, issue: second_issue, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_notification, issue: second_issue)
+        end
+
+        it "returns it's issue" do
+          expect(
+            user.subscriptions_with_notifications(order_by: true)
+                .order("updated_at desc").map(&:id)
+          ).to eq([first_issue.id, second_issue.id])
+        end
+      end
+    end
+
+    context "when 2 task_subscriptions" do
+      context "and order_by is not set" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscriptions_with_notifications
+                .order("updated_at desc").map(&:id)
+          ).to eq([second_task.id, first_task.id])
+        end
+      end
+
+      context "and order_by is false" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscriptions_with_notifications(order_by: false)
+                .order("updated_at desc").map(&:id)
+          ).to eq([second_task.id, first_task.id])
+        end
+      end
+
+      context "and order_by is true" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: second_task, user: user)
+          end
+          Fabricate(:task_notification, task: first_task, user: user)
+          Fabricate(:task_notification, task: second_task)
+        end
+
+        it "returns it's task" do
+          expect(
+            user.subscriptions_with_notifications(order_by: true)
+                .order("updated_at desc").map(&:id)
+          ).to eq([first_task.id, second_task.id])
+        end
+      end
+    end
+
+    context "when issue_subscription and task_subscriptions" do
+      context "and order_by is true" do
+        before do
+          Timecop.freeze(1.week.ago) do
+            Fabricate(:issue_subscription, issue: first_issue, user: user)
+          end
+          Timecop.freeze(1.day.ago) do
+            Fabricate(:task_subscription, task: first_task, user: user)
+          end
+          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:task_notification, task: first_task)
+        end
+
+        it "returns it's issue and task" do
+          expect(
+            user.subscriptions_with_notifications(order_by: true)
+                .order("updated_at desc").map(&:id)
+          ).to eq([first_issue.id, first_task.id])
+        end
+      end
+    end
+  end
 end

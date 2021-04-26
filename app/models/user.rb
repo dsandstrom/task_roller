@@ -311,6 +311,55 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                        'Issue', subscribed_issues.map(&:id))
   end
 
+  def subscribed_issues_with_notifications(order_by: false)
+    query = 'LEFT OUTER JOIN issue_notifications ON '\
+            '(issue_notifications.issue_id = issues.id AND '\
+            "issue_notifications.user_id = #{id})"
+    issues = subscribed_issues.joins(query).select('issues.*').group(:id)
+                              .preload(:project, :user, project: :category)
+    return issues unless order_by
+
+    issues.order('COUNT(issue_notifications.id) DESC')
+  end
+
+  def subscribed_tasks_with_notifications(order_by: false)
+    query = 'LEFT OUTER JOIN task_notifications ON '\
+            '(task_notifications.task_id = tasks.id AND '\
+            "task_notifications.user_id = #{id})"
+    tasks = subscribed_tasks.joins(query).select('tasks.*').group(:id)
+                            .preload(:project, :user, :issue, :assignees,
+                                     project: :category)
+    return tasks unless order_by
+
+    tasks.order('COUNT(task_notifications.id) DESC')
+  end
+
+  def notifications_query
+    @notifications_query ||=
+      'LEFT OUTER JOIN issue_notifications ON '\
+      '(issue_notifications.issue_id = search_results.id AND '\
+      "search_results.class_name = 'Issue' AND "\
+      "issue_notifications.user_id = #{id}) "\
+      'LEFT OUTER JOIN task_notifications ON '\
+      '(task_notifications.task_id = search_results.id AND '\
+      "search_results.class_name = 'Task' AND "\
+      "task_notifications.user_id = #{id})"
+  end
+
+  def subscriptions_with_notifications(order_by: false)
+    attrs = %w[id project_id user_id issue_id class_name created_at updated_at
+               summary description status type_id]
+    search_results =
+      subscriptions.joins(notifications_query)
+                   .select(attrs).group(attrs)
+                   .preload(:project, :user, :issue, :assignees,
+                            project: :category)
+    return search_results unless order_by
+
+    search_results.order('COUNT(issue_notifications.id) DESC')
+                  .order('COUNT(task_notifications.id) DESC')
+  end
+
   # block non-employees from devise
   def active_for_authentication?
     super && employee?

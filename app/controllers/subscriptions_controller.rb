@@ -23,44 +23,14 @@ class SubscriptionsController < ApplicationController
     end
 
     def build
+      order_by = params[:order].blank? || params[:order] == 'updated,desc'
       case filters[:type]
       when 'issues'
-        build_issues
+        current_user.subscribed_issues_with_notifications(order_by: order_by)
       when 'tasks'
-        build_tasks
+        current_user.subscribed_tasks_with_notifications(order_by: order_by)
       else
-        build_issues_and_tasks
+        current_user.subscriptions_with_notifications(order_by: order_by)
       end
-    end
-
-    def build_issues_and_tasks
-      current_user
-        .subscriptions
-        .preload(:project, :user, :issue, :assignees, project: :category)
-    end
-
-    def build_tasks
-      query = 'LEFT OUTER JOIN task_notifications ON '\
-              '(task_notifications.task_id = tasks.id AND '\
-              "task_notifications.user_id = #{current_user.id})"
-      tasks = current_user.subscribed_tasks
-                          .joins(query).select('tasks.*').group(:id)
-                          .preload(:project, :user, :issue, :assignees,
-                                   project: :category)
-      return tasks unless params[:order] == 'updated,desc'
-
-      tasks.order('COUNT(task_notifications.id) DESC')
-    end
-
-    def build_issues
-      query = 'LEFT OUTER JOIN issue_notifications ON '\
-              '(issue_notifications.issue_id = issues.id AND '\
-              "issue_notifications.user_id = #{current_user.id})"
-      issues = current_user.subscribed_issues
-                           .joins(query).select('issues.*').group(:id)
-                           .preload(:project, :user, project: :category)
-      return issues unless params[:order] == 'updated,desc'
-
-      issues.order('COUNT(issue_notifications.id) DESC')
     end
 end
