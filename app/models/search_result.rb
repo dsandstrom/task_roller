@@ -30,14 +30,16 @@ class SearchResult < ApplicationRecord
     results = filter_by_id(id)
     results = results.filter_by_string(query)
                      .filter_by_projects(filters[:project_ids])
-    results.order(build_order_param(filters[:order])).distinct
+    results.order(build_order_param(filters[:order]))
   end
 
   def self.filter_by_string(query)
     return all if query.blank?
 
-    where('summary ILIKE :query OR description ILIKE :query',
-          query: "%#{query}%")
+    filters = %w[summary description].map do |column|
+      "search_results.#{column} ILIKE :query"
+    end.join(' OR ')
+    where(filters, query: "%#{query}%")
   end
 
   def self.filter_by_projects(project_ids)
@@ -55,7 +57,7 @@ class SearchResult < ApplicationRecord
                                 %w[created updated].include?(column) &&
                                 %w[asc desc].include?(direction)
 
-    "#{column}_at #{direction}"
+    "search_results.#{column}_at #{direction}"
   end
 
   def self.split_id(query)
@@ -75,7 +77,10 @@ class SearchResult < ApplicationRecord
   private_class_method def self.filter_by_id(query)
     return all if query.blank?
 
-    where('id = :id OR issue_id = :id', id: query.to_i)
+    filters = %w[id issue_id].map do |column|
+      "search_results.#{column} = :id"
+    end.join(' OR ')
+    where(filters, id: query.to_i)
   end
 
   # INSTANCE
