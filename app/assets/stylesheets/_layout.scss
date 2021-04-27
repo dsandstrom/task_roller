@@ -268,14 +268,14 @@ body {
 @include breakpoint(medium up) {
   .columns {
     display: flex;
-    margin: 0 -1rem;
+    margin: 0 -.5rem;
 
     > .first-column,
     > .second-column,
     > .half-column,
     > .column {
       border: 0 solid transparent;
-      border-width: 0 1rem;
+      border-width: 0 .5rem;
     }
 
     > .first-column {
