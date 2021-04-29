@@ -8,6 +8,7 @@ class TaskNotificationsController < ApplicationController
   def destroy
     @destroyed_id = @task_notification.id
     @task = @task_notification.task
+    @task_comment = @task_notification.task_comment
     @task_notification.destroy
 
     respond_to do |format|

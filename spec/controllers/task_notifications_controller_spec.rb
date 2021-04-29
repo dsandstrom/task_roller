@@ -37,14 +37,16 @@ RSpec.describe TaskNotificationsController, type: :controller do
               task_notification = Fabricate(:task_notification,
                                             task: task, user: current_user)
               expect do
-                delete :destroy, params: { id: task_notification.to_param }
+                delete :destroy, params: { id: task_notification.to_param },
+                                 xhr: true
               end.to change(TaskNotification, :count).by(-1)
             end
 
             it "renders destroy" do
               task_notification = Fabricate(:task_notification,
                                             task: task, user: current_user)
-              delete :destroy, params: { id: task_notification.to_param }
+              delete :destroy, params: { id: task_notification.to_param },
+                               xhr: true
               expect(response).to be_successful
             end
           end

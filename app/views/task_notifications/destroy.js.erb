@@ -7,3 +7,8 @@ var task = document.getElementById("task-<%= @task&.id %>");
 if (task) {
   task.classList.remove('with-notification');
 }
+
+var comment = document.getElementById("comment-<%= @task_comment&.id %>");
+if (comment) {
+  comment.classList.remove('with-notification');
+}

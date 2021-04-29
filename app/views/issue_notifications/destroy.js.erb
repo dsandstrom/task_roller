@@ -7,3 +7,8 @@ var issue = document.getElementById("issue-<%= @issue&.id %>");
 if (issue) {
   issue.classList.remove('with-notification');
 }
+
+var comment = document.getElementById("comment-<%= @issue_comment&.id %>");
+if (comment) {
+  comment.classList.remove('with-notification');
+}
