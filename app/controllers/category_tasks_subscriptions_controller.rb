@@ -44,7 +44,7 @@ class CategoryTasksSubscriptionsController < ApplicationController
 
     def new_js
       @category_tasks_subscription =
-        @category.category_tasks_subscriptions.build(user_id: current_user.id)
+        @category.category_tasks_subscriptions.build(user_id: current_user_id)
       authorize! :create, @category_tasks_subscription
 
       render :new

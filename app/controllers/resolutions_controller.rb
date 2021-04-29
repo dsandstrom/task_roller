@@ -36,7 +36,7 @@ class ResolutionsController < ApplicationController
   private
 
     def build_and_authorize
-      @resolution = @issue.resolutions.build(user_id: current_user.id)
+      @resolution = @issue.resolutions.build(user_id: current_user_id)
       authorize! :create, @resolution
     end
 end

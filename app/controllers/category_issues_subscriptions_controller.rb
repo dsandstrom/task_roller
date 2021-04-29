@@ -45,7 +45,7 @@ class CategoryIssuesSubscriptionsController < ApplicationController
 
     def new_js
       @category_issues_subscription =
-        @category.category_issues_subscriptions.build(user_id: current_user.id)
+        @category.category_issues_subscriptions.build(user_id: current_user_id)
       authorize! :create, @category_issues_subscription
 
       render :new

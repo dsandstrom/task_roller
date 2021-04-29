@@ -5,11 +5,11 @@ class TaskAssigneesController < ApplicationController
   load_and_authorize_resource through: :task
 
   def new
-    @task_assignee.assignee_id = current_user.id
+    @task_assignee.assignee_id = current_user_id
   end
 
   def create
-    @task_assignee.assignee_id = current_user.id
+    @task_assignee.assignee_id = current_user_id
 
     if @task_assignee.save
       @task.subscribe_user(current_user)

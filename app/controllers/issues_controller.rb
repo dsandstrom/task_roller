@@ -31,7 +31,7 @@ class IssuesController < ApplicationController
   def new
     if @issue_types&.any?
       @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
-                                     user_id: current_user.id)
+                                     user_id: current_user_id)
       authorize! :create, @issue
     else
       # TODO: raise error in ApplicationController and rescue/redirect
@@ -110,12 +110,12 @@ class IssuesController < ApplicationController
     def set_issue_variables
       @project = @issue.project
       @comments = @issue.comments.includes(:user)
-      @notifications = @issue.notifications.where(user_id: current_user.id)
+      @notifications = @issue.notifications.where(user_id: current_user_id)
                              .where(event: %w[new status])
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
       @source_connection = @issue.source_connection
       @subscription = @issue.issue_subscriptions
-                            .find_or_initialize_by(user_id: current_user.id)
+                            .find_or_initialize_by(user_id: current_user_id)
     end
 end

@@ -45,7 +45,7 @@ class IssueSubscriptionsController < ApplicationController
 
     def new_js
       @issue_subscription =
-        @issue.issue_subscriptions.build(user_id: current_user.id)
+        @issue.issue_subscriptions.build(user_id: current_user_id)
       authorize! :create, @issue_subscription
 
       render :new

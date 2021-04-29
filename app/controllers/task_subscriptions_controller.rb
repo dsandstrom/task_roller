@@ -45,7 +45,7 @@ class TaskSubscriptionsController < ApplicationController
 
     def new_js
       @task_subscription =
-        @task.task_subscriptions.build(user_id: current_user.id)
+        @task.task_subscriptions.build(user_id: current_user_id)
       authorize! :create, @task_subscription
 
       render :new

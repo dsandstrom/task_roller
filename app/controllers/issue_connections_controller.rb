@@ -26,7 +26,7 @@ class IssueConnectionsController < ApplicationController
 
     if @issue_connection.destroy
       issue.reopen(current_user)
-      issue.reopenings.create(user_id: current_user.id)
+      issue.reopenings.create(user_id: current_user_id)
     end
     redirect_to issue, notice: notice
   end
@@ -39,7 +39,7 @@ class IssueConnectionsController < ApplicationController
       end
       @issue_connection =
         IssueConnection.new(source_id: params[:source_id], target_id: target_id,
-                            user_id: current_user.id)
+                            user_id: current_user_id)
       authorize! :read, @issue_connection.source
     end
 

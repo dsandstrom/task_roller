@@ -52,7 +52,7 @@ class EmployeeTypesController < ApplicationController
     end
 
     def destroy_redirect(user)
-      if user.id == current_user.id
+      if user.id == current_user_id
         sign_out user
         redirect_to new_user_session_path,
                     notice: 'Your account was successfully cancelled.'

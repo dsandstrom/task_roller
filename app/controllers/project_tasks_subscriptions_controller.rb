@@ -44,7 +44,7 @@ class ProjectTasksSubscriptionsController < ApplicationController
 
     def new_js
       @project_tasks_subscription =
-        @project.project_tasks_subscriptions.build(user_id: current_user.id)
+        @project.project_tasks_subscriptions.build(user_id: current_user_id)
       authorize! :create, @project_tasks_subscription
 
       render :new

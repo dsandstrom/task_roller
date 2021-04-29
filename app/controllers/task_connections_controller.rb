@@ -26,7 +26,7 @@ class TaskConnectionsController < ApplicationController
 
     if @task_connection.destroy
       task.reopen
-      task.reopenings.create(user_id: current_user.id)
+      task.reopenings.create(user_id: current_user_id)
     end
     redirect_to task, notice: notice
   end
@@ -37,7 +37,7 @@ class TaskConnectionsController < ApplicationController
       target_id = task_connection_params[:target_id] if params[:task_connection]
       @task_connection =
         TaskConnection.new(source_id: params[:source_id], target_id: target_id,
-                           user_id: current_user.id)
+                           user_id: current_user_id)
       authorize! :read, @task_connection.source
     end
 
