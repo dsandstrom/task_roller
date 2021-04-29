@@ -9,6 +9,7 @@ class TaskComment < ApplicationRecord
 
   belongs_to :task, foreign_key: :task_id, inverse_of: :comments
   belongs_to :user
+  has_many :notifications, class_name: 'TaskNotification'
 
   default_scope { order(created_at: :asc) }
 
