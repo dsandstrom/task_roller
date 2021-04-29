@@ -4,5 +4,9 @@
      class="issue-notification">
   <%= render 'shared/notification', notification: issue_notification %>
 
-  <%= close_link('notification-close-link') %>
+  <% if can?(:destroy, issue_notification) %>
+    <%= link_to "\u2716", issue_notification,
+                method: :delete, title: 'Dismiss',
+                class: 'close-link notification-close-link' %>
+  <% end %>
 </div>

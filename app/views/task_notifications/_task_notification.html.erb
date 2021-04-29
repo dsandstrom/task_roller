@@ -4,5 +4,9 @@
      class="task-notification">
   <%= render 'shared/notification', notification: task_notification %>
 
-  <%= close_link('notification-close-link') %>
+  <% if can?(:destroy, task_notification) %>
+    <%= link_to "\u2716", task_notification,
+                method: :delete, title: 'Dismiss',
+                class: 'close-link notification-close-link' %>
+  <% end %>
 </div>
