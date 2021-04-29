@@ -305,10 +305,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def subscriptions
-    query = '(search_results.class_name = ? AND search_results.id IN (?)) OR '\
-            '(search_results.class_name = ? AND search_results.id IN (?))'
-    SearchResult.where(query, 'Task', subscribed_tasks.map(&:id),
-                       'Issue', subscribed_issues.map(&:id))
+    query = 'issue_subscriptions.id IS NOT NULL OR '\
+            'task_subscriptions.id IS NOT NULL'
+    SearchResult.joins(issue_subscriptions_query)
+                .joins(task_subscriptions_query)
+                .where(query)
   end
 
   def subscribed_issues_with_notifications(order_by: false)
@@ -332,18 +333,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return tasks unless order_by
 
     tasks.order('COUNT(task_notifications.id) DESC')
-  end
-
-  def notifications_query
-    @notifications_query ||=
-      'LEFT OUTER JOIN issue_notifications ON '\
-      '(issue_notifications.issue_id = search_results.id AND '\
-      "search_results.class_name = 'Issue' AND "\
-      "issue_notifications.user_id = #{id}) "\
-      'LEFT OUTER JOIN task_notifications ON '\
-      '(task_notifications.task_id = search_results.id AND '\
-      "search_results.class_name = 'Task' AND "\
-      "task_notifications.user_id = #{id})"
   end
 
   def subscriptions_with_notifications(order_by: false)
@@ -380,5 +369,35 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
         @password_required_ = github_id.present? || !confirmed? ? false : super
       end
       @password_required_
+    end
+
+  private
+
+    def issue_subscriptions_query
+      @issue_subscriptions_query ||=
+        'LEFT OUTER JOIN issue_subscriptions ON '\
+        '(issue_subscriptions.issue_id = search_results.id AND '\
+        "search_results.class_name = 'Issue' AND "\
+        "issue_subscriptions.user_id = #{id})"
+    end
+
+    def task_subscriptions_query
+      @task_subscriptions_query ||=
+        'LEFT OUTER JOIN task_subscriptions ON '\
+        '(task_subscriptions.task_id = search_results.id AND '\
+        "search_results.class_name = 'Task' AND "\
+        "task_subscriptions.user_id = #{id})"
+    end
+
+    def notifications_query
+      @notifications_query ||=
+        'LEFT OUTER JOIN issue_notifications ON '\
+        '(issue_notifications.issue_id = search_results.id AND '\
+        "search_results.class_name = 'Issue' AND "\
+        "issue_notifications.user_id = #{id}) "\
+        'LEFT OUTER JOIN task_notifications ON '\
+        '(task_notifications.task_id = search_results.id AND '\
+        "search_results.class_name = 'Task' AND "\
+        "task_notifications.user_id = #{id})"
     end
 end

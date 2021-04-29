@@ -6,8 +6,9 @@ class SubscriptionsController < ApplicationController
   authorize_resource :issue_subscription
 
   def index
-    @subscriptions = build.all_visible.accessible_by(current_ability)
-    @subscriptions = @subscriptions.filter_by(filters).page(params[:page])
+    @subscriptions = build_subscriptions.all_visible
+                                        .accessible_by(current_ability)
+                                        .filter_by(filters).page(params[:page])
   end
 
   private
@@ -22,7 +23,7 @@ class SubscriptionsController < ApplicationController
       temp
     end
 
-    def build
+    def build_subscriptions
       order_by = params[:order].blank? || params[:order] == 'updated,desc'
       case filters[:type]
       when 'issues'
