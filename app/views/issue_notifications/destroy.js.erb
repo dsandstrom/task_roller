@@ -1,0 +1,9 @@
+var notification = document.getElementById("issue_notification-<%= @destroyed_id %>");
+if (notification) {
+  notification.classList.add('hidden');
+}
+
+var issue = document.getElementById("issue-<%= @issue&.id %>");
+if (issue) {
+  issue.classList.remove('with-notification');
+}

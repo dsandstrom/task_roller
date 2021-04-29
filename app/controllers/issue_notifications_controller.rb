@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
 class IssueNotificationsController < ApplicationController
+  NOTICE = 'Notification was successfully dismissed.'
+
   load_and_authorize_resource
 
   def destroy
-    notice = 'Notification was successfully dismissed.'
+    @destroyed_id = @issue_notification.id
+    @issue = @issue_notification.issue
     @issue_notification.destroy
-    redirect_back fallback_location: @issue_notification.issue, notice: notice
+
+    respond_to do |format|
+      format.html do
+        redirect_back fallback_location: @issue, notice: NOTICE
+      end
+      format.js
+    end
   end
 end
