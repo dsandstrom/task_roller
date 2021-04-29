@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
 class TaskNotificationsController < ApplicationController
+  NOTICE = 'Notification was successfully dismissed.'
+
   load_and_authorize_resource
 
   def destroy
-    notice = 'Notification was successfully dismissed.'
+    @destroyed_id = @task_notification.id
+    @task = @task_notification.task
     @task_notification.destroy
-    redirect_back fallback_location: @task_notification.task, notice: notice
+
+    respond_to do |format|
+      format.html do
+        redirect_back fallback_location: @task, notice: NOTICE
+      end
+      format.js
+    end
   end
 end

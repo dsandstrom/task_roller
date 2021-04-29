@@ -15,19 +15,38 @@ RSpec.describe TaskNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested task_notification belongs to them" do
-          it "destroys the requested task_notification" do
-            task_notification = Fabricate(:task_notification,
-                                          task: task, user: current_user)
-            expect do
+          context "for an html request" do
+            it "destroys the requested task_notification" do
+              task_notification = Fabricate(:task_notification,
+                                            task: task, user: current_user)
+              expect do
+                delete :destroy, params: { id: task_notification.to_param }
+              end.to change(TaskNotification, :count).by(-1)
+            end
+
+            it "redirects to the task" do
+              task_notification = Fabricate(:task_notification,
+                                            task: task, user: current_user)
               delete :destroy, params: { id: task_notification.to_param }
-            end.to change(TaskNotification, :count).by(-1)
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "redirects to the task" do
-            task_notification = Fabricate(:task_notification,
-                                          task: task, user: current_user)
-            delete :destroy, params: { id: task_notification.to_param }
-            expect(response).to redirect_to(task)
+          context "for an ajax request" do
+            it "destroys the requested task_notification" do
+              task_notification = Fabricate(:task_notification,
+                                            task: task, user: current_user)
+              expect do
+                delete :destroy, params: { id: task_notification.to_param }
+              end.to change(TaskNotification, :count).by(-1)
+            end
+
+            it "renders destroy" do
+              task_notification = Fabricate(:task_notification,
+                                            task: task, user: current_user)
+              delete :destroy, params: { id: task_notification.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 

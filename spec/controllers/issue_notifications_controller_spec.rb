@@ -15,19 +15,40 @@ RSpec.describe IssueNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested issue_notification belongs to them" do
-          it "destroys the requested issue_notification" do
-            issue_notification = Fabricate(:issue_notification,
-                                           issue: issue, user: current_user)
-            expect do
+          context "for an html request" do
+            it "destroys the requested issue_notification" do
+              issue_notification = Fabricate(:issue_notification,
+                                             issue: issue, user: current_user)
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param }
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "redirects to the issue" do
+              issue_notification = Fabricate(:issue_notification,
+                                             issue: issue, user: current_user)
               delete :destroy, params: { id: issue_notification.to_param }
-            end.to change(IssueNotification, :count).by(-1)
+              expect(response).to redirect_to(issue)
+            end
           end
 
-          it "redirects to the issue" do
-            issue_notification = Fabricate(:issue_notification,
-                                           issue: issue, user: current_user)
-            delete :destroy, params: { id: issue_notification.to_param }
-            expect(response).to redirect_to(issue)
+          context "for an ajax request" do
+            it "destroys the requested issue_notification" do
+              issue_notification = Fabricate(:issue_notification,
+                                             issue: issue, user: current_user)
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param },
+                                 xhr: true
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "renders :destroy" do
+              issue_notification = Fabricate(:issue_notification,
+                                             issue: issue, user: current_user)
+              delete :destroy, params: { id: issue_notification.to_param },
+                               xhr: true
+              expect(response).to be_successful
+            end
           end
         end
 
