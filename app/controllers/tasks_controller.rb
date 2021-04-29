@@ -128,12 +128,16 @@ class TasksController < ApplicationController
       @source_connection = @task.source_connection
       @duplicates = @task.duplicates
       @siblings = @task.siblings
-      @comments = @task.comments.includes(:user)
-      @notifications = @task.notifications.where(user_id: current_user.id)
+      @comments = @task.comments.preload(:user)
+      @notifications = @task.notifications.where(user_id: current_user_id)
                             .where(event: %w[new status])
-      @subscription = @task.task_subscriptions
-                           .find_or_initialize_by(user_id: current_user.id)
       @progressions = @task.progressions.unfinished
-                           .where(user_id: current_user.id)
+                           .where(user_id: current_user_id)
+      set_subscription
+    end
+
+    def set_subscription
+      @subscription = @task.task_subscriptions
+                           .find_or_initialize_by(user_id: current_user_id)
     end
 end

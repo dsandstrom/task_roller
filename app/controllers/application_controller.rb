@@ -54,4 +54,8 @@ class ApplicationController < ActionController::Base
         format.js   { head :forbidden, content_type: 'text/html' }
       end
     end
+
+    def current_user_id
+      @current_user_id ||= current_user&.id
+    end
 end
