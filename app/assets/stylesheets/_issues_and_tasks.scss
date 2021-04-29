@@ -4,6 +4,58 @@ $box-border-color: $light-gray;
   margin-bottom: 1.5rem;
 }
 
+.issue-notification,
+.task-notification {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: .5rem;
+  border-left: .5rem solid $color-success;
+  background-color: $off-white;
+  color: $color-success;
+  font-size: 80%;
+  font-weight: bold;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.notification-event {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  padding: .25rem .5rem;
+  border: 0 solid $light-gray;
+  border-width: 1px 0;
+}
+
+.notification-close-link {
+  display: flex;
+  align-items: center;
+  background-color: $light-gray;
+
+  &:hover {
+    background-color: darken($light-gray, 5%);
+  }
+}
+
+.issues .issue,
+.tasks .task,
+.comment {
+  &.with-notification {
+    border-color: $gray;
+  }
+
+  .issue-notification,
+  .task-notification {
+    margin: 0;
+    border: 1px solid $gray;
+    border-width: 0 0 1px;
+  }
+
+  .notification-event {
+    border-width: 0;
+  }
+}
+
 .issues,
 .tasks {
   margin-bottom: 3rem;
@@ -500,21 +552,5 @@ $box-border-color: $light-gray;
   .issue-data,
   .task-data {
     max-width: 45%;
-  }
-}
-
-.issue-notification,
-.task-notification {
-  display: flex;
-  position: relative;
-  border-left: .5rem solid $color-success;
-  background-color: $off-white;
-  color: $ink;
-
-  .notification-event {
-    flex-grow: 1;
-    padding: .25rem .5rem;
-    border: 0 solid $box-border-color;
-    border-width: 1px 0;
   }
 }

@@ -1,6 +1,8 @@
-<div class="comment task-description">
+<div class="comment original-user task-description">
   <header class="task-user-date">
-    <p><span class="task-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
+    <div class="header-box">
+      <p><span class="task-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
+    </div>
   </header>
 
   <%= content_tag :main, task.description_html.html_safe %>

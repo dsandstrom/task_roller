@@ -17,6 +17,7 @@ class IssuesController < ApplicationController
   end
 
   def show
+    # TODO: destroy 'new' notifications for current_user
     @user = @issue.user
 
     respond_to do |format|
@@ -109,6 +110,8 @@ class IssuesController < ApplicationController
     def set_issue_variables
       @project = @issue.project
       @comments = @issue.comments.includes(:user)
+      @notifications = @issue.notifications.where(user_id: current_user.id)
+                             .where(event: %w[new status])
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
       @source_connection = @issue.source_connection

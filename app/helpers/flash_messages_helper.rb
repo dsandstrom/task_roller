@@ -18,13 +18,17 @@ module FlashMessagesHelper
     end
 
     def flash_message(key, message)
-      css_class = 'close-link flash-message-close-link'
-
       content_tag :div, class: "flash-message #{flash_message_class(key)}" do
         content_tag :div, class: 'flash-message-container' do
           concat message
-          concat link_to("\u2716", 'javascript:void(0)', class: css_class)
+          concat close_link('flash-message-close-link')
         end
       end
+    end
+
+    def close_link(extra_class = nil)
+      css_class = "close-link #{extra_class}".strip
+
+      link_to("\u2716", 'javascript:void(0)', class: css_class)
     end
 end

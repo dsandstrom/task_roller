@@ -129,6 +129,8 @@ class TasksController < ApplicationController
       @duplicates = @task.duplicates
       @siblings = @task.siblings
       @comments = @task.comments.includes(:user)
+      @notifications = @task.notifications.where(user_id: current_user.id)
+                            .where(event: %w[new status])
       @subscription = @task.task_subscriptions
                            .find_or_initialize_by(user_id: current_user.id)
       @progressions = @task.progressions.unfinished

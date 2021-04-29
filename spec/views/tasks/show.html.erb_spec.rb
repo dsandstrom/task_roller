@@ -30,6 +30,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:assigned, [])
       assign(:progressions, [])
       assign(:duplicates, [])
+      assign(:notifications, [])
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)
@@ -877,6 +878,22 @@ RSpec.describe "tasks/show", type: :view do
         end
       end
     end
+
+    context "when task has a notification" do
+      let(:notification) do
+        Fabricate(:task_notification, task: @task, user: admin)
+      end
+
+      before do
+        @task = assign(:task, task)
+        assign(:notifications, [notification])
+      end
+
+      it "renders it" do
+        render
+        assert_select "#task_notification-#{notification.id}"
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -892,6 +909,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:assigned, [])
       assign(:progressions, [])
       assign(:duplicates, [])
+      assign(:notifications, [])
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)
@@ -1642,6 +1660,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:assigned, [])
       assign(:progressions, [])
       assign(:duplicates, [])
+      assign(:notifications, [])
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:siblings, nil)
@@ -2192,6 +2211,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:assigned, [])
       assign(:progressions, [])
       assign(:duplicates, [])
+      assign(:notifications, [])
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:user, task.user)

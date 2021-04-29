@@ -23,6 +23,7 @@ RSpec.describe "issues/show", type: :view do
       enable_can(view, current_user)
       assign(:duplicates, [])
       assign(:comments, [])
+      assign(:notifications, [])
       assign(:subscription, issue_subscription)
       assign(:user, issue.user)
     end
@@ -677,6 +678,22 @@ RSpec.describe "issues/show", type: :view do
         end
       end
     end
+
+    context "when issue has a notification" do
+      let(:notification) do
+        Fabricate(:issue_notification, issue: @issue, user: current_user)
+      end
+
+      before do
+        @issue = assign(:issue, issue)
+        assign(:notifications, [notification])
+      end
+
+      it "renders it" do
+        render
+        assert_select "#issue_notification-#{notification.id}"
+      end
+    end
   end
 
   context "for a reviewer" do
@@ -690,6 +707,7 @@ RSpec.describe "issues/show", type: :view do
       assign(:duplicates, [])
       assign(:comments, [])
       assign(:subscription, issue_subscription)
+      assign(:notifications, [])
       assign(:user, issue.user)
     end
 
@@ -1171,6 +1189,7 @@ RSpec.describe "issues/show", type: :view do
         assign(:duplicates, [])
         assign(:comments, [])
         assign(:subscription, issue_subscription)
+        assign(:notifications, [])
         assign(:user, issue.user)
       end
 

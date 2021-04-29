@@ -94,6 +94,8 @@
     </div>
 
     <div class="issue-column second-column">
+      <%= render @notifications %>
+
       <div class="issue-comments comments">
         <%= render 'issues/description', issue: @issue, user: @user %>
 

@@ -124,6 +124,8 @@
     </div><!-- first column  -->
 
     <div class="task-column second-column">
+      <%= render @notifications %>
+
       <div class="task-comments comments">
         <%= render 'tasks/description', task: @task, user: @user %>
 

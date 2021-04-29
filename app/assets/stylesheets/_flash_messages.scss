@@ -51,19 +51,25 @@
 
 .flash-message-close-link,
 .notification-close-link {
-  position: absolute;
-  top: 0;
-  right: 0;
   padding: .5rem .8rem;
-  border-radius: $border-radius;
-  background: rgba($ink, .05);
   color: $red;
   font-size: 1.8rem;
   font-weight: bold;
   line-height: 1;
 
   &:hover {
-    background: rgba($ink, .09);
     color: $dark-red;
+  }
+}
+
+.flash-message-close-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: $border-radius;
+  background: rgba($ink, .05);
+
+  &:hover {
+    background: rgba($ink, .09);
   }
 }

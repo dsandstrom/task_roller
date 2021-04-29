@@ -1,9 +1,28 @@
-<div id="comment-<%= comment.id %>" class="comment">
+<%
+  notification = comment.notifications
+                        .find_by(user_id: current_user.id)
+  html_class = 'comment'
+  if object.user_id == comment.user_id
+    html_class += ' original-user'
+  end
+  if comment.user_id == current_user.id
+    html_class += ' current-user'
+  end
+  if notification.present?
+    html_class += ' with-notification'
+  end
+%>
+
+<div id="comment-<%= comment.id %>" class="<%= html_class %>">
   <header>
-    <p><span class="comment-user"><%= comment.user ? comment.user.name_or_email : User.destroyed_name %></span>:</p>
-    <p class="comment-dates">
-      <%= formatted_dates comment %>
-    </p>
+    <%= render notification if notification %>
+
+    <div class="header-box">
+      <p><span class="comment-user"><%= comment.user ? comment.user.name_or_email : User.destroyed_name %></span>:</p>
+      <p class="comment-dates">
+        <%= formatted_dates comment %>
+      </p>
+    </div>
   </header>
 
   <main>

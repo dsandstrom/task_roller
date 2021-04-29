@@ -3,4 +3,6 @@
 <div id="task_notification-<%= task_notification.id %>"
      class="task-notification">
   <%= render 'shared/notification', notification: task_notification %>
+
+  <%= close_link('notification-close-link') %>
 </div>

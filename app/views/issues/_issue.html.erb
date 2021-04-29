@@ -13,6 +13,8 @@
 
 <%= content_tag :section, id: "issue-#{issue.id}", class: css_class do %>
   <header class="issue-header">
+    <%= render notification if notification %>
+
     <div class="header-box">
       <%= content_tag(:p, "Issue ##{issue.id}", class: 'issue-id') %>
 
@@ -29,8 +31,6 @@
       <%= link_to_if(can?(:read, issue), issue.summary, issue_path(issue)) %>
     </h3>
   </header>
-
-  <%= render notification if notification %>
 
   <main class="issue-container">
     <div class="issue-tags-wrapper">

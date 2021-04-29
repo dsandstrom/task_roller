@@ -1,20 +1,20 @@
 .comments {
   header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 0;
-    padding: .5rem;
-    border-bottom: 1px solid $light-gray;
-    background: $off-white;
-    font-family: $heading-font;
-    font-size: 1.4rem;
-
     p {
       margin: 0;
       border: 0 solid transparent;
       border-width: 0 .5rem;
     }
+  }
+
+  .header-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: .5rem;
+    background: $off-white;
+    font-family: $heading-font;
+    font-size: 1.4rem;
   }
 
   main {
@@ -71,6 +71,16 @@
 .comment,
 .editor-preview,
 .editor-preview-side {
+  &.original-user {
+    background: $off-white;
+
+    header {
+      border-bottom: 1px solid $light-gray;
+      background: $off-white;
+      color: $black;
+    }
+  }
+
   blockquote {
     margin: 1rem 0;
     padding: 0 0 0 1rem;
@@ -125,17 +135,6 @@
       font-weight: bold;
     }
   }
-
-  &.issue-description,
-  &.task-description {
-    border-color: $light-gray;
-    background: $off-white;
-
-    header {
-      background: $off-white;
-      color: $black;
-    }
-  }
 }
 
 .comment {
@@ -143,20 +142,6 @@
   margin: 0 0 1rem;
   padding: 0;
   border: 1px solid $light-gray;
-
-  .field-label-and-message {
-    label {
-      display: none;
-    }
-  }
-
-  .field-message {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    right: 0;
-    color: transparent;
-  }
 
   &.with-form {
     border-width: 0;
@@ -211,6 +196,20 @@
     form:not(.new-comment-form) {
       display: none;
     }
+  }
+
+  .field-label-and-message {
+    label {
+      display: none;
+    }
+  }
+
+  .field-message {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    color: transparent;
   }
 
   .actions {

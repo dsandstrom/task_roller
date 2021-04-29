@@ -1,13 +1,15 @@
-<div class="comment issue-description">
+<div class="comment original-user issue-description">
   <header class="issue-user-date">
-    <p><span class="issue-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
+    <div class="header-box">
+      <p><span class="issue-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
 
-    <% if @issue.github_url.present? %>
-      <p class="issue-github-connection">
-        <%= link_to "Imported from GitHub", @issue.github_url,
-                    target: '_blank' %>
-      </p>
-    <% end %>
+      <% if @issue.github_url.present? %>
+        <p class="issue-github-connection">
+          <%= link_to "Imported from GitHub", @issue.github_url,
+                      target: '_blank' %>
+        </p>
+      <% end %>
+    </div>
   </header>
 
   <%= content_tag :main, issue.description_html.html_safe %>

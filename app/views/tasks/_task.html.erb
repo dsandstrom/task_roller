@@ -12,6 +12,8 @@
 
 <%= content_tag :section, id: "task-#{task.id}", class: css_class do %>
   <header class="task-header">
+    <%= render notification if notification %>
+
     <div class="header-box">
       <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
 
@@ -28,8 +30,6 @@
       <%= link_to_if(can?(:read, task), task.summary, task_path(task)) %>
     </h3>
   </header>
-
-  <%= render notification if notification %>
 
   <main class="task-container">
     <div class="task-tags-wrapper">
