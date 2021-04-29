@@ -1,4 +1,5 @@
-$box-border-color: $light-gray;
+$box-border-color: $gray;
+$notification-color: $color-success;
 
 .filters-wrapper {
   margin-bottom: 1.5rem;
@@ -9,9 +10,9 @@ $box-border-color: $light-gray;
   display: flex;
   align-items: stretch;
   margin-bottom: .5rem;
-  border-left: .5rem solid $color-success;
+  border-left: .5rem solid $notification-color;
   background-color: $off-white;
-  color: $color-success;
+  color: $notification-color;
   font-size: 80%;
   font-weight: bold;
   line-height: 1.5;
@@ -41,18 +42,27 @@ $box-border-color: $light-gray;
 .tasks .task,
 .comment {
   &.with-notification {
-    border-color: $gray;
+    border-color: $notification-color;
   }
 
   .issue-notification,
   .task-notification {
-    margin: 0;
-    border: 1px solid $gray;
-    border-width: 0 0 1px;
+    margin: -1px -1px 0;
+    border-width: 0;
+    background-color: $notification-color;
+    color: $off-white;
   }
 
   .notification-event {
     border-width: 0;
+  }
+
+  .notification-close-link {
+    background-color: rgba($black, .2%);
+
+    &:hover {
+      background-color: rgba($black, .4%);
+    }
   }
 }
 
@@ -102,7 +112,7 @@ $box-border-color: $light-gray;
 
   .issue-summary,
   .task-summary {
-    margin: 0 .5rem;
+    margin: .5rem .5rem 0;
   }
 
   .issue-tags,

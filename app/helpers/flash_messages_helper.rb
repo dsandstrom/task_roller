@@ -29,6 +29,7 @@ module FlashMessagesHelper
     def close_link(extra_class = nil)
       css_class = "close-link #{extra_class}".strip
 
-      link_to("\u2716", 'javascript:void(0)', class: css_class)
+      link_to("\u2716", 'javascript:void(0)', class: css_class,
+                                              title: 'Dismiss')
     end
 end
