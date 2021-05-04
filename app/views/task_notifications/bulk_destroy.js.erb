@@ -1,0 +1,9 @@
+var notification = document.getElementById("task_notifications-<%= @task.id %>");
+if (notification) {
+  notification.classList.add('hidden');
+}
+
+var task = document.getElementById("task-<%= @task&.id %>");
+if (task) {
+  task.classList.remove('with-notification');
+}

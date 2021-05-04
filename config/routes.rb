@@ -46,6 +46,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         post :disapprove
       end
     end
+    resources :issue_notifications, only: nil do
+      collection do
+        delete :bulk_destroy
+      end
+    end
   end
 
   resources :tasks, only: %i[show edit update] do
@@ -61,6 +66,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       member do
         patch :approve
         patch :disapprove
+      end
+    end
+    resources :task_notifications, only: nil do
+      collection do
+        delete :bulk_destroy
       end
     end
   end
