@@ -140,4 +140,46 @@ RSpec.describe TaskNotification, type: :model do
       end
     end
   end
+
+  describe "#full_event" do
+    context "when event is nil" do
+      let(:task_notification) do
+        Fabricate.build(:task_notification, event: nil)
+      end
+
+      it "returns nil" do
+        expect(task_notification.full_event).to eq(nil)
+      end
+    end
+
+    context "when event is 'comment'" do
+      let(:task_notification) do
+        Fabricate(:task_notification, event: "comment")
+      end
+
+      it "returns nil" do
+        expect(task_notification.full_event).to eq("New Comment")
+      end
+    end
+
+    context "when event is 'new'" do
+      let(:task_notification) do
+        Fabricate(:task_notification, event: "new")
+      end
+
+      it "returns nil" do
+        expect(task_notification.full_event).to eq("New Task")
+      end
+    end
+
+    context "when event is 'status'" do
+      let(:task_notification) do
+        Fabricate(:task_notification, event: "status")
+      end
+
+      it "returns nil" do
+        expect(task_notification.full_event).to eq("Status Change")
+      end
+    end
+  end
 end

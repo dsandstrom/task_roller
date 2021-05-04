@@ -16,6 +16,10 @@ class IssueNotification < ApplicationRecord
   belongs_to :issue
   belongs_to :issue_comment, optional: true
 
+  def full_event
+    @full_event ||= build_full_event
+  end
+
   def send_email
     return unless valid?
     return unless mailer_options.all? { |_, value| value.present? }
@@ -38,5 +42,18 @@ class IssueNotification < ApplicationRecord
         options[:comment] = issue_comment
       end
       options
+    end
+
+    def build_full_event
+      case event
+      when 'comment'
+        'New Comment'
+      when 'status'
+        'Status Change'
+      when 'new'
+        'New Issue'
+      else
+        event
+      end
     end
 end

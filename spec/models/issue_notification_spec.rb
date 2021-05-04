@@ -139,4 +139,46 @@ RSpec.describe IssueNotification, type: :model do
       end
     end
   end
+
+  describe "#full_event" do
+    context "when event is nil" do
+      let(:issue_notification) do
+        Fabricate.build(:issue_notification, event: nil)
+      end
+
+      it "returns nil" do
+        expect(issue_notification.full_event).to eq(nil)
+      end
+    end
+
+    context "when event is 'comment'" do
+      let(:issue_notification) do
+        Fabricate(:issue_notification, event: "comment")
+      end
+
+      it "returns nil" do
+        expect(issue_notification.full_event).to eq("New Comment")
+      end
+    end
+
+    context "when event is 'new'" do
+      let(:issue_notification) do
+        Fabricate(:issue_notification, event: "new")
+      end
+
+      it "returns nil" do
+        expect(issue_notification.full_event).to eq("New Issue")
+      end
+    end
+
+    context "when event is 'status'" do
+      let(:issue_notification) do
+        Fabricate(:issue_notification, event: "status")
+      end
+
+      it "returns nil" do
+        expect(issue_notification.full_event).to eq("Status Change")
+      end
+    end
+  end
 end
