@@ -1273,6 +1273,53 @@ RSpec.describe Issue, type: :model do
           expect(issue.update_status).to eq(true)
         end
       end
+
+      context "and user already has a similar notification" do
+        let(:issue) { Fabricate(:issue, status: "being_worked_on") }
+        let!(:issue_notification) do
+          Fabricate(:issue_notification, issue: issue, user: reporter,
+                                         event: "status",
+                                         details: "open,being_worked_on")
+        end
+
+        before do
+          issue.subscribers << reporter
+          issue.update closed: true
+          allow(issue).to receive(:tasks_approved?) { true }
+          allow(issue).to receive(:resolution_approved?) { false }
+        end
+
+        it "changes status" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("addressed")
+        end
+
+        it "doesn't create new notification" do
+          expect do
+            issue.update_status
+          end.not_to change(IssueNotification, :count)
+        end
+
+        it "updates notification" do
+          expect do
+            issue.update_status
+            issue_notification.reload
+          end.to change(issue_notification, :details)
+            .to("being_worked_on,addressed")
+        end
+
+        it "email subscribers" do
+          expect do
+            issue.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
+      end
     end
 
     context "when closed is true" do

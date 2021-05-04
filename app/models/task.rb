@@ -369,7 +369,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def open_status
       if any_pending_reviews?
         'in_review'
-      elsif unfinished_progressions?
+      elsif unfinished_progressions? ||
+            (any_assignees? && status == 'in_progress')
         'in_progress'
       elsif any_assignees?
         'assigned'

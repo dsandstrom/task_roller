@@ -1124,6 +1124,16 @@ RSpec.describe Task, type: :model do
           expect(task.send(:build_status)).to eq("closed")
         end
       end
+
+      context "and task is currently 'in_progress'" do
+        let(:task) { Fabricate(:open_task, status: "in_progress") }
+
+        before { task.assignees << user }
+
+        it "returns 'in_progress'" do
+          expect(task.send(:build_status)).to eq("in_progress")
+        end
+      end
     end
 
     context "when progressions" do

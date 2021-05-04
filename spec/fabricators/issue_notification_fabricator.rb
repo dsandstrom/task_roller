@@ -8,6 +8,7 @@ end
 
 Fabricator(:issue_status_notification, from: :issue_notification) do
   event 'status'
+  details 'open,being_worked_on'
 end
 
 Fabricator(:issue_new_notification, from: :issue_notification) do

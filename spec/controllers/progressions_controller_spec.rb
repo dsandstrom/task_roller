@@ -172,14 +172,14 @@ RSpec.describe ProgressionsController, type: :controller do
               end.to change(progression, :finished).to(true)
             end
 
-            it "updates the requested task's status" do
+            it "doesn't change the requested task's status" do
               progression =
                 Fabricate(:progression, task: task, user: current_user)
               expect do
                 patch :finish, params: { task_id: task.to_param,
                                          id: progression.to_param }
                 task.reload
-              end.to change(task, :status).to("assigned")
+              end.not_to change(task, :status)
             end
 
             it "redirects to the task" do

@@ -253,8 +253,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @history_feed ||= build_history_feed
   end
 
-  # FIXME: don't allow issue to go in_progress->assigned
-  # just allows it toggle it back and forth and be annoying
   def update_status(current_user = nil)
     old_status = status
     update_column :status, build_status
