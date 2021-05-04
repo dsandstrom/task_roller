@@ -1,4 +1,4 @@
-$box-border-color: $gray;
+$box-border-color: $light-gray;
 $notification-color: $color-success;
 
 .filters-wrapper {
@@ -14,7 +14,7 @@ $notification-color: $color-success;
   overflow: hidden;
   transition: max-height .3s ease-out;
   border-left: .5rem solid $notification-color;
-  background-color: $off-white;
+  background-color: $white;
   color: $notification-color;
   font-size: 80%;
   font-weight: bold;

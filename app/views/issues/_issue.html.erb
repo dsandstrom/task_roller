@@ -3,9 +3,9 @@
   project = issue.project
   category = issue.category
   tasks = issue.tasks
-  notification = current_user.issue_notifications.where(issue_id: issue.id).last
+  notifications = current_user.issue_notifications.where(issue_id: issue.id)
   css_class = 'issue'
-  css_class += ' with-notification' if notification
+  css_class += ' with-notification' if notifications.any?
 
   # TODO: show last comment date, and highlight if comment notification
   # TODO: highlight status if status change notification
@@ -13,7 +13,11 @@
 
 <%= content_tag :section, id: "issue-#{issue.id}", class: css_class do %>
   <header class="issue-header">
-    <%= render notification if notification %>
+    <% if notifications.any? %>
+      <%= render 'issue_notifications/issue_notifications',
+                 issue: issue,
+                 issue_notifications: notifications %>
+    <% end %>
 
     <div class="header-box">
       <%= content_tag(:p, "Issue ##{issue.id}", class: 'issue-id') %>

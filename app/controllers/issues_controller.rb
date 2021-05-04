@@ -112,6 +112,7 @@ class IssuesController < ApplicationController
       @comments = @issue.comments.includes(:user)
       @notifications = @issue.notifications.where(user_id: current_user_id)
                              .where(event: %w[new status])
+                             .order(created_at: :asc)
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
       @source_connection = @issue.source_connection

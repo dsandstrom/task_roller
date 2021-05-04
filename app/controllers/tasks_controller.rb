@@ -131,6 +131,7 @@ class TasksController < ApplicationController
       @comments = @task.comments.preload(:user)
       @notifications = @task.notifications.where(user_id: current_user_id)
                             .where(event: %w[new status])
+                            .order(created_at: :desc)
       @progressions = @task.progressions.unfinished
                            .where(user_id: current_user_id)
       set_subscription

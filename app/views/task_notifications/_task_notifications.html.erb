@@ -1,0 +1,18 @@
+<% return unless can?(:read, task_notifications.first) %>
+
+<% if task_notifications.size == 1 %>
+  <%= render task_notifications %>
+<% else %>
+  <div id="task_notifications-<%= task.id %>"
+       class="task-notification">
+    <span class="notification-event">
+      <%= task_notifications.map(&:full_event).uniq.join(', ') %>
+    </span>
+
+    <% if can?(:destroy, task_notifications.first) %>
+      <%= link_to "\u2716", bulk_destroy_task_task_notifications_path(task),
+                  method: :delete, title: 'Dismiss All', remote: true,
+                  class: 'close-link notification-close-link' %>
+    <% end %>
+  </div>
+<% end %>

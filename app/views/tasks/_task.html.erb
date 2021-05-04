@@ -4,15 +4,19 @@
   project = task.project
   category = task.category
   assignees = task.assignees
-  notification = current_user.task_notifications.where(task_id: task.id).last
+  notifications = current_user.task_notifications.where(task_id: task.id)
 
   css_class = 'task'
-  css_class += ' with-notification' if notification
+  css_class += ' with-notification' if notifications.any?
 %>
 
 <%= content_tag :section, id: "task-#{task.id}", class: css_class do %>
   <header class="task-header">
-    <%= render notification if notification %>
+    <% if notifications.any? %>
+      <%= render 'task_notifications/task_notifications',
+                 task: task,
+                 task_notifications: notifications %>
+    <% end %>
 
     <div class="header-box">
       <%= content_tag(:p, "Task ##{task.id}", class: 'task-id') %>
