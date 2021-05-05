@@ -460,13 +460,25 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def notify_subscribers(options)
       current_user = options.delete(:current_user)
       subscribers_except(current_user).each do |subscriber|
-        notification = notifications.create!(options.merge(user: subscriber))
-        notification.send_email
+        notify_subscriber(subscriber, options)
       end
       true
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.debug "TaskNotification invalid:\n#{e.inspect}"
       false
+    end
+
+    def notify_subscriber(subscriber, options)
+      if options[:event] == 'status'
+        notification = notifications.find_by(user_id: subscriber.id,
+                                             event: 'status')
+      end
+      if notification
+        notification.update options
+      else
+        notification = notifications.create!(options.merge(user: subscriber))
+      end
+      notification.send_email
     end
 
     def notification_options(old_status)

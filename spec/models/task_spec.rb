@@ -1388,6 +1388,12 @@ RSpec.describe Task, type: :model do
             task.update_status
           end.not_to have_enqueued_job
         end
+
+        it "doesn't create TaskNotification" do
+          expect do
+            task.update_status
+          end.not_to change(TaskNotification, :count)
+        end
       end
 
       context "and changes to 'in_progress'" do
@@ -1410,6 +1416,75 @@ RSpec.describe Task, type: :model do
           expect do
             task.update_status
           end.to change(TaskNotification, :count).by(1)
+        end
+      end
+    end
+
+    context "when status is originally 'in_progress'" do
+      let(:task) { Fabricate(:task, status: "in_progress") }
+      let(:subscriber) { Fabricate(:user_worker) }
+
+      before { task.subscribers << subscriber }
+
+      context "and changes to 'addressed'" do
+        context "with no current notifications" do
+          before { allow(task).to receive(:build_status) { "addressed" } }
+
+          it "changes status" do
+            expect do
+              task.update_status
+              task.reload
+            end.to change(task, :status).to("addressed")
+          end
+
+          it "delivers email" do
+            expect do
+              task.update_status
+            end.to have_enqueued_job.on_queue("mailers")
+          end
+
+          it "creates TaskNotification" do
+            expect do
+              task.update_status
+            end.to change(TaskNotification, :count).by(1)
+          end
+        end
+
+        context "with a similar notification" do
+          let!(:task_notification) do
+            Fabricate(:task_notification, task: task, user: subscriber,
+                                          event: "status",
+                                          details: "open,in_progress")
+          end
+
+          before { allow(task).to receive(:build_status) { "addressed" } }
+
+          it "changes status" do
+            expect do
+              task.update_status
+              task.reload
+            end.to change(task, :status).to("addressed")
+          end
+
+          it "delivers email" do
+            expect do
+              task.update_status
+            end.to have_enqueued_job.on_queue("mailers")
+          end
+
+          it "doesn't create TaskNotification" do
+            expect do
+              task.update_status
+            end.not_to change(TaskNotification, :count)
+          end
+
+          it "updates the current notification" do
+            expect do
+              task.update_status
+              task_notification.reload
+            end.to change(task_notification, :details)
+              .to("in_progress,addressed")
+          end
         end
       end
     end

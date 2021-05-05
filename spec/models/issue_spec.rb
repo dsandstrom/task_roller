@@ -1182,6 +1182,23 @@ RSpec.describe Issue, type: :model do
           end.to change(issue, :status).to("open")
         end
 
+        it "creates one notification" do
+          issue.subscribers << reporter
+          expect do
+            issue.update_status
+          end.to change(IssueNotification, :count).by(1)
+        end
+
+        it "creates notification" do
+          issue.subscribers << reporter
+          issue.update_status
+
+          notification = IssueNotification.last
+          expect(notification).not_to be_nil
+
+          expect(notification.event).to eq("status")
+        end
+
         it "delivers emails" do
           issue.subscribers << reporter
           Fabricate(:user_reporter)
@@ -1236,6 +1253,13 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.not_to change(issue, :status)
+        end
+
+        it "doesn't create notification" do
+          issue.subscribers << reporter
+          expect do
+            issue.update_status
+          end.not_to change(IssueNotification, :count)
         end
 
         it "doesn't email subscribers" do
@@ -1311,6 +1335,53 @@ RSpec.describe Issue, type: :model do
         end
 
         it "email subscribers" do
+          expect do
+            issue.update_status
+          end.to have_enqueued_job.on_queue("mailers")
+        end
+
+        it "returns true" do
+          expect(issue.update_status).to eq(true)
+        end
+      end
+
+      context "and user already has a 'new' notification" do
+        let(:issue) { Fabricate(:issue, status: "open") }
+        let!(:issue_notification) do
+          Fabricate(:issue_notification, issue: issue, user: reporter,
+                                         event: "new")
+        end
+
+        before do
+          issue.subscribers << reporter
+          allow(issue).to receive(:open_tasks?) { true }
+        end
+
+        it "changes status to 'in_progress'" do
+          expect do
+            issue.update_status
+            issue.reload
+          end.to change(issue, :status).to("being_worked_on")
+        end
+
+        it "creates one notification" do
+          expect do
+            issue.update_status
+          end.to change(IssueNotification, :count).by(1)
+        end
+
+        it "creates notification" do
+          issue.update_status
+
+          notification = IssueNotification.last
+          expect(notification).not_to be_nil
+
+          expect(notification.event).to eq("status")
+        end
+
+        it "delivers emails" do
+          Fabricate(:user_reporter)
+
           expect do
             issue.update_status
           end.to have_enqueued_job.on_queue("mailers")
