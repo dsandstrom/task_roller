@@ -107,7 +107,7 @@ GEM
       http_parser.rb (~> 0.6.0)
     erubi (1.10.0)
     eventmachine (1.2.7)
-    fabrication (2.19.0)
+    fabrication (2.22.0)
     faker (2.17.0)
       i18n (>= 1.6, < 2)
     faraday (1.4.1)
@@ -388,7 +388,7 @@ DEPENDENCIES
   capybara (~> 3.32)
   devise (~> 4.8)
   dotenv-rails (~> 2.7)
-  fabrication (~> 2.19.0)
+  fabrication (~> 2.22)
   faker (~> 2.14)
   guard (~> 2.0)
   guard-bundler
@@ -416,7 +416,7 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-matchers (~> 3.1)
   spring (~> 2.1)
-  spring-watcher-listen (~> 2.0.0)
+  spring-watcher-listen (~> 2.0)
   sucker_punch (~> 3.0)
   timecop (~> 0.9)
   web-console (>= 3.3.0)

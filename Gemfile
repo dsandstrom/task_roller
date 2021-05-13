@@ -65,7 +65,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'dotenv-rails', '~> 2.7'
-  gem 'fabrication', '~> 2.19.0'
+  gem 'fabrication', '~> 2.22'
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rails', '~> 0.8.1', require: false
@@ -89,7 +89,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the
   # background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 2.1'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen', '~> 2.0'
   gem 'web-console', '>= 3.3.0'
 end
 
