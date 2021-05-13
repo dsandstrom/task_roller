@@ -694,6 +694,35 @@ RSpec.describe Issue, type: :model do
     end
   end
 
+  describe ".with_notifications" do
+    let(:first_issue) { Fabricate(:issue) }
+    let(:second_issue) { Fabricate(:issue) }
+
+    before do
+      Timecop.freeze(1.day.ago) do
+        Fabricate(:issue_notification, issue: first_issue)
+      end
+      Fabricate(:issue_subscription, issue: second_issue, user: reporter)
+      Fabricate(:issue_notification, issue: second_issue, user: reporter)
+    end
+
+    context "when order_by is not set" do
+      it "returns all" do
+        expect(Issue.with_notifications(reporter).order(created_at: :asc))
+          .to eq([first_issue, second_issue])
+      end
+    end
+
+    context "when order_by is true" do
+      it "returns all" do
+        expect(
+          Issue.with_notifications(reporter, order_by: true)
+              .order(created_at: :asc)
+        ).to eq([second_issue, first_issue])
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#tasks" do

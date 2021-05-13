@@ -149,6 +149,17 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
              visible: false)
   end
 
+  def self.with_notifications(user, order_by: false)
+    query = 'LEFT OUTER JOIN issue_notifications ON '\
+            '(issue_notifications.issue_id = issues.id AND '\
+            "issue_notifications.user_id = #{user.id})"
+    issues = joins(query).select('issues.*').group(:id)
+                         .preload(:project, :user, project: :category)
+    return issues unless order_by
+
+    issues.order('COUNT(issue_notifications.id) DESC')
+  end
+
   # INSTANCE
 
   # TODO: shortened version for IssueMailer?

@@ -179,6 +179,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
              visible: false)
   end
 
+  def self.with_notifications(user, order_by: false)
+    query = 'LEFT OUTER JOIN task_notifications ON '\
+            '(task_notifications.task_id = tasks.id AND '\
+            "task_notifications.user_id = #{user.id})"
+    tasks = joins(query).select('tasks.*').group(:id)
+                        .preload(:project, :user, :issue, :assignees,
+                                 project: :category)
+    return tasks unless order_by
+
+    tasks.order('COUNT(task_notifications.id) DESC')
+  end
+
   # INSTANCE
 
   def description_html

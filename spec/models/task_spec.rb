@@ -801,6 +801,35 @@ RSpec.describe Task, type: :model do
     end
   end
 
+  describe ".with_notifications" do
+    let(:first_task) { Fabricate(:task) }
+    let(:second_task) { Fabricate(:task) }
+
+    before do
+      Timecop.freeze(1.day.ago) do
+        Fabricate(:task_notification, task: first_task)
+      end
+      Fabricate(:task_subscription, task: second_task, user: worker)
+      Fabricate(:task_notification, task: second_task, user: worker)
+    end
+
+    context "when order_by is not set" do
+      it "returns all" do
+        expect(Task.with_notifications(worker).order(created_at: :asc))
+          .to eq([first_task, second_task])
+      end
+    end
+
+    context "when order_by is true" do
+      it "returns all" do
+        expect(
+          Task.with_notifications(worker, order_by: true)
+              .order(created_at: :asc)
+        ).to eq([second_task, first_task])
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#task_assignees" do
