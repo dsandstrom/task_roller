@@ -13,6 +13,7 @@ $notification-color: $color-success;
   margin-bottom: .5rem;
   overflow: hidden;
   transition: max-height .3s ease-out;
+  border-right: 1px solid $box-border-color;
   border-left: .5rem solid $notification-color;
   background-color: $white;
   color: $notification-color;
