@@ -74,6 +74,18 @@ class SearchResult < ApplicationRecord
              visible: true)
   end
 
+  def self.with_notifications(user, order_by: false)
+    attrs = %w[id project_id user_id issue_id class_name created_at updated_at
+               summary description status type_id]
+    preloads = [:project, :user, :issue, :assignees, { project: :category }]
+    search_results = joins(user.notifications_query).select(attrs).group(attrs)
+                                                    .preload(preloads)
+    return search_results unless order_by
+
+    search_results.order('COUNT(issue_notifications.id) DESC')
+                  .order('COUNT(task_notifications.id) DESC')
+  end
+
   private_class_method def self.filter_by_id(query)
     return all if query.blank?
 

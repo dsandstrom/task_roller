@@ -385,6 +385,52 @@ RSpec.describe SearchResult, type: :model do
     end
   end
 
+  describe ".with_notifications" do
+    let(:worker) { Fabricate(:user_worker) }
+    let(:first_issue) { Fabricate(:issue) }
+    let(:first_task) { Fabricate(:task) }
+    let(:second_issue) { Fabricate(:issue) }
+    let(:second_task) { Fabricate(:task) }
+
+    before do
+      Timecop.freeze(2.weeks.ago) do
+        Fabricate(:issue_notification, issue: first_issue)
+      end
+      Timecop.freeze(1.week.ago) do
+        Fabricate(:task_notification, task: first_task)
+      end
+
+      Timecop.freeze(2.days.ago) do
+        Fabricate(:issue_subscription, issue: second_issue, user: worker)
+        Fabricate(:issue_notification, issue: second_issue, user: worker)
+      end
+
+      Fabricate(:task_subscription, task: second_task, user: worker)
+      Fabricate(:task_notification, task: second_task, user: worker)
+    end
+
+    context "when order_by is not set" do
+      it "returns all" do
+        expect(
+          SearchResult.order(created_at: :asc).map(&:id)
+        ).to eq(
+          [first_issue.id, first_task.id, second_issue.id, second_task.id]
+        )
+      end
+    end
+
+    context "when order_by is true" do
+      it "returns all" do
+        expect(
+          SearchResult.with_notifications(worker, order_by: true)
+              .order(created_at: :asc).map(&:id)
+        ).to eq(
+          [second_issue.id, second_task.id, first_issue.id, first_task.id]
+        )
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#issue?" do

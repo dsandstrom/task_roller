@@ -359,6 +359,18 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @password_
   end
 
+  def notifications_query
+    @notifications_query ||=
+      'LEFT OUTER JOIN issue_notifications ON '\
+      '(issue_notifications.issue_id = search_results.id AND '\
+      "search_results.class_name = 'Issue' AND "\
+      "issue_notifications.user_id = #{id}) "\
+      'LEFT OUTER JOIN task_notifications ON '\
+      '(task_notifications.task_id = search_results.id AND '\
+      "search_results.class_name = 'Task' AND "\
+      "task_notifications.user_id = #{id})"
+  end
+
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
@@ -387,17 +399,5 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
         '(task_subscriptions.task_id = search_results.id AND '\
         "search_results.class_name = 'Task' AND "\
         "task_subscriptions.user_id = #{id})"
-    end
-
-    def notifications_query
-      @notifications_query ||=
-        'LEFT OUTER JOIN issue_notifications ON '\
-        '(issue_notifications.issue_id = search_results.id AND '\
-        "search_results.class_name = 'Issue' AND "\
-        "issue_notifications.user_id = #{id}) "\
-        'LEFT OUTER JOIN task_notifications ON '\
-        '(task_notifications.task_id = search_results.id AND '\
-        "search_results.class_name = 'Task' AND "\
-        "task_notifications.user_id = #{id})"
     end
 end
