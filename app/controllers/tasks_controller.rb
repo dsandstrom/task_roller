@@ -16,7 +16,9 @@ class TasksController < ApplicationController
     @source = build_source
     authorize! :read, @source
 
-    @tasks = build_tasks
+    @tasks = build_tasks.accessible_by(current_ability)
+                        .with_notifications(current_user, order_by: order_by)
+                        .filter_by(build_filters).page(params[:page])
   end
 
   def show
@@ -114,8 +116,7 @@ class TasksController < ApplicationController
       elsif @source.respond_to?(:visible?)
         tasks = tasks.all_visible if @source.visible?
       end
-      tasks.accessible_by(current_ability).filter_by(build_filters)
-           .page(params[:page])
+      tasks
     end
 
     def set_user_resources
@@ -140,5 +141,9 @@ class TasksController < ApplicationController
     def set_subscription
       @subscription = @task.task_subscriptions
                            .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def order_by
+      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
     end
 end

@@ -13,7 +13,9 @@ class IssuesController < ApplicationController
     @source = build_source
     authorize! :read, @source
 
-    @issues = build_issues
+    @issues = build_issues.accessible_by(current_ability)
+                          .with_notifications(current_user, order_by: order_by)
+                          .filter_by(build_filters).page(params[:page])
   end
 
   def show
@@ -103,8 +105,7 @@ class IssuesController < ApplicationController
       elsif @source.respond_to?(:visible?)
         issues = issues.all_visible if @source.visible?
       end
-      issues.accessible_by(current_ability).filter_by(build_filters)
-            .page(params[:page])
+      issues
     end
 
     def set_issue_variables
@@ -118,5 +119,9 @@ class IssuesController < ApplicationController
       @source_connection = @issue.source_connection
       @subscription = @issue.issue_subscriptions
                             .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def order_by
+      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
     end
 end

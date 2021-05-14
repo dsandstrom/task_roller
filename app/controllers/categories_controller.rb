@@ -65,8 +65,14 @@ class CategoriesController < ApplicationController
     end
 
     def build_search_results
-      SearchResult.accessible_by(current_ability).filter_by(filters)
+      SearchResult.accessible_by(current_ability)
+                  .with_notifications(current_user, order_by: order_by)
+                  .filter_by(filters)
                   .preload(:project, :user, :issue, :assignees,
                            project: :category)
+    end
+
+    def order_by
+      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
     end
 end

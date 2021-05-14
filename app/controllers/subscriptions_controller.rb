@@ -24,7 +24,6 @@ class SubscriptionsController < ApplicationController
     end
 
     def build_subscriptions
-      order_by = params[:order].blank? || params[:order] == 'updated,desc'
       case filters[:type]
       when 'issues'
         current_user.subscribed_issues_with_notifications(order_by: order_by)
@@ -33,5 +32,9 @@ class SubscriptionsController < ApplicationController
       else
         current_user.subscriptions_with_notifications(order_by: order_by)
       end
+    end
+
+    def order_by
+      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
     end
 end
