@@ -15,6 +15,7 @@ class UsersController < ApplicationController
     @unemployed = @users.unemployed
   end
 
+  # TODO: add with_notifications
   def show
     @unresolved_issues =
       @unresolved_issues.all_visible.accessible_by(current_ability)
