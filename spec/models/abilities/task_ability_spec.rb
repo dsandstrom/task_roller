@@ -4540,9 +4540,9 @@ RSpec.describe Ability do
             end
 
             it { is_expected.not_to be_able_to(:create, task_notification) }
-            it { is_expected.not_to be_able_to(:read, task_notification) }
+            it { is_expected.to be_able_to(:read, task_notification) }
             it { is_expected.not_to be_able_to(:update, task_notification) }
-            it { is_expected.not_to be_able_to(:destroy, task_notification) }
+            it { is_expected.to be_able_to(:destroy, task_notification) }
           end
         end
 

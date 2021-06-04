@@ -125,6 +125,7 @@ class TaskAbility < BaseAbility
         ability.can :read, model_name
       end
       ability.can :read, TaskAssignee, assignee_id: user_id
+      ability.can %i[read destroy], TaskNotification, user_id: user_id
     end
 
     def activate_visible_task_abilities

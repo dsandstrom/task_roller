@@ -3614,9 +3614,9 @@ RSpec.describe Ability do
             end
 
             it { is_expected.not_to be_able_to(:create, issue_notification) }
-            it { is_expected.not_to be_able_to(:read, issue_notification) }
+            it { is_expected.to be_able_to(:read, issue_notification) }
             it { is_expected.not_to be_able_to(:update, issue_notification) }
-            it { is_expected.not_to be_able_to(:destroy, issue_notification) }
+            it { is_expected.to be_able_to(:destroy, issue_notification) }
           end
 
           context "when doesn't belong to them" do

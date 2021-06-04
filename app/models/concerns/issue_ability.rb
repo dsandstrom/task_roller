@@ -99,6 +99,7 @@ class IssueAbility < BaseAbility
        Resolution].each do |model_name|
         ability.can :read, model_name
       end
+      ability.can %i[read destroy], IssueNotification, user_id: user_id
     end
 
     def activate_invisible_abilities
