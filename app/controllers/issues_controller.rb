@@ -104,6 +104,8 @@ class IssuesController < ApplicationController
         issues = issues.all_visible if @source.totally_visible?
       elsif @source.respond_to?(:visible?)
         issues = issues.all_visible if @source.visible?
+      elsif @source.is_a?(User)
+        issues = issues.all_visible
       end
       issues
     end

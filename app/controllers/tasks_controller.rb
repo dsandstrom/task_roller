@@ -115,6 +115,8 @@ class TasksController < ApplicationController
         tasks = tasks.all_visible if @source.totally_visible?
       elsif @source.respond_to?(:visible?)
         tasks = tasks.all_visible if @source.visible?
+      elsif @source.is_a?(User)
+        tasks = tasks.all_visible
       end
       tasks
     end

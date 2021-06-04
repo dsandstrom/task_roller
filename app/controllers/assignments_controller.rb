@@ -6,7 +6,8 @@ class AssignmentsController < ApplicationController
   before_action :load_and_authorize_task, only: %i[edit update]
 
   def index
-    @assignments = @assignments.filter_by(build_filters).page(params[:page])
+    @assignments = @assignments.all_visible.accessible_by(current_ability)
+                               .filter_by(build_filters).page(params[:page])
   end
 
   def edit; end
