@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: show stats in user partials
+# issues opened, tasks worked on, etc
+
 class UsersController < ApplicationController
   load_and_authorize_resource
   load_resource :active_assignments, through: :user, singleton: true,
