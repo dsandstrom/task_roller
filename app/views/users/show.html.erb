@@ -2,9 +2,7 @@
   <%= user_header @user %>
 
   <% if @active_assignments.none? && @open_tasks.none? && @unresolved_issues.none? %>
-      <p>
-        No active issues/tasks
-      </p>
+    <p>No active issues/tasks</p>
   <% end %>
 
   <% if @active_assignments&.any? %>
