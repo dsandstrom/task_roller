@@ -12,6 +12,7 @@
     "normalize.css": "^8.0.1",
     "ssri": "^8.0.1",
     "turbolinks": "^5.2.0",
+    "trim-newlines": "^3.0.1",
     "validate-js": "^2.0.1"
   },
   "devDependencies": {
