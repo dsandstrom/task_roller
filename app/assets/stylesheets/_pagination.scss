@@ -1,28 +1,42 @@
+// .pagination {
+//   .page,
+//   .first,
+//   .prev,
+//   .next,
+//   .last {
+//     margin: .5rem;
+//     padding: 0;
+//     line-height: 1.4;
+//
+//     a {
+//       padding: .25rem .5rem;
+//     }
+//
+//     &.current {
+//       color: $gray;
+//     }
+//   }
+//
+//   .first {
+//     margin-left: 0;
+//   }
+//
+//   .last {
+//     margin-right: 0;
+//   }
+// }
+
 .pagination {
-  .page,
-  .first,
-  .prev,
-  .next,
-  .last {
-    margin: .5rem;
-    padding: 0;
-    line-height: 1.4;
+  text-align: center;
 
-    a {
-      padding: .25rem .5rem;
-    }
-
-    &.current {
-      color: $gray;
-    }
+  .button {
+    height: 2.5rem;
+    padding: 0 1rem;
+    line-height: 2.5rem;
   }
 
-  .first {
-    margin-left: 0;
-  }
-
-  .last {
-    margin-right: 0;
+  .gap {
+    color: $gray;
   }
 }
 
