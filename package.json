@@ -2,8 +2,9 @@
   "name": "task_roller",
   "private": true,
   "dependencies": {
+    "@rails/webpacker": "^6.0.0-rc.5",
     "@rails/ujs": "^6.0.3-1",
-    "@rails/webpacker": "^5.1.1",
+    "babel-plugin-macros": "^3.1.0",
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
     "highlight.js": "^10.4.1",
@@ -12,9 +13,18 @@
     "normalize.css": "^8.0.1",
     "ssri": "^8.0.1",
     "turbolinks": "^5.2.0",
-    "validate-js": "^2.0.1"
+    "validate-js": "^2.0.1",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0"
+  },
+  "version": "0.2.0",
+  "babel": {
+    "presets": [
+      "./node_modules/@rails/webpacker/package/babel/preset.js"
+    ]
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.11.0"
+    "@webpack-cli/serve": "^1.5.2",
+    "webpack-dev-server": "^4.2.1"
   }
 }

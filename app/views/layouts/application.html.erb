@@ -8,13 +8,9 @@
     <%= stylesheet_link_tag 'application', media: 'all',
                             'data-turbolinks-track': 'reload' %>
 
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'flash_messages', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'forms', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'search_forms', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'radio_buttons', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'dropdowns', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'accordions', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'accordions', 'dropdowns',
+                            'flash_messages', 'forms', 'radio_buttons',
+                            'search_forms', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>

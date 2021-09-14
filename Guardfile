@@ -90,6 +90,17 @@ group :frontend do
     watch(%r{app/helpers/[^.]+\.rb})
     watch(%r{config/locales/[^.]+\.yml})
   end
+
+  ### Guard::Webpacker
+  #  available options:
+  #  - :bin (defaults to "webpack-dev-server") to run
+  #  - :watch (defaults to "default") can be an array
+  #  - :colors (defaults to 1)
+  #  - :progress
+  guard :webpacker do
+    watch('config/webpacker.yml')
+    watch(%r{^config/webpacker/(.+)$})
+  end
 end
 
 group :backend do

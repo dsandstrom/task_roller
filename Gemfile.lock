@@ -159,6 +159,9 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    guard-webpacker (0.2.1)
+      guard (>= 2)
+      guard-compat (~> 1.0)
     hashie (4.1.0)
     http_parser.rb (0.6.0)
     i18n (1.8.10)
@@ -373,7 +376,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webpacker (5.4.2)
+    webpacker (6.0.0.rc.5)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
@@ -405,6 +408,7 @@ DEPENDENCIES
   guard-livereload (~> 2.5)
   guard-rails (~> 0.8.1)
   guard-rspec (~> 4.7.3)
+  guard-webpacker (~> 0.2.1)
   kaminari (~> 1.2.1)
   letter_opener (~> 1.7)
   listen (~> 3.2)
@@ -430,7 +434,7 @@ DEPENDENCIES
   sucker_punch (~> 3.0)
   timecop (~> 0.9)
   web-console (>= 3.3.0)
-  webpacker (~> 5.3)
+  webpacker (~> 6.0.0.rc.5)
 
 RUBY VERSION
    ruby 3.0.1p64

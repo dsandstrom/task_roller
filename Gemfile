@@ -17,7 +17,7 @@ gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 6.0'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 5.3'
+gem 'webpacker', '~> 6.0.0.rc.5'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -81,6 +81,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'guard-livereload', '~> 2.5', require: false
+  gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rubocop', '~> 1.4.2', require: false
