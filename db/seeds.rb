@@ -2,7 +2,6 @@
 
 # TODO: add quotes to comments
 # Faker::TvShows::Simpsons.quote
-# TODO: add password/confirmation to users
 
 # TODO: approve, disapprove, close current issues/tasks
 # make it look like action is happening to older issues
@@ -73,8 +72,10 @@ class Seeds
 
     def create_user(employee_type)
       User.create!(name: Faker::Name.unique.name,
-                   email: Faker::Internet.unique.email,
-                   employee_type: employee_type)
+                   email: Faker::Internet.unique.safe_email,
+                   employee_type: employee_type,
+                   password: 'password', password_confirmation: 'password',
+                   confirmed_at: Time.now)
     end
 
     def create_issue(attrs = {})
@@ -329,23 +330,18 @@ class Seeds
     end
 
     def comment_body
-      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
-
-      body = "#{Faker::Lorem.paragraph(p_options)}\n\n"
+      body = "#{fake_paragraphs}\n\n"
       body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
-      body += Faker::Lorem.paragraph(p_options)
+      body += fake_paragraphs
       body
     end
 
     def comment_question
-      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
-      q_options = { word_count: 2, random_words_to_add: 4 }
-
-      body = "#{Faker::Lorem.paragraph(p_options)} "
-      body += "#{Faker::Lorem.question(q_options)}\n\n"
+      body = "#{fake_paragraphs} "
+      body += "#{fake_question}\n\n"
       body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
-      body += "#{Faker::Lorem.paragraph(p_options)} "
-      body += Faker::Lorem.question(q_options)
+      body += "#{fake_paragraphs} "
+      body += fake_question
       body
     end
 
@@ -376,23 +372,18 @@ class Seeds
     end
 
     def issue_description
-      p_options = { sentence_count: 3, random_sentences_to_add: 5 }
-      q_options = { word_count: 3, random_words_to_add: 6 }
-
-      body = "#{Faker::Lorem.paragraph(p_options)} "
-      body += "#{Faker::Lorem.question(q_options)}\n\n"
+      body = "#{fake_paragraphs} "
+      body += "#{fake_question}\n\n"
       body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
-      body += "#{Faker::Lorem.paragraph(p_options)} "
-      body += Faker::Lorem.question(q_options)
+      body += "#{fake_paragraphs} "
+      body += fake_question
       body
     end
 
     def task_description
-      p_options = { sentence_count: 2, random_sentences_to_add: 4 }
-
-      body = "#{Faker::Lorem.paragraph(p_options)}\n\n"
+      body = "#{fake_paragraphs}\n\n"
       body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
-      body += Faker::Lorem.paragraph(p_options)
+      body += fake_paragraphs
       body
     end
 
@@ -428,6 +419,14 @@ class Seeds
       else
         task.user_id
       end
+    end
+
+    def fake_paragraphs
+      Faker::Lorem.paragraph(sentence_count: 2, random_sentences_to_add: 4)
+    end
+
+    def fake_question
+      Faker::Lorem.question(word_count: 2, random_words_to_add: 4)
     end
 end
 
