@@ -61,6 +61,16 @@ $notification-color: $color-success;
     border-color: $notification-color;
   }
 
+  footer {
+    margin: 0;
+    padding: .5rem 1rem;
+    border-top: 1px dashed $light-gray;
+
+    &:empty {
+      display: none;
+    }
+  }
+
   .issue-notification,
   .task-notification {
     margin: 0;
@@ -220,7 +230,7 @@ $notification-color: $color-success;
   .issue-task {
     margin: 0;
     padding: 0;
-    border-top: 1px dashed $light-gray;
+    border-top: 1px solid $light-gray;
     background-color: $off-white;
 
     .issue-container,

@@ -1,4 +1,4 @@
-<% show_status = true if show_status.nil? %>
+<% show_status = task.status.present? if show_status.nil? %>
 
 <p class="task" id="task-<%= task.id %>">
   <%= task_type_icon_tag(task.task_type) %>

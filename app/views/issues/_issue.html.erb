@@ -41,12 +41,6 @@
       <%# TODO: merge with edit %>
       <%= issue_tags(issue) %>
 
-      <% if can?(:update, issue) %>
-        <p>
-          <%= link_to 'Edit', edit_issue_path(issue) %>
-        </p>
-      <% end %>
-
       <% if tasks.any? %>
         <p>
           <%= link_to issue_tasks_path(issue),
@@ -88,6 +82,12 @@
       </dd>
     </dl>
   </main>
+
+  <% if can?(:update, issue) %>
+    <footer>
+      <%= link_to 'Edit', edit_issue_path(issue) %>
+    </footer>
+  <% end %>
 
   <% if tasks.any? %>
     <div id="issue_<%= issue.id %>_tasks_wrapper" class="issue-tasks-wrapper"></div>
