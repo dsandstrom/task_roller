@@ -151,3 +151,73 @@ label {
 [multiple="multiple"] {
   height: auto;
 }
+
+.check-box-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  label,
+  .destroy-link,
+  .missing-spot-position {
+    min-width: 3rem;
+    margin: 0 .5rem 0 0;
+    padding: .1rem .5rem;
+    border: 1px solid $light-gray;
+    border-radius: $border-radius;
+    background-color: $white;
+    color: $dark-gray;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  label,
+  .destroy-link {
+    &:hover {
+      border-color: $color-secondary;
+      background-color: $off-white;
+      color: $color-secondary;
+    }
+
+    &.active {
+      border-color: $active-color;
+      background-color: rgba($active-color, .1);
+      color: $active-color;
+    }
+  }
+
+  input {
+    display: none;
+  }
+
+  .missing-spot-position {
+    border-color: $off-white;
+    color: $light-gray;
+  }
+
+  .destroy-link {
+    color: $color-warning;
+
+    &:hover {
+      border-color: $color-warning-hover;
+      color: $color-warning-hover;
+    }
+
+    &.disabled {
+      border-color: $light-gray;
+      color: $gray;
+    }
+  }
+
+  &.highlight {
+    label {
+      border-color: rgba($color-warning, .4);
+      color: $color-warning;
+
+      &:hover {
+        border-color: rgba($color-warning, .8);
+        color: $color-warning-hover;
+      }
+    }
+  }
+}
