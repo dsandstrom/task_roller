@@ -20,14 +20,14 @@ module ProjectsHelper
     pages
   end
 
-  def project_header(project, options = {})
+  def project_header(project)
     category = project.category
     return unless category
 
     pages = [project_header_first_column(project),
-             project_header_second_column(project, options)]
-
+             project_header_second_column(project)]
     content_for :header do
+      concat breadcrumbs(project_breadcrumb_pages(project))
       concat content_tag(:div, safe_join(pages), class: 'columns')
       concat project_nav(project)
     end
@@ -61,14 +61,14 @@ module ProjectsHelper
 
     def project_nav_links(project)
       [['Project', project], ['Issues', project_issues_path(project)],
-       ['Tasks', project_tasks_path(project)],
-       edit_project_link(project)].compact
+       ['Tasks', project_tasks_path(project)]].compact
     end
 
     def edit_project_link(project)
-      return unless can?(:update, project)
+      edit_path = edit_project_path(project)
+      return unless can?(:update, project) && !current_page?(edit_path)
 
-      ['Settings', edit_project_path(project)]
+      ['Project Settings', edit_path]
     end
 
     def project_page_title(project)
@@ -94,24 +94,17 @@ module ProjectsHelper
 
     def project_header_first_column(project)
       content_tag :div, class: 'first-column' do
-        concat breadcrumbs(project_breadcrumb_pages(project))
         concat content_tag(:h1, project_header_heading(project))
         concat project_tags(project)
         concat project_page_title(project)
       end
     end
 
-    def project_header_second_column(project, options)
-      return unless options[:subscriptions].present?
+    def project_header_second_column(project)
+      buttons = edit_project_link(project)
+      return if buttons.blank?
 
-      buttons = options[:subscriptions].map do |s|
-        content = render(s, project: project)
-        return nil if content == "\n"
-
-        content
-      end.compact
-      return unless buttons&.any?
-
+      buttons = navitize([buttons], class: 'button')
       content_tag :div, class: 'second-column' do
         content_tag :div, safe_join(buttons)
       end
