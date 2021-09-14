@@ -262,12 +262,13 @@ body {
   }
 
   > .second-column {
+    margin-bottom: 2.5rem;
+
     .devise-links {
       display: flex;
       flex-direction: column;
       align-content: stretch;
       height: 100%;
-      margin-bottom: 2.5rem;
     }
   }
 }
