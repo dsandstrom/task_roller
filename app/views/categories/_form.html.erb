@@ -9,13 +9,31 @@
   </div>
 
   <div class="field">
-    <%= form.label :visible, for: :category_visible %>
-    <%= form.check_box :visible, id: :category_visible %>
+    <div class="check-box-buttons">
+      <%= label_tag 'category_visible_true', class: 'radio-button-label' do %>
+        <%= form.radio_button :visible, true, id: 'category_visible_true' %>
+        Visible
+      <% end %>
+
+      <%= label_tag 'category_visible_false', class: 'radio-button-label' do %>
+        <%= form.radio_button :visible, false, id: 'category_visible_false' %>
+        Archived
+      <% end %>
+    </div>
   </div>
 
   <div class="field">
-    <%= form.label :internal, for: :category_internal %>
-    <%= form.check_box :internal, id: :category_internal %>
+    <div class="check-box-buttons">
+      <%= label_tag 'category_internal_false', class: 'radio-button-label' do %>
+        <%= form.radio_button :internal, false, id: 'category_internal_false' %>
+        External
+      <% end %>
+
+      <%= label_tag 'category_internal_true', class: 'radio-button-label' do %>
+        <%= form.radio_button :internal, true, id: 'category_internal_true' %>
+        Internal
+      <% end %>
+    </div>
   </div>
 
   <div class="actions">
