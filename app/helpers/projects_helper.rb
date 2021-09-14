@@ -104,7 +104,7 @@ module ProjectsHelper
       buttons = edit_project_link(project)
       return if buttons.blank?
 
-      buttons = navitize([buttons], class: 'button')
+      buttons = navitize([buttons], class: 'button button-outline')
       content_tag :div, class: 'second-column' do
         content_tag :div, safe_join(buttons)
       end

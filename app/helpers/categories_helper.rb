@@ -8,10 +8,11 @@ module CategoriesHelper
     end
   end
 
-  def category_header(category, options = {})
+  def category_header(category)
     columns = [category_header_first_column(category),
-               category_header_second_column(category, options)]
+               category_header_second_column(category)]
     content_for :header do
+      concat breadcrumbs(category_breadcrumb_pages(category))
       concat content_tag(:div, safe_join(columns), class: 'columns')
       concat category_nav(category)
     end
@@ -78,14 +79,14 @@ module CategoriesHelper
     def category_nav_links(category)
       [['Category', category_path(category)],
        ['Issues', category_issues_path(category)],
-       ['Tasks', category_tasks_path(category)],
-       edit_category_link(category)].compact
+       ['Tasks', category_tasks_path(category)]].compact
     end
 
     def edit_category_link(category)
-      return unless can?(:update, category)
+      edit_path = edit_category_path(category)
+      return unless can?(:update, category) && !current_page?(edit_path)
 
-      ['Settings', edit_category_path(category)]
+      ['Category Settings', edit_path]
     end
 
     def invisible_category
@@ -108,22 +109,17 @@ module CategoriesHelper
       url = category_path(category)
 
       content_tag :div, class: 'first-column' do
-        concat breadcrumbs(category_breadcrumb_pages(category))
         concat content_tag(:h1, link_to_unless_current(category.name, url))
         concat category_tags(category)
         concat category_page_title(category)
       end
     end
 
-    def category_header_second_column(category, options)
-      return unless options[:subscriptions].present?
+    def category_header_second_column(category)
+      buttons = edit_category_link(category)
+      return if buttons.blank?
 
-      buttons = options[:subscriptions].map do |s|
-        content = render(s, category: category)
-        content == "\n" ? nil : content
-      end.compact
-      return unless buttons&.any?
-
+      buttons = navitize([buttons], class: 'button button-outline')
       content_tag :div, class: 'second-column' do
         content_tag :div, safe_join(buttons)
       end
