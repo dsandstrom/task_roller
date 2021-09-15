@@ -18,6 +18,7 @@ class TaskNotification < ApplicationRecord
   end
 
   def send_email
+    return if Rails.env.development?
     return unless valid?
     return unless mailer_options.all? { |_, value| value.present? }
 
