@@ -3,6 +3,7 @@
 # FIXME: issue closure for invalid issue, not closed
 # issue user destroyed, add closure, shows as open
 # FIXME: if issue is addressed, reopened, marked duplicate -> still addressed
+# TODO: add tags (client related, guest, host)
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'

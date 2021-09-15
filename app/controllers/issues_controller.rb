@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# TODO: add one place to add issues (able to pick project there)
+# TODO: add all issues page, filter by category/project
+# TODO: add general search
+# TODO: allow to update status of multiple issues/task
+
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]

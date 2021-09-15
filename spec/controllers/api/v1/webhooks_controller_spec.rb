@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::WebhooksController, type: :controller do
+  let(:commit_user) { Fabricate(:user_worker) }
+
   describe "POST #github" do
     let(:github_secret) { "secret" }
     let(:api_url) { "https://api.github.com" }
