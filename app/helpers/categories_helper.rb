@@ -119,9 +119,9 @@ module CategoriesHelper
       buttons = edit_category_link(category)
       return if buttons.blank?
 
-      buttons = navitize([buttons], class: 'button button-outline')
+      buttons = navitize([buttons], class: 'button')
       content_tag :div, class: 'second-column' do
-        content_tag :div, safe_join(buttons)
+        content_tag :p, safe_join(buttons)
       end
     end
 end

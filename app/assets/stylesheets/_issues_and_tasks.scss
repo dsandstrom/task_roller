@@ -454,6 +454,10 @@ $notification-color: $color-success;
 .category-projects-header {
   margin: 1rem 0 0;
 
+  h2 {
+    margin-top: 0;
+  }
+
   p {
     margin-bottom: 1rem;
   }
@@ -481,10 +485,6 @@ $notification-color: $color-success;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    p {
-      margin: 0;
-    }
   }
 }
 

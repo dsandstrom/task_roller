@@ -1,7 +1,6 @@
 <%= category_index_header %>
 
 <header class="category-projects-header">
-  <h2></h2>
   <% if can?(:read, invisible_category) && Category.all_invisible.any? %>
     <p>
       <%= link_to 'View Archived Categories',
