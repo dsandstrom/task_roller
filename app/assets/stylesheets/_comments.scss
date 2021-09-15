@@ -1,20 +1,12 @@
 .comments {
   header {
+    border-bottom: 1px solid $light-gray;
+
     p {
       margin: 0;
       border: 0 solid transparent;
       border-width: 0 .5rem;
     }
-  }
-
-  .header-box {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: .5rem;
-    background: $off-white;
-    font-family: $heading-font;
-    font-size: 1.4rem;
   }
 
   main {
@@ -25,7 +17,6 @@
     p {
       margin: 0;
       padding: .5rem 1rem;
-      border-top: 1px dashed $light-gray;
     }
 
     &:empty {
@@ -55,6 +46,16 @@
     }
   }
 
+  .header-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: .5rem;
+    background: $off-white;
+    font-family: $heading-font;
+    font-size: 1.4rem;
+  }
+
   .comment {
     &:first-child {
       border-radius: $border-radius $border-radius 0 0;
@@ -71,14 +72,9 @@
 .comment,
 .editor-preview,
 .editor-preview-side {
+
   &.original-user {
     background: $off-white;
-
-    header {
-      border-bottom: 1px solid $light-gray;
-      background: $off-white;
-      color: $black;
-    }
   }
 
   blockquote {
