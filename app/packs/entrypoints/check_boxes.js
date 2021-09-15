@@ -36,7 +36,6 @@ class CheckBoxes {
       if (!radio) return;
 
       radio.addEventListener('change', () => {
-        console.log('change');
         this.toggleDisabledClasses();
       });
     }
