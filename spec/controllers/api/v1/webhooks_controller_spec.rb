@@ -3,7 +3,10 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::WebhooksController, type: :controller do
-  let(:commit_user) { Fabricate(:user_worker) }
+  let(:task) { Fabricate(:task) }
+  let(:commit_user) do
+    Fabricate(:user_worker, github_id: 4321, github_url: "login")
+  end
 
   describe "POST #github" do
     let(:github_secret) { "secret" }
@@ -92,6 +95,69 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
       }
     end
 
+    let(:commit_push_params) do
+      {
+        "commits" => [
+          {
+            "url" => "#{api_url}/repos/test",
+            "comments_url" => "#{api_url}/repos/user/repo/issues/2/comments",
+            "html_url" => "https://github.com/user/repo/issues/2",
+            "node_id" => "zzz=",
+            "commit" => {
+              "url" => "#{api_url}/repos/test/git/commits/bbb",
+              "author" => {
+                "name" => commit_user.name,
+                "email" => commit_user.email,
+                "date" => "2011-04-14T16:00:49Z"
+              },
+              "commiter" => {
+                "name" => commit_user.name,
+                "email" => commit_user.email,
+                "date" => "2011-04-14T16:00:49Z"
+              },
+              "message" => "Fix all the bugs"
+            },
+            "author" => {
+              "login" => commit_user.github_url,
+              "id" => commit_user.github_id,
+              "node_id" => "zzz=",
+              "avatar_url" => "https://avatars.githubusercontent.com/u/test",
+              "gravatar_id" => "",
+              "url" => "#{api_url}/users/user",
+              "html_url" => "https://github.com/user",
+              "followers_url" => "#{api_url}/users/user/followers",
+              "following_url" => "#{api_url}/users/user/following{/other_user}",
+              "gists_url" => "#{api_url}/users/user/gists{/gist_id}",
+              "starred_url" => "#{api_url}/users/user/starred{/owner}{/repo}",
+              "subscriptions_url" => "#{api_url}/users/user/subscriptions",
+              "organizations_url" => "#{api_url}/users/user/orgs",
+              "repos_url" => "#{api_url}/users/user/repos",
+              "events_url" => "#{api_url}/users/user/events{/privacy}",
+              "received_events_url" => "#{api_url}/users/user/received_events",
+              "type" => "User",
+              "site_admin" => false
+            }
+          }
+        ],
+        "repository" => {
+          "id" => 543
+        },
+        "pusher" => {
+          "name" => "Codertocat",
+          "email" => "pusher@example.com"
+        },
+        "sender" => {
+          "login" => "Codertocat",
+          "id" => "1234",
+          "node_id" => "ttt",
+          "avatar_url" => "https://avatars1.githubusercontent.com/u/1234?v=4",
+          "gravatar_id" => "",
+          "url" => "https://api.github.com/users/Codertocat",
+          "html_url" => "https://github.com/Codertocat"
+        }
+      }
+    end
+
     before do
       Fabricate(:issue_type)
       Fabricate(:user_reporter)
@@ -175,207 +241,328 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
         end
       end
 
-      context "action is 'opened'" do
+      context "for an issue" do
+        context "action is 'opened'" do
+          before do
+            code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                           github_secret,
+                                           issue_open_params.to_query)
+            request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
+          end
+
+          context "when category and project don't exist" do
+            it "returns a success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+
+            it "creates a new category" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(Category, :count).by(1)
+            end
+
+            it "creates a new project" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(Project, :count).by(1)
+            end
+
+            it "creates a new app issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(Issue, :count).by(1)
+            end
+
+            it "sets issue attributes" do
+              post :github, params: issue_open_params
+              issue = Issue.last
+              expect(issue).not_to be_nil
+              expect(issue.summary).to eq("New Issue API Test")
+              expect(issue.description).to eq("Testing api")
+              expect(issue.github_id).to eq(1234)
+            end
+          end
+
+          context "when project doesn't exist" do
+            let!(:category) { Fabricate(:category, name: category_name) }
+
+            it "returns a success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+
+            it "doesn't create a new category" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Category, :count)
+            end
+
+            it "creates a new project" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(category.projects, :count).by(1)
+            end
+
+            it "creates a new app issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(Issue, :count).by(1)
+            end
+          end
+
+          context "when project exists" do
+            let!(:category) { Fabricate(:category, name: category_name) }
+            let!(:project) do
+              Fabricate(:project, category: category, name: project_name)
+            end
+
+            it "returns a success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+
+            it "doesn't create a new category" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Category, :count)
+            end
+
+            it "doesn't create a new project" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Project, :count)
+            end
+
+            it "creates a new app issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(Issue, :count).by(1)
+            end
+          end
+
+          context "and user is new" do
+            it "creates a new user" do
+              expect do
+                post :github, params: issue_open_params
+              end.to change(User, :count).by(1)
+            end
+
+            it "sets issue user_id" do
+              post :github, params: issue_open_params
+              issue = Issue.last
+              expect(issue).not_to be_nil
+              expect(issue.user_id).not_to be_nil
+            end
+
+            it "returns a success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+          end
+
+          context "and user exists" do
+            before do
+              Fabricate(:user_reviewer,
+                        github_id: issue_open_params["issue"]["user"]["id"])
+            end
+            it "doesn't create a new user" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(User, :count)
+            end
+
+            it "sets issue user_id" do
+              post :github, params: issue_open_params
+              issue = Issue.last
+              expect(issue).not_to be_nil
+              expect(issue.user_id).not_to be_nil
+            end
+
+            it "returns a success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+          end
+
+          context "and new user is invalid" do
+            before do
+              issue_open_params["issue"]["user"]["login"] = nil
+              code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                             github_secret,
+                                             issue_open_params.to_query)
+              request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
+            end
+
+            it "doesn't create a new issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Issue, :count)
+            end
+
+            it "returns an error response" do
+              post :github, params: issue_open_params
+              expect(response).to have_http_status(:unprocessable_entity)
+            end
+          end
+
+          context "and issue is invalid" do
+            before do
+              issue_open_params["issue"]["title"] = nil
+              code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                             github_secret,
+                                             issue_open_params.to_query)
+              request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
+            end
+
+            it "doesn't create a new issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Issue, :count)
+            end
+
+            it "returns an error response" do
+              post :github, params: issue_open_params
+              expect(response).to have_http_status(:unprocessable_entity)
+            end
+          end
+
+          context "and issue already exists" do
+            before do
+              Fabricate(:issue, github_id: issue_open_params["issue"]["id"])
+              Fabricate(:user_reporter,
+                        github_id: issue_open_params["issue"]["user"]["id"])
+            end
+
+            it "doesn't create a new issue" do
+              expect do
+                post :github, params: issue_open_params
+              end.not_to change(Issue, :count)
+            end
+
+            it "returns an success response" do
+              post :github, params: issue_open_params
+              expect(response).to be_successful
+            end
+          end
+        end
+      end
+
+      context "for a commit" do
         before do
           code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                          github_secret,
-                                         issue_open_params.to_query)
+                                         commit_push_params.to_query)
           request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
         end
 
-        context "when category and project don't exist" do
-          it "returns a success response" do
-            post :github, params: issue_open_params
-            expect(response).to be_successful
-          end
-
-          it "creates a new category" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(Category, :count).by(1)
-          end
-
-          it "creates a new project" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(Project, :count).by(1)
-          end
-
-          it "creates a new app issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(Issue, :count).by(1)
-          end
-
-          it "sets issue attributes" do
-            post :github, params: issue_open_params
-            issue = Issue.last
-            expect(issue).not_to be_nil
-            expect(issue.summary).to eq("New Issue API Test")
-            expect(issue.description).to eq("Testing api")
-            expect(issue.github_id).to eq(1234)
-          end
-        end
-
-        context "when project doesn't exist" do
-          let!(:category) { Fabricate(:category, name: category_name) }
-
-          it "returns a success response" do
-            post :github, params: issue_open_params
-            expect(response).to be_successful
-          end
-
-          it "doesn't create a new category" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Category, :count)
-          end
-
-          it "creates a new project" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(category.projects, :count).by(1)
-          end
-
-          it "creates a new app issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(Issue, :count).by(1)
-          end
-        end
-
-        context "when project exists" do
-          let!(:category) { Fabricate(:category, name: category_name) }
-          let!(:project) do
-            Fabricate(:project, category: category, name: project_name)
-          end
-
-          it "returns a success response" do
-            post :github, params: issue_open_params
-            expect(response).to be_successful
-          end
-
-          it "doesn't create a new category" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Category, :count)
-          end
-
-          it "doesn't create a new project" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Project, :count)
-          end
-
-          it "creates a new app issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(Issue, :count).by(1)
-          end
-        end
-
-        context "and user is new" do
-          it "creates a new user" do
-            expect do
-              post :github, params: issue_open_params
-            end.to change(User, :count).by(1)
-          end
-
-          it "sets issue user_id" do
-            post :github, params: issue_open_params
-            issue = Issue.last
-            expect(issue).not_to be_nil
-            expect(issue.user_id).not_to be_nil
-          end
-
-          it "returns a success response" do
-            post :github, params: issue_open_params
-            expect(response).to be_successful
-          end
-        end
-
         context "and user exists" do
-          before do
-            Fabricate(:user_reviewer,
-                      github_id: issue_open_params["issue"]["user"]["id"])
-          end
           it "doesn't create a new user" do
             expect do
-              post :github, params: issue_open_params
+              post :github, params: commit_push_params
             end.not_to change(User, :count)
           end
 
-          it "sets issue user_id" do
-            post :github, params: issue_open_params
-            issue = Issue.last
-            expect(issue).not_to be_nil
-            expect(issue.user_id).not_to be_nil
+          it "returns a success response" do
+            post :github, params: commit_push_params
+            expect(response).to be_successful
+          end
+        end
+
+        context "and user doesn't exist" do
+          before { commit_user.destroy }
+
+          it "creates a new user" do
+            expect do
+              post :github, params: commit_push_params
+            end.to change(User, :count).by(1)
           end
 
           it "returns a success response" do
-            post :github, params: issue_open_params
+            post :github, params: commit_push_params
             expect(response).to be_successful
           end
         end
 
-        context "and new user is invalid" do
+        context "and commit message contains start and task #" do
           before do
-            issue_open_params["issue"]["user"]["login"] = nil
+            Fabricate(:task_assignee, task: task, assignee: commit_user)
+            commit_push_params["commits"][0]["commit"]["message"] =
+              "Starts Task##{task.id}"
+          end
+
+          before do
             code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                            github_secret,
-                                           issue_open_params.to_query)
+                                           commit_push_params.to_query)
             request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
           end
 
-          it "doesn't create a new issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Issue, :count)
-          end
+          context "when task open and assigned to user" do
+            it "creates a new progression" do
+              expect do
+                post :github, params: commit_push_params
+              end.to change(task.progressions, :count).by(1)
+            end
 
-          it "returns an error response" do
-            post :github, params: issue_open_params
-            expect(response).to have_http_status(:unprocessable_entity)
+            it "doesn't create a review" do
+              expect do
+                post :github, params: commit_push_params
+              end.not_to change(Review, :count)
+            end
+
+            it "updates the task's status" do
+              expect do
+                post :github, params: commit_push_params
+                task.reload
+              end.to change(task, :status)
+            end
+
+            it "returns a success response" do
+              post :github, params: commit_push_params
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "and issue is invalid" do
+        context "and commit message contains fixes and task #" do
           before do
-            issue_open_params["issue"]["title"] = nil
+            Fabricate(:task_assignee, task: task, assignee: commit_user)
+            commit_push_params["commits"][0]["commit"]["message"] =
+              "Fixes #{task.id}"
+          end
+
+          before do
             code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                            github_secret,
-                                           issue_open_params.to_query)
+                                           commit_push_params.to_query)
             request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
           end
 
-          it "doesn't create a new issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Issue, :count)
-          end
+          context "when task open and assigned to user" do
+            it "creates a new review" do
+              expect do
+                post :github, params: commit_push_params
+              end.to change(task.reviews, :count).by(1)
+            end
 
-          it "returns an error response" do
-            post :github, params: issue_open_params
-            expect(response).to have_http_status(:unprocessable_entity)
-          end
-        end
+            it "doesn't create a progression" do
+              expect do
+                post :github, params: commit_push_params
+              end.not_to change(Progression, :count)
+            end
 
-        context "and issue already exists" do
-          before do
-            Fabricate(:issue, github_id: issue_open_params["issue"]["id"])
-            Fabricate(:user_reporter,
-                      github_id: issue_open_params["issue"]["user"]["id"])
-          end
+            it "updates the task's status" do
+              expect do
+                post :github, params: commit_push_params
+                task.reload
+              end.to change(task, :status)
+            end
 
-          it "doesn't create a new issue" do
-            expect do
-              post :github, params: issue_open_params
-            end.not_to change(Issue, :count)
-          end
-
-          it "returns an success response" do
-            post :github, params: issue_open_params
-            expect(response).to be_successful
+            it "returns a success response" do
+              post :github, params: commit_push_params
+              expect(response).to be_successful
+            end
           end
         end
       end
