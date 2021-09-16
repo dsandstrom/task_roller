@@ -7,6 +7,8 @@ class IssueType < ApplicationRecord
   acts_as_list
   default_scope { order(position: :asc) }
 
+  has_many :search_results, dependent: nil
+
   validates :icon, presence: true, inclusion: { in: ICON_OPTIONS }
   validates :name, presence: true, length: { maximum: 100 },
                    uniqueness: { case_sensitive: false }

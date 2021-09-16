@@ -26,6 +26,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :reviews, dependent: :destroy
   has_many :comments, class_name: 'TaskComment',
                       dependent: :destroy, inverse_of: :task
+  belongs_to :search_result, foreign_key: :issue_id, optional: true,
+                             inverse_of: :tasks
+
   delegate :category, to: :project
 
   has_one :source_connection, class_name: 'TaskConnection',

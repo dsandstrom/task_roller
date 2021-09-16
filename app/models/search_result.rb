@@ -10,12 +10,16 @@ class SearchResult < ApplicationRecord
   delegate :category, to: :project
   belongs_to :issue
   # TODO: if issue
-  belongs_to :task_type, foreign_key: :type_id
+  belongs_to :task_type, foreign_key: :type_id, optional: true,
+                         inverse_of: :search_results
   # TODO: if task
-  belongs_to :issue_type, foreign_key: :type_id
-  has_many :task_assignees, foreign_key: :task_id
+  belongs_to :issue_type, foreign_key: :type_id, optional: true,
+                          inverse_of: :search_results
+  has_many :task_assignees, foreign_key: :task_id, dependent: nil,
+                            inverse_of: :search_results
   has_many :assignees, through: :task_assignees
-  has_many :tasks, foreign_key: :issue_id
+  has_many :tasks, foreign_key: :issue_id, dependent: nil,
+                   inverse_of: :search_result
 
   # CLASS
 
