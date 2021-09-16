@@ -311,7 +311,7 @@ RSpec.describe Task, type: :model do
           task.update_status
         end
 
-        Timecop.freeze(Time.now + 2.days) do
+        Timecop.freeze(Time.zone.now + 2.days) do
           reopened_task.reopen
         end
       end

@@ -18,8 +18,8 @@ class Progression < ApplicationRecord
     return unless user && task_id
 
     unfinished = user.progressions.unfinished
-    unfinished = unfinished.where('progressions.task_id = ?', task_id)
-    unfinished = unfinished.where('progressions.id != ?', id) if id
+    unfinished = unfinished.where(progressions: { task_id: task_id })
+    unfinished = unfinished.where.not(progressions: { id: id }) if id
     return if unfinished.none?
 
     errors.add(:user_id, 'not available')
@@ -38,7 +38,7 @@ class Progression < ApplicationRecord
   # INSTANCE
 
   def finish
-    update finished: true, finished_at: Time.now
+    update finished: true, finished_at: Time.zone.now
   end
 
   def start_date
@@ -57,7 +57,7 @@ class Progression < ApplicationRecord
 
     def date_format(date)
       date_format = '%-m/%-d'
-      return date_format if date.year == Time.now.year
+      return date_format if date.year == Time.zone.now.year
 
       "#{date_format}/%Y"
     end

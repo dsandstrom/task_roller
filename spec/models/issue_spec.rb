@@ -1038,7 +1038,7 @@ RSpec.describe Issue, type: :model do
     context "when approved task before opened_at" do
       before do
         Fabricate(:approved_task, issue: issue)
-        issue.update_attribute :opened_at, (Time.now + 1.week)
+        issue.update_attribute :opened_at, (Time.zone.now + 1.week)
       end
 
       it "returns true" do

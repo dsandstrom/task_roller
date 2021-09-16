@@ -3,6 +3,9 @@
 
 # .rubocop.yml
 
+require:
+  - rubocop-rails
+
 AllCops:
   TargetRubyVersion: 2.7
   NewCops: enable

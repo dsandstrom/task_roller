@@ -55,15 +55,15 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def self.employees(type = nil)
     if type.blank?
-      where('employee_type IN (?)', VALID_EMPLOYEE_TYPES)
+      where(employee_type: VALID_EMPLOYEE_TYPES)
     elsif type.instance_of?(Array)
       return none unless type.all? { |t| VALID_EMPLOYEE_TYPES.include?(t) }
 
-      where('employee_type IN (?)', type)
+      where(employee_type: type)
     else
       return none unless VALID_EMPLOYEE_TYPES.include?(type)
 
-      where('employee_type = ?', type)
+      where(employee_type: type)
     end
   end
 
@@ -109,7 +109,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     assigned = eager_load(:progressions, :task_assignees)
                .where(query, id: task.id)
     if task.open? && task.assignee_ids.any?
-      assigned = assigned.where('users.id NOT IN (?)', task.assignee_ids)
+      assigned = assigned.where.not(users: { id: task.assignee_ids })
     end
     assigned.order(order)
   end

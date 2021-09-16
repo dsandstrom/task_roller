@@ -10,5 +10,5 @@ Fabricator(:unfinished_progression, from: :progression)
 
 Fabricator(:finished_progression, from: :progression) do
   finished true
-  finished_at { Time.now }
+  finished_at { Time.zone.now }
 end

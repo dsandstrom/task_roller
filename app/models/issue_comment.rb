@@ -7,7 +7,7 @@ class IssueComment < ApplicationRecord
   validates :user, presence: true, if: :user_id
   validates :body, presence: true
 
-  belongs_to :issue, foreign_key: :issue_id, inverse_of: :comments
+  belongs_to :issue, inverse_of: :comments
   belongs_to :user
   has_many :notifications, class_name: 'IssueNotification'
 

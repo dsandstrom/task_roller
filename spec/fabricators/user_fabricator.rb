@@ -6,7 +6,7 @@ Fabricator(:user, aliases: :user_worker) do
   employee_type { 'Worker' }
   password { '12345679' }
   password_confirmation { '12345679' }
-  confirmed_at { Time.now }
+  confirmed_at { Time.zone.now }
 end
 
 Fabricator(:user_admin, from: :user) do

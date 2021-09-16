@@ -7,7 +7,7 @@ class TaskComment < ApplicationRecord
   validates :user, presence: true, if: :user_id
   validates :body, presence: true
 
-  belongs_to :task, foreign_key: :task_id, inverse_of: :comments
+  belongs_to :task, inverse_of: :comments
   belongs_to :user
   has_many :notifications, class_name: 'TaskNotification'
 

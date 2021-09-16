@@ -6,7 +6,7 @@ module ApplicationHelper
 
   # TODO: test
   def format_date(value)
-    return unless value.present?
+    return if value.blank?
 
     zone = 'Pacific Time (US & Canada)'
     now = Time.now.in_time_zone(zone)

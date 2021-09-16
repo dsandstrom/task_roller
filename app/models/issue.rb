@@ -20,7 +20,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :issue_type
   belongs_to :project
   has_many :tasks, -> { order(created_at: :asc) }, dependent: :nullify
-  has_many :comments, class_name: 'IssueComment', foreign_key: :issue_id,
+  has_many :comments, class_name: 'IssueComment',
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
   has_many :resolutions, dependent: :destroy
@@ -35,7 +35,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 inverse_of: :target
   has_many :duplicates, through: :target_connections, class_name: 'Issue',
                         source: :source
-  has_many :issue_subscriptions, dependent: :destroy, foreign_key: :issue_id
+  has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user
   has_many :closures, class_name: 'IssueClosure'
@@ -226,7 +226,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def reopen(current_user = nil)
-    update closed: false, opened_at: Time.now
+    update closed: false, opened_at: Time.zone.now
     update_status(current_user)
   end
 
@@ -254,7 +254,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @addressed_at ||=
       approved_tasks
       .joins(:reviews)
-      .where('reviews.approved = ?', true)
+      .where(reviews: { approved: true })
       .select('tasks.id, MAX(reviews.updated_at) AS addressed_at')
       .group(:id).reorder(addressed_at: :desc).first&.addressed_at
   end
@@ -398,7 +398,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       true
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug "IssueNotification invalid:\n#{e.inspect}"
+      Rails.logger.debug { "IssueNotification invalid:\n#{e.inspect}" }
       false
     end
 

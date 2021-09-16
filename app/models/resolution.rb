@@ -79,7 +79,7 @@ class Resolution < ApplicationRecord
       return unless issue_resolutions
 
       pending = issue_resolutions.pending
-      pending = pending.where('resolutions.id != ?', id) if id
+      pending = pending.where.not(resolutions: { id: id }) if id
       return if pending.none?
 
       errors.add(:issue_id, 'already waiting for a resolution')
@@ -89,7 +89,7 @@ class Resolution < ApplicationRecord
       return unless issue_resolutions
 
       approved = issue_resolutions.approved
-      approved = approved.where('resolutions.id != ?', id) if id
+      approved = approved.where.not(resolutions: { id: id }) if id
       return if approved.none?
 
       errors.add(:issue_id, 'already approved')

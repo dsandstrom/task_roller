@@ -17,14 +17,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :user
   belongs_to :task_type
   belongs_to :project
-  belongs_to :issue, required: false, counter_cache: true
+  belongs_to :issue, optional: true, counter_cache: true
   has_many :task_assignees, dependent: :destroy
   has_many :assignees, through: :task_assignees,
                        before_remove: :finish_assignee_progressions
   has_many :progressions, dependent: :destroy
   has_many :progression_users, through: :progressions, source: :user
   has_many :reviews, dependent: :destroy
-  has_many :comments, class_name: 'TaskComment', foreign_key: :task_id,
+  has_many :comments, class_name: 'TaskComment',
                       dependent: :destroy, inverse_of: :task
   delegate :category, to: :project
 
@@ -124,10 +124,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return all if assigned_id.blank?
 
     if assigned_id == User.unassigned.id.to_s
-      where('task_assignees.assignee_id IS NULL')
+      where(task_assignees: { assignee_id: nil })
         .references(:task_assignees)
     else
-      where('task_assignees.assignee_id = ?', assigned_id)
+      where(task_assignees: { assignee_id: assigned_id })
         .references(:task_assignees)
     end
   end
@@ -269,7 +269,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # TODO: show outdated reviews in history
   def reopen(current_user = nil)
-    return false unless update(closed: false, opened_at: Time.now)
+    return false unless update(closed: false, opened_at: Time.zone.now)
 
     update_status(current_user)
     return true unless issue&.closed?
@@ -432,7 +432,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def last_task_for_issue?
-      issue.open_tasks.where('tasks.id != ?', id).none?
+      issue.open_tasks.where.not(tasks: { id: id }).none?
     end
 
     def close_issue(current_user = nil)
@@ -476,7 +476,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       true
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug "TaskNotification invalid:\n#{e.inspect}"
+      Rails.logger.debug { "TaskNotification invalid:\n#{e.inspect}" }
       false
     end
 

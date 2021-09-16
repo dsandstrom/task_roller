@@ -75,7 +75,7 @@ class Seeds
                    email: Faker::Internet.unique.safe_email,
                    employee_type: employee_type,
                    password: 'password', password_confirmation: 'password',
-                   confirmed_at: Time.now)
+                   confirmed_at: Time.zone.now)
     end
 
     def create_issue(attrs = {})
@@ -206,7 +206,7 @@ class Seeds
 
     def create_finished_progression(task, worker)
       task.progressions.create!(user_id: worker.id, finished: true,
-                                finished_at: Time.now)
+                                finished_at: Time.zone.now)
       task.update_status
       task.issue&.update_status
     end

@@ -92,7 +92,7 @@ class Review < ApplicationRecord
       return unless task_reviews
 
       pending = task_reviews.pending
-      pending = pending.where('reviews.id != ?', id) if id
+      pending = pending.where.not(reviews: { id: id }) if id
       return if pending.none?
 
       errors.add(:task_id, 'already waiting for a review')
@@ -102,7 +102,7 @@ class Review < ApplicationRecord
       return unless task_reviews
 
       approved = task_reviews.approved
-      approved = approved.where('reviews.id != ?', id) if id
+      approved = approved.where.not(reviews: { id: id }) if id
       return if approved.none?
 
       errors.add(:task_id, 'already approved')
