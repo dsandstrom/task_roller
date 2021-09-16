@@ -14,11 +14,11 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :assignments, through: :task_assignees, class_name: 'Task',
                          source: :task
   has_many :progressions, dependent: :destroy
-  has_many :issues
-  has_many :tasks
-  has_many :issue_comments
-  has_many :task_comments
-  has_many :reviews
+  has_many :issues, dependent: :nullify
+  has_many :tasks, dependent: :nullify
+  has_many :issue_comments, dependent: :nullify
+  has_many :task_comments, dependent: :nullify
+  has_many :reviews, dependent: :nullify
   has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribed_issues, through: :issue_subscriptions, source: :issue
   has_many :task_subscriptions, dependent: :destroy
@@ -33,10 +33,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :category_tasks_subscriptions, dependent: :destroy
   has_many :project_issues_subscriptions, dependent: :destroy
   has_many :project_tasks_subscriptions, dependent: :destroy
-  has_many :issue_closures
-  has_many :task_closures
-  has_many :issue_reopenings
-  has_many :task_reopenings
+  has_many :issue_closures, dependent: :nullify
+  has_many :task_closures, dependent: :nullify
+  has_many :issue_reopenings, dependent: :nullify
+  has_many :task_reopenings, dependent: :nullify
   has_many :issue_notifications, dependent: :destroy
   has_many :task_notifications, dependent: :destroy
   has_many :notifying_tasks, through: :task_notifications, class_name: 'Task',
