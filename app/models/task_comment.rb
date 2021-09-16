@@ -9,7 +9,7 @@ class TaskComment < ApplicationRecord
 
   belongs_to :task, inverse_of: :comments
   belongs_to :user
-  has_many :notifications, class_name: 'TaskNotification'
+  has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
 
   default_scope { order(created_at: :asc) }
 

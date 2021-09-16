@@ -38,8 +38,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user
-  has_many :closures, class_name: 'IssueClosure'
-  has_many :reopenings, class_name: 'IssueReopening'
+  has_many :closures, class_name: 'IssueClosure', dependent: :destroy
+  has_many :reopenings, class_name: 'IssueReopening', dependent: :destroy
   has_many :notifications, class_name: 'IssueNotification', dependent: :destroy
 
   validates :summary, presence: true, length: { maximum: 200 }

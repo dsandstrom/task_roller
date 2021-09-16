@@ -9,7 +9,7 @@ class IssueComment < ApplicationRecord
 
   belongs_to :issue, inverse_of: :comments
   belongs_to :user
-  has_many :notifications, class_name: 'IssueNotification'
+  has_many :notifications, class_name: 'IssueNotification', dependent: :destroy
 
   default_scope { order(created_at: :asc) }
 

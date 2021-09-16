@@ -41,8 +41,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                         source: :source
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user
-  has_many :closures, class_name: 'TaskClosure'
-  has_many :reopenings, class_name: 'TaskReopening'
+  has_many :closures, class_name: 'TaskClosure', dependent: :destroy
+  has_many :reopenings, class_name: 'TaskReopening', dependent: :destroy
   has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
 
   accepts_nested_attributes_for :assignees
@@ -339,7 +339,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def update_status(current_user = nil)
     old_status = status
+    # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
+    # rubocop:enable Rails/SkipsModelValidations
     return true if old_status == status
 
     options = notification_options(old_status)
