@@ -16,7 +16,7 @@ class SearchResult < ApplicationRecord
   belongs_to :issue_type, foreign_key: :type_id, optional: true,
                           inverse_of: :search_results
   has_many :task_assignees, foreign_key: :task_id, dependent: nil,
-                            inverse_of: :search_results
+                            inverse_of: :search_result
   has_many :assignees, through: :task_assignees
   has_many :tasks, foreign_key: :issue_id, dependent: nil,
                    inverse_of: :search_result

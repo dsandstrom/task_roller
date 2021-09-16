@@ -4,7 +4,8 @@ class TaskAssignee < ApplicationRecord
   belongs_to :task
   belongs_to :assignee, class_name: 'User', inverse_of: :task_assignees
 
-  has_many :search_results, foreign_key: :task_id, dependent: nil
+  belongs_to :search_result, foreign_key: :task_id, optional: true,
+                             inverse_of: :task_assignees
 
   validates :task_id, uniqueness: { scope: :assignee_id,
                                     message: 'already assigned to User' }

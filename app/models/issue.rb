@@ -19,7 +19,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   belongs_to :user # reporter
   belongs_to :issue_type
   belongs_to :project
-  has_many :tasks, -> { order(created_at: :asc) }, dependent: :nullify
+  has_many :tasks, -> { order(created_at: :asc) }, dependent: :nullify,
+                                                   inverse_of: :issue
   has_many :comments, class_name: 'IssueComment',
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
@@ -267,7 +268,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def update_status(current_user = nil)
     old_status = status
+    # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
+    # rubocop:enable Rails/SkipsModelValidations
     return true if old_status == status
 
     options = notification_options(old_status)
@@ -295,7 +298,9 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def set_opened_at
       return if opened_at.present? || created_at.nil?
 
+      # rubocop:disable Rails/SkipsModelValidations
       update_column :opened_at, updated_at
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # - closed
