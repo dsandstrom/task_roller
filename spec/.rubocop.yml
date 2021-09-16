@@ -10,3 +10,6 @@ Style/StringLiterals:
 
 Metrics/BlockLength:
   Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false

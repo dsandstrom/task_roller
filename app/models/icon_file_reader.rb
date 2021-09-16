@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IconFileReader
-  FONT_FILE = Rails.root.join('app', 'assets', 'fonts', 'task-roller.svg')
+  FONT_FILE = Rails.root.join('app/assets/fonts/task-roller.svg')
   RESERVED_ICON_NAMES =
     %w[alert arrow-down arrow-left arrow-right arrow-up buffer checkmark close
        delete eye eye-disabled hamburger heart heart-outline thumbsup thumbsdown

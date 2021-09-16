@@ -38,7 +38,7 @@ module TaskRoller
       g.routing_specs false
     end
 
-    config.autoload_paths << Rails.root.join('app', 'classes')
+    config.autoload_paths << Rails.root.join('app/classes')
 
     config.active_job.queue_adapter = :sucker_punch
   end

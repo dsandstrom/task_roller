@@ -428,7 +428,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def set_opened_at
       return if opened_at.present? || created_at.nil?
 
+      # rubocop:disable Rails/SkipsModelValidations
       update_column :opened_at, created_at
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def last_task_for_issue?
@@ -444,7 +446,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def update_issue_counts
       return unless issue
 
+      # rubocop:disable Rails/SkipsModelValidations
       issue.update_column :open_tasks_count, issue.tasks.all_non_closed.count
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def subscribers_except(users)
