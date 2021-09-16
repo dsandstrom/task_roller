@@ -124,16 +124,28 @@ module Api
           action, task_id  = process_commit_message(commit_payload[:message])
           return unless action && task_id
 
+          process_commit_action(action, task_id, user)
+        end
+
+        def process_commit_action(action, task_id, user)
           task = Task.find_by(id: task_id)
           return unless task
 
-          if action.match?(/start/i)
+          if look_like_start?(action)
             task.progressions.create(user: user)
-          elsif action.match?(/fix/i)
+          elsif look_like_fix?(action)
             task.reviews.create(user: user)
           end
 
           task.update_status
+        end
+
+        def look_like_start?(action)
+          action.match?(/start/i)
+        end
+
+        def look_like_fix?(action)
+          action.match?(/fix/i)
         end
 
         def process_user(payload)
