@@ -43,6 +43,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                              source: :task
   has_many :notifying_issues, through: :issue_notifications,
                               class_name: 'Issue', source: :issue
+  has_many :repo_callouts, dependent: :nullify
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }

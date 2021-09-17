@@ -47,6 +47,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :closures, class_name: 'TaskClosure', dependent: :destroy
   has_many :reopenings, class_name: 'TaskReopening', dependent: :destroy
   has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
+  has_many :repo_callouts, dependent: :destroy
 
   accepts_nested_attributes_for :assignees
 
