@@ -274,7 +274,7 @@ RSpec.describe RepoCallout, type: :model do
     end
   end
 
-  describe "#perform_action", focus: true do
+  describe "#perform_action" do
     context "when no action" do
       before { subject.action = nil }
 
@@ -319,6 +319,13 @@ RSpec.describe RepoCallout, type: :model do
             expect do
               subject.perform_action
             end.not_to change(Review, :count)
+          end
+
+          it "changes task's status" do
+            expect do
+              subject.perform_action
+              task.reload
+            end.to change(task, :status)
           end
         end
 
@@ -405,6 +412,13 @@ RSpec.describe RepoCallout, type: :model do
               subject.perform_action
             end.not_to change(Review, :count)
           end
+
+          it "changes task's status" do
+            expect do
+              subject.perform_action
+              task.reload
+            end.to change(task, :status)
+          end
         end
       end
 
@@ -457,6 +471,13 @@ RSpec.describe RepoCallout, type: :model do
               progression.reload
             end.to change(progression, :finished).to(true)
           end
+        end
+
+        it "changes task's status" do
+          expect do
+            subject.perform_action
+            task.reload
+          end.to change(task, :status)
         end
       end
 

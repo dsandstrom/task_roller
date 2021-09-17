@@ -47,6 +47,8 @@ class RepoCallout < ApplicationRecord
     when 'complete'
       finish_task
     end
+
+    task.update_status
   end
 
   private
