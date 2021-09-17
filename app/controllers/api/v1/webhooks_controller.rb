@@ -168,7 +168,6 @@ module Api
 
           # TODO: add class method to test message edge cases easier
           matches = message.match(/(starts?|fix(?:es))\s(?:task)?\s?#?(\d+)/i)
-          # matches = message.match(/(?:task)?\s?#?(\d)/i)
           return unless matches
 
           [matches[1], matches[2]]

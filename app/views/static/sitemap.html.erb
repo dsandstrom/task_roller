@@ -21,7 +21,6 @@
   <li>
     <%= link_to_if can?(:read, Category),
                    'Categories', categories_path %>
-
     <ul>
       <% @categories.each do |category| %>
         <li>
@@ -46,7 +45,6 @@
 
   <li>
     <%= link_to_if can?(:read, User), 'Users', users_path %>
-
     <ul>
       <li>
         <%= link_to current_user.name_or_email, user_path(current_user) %>
