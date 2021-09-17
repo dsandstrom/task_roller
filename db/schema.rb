@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_16_054339) do
+ActiveRecord::Schema.define(version: 2021_09_17_053604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,20 @@ ActiveRecord::Schema.define(version: 2021_09_16_054339) do
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
     t.index ["visible"], name: "index_projects_on_visible"
+  end
+
+  create_table "repo_callouts", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "task_id", null: false
+    t.string "action", null: false
+    t.text "commit_message", null: false
+    t.string "commit_html_url"
+    t.string "commit_sha", null: false
+    t.integer "github_commit_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["task_id", "commit_sha"], name: "index_repo_callouts_on_task_id_and_commit_sha", unique: true
+    t.index ["task_id"], name: "index_repo_callouts_on_task_id"
   end
 
   create_table "resolutions", force: :cascade do |t|
