@@ -8,7 +8,7 @@ RSpec.describe RepoCallout, type: :model do
 
   before do
     @repo_callout =
-      RepoCallout.new(task_id: task.id, user_id: user.id, action: "fix",
+      RepoCallout.new(task_id: task.id, user_id: user.id, action: "complete",
                       commit_sha: "zzzyyyxxxx", commit_message: "Fixes #12")
   end
 
@@ -25,6 +25,11 @@ RSpec.describe RepoCallout, type: :model do
   it { is_expected.to validate_presence_of(:commit_message) }
 
   it { is_expected.to validate_uniqueness_of(:task_id).scoped_to(:commit_sha) }
+
+  it do
+    is_expected.to validate_inclusion_of(:action)
+      .in_array(%w[start pause complete])
+  end
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:task) }
