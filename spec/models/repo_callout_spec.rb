@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe RepoCallout, type: :model do
   let(:user) { Fabricate(:user) }
-  let(:task) { Fabricate(:task) }
+  let(:task) { Fabricate(:open_task) }
 
   before do
     @repo_callout =
@@ -270,6 +270,204 @@ RSpec.describe RepoCallout, type: :model do
         expect do
           subject.process_commit_message
         end.not_to change(subject, :task_id)
+      end
+    end
+  end
+
+  describe "#perform_action", focus: true do
+    context "when no action" do
+      before { subject.action = nil }
+
+      it "doesn't create a Progression" do
+        expect do
+          subject.perform_action
+        end.not_to change(Progression, :count)
+      end
+
+      it "doesn't create a Review" do
+        expect do
+          subject.perform_action
+        end.not_to change(Review, :count)
+      end
+    end
+
+    context "when no user" do
+      before do
+        subject.action = "complete"
+        subject.user_id = nil
+      end
+
+      it "doesn't create a Review" do
+        expect do
+          subject.perform_action
+        end.not_to change(Review, :count)
+      end
+    end
+
+    context "when action is 'start'" do
+      before { subject.action = "start" }
+
+      context "while task is open" do
+        context "and user doesn't have a progression" do
+          it "creates a Progression" do
+            expect do
+              subject.perform_action
+            end.to change(task.progressions, :count).by(1)
+          end
+
+          it "doesn't create a Review" do
+            expect do
+              subject.perform_action
+            end.not_to change(Review, :count)
+          end
+        end
+
+        context "and user already has an unfinished progression" do
+          let!(:progression) do
+            Fabricate(:unfinished_progression, task: task, user: user)
+          end
+
+          it "doesn't change it's finished" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.not_to change(progression, :finished)
+          end
+
+          it "doesn't create a Progression" do
+            expect do
+              subject.perform_action
+            end.not_to change(Progression, :count)
+          end
+
+          it "doesn't create a Review" do
+            expect do
+              subject.perform_action
+            end.not_to change(Review, :count)
+          end
+        end
+
+        context "and user has a finished progression" do
+          before { Fabricate(:finished_progression, task: task, user: user) }
+
+          it "creates a Progression" do
+            expect do
+              subject.perform_action
+            end.to change(task.progressions, :count).by(1)
+          end
+
+          it "doesn't create a Review" do
+            expect do
+              subject.perform_action
+            end.not_to change(Review, :count)
+          end
+        end
+      end
+
+      context "while task is closed" do
+        let(:task) { Fabricate(:closed_task) }
+
+        it "doesn't create a Progression" do
+          expect do
+            subject.perform_action
+          end.not_to change(Progression, :count)
+        end
+      end
+    end
+
+    context "when action is 'pause'" do
+      before do
+        Fabricate(:unfinished_progression, task: task)
+        subject.action = "pause"
+      end
+
+      context "while task is open" do
+        context "and user has an unfinished progression" do
+          let!(:progression) do
+            Fabricate(:unfinished_progression, task: task, user: user)
+          end
+
+          it "finishes it" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.to change(progression, :finished).to(true)
+          end
+
+          it "doesn't create a new Progression" do
+            expect do
+              subject.perform_action
+            end.not_to change(Progression, :count)
+          end
+
+          it "doesn't create a Review" do
+            expect do
+              subject.perform_action
+            end.not_to change(Review, :count)
+          end
+        end
+      end
+
+      context "while task is closed" do
+        let(:task) { Fabricate(:closed_task) }
+
+        let!(:progression) do
+          Fabricate(:unfinished_progression, task: task, user: user)
+        end
+
+        it "pauses unfinished Progressions for user" do
+          expect do
+            subject.perform_action
+            progression.reload
+          end.to change(progression, :finished).to(true)
+        end
+
+        it "doesn't create a new Progression" do
+          expect do
+            subject.perform_action
+          end.not_to change(Progression, :count)
+        end
+      end
+    end
+
+    context "when action is 'complete'" do
+      before { subject.action = "complete" }
+
+      context "while task is open" do
+        it "creates a Review" do
+          expect do
+            subject.perform_action
+          end.to change(task.reviews, :count).by(1)
+        end
+
+        it "doesn't create a Progression" do
+          expect do
+            subject.perform_action
+          end.not_to change(Progression, :count)
+        end
+
+        context "and user has an unfinished progression" do
+          let!(:progression) do
+            Fabricate(:unfinished_progression, task: task, user: user)
+          end
+
+          it "finshes unfinished Progressions for user" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.to change(progression, :finished).to(true)
+          end
+        end
+      end
+
+      context "while task is closed" do
+        let(:task) { Fabricate(:closed_task) }
+
+        it "doesn't create a Review" do
+          expect do
+            subject.perform_action
+          end.not_to change(Review, :count)
+        end
       end
     end
   end

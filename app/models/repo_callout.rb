@@ -17,6 +17,11 @@ class RepoCallout < ApplicationRecord
   belongs_to :task
   belongs_to :user, optional: true
 
+  def unfinished_progressions
+    @unfinished_progressions ||=
+      task.progressions.unfinished.where(user_id: user.id)
+  end
+
   def process_commit_message
     return if action && task_id
 
@@ -29,6 +34,19 @@ class RepoCallout < ApplicationRecord
 
     self.action = action
     self.task_id = task.id
+  end
+
+  def perform_action
+    return unless user && task
+
+    case action
+    when 'start'
+      start_task
+    when 'pause'
+      pause_task
+    when 'complete'
+      finish_task
+    end
   end
 
   private
@@ -53,5 +71,21 @@ class RepoCallout < ApplicationRecord
 
     def look_like_complete?(part)
       part.match?(/fix|close|complete/i)
+    end
+
+    def start_task
+      return unless task.open? && unfinished_progressions.none?
+
+      task.progressions.create(user: user)
+    end
+
+    def pause_task
+      unfinished_progressions.all?(&:finish)
+    end
+
+    def finish_task
+      return if task.closed?
+
+      task.finish if task.reviews.create(user: user)
     end
 end
