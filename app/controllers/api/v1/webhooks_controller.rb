@@ -138,9 +138,12 @@ module Api
 
         def perform_repo_callout_action(repo_callout)
           repo_callout.process_commit_message
-          return unless repo_callout.save
+          return unless repo_callout.save!
 
           repo_callout.perform_action
+        rescue ActiveRecord::RecordInvalid
+          logger.info "GitHub commit can't be process. RepoCallout is invalid:"
+          logger.info repo_callout&.errors&.messages&.inspect
         end
 
         def process_user(payload)
