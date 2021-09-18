@@ -121,18 +121,19 @@ module Api
           user = process_user(payload[:author])
           return unless user
 
-          # TODO: scan thru with regex, create callout per match
           commit_payload = payload[:commit]
           commit_message = commit_payload[:message]
           attrs = { commit_sha: payload[:sha],
                     commit_html_url: payload[:html_url],
-                    github_commit_id: payload[:node_id],
-                    commit_message: commit_message }
-          repo_callout = user.repo_callouts.build(attrs)
-          repo_callout.process_commit_message
-          return unless repo_callout.save
+                    github_commit_id: payload[:node_id] }
+          commit_message.scan(RepoCallout::MESSAGE_REGEX) do |match, _a, _t|
+            repo_callout =
+              user.repo_callouts.build(attrs.merge(commit_message: match))
+            repo_callout.process_commit_message
+            next unless repo_callout.save
 
-          repo_callout.perform_action
+            repo_callout.perform_action
+          end
         end
 
         def process_user(payload)

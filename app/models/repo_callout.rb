@@ -3,9 +3,9 @@
 class RepoCallout < ApplicationRecord
   ACTION_OPTIONS = %w[start pause complete].freeze
   MESSAGE_REGEX = /
-    (starts?|fix(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
+    ((starts?|fix(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
     (?:task)?\s?[\#\-]?
-    (\d+)
+    (\d+))
   /ix.freeze
 
   validates :task_id, presence: true
@@ -26,10 +26,10 @@ class RepoCallout < ApplicationRecord
     return if action && task_id
 
     matches = commit_message.match(MESSAGE_REGEX)
-    return unless matches && matches.size == 3
+    return unless matches && matches.size == 4
 
-    action = generate_action(matches[1])
-    task = Task.find_by(id: matches[2].to_i)
+    action = generate_action(matches[2])
+    task = Task.find_by(id: matches[3].to_i)
     return unless action && task
 
     self.action = action

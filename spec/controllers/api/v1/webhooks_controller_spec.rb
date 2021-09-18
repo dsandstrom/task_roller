@@ -566,6 +566,56 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             end
           end
         end
+
+        context "and commit message contains multiple task callouts" do
+          let(:second_task) { Fabricate(:open_task) }
+
+          before do
+            Fabricate(:task_assignee, task: task, assignee: commit_user)
+            commit_push_params["commits"][0]["commit"]["message"] =
+              "Some changes\n\nFixes #{task.id}\nFixes #{second_task.id}"
+          end
+
+          before do
+            code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                           github_secret,
+                                           commit_push_params.to_query)
+            request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
+          end
+
+          context "when task open and assigned to user" do
+            it "creates a new review" do
+              expect do
+                post :github, params: commit_push_params
+              end.to change(task.reviews, :count).by(1)
+            end
+
+            it "creates a second review" do
+              expect do
+                post :github, params: commit_push_params
+              end.to change(second_task.reviews, :count).by(1)
+            end
+
+            it "updates the task's status" do
+              expect do
+                post :github, params: commit_push_params
+                task.reload
+              end.to change(task, :status)
+            end
+
+            it "updates the second task's status" do
+              expect do
+                post :github, params: commit_push_params
+                second_task.reload
+              end.to change(second_task, :status)
+            end
+
+            it "returns a success response" do
+              post :github, params: commit_push_params
+              expect(response).to be_successful
+            end
+          end
+        end
       end
     end
   end
