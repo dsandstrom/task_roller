@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-# TODO: add 'progresses' action to add progression
-
 class RepoCallout < ApplicationRecord
   ACTION_OPTIONS = %w[start pause complete].freeze
   MESSAGE_REGEX = /
-    ((starts?|fix(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
+    ((starts?|fix(?:e[ds])?|progress(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
     (?:task)?\s?[\#\-]?
     (\d+))
   /ix.freeze
@@ -69,7 +67,7 @@ class RepoCallout < ApplicationRecord
     end
 
     def look_like_start?(part)
-      part.match?(/start/i)
+      part.match?(/start|progress/i)
     end
 
     def look_like_pause?(part)

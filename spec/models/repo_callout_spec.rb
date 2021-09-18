@@ -256,6 +256,22 @@ RSpec.describe RepoCallout, type: :model do
           end
         end
 
+        context "is 'progresses task id'" do
+          before { subject.commit_message_part = "progresses task #{task.id}" }
+
+          it "changes action" do
+            expect do
+              subject.process_commit_message
+            end.to change(subject, :action).to("start")
+          end
+
+          it "changes task_id" do
+            expect do
+              subject.process_commit_message
+            end.to change(subject, :task_id).to(task.id)
+          end
+        end
+
         context "is 'completes taskid'" do
           before { subject.commit_message_part = "completes task#{task.id}" }
 
