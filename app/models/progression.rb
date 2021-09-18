@@ -5,6 +5,7 @@ class Progression < ApplicationRecord
 
   belongs_to :task
   belongs_to :user
+  belongs_to :repo_callout, optional: true
 
   validates :task_id, presence: true
   validates :task, presence: true, if: :task_id

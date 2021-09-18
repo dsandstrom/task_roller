@@ -37,6 +37,9 @@ RSpec.describe RepoCallout, type: :model do
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:task) }
 
+  it { is_expected.to have_one(:progression) }
+  it { is_expected.to have_one(:review) }
+
   describe "#process_commit_message" do
     context "when no action and task_id" do
       before do

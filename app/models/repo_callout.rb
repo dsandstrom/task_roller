@@ -19,6 +19,8 @@ class RepoCallout < ApplicationRecord
 
   belongs_to :task
   belongs_to :user, optional: true
+  has_one :progression, dependent: :nullify
+  has_one :review, dependent: :nullify
 
   def unfinished_progressions
     @unfinished_progressions ||=
