@@ -115,26 +115,32 @@ module Api
           true
         end
 
+        def commit_params(payload)
+          { commit_sha: payload[:sha], commit_html_url: payload[:html_url],
+            commit_message: payload[:commit][:message],
+            github_commit_id: payload[:node_id] }
+        end
+
         def process_commit(payload)
-          return unless payload[:commit] && payload[:author]
+          return unless payload[:author] && payload[:commit] &&
+                        payload[:commit][:message]
 
           user = process_user(payload[:author])
           return unless user
 
-          commit_payload = payload[:commit]
-          commit_message = commit_payload[:message]
-          attrs = { commit_sha: payload[:sha],
-                    commit_html_url: payload[:html_url],
-                    commit_message: commit_message,
-                    github_commit_id: payload[:node_id] }
-          commit_message.scan(RepoCallout::MESSAGE_REGEX) do |match, _a, _t|
+          attrs = commit_params(payload)
+          attrs[:commit_message].scan(RepoCallout::MESSAGE_REGEX) do |m, _a, _t|
             repo_callout =
-              user.repo_callouts.build(attrs.merge(commit_message_part: match))
-            repo_callout.process_commit_message
-            next unless repo_callout.save
-
-            repo_callout.perform_action
+              user.repo_callouts.build(attrs.merge(commit_message_part: m))
+            perform_repo_callout_action(repo_callout)
           end
+        end
+
+        def perform_repo_callout_action(repo_callout)
+          repo_callout.process_commit_message
+          return unless repo_callout.save
+
+          repo_callout.perform_action
         end
 
         def process_user(payload)
