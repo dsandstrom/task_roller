@@ -121,10 +121,10 @@ module Api
         end
 
         def process_commit(payload)
-          return unless payload[:author] && payload[:commit] &&
+          return unless payload[:commit] && payload[:commit][:committer] &&
                         payload[:commit][:message]
 
-          user = process_user(payload[:author])
+          user = process_user(payload[:commit][:committer])
           return unless user
 
           attrs = commit_params(payload)
@@ -143,13 +143,14 @@ module Api
         end
 
         def process_user(payload)
-          return unless payload[:id]
+          return unless payload[:username]
 
-          user = User.find_by(github_id: payload[:id])
+          user = User.find_by(github_url: payload[:username])
           return user if user
 
-          u = { github_id: payload[:id], github_url: payload[:login],
-                name: payload[:login] }
+          # FIXME: commit doesn't send id, so not valid
+          u = { github_id: payload[:id], github_url: payload[:username],
+                name: payload[:name] }
           return if u.any? { |_, value| value.blank? }
 
           user = User.new(u)
