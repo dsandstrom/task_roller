@@ -2,7 +2,6 @@
 
 # TODO: allow customizing which project & issue_type is picked
 # TODO: import comments?
-# TODO: watch for commits to start/finish tasks
 # TODO: use only master/main branch
 
 # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
