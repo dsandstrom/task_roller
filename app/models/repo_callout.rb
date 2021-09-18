@@ -12,6 +12,7 @@ class RepoCallout < ApplicationRecord
   validates :action, presence: true, inclusion: { in: ACTION_OPTIONS }
   validates :commit_sha, presence: true
   validates :commit_message, presence: true
+  validates :commit_message_part, presence: true
   validates :task_id, uniqueness: { scope: :commit_sha }
 
   belongs_to :task
@@ -25,7 +26,7 @@ class RepoCallout < ApplicationRecord
   def process_commit_message
     return if action && task_id
 
-    matches = commit_message.match(MESSAGE_REGEX)
+    matches = commit_message_part.match(MESSAGE_REGEX)
     return unless matches && matches.size == 4
 
     action = generate_action(matches[2])

@@ -125,10 +125,11 @@ module Api
           commit_message = commit_payload[:message]
           attrs = { commit_sha: payload[:sha],
                     commit_html_url: payload[:html_url],
+                    commit_message: commit_message,
                     github_commit_id: payload[:node_id] }
           commit_message.scan(RepoCallout::MESSAGE_REGEX) do |match, _a, _t|
             repo_callout =
-              user.repo_callouts.build(attrs.merge(commit_message: match))
+              user.repo_callouts.build(attrs.merge(commit_message_part: match))
             repo_callout.process_commit_message
             next unless repo_callout.save
 

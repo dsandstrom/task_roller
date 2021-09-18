@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_17_053604) do
+ActiveRecord::Schema.define(version: 2021_09_18_005122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 2021_09_17_053604) do
     t.integer "github_commit_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "commit_message_part", null: false
     t.index ["task_id", "commit_sha"], name: "index_repo_callouts_on_task_id_and_commit_sha", unique: true
     t.index ["task_id"], name: "index_repo_callouts_on_task_id"
   end

@@ -9,7 +9,9 @@ RSpec.describe RepoCallout, type: :model do
   before do
     @repo_callout =
       RepoCallout.new(task_id: task.id, user_id: user.id, action: "complete",
-                      commit_sha: "zzzyyyxxxx", commit_message: "Fixes #12")
+                      commit_sha: "zzzyyyxxxx",
+                      commit_message: "Update repo\nFixes #12",
+                      commit_message_part: "Fixes #12")
   end
 
   subject { @repo_callout }
@@ -23,6 +25,7 @@ RSpec.describe RepoCallout, type: :model do
   it { is_expected.to validate_presence_of(:action) }
   it { is_expected.to validate_presence_of(:commit_sha) }
   it { is_expected.to validate_presence_of(:commit_message) }
+  it { is_expected.to validate_presence_of(:commit_message_part) }
 
   it { is_expected.to validate_uniqueness_of(:task_id).scoped_to(:commit_sha) }
 
@@ -42,7 +45,7 @@ RSpec.describe RepoCallout, type: :model do
       end
 
       context "when no commit message" do
-        before { subject.commit_message = "" }
+        before { subject.commit_message_part = "" }
 
         it "doesn't change action" do
           expect do
@@ -59,7 +62,7 @@ RSpec.describe RepoCallout, type: :model do
 
       context "when commit_message" do
         context "is 'Starts Task#id'" do
-          before { subject.commit_message = "Starts Task##{task.id}" }
+          before { subject.commit_message_part = "Starts Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -75,7 +78,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'start Task#id'" do
-          before { subject.commit_message = "start Task##{task.id}" }
+          before { subject.commit_message_part = "start Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -91,7 +94,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Pauses Task#id'" do
-          before { subject.commit_message = "Pauses Task##{task.id}" }
+          before { subject.commit_message_part = "Pauses Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -107,7 +110,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Pause Task#id'" do
-          before { subject.commit_message = "Pause Task##{task.id}" }
+          before { subject.commit_message_part = "Pause Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -123,7 +126,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Paused Task#id'" do
-          before { subject.commit_message = "Paused Task##{task.id}" }
+          before { subject.commit_message_part = "Paused Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -139,7 +142,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Fixed Task#id'" do
-          before { subject.commit_message = "Fixes Task##{task.id}" }
+          before { subject.commit_message_part = "Fixes Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -155,7 +158,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Fix Task#id'" do
-          before { subject.commit_message = "Fix Task##{task.id}" }
+          before { subject.commit_message_part = "Fix Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -171,7 +174,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Fixes Task#id'" do
-          before { subject.commit_message = "Fixes Task##{task.id}" }
+          before { subject.commit_message_part = "Fixes Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -187,7 +190,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Closes Task#id'" do
-          before { subject.commit_message = "Closes Task##{task.id}" }
+          before { subject.commit_message_part = "Closes Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -203,7 +206,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Completes Task#id'" do
-          before { subject.commit_message = "Completes Task##{task.id}" }
+          before { subject.commit_message_part = "Completes Task##{task.id}" }
 
           it "changes action" do
             expect do
@@ -219,7 +222,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'completes task-id'" do
-          before { subject.commit_message = "completes task-#{task.id}" }
+          before { subject.commit_message_part = "completes task-#{task.id}" }
 
           it "changes action" do
             expect do
@@ -235,7 +238,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'completes task id'" do
-          before { subject.commit_message = "completes task #{task.id}" }
+          before { subject.commit_message_part = "completes task #{task.id}" }
 
           it "changes action" do
             expect do
@@ -251,7 +254,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'completes taskid'" do
-          before { subject.commit_message = "completes task#{task.id}" }
+          before { subject.commit_message_part = "completes task#{task.id}" }
 
           it "changes action" do
             expect do
@@ -267,7 +270,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'completes id'" do
-          before { subject.commit_message = "completes #{task.id}" }
+          before { subject.commit_message_part = "completes #{task.id}" }
 
           it "changes action" do
             expect do
@@ -283,7 +286,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Starts Task#'" do
-          before { subject.commit_message = "Starts Task#" }
+          before { subject.commit_message_part = "Starts Task#" }
 
           it "doesn't change action" do
             expect do
@@ -299,7 +302,7 @@ RSpec.describe RepoCallout, type: :model do
         end
 
         context "is 'Task#id'" do
-          before { subject.commit_message = "Task##{task.id}" }
+          before { subject.commit_message_part = "Task##{task.id}" }
 
           it "doesn't change action" do
             expect do
@@ -322,7 +325,7 @@ RSpec.describe RepoCallout, type: :model do
         subject.task_id = Fabricate(:task).id
       end
 
-      before { subject.commit_message = "Starts Task##{task.id}" }
+      before { subject.commit_message_part = "Starts Task##{task.id}" }
 
       it "doesn't change action" do
         expect do
