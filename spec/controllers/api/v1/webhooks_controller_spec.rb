@@ -103,6 +103,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             "comments_url" => "#{api_url}/repos/user/repo/issues/2/comments",
             "html_url" => "https://github.com/user/repo/issues/2",
             "node_id" => "zzz=",
+            "sha" => "yyy",
             "commit" => {
               "url" => "#{api_url}/repos/test/git/commits/bbb",
               "author" => {

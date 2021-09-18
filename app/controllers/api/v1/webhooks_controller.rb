@@ -3,6 +3,7 @@
 # TODO: allow customizing which project & issue_type is picked
 # TODO: import comments?
 # TODO: watch for commits to start/finish tasks
+# TODO: use only master/main branch
 
 # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
 # https://docs.github.com/en/rest/reference/repos#commits
@@ -120,32 +121,18 @@ module Api
           user = process_user(payload[:author])
           return unless user
 
+          # TODO: scan thru with regex, create callout per match
           commit_payload = payload[:commit]
-          action, task_id  = process_commit_message(commit_payload[:message])
-          return unless action && task_id
+          commit_message = commit_payload[:message]
+          attrs = { commit_sha: payload[:sha],
+                    commit_html_url: payload[:html_url],
+                    github_commit_id: payload[:node_id],
+                    commit_message: commit_message }
+          repo_callout = user.repo_callouts.build(attrs)
+          repo_callout.process_commit_message
+          return unless repo_callout.save
 
-          process_commit_action(action, task_id, user)
-        end
-
-        def process_commit_action(action, task_id, user)
-          task = Task.find_by(id: task_id)
-          return unless task
-
-          if look_like_start?(action)
-            task.progressions.create(user: user)
-          elsif look_like_fix?(action)
-            task.reviews.create(user: user)
-          end
-
-          task.update_status
-        end
-
-        def look_like_start?(action)
-          action.match?(/start/i)
-        end
-
-        def look_like_fix?(action)
-          action.match?(/fix/i)
+          repo_callout.perform_action
         end
 
         def process_user(payload)
@@ -161,16 +148,6 @@ module Api
           user = User.new(u)
           user.save(validate: false)
           user
-        end
-
-        def process_commit_message(message)
-          return unless message
-
-          # TODO: add class method to test message edge cases easier
-          matches = message.match(/(starts?|fix(?:es))\s(?:task)?\s?#?(\d+)/i)
-          return unless matches
-
-          [matches[1], matches[2]]
         end
 
         def verify_github_signature
