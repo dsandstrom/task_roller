@@ -100,44 +100,18 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
         "commits" => [
           {
             "url" => "#{api_url}/repos/test",
-            "comments_url" => "#{api_url}/repos/user/repo/issues/2/comments",
-            "html_url" => "https://github.com/user/repo/issues/2",
-            "node_id" => "zzz=",
-            "sha" => "yyy",
-            "commit" => {
-              "url" => "#{api_url}/repos/test/git/commits/bbb",
-              "author" => {
-                "name" => commit_user.name,
-                "email" => commit_user.email,
-                "username" => commit_user.github_url
-              },
-              "committer" => {
-                "name" => commit_user.name,
-                "email" => commit_user.email,
-                "username" => commit_user.github_url
-              },
-              "message" => "Fix all the bugs"
-            },
+            "id" => "ssshhhaaa",
             "author" => {
-              "login" => commit_user.github_url,
-              "id" => commit_user.github_id,
-              "node_id" => "zzz=",
-              "avatar_url" => "https://avatars.githubusercontent.com/u/test",
-              "gravatar_id" => "",
-              "url" => "#{api_url}/users/user",
-              "html_url" => "https://github.com/user",
-              "followers_url" => "#{api_url}/users/user/followers",
-              "following_url" => "#{api_url}/users/user/following{/other_user}",
-              "gists_url" => "#{api_url}/users/user/gists{/gist_id}",
-              "starred_url" => "#{api_url}/users/user/starred{/owner}{/repo}",
-              "subscriptions_url" => "#{api_url}/users/user/subscriptions",
-              "organizations_url" => "#{api_url}/users/user/orgs",
-              "repos_url" => "#{api_url}/users/user/repos",
-              "events_url" => "#{api_url}/users/user/events{/privacy}",
-              "received_events_url" => "#{api_url}/users/user/received_events",
-              "type" => "User",
-              "site_admin" => false
-            }
+              "name" => commit_user.name,
+              "email" => commit_user.email,
+              "username" => commit_user.github_url
+            },
+            "committer" => {
+              "name" => commit_user.name,
+              "email" => commit_user.email,
+              "username" => commit_user.github_url
+            },
+            "message" => "Fix all the bugs"
           }
         ],
         "repository" => {
@@ -488,7 +462,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
         context "and commit message contains start and task #" do
           before do
             Fabricate(:task_assignee, task: task, assignee: commit_user)
-            commit_push_params["commits"][0]["commit"]["message"] =
+            commit_push_params["commits"][0]["message"] =
               "Starts Task##{task.id}"
           end
 
@@ -529,7 +503,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
         context "and commit message contains fixes and task #" do
           before do
             Fabricate(:task_assignee, task: task, assignee: commit_user)
-            commit_push_params["commits"][0]["commit"]["message"] =
+            commit_push_params["commits"][0]["message"] =
               "Fixes #{task.id}"
           end
 
@@ -572,7 +546,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
 
           before do
             Fabricate(:task_assignee, task: task, assignee: commit_user)
-            commit_push_params["commits"][0]["commit"]["message"] =
+            commit_push_params["commits"][0]["message"] =
               "Some changes\n\nFixes #{task.id}\nFixes #{second_task.id}"
           end
 

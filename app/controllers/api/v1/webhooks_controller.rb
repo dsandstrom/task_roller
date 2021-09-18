@@ -116,16 +116,14 @@ module Api
         end
 
         def commit_params(payload)
-          { commit_sha: payload[:sha], commit_html_url: payload[:html_url],
-            commit_message: payload[:commit][:message],
-            github_commit_id: payload[:node_id] }
+          { commit_sha: payload[:id], commit_html_url: payload[:url],
+            commit_message: payload[:message] }
         end
 
         def process_commit(payload)
-          return unless payload[:commit] && payload[:commit][:committer] &&
-                        payload[:commit][:message]
+          return unless payload && payload[:committer] && payload[:message]
 
-          user = process_user(payload[:commit][:committer])
+          user = process_user(payload[:committer])
           return unless user
 
           attrs = commit_params(payload)
