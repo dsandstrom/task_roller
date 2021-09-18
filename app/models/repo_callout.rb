@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: add 'progresses' action to add progression
+
 class RepoCallout < ApplicationRecord
   ACTION_OPTIONS = %w[start pause complete].freeze
   MESSAGE_REGEX = /
