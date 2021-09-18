@@ -81,16 +81,17 @@ class RepoCallout < ApplicationRecord
     def start_task
       return unless task.open? && unfinished_progressions.none?
 
-      task.progressions.create(user: user)
+      task.progressions.create(user: user, repo_callout_id: id)
     end
 
     def pause_task
+      # TODO: set repo_callout_id (may conflict if set when started)
       unfinished_progressions.all?(&:finish)
     end
 
     def finish_task
       return if task.closed?
 
-      task.finish if task.reviews.create(user: user)
+      task.finish if task.reviews.create(user: user, repo_callout_id: id)
     end
 end
