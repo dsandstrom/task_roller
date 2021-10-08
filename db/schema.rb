@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_18_014634) do
+ActiveRecord::Schema.define(version: 2021_10_08_231704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -307,7 +307,7 @@ ActiveRecord::Schema.define(version: 2021_09_18_014634) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.integer "github_id"
-    t.string "github_url"
+    t.string "github_username"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["github_id"], name: "index_users_on_github_id", unique: true

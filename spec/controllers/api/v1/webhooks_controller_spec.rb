@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Api::V1::WebhooksController, type: :controller do
   let(:task) { Fabricate(:task) }
   let(:commit_user) do
-    Fabricate(:user_worker, github_id: 4321, github_url: "login")
+    Fabricate(:user_worker, github_id: 4321, github_username: "login")
   end
 
   describe "POST #github" do
@@ -104,12 +104,12 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             "author" => {
               "name" => commit_user.name,
               "email" => commit_user.email,
-              "username" => commit_user.github_url
+              "username" => commit_user.github_username
             },
             "committer" => {
               "name" => commit_user.name,
               "email" => commit_user.email,
-              "username" => commit_user.github_url
+              "username" => commit_user.github_username
             },
             "message" => "Fix all the bugs"
           }

@@ -133,7 +133,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return unless auth.uid.present? && auth.info
 
     where(github_id: auth.uid).first_or_create do |user|
-      attrs = { github_url: auth.info.nickname, email: auth.info.email,
+      attrs = { github_username: auth.info.nickname, email: auth.info.email,
                 employee_type: 'Reporter', name: auth.info.name }
       user.assign_attributes(attrs)
       # user.image = auth.info.image # assuming the user model has an image

@@ -16,7 +16,7 @@ RSpec.describe User, type: :model do
   it { is_expected.to respond_to(:email) }
   it { is_expected.to respond_to(:employee_type) }
   it { is_expected.to respond_to(:github_id) }
-  it { is_expected.to respond_to(:github_url) }
+  it { is_expected.to respond_to(:github_username) }
 
   it { is_expected.to have_many(:issues) }
   it { is_expected.to have_many(:issue_comments) }
@@ -531,7 +531,7 @@ RSpec.describe User, type: :model do
           expect(user.employee_type).to eq("Reporter")
           expect(user.confirmed?).to eq(true)
           expect(user.github_id).to eq(1234)
-          expect(user.github_url).to eq("username")
+          expect(user.github_username).to eq("username")
         end
       end
     end
@@ -607,7 +607,7 @@ RSpec.describe User, type: :model do
             expect(user.employee_type).to eq("Reporter")
             expect(user.confirmed?).to eq(true)
             expect(user.github_id).to eq(1234)
-            expect(user.github_url).to eq("username")
+            expect(user.github_username).to eq("username")
           end
         end
       end

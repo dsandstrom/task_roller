@@ -64,7 +64,8 @@ module Api
 
         def user_params
           @user_params ||=
-            { github_id: user_payload[:id], github_url: user_payload[:login],
+            { github_id: user_payload[:id],
+              github_username: user_payload[:login],
               name: user_payload[:login] }
         end
 
@@ -79,7 +80,9 @@ module Api
         end
 
         def github_user_valid?
-          %i[github_id github_url name].all? { |k| user_params[k].present? }
+          %i[github_id github_username name].all? do |k|
+            user_params[k].present?
+          end
         end
 
         def github_user
@@ -148,11 +151,11 @@ module Api
         def process_user(payload)
           return unless payload[:username]
 
-          user = User.find_by(github_url: payload[:username])
+          user = User.find_by(github_username: payload[:username])
           return user if user
 
           # FIXME: commit doesn't send id, so not valid
-          u = { github_id: payload[:id], github_url: payload[:username],
+          u = { github_id: payload[:id], github_username: payload[:username],
                 name: payload[:name] }
           return if u.any? { |_, value| value.blank? }
 
