@@ -1182,6 +1182,16 @@ RSpec.describe User, type: :model do
         expect(user.active_assignments).to eq(tasks)
       end
     end
+
+    context "when user commented on assigned task" do
+      it "still includes it" do
+        task = Fabricate(:open_task, user: user)
+        task.assignees << user
+        Fabricate(:task_comment, task: task, user: user)
+
+        expect(user.active_assignments).to eq([task])
+      end
+    end
   end
 
   describe "#open_tasks" do

@@ -239,7 +239,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # no progressions or reviews
   # pending review
   # comment by another user
-  # should order last by tasks.created_at asc?
   ACTIVE_ASSIGNMENTS_QUERY =
     'tasks.*, ' \
     'SUM(case when progressions.finished IS FALSE then 1 else 0 end) ' \
@@ -253,11 +252,13 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
       progressions_count: :desc, order_date: :desc }.freeze
   def active_assignments
+    comments_query =
+      'LEFT OUTER JOIN task_comments ON ' \
+      "(tasks.id = task_comments.task_id AND task_comments.user_id != #{id})"
     @active_assignments ||=
       assignments
-      .left_joins(:progressions, :reviews, :comments).references(:comments)
+      .left_joins(:progressions, :reviews).joins(comments_query)
       .all_non_closed.select(ACTIVE_ASSIGNMENTS_QUERY)
-      .where('task_comments.id IS NULL OR task_comments.user_id != ?', id)
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
 
