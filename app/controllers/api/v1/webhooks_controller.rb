@@ -3,7 +3,6 @@
 # TODO: allow customizing which project & issue_type is picked
 # TODO: import comments?
 # TODO: use only master/main branch
-# test comment
 
 # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
 # https://docs.github.com/en/rest/reference/repos#commits
