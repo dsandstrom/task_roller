@@ -378,7 +378,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         task.progressions.unfinished.find_by(user_id: current_user.id)
 
       if progression
-        ['In Progress to Me', 'yellow']
+        ['Started by Me', 'yellow']
       elsif task_assignee
         ['Assigned to Me', 'green']
       else
