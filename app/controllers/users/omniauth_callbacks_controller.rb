@@ -4,6 +4,7 @@
 
 # TODO: Allow users to connect existing account to github
 # even if registration is disallowed
+# Task #12
 
 module Users
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
