@@ -60,7 +60,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
             end
           end
 
-          context "that email and github_id match an confirmed user" do
+          context "that email and github_id match an unconfirmed user" do
             before do
               example_user.github_id = 1234
               example_user.confirmed_at = nil
