@@ -12,8 +12,9 @@ module Users
     before_action :verify_registration_allowed, only: :github
 
     def github
-      redirect_to :unauthorized unless User.allow_registration?
+      # redirect_to :unauthorized unless User.allow_registration?
 
+      # rename (authorize_with_github?)
       create_from_github
     end
 
