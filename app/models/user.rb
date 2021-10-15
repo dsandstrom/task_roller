@@ -51,6 +51,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                             allow_nil: false, on: :create
   validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
                             allow_nil: true, on: :update
+  validates :github_id, uniqueness: true, allow_nil: true
 
   # CLASS
 
@@ -127,7 +128,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # the provider and uid fields when creating a new user. The first_or_create!
   # method operates similarly, except that it will raise an Exception if the
   # user record fails validation.
-  # TODO: rename gitub_url to github_username?
   # FIXME: allow existing confirmed user to connect to github
   def self.from_omniauth(auth)
     return unless auth.uid.present? && auth.info
