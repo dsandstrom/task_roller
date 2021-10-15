@@ -22,6 +22,7 @@
           <h3>Advanced</h3>
           <%= content_tag :p, link_to('Change Password',
                                       edit_user_registration_path) %>
+          <%# TODO: add link to remove current github account %>
           <%= content_tag :p, link_to('Connect GitHub Account',
                                       user_github_omniauth_authorize_path) %>
         </div>
