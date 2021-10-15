@@ -1,16 +1,34 @@
 # frozen_string_literal: true
 
 module UsersHelper
-  def user_header(user = nil)
+  def user_header(user)
     return new_user_header(user) unless user.persisted?
 
-    link = link_to_unless_current(user.name_or_email, user)
     user_page_title(user)
 
     content_for :header do
       concat user_breadcrumbs
-      concat content_tag(:h1, link)
+      concat header_content(user)
       concat user_nav(user)
+    end
+  end
+
+  def user_inner_header(user, heading)
+    user_page_title(user)
+
+    content_for :header do
+      concat user_breadcrumbs(user)
+      concat content_tag(:h1, heading)
+    end
+  end
+
+  def header_content(user)
+    content_tag :main, class: 'header-content' do
+      if can?(:edit, user)
+        user_heading_and_button(user)
+      else
+        content_tag(:h1, link_to_unless_current(user.name_or_email, user))
+      end
     end
   end
 
@@ -33,8 +51,10 @@ module UsersHelper
     end
   end
 
-  def user_breadcrumbs
-    @user_breadcrumbs ||= breadcrumbs([['Users', users_path]])
+  def user_breadcrumbs(user = nil)
+    pages = [['Users', users_path]]
+    pages.append([user.name_or_email, user_path(user)]) if user.present?
+    breadcrumbs(pages)
   end
 
   def new_reporter
@@ -53,6 +73,16 @@ module UsersHelper
 
   private
 
+    def user_heading_and_button(user)
+      link = link_to_unless_current(user.name_or_email, user)
+      button = link_to('User Settings', edit_user_path(user), class: 'button')
+
+      content_tag :div, class: 'columns' do
+        concat content_tag(:div, content_tag(:h1, link), class: 'first-column')
+        concat content_tag(:div, button, class: 'second-column')
+      end
+    end
+
     def user_nav(user)
       content_tag :p, class: 'page-nav user-nav' do
         safe_join(navitize(user_nav_links(user)))
@@ -63,13 +93,9 @@ module UsersHelper
       links = [['Profile', user_path(user)],
                ['Reported Issues', user_issues_path(user)]]
       links << ['Created Tasks', user_tasks_path(user)] if user.tasks.any?
+      return links if user.assignments.none?
 
-      if user.assignments.any?
-        links << ['Assigned Tasks', user_assignments_path(user)]
-      end
-      return links unless can?(:update, user)
-
-      links.append ['Settings', edit_user_path(user)]
+      links << ['Assigned Tasks', user_assignments_path(user)]
     end
 
     def user_page_title(user)

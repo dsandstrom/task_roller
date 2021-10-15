@@ -1,6 +1,4 @@
-<%= user_header(@user) %>
-
-<h2>Advanced Settings</h2>
+<%= user_inner_header @user, 'Advanced Settings' %>
 
 <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
   <div>
@@ -15,7 +13,7 @@
 <% else %>
   <div class="columns">
     <div class="first-column">
-      <h3>Change My Password</h3>
+      <h2>Change My Password</h2>
 
       <%= render 'form',
                  minimum_password_length: @minimum_password_length %>
