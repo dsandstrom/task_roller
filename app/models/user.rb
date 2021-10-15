@@ -164,6 +164,14 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # INSTANCE
 
+  def add_omniauth(auth)
+    return false unless auth.uid.present? && auth.info
+    return false unless confirmed?
+
+    attrs = { github_id: auth.uid, github_username: auth.info.nickname }
+    update(attrs)
+  end
+
   def admin?
     @admin_ = employee_type == 'Admin' if @admin_.nil?
     @admin_

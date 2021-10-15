@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
+  let(:example_user) { Fabricate.build(:user) }
+
   before do
     @user = User.new(name: "User Name", email: "test@example.com",
                      employee_type: "Worker", password: "password",
@@ -475,8 +477,6 @@ RSpec.describe User, type: :model do
   end
 
   describe ".from_omniauth" do
-    let(:example_user) { Fabricate.build(:user) }
-
     context "when no users" do
       context "when invalid environment" do
         let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
@@ -658,6 +658,119 @@ RSpec.describe User, type: :model do
   end
 
   # INSTANCE
+
+  describe "#add_omniauth" do
+    let(:user) { Fabricate(:user_reviewer) }
+
+    context "when invalid environment" do
+      let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+
+      it "doesn't update user" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :github_id)
+      end
+
+      it "returns false" do
+        expect(user.add_omniauth(env)).to eq(false)
+      end
+    end
+
+    context "when invalid user data" do
+      let(:env) { OpenStruct.new(uid: 1234) }
+
+      it "doesn't create a new user" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :github_id)
+      end
+
+      it "returns false" do
+        expect(user.add_omniauth(env)).to eq(false)
+      end
+    end
+
+    context "when valid omniauth env" do
+      let(:env) do
+        OpenStruct.new(
+          uid: 1234,
+          info: OpenStruct.new(name: example_user.name,
+                               email: example_user.email,
+                               nickname: "username")
+        )
+      end
+
+      it "updates github_id" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.to change(user, :github_id).to(1234)
+      end
+
+      it "updates github_username" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.to change(user, :github_username).to("username")
+      end
+
+      it "doesn't change employee_type" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :employee_type)
+      end
+    end
+
+    context "when github_id already taken" do
+      let(:env) do
+        OpenStruct.new(
+          uid: 1234,
+          info: OpenStruct.new(name: example_user.name,
+                               email: example_user.email,
+                               nickname: "username")
+        )
+      end
+
+      before { Fabricate(:user_reporter, github_id: 1234) }
+
+      it "doesn't change github_id" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :github_id)
+      end
+
+      it "doesn't change github_username" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :github_username)
+      end
+    end
+
+    context "when unconfirmed" do
+      let(:env) do
+        OpenStruct.new(
+          uid: 1234,
+          info: OpenStruct.new(name: example_user.name,
+                               email: example_user.email,
+                               nickname: "username")
+        )
+      end
+
+      before { user.update_attribute :confirmed_at, nil }
+
+      it "doesn't change github_id" do
+        expect do
+          user.add_omniauth(env)
+          user.reload
+        end.not_to change(user, :github_id)
+      end
+    end
+  end
 
   describe "#admin?" do
     context "when employee_type is" do
