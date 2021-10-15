@@ -2,20 +2,18 @@
 
 # https://github.com/heartcombo/devise/wiki/OmniAuth:-Overview
 
-# TODO: Allow users to connect existing account to github
-# even if registration is disallowed
-# Task #12
-
 module Users
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     skip_before_action :verify_authenticity_token, only: :github
-    before_action :verify_registration_allowed, only: :github
 
     def github
-      # redirect_to :unauthorized unless User.allow_registration?
-
-      # rename (authorize_with_github?)
-      create_from_github
+      if current_user
+        update_current_user
+      elsif User.allow_registration?
+        create_new_user
+      else
+        redirect_to :unauthorized
+      end
     end
 
     def failure
@@ -32,12 +30,6 @@ module Users
         @sign_in_failure_message ||= 'Unable to sign in with GitHub'
       end
 
-      def verify_registration_allowed
-        return if User.allow_registration?
-
-        redirect_to :unauthorized
-      end
-
       def log_errors_and_redirect
         # Removing extra as it can overflow some session stores
         %i[extra all_emails urls].each { |key| omniauth_payload.delete(key) }
@@ -47,7 +39,15 @@ module Users
         redirect_to new_user_session_url, alert: sign_in_failure_message
       end
 
-      def create_from_github
+      def update_current_user
+        if current_user.add_omniauth(omniauth_payload)
+          redirect_to edit_user_url(current_user)
+        else
+          redirect_to :unauthorized
+        end
+      end
+
+      def create_new_user
         @user = User.from_omniauth(omniauth_payload)
 
         if @user&.persisted?

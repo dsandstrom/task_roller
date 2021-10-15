@@ -23,7 +23,6 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       @request.env["omniauth.auth"] = auth_env
     end
 
-    # TODO: when user matches email, but nil/different gitub_id
     context "when registration is allowed" do
       before { allow(User).to receive(:allow_registration?) { true } }
 
@@ -104,6 +103,109 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
           end
         end
       end
+
+      context "for a reporter" do
+        let(:current_user) { Fabricate(:user_reporter) }
+
+        before { sign_in(current_user) }
+
+        context "when valid environment" do
+          context "that doesn't match an existing user" do
+            it "doesn't create a new user" do
+              expect do
+                get :github
+              end.not_to change(User, :count)
+            end
+
+            it "updates current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.to change(current_user, :github_id).to(1234)
+            end
+
+            it "redirects to user page" do
+              get :github
+              expect(response).to redirect_to(edit_user_path(current_user))
+            end
+          end
+
+          context "that matches an existing user" do
+            before do
+              example_user.github_id = 1234
+              example_user.github_username = "username"
+              example_user.save
+            end
+
+            it "doesn't create a new user" do
+              expect do
+                get :github
+              end.not_to change(User, :count)
+            end
+
+            it "doesn't change current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.not_to change(current_user, :github_id)
+            end
+
+            it "redirects to unauthorized" do
+              get :github
+              expect_to_be_unauthorized(response)
+            end
+          end
+
+          context "that matches current_user already" do
+            before do
+              current_user.assign_attributes github_id: 1234,
+                                             github_username: "username"
+            end
+
+            it "doesn't create a new user" do
+              expect do
+                get :github
+              end.not_to change(User, :count)
+            end
+
+            it "doesn't change current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.not_to change(current_user, :github_id)
+            end
+
+            it "redirects to user page" do
+              get :github
+              expect(response).to redirect_to(edit_user_path(current_user))
+            end
+          end
+        end
+
+        context "when invalid env" do
+          before do
+            allow(auth_env).to receive(:uid) { nil }
+          end
+
+          it "doesn't create a new user" do
+            expect do
+              get :github
+            end.not_to change(User, :count)
+          end
+
+          it "doesn't change current_user" do
+            expect do
+              get :github
+              current_user.reload
+            end.not_to change(current_user, :github_id)
+          end
+
+          it "redirects to unauthorized" do
+            get :github
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
     end
 
     context "when registration is not allowed" do
@@ -128,12 +230,11 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       end
 
       context "for a reporter" do
-        context "when valid environment" do
-          before do
-            allow(auth_env).to receive(:uid) { 1234 }
-            allow(auth_env).to receive(:info) { user_env }
-          end
+        let(:current_user) { Fabricate(:user_reporter) }
 
+        before { sign_in(current_user) }
+
+        context "when valid environment" do
           context "that doesn't match an existing user" do
             it "doesn't create a new user" do
               expect do
@@ -141,15 +242,23 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
               end.not_to change(User, :count)
             end
 
-            it "redirects to unauthorized" do
+            it "updates current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.to change(current_user, :github_id).to(1234)
+            end
+
+            it "redirects to user page" do
               get :github
-              expect_to_be_unauthorized(response)
+              expect(response).to redirect_to(edit_user_path(current_user))
             end
           end
 
-          context "that email and github_id match an existing user" do
+          context "that matches an existing user" do
             before do
               example_user.github_id = 1234
+              example_user.github_username = "username"
               example_user.save
             end
 
@@ -159,14 +268,24 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
               end.not_to change(User, :count)
             end
 
+            it "doesn't change current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.not_to change(current_user, :github_id)
+            end
+
             it "redirects to unauthorized" do
               get :github
               expect_to_be_unauthorized(response)
             end
           end
 
-          context "when email matches an existing user" do
-            before { example_user.save }
+          context "that matches current_user already" do
+            before do
+              current_user.assign_attributes github_id: 1234,
+                                             github_username: "username"
+            end
 
             it "doesn't create a new user" do
               expect do
@@ -174,24 +293,36 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
               end.not_to change(User, :count)
             end
 
-            it "redirects to unauthorized" do
+            it "doesn't change current_user" do
+              expect do
+                get :github
+                current_user.reload
+              end.not_to change(current_user, :github_id)
+            end
+
+            it "redirects to user page" do
               get :github
-              expect_to_be_unauthorized(response)
+              expect(response).to redirect_to(edit_user_path(current_user))
             end
           end
         end
 
         context "when invalid env" do
           before do
-            user_env.email = nil
-            allow(auth_env).to receive(:uid) { 1234 }
-            allow(auth_env).to receive(:info) { user_env }
+            allow(auth_env).to receive(:uid) { nil }
           end
 
           it "doesn't create a new user" do
             expect do
               get :github
             end.not_to change(User, :count)
+          end
+
+          it "doesn't change current_user" do
+            expect do
+              get :github
+              current_user.reload
+            end.not_to change(current_user, :github_id)
           end
 
           it "redirects to unauthorized" do
