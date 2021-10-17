@@ -52,14 +52,18 @@ module UsersHelper
   end
 
   def user_side_nav(user)
-    links = [['Update Name', edit_user_path(user)]]
+    links = [['Basic', edit_user_path(user)],
+             ['Update Name', edit_user_path(user, anchor: 'name')]]
     if current_user.id == user.id
-      links << ['GitHub Account', 'user_github_omniauth_authorize_path']
+      links << ['Connections', edit_user_path(user, anchor: 'connections')]
+      links << ['Advanced', edit_user_registration_path]
       if respond_to?(:edit_user_registration_path)
-        links << ['Change Password', edit_user_registration_path]
+        links <<
+          ['Change Password', edit_user_registration_path(anchor: 'password')]
       end
       if can?(:cancel, user)
-        links << ['Cancel Account', edit_user_registration_path]
+        links <<
+          ['Cancel Account', edit_user_registration_path(anchor: 'cancel')]
       end
     elsif can?(:promote, user)
       links <<

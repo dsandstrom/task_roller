@@ -13,10 +13,12 @@
 <% else %>
   <div class="columns">
     <div class="column">
-      <h2>Change My Password</h2>
+      <div id="password" class="user-form-group">
+        <h2>Change My Password</h2>
 
-      <%= render 'form',
-                 minimum_password_length: @minimum_password_length %>
+        <%= render 'form',
+                   minimum_password_length: @minimum_password_length %>
+      </div>
 
       <%= render 'cancel_account', user: @user %>
     </div>

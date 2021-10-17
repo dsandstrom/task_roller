@@ -1,10 +1,32 @@
 <%= user_inner_header @user, 'Account Settings' %>
 
 <div class="columns">
-  <div id="user-name-form" class="column">
-    <h2>Update Name</h2>
+  <div class="column">
+    <div id="name" class="user-form-group">
+      <h2>Update Name</h2>
 
-    <%= render 'form', user: @user %>
+      <%= render 'form', user: @user %>
+    </div>
+
+    <div id="connections" class="user-form-group">
+      <h2>Connections</h2>
+
+      <h3>GitHub</h3>
+      <p>
+        With a GitHub connection, you can log in using your GitHub acccount.
+        In addition, it makes it possible to use repo commit message callouts.
+      </p>
+
+      <% if @user.github_id.present? %>
+        <span class="github-account">
+          <%= @user.github_username %>
+        </span>
+      <% else %>
+        <%= link_to 'Connect GitHub',
+                    user_github_omniauth_authorize_path,
+                    class: 'button button-outline' %>
+      <% end %>
+    </div>
   </div>
 
   <div class="column nav-column">
