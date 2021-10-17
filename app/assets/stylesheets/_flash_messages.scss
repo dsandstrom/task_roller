@@ -50,7 +50,8 @@
 }
 
 .flash-message-close-link,
-.notification-close-link {
+.notification-close-link,
+.remove-connection-link {
   padding: .5rem .8rem;
   color: $red;
   font-size: 1.8rem;
@@ -68,6 +69,19 @@
   right: 0;
   border-radius: $border-radius;
   background: rgba($ink, .05);
+
+  &:hover {
+    background: rgba($ink, .09);
+  }
+}
+
+.remove-connection-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius;
 
   &:hover {
     background: rgba($ink, .09);

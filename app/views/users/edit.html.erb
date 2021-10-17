@@ -18,9 +18,23 @@
       </p>
 
       <% if @user.github_id.present? %>
-        <span class="github-account">
-          <%= @user.github_username %>
-        </span>
+        <%
+          confirm = 'Are you sure you want to remove the GitHub connection '\
+                    "for #{@user.github_username}?"
+        %>
+
+        <div class="github-account">
+          <%= image_tag 'github-mark.svg',
+                        class: 'github-account-image' %>
+          <%= link_to @user.github_username,
+                      "https://github.com/#{@user.github_username}",
+                      target: 'remote',
+                      class: 'github-account-name' %>
+          <%= link_to "\u2716", 'javascript:void(0)',
+                      class: "close-link remove-connection-link",
+                      title: 'Remove GitHub connection',
+                      data: { confirm: confirm } %>
+        </div>
       <% else %>
         <%= link_to 'Connect GitHub',
                     user_github_omniauth_authorize_path,
