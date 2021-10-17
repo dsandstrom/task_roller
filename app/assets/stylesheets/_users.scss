@@ -88,11 +88,7 @@
 
 .github-account {
   display: inline-flex;
-  position: relative;
-  align-items: center;
-  justify-content: flex-start;
-  margin-right: auto;
-  padding: 1rem 5rem 1rem 1.5rem;
+  align-items: stretch;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   font-family: $heading-font;
@@ -100,9 +96,17 @@
 }
 
 .github-account-image {
+  display: flex;
+  align-items: center;
   max-width: 2rem;
-  margin-right: .5rem;
+  margin: .5rem;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
 }
 
-// .github-account-name {
-// }
+.github-account-name {
+  margin: .5rem;
+}

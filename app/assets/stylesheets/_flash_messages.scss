@@ -76,12 +76,11 @@
 }
 
 .remove-connection-link {
-  position: absolute;
-  top: 0;
-  right: 0;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: $border-radius;
+  margin-left: 1rem;
+  border-left: 1px solid $border-color;
+  background: rgba($ink, .05);
 
   &:hover {
     background: rgba($ink, .09);

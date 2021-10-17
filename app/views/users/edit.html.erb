@@ -24,8 +24,8 @@
         %>
 
         <div class="github-account">
-          <%= image_tag 'github-mark.svg',
-                        class: 'github-account-image' %>
+          <%= content_tag :span, image_tag('github-mark.svg'),
+                          class: 'github-account-image' %>
           <%= link_to @user.github_username,
                       "https://github.com/#{@user.github_username}",
                       target: 'remote',
