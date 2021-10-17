@@ -55,28 +55,36 @@ module UsersHelper
     links = [['Basic', edit_user_path(user)],
              ['Update Name', edit_user_path(user, anchor: 'name')]]
     if current_user.id == user.id
-      links << ['Connections', edit_user_path(user, anchor: 'connections')]
-      links << ['Advanced', edit_user_registration_path]
-      if respond_to?(:edit_user_registration_path)
-        links <<
-          ['Change Password', edit_user_registration_path(anchor: 'password')]
-      end
-      if can?(:cancel, user)
-        links <<
-          ['Cancel Account', edit_user_registration_path(anchor: 'cancel')]
-      end
+      links = add_current_user_links(user, links)
     elsif can?(:promote, user)
-      links <<
-        if user.employee?
-          ['Change Account Type', edit_user_employee_type_path(user)]
-        else
-          ['Assign Account Type', new_user_employee_type_path(user)]
-        end
+      links = add_admin_links(user, links)
     end
 
     content_tag :p, class: 'side-nav user-nav' do
       safe_join(navitize(links))
     end
+  end
+
+  def add_current_user_links(user, links)
+    links << ['Connections', edit_user_path(user, anchor: 'connections')]
+    links << ['Advanced', edit_user_registration_path]
+    if respond_to?(:edit_user_registration_path)
+      links <<
+        ['Change Password', edit_user_registration_path(anchor: 'password')]
+    end
+    return links unless can?(:cancel, user)
+
+    links << ['Cancel Account', edit_user_registration_path(anchor: 'cancel')]
+  end
+
+  def add_admin_links(user, links)
+    links <<
+      if user.employee?
+        ['Change Account Type', edit_user_employee_type_path(user)]
+      else
+        ['Assign Account Type', new_user_employee_type_path(user)]
+      end
+    links
   end
 
   def user_breadcrumbs(user = nil)
