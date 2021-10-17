@@ -19,12 +19,15 @@
     border-top-width: 1px;
   }
 
-  h2,
-  h3 {
+  h2 {
     margin-top: 0;
+  }
+
+  h3 {
+    margin: 2rem 0 .5rem;
 
     img {
-      max-width: 30rem;
+      max-width: 12rem;
     }
   }
 
