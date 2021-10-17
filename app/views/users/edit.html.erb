@@ -1,53 +1,14 @@
-<%= user_inner_header @user, 'User Settings' %>
-
-<h2>
-  Edit
-    <% if @user == current_user %>
-      Profile
-    <% elsif @user.employee_type.blank? %>
-      User
-    <% else %>
-      <%= @user.employee_type %>
-    <% end %>
-</h2>
+<%= user_inner_header @user, 'Account Settings' %>
 
 <div class="columns">
-  <div class="first-column">
+  <div id="user-name-form" class="column">
+    <h2>Update Name</h2>
+
     <%= render 'form', user: @user %>
   </div>
 
-  <div class="second-column">
-    <%- if current_user.id == @user.id %>
-      <%- if respond_to?(:edit_user_registration_path) %>
-        <div class="devise-links">
-          <h3>Advanced</h3>
-          <%= content_tag :p, link_to('Change Password',
-                                      edit_user_registration_path) %>
-          <%# TODO: add link to remove current github account %>
-          <%= content_tag :p, link_to('Connect GitHub Account',
-                                      user_github_omniauth_authorize_path) %>
-        </div>
-      <% end %>
-    <% else %>
-      <div class="devise-links">
-        <h3>Advanced</h3>
-
-        <% if can?(:promote, @user) %>
-          <% if @user.employee? %>
-            <p>
-              <%= link_to 'Change Account Type',
-                          edit_user_employee_type_path(@user) %>
-            </p>
-          <% else %>
-            <p>
-              <%= link_to 'Assign Account Type',
-                          new_user_employee_type_path(@user) %>
-            </p>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+  <div class="column nav-column">
+    <h5>Navigation</h5>
+    <%= user_side_nav(@user) %>
   </div>
 </div>
-
-<p><%= link_to 'Back', :back %></p>

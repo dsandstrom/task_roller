@@ -12,7 +12,7 @@
   </div>
 <% else %>
   <div class="columns">
-    <div class="first-column">
+    <div class="column">
       <h2>Change My Password</h2>
 
       <%= render 'form',
@@ -21,14 +21,9 @@
       <%= render 'cancel_account', user: @user %>
     </div>
 
-    <div class="second-column">
-      <div class="devise-links">
-        <h3>Helpful Links</h3>
-        <%= content_tag :p, link_to('Change Name',
-                                    edit_user_path(@user)) %>
-      </div>
+    <div class="column nav-column">
+      <h5>Navigation</h5>
+      <%= user_side_nav(@user) %>
     </div>
   </div>
-
-  <%= content_tag :p, link_to('Back', :back) %>
 <% end %>

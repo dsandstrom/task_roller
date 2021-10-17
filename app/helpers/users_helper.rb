@@ -51,6 +51,30 @@ module UsersHelper
     end
   end
 
+  def user_side_nav(user)
+    links = [['Update Name', edit_user_path(user)]]
+    if current_user.id == user.id
+      links << ['GitHub Account', 'user_github_omniauth_authorize_path']
+      if respond_to?(:edit_user_registration_path)
+        links << ['Change Password', edit_user_registration_path]
+      end
+      if can?(:cancel, user)
+        links << ['Cancel Account', edit_user_registration_path]
+      end
+    elsif can?(:promote, user)
+      links <<
+        if user.employee?
+          ['Change Account Type', edit_user_employee_type_path(user)]
+        else
+          ['Assign Account Type', new_user_employee_type_path(user)]
+        end
+    end
+
+    content_tag :p, class: 'side-nav user-nav' do
+      safe_join(navitize(links))
+    end
+  end
+
   def user_breadcrumbs(user = nil)
     pages = [['Users', users_path]]
     pages.append([user.name_or_email, user_path(user)]) if user.present?
@@ -75,7 +99,8 @@ module UsersHelper
 
     def user_heading_and_button(user)
       link = link_to_unless_current(user.name_or_email, user)
-      button = link_to('User Settings', edit_user_path(user), class: 'button')
+      button = link_to('Account Settings', edit_user_path(user),
+                       class: 'button')
 
       content_tag :div, class: 'columns' do
         concat content_tag(:div, content_tag(:h1, link), class: 'first-column')
