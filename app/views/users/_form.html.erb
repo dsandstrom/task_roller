@@ -10,8 +10,14 @@
 
   <% if user.persisted? %>
     <div class="field disabled">
-      <%= form.label :email %>
+      <%= field_label_and_message form, :email, 'Locked' %>
       <%= form.email_field :email, id: :user_email, disabled: true %>
+    </div>
+
+    <div class="field disabled">
+      <%= field_label_and_message form, :employee_type, 'Locked' %>
+      <%= form.text_field :employee_type,
+                          id: :user_employee_type, disabled: true %>
     </div>
   <% else %>
     <%= form.hidden_field :employee_type %>

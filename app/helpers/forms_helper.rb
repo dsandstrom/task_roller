@@ -11,11 +11,15 @@ module FormsHelper
     end
   end
 
-  def required_field_label(form, field_name, value = nil)
+  def field_label_and_message(form, field_name, message, label_value = nil)
     content_tag :div, class: 'field-label-and-message' do
-      concat form.label(field_name, value)
-      concat content_tag :span, 'required', class: 'field-message'
+      concat form.label(field_name, label_value)
+      concat content_tag :span, message, class: 'field-message'
     end
+  end
+
+  def required_field_label(form, field_name, value = nil)
+    field_label_and_message(form, field_name, 'required', value)
   end
 
   def hidden_required_field_label(form, field_name, value = nil)
