@@ -35,3 +35,5 @@ en:
       issue_connection:
         source_id: "Source Issue"
         target_id: "Target Issue"
+      user:
+        employee_type: "User Level"

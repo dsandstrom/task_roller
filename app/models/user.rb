@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: user 'User Level' for employee_type labels (help pages)
+
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # Include default devise modules. Others available are:
   #    :timeoutable
