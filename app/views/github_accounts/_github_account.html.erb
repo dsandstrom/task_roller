@@ -1,0 +1,15 @@
+<div class="github-account">
+  <%= content_tag :span, image_tag('github-mark.svg'),
+                  class: 'github-account-image' %>
+  <%= link_to github_account.username, github_account.remote_url,
+              target: 'remote', class: 'github-account-name' %>
+  <% if can?(:destroy, github_account) %>
+    <% confirm = 'Are you sure you want to remove the GitHub connection '\
+                 "for #{github_account.username}?" %>
+    <%= link_to "\u2716", github_account_url,
+                class: "close-link remove-connection-link",
+                title: 'Remove GitHub connection',
+                method: 'delete',
+                data: { confirm: confirm } %>
+  <% end %>
+</div>

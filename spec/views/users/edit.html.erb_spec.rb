@@ -57,6 +57,37 @@ RSpec.describe "users/edit", type: :view do
         expect(rendered)
           .not_to have_link(nil, href: new_user_employee_type_path(@user))
       end
+
+      context "when they have a valid GithubAccount" do
+        before { @user.update github_id: 3562, github_username: "foo" }
+
+        let(:github_account) { @user.github_account }
+
+        it "renders their GithubAccount" do
+          render
+          expect(rendered).to have_link(nil, href: github_account.remote_url)
+          selector = "a[href=\"#{github_account_url}\"][data-method='delete']"
+          expect(rendered).to have_selector(:css, selector)
+        end
+
+        it "doesn't render new connection link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: user_github_omniauth_authorize_path)
+        end
+      end
+
+      context "when they don't have a valid GithubAccount" do
+        before { @user.update github_id: nil }
+
+        let(:github_account) { @user.github_account }
+
+        it "renders new connection link" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: user_github_omniauth_authorize_path)
+        end
+      end
     end
 
     context "when editing a non-employee" do
@@ -84,6 +115,28 @@ RSpec.describe "users/edit", type: :view do
           .to have_link(nil, href: new_user_employee_type_path(@user))
         expect(rendered)
           .not_to have_link(nil, href: edit_user_registration_path)
+      end
+
+      it "doesn't render new connection link" do
+        render
+        expect(rendered)
+          .not_to have_link(nil, href: user_github_omniauth_authorize_path)
+      end
+    end
+
+    context "when editing a user with valid GithubAccount" do
+      let(:user) do
+        Fabricate(:user_reviewer, github_id: 4522, github_username: "username")
+      end
+      let(:github_account) { user.github_account }
+
+      before { @user = assign(:user, user) }
+
+      it "renders their GithubAccount" do
+        render
+        expect(rendered).to have_link(nil, href: github_account.remote_url)
+        selector = "a[href=\"#{github_account_url}\"][data-method='delete']"
+        expect(rendered).not_to have_selector(:css, selector)
       end
     end
   end
@@ -117,6 +170,37 @@ RSpec.describe "users/edit", type: :view do
           .not_to have_link(nil, href: edit_user_employee_type_path(@user))
         expect(rendered)
           .not_to have_link(nil, href: new_user_employee_type_path(@user))
+      end
+
+      context "when they have a valid GithubAccount" do
+        before { @user.update github_id: 3562, github_username: "foo" }
+
+        let(:github_account) { @user.github_account }
+
+        it "renders their GithubAccount" do
+          render
+          expect(rendered).to have_link(nil, href: github_account.remote_url)
+          selector = "a[href=\"#{github_account_url}\"][data-method='delete']"
+          expect(rendered).to have_selector(:css, selector)
+        end
+
+        it "doesn't render new connection link" do
+          render
+          expect(rendered)
+            .not_to have_link(nil, href: user_github_omniauth_authorize_path)
+        end
+      end
+
+      context "when they don't have a valid GithubAccount" do
+        before { @user.update github_id: nil }
+
+        let(:github_account) { @user.github_account }
+
+        it "renders new connection link" do
+          render
+          expect(rendered)
+            .to have_link(nil, href: user_github_omniauth_authorize_path)
+        end
       end
     end
   end

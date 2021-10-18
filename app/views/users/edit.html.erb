@@ -1,3 +1,5 @@
+<% github_account = @user.github_account  %>
+
 <%= user_inner_header @user, 'Account Settings' %>
 
 <div class="columns">
@@ -17,28 +19,15 @@
         In addition, it makes it possible to use repo commit message callouts.
       </p>
 
-      <% if @user.github_id.present? %>
-        <%
-          confirm = 'Are you sure you want to remove the GitHub connection '\
-                    "for #{@user.github_username}?"
-        %>
-
-        <div class="github-account">
-          <%= content_tag :span, image_tag('github-mark.svg'),
-                          class: 'github-account-image' %>
-          <%= link_to @user.github_username,
-                      "https://github.com/#{@user.github_username}",
-                      target: 'remote',
-                      class: 'github-account-name' %>
-          <%= link_to "\u2716", 'javascript:void(0)',
-                      class: "close-link remove-connection-link",
-                      title: 'Remove GitHub connection',
-                      data: { confirm: confirm } %>
-        </div>
-      <% else %>
+      <% if github_account.valid? %>
+        <%= render 'github_accounts/github_account',
+                   github_account: github_account %>
+      <% elsif can?(:create, github_account) %>
         <%= link_to 'Connect GitHub',
                     user_github_omniauth_authorize_path,
                     class: 'button button-outline' %>
+      <% else %>
+        <p><em>No connection yet</em></p>
       <% end %>
     </div>
   </div>
