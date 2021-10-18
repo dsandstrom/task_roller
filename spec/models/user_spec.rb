@@ -1857,4 +1857,26 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#github_account" do
+    context "for a user with github_id/github_username" do
+      let(:user) do
+        Fabricate(:user_reporter, github_id: 9432, github_username: "username")
+      end
+
+      it "has right user_id" do
+        expect(user.github_account.user_id).to eq(user.id)
+      end
+    end
+
+    context "for a user without github_id" do
+      let(:user) do
+        Fabricate(:user_reporter, github_id: nil)
+      end
+
+      it "has right user_id" do
+        expect(user.github_account.user_id).to eq(user.id)
+      end
+    end
+  end
 end

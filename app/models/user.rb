@@ -383,6 +383,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       "task_notifications.user_id = #{id})"
   end
 
+  def github_account
+    @github_account ||= GithubAccount.new(self)
+  end
+
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
