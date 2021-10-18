@@ -94,6 +94,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get 'search' => 'searches#new', as: :search
   get 'search/results' => 'searches#index', as: :search_results
 
+  delete 'github_accounts' => 'github_accounts#destroy', as: :github_account
+
   %w[issue task].each do |roller|
     get "/#{roller}_connections/:source_id/new" => "#{roller}_connections#new",
         as: "new_#{roller}_connection"
