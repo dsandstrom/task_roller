@@ -20,6 +20,10 @@ class GithubAccount
     @user_id ||= user&.id
   end
 
+  def remote_url
+    @remote_url ||= "https://github.com/#{username}"
+  end
+
   def save
     user.update(github_id: remote_id, github_username: username)
   end

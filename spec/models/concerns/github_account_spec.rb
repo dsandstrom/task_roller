@@ -37,4 +37,22 @@ RSpec.describe GithubAccount, type: :model do
       end
     end
   end
+
+  describe "#remote_url" do
+    context "when username" do
+      before { subject.username = "foo" }
+
+      it "returns 'https://github.com/' plus username" do
+        expect(subject.remote_url).to eq("https://github.com/foo")
+      end
+    end
+
+    context "when no username" do
+      before { subject.username = nil }
+
+      it "returns 'https://github.com/' plus username" do
+        expect(subject.remote_url).to eq("https://github.com/")
+      end
+    end
+  end
 end
