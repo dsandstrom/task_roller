@@ -182,4 +182,51 @@ RSpec.describe Ability do
       end
     end
   end
+
+  describe "GithubAccount model" do
+    let(:random_user) { Fabricate(:user_reviewer) }
+    let(:random_github_account) { GithubAccount.new(random_user) }
+
+    describe "for an admin" do
+      let(:admin) { Fabricate(:user_admin) }
+      let(:github_account) { GithubAccount.new(admin) }
+      subject(:ability) { Ability.new(admin) }
+
+      context "when another user" do
+        it { is_expected.not_to be_able_to(:create, random_github_account) }
+        it { is_expected.to be_able_to(:read, random_github_account) }
+        it { is_expected.not_to be_able_to(:update, random_github_account) }
+        it { is_expected.not_to be_able_to(:destroy, random_github_account) }
+      end
+
+      context "when themselves" do
+        it { is_expected.to be_able_to(:create, github_account) }
+        it { is_expected.to be_able_to(:read, github_account) }
+        it { is_expected.to be_able_to(:update, github_account) }
+        it { is_expected.to be_able_to(:destroy, github_account) }
+      end
+    end
+
+    %i[reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        let(:github_account) { GithubAccount.new(current_user) }
+        subject(:ability) { Ability.new(current_user) }
+
+        context "when another user" do
+          it { is_expected.not_to be_able_to(:create, random_github_account) }
+          it { is_expected.to be_able_to(:read, random_github_account) }
+          it { is_expected.not_to be_able_to(:update, random_github_account) }
+          it { is_expected.not_to be_able_to(:destroy, random_github_account) }
+        end
+
+        context "when themselves" do
+          it { is_expected.to be_able_to(:create, github_account) }
+          it { is_expected.to be_able_to(:read, github_account) }
+          it { is_expected.to be_able_to(:update, github_account) }
+          it { is_expected.to be_able_to(:destroy, github_account) }
+        end
+      end
+    end
+  end
 end
