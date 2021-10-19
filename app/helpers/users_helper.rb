@@ -19,6 +19,7 @@ module UsersHelper
     content_for :header do
       concat user_breadcrumbs(user)
       concat content_tag(:h1, heading)
+      concat user_edit_nav(user)
     end
   end
 

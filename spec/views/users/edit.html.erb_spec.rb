@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "users/edit", type: :view do
+  let(:subject) { "users/edit" }
   let(:reporter) { Fabricate(:user_reporter) }
 
   context "for an admin" do
@@ -24,7 +25,8 @@ RSpec.describe "users/edit", type: :view do
       end
 
       it "renders Advanced user links" do
-        render
+        render template: subject, layout: "layouts/application"
+
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered)
@@ -48,7 +50,8 @@ RSpec.describe "users/edit", type: :view do
       end
 
       it "renders Advanced user links" do
-        render
+        render template: subject, layout: "layouts/application"
+
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)
@@ -106,7 +109,8 @@ RSpec.describe "users/edit", type: :view do
       end
 
       it "renders Advanced user links" do
-        render
+        render template: subject, layout: "layouts/application"
+
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered)
@@ -162,7 +166,8 @@ RSpec.describe "users/edit", type: :view do
       end
 
       it "renders Advanced user link" do
-        render
+        render template: subject, layout: "layouts/application"
+
         selector = "a[href=\"#{user_path(@user)}\"][data-method='delete']"
         expect(rendered).not_to have_selector(:css, selector)
         expect(rendered).to have_link(nil, href: edit_user_registration_path)

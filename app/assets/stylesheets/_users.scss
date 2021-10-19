@@ -37,55 +37,6 @@
   }
 }
 
-// .nav-column {
-// }
-
-.side-nav {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 1rem 0 1.5rem;
-  padding: 1rem 0 0;
-
-  a {
-    display: block;
-    padding: 0 1rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    line-height: 3;
-    text-transform: uppercase;
-    white-space: nowrap;
-
-    &.current-page {
-      color: $color-quinary;
-    }
-  }
-}
-
-@include breakpoint(medium up) {
-  .columns {
-    > .column {
-      flex: 1 1 auto;
-      order: 2;
-    }
-
-    > .nav-column {
-      flex: 0 1 20rem;
-      order: 1;
-    }
-  }
-
-  .side-nav {
-    display: block;
-    padding: 0;
-
-    a,
-    span {
-      display: block;
-      padding: 0;
-    }
-  }
-}
-
 .github-account {
   display: inline-flex;
   align-items: stretch;

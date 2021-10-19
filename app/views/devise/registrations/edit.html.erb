@@ -1,4 +1,4 @@
-<%= user_inner_header @user, 'Advanced Settings' %>
+<%= user_inner_header @user, 'Account Settings' %>
 
 <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
   <div>
@@ -21,10 +21,6 @@
       </div>
 
       <%= render 'cancel_account', user: @user %>
-    </div>
-
-    <div class="column nav-column">
-      <%= user_side_nav(@user) %>
     </div>
   </div>
 <% end %>
