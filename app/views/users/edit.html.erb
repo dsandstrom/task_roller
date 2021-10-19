@@ -25,6 +25,7 @@
       <% elsif can?(:create, github_account) %>
         <%= link_to 'Connect GitHub',
                     user_github_omniauth_authorize_path,
+                    method: :post,
                     class: 'button button-outline' %>
       <% else %>
         <p><em>No connection yet</em></p>
