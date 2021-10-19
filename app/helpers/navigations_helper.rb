@@ -12,8 +12,7 @@ module NavigationsHelper
   end
 
   def user_side_nav(user)
-    links = [['Basic', edit_user_path(user)],
-             ['Update Name', edit_user_path(user, anchor: 'name')]]
+    links = [['Name & Connections', edit_user_path(user)]]
     if current_user.id == user.id
       links = add_current_user_links(user, links)
     elsif can?(:promote, user)
@@ -28,27 +27,19 @@ module NavigationsHelper
   private
 
     def add_current_user_links(user, links)
-      links << ['Connections', edit_user_path(user, anchor: 'connections')]
-      links << ['Advanced', edit_user_registration_path]
-      if respond_to?(:edit_user_registration_path)
-        links <<
-          ['Change Password', edit_user_registration_path(anchor: 'password')]
-      end
-      return links unless can?(:cancel, user)
+      return links unless respond_to?(:edit_user_registration_path)
 
-      links << ['Cancel Account', edit_user_registration_path(anchor: 'cancel')]
+      title = 'Password'
+      title += ' & Status' if can?(:cancel, user)
+      links << [title, edit_user_registration_path]
     end
 
     def add_admin_links(user, links)
-      if user.employee?
-        links << ['Advanced', edit_user_employee_type_path(user)]
-        links << ['User Level',
-                  edit_user_employee_type_path(user, anchor: 'employee')]
-        links << ['Cancel Account',
-                  edit_user_employee_type_path(user, anchor: 'cancel')]
-      else
-        links << ['User Level', new_user_employee_type_path(user)]
-      end
-      links
+      links <<
+        if user.employee?
+          ['Account Level', edit_user_employee_type_path(user)]
+        else
+          ['Account Level', new_user_employee_type_path(user)]
+        end
     end
 end
