@@ -3,7 +3,7 @@
 module HelpHelper
   def help_nav
     links = [['Issue Types', issue_types_help_path],
-             ['User Types', user_types_help_path],
+             ['User Levels', user_types_help_path],
              ['Workflows', workflows_help_path]]
 
     content_tag :p, class: 'page-nav help-nav' do
