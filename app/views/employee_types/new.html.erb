@@ -1,11 +1,15 @@
-<%= user_header @user %>
+<%= user_inner_header @user, 'User Account Level' %>
 
 <div class="columns">
-  <div class="first-column">
-    <%= content_tag :h2, "Assign Account Type" %>
+  <div class="column">
+    <div id="employee" class="user-form-group">
+      <%= content_tag :h2, "Assign Level" %>
 
-    <%= render 'form', user: @user %>
+      <%= render 'form', user: @user %>
+    </div>
+  </div>
+
+  <div class="column nav-column">
+    <%= user_side_nav(@user) %>
   </div>
 </div>
-
-<p><%= link_to 'Back', :back %></p>

@@ -40,12 +40,15 @@ module NavigationsHelper
     end
 
     def add_admin_links(user, links)
-      links <<
-        if user.employee?
-          ['Change Account Type', edit_user_employee_type_path(user)]
-        else
-          ['Assign Account Type', new_user_employee_type_path(user)]
-        end
+      if user.employee?
+        links << ['Advanced', edit_user_employee_type_path(user)]
+        links << ['User Level',
+                  edit_user_employee_type_path(user, anchor: 'employee')]
+        links << ['Cancel Account',
+                  edit_user_employee_type_path(user, anchor: 'cancel')]
+      else
+        links << ['User Level', new_user_employee_type_path(user)]
+      end
       links
     end
 end
