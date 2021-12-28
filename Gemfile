@@ -85,7 +85,7 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rubocop', '~> 1.21.0', require: false
-  gem 'rubocop-rails', '~> 2.12', require: false
+  gem 'rubocop-rails', '~> 2.12.3', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
   # Spring speeds up development by keeping your application running in the
