@@ -6,8 +6,7 @@
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
 ## Introduction
-This is a Ruby on Rails app built to be an Issue and Task manager for
-businesses. Issues are opened to report problems, offer suggestions, and ask
+This is an Issue/Task manager app built using Ruby on Rails. Issues are opened to report problems, offer suggestions, and ask
 questions. While Tasks are created to address Issues.
 
 ## Live App
@@ -53,6 +52,32 @@ Tasks can have six statuses: Open, Assigned, In Progress, In Review, Complete,
 and Closed. Here is the basic status workflow:
 
 ![Task Workflow](./app/assets/images/task-workflow.svg)
+
+
+## GitHub API Integration
+
+Connect your TaskRoller app to a GitHub repo to simplify things:
+* When a new issue is added on github.com, a Issue is added to your TaskRoller app.
+* Tasks can be created from this Issue, which can be progressed with [commit message callouts](/#commit-message-callouts).
+* When the TaskRoller Issue is closed, the issue on GitHub is also closed.
+* Bot comments are added to the GitHub issues which provide info and links.
+
+### Commit Message Callouts
+
+*Start/Progress -> Start working on Task
+*Pause -> Pause working on task
+*Fix/Close/Complete -> Mark Issue is ready for review
+
+### Example Commit Message
+```
+Fix the widget color
+
+This commit fixes the color of the widgets.
+
+Fixes Task#12
+```
+
+When a callout is added last in a commit message. It is picked up by TaskRoller and updates the corresponding Task.  For the above example, it will mark Task#12 done and ready for review. In addition, different callout formats and tenses are allowed. These all perform the same action: `Fix Task 12`, `Completed Task #12`, `completes task-12`
 
 ## Local Setup
 
@@ -122,7 +147,3 @@ I use guard to automate local development
 bundle exec guard -g backend # start rspec and bundler watchers
 bundle exec guard -g frontend # start server (port 3000) and livereload watcher
 ```
-
-#### Deployment instructions
-
-WIP
