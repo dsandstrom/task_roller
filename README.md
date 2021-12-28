@@ -58,15 +58,15 @@ and Closed. Here is the basic status workflow:
 
 Connect your TaskRoller app to a GitHub repo to simplify things:
 * When a new issue is added on github.com, a Issue is added to your TaskRoller app.
-* Tasks can be created from this Issue, which can be progressed with [commit message callouts](/#commit-message-callouts).
+* Tasks can be created from this Issue, which can be progressed with commit message callouts.
 * When the TaskRoller Issue is closed, the issue on GitHub is also closed.
 * Bot comments are added to the GitHub issues which provide info and links.
 
 ### Commit Message Callouts
 
-*Start/Progress -> Start working on Task
-*Pause -> Pause working on task
-*Fix/Close/Complete -> Mark Issue is ready for review
+* Start/Progress -> Start working on Task
+* Pause -> Pause working on task
+* Fix/Close/Complete -> Mark Issue is ready for review
 
 ### Example Commit Message
 ```
