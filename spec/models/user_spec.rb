@@ -2,6 +2,9 @@
 
 require "rails_helper"
 
+EnvStruct = Struct.new(:info, :uid)
+InfoStruct = Struct.new(:email, :name, :nickname)
+
 RSpec.describe User, type: :model do
   let(:example_user) { Fabricate.build(:user) }
 
@@ -479,7 +482,7 @@ RSpec.describe User, type: :model do
   describe ".from_omniauth" do
     context "when no users" do
       context "when invalid environment" do
-        let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+        let(:env) { EnvStruct.new(InfoStruct.new, nil) }
 
         it "doesn't create a new user" do
           expect do
@@ -494,7 +497,7 @@ RSpec.describe User, type: :model do
       end
 
       context "when invalid user data" do
-        let(:env) { OpenStruct.new(uid: 1234) }
+        let(:env) { EnvStruct.new(nil, 1234) }
 
         it "doesn't create a new user" do
           expect do
@@ -510,11 +513,9 @@ RSpec.describe User, type: :model do
 
       context "when valid omniauth env" do
         let(:env) do
-          OpenStruct.new(
-            uid: 1234,
-            info: OpenStruct.new(name: example_user.name,
-                                 email: example_user.email,
-                                 nickname: "username")
+          EnvStruct.new(
+            InfoStruct.new(example_user.email, example_user.name, "username"),
+            1234
           )
         end
 
@@ -541,7 +542,7 @@ RSpec.describe User, type: :model do
       context "when invalid user" do
         let!(:existing_user) { Fabricate(:user_reviewer, github_id: 1234) }
 
-        let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+        let(:env) { EnvStruct.new(InfoStruct.new) }
 
         it "doesn't create a new user" do
           expect do
@@ -559,11 +560,10 @@ RSpec.describe User, type: :model do
         context "when a matching user exists" do
           let!(:existing_user) { Fabricate(:user_reviewer, github_id: 1234) }
           let(:env) do
-            OpenStruct.new(
-              uid: 1234,
-              info: OpenStruct.new(name: existing_user.name,
-                                   email: existing_user.email,
-                                   nickname: "username")
+            EnvStruct.new(
+              InfoStruct.new(existing_user.email, existing_user.name,
+                             "username"),
+              1234
             )
           end
 
@@ -586,11 +586,9 @@ RSpec.describe User, type: :model do
 
         context "when new user data" do
           let(:env) do
-            OpenStruct.new(
-              uid: 1234,
-              info: OpenStruct.new(name: example_user.name,
-                                   email: example_user.email,
-                                   nickname: "username")
+            EnvStruct.new(
+              InfoStruct.new(example_user.email, example_user.name, "username"),
+              1234
             )
           end
 
@@ -622,7 +620,7 @@ RSpec.describe User, type: :model do
       {
         "devise.github_data" => {
           "email" => example_user.email,
-          "extra" => { "raw_info" => OpenStruct.new }
+          "extra" => { "raw_info" => {} }
         }
       }
     end
@@ -663,7 +661,7 @@ RSpec.describe User, type: :model do
     let(:user) { Fabricate(:user_reviewer) }
 
     context "when invalid environment" do
-      let(:env) { OpenStruct.new({ info: OpenStruct.new }) }
+      let(:env) { EnvStruct.new({}, nil) }
 
       it "doesn't update user" do
         expect do
@@ -678,7 +676,7 @@ RSpec.describe User, type: :model do
     end
 
     context "when invalid user data" do
-      let(:env) { OpenStruct.new(uid: 1234) }
+      let(:env) { EnvStruct.new(nil, 1234) }
 
       it "doesn't create a new user" do
         expect do
@@ -694,11 +692,9 @@ RSpec.describe User, type: :model do
 
     context "when valid omniauth env" do
       let(:env) do
-        OpenStruct.new(
-          uid: 1234,
-          info: OpenStruct.new(name: example_user.name,
-                               email: example_user.email,
-                               nickname: "username")
+        EnvStruct.new(
+          InfoStruct.new(example_user.email, example_user.name, "username"),
+          1234
         )
       end
 
@@ -726,11 +722,9 @@ RSpec.describe User, type: :model do
 
     context "when github_id already taken" do
       let(:env) do
-        OpenStruct.new(
-          uid: 1234,
-          info: OpenStruct.new(name: example_user.name,
-                               email: example_user.email,
-                               nickname: "username")
+        EnvStruct.new(
+          InfoStruct.new(example_user.email, example_user.name, "username"),
+          1234
         )
       end
 
@@ -753,11 +747,9 @@ RSpec.describe User, type: :model do
 
     context "when unconfirmed" do
       let(:env) do
-        OpenStruct.new(
-          uid: 1234,
-          info: OpenStruct.new(name: example_user.name,
-                               email: example_user.email,
-                               nickname: "username")
+        EnvStruct.new(
+          InfoStruct.new(example_user.email, example_user.name, "username"),
+          1234
         )
       end
 
