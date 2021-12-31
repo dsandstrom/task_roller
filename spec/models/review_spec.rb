@@ -16,12 +16,9 @@ RSpec.describe Review, type: :model do
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:approved) }
 
-  it { is_expected.to belong_to(:task) }
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:repo_callout) }
-
-  it { is_expected.to validate_presence_of(:task_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to belong_to(:task).required }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:repo_callout).optional }
 
   describe "uniqueness" do
     context "when task has no other reviews" do

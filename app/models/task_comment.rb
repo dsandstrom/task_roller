@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class TaskComment < ApplicationRecord
-  validates :task_id, presence: true
-  validates :task, presence: true, if: :task_id
-  validates :user_id, presence: true
-  validates :user, presence: true, if: :user_id
   validates :body, presence: true
 
   belongs_to :task, inverse_of: :comments

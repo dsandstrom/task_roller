@@ -20,9 +20,11 @@ RSpec.describe IssueNotification, type: :model do
   it { is_expected.to respond_to(:issue_comment_id) }
   it { is_expected.to respond_to(:details) }
 
-  it { is_expected.to validate_presence_of(:issue_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_length_of(:details).is_at_most(100) }
+
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:issue).required }
+  it { is_expected.to belong_to(:issue_comment).optional }
 
   describe "#event" do
     context "when a valid value" do
@@ -41,10 +43,6 @@ RSpec.describe IssueNotification, type: :model do
       end
     end
   end
-
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:issue) }
-  it { is_expected.to belong_to(:issue_comment) }
 
   describe "#send_email" do
     context "for a status change" do

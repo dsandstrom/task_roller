@@ -21,9 +21,11 @@ RSpec.describe TaskNotification, type: :model do
   it { is_expected.to respond_to(:event) }
   it { is_expected.to respond_to(:details) }
 
-  it { is_expected.to validate_presence_of(:task_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_length_of(:details).is_at_most(100) }
+
+  it { is_expected.to belong_to(:task).required }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:task_comment).optional }
 
   describe "#event" do
     context "when a valid value" do
@@ -42,10 +44,6 @@ RSpec.describe TaskNotification, type: :model do
       end
     end
   end
-
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:task) }
-  it { is_expected.to belong_to(:task_comment) }
 
   describe "#send_email" do
     context "for a status change" do

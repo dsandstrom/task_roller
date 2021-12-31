@@ -3,9 +3,6 @@
 class TaskNotification < ApplicationRecord
   EVENT_OPTIONS = %w[comment new status].freeze
 
-  validates :task_id, presence: true
-  validates :user_id, presence: true
-
   validates :details, length: { maximum: 100 }
   validates :event, inclusion: { in: EVENT_OPTIONS }
 

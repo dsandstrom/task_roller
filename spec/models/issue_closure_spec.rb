@@ -12,16 +12,10 @@ RSpec.describe IssueClosure, type: :model do
 
   subject { @issue_closure }
 
-  it { is_expected.to respond_to(:issue_id) }
-  it { is_expected.to respond_to(:user_id) }
-
   it { is_expected.to be_valid }
 
-  it { is_expected.to validate_presence_of(:issue_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
-
-  it { is_expected.to belong_to(:issue) }
-  it { is_expected.to respond_to(:user) }
+  it { is_expected.to belong_to(:issue).required }
+  it { is_expected.to belong_to(:user).required }
 
   describe "#subscribe_user" do
     let(:user) { Fabricate(:user_reviewer) }

@@ -9,5 +9,4 @@ class TaskAssignee < ApplicationRecord
 
   validates :task_id, uniqueness: { scope: :assignee_id,
                                     message: 'already assigned to User' }
-  validates :assignee, presence: true, if: :assignee_id
 end

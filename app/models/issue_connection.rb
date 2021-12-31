@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class IssueConnection < ApplicationRecord
-  validates :source_id, presence: true
-  validates :target_id, presence: true
-  validates :user_id, presence: true
-
   belongs_to :user
   # current issue
   belongs_to :source, class_name: 'Issue', inverse_of: :source_connection

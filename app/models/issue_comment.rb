@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class IssueComment < ApplicationRecord
-  validates :issue_id, presence: true
-  validates :issue, presence: true, if: :issue_id
-  validates :user_id, presence: true
-  validates :user, presence: true, if: :user_id
   validates :body, presence: true
 
   belongs_to :issue, inverse_of: :comments

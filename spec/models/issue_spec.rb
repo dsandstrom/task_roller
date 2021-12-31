@@ -36,9 +36,6 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
   it { is_expected.to validate_presence_of(:description) }
   it { is_expected.to validate_length_of(:description).is_at_most(2000) }
-  it { is_expected.to validate_presence_of(:user_id) }
-  it { is_expected.to validate_presence_of(:issue_type_id) }
-  it { is_expected.to validate_presence_of(:project_id) }
 
   describe "#status" do
     context "when a valid value" do
@@ -65,9 +62,9 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:issue_type) }
-  it { is_expected.to belong_to(:project) }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:issue_type).required }
+  it { is_expected.to belong_to(:project).required }
 
   it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:comments).dependent(:destroy) }
@@ -1038,7 +1035,7 @@ RSpec.describe Issue, type: :model do
     context "when approved task before opened_at" do
       before do
         Fabricate(:approved_task, issue: issue)
-        issue.update_attribute :opened_at, (Time.zone.now + 1.week)
+        issue.update_attribute :opened_at, 1.week.from_now
       end
 
       it "returns true" do

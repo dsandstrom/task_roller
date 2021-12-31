@@ -20,14 +20,14 @@ RSpec.describe SearchResult, type: :model do
   it { is_expected.to respond_to(:created_at) }
   it { is_expected.to respond_to(:updated_at) }
 
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:project) }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:project).required }
   it { is_expected.to respond_to(:category) }
 
-  it { is_expected.to belong_to(:issue_type) }
-  it { is_expected.to belong_to(:task_type) }
+  it { is_expected.to belong_to(:issue_type).optional }
+  it { is_expected.to belong_to(:task_type).optional }
 
-  it { is_expected.to belong_to(:issue) }
+  it { is_expected.to belong_to(:issue).required }
 
   it { is_expected.to have_many(:task_assignees) }
   it { is_expected.to have_many(:assignees) }

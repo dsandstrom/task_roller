@@ -23,13 +23,9 @@ RSpec.describe TaskConnection, type: :model do
 
   it { is_expected.to be_valid }
 
-  it { is_expected.to validate_presence_of(:source_id) }
-  it { is_expected.to validate_presence_of(:target_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
-
-  it { is_expected.to belong_to(:source) }
-  it { is_expected.to belong_to(:target) }
-  it { is_expected.to respond_to(:user) }
+  it { is_expected.to belong_to(:source).required }
+  it { is_expected.to belong_to(:target).required }
+  it { is_expected.to belong_to(:user).required }
 
   describe "#target_options" do
     let(:source) { Fabricate(:task) }

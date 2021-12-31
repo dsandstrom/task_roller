@@ -15,9 +15,6 @@ RSpec.describe CategoryIssuesSubscription, type: :model do
 
   it { is_expected.to be_valid }
 
-  it { is_expected.to validate_presence_of(:user_id) }
-  it { is_expected.to validate_presence_of(:category_id) }
-
   context "when a duplicate" do
     it "shouldn't be valid" do
       subject.dup.save
@@ -25,6 +22,6 @@ RSpec.describe CategoryIssuesSubscription, type: :model do
     end
   end
 
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:category) }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:category).required }
 end

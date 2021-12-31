@@ -18,12 +18,10 @@ RSpec.describe TaskComment, type: :model do
   it { is_expected.to respond_to(:body) }
 
   it { is_expected.to be_valid }
-  it { is_expected.to validate_presence_of(:task_id) }
-  it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:body) }
 
-  it { is_expected.to belong_to(:task) }
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:task).required }
+  it { is_expected.to belong_to(:user).required }
   it { is_expected.to have_many(:notifications) }
 
   describe "#default_scope" do

@@ -15,8 +15,8 @@ RSpec.describe TaskAssignee, type: :model do
   it { is_expected.to respond_to(:task_id) }
   it { is_expected.to respond_to(:assignee_id) }
 
-  it { is_expected.to belong_to(:task) }
-  it { is_expected.to belong_to(:assignee) }
+  it { is_expected.to belong_to(:task).required }
+  it { is_expected.to belong_to(:assignee).required }
 
   it { is_expected.to be_valid }
 

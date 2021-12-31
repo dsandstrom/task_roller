@@ -84,8 +84,8 @@ group :development do
   gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
-  gem 'rubocop', '~> 1.21.0', require: false
-  gem 'rubocop-rails', '~> 2.12.3', require: false
+  gem 'rubocop', '~> 1.24.0', require: false
+  gem 'rubocop-rails', '~> 2.13.0', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
   # Spring speeds up development by keeping your application running in the
@@ -98,6 +98,6 @@ end
 group :test do
   # for circleci support
   gem 'rspec_junit_formatter', '~> 0.4.1'
-  gem 'shoulda-matchers', '~> 3.1'
+  gem 'shoulda-matchers', '~> 5.1'
   gem 'timecop', '~> 0.9'
 end

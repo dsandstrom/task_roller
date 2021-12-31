@@ -21,7 +21,6 @@ RSpec.describe RepoCallout, type: :model do
   it { is_expected.to respond_to(:github_commit_id) }
   it { is_expected.to respond_to(:commit_html_url) }
 
-  it { is_expected.to validate_presence_of(:task_id) }
   it { is_expected.to validate_presence_of(:action) }
   it { is_expected.to validate_presence_of(:commit_sha) }
   it { is_expected.to validate_presence_of(:commit_message) }
@@ -34,8 +33,8 @@ RSpec.describe RepoCallout, type: :model do
       .in_array(%w[start pause complete])
   end
 
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:task) }
+  it { is_expected.to belong_to(:user).optional }
+  it { is_expected.to belong_to(:task).required }
 
   it { is_expected.to have_one(:progression) }
   it { is_expected.to have_one(:review) }

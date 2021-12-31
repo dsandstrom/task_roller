@@ -4,11 +4,6 @@ class Resolution < ApplicationRecord
   belongs_to :issue
   belongs_to :user
 
-  validates :issue_id, presence: true
-  validates :issue, presence: true, if: :issue_id
-  validates :user_id, presence: true
-  validates :user, presence: true, if: :user_id
-
   validate :issue_available
 
   # one pending resolution, one approved, any disapproved

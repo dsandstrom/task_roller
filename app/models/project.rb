@@ -13,8 +13,6 @@ class Project < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 250 },
                    uniqueness: { scope: :category_id, case_sensitive: false }
-  validates :category_id, presence: true
-  validates :category, presence: true, if: :category_id
 
   # CLASS
 

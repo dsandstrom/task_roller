@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class TaskConnection < ApplicationRecord
-  validates :source_id, presence: true
-  validates :target_id, presence: true
-  validates :user_id, presence: true
-
   validate :target_has_options
   validate :matching_projects
 

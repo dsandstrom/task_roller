@@ -16,7 +16,7 @@ RSpec.describe Project, type: :model do
   it { is_expected.to respond_to(:internal) }
   it { is_expected.to respond_to(:category_id) }
 
-  it { is_expected.to belong_to(:category) }
+  it { is_expected.to belong_to(:category).required }
 
   it { is_expected.to have_many(:issues) }
   it { is_expected.to have_many(:tasks) }
@@ -32,7 +32,6 @@ RSpec.describe Project, type: :model do
       .case_insensitive.scoped_to(:category_id)
   end
   it { is_expected.to validate_length_of(:name).is_at_most(250) }
-  it { is_expected.to validate_presence_of(:category_id) }
 
   # CLASS
 

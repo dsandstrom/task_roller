@@ -22,9 +22,6 @@ RSpec.describe IssueSubscription, type: :model do
     end
   end
 
-  it { is_expected.to validate_presence_of(:user_id) }
-  it { is_expected.to validate_presence_of(:issue_id) }
-
-  it { is_expected.to belong_to(:user) }
-  it { is_expected.to belong_to(:issue) }
+  it { is_expected.to belong_to(:user).required }
+  it { is_expected.to belong_to(:issue).required }
 end

@@ -15,8 +15,8 @@ RSpec.describe ProjectIssuesSubscription, type: :model do
 
   it { is_expected.to be_valid }
 
-  it { is_expected.to validate_presence_of(:user_id) }
-  it { is_expected.to validate_presence_of(:project_id) }
+  it { is_expected.to belong_to(:project).required }
+  it { is_expected.to belong_to(:user).required }
 
   context "when a duplicate" do
     it "shouldn't be valid" do

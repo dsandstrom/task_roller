@@ -5,11 +5,6 @@ class Review < ApplicationRecord
   belongs_to :user
   belongs_to :repo_callout, optional: true
 
-  validates :task_id, presence: true
-  validates :task, presence: true, if: :task_id
-  validates :user_id, presence: true
-  validates :user, presence: true, if: :user_id
-
   validate :task_available
 
   # one pending review, one approved, any disapproved
