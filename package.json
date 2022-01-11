@@ -2,8 +2,8 @@
   "name": "task_roller",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^6.0.0-rc.5",
     "@rails/ujs": "^6.0.3-1",
+    "@rails/webpacker": "^6.0.0-rc.5",
     "babel-plugin-macros": "^3.1.0",
     "easymde": "^2.10.1",
     "foundation-sites": "^6.6.3",
