@@ -2129,4 +2129,86 @@ RSpec.describe Issue, type: :model do
       end.to have_enqueued_job.on_queue("mailers")
     end
   end
+
+  describe "#notify_github" do
+    let(:url) { "https://test.com/issues/9" }
+    let(:message) do
+      {
+        body: "Please note, this is an automated message:\n\n"\
+              "Thank you for the report. "\
+              "An Issue was opened on our TaskRoller App.\n\n"\
+              "Please visit to see developments: #{url}"
+      }
+    end
+
+    before { ENV["GITHUB_USER_TOKEN"] = "token" }
+
+    context "when connected to github issue" do
+      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
+      let(:api_url) do
+        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
+          "/#{issue.github_id}/comments"
+      end
+
+      before { stub_request(:post, api_url) }
+
+      it "sends new comment request" do
+        issue.notify_github(url)
+
+        expect(a_request(:post, api_url).with(body: message))
+          .to have_been_made.once
+      end
+    end
+
+    context "when no github_id" do
+      let(:issue) { Fabricate(:issue, github_id: nil, github_repo_id: 8765) }
+      let(:api_url) do
+        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
+          "//comments"
+      end
+
+      before { stub_request(:post, api_url) }
+
+      it "doesn't send a request" do
+        issue.notify_github(url)
+
+        expect(a_request(:any, /http/)).not_to have_been_made
+      end
+    end
+
+    context "when no github_repo_id" do
+      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: nil) }
+      let(:api_url) do
+        "https://api.github.com/repositories//issues"\
+          "/#{issue.github_id}/comments"
+      end
+
+      before { stub_request(:post, api_url) }
+
+      it "doesn't send a request" do
+        issue.notify_github(url)
+
+        expect(a_request(:any, /http/)).not_to have_been_made
+      end
+    end
+
+    context "when no API access token" do
+      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
+      let(:api_url) do
+        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
+          "/#{issue.github_id}/comments"
+      end
+
+      before do
+        stub_request(:post, api_url)
+        ENV["GITHUB_USER_TOKEN"] = nil
+      end
+
+      it "doesn't send a request" do
+        issue.notify_github(url)
+
+        expect(a_request(:any, /http/)).not_to have_been_made
+      end
+    end
+  end
 end

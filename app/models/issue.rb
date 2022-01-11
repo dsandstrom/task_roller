@@ -287,6 +287,22 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     notify_subscribers(options.merge(event: 'comment'))
   end
 
+  def notify_github(url)
+    return unless github_repo_id && github_id
+
+    token = ENV['GITHUB_USER_TOKEN']
+    return unless token
+
+    message = "Please note, this is an automated message:\n\n"\
+              'Thank you for the report. '\
+              "An Issue was opened on our TaskRoller App.\n\n"\
+              "Please visit to see developments: #{url}"
+    octokit = Octokit::Client.new(access_token: token)
+    return unless octokit
+
+    octokit.add_comment github_repo_id, github_id, message
+  end
+
   private
 
     def set_opened_at
