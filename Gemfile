@@ -101,4 +101,5 @@ group :test do
   gem 'rspec_junit_formatter', '~> 0.4.1'
   gem 'shoulda-matchers', '~> 5.1'
   gem 'timecop', '~> 0.9'
+  gem 'webmock', '~> 3.14.0'
 end
