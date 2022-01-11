@@ -133,6 +133,10 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
       }
     end
 
+    let(:api_url) do
+      "https://api.github.com/repositories/543/issues/1234/comments"
+    end
+
     before do
       Fabricate(:issue_type)
       Fabricate(:user_reporter)
@@ -219,11 +223,15 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
       context "for an issue" do
         context "action is 'opened'" do
           before do
+            ENV["GITHUB_USER_TOKEN"] = "token"
+            stub_request(:post, api_url)
             code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                            github_secret,
                                            issue_open_params.to_query)
             request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
           end
+
+          after { ENV["GITHUB_USER_TOKEN"] = nil }
 
           context "when category and project don't exist" do
             it "returns a success response" do
@@ -251,12 +259,19 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
 
             it "sets issue attributes" do
               post :github, params: issue_open_params
+
               issue = Issue.last
               expect(issue).not_to be_nil
               expect(issue.summary).to eq("New Issue API Test")
               expect(issue.description).to eq("Testing api")
               expect(issue.github_id).to eq(1234)
               expect(issue.github_repo_id).to eq(543)
+            end
+
+            it "sends new comment request" do
+              post :github, params: issue_open_params
+
+              expect(a_request(:post, api_url)).to have_been_made.once
             end
           end
 
