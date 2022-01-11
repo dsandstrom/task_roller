@@ -217,6 +217,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def close(current_user = nil)
     update closed: true
+    # TODO: close issue on github if connected
     update_status(current_user)
   end
 
