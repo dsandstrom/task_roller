@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_08_231704) do
+ActiveRecord::Schema.define(version: 2022_01_11_034157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 2021_10_08_231704) do
     t.string "github_url"
     t.integer "github_user_id"
     t.string "status"
+    t.integer "github_repo_id"
     t.index ["closed"], name: "index_issues_on_closed"
     t.index ["github_id"], name: "index_issues_on_github_id", unique: true
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
