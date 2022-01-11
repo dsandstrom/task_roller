@@ -16,7 +16,7 @@ module Api
 
       # POST /api/v1/github
       def github
-        return true unless issue_payload || commits_payload&.any?
+        return true unless issue_payload? || commit_payload?
 
         if github_issue || github_commits
           head :ok
@@ -28,6 +28,14 @@ module Api
       end
 
       private
+
+        def issue_payload?
+          issue_payload.present? && repo_payload.present?
+        end
+
+        def commit_payload?
+          commits_payload&.any?
+        end
 
         def app_secret
           @app_secret ||= ENV['GITHUB_WEBHOOK_SECRET']
@@ -47,6 +55,10 @@ module Api
 
         def user_payload
           @user_payload ||= issue_payload[:user]
+        end
+
+        def repo_payload
+          @repo_payload ||= params[:webhook][:repository] if params[:webhook]
         end
 
         def issue_type
@@ -73,6 +85,7 @@ module Api
           @issue_params ||=
             { github_id: issue_payload[:id],
               github_url: issue_payload[:html_url],
+              github_repo_id: repo_payload[:id],
               issue_type: issue_type,
               user: github_user,
               summary: issue_payload[:title],
@@ -98,7 +111,7 @@ module Api
         end
 
         def github_issue
-          return unless issue_payload
+          return unless issue_payload?
 
           @github_issue ||= Issue.find_by(github_id: issue_payload[:id])
           return @github_issue if @github_issue
