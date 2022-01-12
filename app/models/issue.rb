@@ -292,7 +292,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def notify_github(url)
-    return unless github_repo_id && github_id
+    return unless github_repo_id && github_id && github_number
 
     token = ENV['GITHUB_USER_TOKEN']
     return unless token

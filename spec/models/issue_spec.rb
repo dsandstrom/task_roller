@@ -2144,7 +2144,11 @@ RSpec.describe Issue, type: :model do
     before { ENV["GITHUB_USER_TOKEN"] = "token" }
 
     context "when connected to github issue" do
-      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
+      let(:issue) do
+        Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
+                          github_number: 12)
+      end
+
       let(:api_url) do
         "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
           "/#{issue.github_number}/comments"
@@ -2161,10 +2165,14 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when no github_id" do
-      let(:issue) { Fabricate(:issue, github_id: nil, github_repo_id: 8765) }
+      let(:issue) do
+        Fabricate(:issue, github_id: nil, github_repo_id: 8765,
+                          github_number: 12)
+      end
+
       let(:api_url) do
         "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "//comments"
+          "/#{issue.github_number}/comments"
       end
 
       before { stub_request(:post, api_url) }
@@ -2177,10 +2185,34 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when no github_repo_id" do
-      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: nil) }
+      let(:issue) do
+        Fabricate(:issue, github_id: 4321, github_repo_id: nil,
+                          github_number: 12)
+      end
+
       let(:api_url) do
         "https://api.github.com/repositories//issues"\
           "/#{issue.github_number}/comments"
+      end
+
+      before { stub_request(:post, api_url) }
+
+      it "doesn't send a request" do
+        issue.notify_github(url)
+
+        expect(a_request(:any, /http/)).not_to have_been_made
+      end
+    end
+
+    context "when no github_number" do
+      let(:issue) do
+        Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
+                          github_number: nil)
+      end
+
+      let(:api_url) do
+        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
+          "//comments"
       end
 
       before { stub_request(:post, api_url) }
