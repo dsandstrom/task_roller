@@ -2134,10 +2134,11 @@ RSpec.describe Issue, type: :model do
     let(:url) { "https://test.com/issues/9" }
     let(:message) do
       {
-        body: "Please note, this is an automated message:\n\n"\
+        body: "###### Automated Message\n\n"\
               "Thank you for the report. "\
-              "An Issue was opened on our TaskRoller App.\n\n"\
-              "Please visit to see developments: #{url}"
+              "We've opened an Issue on our TaskRoller app to address this "\
+              "GitHub Issue.\n\n"\
+              "Please visit to track developments: #{url}"
       }
     end
 
