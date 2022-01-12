@@ -84,13 +84,13 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             "updated_at" => "2021-01-23T20:52:46Z", "closed_at" => nil,
             "author_association" => "OWNER", "active_lock_reason" => nil,
             "body" => "Testing api", "performed_via_github_app" => nil
-          },
-          "repository" => {
-            "id" => 543
-          },
-          "sender" => {
-            "login" => "user", "id" => 876
           }
+        },
+        "repository" => {
+          "id" => 543
+        },
+        "sender" => {
+          "login" => "user", "id" => 876
         }
       }
     end

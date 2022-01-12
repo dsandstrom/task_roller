@@ -58,7 +58,7 @@ module Api
         end
 
         def repo_payload
-          @repo_payload ||= params[:webhook][:repository] if params[:webhook]
+          @repo_payload ||= params[:repository]
         end
 
         def issue_type
