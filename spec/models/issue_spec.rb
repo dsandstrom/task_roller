@@ -2147,7 +2147,7 @@ RSpec.describe Issue, type: :model do
       let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
       let(:api_url) do
         "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "/#{issue.github_id}/comments"
+          "/#{issue.github_number}/comments"
       end
 
       before { stub_request(:post, api_url) }
@@ -2180,7 +2180,7 @@ RSpec.describe Issue, type: :model do
       let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: nil) }
       let(:api_url) do
         "https://api.github.com/repositories//issues"\
-          "/#{issue.github_id}/comments"
+          "/#{issue.github_number}/comments"
       end
 
       before { stub_request(:post, api_url) }
@@ -2196,7 +2196,7 @@ RSpec.describe Issue, type: :model do
       let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
       let(:api_url) do
         "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "/#{issue.github_id}/comments"
+          "/#{issue.github_number}/comments"
       end
 
       before do

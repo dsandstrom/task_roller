@@ -301,7 +301,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     octokit = Octokit::Client.new(access_token: token)
     return unless octokit
 
-    octokit.add_comment github_repo_id, github_id, message
+    octokit.add_comment github_repo_id, github_number, message
   end
 
   private
