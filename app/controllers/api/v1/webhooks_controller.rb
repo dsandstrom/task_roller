@@ -89,7 +89,7 @@ module Api
               issue_type: issue_type,
               user: github_user,
               summary: issue_payload[:title],
-              description: issue_payload[:body] }
+              description: (issue_payload[:body].presence || 'Imported') }
         end
 
         def github_user_valid?

@@ -418,21 +418,25 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             end
           end
 
-          context "and issue already exists" do
+          context "and body is nil" do
+            let(:params) { issue_open_params }
+
             before do
-              Fabricate(:issue, github_id: issue_open_params["issue"]["id"])
-              Fabricate(:user_reporter,
-                        github_id: issue_open_params["issue"]["user"]["id"])
+              params["issue"]["body"] = nil
+              code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                             github_secret,
+                                             params.to_query)
+              request.env["HTTP_X_HUB_SIGNATURE_256"] = "sha256=#{code}"
             end
 
-            it "doesn't create a new issue" do
+            it "still creates a new issue" do
               expect do
-                post :github, params: issue_open_params
-              end.not_to change(Issue, :count)
+                post :github, params: params
+              end.to change(Issue, :count).by(1)
             end
 
             it "returns an success response" do
-              post :github, params: issue_open_params
+              post :github, params: params
               expect(response).to be_successful
             end
           end
