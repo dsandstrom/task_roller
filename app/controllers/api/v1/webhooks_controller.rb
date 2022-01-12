@@ -86,6 +86,7 @@ module Api
             { github_id: issue_payload[:id],
               github_url: issue_payload[:html_url],
               github_repo_id: repo_payload[:id],
+              github_number: issue_payload[:number],
               issue_type: issue_type,
               user: github_user,
               summary: issue_payload[:title],

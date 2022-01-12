@@ -134,7 +134,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
     end
 
     let(:api_url) do
-      "https://api.github.com/repositories/543/issues/1234/comments"
+      "https://api.github.com/repositories/543/issues/2/comments"
     end
 
     before do
@@ -266,6 +266,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
               expect(issue.description).to eq("Testing api")
               expect(issue.github_id).to eq(1234)
               expect(issue.github_repo_id).to eq(543)
+              expect(issue.github_number).to eq(2)
             end
 
             it "sends new comment request" do
