@@ -291,14 +291,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     notify_subscribers(options.merge(event: 'comment'))
   end
 
-  def github_open_message(url)
-    "###### Automated Message\n\n"\
-      'Thank you for the report. '\
-      "We've opened an Issue on our TaskRoller app to address this "\
-      "GitHub Issue.\n\n"\
-      "Please visit to track developments: #{url}"
-  end
-
   def notify_github(url)
     return unless github_repo_id && github_id && github_number
 
@@ -444,5 +436,13 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         { event: 'new' }
       end
+    end
+
+    def github_open_message(url)
+      "###### Automated Message\n\n"\
+        'Thank you for the report. '\
+        "We've opened an Issue on our TaskRoller app to address this "\
+        "GitHub Issue.\n\n"\
+        "Please visit to track developments: #{url}"
     end
 end
