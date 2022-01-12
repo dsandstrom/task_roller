@@ -218,11 +218,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def close(current_user = nil)
     update closed: true
     # TODO: close issue on github if connected
+    # octokit.close_issue github_repo_id, github_number
     update_status(current_user)
   end
 
   def reopen(current_user = nil)
     update closed: false, opened_at: Time.zone.now
+    # TODO: reopen issue on github if connected
+    # octokit.reopen_issue github_repo_id, github_number
     update_status(current_user)
   end
 
