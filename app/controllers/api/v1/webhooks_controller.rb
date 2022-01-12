@@ -119,6 +119,7 @@ module Api
           return unless github_user
 
           @github_issue = project.issues.create!(issue_params)
+          @github_issue.update_status
           @github_issue.notify_github(issue_url(@github_issue))
         rescue ActiveRecord::RecordInvalid
           false
