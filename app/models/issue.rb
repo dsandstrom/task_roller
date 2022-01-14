@@ -217,15 +217,11 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def close(current_user = nil)
     update closed: true
-    # TODO: close issue on github if connected
-    # octokit.close_issue github_repo_id, github_number
     update_status(current_user)
   end
 
   def reopen(current_user = nil)
     update closed: false, opened_at: Time.zone.now
-    # TODO: reopen issue on github if connected
-    # octokit.reopen_issue github_repo_id, github_number
     update_status(current_user)
   end
 
@@ -271,6 +267,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:enable Rails/SkipsModelValidations
     return true if old_status == status
 
+    enqueue_repo_job(old_status)
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
     notify_subscribers(options)
@@ -291,16 +288,26 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     notify_subscribers(options.merge(event: 'comment'))
   end
 
-  def notify_github(url)
-    return unless github_repo_id && github_id && github_number
+  def octokit
+    @octokit ||= build_octokit
+  end
 
-    token = ENV['GITHUB_USER_TOKEN']
-    return unless token
+  def github_open_message(url = nil)
+    message =
+      'Thank you for the report. '\
+      "We've opened an Issue on our TaskRoller app to address this "\
+      'GitHub Issue.'
+    github_message message, url
+  end
 
-    octokit = Octokit::Client.new(access_token: token)
-    return unless octokit
+  def github_close_message(url = nil)
+    message = 'This Issue is considered addressed and will by closed.'
+    github_message message, url
+  end
 
-    octokit.add_comment github_repo_id, github_number, github_open_message(url)
+  def github_reopen_message(url = nil)
+    message = 'This Issue has been reopened.'
+    github_message message, url
   end
 
   private
@@ -438,11 +445,33 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
     end
 
-    def github_open_message(url)
-      "###### Automated Message\n\n"\
-        'Thank you for the report. '\
-        "We've opened an Issue on our TaskRoller app to address this "\
-        "GitHub Issue.\n\n"\
-        "Please visit to track developments: #{url}"
+    def build_octokit
+      return unless github_repo_id && github_id && github_number
+
+      token = ENV['GITHUB_USER_TOKEN']
+      return unless token
+
+      Octokit::Client.new(access_token: token)
+    end
+
+    def enqueue_repo_job(old_status)
+      return unless octokit
+
+      if status == 'open'
+        if old_status.nil?
+          OpenRepoIssueJob.perform_later self
+        else
+          ReopenRepoIssueJob.perform_later self
+        end
+      elsif closed?
+        CloseRepoIssueJob.perform_later self
+      end
+    end
+
+    def github_message(message, url = nil)
+      message = "###### Automated Message\n\n#{message}"
+      return message unless url
+
+      "#{message}\n\nPlease visit for more info: #{url}"
     end
 end

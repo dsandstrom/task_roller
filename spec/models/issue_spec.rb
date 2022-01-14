@@ -31,6 +31,7 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to respond_to(:github_id) }
   it { is_expected.to respond_to(:github_url) }
   it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:octokit) }
 
   it { is_expected.to validate_presence_of(:summary) }
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
@@ -2130,117 +2131,84 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe "#notify_github" do
+  describe "#github_open_message" do
     let(:url) { "https://test.com/issues/9" }
+    let(:issue) do
+      Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
+                        github_number: 12)
+    end
+
     let(:message) do
-      {
-        body: "###### Automated Message\n\n"\
-              "Thank you for the report. "\
-              "We've opened an Issue on our TaskRoller app to address this "\
-              "GitHub Issue.\n\n"\
-              "Please visit to track developments: #{url}"
-      }
+      "###### Automated Message\n\n"\
+        "Thank you for the report. "\
+        "We've opened an Issue on our TaskRoller app to address this "\
+        "GitHub Issue."
     end
 
-    before { ENV["GITHUB_USER_TOKEN"] = "token" }
+    context "when url" do
+      let(:url_message) { "#{message}\n\nPlease visit for more info: #{url}" }
 
-    context "when connected to github issue" do
-      let(:issue) do
-        Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
-                          github_number: 12)
-      end
-
-      let(:api_url) do
-        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "/#{issue.github_number}/comments"
-      end
-
-      before { stub_request(:post, api_url) }
-
-      it "sends new comment request" do
-        issue.notify_github(url)
-
-        expect(a_request(:post, api_url).with(body: message))
-          .to have_been_made.once
+      it "returns automated message" do
+        expect(issue.github_open_message(url)).to eq(url_message)
       end
     end
 
-    context "when no github_id" do
-      let(:issue) do
-        Fabricate(:issue, github_id: nil, github_repo_id: 8765,
-                          github_number: 12)
+    context "when no url" do
+      it "returns automated message" do
+        expect(issue.github_open_message).to eq(message)
       end
+    end
+  end
 
-      let(:api_url) do
-        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "/#{issue.github_number}/comments"
-      end
+  describe "#github_reopen_message" do
+    let(:url) { "https://test.com/issues/9" }
+    let(:issue) do
+      Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
+                        github_number: 12)
+    end
 
-      before { stub_request(:post, api_url) }
+    let(:message) do
+      "###### Automated Message\n\nThis Issue has been reopened."
+    end
 
-      it "doesn't send a request" do
-        issue.notify_github(url)
+    context "when url" do
+      let(:url_message) { "#{message}\n\nPlease visit for more info: #{url}" }
 
-        expect(a_request(:any, /http/)).not_to have_been_made
+      it "returns automated message" do
+        expect(issue.github_reopen_message(url)).to eq(url_message)
       end
     end
 
-    context "when no github_repo_id" do
-      let(:issue) do
-        Fabricate(:issue, github_id: 4321, github_repo_id: nil,
-                          github_number: 12)
+    context "when no url" do
+      it "returns automated message" do
+        expect(issue.github_reopen_message).to eq(message)
       end
+    end
+  end
 
-      let(:api_url) do
-        "https://api.github.com/repositories//issues"\
-          "/#{issue.github_number}/comments"
-      end
+  describe "#github_close_message" do
+    let(:url) { "https://test.com/issues/9" }
+    let(:issue) do
+      Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
+                        github_number: 12)
+    end
 
-      before { stub_request(:post, api_url) }
+    let(:message) do
+      "###### Automated Message\n\n"\
+        "This Issue is considered addressed and will by closed."
+    end
 
-      it "doesn't send a request" do
-        issue.notify_github(url)
+    context "when url" do
+      let(:url_message) { "#{message}\n\nPlease visit for more info: #{url}" }
 
-        expect(a_request(:any, /http/)).not_to have_been_made
+      it "returns automated message" do
+        expect(issue.github_close_message(url)).to eq(url_message)
       end
     end
 
-    context "when no github_number" do
-      let(:issue) do
-        Fabricate(:issue, github_id: 4321, github_repo_id: 8765,
-                          github_number: nil)
-      end
-
-      let(:api_url) do
-        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "//comments"
-      end
-
-      before { stub_request(:post, api_url) }
-
-      it "doesn't send a request" do
-        issue.notify_github(url)
-
-        expect(a_request(:any, /http/)).not_to have_been_made
-      end
-    end
-
-    context "when no API access token" do
-      let(:issue) { Fabricate(:issue, github_id: 4321, github_repo_id: 8765) }
-      let(:api_url) do
-        "https://api.github.com/repositories/#{issue.github_repo_id}/issues"\
-          "/#{issue.github_number}/comments"
-      end
-
-      before do
-        stub_request(:post, api_url)
-        ENV["GITHUB_USER_TOKEN"] = nil
-      end
-
-      it "doesn't send a request" do
-        issue.notify_github(url)
-
-        expect(a_request(:any, /http/)).not_to have_been_made
+    context "when no url" do
+      it "returns automated message" do
+        expect(issue.github_close_message).to eq(message)
       end
     end
   end
