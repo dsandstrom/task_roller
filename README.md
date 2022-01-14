@@ -60,7 +60,7 @@ Connect your TaskRoller app to a GitHub repo to simplify things:
 * When a new issue is added on github.com, a Issue is added to your TaskRoller app.
 * Tasks can be created from this Issue, which can be progressed with commit message callouts.
 * When the TaskRoller Issue is closed, the issue on GitHub is also closed.
-* Bot comments are added to the GitHub issues which provide info and links.
+* Automated comments are added to the GitHub issues which provide info and links.
 
 ### Commit Message Callouts
 
