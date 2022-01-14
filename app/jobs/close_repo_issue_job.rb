@@ -7,6 +7,6 @@ class CloseRepoIssueJob < RepoIssueJob
 
     octokit.close_issue github_repo_id, github_number
     octokit.add_comment github_repo_id, github_number,
-                        issue.github_close_message
+                        issue.github_close_message(url)
   end
 end

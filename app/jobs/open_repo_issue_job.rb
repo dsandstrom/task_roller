@@ -5,8 +5,7 @@ class OpenRepoIssueJob < RepoIssueJob
     super
     return unless issue && octokit
 
-    # TODO: add route
     octokit.add_comment github_repo_id, github_number,
-                        issue.github_open_message
+                        issue.github_open_message(url)
   end
 end

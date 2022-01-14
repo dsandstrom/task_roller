@@ -24,4 +24,15 @@ class RepoIssueJob < ApplicationJob
   def perform(issue)
     self.issue = issue
   end
+
+  def url
+    @url ||= build_url
+  end
+
+  private
+
+    def build_url
+      host = Rails.application.config.action_mailer.default_url_options[:host]
+      Rails.application.routes.url_helpers.issue_url(issue, host: host)
+    end
 end
