@@ -31,7 +31,7 @@ module CategoriesHelper
 
     content_for :header do
       concat content_tag(:h1, categories_heading)
-      concat dashboard_nav
+      concat categories_nav
     end
   end
 
@@ -80,6 +80,20 @@ module CategoriesHelper
       [['Category', category_path(category)],
        ['Issues', category_issues_path(category)],
        ['Tasks', category_tasks_path(category)]].compact
+    end
+
+    def categories_nav
+      content_tag :p, class: 'page-nav category-nav' do
+        safe_join(navitize(categories_nav_links))
+      end
+    end
+
+    def categories_nav_links
+      return [] unless can?(:read, invisible_category) &&
+                       Category.all_invisible.any?
+
+      [['Categories', categories_path],
+       ['Archived Categories', archived_categories_path]]
     end
 
     def edit_category_link(category)
