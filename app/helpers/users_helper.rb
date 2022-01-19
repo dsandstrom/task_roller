@@ -27,7 +27,7 @@ module UsersHelper
     enable_page_title 'Users'
 
     content_for :header do
-      concat content_tag(:h1, 'Users')
+      concat content_tag(:h1, 'All Users')
       concat dashboard_nav
     end
   end

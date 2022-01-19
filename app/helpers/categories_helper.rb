@@ -45,7 +45,7 @@ module CategoriesHelper
         when 'new'
           'New Category'
         else
-          'Categories'
+          'Categories &  Projects'
         end
     end
 
