@@ -6,6 +6,6 @@ class StaticController < ApplicationController
   def unauthorized; end
 
   def sitemap
-    @categories = Category.all_visible
+    @categories = Category.accessible_by(current_ability).preload(:projects)
   end
 end
