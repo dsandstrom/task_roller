@@ -29,12 +29,12 @@
           <h3>Filters</h3>
 
           <% if searching? %>
-            <%= link_to 'reset', root_path %>
+            <%= link_to 'reset', subscriptions_path %>
           <% end %>
         </div>
 
 
-        <%= form_tag root_path,
+        <%= form_tag subscriptions_path,
                      method: :get, class: "search-form",
                      id: "search_form" do %>
           <%= render 'shared/string_filter_field' %>

@@ -170,5 +170,5 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   get '/sitemap' => 'static#sitemap', as: :sitemap
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
-  root to: 'subscriptions#index'
+  root to: 'categories#index'
 end

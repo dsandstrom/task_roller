@@ -92,7 +92,7 @@ module CategoriesHelper
       return [] unless can?(:read, invisible_category) &&
                        Category.all_invisible.any?
 
-      [['Categories', categories_path],
+      [['Categories', root_path],
        ['Archived Categories', archived_categories_path]]
     end
 
@@ -112,7 +112,7 @@ module CategoriesHelper
     end
 
     def category_breadcrumb_pages(category)
-      pages = [['Categories', categories_path]]
+      pages = [['Categories', root_path]]
       unless category.visible?
         pages << ['Archived Categories', archived_categories_path]
       end
