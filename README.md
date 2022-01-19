@@ -6,53 +6,47 @@
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
 ## Introduction
-This is an Issue/Task manager app built using Ruby on Rails. Issues are opened to report problems, offer suggestions, and ask
-questions. While Tasks are created to address Issues.
+Task Roller is an issue tracking app with the added ability to assign tasks to address your projects' bugs and feature requests.
 
-## Live App
-Please feel free to check out a live version of the app and [report issues](https://production.task-roller.net).
+## Technologies
+* Built using Ruby on Rails, JavaScript, HTML, and CSS.
+* Uses [devise](https://github.com/heartcombo/devise) and [OmniAuth](https://github.com/omniauth/omniauth) which allows logging in with a GitHub account
+* GitHub API Integration: allows connecting to a repo's issues and automation using git commit messages.
 
-## User Types
-There are four available user types. Here is a short description of each:
+## Issues & Tasks
+_Issues_ are opened to report problems, offer suggestions, and ask questions. While _Tasks_ are created to address problems or add features. Both follow _Workflows_ that set the _Status_ and provide information. Issues and Tasks both reside in _Projects_, which are organized into _Categories_. In addition, collaboration is encouraged with markdown enabled comments.
+
+## User Account Levels
+User accounts are organized by levels to allow a focus on responsibilities and add security. Here is a short description of each:
 
 #### Admins
-One or two people responsible for the initial app setup and user management.
-They have the same abilities as Reviewers, but they can also edit/remove other
-people's issues, tasks, comments, etc.
+One or two people responsible for the initial app setup and user management. They have the same abilities as Reviewers, but they can also edit/remove other people's issues, tasks, comments, etc.
 
 #### Reviewers
-Project managers. They can do some app setup like create Categories and
-Projects. However, their main responsibility is managing issues and tasks.
+Project managers. They can do some app setup like create Categories and Projects. However, their main responsibility is managing issues and tasks.
 
 #### Workers
-The busy bees working on tasks. In addition, they can report issues and
-self-assign tasks.
+The busy bees working on tasks. In addition, they can report issues and self-assign tasks.
 
 #### Reporters
 Everyone else can open issues, add comments, and see activity.
 
-## Issue & Task Types
-This part is up to you and must be added initially by an Admin.  However,
-it's easy, just enter a name and pick one of the available colors and icons.
-For issues, I suggest: "Bug", "Suggestion", and "Question". For tasks: "Bug",
-"Improvement", and "Feature Request".
-
-![Issue Type Form](https://user-images.githubusercontent.com/1400414/98878817-c4980e00-2438-11eb-8741-278aa6eec6e8.png)
-
 ## Workflows
 
-#### Issue Status Workflow
-Issues can have five statuses: Open, Being Worked On, Addressed, Resolved, and
-Closed. Here is the basic status workflow:
+### Issue Status Workflow
+Issues can have five statuses: Open, Being Worked On, Addressed, Resolved, and Closed. Here is the basic status workflow:
 
 ![Issue Workflow](./app/assets/images/issue-workflow.svg)
 
-#### Task Status Workflow
-Tasks can have six statuses: Open, Assigned, In Progress, In Review, Complete,
-and Closed. Here is the basic status workflow:
+### Task Status Workflow
+Tasks can have six statuses: Open, Assigned, In Progress, In Review, Complete, and Closed. Here is the basic status workflow:
 
 ![Task Workflow](./app/assets/images/task-workflow.svg)
 
+## Issue & Task Types
+This part is up to you and must be added initially by an Admin.  However, it's easy, just enter a name and pick one of the available colors and icons. For issues, I suggest: "Bug", "Suggestion", and "Question". For tasks: "Bug", "Improvement", and "Feature Request".
+
+![Issue Type Form](https://user-images.githubusercontent.com/1400414/98878817-c4980e00-2438-11eb-8741-278aa6eec6e8.png)
 
 ## GitHub API Integration
 
@@ -78,6 +72,12 @@ Fixes Task#12
 ```
 
 When a callout is added last in a commit message. It is picked up by TaskRoller and updates the corresponding Task.  For the above example, it will mark Task#12 done and ready for review. In addition, different callout formats and tenses are allowed. These all perform the same action: `Fix Task 12`, `Completed Task #12`, `completes task-12`
+
+## Options
+* App can be set to allow anyone to sign up or limited to invitation only.
+
+## Live App
+Please feel free to check out a [live version](https://production.task-roller.net) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_roller).
 
 ## Local Setup
 
