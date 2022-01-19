@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module NavigationsHelper
-  def dashboard_nav
-    links = [['Subscriptions', root_path], ['Categories', categories_path],
-             ['Users', users_path]]
+  def root_nav
+    links = [['Subscriptions', root_path], ['Categories', categories_path]]
     links << ['App Setup', issue_types_path] if can?(:read, IssueType)
 
     content_tag :p, class: 'page-nav user-nav' do
