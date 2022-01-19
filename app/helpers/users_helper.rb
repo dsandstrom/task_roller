@@ -23,12 +23,13 @@ module UsersHelper
     end
   end
 
-  def users_header
+  def users_header(options = {})
+    show_unemployed = options[:show_unemployed] == true
     enable_page_title 'Users'
 
     content_for :header do
       concat content_tag(:h1, 'All Users')
-      concat dashboard_nav
+      concat users_nav(show_unemployed)
     end
   end
 
@@ -130,6 +131,12 @@ module UsersHelper
       end
     end
 
+    def users_nav(show_unemployed)
+      content_tag :p, class: 'page-nav users-nav' do
+        safe_join(navitize(users_nav_links(show_unemployed)))
+      end
+    end
+
     def user_header_content(user)
       content_tag :main, class: 'header-content' do
         if can?(:edit, user)
@@ -147,5 +154,13 @@ module UsersHelper
       return links if user.assignments.none?
 
       links << ['Assigned Tasks', user_assignments_path(user)]
+    end
+
+    def users_nav_links(show_unemployed)
+      links = [['Admins', '#admins'], ['Reviewers', '#reviewers'],
+               ['Workers', '#workers'], ['Reporters', '#reporters']]
+      return links unless show_unemployed
+
+      links << ['Inactive', '#inactive']
     end
 end

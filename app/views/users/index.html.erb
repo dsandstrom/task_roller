@@ -1,31 +1,32 @@
-<%= users_header %>
+<% show_unemployed = @unemployed&.any? %>
+<%= users_header(show_unemployed: show_unemployed) %>
 
-<h2 class="users-heading">Admins</h2>
+<h2 id="admins" class="users-heading">Admins</h2>
 <div class="users admins">
   <%= render 'new_user_button', employee_type: 'Admin' %>
   <%= render @admins %>
 </div>
 
-<h2 class="users-heading">Reviewers</h2>
+<h2 id="reviewers" class="users-heading">Reviewers</h2>
 <div class="users reviewers">
   <%= render 'new_user_button', employee_type: 'Reviewer' %>
   <%= render @reviewers %>
 </div>
 
-<h2 class="users-heading">Workers</h2>
+<h2 id="workers" class="users-heading">Workers</h2>
 <div class="users workers">
   <%= render 'new_user_button', employee_type: 'Worker' %>
   <%= render @workers %>
 </div>
 
-<h2 class="users-heading">Reporters</h2>
+<h2 id="reporters" class="users-heading">Reporters</h2>
 <div class="users reporters">
   <%= render 'new_user_button', employee_type: 'Reporter' %>
   <%= render @reporters %>
 </div>
 
-<% if @unemployed&.any? %>
-  <h2 class="users-heading">Inactive</h2>
+<% if show_unemployed %>
+  <h2 id="inactive" class="users-heading">Inactive</h2>
   <div class="users unemployed">
     <%= render @unemployed %>
   </div>
