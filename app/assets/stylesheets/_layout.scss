@@ -202,7 +202,8 @@ body {
 
   .main-header {
     .user-name {
-      flex-grow: 1;
+      flex-grow: 0;
+      margin-left: auto;
     }
   }
 }
