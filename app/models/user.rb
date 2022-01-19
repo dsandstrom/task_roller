@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: user 'User Level' for employee_type labels (help pages)
-
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # Include default devise modules. Others available are:
   #    :timeoutable
@@ -130,7 +128,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # the provider and uid fields when creating a new user. The first_or_create!
   # method operates similarly, except that it will raise an Exception if the
   # user record fails validation.
-  # FIXME: allow existing confirmed user to connect to github
   def self.from_omniauth(auth)
     return unless auth.uid.present? && auth.info
 
