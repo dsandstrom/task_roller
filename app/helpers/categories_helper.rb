@@ -79,7 +79,7 @@ module CategoriesHelper
     def category_nav_links(category)
       [['Category', category_path(category)],
        ['Issues', category_issues_path(category)],
-       ['Tasks', category_tasks_path(category)]].compact
+       ['Tasks', category_tasks_path(category)]]
     end
 
     def categories_nav
