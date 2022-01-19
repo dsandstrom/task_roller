@@ -494,6 +494,7 @@ $notification-color: $color-success;
     display: flex;
     justify-content: space-between;
     padding: .25rem .5rem;
+    border-bottom: 1px solid $border-color;
     background-color: $off-white;
   }
 
