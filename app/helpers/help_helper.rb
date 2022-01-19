@@ -11,11 +11,11 @@ module HelpHelper
     end
   end
 
-  def help_header(heading)
+  def help_header(heading = nil)
     enable_page_title "#{heading} Help Page"
     content_for :header do
-      concat content_tag :h1, 'Help Pages'
-      concat content_tag :h2, heading
+      concat content_tag(:h1, 'Help Pages')
+      concat content_tag(:h2, heading) if heading.present?
       concat help_nav
     end
   end
