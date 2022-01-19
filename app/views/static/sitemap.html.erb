@@ -9,6 +9,8 @@
     <li><%= link_to 'Issue & Task Type Settings', main_app.issue_types_path %></li>
   <% end %>
 
+  <li><%= link_to 'Subscriptions', subscriptions_path %></li>
+
   <li>
     <%= link_to_if can?(:read, Category),
                    'Categories & Projects', categories_path %>
