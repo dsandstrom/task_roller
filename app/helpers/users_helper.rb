@@ -101,10 +101,8 @@ module UsersHelper
 
     def dropdown_menu_user_container(user)
       content_tag :div, class: 'dropdown-menu-container' do
-        concat content_tag(:span, user.email,
-                           class: 'user-email dropdown-menu-title')
-        concat safe_join(navitize(user_nav_links(user),
-                                  class: 'button button-clear'))
+        safe_join(navitize(user_dropdown_links(user),
+                           class: 'button button-clear'))
       end
     end
 
@@ -148,12 +146,19 @@ module UsersHelper
     end
 
     def user_nav_links(user)
-      links = [['Profile', user_path(user)],
+      links = [['Dashboard', user_path(user)],
                ['Reported Issues', user_issues_path(user)]]
       links << ['Created Tasks', user_tasks_path(user)] if user.tasks.any?
       return links if user.assignments.none?
 
       links << ['Assigned Tasks', user_assignments_path(user)]
+    end
+
+    def user_dropdown_links(user)
+      [['My Dashboard', user_path(user)],
+       ['Account Settings', edit_user_path(user)],
+       ['All Users', users_path],
+       ['Subscriptions', subscriptions_path]]
     end
 
     def users_nav_links(show_unemployed)
