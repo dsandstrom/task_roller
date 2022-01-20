@@ -96,7 +96,6 @@
     padding: 2rem 2.5rem;
     border-bottom: 1px solid $light-gray;
     background-color: $off-white;
-    text-decoration: underline;
 
     h3 {
       margin: 0;
@@ -104,6 +103,7 @@
 
     a {
       color: $ink;
+      text-decoration: underline;
 
       &:hover,
       &:focus {
