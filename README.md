@@ -1,4 +1,4 @@
-# Task Roller
+# TaskRoller
 ###### Issue and Task Manager
 
 [![dsandstrom](https://circleci.com/gh/dsandstrom/task_roller.svg?style=svg)](https://circleci.com/gh/dsandstrom/task_roller)
@@ -6,7 +6,7 @@
 [![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
 
 ## Introduction
-Task Roller is an issue tracking app with the added ability to assign tasks to address your projects' bugs and feature requests.
+TaskRoller is an issue tracking app with the added ability to assign tasks to address your projects' bugs and feature requests.
 
 ## Technologies
 * Built using Ruby on Rails, JavaScript, HTML, and CSS.
