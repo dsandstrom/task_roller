@@ -51,7 +51,7 @@ This part is up to you and must be added initially by an Admin.  However, it's e
 ## GitHub API Integration
 
 Connect your TaskRoller app to a GitHub repo to simplify things:
-* When a new issue is added on github.com, a Issue is added to your TaskRoller app.
+* When a new issue is added on github.com, an Issue is added to your TaskRoller app.
 * Tasks can be created from this Issue, which can be progressed with commit message callouts.
 * When the TaskRoller Issue is closed, the issue on GitHub is also closed.
 * Automated comments are added to the GitHub issues which provide info and links.
@@ -74,7 +74,7 @@ Fixes Task#12
 When a callout is added last in a commit message. It is picked up by TaskRoller and updates the corresponding Task.  For the above example, it will mark Task#12 done and ready for review. In addition, different callout formats and tenses are allowed. These all perform the same action: `Fix Task 12`, `Completed Task #12`, `completes task-12`
 
 ## Options
-* App can be set to allow anyone to sign up or limited to invitation only.
+* App can be set to allow anyone to sign up or limited to invite only.
 
 ## Live App
 Please feel free to check out a [live version](https://production.task-roller.net) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_roller).
