@@ -119,15 +119,9 @@ yarn install
 ```
 
 #### Setup secrets
+Environment variables are used to store passwords and tokens. The gem [dotenv-rails](https://github.com/bkeepers/dotenv) is used in test and development environments. An example file is included in the repo that shows the key options.  For production, set variables when running the app.
 
-```sh
-bin/rails secrets:edit
-```
-
-* Copy config/secrets.yml.example and paste in open window
-* Add secret key bases (Use `bin/rails secret` to generate them)
-* Set db username and password to match your PostgreSQL database
-
+* Rename `.env.example` to `.env` and add the real values
 #### Database creation/initialization
 
 ```sh
