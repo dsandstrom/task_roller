@@ -147,3 +147,6 @@ I use guard to automate local development
 bundle exec guard -g backend # start rspec and bundler watchers
 bundle exec guard -g frontend # start server (port 3000) and livereload watcher
 ```
+
+## App Hosting
+The app is open source and you are free to run on your on own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@task-roller.net if interested.
