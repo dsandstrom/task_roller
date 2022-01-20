@@ -16,6 +16,15 @@ TaskRoller is an issue tracking app with the added ability to assign tasks to ad
 ## Issues & Tasks
 _Issues_ are opened to report problems, offer suggestions, and ask questions. While _Tasks_ are created to address problems or add features. Both follow _Workflows_ that set the _Status_ and provide information. Issues and Tasks both reside in _Projects_, which are organized into _Categories_. In addition, collaboration is encouraged with markdown enabled comments.
 
+### Issue Form
+![Issue Form](https://user-images.githubusercontent.com/1400414/150272401-cc97c698-8a28-41c7-a2c6-f8903c5c3bea.png)
+
+### Task Form
+![Task Form](https://user-images.githubusercontent.com/1400414/150272406-94933c2b-ae92-45da-99fb-ae6508db4fbf.png)
+
+### Index Preview
+![Index Preview](https://user-images.githubusercontent.com/1400414/150270326-104f4aae-cb21-44ba-bf59-f8862c9bf947.png)
+
 ## Subscriptions
 Users can subscribe to Issues & Tasks to get automatic emails after status updates and new comments. Categories and projects can also be subscribed to; any new issues/tasks within will have a subscription.
 
