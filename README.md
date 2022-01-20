@@ -16,6 +16,9 @@ TaskRoller is an issue tracking app with the added ability to assign tasks to ad
 ## Issues & Tasks
 _Issues_ are opened to report problems, offer suggestions, and ask questions. While _Tasks_ are created to address problems or add features. Both follow _Workflows_ that set the _Status_ and provide information. Issues and Tasks both reside in _Projects_, which are organized into _Categories_. In addition, collaboration is encouraged with markdown enabled comments.
 
+## Subscriptions
+Users can subscribe to Issues & Tasks to get automatic emails after status updates and new comments. Categories and projects can also be subscribed to; any new issues/tasks within will have a subscription.
+
 ## User Account Levels
 User accounts are organized by levels to allow a focus on responsibilities and add security. Here is a short description of each:
 
