@@ -339,7 +339,7 @@ RSpec.describe CategoriesController, type: :controller do
             category = Fabricate(:category)
             put :update, params: { id: category.to_param,
                                    category: new_attributes }
-            expect(response).to redirect_to(categories_url)
+            expect(response).to redirect_to(root_url)
           end
         end
 
@@ -349,6 +349,15 @@ RSpec.describe CategoriesController, type: :controller do
             put :update, params: { id: category.to_param,
                                    category: invalid_attributes }
             expect(response).to be_successful
+          end
+        end
+
+        context "when invisible category" do
+          it "redirects to the category" do
+            category = Fabricate(:invisible_category)
+            put :update, params: { id: category.to_param,
+                                   category: new_attributes }
+            expect(response).to redirect_to(archived_categories_url)
           end
         end
       end
@@ -382,7 +391,7 @@ RSpec.describe CategoriesController, type: :controller do
       it "redirects to the categories list" do
         category = Fabricate(:category)
         delete :destroy, params: { id: category.to_param }
-        expect(response).to redirect_to(categories_url)
+        expect(response).to redirect_to(root_url)
       end
     end
 

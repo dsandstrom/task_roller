@@ -43,7 +43,7 @@ class CategoriesController < ApplicationController
 
   def update
     if @category.update(category_params)
-      redirect_to categories_url, notice: 'Category was successfully updated.'
+      redirect_to redirect_url, notice: 'Category was successfully updated.'
     else
       render :edit
     end
@@ -51,7 +51,7 @@ class CategoriesController < ApplicationController
 
   def destroy
     @category.destroy
-    redirect_to categories_url, notice: 'Category was successfully destroyed.'
+    redirect_to root_url, notice: 'Category was successfully destroyed.'
   end
 
   private
@@ -74,5 +74,14 @@ class CategoriesController < ApplicationController
 
     def order_by
       @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
+    end
+
+    def redirect_url
+      @redirect_url ||=
+        if @category.visible?
+          root_url
+        else
+          archived_categories_url
+        end
     end
 end
