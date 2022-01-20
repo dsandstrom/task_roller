@@ -34,12 +34,12 @@ Everyone else can open issues, add comments, and see activity.
 ## Workflows
 
 ### Issue Status Workflow
-Issues can have five statuses: Open, Being Worked On, Addressed, Resolved, and Closed. Here is the basic status workflow:
+Issues can have five statuses: _Open_, _Being Worked On_, _Addressed_, _Resolved_, and _Closed_. Here is the basic status workflow:
 
 ![Issue Workflow](./app/assets/images/issue-workflow.svg)
 
 ### Task Status Workflow
-Tasks can have six statuses: Open, Assigned, In Progress, In Review, Complete, and Closed. Here is the basic status workflow:
+Tasks can have six statuses: _Open_, _Assigned_, _In Progress_, _In Review_, _Complete_, and _Closed_. Here is the basic status workflow:
 
 ![Task Workflow](./app/assets/images/task-workflow.svg)
 
