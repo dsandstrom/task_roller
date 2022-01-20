@@ -108,7 +108,7 @@
       &:hover,
       &:focus {
         color: $color-secondary;
-
+        text-decoration-color: $color-secondary;
       }
     }
   }
