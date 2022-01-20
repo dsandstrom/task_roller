@@ -1,4 +1,5 @@
 <%
+  category = project.category
   url =
     if project.persisted?
       project_path(project)
@@ -24,33 +25,37 @@
                                autofocus: true %>
   </div>
 
-  <div class="field">
-    <div class="check-box-buttons">
-      <%= label_tag 'project_visible_true', class: 'radio-button-label' do %>
-        <%= form.radio_button :visible, true, id: 'project_visible_true' %>
-        Visible
-      <% end %>
+  <% if category&.visible? %>
+    <div class="field">
+      <div class="check-box-buttons">
+        <%= label_tag 'project_visible_true', class: 'radio-button-label' do %>
+          <%= form.radio_button :visible, true, id: 'project_visible_true' %>
+          Visible
+        <% end %>
 
-      <%= label_tag 'project_visible_false', class: 'radio-button-label' do %>
-        <%= form.radio_button :visible, false, id: 'project_visible_false' %>
-        Archived
-      <% end %>
+        <%= label_tag 'project_visible_false', class: 'radio-button-label' do %>
+          <%= form.radio_button :visible, false, id: 'project_visible_false' %>
+          Archived
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
-  <div class="field">
-    <div class="check-box-buttons">
-      <%= label_tag 'project_internal_false', class: 'radio-button-label' do %>
-        <%= form.radio_button :internal, false, id: 'project_internal_false' %>
-        External
-      <% end %>
+  <% unless category&.internal? %>
+    <div class="field">
+      <div class="check-box-buttons">
+        <%= label_tag 'project_internal_false', class: 'radio-button-label' do %>
+          <%= form.radio_button :internal, false, id: 'project_internal_false' %>
+          External
+        <% end %>
 
-      <%= label_tag 'project_internal_true', class: 'radio-button-label' do %>
-        <%= form.radio_button :internal, true, id: 'project_internal_true' %>
-        Internal
-      <% end %>
+        <%= label_tag 'project_internal_true', class: 'radio-button-label' do %>
+          <%= form.radio_button :internal, true, id: 'project_internal_true' %>
+          Internal
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <div class="actions">
     <%= form.submit %>
