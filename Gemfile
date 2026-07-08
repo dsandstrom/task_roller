@@ -45,7 +45,7 @@ gem 'cancancan', '~> 3.6.1'
 # Need to update rails, to update devise to 5
 gem 'devise', '~> 4.9'
 # GitHub API
-gem 'octokit', '~> 4.0'
+gem 'octokit', '~> 10.0'
 gem 'omniauth-github', '~> 2.0'
 # required for omniauth 2.0
 # https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
