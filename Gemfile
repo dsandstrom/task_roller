@@ -51,7 +51,7 @@ gem 'omniauth-github', '~> 2.0'
 # https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
 gem 'omniauth-rails_csrf_protection', '~> 2.0'
 
-gem 'kaminari', '~> 1.2.1'
+gem 'kaminari', '~> 1.2.2'
 
 gem 'faker', '~> 2.14', require: false
 

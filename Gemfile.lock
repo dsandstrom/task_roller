@@ -456,7 +456,7 @@ DEPENDENCIES
   guard-rails (~> 0.8.1)
   guard-rspec (~> 4.7.3)
   guard-webpacker (~> 0.2.1)
-  kaminari (~> 1.2.1)
+  kaminari (~> 1.2.2)
   letter_opener (~> 1.7)
   listen (~> 3.2)
   octokit (~> 10.0)
