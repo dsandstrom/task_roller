@@ -49,7 +49,7 @@ gem 'octokit', '~> 10.0'
 gem 'omniauth-github', '~> 2.0'
 # required for omniauth 2.0
 # https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
-gem 'omniauth-rails_csrf_protection', '~> 1.0'
+gem 'omniauth-rails_csrf_protection', '~> 2.0'
 
 gem 'kaminari', '~> 1.2.1'
 
