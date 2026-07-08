@@ -35,7 +35,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # gem 'capistrano-rails', group: :development
 
 # https://github.com/swanandp/acts_as_list
-gem 'acts_as_list', '~> 0.9.10'
+gem 'acts_as_list', '~> 1.2.6'
 # https://github.com/ai/autoprefixer-rails
 # gem 'autoprefixer-rails', '~> 7.2.5'
 
