@@ -59,7 +59,8 @@ gem 'rollbar', '~> 3.1'
 
 # https://github.com/scenic-views/scenic
 # combine issues/tasks for searching
-gem 'scenic', '~> 1.5'
+# scenic 1.9 requires ruby 3.1
+gem 'scenic', '~> 1.8.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
