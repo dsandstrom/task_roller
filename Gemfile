@@ -39,9 +39,9 @@ gem 'acts_as_list', '~> 1.2.6'
 # https://github.com/ai/autoprefixer-rails
 # gem 'autoprefixer-rails', '~> 7.2.5'
 
-gem 'redcarpet', '~> 3.5.1'
+gem 'redcarpet', '~> 3.6.1'
 
-gem 'cancancan', '~> 3.2.0'
+gem 'cancancan', '~> 3.6.1'
 gem 'devise', '~> 4.8'
 # GitHub API
 gem 'octokit', '~> 4.0'
