@@ -8,7 +8,7 @@
 
   <% if can?(:destroy, issue_notifications.first) %>
     <%= link_to "\u2716", bulk_destroy_issue_issue_notifications_path(issue),
-                method: :delete, title: 'Dismiss All', remote: true,
+                method: :delete, title: 'Dismiss', remote: true,
                 class: 'close-link notification-close-link' %>
   <% end %>
 </div>

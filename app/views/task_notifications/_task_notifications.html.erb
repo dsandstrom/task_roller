@@ -8,7 +8,7 @@
 
   <% if can?(:destroy, task_notifications.first) %>
     <%= link_to "\u2716", bulk_destroy_task_task_notifications_path(task),
-                method: :delete, title: 'Dismiss All', remote: true,
+                method: :delete, title: 'Dismiss', remote: true,
                 class: 'close-link notification-close-link' %>
   <% end %>
 </div>
