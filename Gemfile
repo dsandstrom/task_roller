@@ -42,7 +42,8 @@ gem 'acts_as_list', '~> 1.2.6'
 gem 'redcarpet', '~> 3.6.1'
 
 gem 'cancancan', '~> 3.6.1'
-gem 'devise', '~> 4.8'
+# Need to update rails, to update devise to 5
+gem 'devise', '~> 4.9'
 # GitHub API
 gem 'octokit', '~> 4.0'
 gem 'omniauth-github', '~> 2.0'
