@@ -92,7 +92,7 @@ group :development do
   gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
-  gem 'rubocop', '~> 1.88', require: false
+  gem 'rubocop', '~> 1.27.0', require: false
   gem 'rubocop-rails', '~> 2.15', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
