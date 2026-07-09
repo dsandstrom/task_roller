@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
 
     # If running on a self-hosted runner, check it meets the requirements
     # listed at https://github.com/ruby/setup-ruby#using-self-hosted-runners
@@ -24,7 +24,7 @@ jobs:
       run: bundle add code-scanning-rubocop --version 0.4.0 --skip-install
 
     - name: Setup Bundler cache
-      uses: actions/cache@v2
+      uses: actions/cache@v6
       with:
         path: vendor/bundle
         key: bundle-use-ruby-${{ matrix.os }}-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile.lock') }}
@@ -45,6 +45,6 @@ jobs:
         "
 
     - name: Upload Sarif output
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: rubocop.sarif
