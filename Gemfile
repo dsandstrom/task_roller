@@ -80,7 +80,7 @@ group :development, :test do
   gem 'rspec', '~> 3.10'
   # rspec-rails 8 requires rails 7
   gem 'rspec-rails', '~>  6.0'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 4.26'
 end
 
 group :development do
