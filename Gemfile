@@ -78,7 +78,8 @@ group :development, :test do
   gem 'guard-rails', '~> 0.8.1', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'rspec', '~> 3.10'
-  gem 'rspec-rails', '~> 4.0'
+  # rspec-rails 8 requires rails 7
+  gem 'rspec-rails', '~>  6.0'
   gem 'selenium-webdriver'
 end
 
