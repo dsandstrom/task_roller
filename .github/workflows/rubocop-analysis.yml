@@ -17,11 +17,11 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.0.2
+        ruby-version: 3.3.11
 
     # This step is not necessary if you add the gem to your Gemfile
     - name: Install Code Scanning integration
-      run: bundle add code-scanning-rubocop --version 0.4.0 --skip-install
+      run: bundle add code-scanning-rubocop --version 0.6.1 --skip-install
 
     - name: Setup Bundler cache
       uses: actions/cache@v6
