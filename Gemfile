@@ -71,7 +71,8 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'dotenv-rails', '~> 3.2'
-  gem 'fabrication', '~> 2.22'
+  # fabrication 3 requires ruby 3.2
+  gem 'fabrication', '~> 2'
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rails', '~> 0.8.1', require: false

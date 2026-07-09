@@ -5,7 +5,7 @@ Fabricator(:resolution) do
   user { Fabricate(:user_worker) }
   approved nil
 
-  before_validation do |resolution|
+  before_create do |resolution|
     resolution.issue ||=
       if resolution.user
         Fabricate(:closed_issue, user: resolution.user)
