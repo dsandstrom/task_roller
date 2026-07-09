@@ -793,7 +793,7 @@ RSpec.describe Issue, type: :model do
 
       it "returns id and short_summary" do
         expect(issue.id_and_summary)
-          .to eq("\##{issue.id} - #{issue.short_summary}")
+          .to eq("##{issue.id} - #{issue.short_summary}")
       end
     end
   end
@@ -821,7 +821,7 @@ RSpec.describe Issue, type: :model do
 
     context "when a summary" do
       it "returns 'Issue: ' and short_summary" do
-        expect(issue.heading).to eq("Issue \##{issue.id}: #{issue.summary}")
+        expect(issue.heading).to eq("Issue ##{issue.id}: #{issue.summary}")
       end
     end
 
@@ -2139,9 +2139,9 @@ RSpec.describe Issue, type: :model do
     end
 
     let(:message) do
-      "###### Automated Message\n\n"\
-        "Thank you for the report. "\
-        "We've opened an Issue on our TaskRoller app to address this "\
+      "###### Automated Message\n\n" \
+        "Thank you for the report. " \
+        "We've opened an Issue on our TaskRoller app to address this " \
         "GitHub Issue."
     end
 
@@ -2194,7 +2194,7 @@ RSpec.describe Issue, type: :model do
     end
 
     let(:message) do
-      "###### Automated Message\n\n"\
+      "###### Automated Message\n\n" \
         "This Issue is considered addressed and will by closed."
     end
 

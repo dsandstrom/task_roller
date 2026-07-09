@@ -92,7 +92,7 @@ module UsersHelper
 
     def new_user_header(user)
       heading =
-        "New #{user.employee_type&.present? ? user.employee_type : 'User'}"
+        "New #{user.employee_type.presence || 'User'}"
       content_for :header do
         concat user_breadcrumbs
         concat content_tag(:h1, heading)

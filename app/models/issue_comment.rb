@@ -16,7 +16,7 @@ class IssueComment < ApplicationRecord
   end
 
   def body_html
-    @body_html ||= (RollerMarkdown.new.render(body) || '')
+    @body_html ||= RollerMarkdown.new.render(body) || ''
   end
 
   def notify_subscribers

@@ -5,7 +5,7 @@ class HTMLRenderer < Redcarpet::Render::HTML
               no_styles: true, prettify: true, safe_links_only: true }.freeze
 
   def initialize(*_)
-    super OPTIONS.dup
+    super(OPTIONS.dup)
   end
 
   def header(text, header_level)

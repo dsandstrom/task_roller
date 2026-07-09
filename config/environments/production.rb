@@ -78,7 +78,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
@@ -118,7 +118,7 @@ Rails.application.configure do
   #   ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
   config.action_mailer.default_url_options =
-    { host: (ENV['FRONTEND_URL'] || 'task-roller.net'), port: 80 }
+    { host: ENV['FRONTEND_URL'] || 'task-roller.net', port: 80 }
 
   config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
@@ -126,8 +126,8 @@ Rails.application.configure do
     address: 'smtp.gmail.com',
     port: 587,
     domain: 'task-roller.net',
-    user_name: ENV['EMAIL_USER_NAME'],
-    password: ENV['EMAIL_PASSWORD'],
+    user_name: ENV.fetch('EMAIL_USER_NAME', nil),
+    password: ENV.fetch('EMAIL_PASSWORD', nil),
     authentication: 'plain',
     enable_starttls_auto: true
   }

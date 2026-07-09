@@ -28,8 +28,8 @@ class IssueSubscriptionsController < ApplicationController
   private
 
     def create_success
-      notice = "Subscribed to Issue ##{@issue.id}. You will be notified after "\
-               'updates.'
+      notice = "Subscribed to Issue ##{@issue.id}. You will be notified " \
+               'after updates.'
       respond_to do |format|
         format.html { redirect_back fallback_location: @issue, notice: notice }
         format.js { render :show }

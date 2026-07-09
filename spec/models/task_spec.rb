@@ -901,7 +901,7 @@ RSpec.describe Task, type: :model do
 
       it "returns id and short_summary" do
         expect(task.id_and_summary)
-          .to eq("\##{task.id} - #{task.short_summary}")
+          .to eq("##{task.id} - #{task.short_summary}")
       end
     end
   end
@@ -1566,7 +1566,7 @@ RSpec.describe Task, type: :model do
 
     context "when a summary" do
       it "returns 'Task: ' and short_summary" do
-        expect(task.heading).to eq("Task \##{task.id}: #{task.summary}")
+        expect(task.heading).to eq("Task ##{task.id}: #{task.summary}")
       end
     end
 

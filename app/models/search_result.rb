@@ -111,7 +111,7 @@ class SearchResult < ApplicationRecord
 
   def heading
     @heading ||=
-      ("#{class_name} \##{id}: #{short_summary}" if id && summary.present?)
+      ("#{class_name} ##{id}: #{short_summary}" if id && summary.present?)
   end
 
   def short_summary

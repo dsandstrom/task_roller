@@ -200,8 +200,8 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     def task_connection_links(connection)
       return unless can?(:destroy, connection)
 
-      confirm = 'Are you sure you want to remove the connection to '\
-                "\"#{connection.target.short_summary}\" and reopen "\
+      confirm = 'Are you sure you want to remove the connection to ' \
+                "\"#{connection.target.short_summary}\" and reopen " \
                 'this task?'
 
       [['Reopen Task', connection,

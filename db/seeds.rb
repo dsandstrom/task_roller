@@ -412,7 +412,7 @@ class Seeds
     end
 
     def create_issue_comments
-      Issue.all.each do |issue|
+      Issue.find_each do |issue|
         if issue.comments.none?
           create_issue_q_a(issue, random_user_id, issue.user_id)
         end
@@ -424,7 +424,7 @@ class Seeds
     end
 
     def create_task_comments
-      Task.all.each do |task|
+      Task.find_each do |task|
         create_task_q_a(task, task_comment_q_id(task), task_comment_a_id(task))
       end
     end

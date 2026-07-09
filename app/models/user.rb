@@ -211,7 +211,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def name_or_email
-    @name_or_email ||= (name || email)
+    @name_or_email ||= name || email
   end
 
   def task_progressions(task)
@@ -314,7 +314,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def subscriptions
-    query = 'issue_subscriptions.id IS NOT NULL OR '\
+    query = 'issue_subscriptions.id IS NOT NULL OR ' \
             'task_subscriptions.id IS NOT NULL'
     SearchResult.joins(issue_subscriptions_query)
                 .joins(task_subscriptions_query)
@@ -322,8 +322,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def subscribed_issues_with_notifications(order_by: false)
-    query = 'LEFT OUTER JOIN issue_notifications ON '\
-            '(issue_notifications.issue_id = issues.id AND '\
+    query = 'LEFT OUTER JOIN issue_notifications ON ' \
+            '(issue_notifications.issue_id = issues.id AND ' \
             "issue_notifications.user_id = #{id})"
     issues = subscribed_issues.joins(query).select('issues.*').group(:id)
                               .preload(:project, :user, project: :category)
@@ -333,8 +333,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def subscribed_tasks_with_notifications(order_by: false)
-    query = 'LEFT OUTER JOIN task_notifications ON '\
-            '(task_notifications.task_id = tasks.id AND '\
+    query = 'LEFT OUTER JOIN task_notifications ON ' \
+            '(task_notifications.task_id = tasks.id AND ' \
             "task_notifications.user_id = #{id})"
     tasks = subscribed_tasks.joins(query).select('tasks.*').group(:id)
                             .preload(:project, :user, :issue, :assignees,
@@ -370,13 +370,13 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def notifications_query
     @notifications_query ||=
-      'LEFT OUTER JOIN issue_notifications ON '\
-      '(issue_notifications.issue_id = search_results.id AND '\
-      "search_results.class_name = 'Issue' AND "\
-      "issue_notifications.user_id = #{id}) "\
-      'LEFT OUTER JOIN task_notifications ON '\
-      '(task_notifications.task_id = search_results.id AND '\
-      "search_results.class_name = 'Task' AND "\
+      'LEFT OUTER JOIN issue_notifications ON ' \
+      '(issue_notifications.issue_id = search_results.id AND ' \
+      "search_results.class_name = 'Issue' AND " \
+      "issue_notifications.user_id = #{id}) " \
+      'LEFT OUTER JOIN task_notifications ON ' \
+      '(task_notifications.task_id = search_results.id AND ' \
+      "search_results.class_name = 'Task' AND " \
       "task_notifications.user_id = #{id})"
   end
 
@@ -400,17 +400,17 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     def issue_subscriptions_query
       @issue_subscriptions_query ||=
-        'LEFT OUTER JOIN issue_subscriptions ON '\
-        '(issue_subscriptions.issue_id = search_results.id AND '\
-        "search_results.class_name = 'Issue' AND "\
+        'LEFT OUTER JOIN issue_subscriptions ON ' \
+        '(issue_subscriptions.issue_id = search_results.id AND ' \
+        "search_results.class_name = 'Issue' AND " \
         "issue_subscriptions.user_id = #{id})"
     end
 
     def task_subscriptions_query
       @task_subscriptions_query ||=
-        'LEFT OUTER JOIN task_subscriptions ON '\
-        '(task_subscriptions.task_id = search_results.id AND '\
-        "search_results.class_name = 'Task' AND "\
+        'LEFT OUTER JOIN task_subscriptions ON ' \
+        '(task_subscriptions.task_id = search_results.id AND ' \
+        "search_results.class_name = 'Task' AND " \
         "task_subscriptions.user_id = #{id})"
     end
 end

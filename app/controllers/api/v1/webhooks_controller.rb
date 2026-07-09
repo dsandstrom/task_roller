@@ -38,7 +38,7 @@ module Api
         end
 
         def app_secret
-          @app_secret ||= ENV['GITHUB_WEBHOOK_SECRET']
+          @app_secret ||= ENV.fetch('GITHUB_WEBHOOK_SECRET', nil)
         end
 
         def request_signature
@@ -90,7 +90,7 @@ module Api
               issue_type: issue_type,
               user: github_user,
               summary: issue_payload[:title],
-              description: (issue_payload[:body].presence || 'Imported') }
+              description: issue_payload[:body].presence || 'Imported' }
         end
 
         def github_user_valid?
@@ -153,6 +153,13 @@ module Api
           end
         end
 
+        def callout_message(callout)
+          return unless callout&.errors
+
+          errors = callout.errors
+          errors&.messages&.inspect
+        end
+
         def perform_repo_callout_action(repo_callout)
           repo_callout.process_commit_message
           return unless repo_callout.save!
@@ -160,7 +167,7 @@ module Api
           repo_callout.perform_action
         rescue ActiveRecord::RecordInvalid
           logger.info "GitHub commit can't be process. RepoCallout is invalid:"
-          logger.info repo_callout&.errors&.messages&.inspect
+          logger.info callout_message(repo_callout)
         end
 
         def process_user(payload)

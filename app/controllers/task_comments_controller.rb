@@ -4,6 +4,15 @@ class TaskCommentsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :comments
 
+  def show
+    respond_to do |format|
+      format.html do
+        redirect_to task_path(@task, anchor: "comment-#{@task_comment.id}")
+      end
+      format.js
+    end
+  end
+
   def new
     respond_to do |format|
       format.html
@@ -14,15 +23,6 @@ class TaskCommentsController < ApplicationController
   def edit
     respond_to do |format|
       format.html
-      format.js
-    end
-  end
-
-  def show
-    respond_to do |format|
-      format.html do
-        redirect_to task_path(@task, anchor: "comment-#{@task_comment.id}")
-      end
       format.js
     end
   end

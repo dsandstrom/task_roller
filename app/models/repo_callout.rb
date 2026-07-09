@@ -6,7 +6,7 @@ class RepoCallout < ApplicationRecord
     ((starts?|fix(?:e[ds])?|progress(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
     (?:task)?\s?[\#\-]?
     (\d+))
-  /ix.freeze
+  /ix
 
   validates :action, presence: true, inclusion: { in: ACTION_OPTIONS }
   validates :commit_sha, presence: true

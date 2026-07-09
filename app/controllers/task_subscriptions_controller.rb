@@ -28,7 +28,7 @@ class TaskSubscriptionsController < ApplicationController
   private
 
     def create_success
-      notice = "Subscribed to Task ##{@task.id}. You will be notified after "\
+      notice = "Subscribed to Task ##{@task.id}. You will be notified after " \
                'updates.'
       respond_to do |format|
         format.html { redirect_back fallback_location: @task, notice: notice }

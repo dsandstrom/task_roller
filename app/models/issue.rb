@@ -146,8 +146,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.with_notifications(user, order_by: false)
-    query = 'LEFT OUTER JOIN issue_notifications ON '\
-            '(issue_notifications.issue_id = issues.id AND '\
+    query = 'LEFT OUTER JOIN issue_notifications ON ' \
+            '(issue_notifications.issue_id = issues.id AND ' \
             "issue_notifications.user_id = #{user.id})"
     issues = joins(query).select('issues.*').group(:id)
                          .preload(:project, :user, project: :category)
@@ -160,7 +160,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # TODO: shortened version for IssueMailer?
   def description_html
-    @description_html ||= (RollerMarkdown.new.render(description) || '')
+    @description_html ||= RollerMarkdown.new.render(description) || ''
   end
 
   def short_summary
@@ -172,7 +172,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def heading
-    @heading ||= ("Issue \##{id}: #{short_summary}" if id && summary.present?)
+    @heading ||= ("Issue ##{id}: #{short_summary}" if id && summary.present?)
   end
 
   def open?
@@ -294,8 +294,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def github_open_message(url = nil)
     message =
-      'Thank you for the report. '\
-      "We've opened an Issue on our TaskRoller app to address this "\
+      'Thank you for the report. ' \
+      "We've opened an Issue on our TaskRoller app to address this " \
       'GitHub Issue.'
     github_message message, url
   end
@@ -448,7 +448,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def build_octokit
       return unless github_repo_id && github_id && github_number
 
-      token = ENV['GITHUB_USER_TOKEN']
+      token = ENV.fetch('GITHUB_USER_TOKEN', nil)
       return unless token
 
       Octokit::Client.new(access_token: token)
