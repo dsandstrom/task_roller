@@ -81,6 +81,7 @@ group :development, :test do
   # rspec-rails 8 requires rails 7
   gem 'rspec-rails', '~>  6.0'
   gem 'selenium-webdriver', '~> 4.26'
+  gem 'code-scanning-rubocop', '0.5.0'
 end
 
 group :development do
