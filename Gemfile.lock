@@ -390,7 +390,7 @@ GEM
     scenic (1.8.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
-    scss_lint (0.59.0)
+    scss_lint (0.60.0)
       sass (~> 3.5, >= 3.5.5)
     scss_lint_reporter_junit (0.1.2)
     selenium-webdriver (4.26.0)
