@@ -11,8 +11,7 @@ class IssueConnection < ApplicationRecord
   validate :matching_projects
 
   def target_options
-    @target_options ||=
-      (source.project&.issues&.where&.not(id: source.id) if source&.id)
+    @target_options ||= build_target_options(source)
   end
 
   def subscribe_user
@@ -35,5 +34,12 @@ class IssueConnection < ApplicationRecord
       return if source.project.present? && source.project == target.project
 
       errors.add(:target_id, 'wrong project')
+    end
+
+    def build_target_options(source)
+      return unless source&.id && source.project&.issues
+
+      issues = source.project.issues
+      issues&.where&.not(id: source.id)
     end
 end

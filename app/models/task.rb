@@ -306,7 +306,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def siblings
-    @siblings ||= issue&.tasks&.where&.not(id: id)
+    @siblings ||= build_siblings(issue)
   end
 
   # rubocop:disable Naming/MemoizedInstanceVariableName
@@ -503,5 +503,12 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         { event: 'new' }
       end
+    end
+
+    def build_siblings(issue)
+      return unless issue&.tasks
+
+      tasks = issue.tasks
+      tasks&.where&.not(id: id)
     end
 end

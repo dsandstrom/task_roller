@@ -11,8 +11,7 @@ class TaskConnection < ApplicationRecord
   belongs_to :target, class_name: 'Task'
 
   def target_options
-    @target_options ||=
-      (source.project&.tasks&.where&.not(id: source.id) if source&.id)
+    @target_options ||= build_target_options(source)
   end
 
   def subscribe_user
@@ -35,5 +34,12 @@ class TaskConnection < ApplicationRecord
       return if source.project.present? && source.project == target.project
 
       errors.add(:target_id, 'wrong project')
+    end
+
+    def build_target_options(source)
+      return unless source&.id && source.project
+
+      tasks = source.project.tasks
+      tasks&.where&.not(id: source.id)
     end
 end
