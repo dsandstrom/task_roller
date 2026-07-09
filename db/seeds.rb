@@ -72,7 +72,7 @@ class Seeds
 
     def create_user(employee_type)
       User.create!(name: Faker::Name.unique.name,
-                   email: Faker::Internet.unique.safe_email,
+                   email: Faker::Internet.unique.email,
                    employee_type: employee_type,
                    password: 'password', password_confirmation: 'password',
                    confirmed_at: Time.zone.now)

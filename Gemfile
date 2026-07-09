@@ -53,7 +53,7 @@ gem 'omniauth-rails_csrf_protection', '~> 2.0'
 
 gem 'kaminari', '~> 1.2.2'
 
-gem 'faker', '~> 2.23', require: false
+gem 'faker', '~> 3.5.3', require: false
 
 gem 'rollbar', '~> 3.1'
 
