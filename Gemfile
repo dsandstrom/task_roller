@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby '3.0.2'
+ruby '3.3.11'
 
 gem 'rails', '~> 6.1.7.10'
 # Use postgresql as the database for Active Record
@@ -67,7 +67,7 @@ gem 'scenic', '~> 1.8.0'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'byebug', platforms: %i[mri windows]
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'dotenv-rails', '~> 3.2'
@@ -92,8 +92,9 @@ group :development do
   gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
-  gem 'rubocop', '~> 1.24.0', require: false
-  gem 'rubocop-rails', '~> 2.15', require: false
+  # 1.72 introduces plugins
+  gem 'rubocop', '~> 1.71.0', require: false
+  gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
   # Spring speeds up development by keeping your application running in the
