@@ -497,7 +497,7 @@ RSpec.describe SearchResult, type: :model do
     context "when a summary" do
       it "returns class_name and short_summary" do
         expect(subject.heading)
-          .to eq("Task \##{subject.id}: #{subject.summary}")
+          .to eq("Task ##{subject.id}: #{subject.summary}")
       end
     end
 

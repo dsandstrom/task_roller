@@ -38,7 +38,7 @@ module Api
         end
 
         def app_secret
-          @app_secret ||= ENV['GITHUB_WEBHOOK_SECRET']
+          @app_secret ||= ENV.fetch('GITHUB_WEBHOOK_SECRET', nil)
         end
 
         def request_signature
@@ -90,7 +90,7 @@ module Api
               issue_type: issue_type,
               user: github_user,
               summary: issue_payload[:title],
-              description: (issue_payload[:body].presence || 'Imported') }
+              description: issue_payload[:body].presence || 'Imported' }
         end
 
         def github_user_valid?

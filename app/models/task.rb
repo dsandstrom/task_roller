@@ -178,8 +178,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.with_notifications(user, order_by: false)
-    query = 'LEFT OUTER JOIN task_notifications ON '\
-            '(task_notifications.task_id = tasks.id AND '\
+    query = 'LEFT OUTER JOIN task_notifications ON ' \
+            '(task_notifications.task_id = tasks.id AND ' \
             "task_notifications.user_id = #{user.id})"
     tasks = joins(query).select('tasks.*').group(:id)
                         .preload(:project, :user, :issue, :assignees,
@@ -192,7 +192,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # INSTANCE
 
   def description_html
-    @description_html ||= (RollerMarkdown.new.render(description) || '')
+    @description_html ||= RollerMarkdown.new.render(description) || ''
   end
 
   def short_summary
@@ -204,7 +204,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def heading
-    @heading ||= ("Task \##{id}: #{summary}" if id && summary.present?)
+    @heading ||= ("Task ##{id}: #{summary}" if id && summary.present?)
   end
 
   def open?

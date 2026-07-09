@@ -6,6 +6,15 @@ class IssueCommentsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :comments
 
+  def show
+    respond_to do |format|
+      format.html do
+        redirect_to issue_path(@issue, anchor: "comment-#{@issue_comment.id}")
+      end
+      format.js
+    end
+  end
+
   def new
     respond_to do |format|
       format.html
@@ -16,15 +25,6 @@ class IssueCommentsController < ApplicationController
   def edit
     respond_to do |format|
       format.html
-      format.js
-    end
-  end
-
-  def show
-    respond_to do |format|
-      format.html do
-        redirect_to issue_path(@issue, anchor: "comment-#{@issue_comment.id}")
-      end
       format.js
     end
   end
