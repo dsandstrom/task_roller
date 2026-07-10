@@ -148,7 +148,7 @@ default_environment: &default_environment
 jobs:
   build: # our first job, named "build"
     docker:
-      - image: circleci/ruby:<<pipeline.parameters.ruby_version>>-node-browsers
+      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
     <<: *default_environment
     steps:
       - checkout # pull down our git code.
