@@ -143,6 +143,7 @@ default_environment: &default_environment
     PG_USERNAME: <<pipeline.parameters.postgres_username>>
     PG_PASSWORD: <<pipeline.parameters.postgres_password>>
     RAILS_ENV: test
+    NODE_ENV: test
 
 jobs:
   build: # our first job, named "build"
