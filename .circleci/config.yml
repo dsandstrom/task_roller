@@ -77,7 +77,7 @@ commands:
         default: '24.18.0'
     steps:
       - run:
-          name: Remove current bin/yarn
+          name: Remove system bin/yarn
           command: |
             sudo rm /usr/local/bin/yarn
             sudo rm /usr/local/bin/yarnpkg
