@@ -148,7 +148,7 @@ default_environment: &default_environment
 jobs:
   build: # our first job, named "build"
     docker:
-      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
+      - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node-browsers
     <<: *default_environment
     steps:
       - checkout # pull down our git code.
