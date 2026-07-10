@@ -33,7 +33,7 @@ parameters:
     default: '12.4'
   ruby_version:
     type: string
-    default: '3.0.2'
+    default: '3.3.11'
 
 commands:
   # use the node orb to install our packages
@@ -74,7 +74,7 @@ commands:
     parameters:
       version:
         type: string
-        default: '12.18.0'
+        default: '18.20.8'
     steps:
       - node/install:
           install-yarn: true
@@ -106,13 +106,13 @@ commands:
     parameters:
       bundler_version:
         description: 'Configure which version of bundler to install and utilize'
-        default: '2.1.4'
+        default: '4.0.15'
         type: string
     steps:
       - restore_cache:
           name: Restore Ruby Gems Cache
           keys:
-            - ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - ruby-gems-v2-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Install Ruby Gems
           command: |
@@ -127,7 +127,7 @@ commands:
           name: Cache Ruby Gems
           paths:
             - << pipeline.parameters.bundle_path >>
-          key: ruby-gems-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: ruby-gems-v2-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 
 # Re-usable defaults
 default_environment: &default_environment
