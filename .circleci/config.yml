@@ -76,8 +76,7 @@ commands:
         type: string
         default: '24.18.0'
     steps:
-      - prepare:
-        run:
+      - run:
           name: Remove current yarn
           command: |
             rm /usr/local/bin/yarn
