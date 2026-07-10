@@ -87,7 +87,7 @@ commands:
         default: tmp/cache/yarn
       cache_key:
         type: string
-        default: yarn-packages-v1
+        default: yarn-packages-v2
     steps:
       - restore_cache:
           name: Restore Node Packages Cache
