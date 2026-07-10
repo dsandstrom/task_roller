@@ -77,7 +77,7 @@ commands:
         default: '24.18.0'
     steps:
       - node/install:
-          install-yarn: true
+          install-yarn: false
           node-version: <<parameters.version>>
   install_node_packages:
     description: 'Install Node Packages using Yarn'
