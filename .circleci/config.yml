@@ -30,7 +30,7 @@ parameters:
     default: pass123
   postgres_version:
     type: string
-    default: '18.4.0'
+    default: '18.4'
   ruby_version:
     type: string
     default: '3.3.11'
