@@ -182,7 +182,6 @@ jobs:
       - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
         environment:
           PGHOST: 127.0.0.1
-          NODE_ENV: test
       - image: circleci/postgres:<<pipeline.parameters.postgres_version>>
         environment:
           POSTGRES_DB: <<pipeline.parameters.postgres_database>>
@@ -203,6 +202,9 @@ jobs:
       - run:
           name: Setup Database
           command: bundle exec rails db:schema:load --trace
+      - run:
+          name: Compile assets
+          command: bin/rails assets:precompile
       # Run rspec in parallel
       - ruby/rspec-test
 
