@@ -182,7 +182,7 @@ jobs:
       - image: cimg/ruby:<<pipeline.parameters.ruby_version>>-node
         environment:
           PGHOST: 127.0.0.1
-      - image: circleci/postgres:<<pipeline.parameters.postgres_version>>
+      - image: cimg/postgres:<<pipeline.parameters.postgres_version>>
         environment:
           POSTGRES_DB: <<pipeline.parameters.postgres_database>>
           POSTGRES_USER: <<pipeline.parameters.postgres_username>>
