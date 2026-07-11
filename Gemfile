@@ -21,6 +21,10 @@ gem 'webpacker', '~> 6.0.0.rc.6'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
+# 1.3.7 has error uninitialized constant
+# ActiveSupport::LoggerThreadSafeLevel::Logger
+gem 'concurrent-ruby', '< 1.3.5'
+
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
