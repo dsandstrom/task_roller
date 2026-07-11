@@ -34,6 +34,12 @@ parameters:
   ruby_version:
     type: string
     default: '3.3.11'
+  bundler_version:
+    type: string
+    default: '4.0.15'
+  node_version:
+    type: string
+    default: '24.18.0'
 
 commands:
   # use the node orb to install our packages
@@ -74,7 +80,7 @@ commands:
     parameters:
       version:
         type: string
-        default: '24.18.0'
+        default: <<pipeline.parameters.node_version>>
     steps:
       - run:
           name: Remove system bin/yarn
@@ -111,7 +117,7 @@ commands:
     parameters:
       bundler_version:
         description: 'Configure which version of bundler to install and utilize'
-        default: '4.0.15'
+        default: <<pipeline.parameters.bundler_version>>
         type: string
     steps:
       - restore_cache:
