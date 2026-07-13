@@ -66,6 +66,9 @@ Rails/I18nLocaleTexts:
 Style/Documentation:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
