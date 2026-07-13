@@ -8,7 +8,7 @@ class RollerMarkdown
               disable_indented_code_blocks: true }.freeze
 
   def initialize
-    @markdown = Redcarpet::Markdown.new(HTMLRenderer.new, OPTIONS.dup)
+    @markdown = Redcarpet::Markdown.new(HtmlRenderer.new, OPTIONS.dup)
   end
 
   def render(value)

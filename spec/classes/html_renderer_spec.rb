@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe HTMLRenderer, type: :class do
-  before { @html_renderer = HTMLRenderer.new }
+RSpec.describe HtmlRenderer, type: :class do
+  before { @html_renderer = HtmlRenderer.new }
 
   subject { @html_renderer }
 
