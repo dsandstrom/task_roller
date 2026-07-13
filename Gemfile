@@ -9,7 +9,7 @@ end
 
 ruby '3.3.11'
 
-gem 'rails', '~> 6.1.7.10'
+gem 'rails', '~> 8.1.3'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.6.3'
 # Use Puma as the app server
@@ -47,7 +47,7 @@ gem 'redcarpet', '~> 3.6.1'
 
 gem 'cancancan', '~> 3.6.1'
 # Need to update rails, to update devise to 5
-gem 'devise', '~> 4.9'
+gem 'devise', '~> 5.0'
 # GitHub API
 gem 'octokit', '~> 10.0'
 gem 'omniauth-github', '~> 2.0'
