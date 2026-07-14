@@ -22,7 +22,7 @@ Bundler.require(*Rails.groups)
 module TaskRoller
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -43,5 +43,7 @@ module TaskRoller
     end
 
     config.active_job.queue_adapter = :sucker_punch
+
+    config.action_mailer.deliver_later_queue_name = :mailers
   end
 end
