@@ -1,11 +1,11 @@
-@import "../_colors";
+@import '../colors';
 
 .hljs {
   display: block;
+  padding: .5em;
   overflow-x: auto;
-  padding: 0.5em;
-  color: $off-white;
   background: $color-quaternary;
+  color: $off-white;
 }
 
 .hljs-comment,
@@ -41,10 +41,12 @@
   color: $color-success;
 }
 
+// scss-lint:disable SelectorFormat
 .hljs-built_in,
 .hljs-class .hljs-title {
   color: $color-primary;
 }
+// scss-lint:enable SelectorFormat
 
 .hljs-attr,
 .hljs-variable,
