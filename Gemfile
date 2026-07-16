@@ -20,6 +20,9 @@ gem 'cssbundling-rails', '~> 1.0'
 gem 'webpacker', '~> 6.0.0.rc.6'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
+# Asset pipeline
+# TODO: replace sprockets with propshaft
+gem 'sprockets-rails', '~> 3.5'
 
 # 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
