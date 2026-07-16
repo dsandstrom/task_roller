@@ -14,8 +14,8 @@ gem 'rails', '~> 6.1.7.10'
 gem 'pg', '~> 1.6.3'
 # Use Puma as the app server
 gem 'puma', '~> 8.0'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 6.0'
+# Use cssbundling for stylesheets
+gem 'cssbundling-rails', '~> 1.0'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 6.0.0.rc.6'
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -92,6 +92,8 @@ group :development do
   # in the code.
   gem 'better_errors'
   gem 'binding_of_caller'
+  # Foreman used by bin/dev
+  gem 'foreman', '~> 0.90'
   gem 'guard-livereload', '~> 2.5', require: false
   gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
