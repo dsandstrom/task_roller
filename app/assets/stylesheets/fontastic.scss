@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: 'task-roller';
-  src: asset-url('task-roller.eot');
-  src: asset-url('task-roller.eot?#iefix') format('embedded-opentype'),
-       asset-url('task-roller.woff') format('woff'),
-       asset-url('task-roller.ttf') format('truetype'),
-       asset-url('task-roller.svg#task-roller') format('svg');
+  src: url('task-roller.eot');
+  src: url('task-roller.eot?#iefix') format('embedded-opentype'),
+       url('task-roller.woff') format('woff'),
+       url('task-roller.ttf') format('truetype'),
+       url('task-roller.svg#task-roller') format('svg');
   font-weight: normal;
   font-style: normal;
 }
