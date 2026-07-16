@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_07_13_224317) do
-
+ActiveRecord::Schema[7.0].define(version: 2026_07_16_062633) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,8 +18,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.string "name"
     t.boolean "visible", default: true
     t.boolean "internal", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["internal"], name: "index_categories_on_internal"
     t.index ["visible"], name: "index_categories_on_visible"
   end
@@ -28,40 +27,40 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
   create_table "category_issues_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
     t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["category_id", "user_id"], name: "index_category_issues_subscriptions_on_category_id_and_user_id", unique: true
   end
 
   create_table "category_tasks_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
     t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["category_id", "user_id"], name: "index_category_tasks_subscriptions_on_category_id_and_user_id", unique: true
   end
 
   create_table "issue_closures", force: :cascade do |t|
     t.integer "issue_id", null: false
     t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "issue_comments", force: :cascade do |t|
     t.integer "issue_id", null: false
     t.integer "user_id"
     t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "issue_connections", force: :cascade do |t|
     t.integer "source_id", null: false
     t.integer "target_id", null: false
     t.string "scheme"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "user_id"
   end
 
@@ -70,8 +69,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "user_id", null: false
     t.string "event", null: false
     t.string "details"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "issue_comment_id"
     t.index ["user_id"], name: "index_issue_notifications_on_user_id"
   end
@@ -79,15 +78,15 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
   create_table "issue_reopenings", force: :cascade do |t|
     t.integer "issue_id", null: false
     t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "issue_subscriptions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "issue_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["issue_id", "user_id"], name: "index_issue_subscriptions_on_issue_id_and_user_id", unique: true
   end
 
@@ -96,8 +95,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.string "icon", null: false
     t.string "color", null: false
     t.integer "position"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_issue_types_on_name", unique: true
   end
 
@@ -107,10 +106,10 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "issue_type_id"
     t.integer "user_id"
     t.integer "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "closed", default: false, null: false
-    t.datetime "opened_at", precision: 6
+    t.datetime "opened_at"
     t.integer "tasks_count", default: 0, null: false
     t.integer "open_tasks_count", default: 0, null: false
     t.integer "github_id"
@@ -131,25 +130,25 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "task_id", null: false
     t.integer "user_id"
     t.boolean "finished", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "finished_at", precision: 6
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "finished_at"
     t.integer "repo_callout_id"
   end
 
   create_table "project_issues_subscriptions", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["project_id", "user_id"], name: "index_project_issues_subscriptions_on_project_id_and_user_id", unique: true
   end
 
   create_table "project_tasks_subscriptions", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["project_id", "user_id"], name: "index_project_tasks_subscriptions_on_project_id_and_user_id", unique: true
   end
 
@@ -158,8 +157,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.boolean "visible", default: true
     t.boolean "internal", default: false
     t.integer "category_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["category_id", "name"], name: "index_projects_on_category_id_and_name", unique: true
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
@@ -174,8 +173,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.string "commit_html_url"
     t.string "commit_sha", null: false
     t.integer "github_commit_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "commit_message_part", null: false
     t.index ["task_id", "commit_sha"], name: "index_repo_callouts_on_task_id_and_commit_sha", unique: true
     t.index ["task_id"], name: "index_repo_callouts_on_task_id"
@@ -185,48 +184,48 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "issue_id", null: false
     t.integer "user_id"
     t.boolean "approved"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reviews", force: :cascade do |t|
     t.integer "task_id", null: false
     t.integer "user_id"
     t.boolean "approved"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "repo_callout_id"
   end
 
   create_table "task_assignees", force: :cascade do |t|
     t.integer "task_id"
     t.integer "assignee_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["task_id", "assignee_id"], name: "index_task_assignees_on_task_id_and_assignee_id", unique: true
   end
 
   create_table "task_closures", force: :cascade do |t|
     t.integer "task_id", null: false
     t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "task_comments", force: :cascade do |t|
     t.integer "task_id", null: false
     t.integer "user_id"
     t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "task_connections", force: :cascade do |t|
     t.integer "source_id", null: false
     t.integer "target_id", null: false
     t.string "scheme"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "user_id"
   end
 
@@ -236,23 +235,23 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "task_comment_id"
     t.string "event", null: false
     t.string "details"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_task_notifications_on_user_id"
   end
 
   create_table "task_reopenings", force: :cascade do |t|
     t.integer "task_id", null: false
     t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "task_subscriptions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "task_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["task_id", "user_id"], name: "index_task_subscriptions_on_task_id_and_user_id", unique: true
   end
 
@@ -261,8 +260,8 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.string "icon", null: false
     t.string "color", null: false
     t.integer "position"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_task_types_on_name", unique: true
   end
 
@@ -273,10 +272,10 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
     t.integer "issue_id"
     t.integer "user_id"
     t.integer "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "closed", default: false, null: false
-    t.datetime "opened_at", precision: 6
+    t.datetime "opened_at"
     t.string "status"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
@@ -289,25 +288,25 @@ ActiveRecord::Schema.define(version: 2026_07_13_224317) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "employee_type"
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
-    t.datetime "locked_at"
+    t.datetime "locked_at", precision: nil
     t.integer "github_id"
     t.string "github_username"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
