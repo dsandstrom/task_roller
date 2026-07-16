@@ -78,13 +78,13 @@ class Dropdown {
 }
 
 var dropdowns = [];
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (var elem of document.querySelectorAll('.dropdown-menu')) {
     dropdowns.push(new Dropdown(elem));
   }
 })
 // close any current dropdowns
-document.addEventListener('turbolinks:visit', function() {
+document.addEventListener('turbo:visit', function() {
   for (var dropdown of dropdowns) {
     dropdown.toggleOff();
   }

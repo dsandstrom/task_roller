@@ -57,7 +57,7 @@ class SearchTypeLabels {
 
 const typeLabelIds = ['search_type_labels'];
 
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (let id of typeLabelIds) {
     const elem = document.getElementById(id);
     if (!elem) continue;

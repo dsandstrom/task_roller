@@ -60,7 +60,7 @@ class Accordion {
 }
 
 var accordions = [];
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (var elem of document.querySelectorAll('.accordion')) {
     accordions.push(new Accordion(elem));
   }

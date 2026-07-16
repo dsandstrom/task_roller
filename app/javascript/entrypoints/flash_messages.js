@@ -53,7 +53,7 @@ class FlashMessage {
   }
 }
 
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (var message of document.querySelectorAll('.flash-message')) {
     new FlashMessage(message);
   }

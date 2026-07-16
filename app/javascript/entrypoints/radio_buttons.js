@@ -56,7 +56,7 @@ const radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
                         'task_order_labels', 'issue_type_labels',
                         'task_type_labels', 'search_type_labels'];
 
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (let id of radioButtonIds) {
     const labels = document.getElementById(id);
     if (!labels) continue;

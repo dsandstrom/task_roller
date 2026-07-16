@@ -50,7 +50,7 @@ class CheckBoxes {
 
 const checkBoxClasses = ['check-box-buttons'];
 
-document.addEventListener('turbolinks:load', function() {
+document.addEventListener('turbo:load', function() {
   for (let klass of checkBoxClasses) {
     document.querySelectorAll('.' + klass).forEach((checkBoxes) => {
       new CheckBoxes(checkBoxes);

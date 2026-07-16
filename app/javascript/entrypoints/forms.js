@@ -37,7 +37,7 @@ const syntaxHighlight = function (event) {
   }
 }
 
-document.addEventListener('turbolinks:load', function(event) {
+document.addEventListener('turbo:load', function(event) {
   initForms(event);
   syntaxHighlight();
 
@@ -56,7 +56,7 @@ document.addEventListener('custom:reset-forms', function(event) {
   syntaxHighlight();
 });
 
-document.addEventListener('turbolinks:visit', function() {
+document.addEventListener('turbo:visit', function() {
   var openComments = document.querySelectorAll('.comment.with-form');
 
   for (var i = 0; i < openComments.length; i++) {
