@@ -1,5 +1,5 @@
-import {Form} from 'src/form';
-import {HiddenForm} from 'src/hidden_form';
+import {Form} from './../src/form';
+import {HiddenForm} from './../src/hidden_form';
 import hljs from 'highlight.js';
 
 let currentForms = [];

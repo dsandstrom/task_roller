@@ -1,4 +1,9 @@
 // Entry point for the build script in your package.json
-// TODO: add  'accordions', 'check_boxes',
-// 'dropdowns', 'flash_messages', 'forms',
-// 'radio_buttons', 'search_forms'
+
+import './entrypoints/accordions'
+import './entrypoints/check_boxes'
+import './entrypoints/dropdowns'
+import './entrypoints/flash_messages'
+import './entrypoints/forms'
+import './entrypoints/radio_buttons'
+import './entrypoints/search_forms'
