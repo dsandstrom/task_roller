@@ -16,13 +16,14 @@ gem 'pg', '~> 1.6.3'
 gem 'puma', '~> 8.0'
 # Use cssbundling for stylesheets
 gem 'cssbundling-rails', '~> 1.0'
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 6.0.0.rc.6'
+# Use jsbundling for javascript/transpiling
+gem 'jsbundling-rails', '~> 1.3'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 # Asset pipeline
 # TODO: replace sprockets with propshaft
 gem 'sprockets-rails', '~> 3.5'
+gem 'turbo-rails', '~> 2.0'
 
 # 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
@@ -98,7 +99,6 @@ group :development do
   # Foreman used by bin/dev
   gem 'foreman', '~> 0.90'
   gem 'guard-livereload', '~> 2.5', require: false
-  gem 'guard-webpacker', '~> 0.2.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   # 1.72 introduces plugins
