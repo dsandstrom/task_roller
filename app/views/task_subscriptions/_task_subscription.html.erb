@@ -8,19 +8,10 @@
                 task_task_subscription_path(task, task_subscription),
                 method: :delete,
                 class: 'button button-success button-disabled' %>
-    <%= link_to task_task_subscription_path(task, task_subscription),
-                method: :delete,
-                class: 'button button-success button-unsubscribe button-icon',
-                title: 'Unsubscribe',
-                remote: true,
-                data: { disable_with: '...' } do %>
-      <%= icon('close') %>
-    <% end %>
+    <%= render 'task_subscriptions/destroy_form',
+               task_subscription: task_subscription, task: task %>
   </div>
 <% elsif can?(:create, task_subscription) %>
-  <%= link_to 'Subscribe to task',
-              task_task_subscriptions_path(task),
-              method: :post, class: 'button button-outline',
-              remote: true,
-              data: { disable_with: 'Subscribing' } %>
+  <%= render 'task_subscriptions/form',
+             task_subscription: task_subscription, task: task %>
 <% end %>
