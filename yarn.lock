@@ -443,11 +443,6 @@ typo-js@*:
   resolved "https://registry.yarnpkg.com/typo-js/-/typo-js-1.2.1.tgz#334a0d8c3f6c56f2f1e15fdf6c31677793cbbe9b"
   integrity sha512-bTGLjbD3WqZDR3CgEFkyi9Q/SS2oM29ipXrWfDb4M74ea69QwKAECVceYpaBu0GfdnASMg9Qfl67ttB23nePHg==
 
-validate-js@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/validate-js/-/validate-js-2.0.1.tgz#e9fe263f2dc1294e5c5fc6e8e2eb8fb6d6bac0cc"
-  integrity sha1-6f4mPy3BKU5cX8bo4uuPtta6wMw=
-
 yallist@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"

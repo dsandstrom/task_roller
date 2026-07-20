@@ -1,5 +1,5 @@
 // https://github.com/rickharrison/validate.js
-import FormValidator from 'validate-js/validate';
+import FormValidator from './../src/validate.js';
 import {MarkdownEditor} from './../src/markdown_editor';
 
 // https://production.task-roller.net/issues/17
