@@ -8,7 +8,7 @@ export class HiddenForm {
 
     this.cssClass = 'hidden-form';
     this.originalText = linkElem.innerHTML;
-    this.hideFormText = 'nevermind, hide the form';
+    this.hideFormText = 'hide the form';
 
     this.watchLink();
   }
