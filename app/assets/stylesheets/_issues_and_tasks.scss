@@ -379,6 +379,13 @@ $notification-color: $color-success;
     form {
       padding: .5rem 1rem 1rem;
       border: 1px solid $box-border-color;
+
+      &.issue-subscription-form,
+      &.task-subscription-form {
+        margin: 0;
+        padding: 0;
+        border-width: 0;
+      }
     }
 
     input,
@@ -589,5 +596,15 @@ $notification-color: $color-success;
   .issue-data,
   .task-data {
     max-width: 45%;
+  }
+}
+
+
+form {
+  &.issue-subscription-form,
+  &.task-subscription-form {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
   }
 }
