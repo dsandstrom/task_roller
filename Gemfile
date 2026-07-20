@@ -21,8 +21,7 @@ gem 'jsbundling-rails', '~> 1.3'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 # Asset pipeline
-# TODO: replace sprockets with propshaft
-gem 'sprockets-rails', '~> 3.5'
+gem 'propshaft', '~> 1.3.2'
 gem 'turbo-rails', '~> 2.0'
 
 # 1.3.7 has error uninitialized constant
