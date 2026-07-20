@@ -114,7 +114,8 @@ module UsersHelper
 
     def log_out_link
       [['Log Out', destroy_user_session_path,
-        { method: :delete, class: 'button button-warning button-clear' }]]
+        { method: :delete, class: 'button button-warning button-clear',
+          data: { turbo_method: 'delete' } }]]
     end
 
     def user_breadcrumbs(user = nil)
