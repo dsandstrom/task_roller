@@ -1,0 +1,12 @@
+<%= form_with(model: issue_subscription,
+              url: issue_issue_subscription_path(issue, issue_subscription),
+              method: :delete,
+              html: { name: 'issue_subscription_destroy_form',
+                      class: 'issue-subscription-form' },
+              data: { turbo_method: 'destroy' }) do |form| %>
+  <%= button_tag class: 'button button-success button-unsubscribe button-icon',
+                 title: 'Unsubscribe',
+                 data: { turbo_submits_with: '...' } do %>
+    <%= icon('close') %>
+  <% end %>
+<% end %>

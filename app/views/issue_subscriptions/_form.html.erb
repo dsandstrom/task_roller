@@ -1,11 +1,10 @@
 <%= form_with(model: issue_subscription,
               url: issue_issue_subscriptions_path(issue),
-              local: true,
               html: { name: 'issue_subscription_form',
-                      class: 'issue-subscription-form' }) do |form| %>
-  <%= form_errors(form.object) %>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+                      class: 'issue-subscription-form' },
+              data: { turbo_method: 'post' }) do |form| %>
+  <%= form.submit 'Subscribe to issue',
+                  class: 'button button-outline',
+                  title: 'Subscribe',
+                  data: { turbo_submits_with: 'Subscribing...' } %>
 <% end %>
