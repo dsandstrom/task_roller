@@ -3,32 +3,27 @@
   return unless project
 %>
 
-<% if project_tasks_subscription.persisted? %>
-  <% return unless can?(:destroy, project_tasks_subscription) %>
+<%= turbo_frame_tag "turbo_project_tasks_subscription_#{project.id}" do %>
+  <% if project_tasks_subscription.persisted? %>
+    <% return unless can?(:destroy, project_tasks_subscription) %>
 
-  <% url = project_tasks_subscription_path(project, project_tasks_subscription) %>
+    <% url = project_tasks_subscription_path(project, project_tasks_subscription) %>
 
-  <div class="button-wrapper">
-    <%= link_to 'Subscribed',
-                url,
-                method: :delete,
-                class: 'button button-success button-disabled' %>
-    <%= link_to url,
-                method: :delete,
-                class: 'button button-success button-unsubscribe button-icon',
-                title: 'Unsubscribe',
-                remote: true,
-                data: { disable_with: '...' } do %>
-      <%= icon('close') %>
-    <% end %>
-  </div>
-<% elsif project&.category&.subscribed_to_tasks?(current_user) %>
-  <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
-              class: "button button-success button-clear button-wrap button-disabled" %>
-<% elsif can?(:create, project_tasks_subscription) %>
-  <%= link_to 'Auto-Subscribe to New Tasks',
-              project_tasks_subscriptions_path(project),
-              method: :post, class: 'button button-clear button-wrap',
-              remote: true,
-              data: { disable_with: 'Subscribing' } %>
+    <div class="button-wrapper">
+      <%= link_to 'Subscribed',
+                  url,
+                  method: :delete,
+                  class: 'button button-success button-disabled' %>
+      <%= render 'project_tasks_subscriptions/destroy_form',
+                 project: project,
+                 project_tasks_subscription: project_tasks_subscription %>
+    </div>
+  <% elsif project&.category&.subscribed_to_tasks?(current_user) %>
+    <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
+                class: "button button-success button-clear button-wrap button-disabled" %>
+  <% elsif can?(:create, project_tasks_subscription) %>
+    <%= render 'project_tasks_subscriptions/form',
+               project: project,
+               project_tasks_subscription: project_tasks_subscription %>
+  <% end %>
 <% end %>
