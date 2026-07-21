@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -82,7 +80,6 @@ group :development, :test do
   gem 'fabrication', '~> 2'
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
-  gem 'guard-rails', '~> 0.8.1', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'rspec', '~> 3.10'
   # rspec-rails 8 requires rails 7
@@ -97,7 +94,6 @@ group :development do
   gem 'binding_of_caller'
   # Foreman used by bin/dev
   gem 'foreman', '~> 0.90'
-  gem 'guard-livereload', '~> 2.5', require: false
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
