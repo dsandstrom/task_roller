@@ -6,12 +6,13 @@
       category_issues_subscriptions_path(category)
     end
 %>
-<%= form_with(model: category_issues_subscription, url: url, local: true,
+<%= form_with(model: category_issues_subscription,
+              url: url,
               html: { name: 'issue_subscription_form',
-                      class: 'issue-subscription-form' }) do |form| %>
-  <%= form_errors(form.object) %>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+                      class: 'issue-subscription-form' },
+              data: {turbo_method: :post}) do |form| %>
+  <%= form.submit 'Auto-Subscribe to New Issues',
+                   class: 'button button-wrap button-clear',
+                  title: 'Subscribe',
+                  data: { turbo_submits_with: 'Subscribing...' } %>
 <% end %>
