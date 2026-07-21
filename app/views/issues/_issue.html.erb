@@ -38,13 +38,13 @@
 
   <main class="issue-container">
     <div class="issue-tags-wrapper">
-      <%# TODO: merge with edit %>
       <%= issue_tags(issue) %>
 
       <% if tasks.any? %>
         <p>
-          <%= link_to issue_tasks_path(issue),
-                      remote: true, class: 'toggle-link' do %>
+          <%= link_to 'javascript:void(0)',
+                      class: 'toggle-link',
+                      data: { toggle_target: "issue_#{issue.id}_tasks_wrapper" } do %>
             Preview <%= content_tag :span, pluralize(tasks.count, "Task"), class: 'tasks-count' %>
           <% end %>
         </p>
@@ -90,6 +90,8 @@
   <% end %>
 
   <% if tasks.any? %>
-    <div id="issue_<%= issue.id %>_tasks_wrapper" class="issue-tasks-wrapper"></div>
+    <div id="issue_<%= issue.id %>_tasks_wrapper" class="issue-tasks-wrapper hide">
+      <%= render(collection: tasks, partial: 'issues/task') %>
+    </div>
   <% end %>
 <% end %>

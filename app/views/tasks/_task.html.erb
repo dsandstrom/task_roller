@@ -37,13 +37,13 @@
 
   <main class="task-container">
     <div class="task-tags-wrapper">
-      <%# TODO: merge with edit %>
       <%= task_tags(task) %>
 
       <% if issue %>
         <p>
-          <%= link_to task_issue_path(task, issue),
-                      remote: true, class: 'toggle-link' do %>
+          <%= link_to 'javascript:void(0)',
+                      class: 'toggle-link',
+                      data: { toggle_target: "task_#{task.id}_issue_#{issue.id}_wrapper" } do %>
             Preview <%= content_tag :span, "Issue ##{issue.id}", class: 'issue-id' %>
           <% end %>
         </p>
@@ -74,14 +74,14 @@
         <% else %>
           <%= user&.name_or_email || User.destroyed_name %>
         <% end %>
-
-        <% if assignees.any? %>
-          <dt>Assigned</dt>
-          <dd class="task-assignees">
-            <%= render collection: assignees, partial: 'tasks/assignee' %>
-          </dd>
-        <% end %>
       </dd>
+
+      <% if assignees.any? %>
+        <dt>Assigned</dt>
+        <dd class="task-assignees">
+          <%= render collection: assignees, partial: 'tasks/assignee' %>
+        </dd>
+      <% end %>
     </dl>
   </main>
 
@@ -93,6 +93,8 @@
   <% end %>
 
   <% if issue %>
-    <div id="task_<%= task.id %>_issue_<%= issue.id %>_wrapper" class="task-issue-wrapper"></div>
+    <div id="task_<%= task.id %>_issue_<%= issue.id %>_wrapper" class="task-issue-wrapper hide">
+      <%= render('tasks/issue', task: task, issue: issue) %>
+    </div>
   <% end %>
 <% end %>

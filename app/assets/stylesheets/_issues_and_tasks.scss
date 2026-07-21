@@ -599,6 +599,12 @@ $notification-color: $color-success;
   }
 }
 
+.issue-tasks-wrapper,
+.task-issue-wrapper {
+  &.hide {
+    display: none;
+  }
+}
 
 form {
   &.issue-subscription-form,
