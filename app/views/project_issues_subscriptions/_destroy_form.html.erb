@@ -1,7 +1,7 @@
-<%= form_with(model: category_issues_subscription,
-              url: category_issues_subscription_path(category, category_issues_subscription),
+<%= form_with(model: project_issues_subscription,
+              url: project_issues_subscription_path(project, project_issues_subscription),
               method: :delete,
-              html: { name: 'category_issues_subscription_destroy_form',
+              html: { name: 'project_issue_subscription_destroy_form',
                       class: 'issue-subscription-form' },
               data: { turbo_method: 'delete' }) do |form| %>
   <%= button_tag class: 'button button-success button-unsubscribe button-icon',

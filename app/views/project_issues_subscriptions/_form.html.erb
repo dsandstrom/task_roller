@@ -6,12 +6,12 @@
       project_issues_subscriptions_path(project)
     end
 %>
-<%= form_with(model: project_issues_subscription, url: url, local: true,
-              html: { name: 'issue_subscription_form',
-                      class: 'issue-subscription-form' }) do |form| %>
-  <%= form_errors(form.object) %>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+<%= form_with(model: project_issues_subscription,
+              url: url,
+              html: { name: 'project_issues_subscription_form',
+                      class: 'issue-subscription-form' },
+              data: {turbo_method: :post}) do |form| %>
+    <%= form.submit 'Auto-Subscribe to New Issues',
+                    class: 'button button-clear button-wrap',
+                    data: { disable_with: 'Subscribing...', turbo_submits_with: 'Subscribing...' } %>
 <% end %>

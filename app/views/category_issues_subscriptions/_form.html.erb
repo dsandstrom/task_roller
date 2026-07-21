@@ -8,7 +8,7 @@
 %>
 <%= form_with(model: category_issues_subscription,
               url: url,
-              html: { name: 'issue_subscription_form',
+              html: { name: 'category_issues_subscription_form',
                       class: 'issue-subscription-form' },
               data: { turbo_method: :post }) do |form| %>
   <%= form.submit 'Auto-Subscribe to New Issues',
