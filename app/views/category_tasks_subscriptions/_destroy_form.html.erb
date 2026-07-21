@@ -1,0 +1,12 @@
+<%= form_with(model: category_tasks_subscription,
+              url: category_tasks_subscription_path(category, category_tasks_subscription),
+              method: :delete,
+              html: { name: 'category_task_subscription_destroy_form',
+                      class: 'task-subscription-form' },
+              data: { turbo_method: 'delete' }) do |form| %>
+  <%= button_tag class: 'button button-success button-unsubscribe button-icon',
+                 title: 'Unsubscribe',
+                 data: { disble_with: '...', turbo_submits_with: '...' } do %>
+    <%= icon('close') %>
+  <% end %>
+<% end %>

@@ -6,12 +6,13 @@
       category_tasks_subscriptions_path(category)
     end
 %>
-<%= form_with(model: category_tasks_subscription, url: url, local: true,
+<%= form_with(model: category_tasks_subscription,
+              url: url,
               html: { name: 'task_subscription_form',
-                      class: 'task-subscription-form' }) do |form| %>
-  <%= form_errors(form.object) %>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+                      class: 'task-subscription-form' },
+              data: { turbo_method: :post }) do |form| %>
+  <%= form.submit 'Auto-Subscribe to New Tasks',
+                  class: 'button button-wrap button-clear',
+                  title: 'Subscribe',
+                  data: { disable_with: 'Subscribing...', turbo_submits_with: 'Subscribing...' } %>
 <% end %>
