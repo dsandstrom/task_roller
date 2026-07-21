@@ -3,20 +3,22 @@
   return unless category
 %>
 
-<% if category_issues_subscription.persisted? %>
-  <% return unless can?(:destroy, category_issues_subscription) %>
+<%= turbo_frame_tag "turbo_category_issues_subscription_#{category.id}" do %>
+  <% if category_issues_subscription.persisted? %>
+    <% return unless can?(:destroy, category_issues_subscription) %>
 
-  <div class="button-wrapper">
-    <%= link_to 'Subscribed',
-                'javascript:void(0)',
-                method: :delete,
-                class: 'button button-success button-disabled' %>
-    <%= render 'category_issues_subscriptions/destroy_form',
+    <div class="button-wrapper">
+      <%= link_to 'Subscribed',
+                  'javascript:void(0)',
+                  method: :delete,
+                  class: 'button button-success button-disabled' %>
+      <%= render 'category_issues_subscriptions/destroy_form',
+                 category: category,
+                 category_issues_subscription: category_issues_subscription %>
+    </div>
+  <% elsif can?(:create, category_issues_subscription) %>
+    <%= render 'category_issues_subscriptions/form',
                category: category,
                category_issues_subscription: category_issues_subscription %>
-  </div>
-<% elsif can?(:create, category_issues_subscription) %>
-  <%= render 'category_issues_subscriptions/form',
-             category: category,
-             category_issues_subscription: category_issues_subscription %>
+  <% end %>
 <% end %>

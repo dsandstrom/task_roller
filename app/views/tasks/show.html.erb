@@ -4,10 +4,12 @@
   <div class="task-columns">
     <div class="task-column first-column">
       <%= content_tag :section,
-                      render(@subscription, task: @task),
                       class: "task-subscription-wrapper",
-                      id: "subscription_for_#{@task.id}" %>
-
+                      id: "subscription_for_#{@task.id}" do %>
+        <%= turbo_frame_tag "turbo_frame_task_subscription_for_#{@task.id}" do %>
+          <%= render(@subscription, task: @task) %>
+        <% end %>
+      <% end %>
       <% if @task.open? %>
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>

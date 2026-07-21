@@ -3,23 +3,25 @@
   return unless project
 %>
 
-<% if project_issues_subscription.persisted? %>
-  <% return unless can?(:destroy, project_issues_subscription) %>
+<%= turbo_frame_tag "turbo_project_issues_subscription_#{project.id}" do %>
+  <% if project_issues_subscription.persisted? %>
+    <% return unless can?(:destroy, project_issues_subscription) %>
 
-  <div class="button-wrapper">
-    <%= link_to 'Subscribed',
-                'javascript:void(0)',
-                method: :delete,
-                class: 'button button-success button-disabled' %>
-    <%= render 'project_issues_subscriptions/destroy_form',
+    <div class="button-wrapper">
+      <%= link_to 'Subscribed',
+                  'javascript:void(0)',
+                  method: :delete,
+                  class: 'button button-success button-disabled' %>
+      <%= render 'project_issues_subscriptions/destroy_form',
+                 project: project,
+                 project_issues_subscription: project_issues_subscription %>
+    </div>
+  <% elsif project&.category&.subscribed_to_issues?(current_user) %>
+    <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
+                class: "button button-success button-clear button-wrap button-disabled" %>
+  <% elsif can?(:create, project_issues_subscription) %>
+    <%= render 'project_issues_subscriptions/form',
                project: project,
                project_issues_subscription: project_issues_subscription %>
-  </div>
-<% elsif project&.category&.subscribed_to_issues?(current_user) %>
-  <%= link_to 'Subscribed Thru Category', 'javascript:void(0)',
-              class: "button button-success button-clear button-wrap button-disabled" %>
-<% elsif can?(:create, project_issues_subscription) %>
-  <%= render 'project_issues_subscriptions/form',
-             project: project,
-             project_issues_subscription: project_issues_subscription %>
+  <% end %>
 <% end %>

@@ -4,9 +4,12 @@
   <div class="issue-columns">
     <div class="issue-column first-column">
       <%= content_tag :section,
-                      render(@subscription, issue: @issue),
                       class: "issue-subscription-wrapper",
-                      id: "subscription_for_#{@issue.id}" %>
+                      id: "subscription_for_#{@issue.id}" do %>
+        <%= turbo_frame_tag "turbo_frame_issue_subscription_for_#{@issue.id}" do %>
+          <%= render(@subscription, issue: @issue) %>
+        <% end %>
+      <% end %>
 
       <% case @issue.status %>
       <% when 'resolved' %>
