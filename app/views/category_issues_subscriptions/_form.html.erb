@@ -10,9 +10,9 @@
               url: url,
               html: { name: 'issue_subscription_form',
                       class: 'issue-subscription-form' },
-              data: {turbo_method: :post}) do |form| %>
+              data: { turbo_method: :post }) do |form| %>
   <%= form.submit 'Auto-Subscribe to New Issues',
-                   class: 'button button-wrap button-clear',
+                  class: 'button button-wrap button-clear',
                   title: 'Subscribe',
-                  data: { turbo_submits_with: 'Subscribing...' } %>
+                  data: { disable_with: 'Subscribing...', turbo_submits_with: 'Subscribing...' } %>
 <% end %>

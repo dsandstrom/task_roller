@@ -3,7 +3,7 @@
               method: :delete,
               html: { name: 'category_issue_subscription_destroy_form',
                       class: 'issue-subscription-form' },
-              data: { turbo_method: 'destroy' }) do |form| %>
+              data: { turbo_method: 'delete' }) do |form| %>
   <%= button_tag class: 'button button-success button-unsubscribe button-icon',
                  title: 'Unsubscribe',
                  data: { turbo_submits_with: '...' } do %>
