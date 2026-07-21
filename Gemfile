@@ -100,6 +100,7 @@ group :development do
   gem 'guard-livereload', '~> 2.5', require: false
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
+  gem 'rails_live_reload', '~> 0.5'
   # 1.72 introduces plugins
   gem 'rubocop', '~> 1.71.0', require: false
   gem 'rubocop-rails', '~> 2', require: false
