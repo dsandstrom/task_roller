@@ -1,14 +1,5 @@
 <% return unless can?(:create, comment) %>
 
-<%
-url =
-  if object.is_a?(Task)
-    new_task_task_comment_path(object)
-  else
-    new_issue_issue_comment_path(object)
-  end
-%>
-
 <div id="new_comment" class="comment new-comment">
   <header>
     <div class="header-box">
@@ -16,15 +7,7 @@ url =
     </div>
   </header>
 
-  <main>
-    <%= form_tag url, method: :get, name: 'new_comment_form',
-                      class: 'new-comment-form',
-                      remote: true do %>
-      <%= text_area_tag :new_comment_body, nil,
-                        id: 'new_comment_body',
-                        name: 'new_comment[body]',
-                        data: { url: url },
-                        onfocus: "this.parentNode.requestSubmit();" %>
-    <% end %>
-  </main>
+  <%= turbo_frame_tag :turbo_new_comment do %>
+    <%= render 'shared/new_comment_form', object: object %>
+  <% end %>
 </div>

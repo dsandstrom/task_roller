@@ -5,11 +5,10 @@
     else
       task_task_comments_url(task)
     end
-  remote = false if remote.nil?
   autofocus = !task_comment.persisted? if autofocus.nil?
 %>
 
-<%= form_with(model: task_comment, url: url, local: !remote,
+<%= form_with(model: task_comment, url: url,
               html: { name: 'task_comment_form',
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
@@ -24,16 +23,14 @@
     <%= form.submit comment_button_text(task_comment),
                     class: 'button' %>
 
-    <% if remote %>
-      <% if task_comment.persisted? %>
-        <%= link_to 'reset', task_task_comment_path(task, task_comment),
-                    id: 'comment_reset_link',
-                    remote: remote %>
-      <% else %>
-        <%= link_to 'reset', task_path(task),
-                    id: 'comment_reset_link',
-                    remote: remote %>
-      <% end %>
+    <% if task_comment.persisted? %>
+      <%= link_to 'reset', task_task_comment_path(task, task_comment),
+                  id: 'comment_reset_link',
+                  data: { turbo_frame: "turbo_edit_comment" } %>
+    <% else %>
+      <%= link_to 'reset', task_path(task),
+                  id: 'comment_reset_link',
+                  data: { turbo_frame: "turbo_new_comment" } %>
     <% end %>
   </div>
 <% end %>

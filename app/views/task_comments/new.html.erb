@@ -2,7 +2,9 @@
 
 <h2>New Comment</h2>
 
-<%= render 'form', task: @task,
-                   task_comment: @task_comment %>
+<%= turbo_frame_tag "turbo_new_comment" do %>
+  <%= render 'form', task: @task,
+                     task_comment: @task_comment %>
+<% end %>
 
 <p><%= link_to 'Back', :back %></p>

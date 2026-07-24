@@ -7,7 +7,9 @@ by <%= content_tag :strong, @task_comment.user.name_or_email %>
 on <%= content_tag :span, formatted_dates(@task_comment) %>
 </p>
 
-<%= render 'form', task: @task,
-                   task_comment: @task_comment %>
+<%= turbo_frame_tag @task_comment do %>
+  <%= render 'form', task: @task,
+                     task_comment: @task_comment %>
+<% end %>
 
 <p><%= link_to 'Back', :back %></p>

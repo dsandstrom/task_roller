@@ -131,8 +131,10 @@
       <div class="task-comments comments">
         <%= render 'tasks/description', task: @task, user: @user %>
 
-        <%= render partial: 'shared/comment', collection: @comments,
-                   locals: { object: @task } %>
+        <%= turbo_frame_tag :turbo_comments do %>
+          <%= render partial: 'shared/comment', collection: @comments,
+                     locals: { object: @task } %>
+        <% end %>
 
         <%= render 'shared/new_comment',
                    object: @task, comment: new_task_comment(@task),

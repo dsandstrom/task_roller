@@ -1199,10 +1199,10 @@ RSpec.describe "tasks/show", type: :view do
                Fabricate.build(:task_subscription, task: @task, user: reviewer))
       end
 
-      it "renders new task_subscription link" do
+      it "renders new task_subscription form" do
         render
-        expect(rendered)
-          .to have_link(nil, href: task_task_subscriptions_path(@task))
+        form_url = task_task_subscriptions_path(@task)
+        assert_select "form[action=?][method=?]", form_url, "post"
       end
     end
 
@@ -1212,16 +1212,16 @@ RSpec.describe "tasks/show", type: :view do
         @subscription = assign(:subscription, task_subscription)
       end
 
-      it "doesn't render new task_subscription link" do
+      it "doesn't render new task_subscription form" do
         render
-        url = task_task_subscriptions_path(@task)
-        expect(rendered).not_to have_link(nil, href: url)
+        form_url = task_task_subscriptions_path(@task)
+        assert_select "form[action=?]", form_url, count: 0
       end
 
-      it "renders destroy task_subscription link" do
+      it "renders destroy task_subscription form" do
         render
-        url = task_task_subscription_path(@task, @subscription)
-        assert_select "a[data-method='delete'][href='#{url}']"
+        form_url = task_task_subscription_path(@task, @subscription)
+        assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
       end
     end
 
@@ -1469,10 +1469,10 @@ RSpec.describe "tasks/show", type: :view do
           assign(:subscription, subscription)
         end
 
-        it "doesn't render new task_subscription link" do
-          render template: subject, layout: "layouts/application"
-          expect(rendered)
-            .not_to have_link(nil, href: task_task_subscriptions_path(@task))
+        it "doesn't render new task_subscription form" do
+          render
+          form_url = task_task_subscriptions_path(@task)
+          assert_select "form[action=?]", form_url, count: 0
         end
       end
 
@@ -1484,8 +1484,8 @@ RSpec.describe "tasks/show", type: :view do
 
         it "doesn't render destroy task_subscription link" do
           render template: subject, layout: "layouts/application"
-          url = task_task_subscription_path(@task, @subscription)
-          expect(rendered).not_to have_link(nil, href: url)
+          form_url = task_task_subscription_path(@task, @subscription)
+          assert_select "form[data-turbo-method=?]", "delete", count: 0
         end
       end
     end
@@ -1619,10 +1619,10 @@ RSpec.describe "tasks/show", type: :view do
           assign(:subscription, subscription)
         end
 
-        it "renders new task_subscription link" do
+        it "renders new task_subscription form" do
           render
-          expect(rendered)
-            .to have_link(nil, href: task_task_subscriptions_path(@task))
+          form_url = task_task_subscriptions_path(@task)
+          assert_select "form[action=?][method=?]", form_url, "post"
         end
       end
 
@@ -1632,16 +1632,16 @@ RSpec.describe "tasks/show", type: :view do
           @subscription = assign(:subscription, task_subscription)
         end
 
-        it "doesn't render new task_subscription link" do
+        it "doesn't render new task_subscription form" do
           render
-          url = task_task_subscriptions_path(@task)
-          expect(rendered).not_to have_link(nil, href: url)
+          form_url = task_task_subscriptions_path(@task)
+          assert_select "form[action=?]", form_url, count: 0
         end
 
-        it "renders destroy task_subscription link" do
+        it "renders destroy task_subscription form" do
           render
-          url = task_task_subscription_path(@task, @subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
+          form_url = task_task_subscription_path(@task, @subscription)
+          assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
         end
       end
     end
