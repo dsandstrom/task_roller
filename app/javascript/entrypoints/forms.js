@@ -23,9 +23,6 @@ const initForm = function (element) {
 const initForms = function (event) {
   formNames.forEach((name, i) => {
     document.getElementsByName(name).forEach((element) => {
-      // TODO: need to stream in header to get updated dates
-      // on page leave or before fetch, remove currentforms
-
       initForm(element);
     });
   });

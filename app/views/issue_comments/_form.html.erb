@@ -1,16 +1,17 @@
 <%
-  url =
-    if issue_comment.persisted?
-      issue_issue_comment_url(issue, issue_comment)
-    else
-      issue_issue_comments_url(issue)
-    end
-  remote = false if remote.nil?
+  if issue_comment.persisted?
+    id = "issue_comment_form_#{issue_comment.id}"
+    url = issue_issue_comment_url(issue, issue_comment)
+  else
+    url = issue_issue_comments_url(issue)
+    id = "new_issue_comment_form"
+  end
   autofocus = !issue_comment.persisted? if autofocus.nil?
 %>
 
-<%= form_with(model: issue_comment, url: url, local: !remote,
+<%= form_with(model: issue_comment, url: url,
               html: { name: 'issue_comment_form',
+                      id: id,
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 
@@ -24,16 +25,14 @@
     <%= form.submit comment_button_text(issue_comment),
                     class: 'button' %>
 
-    <% if remote %>
-      <% if issue_comment.persisted? %>
-        <%= link_to 'reset', issue_issue_comment_path(issue, issue_comment),
-                    id: 'comment_reset_link',
-                    remote: remote %>
-      <% else %>
-        <%= link_to 'reset', issue_path(issue),
-                    id: 'comment_reset_link',
-                    remote: remote %>
-      <% end %>
+    <% if issue_comment.persisted? %>
+      <%= link_to 'reset', issue_issue_comment_path(issue, issue_comment),
+                  id: 'comment_reset_link',
+                  data: { turbo_frame: "turbo_edit_comment" } %>
+    <% else %>
+      <%= link_to 'reset', issue_path(issue),
+                  id: 'comment_reset_link',
+                  data: { turbo_frame: "turbo_new_comment" } %>
     <% end %>
   </div>
 <% end %>

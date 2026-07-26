@@ -1,0 +1,6 @@
+<%= turbo_stream.append :turbo_comments,
+                        partial: 'shared/comment',
+                        locals: { object: @issue, comment: @issue_comment } %>
+<%= turbo_stream.update :turbo_new_comment,
+                        partial: 'shared/new_comment_form',
+                        locals: { object: @issue } %>

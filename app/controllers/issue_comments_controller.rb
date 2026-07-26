@@ -49,8 +49,11 @@ class IssueCommentsController < ApplicationController
 
   def destroy
     @issue_comment.destroy
-    redirect_to issue_url(@issue),
-                notice: 'Comment was successfully destroyed.'
+
+    respond_to do |format|
+     format.html { redirect_to @issue, notice: 'Comment was successfully destroyed.' }
+     format.turbo_stream
+   end
   end
 
   private
@@ -68,6 +71,7 @@ class IssueCommentsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to redirect_url }
         format.js { render :show }
+        format.turbo_stream
       end
     end
 

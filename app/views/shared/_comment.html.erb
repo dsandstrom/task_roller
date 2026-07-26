@@ -14,18 +14,9 @@
 %>
 
 <div id="comment-<%= comment.id %>" class="<%= html_class %>">
-  <header>
-    <%= render notification if notification %>
-
-    <div class="header-box">
-      <p><span class="comment-user"><%= comment.user ? comment.user.name_or_email : User.destroyed_name %></span>:</p>
-      <p class="comment-dates">
-        <%= formatted_dates comment %>
-      </p>
-    </div>
-  </header>
-
   <%= turbo_frame_tag comment do %>
+    <%= render 'shared/comment_header', comment: comment, notification: notification %>
+
     <main>
       <%= content_tag :div, comment.body_html.html_safe,
                       class: 'comment-body' %>

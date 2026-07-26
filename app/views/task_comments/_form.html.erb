@@ -1,15 +1,17 @@
 <%
-  url =
-    if task_comment.persisted?
-      task_task_comment_url(task, task_comment)
-    else
-      task_task_comments_url(task)
-    end
+  if task_comment.persisted?
+    id = "task_comment_form_#{task_comment.id}"
+    url = task_task_comment_url(task, task_comment)
+  else
+    url = task_task_comments_url(task)
+    id = "new_task_comment_form"
+  end
   autofocus = !task_comment.persisted? if autofocus.nil?
 %>
 
 <%= form_with(model: task_comment, url: url,
               html: { name: 'task_comment_form',
+                      id: id,
                       novalidate: 'novalidate' }) do |form| %>
   <%= form_errors(form.object) %>
 

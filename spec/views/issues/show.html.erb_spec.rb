@@ -246,10 +246,11 @@ RSpec.describe "issues/show", type: :view do
         assign(:subscription, subscription)
       end
 
-      it "renders new issue_subscription link" do
+      it "renders new issue_subscription form" do
         render
-        expect(rendered)
-          .to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+
+        form_url = issue_issue_subscriptions_path(@issue)
+        assert_select "form[action=?][method=?]", form_url, "post"
       end
     end
 
@@ -259,16 +260,16 @@ RSpec.describe "issues/show", type: :view do
         @subscription = assign(:subscription, issue_subscription)
       end
 
-      it "doesn't render new issue_subscription link" do
+      it "doesn't render new issue_subscription form" do
         render
-        url = issue_issue_subscriptions_path(@issue)
-        expect(rendered).not_to have_link(nil, href: url)
+        form_url = issue_issue_subscriptions_path(@issue)
+        assert_select "form[action=?]", form_url, count: 0
       end
 
-      it "renders destroy issue_subscription link" do
+      it "renders destroy issue_subscription form" do
         render
-        url = issue_issue_subscription_path(@issue, @subscription)
-        assert_select "a[data-method='delete'][href='#{url}']"
+        form_url = issue_issue_subscription_path(@issue, @subscription)
+        assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
       end
     end
 
@@ -445,10 +446,11 @@ RSpec.describe "issues/show", type: :view do
           assign(:subscription, subscription)
         end
 
-        it "renders new issue_subscription link" do
+        it "renders new issue_subscription form" do
           render
-          expect(rendered)
-            .to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+
+          form_url = issue_issue_subscriptions_path(@issue)
+          assert_select "form[action=?][method=?]", form_url, "post"
         end
       end
 
@@ -458,16 +460,16 @@ RSpec.describe "issues/show", type: :view do
           @subscription = assign(:subscription, issue_subscription)
         end
 
-        it "doesn't render new issue_subscription link" do
+        it "doesn't render new issue_subscription form" do
           render
-          url = issue_issue_subscriptions_path(@issue)
-          expect(rendered).not_to have_link(nil, href: url)
+          form_url = issue_issue_subscriptions_path(@issue)
+          assert_select "form[action=?]", form_url, count: 0
         end
 
-        it "renders destroy issue_subscription link" do
+        it "renders destroy issue_subscription form" do
           render
-          url = issue_issue_subscription_path(@issue, @subscription)
-          assert_select "a[data-method='delete'][href='#{url}']"
+          form_url = issue_issue_subscription_path(@issue, @subscription)
+          assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
         end
       end
 

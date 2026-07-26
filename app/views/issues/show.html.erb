@@ -102,8 +102,10 @@
       <div class="issue-comments comments">
         <%= render 'issues/description', issue: @issue, user: @user %>
 
-        <%= render partial: 'shared/comment', collection: @comments,
-                   locals: { object: @issue } %>
+        <%= turbo_frame_tag :turbo_comments do %>
+          <%= render partial: 'shared/comment', collection: @comments,
+                     locals: { object: @issue } %>
+        <% end %>
 
         <%= render 'shared/new_comment',
                    object: @issue, comment: new_issue_comment(@issue),

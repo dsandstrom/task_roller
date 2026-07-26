@@ -2,7 +2,13 @@
 
 <h2>Edit Comment</h2>
 
-<%= render 'form', issue: @issue,
-                   issue_comment: @issue_comment %>
+<%= turbo_frame_tag @issue_comment do %>
+  <%= render 'shared/comment_header', comment: @issue_comment, notification: nil %>
+
+  <main>
+    <%= render 'form', issue: @issue,
+                       issue_comment: @issue_comment %>
+  </main>
+<% end %>
 
 <p><%= link_to 'Back', :back %></p>
