@@ -5,53 +5,45 @@ import hljs from 'highlight.js';
 let currentForms = [];
 const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'issue_form', 'category_form', 'project_form',
-                   'task_form', 'task_comment_form', 'issue_comment_form',
-                   'user_password_form'];
+                   'issue_comment_form', 'task_comment_form',
+                   'task_form', 'user_password_form'];
 let hiddenForms = new Map();
 hiddenForms.set('task_assignment_link', 'task_assignment_form');
 
-// const resetCommentForms = function (event) {
-//   let openComments = document.querySelectorAll('.comment.with-form');
-//
-//   for (var i = 0; i < openComments.length; i++) {
-//     let openComment = openComments[i];
-//
-//     openComment.classList.remove('with-form');
-//     openComment.classList.add('with-hidden-form');
-//   }
-// }
+// TODO: rename file to markdownForms.js
 
-// const initForms = function (event) {
-//   formNames.forEach((name, i) => {
-//     document.getElementsByName(name).forEach((element) => {
-//       let form = currentForm(element);
-//
-//       if (form) {
-//         form.focus();
-//       } else {
-//         form = new Form(element);
-//
-//         currentForms.push(form);
-//         element.classList.add('with-validation');
-//         form.focus();
-//       }
-//     });
-//   });
-// }
+const initForm = function (element) {
+  let form = new Form(element);
 
-const initFormsTurbo = function (event) {
+  element.classList.add('with-validation');
+  currentForms.push(form);
+  form.focus();
+}
+
+const initForms = function (event) {
   formNames.forEach((name, i) => {
     document.getElementsByName(name).forEach((element) => {
-      let form = new Form(element);
-      element.classList.add('with-validation');
-      form.focus();
+      // TODO: need to stream in header to get updated dates
+      // on page leave or before fetch, remove currentforms
+
+      initForm(element);
     });
   });
 }
 
-// const currentForm = function (element) {
-//   return currentForms.find(form => form.form == element);
-// }
+const initTurboForm = function (event) {
+  let formElem = event.target.querySelector('form');
+
+  initForm(formElem);
+}
+
+const resetCurrentForms = function () {
+  currentForms.forEach((form) => {
+    form.reset();
+  });
+
+  currentForms = [];
+}
 
 // NOTE: not sure if needed
 const syntaxHighlight = function (event) {
@@ -61,15 +53,8 @@ const syntaxHighlight = function (event) {
   }
 }
 
-// document.addEventListener('turbo:click', function(event) {
-//   console.log('turbo click');
-//
-//   // resetCommentForms();
-// });
-
 document.addEventListener('turbo:load', function(event) {
-  // console.log('turbo load');
-  initFormsTurbo(event);
+  initForms(event);
   syntaxHighlight();
 
   // toggle hidden sidebar forms
@@ -84,10 +69,6 @@ document.addEventListener('turbo:load', function(event) {
 
 // After markdown editor is added
 document.addEventListener('turbo:frame-load', function(event) {
-  // console.log('turbo frame load');
-  // let eventTarget = event.target;
-  // if (eventTarget.id != 'turbo_new_comment') return;
-
   let eventComment = event.target.parentNode;
 
   if (!eventComment.classList.contains('comment')) return;
@@ -98,35 +79,19 @@ document.addEventListener('turbo:frame-load', function(event) {
   } else {
     // After edit
     eventComment.classList.add('with-form');
-    initFormsTurbo(event);
+    initTurboForm(event);
   }
-
-  // resetCommentForms(event);
-  // syntaxHighlight();
-
-  // TODO: if form added, toggle off other forms
 });
 
 // After comment create
 document.addEventListener('turbo:before-stream-render', function(event) {
-  // console.log('turbo');
-
   let newComment = document.getElementById('new_comment');
   if (!newComment) return;
 
   newComment.classList.remove('with-form');
 });
 
-// document.addEventListener('turbo:visit', function() {
-//   var openComments = document.querySelectorAll('.comment.with-form');
-//
-//   for (var i = 0; i < openComments.length; i++) {
-//     var openComment = openComments[i];
-//     var id = openComment.dataset.id;
-//
-//     if (id) {
-//       openComment.classList.remove('with-form');
-//       openComment.classList.add('with-hidden-form');
-//     }
-//   }
-// })
+document.addEventListener('turbo:visit', function() {
+  // On page leave
+  resetCurrentForms();
+});

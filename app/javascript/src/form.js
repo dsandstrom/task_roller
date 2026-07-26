@@ -232,4 +232,12 @@ export class Form {
       editor.codemirror.focus();
     });
   }
+
+  reset() {
+    if (this.editors === undefined) return;
+
+    this.editors.forEach((editor) => {
+      editor.toTextArea();
+    })
+  }
 };
