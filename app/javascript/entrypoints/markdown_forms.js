@@ -10,8 +10,6 @@ const formNames = ['issue_type_form', 'task_type_form', 'user_form',
 let hiddenForms = new Map();
 hiddenForms.set('task_assignment_link', 'task_assignment_form');
 
-// TODO: rename file to markdownForms.js
-
 const initForm = function (element) {
   let form = new Form(element);
 
