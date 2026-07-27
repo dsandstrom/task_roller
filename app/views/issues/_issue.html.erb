@@ -42,9 +42,9 @@
 
       <% if tasks.any? %>
         <p>
-          <%= link_to 'javascript:void(0)',
-                      class: 'toggle-link',
-                      data: { toggle_target: "issue_#{issue.id}_tasks_wrapper" } do %>
+          <%= link_to issue_tasks_path(issue),
+                      class: 'turbo-stream-link',
+                      data: { turbo_stream: true } do %>
             Preview <%= content_tag :span, pluralize(tasks.count, "Task"), class: 'tasks-count' %>
           <% end %>
         </p>
@@ -89,9 +89,5 @@
     </footer>
   <% end %>
 
-  <% if tasks.any? %>
-    <div id="issue_<%= issue.id %>_tasks_wrapper" class="issue-tasks-wrapper hide">
-      <%= render(collection: tasks, partial: 'issues/task') %>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag "turbo_issue_tasks_#{issue.id}", class: "issue-tasks-wrapper" %>
 <% end %>

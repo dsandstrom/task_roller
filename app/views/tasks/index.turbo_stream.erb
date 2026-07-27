@@ -1,0 +1,4 @@
+<%= turbo_stream.replace "turbo_issue_tasks_#{@source.id}",
+                         collection: @tasks,
+                         partial: 'issues/task',
+                         locals: { issue: @source } %>

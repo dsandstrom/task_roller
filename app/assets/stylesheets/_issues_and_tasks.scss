@@ -255,6 +255,7 @@ $notification-color: $color-success;
     }
 
     &.disabled {
+      &:link,
       &:visited,
       &:hover,
       &:focus,
