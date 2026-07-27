@@ -8,7 +8,7 @@
         <%= link_to_if(can?(:read, issue),
                        safe_join([content_tag(:span, "Issue ##{issue.id}", class: 'issue-id'),
                                   content_tag(:span, issue.summary)], ' '),
-                       issue_path(issue)) %>
+                       task_issue_path(task, issue)) %>
       </h4>
 
       <p class="task-issue-tags">

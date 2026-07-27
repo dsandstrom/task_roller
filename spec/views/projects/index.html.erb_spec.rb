@@ -121,14 +121,14 @@ RSpec.describe "projects/index", type: :view do
         Fabricate(:project_tasks_subscription, project: project)
       end
 
-      it "renders subscribe links" do
+      it "renders subscribe buttons" do
         render
 
         issues_url = project_issues_subscriptions_path(project)
         tasks_url = project_tasks_subscriptions_path(project)
 
-        expect(rendered).to have_link(nil, href: issues_url)
-        expect(rendered).to have_link(nil, href: tasks_url)
+        assert_select "form[action=?][method=?]", issues_url, "post"
+        assert_select "form[action=?][method=?]", tasks_url, "post"
       end
     end
 
@@ -149,8 +149,8 @@ RSpec.describe "projects/index", type: :view do
           project_issues_subscription_path(project, issues_subscription)
         tasks_url = project_tasks_subscription_path(project, tasks_subscription)
 
-        assert_select "a[data-method='delete'][href='#{issues_url}']"
-        assert_select "a[data-method='delete'][href='#{tasks_url}']"
+        assert_select "form[action=?][data-turbo-method=?]", issues_url, "delete"
+        assert_select "form[action=?][data-turbo-method=?]", tasks_url, "delete"
       end
     end
   end
