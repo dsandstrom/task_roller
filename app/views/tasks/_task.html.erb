@@ -41,9 +41,9 @@
 
       <% if issue %>
         <p>
-          <%= link_to 'javascript:void(0)',
-                      class: 'toggle-link',
-                      data: { toggle_target: "task_#{task.id}_issue_#{issue.id}_wrapper" } do %>
+          <%= link_to task_issue_path(task, issue),
+                      class: "turbo-stream-link",
+                      data: { turbo_stream: true } do %>
             Preview <%= content_tag :span, "Issue ##{issue.id}", class: 'issue-id' %>
           <% end %>
         </p>
@@ -92,9 +92,5 @@
     </footer>
   <% end %>
 
-  <% if issue %>
-    <div id="task_<%= task.id %>_issue_<%= issue.id %>_wrapper" class="task-issue-wrapper hide">
-      <%= render('tasks/issue', task: task, issue: issue) %>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag "turbo_task_issue_#{task.id}", class: "task-issue-wrapper" %>
 <% end %>

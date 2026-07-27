@@ -5,6 +5,12 @@ body {
   background: $white;
 }
 
+a {
+  &.disabled {
+    pointer-events: none;
+  }
+}
+
 .main-container {
   display: flex;
   flex-direction: column;

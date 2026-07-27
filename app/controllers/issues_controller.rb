@@ -26,12 +26,12 @@ class IssuesController < ApplicationController
   def show
     # TODO: destroy 'new' notifications for current_user
     @user = @issue.user
+    @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
 
     respond_to do |format|
       format.html { set_issue_variables }
-      format.js do
-        @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
-      end
+      format.js
+      format.turbo_stream
     end
   end
 

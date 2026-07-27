@@ -241,7 +241,8 @@ $notification-color: $color-success;
     }
   }
 
-  .toggle-link {
+  .toggle-link,
+  .turbo-stream-link {
     margin: 0 0 .5rem;
     color: $color-tertiary;
     font-size: 1.2rem;
@@ -250,6 +251,16 @@ $notification-color: $color-success;
     &:hover,
     &:focus {
       color: $color-secondary;
+
+    }
+
+    &.disabled {
+      &:visited,
+      &:hover,
+      &:focus,
+      &:active {
+        color: $light-gray;
+      }
     }
 
     .issue-id,
