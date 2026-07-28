@@ -8,7 +8,7 @@ RailsLiveReload.configure do |config|
   # config.watch %r{(app|vendor)/(assets|javascript)/\w+/(.+\.(css|js|html|png|jpg|ts|jsx)).*}, reload: :always
 
   # More examples:
-  # config.watch %r{app/helpers/.+\.rb}, reload: :always
+  config.watch %r{app/helpers/.+\.rb}, reload: :always
   # config.watch %r{config/locales/.+\.yml}, reload: :always
 
   # Ignored folders & files
