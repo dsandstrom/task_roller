@@ -6,7 +6,9 @@
   <div class="first-column">
     <% if issues.any? || searching? %>
       <div class="issues">
-        <%= render issues %>
+        <% issues.each do |issue|  %>
+          <%= turbo_frame_tag "turbo_issue_#{issue.id}" do %><%= render issue %><% end %>
+        <% end %>
       </div>
 
       <%= render 'shared/simple_page_links', collection: issues %>

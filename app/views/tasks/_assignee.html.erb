@@ -1,7 +1,7 @@
 <% url = user_assignments_path(assignee) %>
 
 <% if can?(:read, assignee) && !current_page?(url) %>
-  <%= link_to assignee.name_or_email, url, class: 'task-assignee' %>
+  <%= link_to assignee.name_or_email, url, class: 'task-assignee', data: { turbo_frame: '_top' } %>
 <% else %>
   <%= content_tag :span,
               (assignee&.name_or_email || User.destroyed_name),

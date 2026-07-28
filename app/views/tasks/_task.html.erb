@@ -31,7 +31,7 @@
     </div>
 
     <h3 class="task-summary">
-      <%= link_to_if(can?(:read, task), task.summary, task_path(task)) %>
+      <%= link_to_if(can?(:read, task), task.summary, task_path(task), data: { turbo_frame: "_top" }) %>
     </h3>
   </header>
 
@@ -56,13 +56,13 @@
           <% unless category_page?(category) %>
             <dt>Category</dt>
             <dd>
-              <%= link_to_if(can?(:read, category), category.name, category) %>
+              <%= link_to_if(can?(:read, category), category.name, category, data: { turbo_frame: '_top' }) %>
             </dd>
           <% end %>
 
           <dt>Project</dt>
           <dd>
-            <%= link_to_if(can?(:read, project), project.name, project) %>
+            <%= link_to_if(can?(:read, project), project.name, project, data: { turbo_frame: '_top' }) %>
           </dd>
         <% end %>
       <% end %>
@@ -70,7 +70,7 @@
       <dt>User</dt>
       <dd class="task-user">
         <% if user && can?(:read, user) %>
-          <%= link_to_unless_current user.name_or_email, user_tasks_path(user) %>
+          <%= link_to_unless_current user.name_or_email, user_tasks_path(user), data: { turbo_frame: '_top' } %>
         <% else %>
           <%= user&.name_or_email || User.destroyed_name %>
         <% end %>
@@ -88,7 +88,7 @@
 
   <% if can?(:update, task) %>
     <footer>
-      <%= link_to 'Edit', edit_task_path(task) %>
+      <%= link_to 'Edit', edit_task_path(task), data: { turbo_frame: '_top' } %>
     </footer>
   <% end %>
 

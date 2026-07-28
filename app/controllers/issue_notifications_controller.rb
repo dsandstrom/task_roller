@@ -26,6 +26,7 @@ class IssueNotificationsController < ApplicationController
                       notice: 'Notifications were successfully dismissed.'
       end
       format.js
+      format.turbo_stream
     end
   end
 

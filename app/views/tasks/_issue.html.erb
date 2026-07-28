@@ -8,7 +8,7 @@
         <%= link_to_if(can?(:read, issue),
                        safe_join([content_tag(:span, "Issue ##{issue.id}", class: 'issue-id'),
                                   content_tag(:span, issue.summary)], ' '),
-                       task_issue_path(task, issue)) %>
+                       task_issue_path(task, issue), data: { turbo_frame: '_top' }) %>
       </h4>
 
       <p class="task-issue-tags">
@@ -22,7 +22,8 @@
         <dt>User</dt>
         <dd>
           <%= link_to_if(can?(:read, user), user.name_or_email,
-                         user_issues_path(user)) %>
+                         user_issues_path(user),
+                         data: { turbo_frame: '_top' }) %>
         </dd>
       <% end %>
     </dl>

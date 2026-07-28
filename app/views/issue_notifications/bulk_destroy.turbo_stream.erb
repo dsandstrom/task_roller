@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "turbo_issue_#{@issue.id}",
+                         partial: "issues/issue",
+                         locals: { issue: @issue } %>

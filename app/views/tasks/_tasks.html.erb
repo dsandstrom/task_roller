@@ -6,7 +6,11 @@
   <div class="first-column">
     <% if tasks.any? || searching? %>
       <div class="tasks">
-        <%= render tasks %>
+        <%= tasks.each do |task| %>
+          <%= turbo_frame_tag "turbo_task_#{task.id}" do %>
+            <%= render task %>
+          <% end %>
+        <% end %>
       </div>
 
       <%= render 'shared/simple_page_links', collection: tasks %>

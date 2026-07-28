@@ -32,7 +32,7 @@
     </div>
 
     <h3 class="issue-summary">
-      <%= link_to_if(can?(:read, issue), issue.summary, issue_path(issue)) %>
+      <%= link_to_if(can?(:read, issue), issue.summary, issue_path(issue), data: { turbo_frame: '_top' }) %>
     </h3>
   </header>
 
@@ -57,13 +57,13 @@
           <% unless category_page?(category) %>
             <dt>Category</dt>
             <dd>
-              <%= link_to_if(can?(:read, category), category.name, category) %>
+              <%= link_to_if(can?(:read, category), category.name, category, data: { turbo_frame: '_top' }) %>
             </dd>
           <% end %>
 
           <dt>Project</dt>
           <dd>
-            <%= link_to_if(can?(:read, project), project.name, project) %>
+            <%= link_to_if(can?(:read, project), project.name, project, data: { turbo_frame: '_top' }) %>
           </dd>
         <% end %>
       <% end %>
@@ -73,7 +73,8 @@
         <% if user && can?(:read, user) %>
           <%= link_to_unless_current user.name_or_email,
                                      user_issues_path(user),
-                                     class: 'issue-user' %>
+                                     class: 'issue-user',
+                                     data: { turbo_frame: '_top' } %>
         <% else %>
           <%= content_tag :span,
                           (user&.name_or_email || User.destroyed_name),
@@ -85,7 +86,7 @@
 
   <% if can?(:update, issue) %>
     <footer>
-      <%= link_to 'Edit', edit_issue_path(issue) %>
+      <%= link_to 'Edit', edit_issue_path(issue), data: { turbo_frame: '_top' } %>
     </footer>
   <% end %>
 
