@@ -1484,7 +1484,7 @@ RSpec.describe "tasks/show", type: :view do
 
         it "doesn't render destroy task_subscription link" do
           render template: subject, layout: "layouts/application"
-          form_url = task_task_subscription_path(@task, @subscription)
+          task_task_subscription_path(@task, @subscription)
           assert_select "form[data-turbo-method=?]", "delete", count: 0
         end
       end
@@ -1641,7 +1641,8 @@ RSpec.describe "tasks/show", type: :view do
         it "renders destroy task_subscription form" do
           render
           form_url = task_task_subscription_path(@task, @subscription)
-          assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
+          assert_select "form[action=?][data-turbo-method=?]", form_url,
+                        "delete"
         end
       end
     end

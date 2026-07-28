@@ -49,9 +49,11 @@ class TaskCommentsController < ApplicationController
     @task_comment.destroy
 
     respond_to do |format|
-     format.html { redirect_to @task, notice: 'Comment was successfully destroyed.' }
-     format.turbo_stream
-   end
+      format.html do
+        redirect_to @task, notice: 'Comment was successfully destroyed.'
+      end
+      format.turbo_stream
+    end
   end
 
   private

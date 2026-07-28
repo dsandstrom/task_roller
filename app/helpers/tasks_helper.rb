@@ -245,19 +245,31 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       task_in_review_status_user_links(task) if task.in_review?
     end
 
+    def task_approve_link(task, review)
+      ['approve', approve_task_review_path(task, review),
+       { method: :patch, class: 'button-success',
+         data: { turbo_method: :patch } }]
+    end
+
+    def task_disapprove_link(task, review)
+      ['disapprove', disapprove_task_review_path(task, review),
+       { method: :patch, class: 'button-warning',
+         data: { turbo_method: :patch } }]
+    end
+
     def task_review_links(task, review)
       links = []
-      if can?(:approve, review)
-        links << ['approve', approve_task_review_path(task, review),
-                  { method: :patch, class: 'button-success',
-                    data: { turbo_method: :patch } }]
-      end
-      if can?(:disapprove, review)
-        links << ['disapprove', disapprove_task_review_path(task, review),
-                  { method: :patch, class: 'button-warning',
-                    data: { turbo_method: :patch } }]
-      end
+      links << task_approve_link(task, review) if can?(:approve, review)
+      links << task_disapprove_link(task, review) if can?(:disapprove, review)
       links
+    end
+
+    def cancel_review_link(task, review)
+      confirm = 'Are you sure you want to cancel the review?'
+
+      ['cancel review', task_review_path(task, review),
+       { method: :delete, class: 'button-warning',
+         data: { turbo_confirm: confirm, turbo_method: :delete } }]
     end
 
     def task_in_review_status_user_links(task)
@@ -265,12 +277,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       return unless review
 
       links = []
-      if can?(:destroy, review)
-        confirm = 'Are you sure you want to cancel the review?'
-        links << ['cancel review', task_review_path(task, review),
-                  { method: :delete, data: { turbo_confirm: confirm },
-                    class: 'button-warning', data: { turbo_method: :delete } }]
-      end
+      links << cancel_review_link if can?(:destroy, review)
       links
     end
 
@@ -307,7 +314,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
     def task_new_progression_link(task)
       ['start task', task_progressions_path(task),
-        { method: :post, data: { turbo_method: :post } }]
+       { method: :post, data: { turbo_method: :post } }]
     end
 
     def task_new_review_links(task)

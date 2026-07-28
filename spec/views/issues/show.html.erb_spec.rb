@@ -469,7 +469,8 @@ RSpec.describe "issues/show", type: :view do
         it "renders destroy issue_subscription form" do
           render
           form_url = issue_issue_subscription_path(@issue, @subscription)
-          assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
+          assert_select "form[action=?][data-turbo-method=?]", form_url,
+                        "delete"
         end
       end
 

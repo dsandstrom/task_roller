@@ -149,7 +149,8 @@ RSpec.describe "projects/index", type: :view do
           project_issues_subscription_path(project, issues_subscription)
         tasks_url = project_tasks_subscription_path(project, tasks_subscription)
 
-        assert_select "form[action=?][data-turbo-method=?]", issues_url, "delete"
+        assert_select "form[action=?][data-turbo-method=?]", issues_url,
+                      "delete"
         assert_select "form[action=?][data-turbo-method=?]", tasks_url, "delete"
       end
     end

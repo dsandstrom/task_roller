@@ -116,8 +116,10 @@ RSpec.describe "categories/index", type: :view do
 
         assert_select "form[action=?][method=?]", first_issues_url, "post"
         assert_select "form[action=?][method=?]", first_tasks_url, "post"
-        assert_select "form[action=?][method=?]", second_issues_url, "post", count: 0
-        assert_select "form[action=?][method=?]", second_tasks_url, "post", count: 0
+        assert_select "form[action=?][method=?]", second_issues_url, "post",
+                      count: 0
+        assert_select "form[action=?][method=?]", second_tasks_url, "post",
+                      count: 0
       end
 
       it "renders unsubscribe links" do
@@ -129,8 +131,10 @@ RSpec.describe "categories/index", type: :view do
         second_tasks_url =
           category_tasks_subscription_path(second_category, tasks_subscription)
 
-        assert_select "form[action=?][data-turbo-method=?]", second_issues_url, "delete"
-        assert_select "form[action=?][data-turbo-method=?]", second_tasks_url, "delete"
+        assert_select "form[action=?][data-turbo-method=?]", second_issues_url,
+                      "delete"
+        assert_select "form[action=?][data-turbo-method=?]", second_tasks_url,
+                      "delete"
       end
     end
   end
