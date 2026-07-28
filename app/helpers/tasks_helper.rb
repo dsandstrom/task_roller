@@ -192,7 +192,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
       if can?(:create, new_task_closure(task))
         links << ['Close Task', task_closures_path(task),
-                  { method: :post }]
+                  { method: :post, data: { turbo_method: :post } }]
       end
       links
     end
@@ -203,9 +203,9 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       confirm = 'Are you sure you want to remove the connection to ' \
                 "\"#{connection.target.short_summary}\" and reopen " \
                 'this task?'
+      data = { turbo_confirm: confirm, turbo_method: :delete }
 
-      [['Reopen Task', connection,
-        { method: :delete, data: { turbo_confirm: confirm } }]]
+      [['Reopen Task', connection, { method: :delete, data: data }]]
     end
 
     def task_closed_status_reviewer_links(task)
@@ -214,7 +214,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         task_connection_links(connection)
       elsif can?(:create, new_task_reopening(task))
         [['Reopen Task', task_reopenings_path(task),
-          { method: :post }]]
+          { method: :post, data: { turbo_method: :post } }]]
       end
     end
 
@@ -249,11 +249,13 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       links = []
       if can?(:approve, review)
         links << ['approve', approve_task_review_path(task, review),
-                  { method: :patch, class: 'button-success' }]
+                  { method: :patch, class: 'button-success',
+                    data: { turbo_method: :patch } }]
       end
       if can?(:disapprove, review)
         links << ['disapprove', disapprove_task_review_path(task, review),
-                  { method: :patch, class: 'button-warning' }]
+                  { method: :patch, class: 'button-warning',
+                    data: { turbo_method: :patch } }]
       end
       links
     end
@@ -267,7 +269,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         confirm = 'Are you sure you want to cancel the review?'
         links << ['cancel review', task_review_path(task, review),
                   { method: :delete, data: { turbo_confirm: confirm },
-                    class: 'button-warning' }]
+                    class: 'button-warning', data: { turbo_method: :delete } }]
       end
       links
     end
@@ -280,7 +282,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
           .each { |l| links << l }
       elsif can?(:create, new_task_assignee(task))
         links << ['Assign Myself', task_task_assignees_path(task),
-                  { method: :post }]
+                  { method: :post, data: { turbo_method: :post } }]
       end
 
       links
@@ -300,18 +302,20 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       return unless can?(:finish, progression)
 
       [['pause task', finish_task_progression_path(task, progression),
-        { method: :patch }]]
+        { method: :patch, data: { turbo_method: :patch } }]]
     end
 
     def task_new_progression_link(task)
-      ['start task', task_progressions_path(task), { method: :post }]
+      ['start task', task_progressions_path(task),
+        { method: :post, data: { turbo_method: :post } }]
     end
 
     def task_new_review_links(task)
       return unless can?(:create, new_review(task))
 
       [['Mark Complete', task_reviews_path(task),
-        { method: :post, class: 'button-success' }]]
+        { method: :post, class: 'button-success',
+          data: { turbo_method: :post } }]]
     end
 
     def task_unassign_link(task, task_assignee)
@@ -319,7 +323,9 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         "Are you sure you want to unassign yourself from #{task.heading}?"
 
       ['Unassign Myself', task_task_assignee_path(task, task_assignee),
-       { method: :delete, data: { turbo_confirm: confirm }, class: 'button-warning' }]
+       { method: :delete,
+         data: { turbo_confirm: confirm, turbo_method: :delete },
+         class: 'button-warning' }]
     end
 
     def task_assignee_links(task, task_assignee)
