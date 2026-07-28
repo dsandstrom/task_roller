@@ -226,7 +226,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
                 'this issue?'
 
       [['Reopen Issue', connection,
-        { method: :delete, data: { confirm: confirm } }]]
+        { method: :delete, data: { turbo_confirm: confirm } }]]
     end
 
     def issue_closed_status_reviewer_links(issue)

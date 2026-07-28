@@ -205,7 +205,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
                 'this task?'
 
       [['Reopen Task', connection,
-        { method: :delete, data: { confirm: confirm } }]]
+        { method: :delete, data: { turbo_confirm: confirm } }]]
     end
 
     def task_closed_status_reviewer_links(task)
@@ -266,7 +266,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       if can?(:destroy, review)
         confirm = 'Are you sure you want to cancel the review?'
         links << ['cancel review', task_review_path(task, review),
-                  { method: :delete, data: { confirm: confirm },
+                  { method: :delete, data: { turbo_confirm: confirm },
                     class: 'button-warning' }]
       end
       links
@@ -319,7 +319,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         "Are you sure you want to unassign yourself from #{task.heading}?"
 
       ['Unassign Myself', task_task_assignee_path(task, task_assignee),
-       { method: :delete, data: { confirm: confirm }, class: 'button-warning' }]
+       { method: :delete, data: { turbo_confirm: confirm }, class: 'button-warning' }]
     end
 
     def task_assignee_links(task, task_assignee)

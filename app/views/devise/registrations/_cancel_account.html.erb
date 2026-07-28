@@ -13,6 +13,6 @@
 
   <%= button_to "Cancel my account",
                 user_employee_type_path(user),
-                method: :delete, data: { confirm: confirm },
+                method: :delete, data: { turbo_confirm: confirm },
                 class: 'button button-outline button-warning' %>
 </div>

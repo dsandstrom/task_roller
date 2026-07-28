@@ -23,6 +23,6 @@
     <%= link_to 'delete',
                 issue_issue_comment_path(@issue, @issue_comment),
                 method: :delete, class: 'destroy-link',
-                data: { confirm: 'Are you sure?' } %>
+                data: { turbo_confirm: 'Are you sure?' } %>
   <% end %>
 </p>

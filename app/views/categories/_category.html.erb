@@ -203,7 +203,7 @@ end
     <% end %>
     <% if can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
-                  method: :delete, data: { confirm: 'Are you sure?' },
+                  method: :delete, data: { turbo_confirm: 'Are you sure?' },
                   class: 'button button-outline button-warning' %>
     <% end %>
   </p>

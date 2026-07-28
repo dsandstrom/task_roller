@@ -19,7 +19,7 @@
       <%= link_to 'delete',
                   task_progression_path(task, progression),
                   method: :delete,
-                  data: { confirm: 'Are you sure?' } %>
+                  data: { turbo_confirm: 'Are you sure?' } %>
     </p>
   <% end %>
 </div>

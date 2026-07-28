@@ -23,6 +23,6 @@
     <%= link_to 'delete',
                 task_task_comment_path(@task, @task_comment),
                 method: :delete, class: 'destroy-link',
-                data: { confirm: 'Are you sure?' } %>
+                data: { turbo_confirm: 'Are you sure?' } %>
   <% end %>
 </p>
