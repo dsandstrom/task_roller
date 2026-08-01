@@ -213,7 +213,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
       end
       if can?(:create, new_issue_closure(issue))
         links << ['Close Issue', issue_closures_path(issue),
-                  { method: :post }]
+                  { data: { turbo_method: :post } }]
       end
       links
     end
@@ -226,7 +226,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
                 'this issue?'
 
       [['Reopen Issue', connection,
-        { method: :delete, data: { turbo_confirm: confirm } }]]
+        { data: { turbo_confirm: confirm, turbo_method: :delete } }]]
     end
 
     def issue_closed_status_reviewer_links(issue)
@@ -235,7 +235,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
         issue_connection_links(connection)
       elsif can?(:create, new_issue_reopening(issue))
         [['Reopen Issue', issue_reopenings_path(issue),
-          { method: :post }]]
+          { data: { turbo_method: :post } }]]
       end
     end
 
@@ -266,10 +266,10 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
 
       if issue.status == 'addressed'
         [['Report Issue not Fixed', disapprove_issue_resolutions_path(issue),
-          { method: :post }]]
+          { data: { turbo_method: :post } }]]
       else
         [['Mark Resolved', approve_issue_resolutions_path(issue),
-          { method: :post }]]
+          { data: { turbo_method: :post } }]]
       end
     end
 
