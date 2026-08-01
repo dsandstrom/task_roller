@@ -1,4 +1,0 @@
-var wrapper = document.getElementById("subscription_for_<%= @issue.id %>");
-if (wrapper) {
-  wrapper.innerHTML = "<%= j render(@issue_subscription, issue: @issue) %>";
-}

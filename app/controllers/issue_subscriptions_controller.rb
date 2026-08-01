@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
-# TODO: remove js responses after done with turbfying
-# TODO: deal with flash message - showing up on link click instead of after
-# sub/unsub with turbo
+# TODO: remove all js responses after done with turbfying
 
 class IssueSubscriptionsController < ApplicationController
   load_and_authorize_resource :issue
@@ -12,9 +8,14 @@ class IssueSubscriptionsController < ApplicationController
 
   def create
     if @issue_subscription.save
-      create_success
+      notice = "Subscribed to Issue ##{@issue.id}. You will be notified " \
+               'after updates.'
+      respond_to do |format|
+        format.html { redirect_back fallback_location: @issue, notice: notice }
+        format.turbo_stream { redirect_back fallback_location: @issue }
+      end
     else
-      create_failure
+      render :new
     end
   end
 
@@ -25,33 +26,7 @@ class IssueSubscriptionsController < ApplicationController
         redirect_back fallback_location: @issue,
                       notice: "Unsubscribed from Issue ##{@issue.id}"
       end
-      format.js { new_js }
+      format.turbo_stream { redirect_back fallback_location: @issue }
     end
   end
-
-  private
-
-    def create_success
-      notice = "Subscribed to Issue ##{@issue.id}. You will be notified " \
-               'after updates.'
-      respond_to do |format|
-        format.html { redirect_back fallback_location: @issue, notice: notice }
-        format.js { render :show }
-      end
-    end
-
-    def create_failure
-      respond_to do |format|
-        format.html { render :new }
-        format.js { new_js }
-      end
-    end
-
-    def new_js
-      @issue_subscription =
-        @issue.issue_subscriptions.build(user_id: current_user_id)
-      authorize! :create, @issue_subscription
-
-      render :new
-    end
 end

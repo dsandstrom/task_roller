@@ -1,9 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueSubscriptionsController, type: :controller do
   let(:issue) { Fabricate(:issue) }
+
+  before do
+    Fabricate(:issue_subscription)
+  end
 
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
@@ -59,17 +61,19 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
         end
 
-        context "when js request" do
+        context "when turbo_stream request" do
           context "with valid params" do
             it "creates a new IssueSubscription" do
               expect do
-                post :create, params: { issue_id: issue.to_param }, xhr: true
+                post :create, params: { issue_id: issue.to_param },
+                     as: :turbo_stream
               end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
-            it "renders :show" do
-              post :create, params: { issue_id: issue.to_param }, xhr: true
-              expect(response).to be_successful
+            it "redirects to the requested issue" do
+              post :create, params: { issue_id: issue.to_param },
+                   as: :turbo_stream
+              expect(response).to redirect_to(issue)
             end
           end
 
@@ -80,12 +84,14 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
             it "doesn't create a new IssueSubscription" do
               expect do
-                post :create, params: { issue_id: issue.to_param }, xhr: true
+                post :create, params: { issue_id: issue.to_param },
+                     as: :turbo_stream
               end.not_to change(IssueSubscription, :count)
             end
 
             it "renders new" do
-              post :create, params: { issue_id: issue.to_param }, xhr: true
+              post :create, params: { issue_id: issue.to_param },
+                   as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -112,7 +118,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
               end.to change(current_user.issue_subscriptions, :count).by(-1)
             end
 
-            it "redirects to the issue_subscriptions list" do
+            it "redirects to the issue" do
               issue_subscription =
                 Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
@@ -122,7 +128,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
 
           context "when someone else's issue_subscription" do
-            it "doesn't destroys the requested issue_subscription" do
+            it "doesn't destroy the requested issue_subscription" do
               issue_subscription = Fabricate(:issue_subscription, issue: issue)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
@@ -139,7 +145,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
         end
 
-        context "when js request" do
+        context "when turbo_stream request" do
           context "when their issue_subscription" do
             it "destroys the requested issue_subscription" do
               issue_subscription =
@@ -147,27 +153,27 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param },
-                                 xhr: true
+                                 as: :turbo_stream
               end.to change(current_user.issue_subscriptions, :count).by(-1)
             end
 
-            it "renders :new" do
+            it "redirects to the issue" do
               issue_subscription =
                 Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param },
-                               xhr: true
-              expect(response).to be_successful
+                               as: :turbo_stream
+              expect(response).to redirect_to(issue)
             end
           end
 
           context "when someone else's issue_subscription" do
-            it "doesn't destroys the requested issue_subscription" do
+            it "doesn't destroy the requested issue_subscription" do
               issue_subscription = Fabricate(:issue_subscription, issue: issue)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param },
-                                 xhr: true
+                                 as: :turbo_stream
               end.not_to change(IssueSubscription, :count)
             end
 
@@ -175,7 +181,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
               issue_subscription = Fabricate(:issue_subscription, issue: issue)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param },
-                               xhr: true
+                               as: :turbo_stream
               expect(response).to have_http_status(:forbidden)
             end
           end
