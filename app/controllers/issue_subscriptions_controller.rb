@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# TODO: remove js responses after done with turbfying
+# TODO: deal with flash message - showing up on link click instead of after
+# sub/unsub with turbo
+
 class IssueSubscriptionsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue
