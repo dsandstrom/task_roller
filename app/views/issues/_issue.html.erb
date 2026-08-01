@@ -42,7 +42,7 @@
 
       <% if tasks.any? %>
         <p>
-          <%= link_to issue_tasks_path(issue),
+          <%= link_to issue_task_previews_path(issue),
                       class: 'turbo-stream-link',
                       data: { turbo_stream: true } do %>
             Preview <%= content_tag :span, pluralize(tasks.count, "Task"), class: 'tasks-count' %>

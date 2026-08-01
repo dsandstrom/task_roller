@@ -41,7 +41,7 @@
 
       <% if issue %>
         <p>
-          <%= link_to task_issue_path(task, issue),
+          <%= link_to task_issue_previews_path(task),
                       class: "turbo-stream-link",
                       data: { turbo_stream: true } do %>
             Preview <%= content_tag :span, "Issue ##{issue.id}", class: 'issue-id' %>

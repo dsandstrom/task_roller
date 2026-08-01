@@ -31,7 +31,6 @@ class IssuesController < ApplicationController
     respond_to do |format|
       format.html { set_issue_variables }
       format.js
-      format.turbo_stream
     end
   end
 
