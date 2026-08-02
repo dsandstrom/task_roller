@@ -6,10 +6,10 @@ class TaskSubscriptionsController < ApplicationController
 
   def create
     if @task_subscription.save
-      notice = "Subscribed to Task ##{@task.id}. You will be notified after " \
-               'updates.'
       respond_to do |format|
-        format.html { redirect_back fallback_location: @task, notice: notice }
+        format.html do
+          redirect_back fallback_location: @task, notice: create_notice
+        end
         format.turbo_stream { redirect_back fallback_location: @task }
       end
     else
@@ -19,12 +19,22 @@ class TaskSubscriptionsController < ApplicationController
 
   def destroy
     @task_subscription.destroy
+
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @task,
-                      notice: "Unsubscribed from Task ##{@task.id}"
+        redirect_back fallback_location: @task, notice: destroy_notice
       end
       format.turbo_stream { redirect_back fallback_location: @task }
     end
   end
+
+  private
+
+    def create_notice
+      "Subscribed to Task ##{@task.id}. You will be notified after updates."
+    end
+
+    def destroy_notice
+      "Unsubscribed from Task ##{@task.id}"
+    end
 end
