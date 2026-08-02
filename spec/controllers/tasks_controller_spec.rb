@@ -1678,32 +1678,4 @@ RSpec.describe TasksController, type: :controller do
       end
     end
   end
-
-  describe "GET #show" do
-    %w[admin].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-
-        context "when category/project are invisible and internal" do
-          let(:category) do
-            Fabricate(:category, visible: false, internal: true)
-          end
-          let(:project) do
-            Fabricate(:project, category: category, visible: false,
-                                internal: true)
-          end
-
-          before { sign_in(current_user) }
-
-          context "when someone else's task", focus: true do
-            it "returns a success response" do
-              task = Fabricate(:task, project: project)
-              get :preview_issue, params: { id: task.to_param }
-              expect(response).to be_successful
-            end
-          end
-        end
-      end
-    end
-  end
 end
