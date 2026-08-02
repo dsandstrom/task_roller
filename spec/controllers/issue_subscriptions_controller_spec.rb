@@ -14,9 +14,18 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        it "returns a success response" do
-          get :new, params: { issue_id: issue.to_param }
-          expect(response).to be_successful
+        context "when html request" do
+          it "returns a success response" do
+            get :new, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when turbo_stream request" do
+          it "returns a success response" do
+            get :new, params: { issue_id: issue.to_param }, as: :turbo_stream
+            expect(response).to be_successful
+          end
         end
       end
     end
@@ -66,13 +75,13 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             it "creates a new IssueSubscription" do
               expect do
                 post :create, params: { issue_id: issue.to_param },
-                     as: :turbo_stream
+                              as: :turbo_stream
               end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
             it "redirects to the requested issue" do
               post :create, params: { issue_id: issue.to_param },
-                   as: :turbo_stream
+                            as: :turbo_stream
               expect(response).to redirect_to(issue)
             end
           end
@@ -85,13 +94,13 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             it "doesn't create a new IssueSubscription" do
               expect do
                 post :create, params: { issue_id: issue.to_param },
-                     as: :turbo_stream
+                              as: :turbo_stream
               end.not_to change(IssueSubscription, :count)
             end
 
             it "renders new" do
               post :create, params: { issue_id: issue.to_param },
-                   as: :turbo_stream
+                            as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -109,9 +118,11 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
         context "when html request" do
           context "when their issue_subscription" do
+            let!(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
             it "destroys the requested issue_subscription" do
-              issue_subscription =
-                Fabricate(:issue_subscription, issue: issue, user: current_user)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param }
@@ -119,8 +130,6 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             end
 
             it "redirects to the issue" do
-              issue_subscription =
-                Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param }
               expect(response).to redirect_to(issue)
@@ -128,8 +137,11 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
 
           context "when someone else's issue_subscription" do
+            let!(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
             it "doesn't destroy the requested issue_subscription" do
-              issue_subscription = Fabricate(:issue_subscription, issue: issue)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param }
@@ -137,7 +149,6 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             end
 
             it "should be unauthorized" do
-              issue_subscription = Fabricate(:issue_subscription, issue: issue)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param }
               expect_to_be_unauthorized(response)
@@ -147,9 +158,11 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
 
         context "when turbo_stream request" do
           context "when their issue_subscription" do
+            let!(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue, user: current_user)
+            end
+
             it "destroys the requested issue_subscription" do
-              issue_subscription =
-                Fabricate(:issue_subscription, issue: issue, user: current_user)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param },
@@ -158,8 +171,6 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             end
 
             it "redirects to the issue" do
-              issue_subscription =
-                Fabricate(:issue_subscription, issue: issue, user: current_user)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param },
                                as: :turbo_stream
@@ -168,8 +179,11 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
           end
 
           context "when someone else's issue_subscription" do
+            let!(:issue_subscription) do
+              Fabricate(:issue_subscription, issue: issue)
+            end
+
             it "doesn't destroy the requested issue_subscription" do
-              issue_subscription = Fabricate(:issue_subscription, issue: issue)
               expect do
                 delete :destroy, params: { issue_id: issue.to_param,
                                            id: issue_subscription.to_param },
@@ -178,7 +192,6 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
             end
 
             it "should be unauthorized" do
-              issue_subscription = Fabricate(:issue_subscription, issue: issue)
               delete :destroy, params: { issue_id: issue.to_param,
                                          id: issue_subscription.to_param },
                                as: :turbo_stream
