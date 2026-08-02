@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueCommentsController, type: :controller do
@@ -22,13 +20,6 @@ RSpec.describe IssueCommentsController, type: :controller do
             expect(response).to be_successful
           end
         end
-
-        context "when js request" do
-          it "returns a success response" do
-            get :new, params: { issue_id: issue.to_param }, xhr: true
-            expect(response).to be_successful
-          end
-        end
       end
     end
   end
@@ -43,16 +34,6 @@ RSpec.describe IssueCommentsController, type: :controller do
             issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
             get :edit, params: { issue_id: issue.to_param,
                                  id: issue_comment.to_param }
-            expect(response).to be_successful
-          end
-        end
-
-        context "when js request" do
-          it "returns a success response" do
-            issue_comment = Fabricate(:issue_comment, issue: issue, user: admin)
-            get :edit, params: { issue_id: issue.to_param,
-                                 id: issue_comment.to_param },
-                       xhr: true
             expect(response).to be_successful
           end
         end
@@ -110,21 +91,19 @@ RSpec.describe IssueCommentsController, type: :controller do
             expect(response).to redirect_to(url)
           end
         end
-
-        context "when js request" do
-          it "returns a success response" do
-            issue_comment = Fabricate(:issue_comment, issue: issue)
-            get :show, params: { issue_id: issue.to_param,
-                                 id: issue_comment.to_param },
-                       xhr: true
-            expect(response).to be_successful
-          end
-        end
       end
     end
   end
 
   describe "POST #create" do
+    let(:valid_params) do
+      { issue_id: issue.to_param, issue_comment: valid_attributes }
+    end
+
+    let(:invalid_params) do
+      { issue_id: issue.to_param, issue_comment: invalid_attributes }
+    end
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -135,14 +114,12 @@ RSpec.describe IssueCommentsController, type: :controller do
           context "when html request" do
             it "creates a new IssueComment" do
               expect do
-                post :create, params: { issue_id: issue.to_param,
-                                        issue_comment: valid_attributes }
+                post :create, params: valid_params
               end.to change(current_user.issue_comments, :count).by(1)
             end
 
             it "redirects to the created issue_comment" do
-              post :create, params: { issue_id: issue.to_param,
-                                      issue_comment: valid_attributes }
+              post :create, params: valid_params
               anchor = "comment-#{IssueComment.last.id}"
               url = issue_url(issue, anchor: anchor)
               expect(response).to redirect_to(url)
@@ -151,8 +128,7 @@ RSpec.describe IssueCommentsController, type: :controller do
             context "when not subscribed to issue" do
               it "creates a new IssueSubscription" do
                 expect do
-                  post :create, params: { issue_id: issue.to_param,
-                                          issue_comment: valid_attributes }
+                  post :create, params: valid_params
                 end.to change(current_user.issue_subscriptions, :count).by(1)
               end
             end
@@ -164,15 +140,13 @@ RSpec.describe IssueCommentsController, type: :controller do
 
               it "doesn't create a new IssueSubscription" do
                 expect do
-                  post :create, params: { issue_id: issue.to_param,
-                                          issue_comment: valid_attributes }
+                  post :create, params: valid_params
                 end.not_to change(IssueSubscription, :count)
               end
 
               it "doesn't send an email" do
                 expect do
-                  post :create, params: { issue_id: issue.to_param,
-                                          issue_comment: valid_attributes }
+                  post :create, params: valid_params
                 end.not_to have_enqueued_job
               end
             end
@@ -187,8 +161,7 @@ RSpec.describe IssueCommentsController, type: :controller do
 
               it "sends an email" do
                 expect do
-                  post :create, params: { issue_id: issue.to_param,
-                                          issue_comment: valid_attributes }
+                  post :create, params: valid_params
                 end.to(have_enqueued_job.with do |mailer, action, time, options|
                   # IssueComment.last is nil unless you add another block
                   expect(mailer).to eq("IssueMailer")
@@ -203,19 +176,15 @@ RSpec.describe IssueCommentsController, type: :controller do
             end
           end
 
-          context "when js request" do
+          context "when turbo_stream request" do
             it "creates a new IssueComment" do
               expect do
-                post :create, params: { issue_id: issue.to_param,
-                                        issue_comment: valid_attributes },
-                              xhr: true
+                post :create, params: valid_params, as: :turbo_stream
               end.to change(current_user.issue_comments, :count).by(1)
             end
 
             it "redirects to the created issue_comment" do
-              post :create, params: { issue_id: issue.to_param,
-                                      issue_comment: valid_attributes },
-                            xhr: true
+              post :create, params: valid_params, as: :turbo_stream
               expect(response).to be_successful
             end
 
@@ -229,19 +198,21 @@ RSpec.describe IssueCommentsController, type: :controller do
 
               it "sends an email" do
                 expect do
-                  post :create, params: { issue_id: issue.to_param,
-                                          issue_comment: valid_attributes },
-                                xhr: true
-                end.to(have_enqueued_job.with do |mailer, action, time, options|
-                  # IssueComment.last is nil unless you add another block
-                  expect(mailer).to eq("IssueMailer")
-                  expect(action).to eq("comment")
-                  expect(time).to eq("deliver_now")
-                  expect(options)
-                    .to eq(args: [], params: { issue: issue,
-                                               user: user_reporter,
-                                               comment: IssueComment.last })
-                end)
+                  post :create, params: valid_params, as: :turbo_stream
+                end.to(
+                  have_enqueued_job.with do |mailer, action, time, options|
+                    # IssueComment.last is nil unless you add another block
+                    expect(mailer).to eq("IssueMailer")
+                    expect(action).to eq("comment")
+                    expect(time).to eq("deliver_now")
+                    expect(options)
+                      .to eq(
+                        args: [],
+                        params: { issue: issue, user: user_reporter,
+                                  comment: IssueComment.last }
+                      )
+                  end
+                )
               end
             end
           end
@@ -250,17 +221,14 @@ RSpec.describe IssueCommentsController, type: :controller do
         context "with invalid params" do
           context "when html request" do
             it "returns a success response ('new' template)" do
-              post :create, params: { issue_id: issue.to_param,
-                                      issue_comment: invalid_attributes }
+              post :create, params: invalid_params
               expect(response).to be_successful
             end
           end
 
-          context "when js request" do
+          context "when turbo_stream request" do
             it "returns a success response ('new' template)" do
-              post :create, params: { issue_id: issue.to_param,
-                                      issue_comment: invalid_attributes },
-                            xhr: true
+              post :create, params: invalid_params, as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -272,77 +240,67 @@ RSpec.describe IssueCommentsController, type: :controller do
   describe "PUT #update" do
     let(:new_attributes) { { body: "New body" } }
 
+    let(:valid_params) do
+      { issue_id: issue.to_param, id: issue_comment.to_param,
+        issue_comment: new_attributes }
+    end
+
+    let(:invalid_params) do
+      { issue_id: issue.to_param, id: issue_comment.to_param,
+        issue_comment: invalid_attributes }
+    end
+
     context "for an admin" do
       before { sign_in(admin) }
 
       context "for their own IssueComment" do
-        context "with valid params" do
-          context "when html request" do
+        let!(:issue_comment) do
+          Fabricate(:issue_comment, issue: issue, user: admin)
+        end
+
+        context "when html request" do
+          context "with valid params" do
             it "updates the requested issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
               expect do
-                put :update, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param,
-                                       issue_comment: new_attributes }
+                put :update, params: valid_params
                 issue_comment.reload
               end.to change(issue_comment, :body).to("New body")
             end
 
             it "redirects to the issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
               url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes }
+              put :update, params: valid_params
               expect(response).to redirect_to(url)
             end
           end
 
           context "with invalid params" do
             it "returns a success response ('edit' template)" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: invalid_attributes }
+              put :update, params: invalid_params
               expect(response).to be_successful
             end
           end
+        end
 
-          context "when js request" do
+        context "when turbo_stream request" do
+          context "with valid params" do
             it "updates the requested issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
               expect do
-                put :update, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param,
-                                       issue_comment: new_attributes },
-                             xhr: true
+                put :update, params: valid_params, as: :turbo_stream
                 issue_comment.reload
               end.to change(issue_comment, :body).to("New body")
             end
 
             it "redirects to the issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes },
-                           xhr: true
-              expect(response).to be_successful
+              url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
+              put :update, params: valid_params, as: :turbo_stream
+              expect(response).to redirect_to(url)
             end
           end
 
           context "with invalid params" do
             it "returns a success response ('edit' template)" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: admin)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: invalid_attributes },
-                           xhr: true
+              put :update, params: invalid_params, as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -350,35 +308,26 @@ RSpec.describe IssueCommentsController, type: :controller do
       end
 
       context "for someone else's IssueComment" do
-        context "with valid params" do
-          let(:new_attributes) { { body: "New body" } }
+        let!(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
 
+        context "with valid params" do
           it "updates the requested issue_comment" do
-            issue_comment = Fabricate(:issue_comment, issue: issue)
             expect do
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes }
+              put :update, params: valid_params
               issue_comment.reload
             end.to change(issue_comment, :body).to("New body")
           end
 
           it "redirects to the issue_comment" do
-            issue_comment = Fabricate(:issue_comment, issue: issue)
             url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
-            put :update, params: { issue_id: issue.to_param,
-                                   id: issue_comment.to_param,
-                                   issue_comment: new_attributes }
+            put :update, params: valid_params
             expect(response).to redirect_to(url)
           end
         end
 
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
-            issue_comment = Fabricate(:issue_comment, issue: issue)
-            put :update, params: { issue_id: issue.to_param,
-                                   id: issue_comment.to_param,
-                                   issue_comment: invalid_attributes }
+            put :update, params: invalid_params
             expect(response).to be_successful
           end
         end
@@ -392,81 +341,86 @@ RSpec.describe IssueCommentsController, type: :controller do
         before { sign_in(current_user) }
 
         context "for their own IssueComment" do
-          context "with valid params" do
-            it "updates the requested issue_comment" do
-              issue_comment =
-                Fabricate(:issue_comment, issue: issue, user: current_user)
-              expect do
-                put :update, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param,
-                                       issue_comment: new_attributes }
-                issue_comment.reload
-              end.to change(issue_comment, :body).to("New body")
+          let!(:issue_comment) do
+            Fabricate(:issue_comment, issue: issue, user: current_user)
+          end
+
+          context "when html request" do
+            context "with valid params" do
+              it "updates the requested issue_comment" do
+                expect do
+                  put :update, params: valid_params
+                  issue_comment.reload
+                end.to change(issue_comment, :body).to("New body")
+              end
+
+              it "redirects to the issue_comment" do
+                url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
+                put :update, params: valid_params
+                expect(response).to redirect_to(url)
+              end
             end
 
-            it "redirects to the issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue,
-                                                        user: current_user)
-              anchor = "comment-#{issue_comment.id}"
-              url = issue_url(issue, anchor: anchor)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes }
-              expect(response).to redirect_to(url)
+            context "with invalid params" do
+              it "returns a success response ('edit' template)" do
+                put :update, params: invalid_params
+                expect(response).to be_successful
+              end
             end
           end
 
-          context "with invalid params" do
-            it "returns a success response ('edit' template)" do
-              issue_comment =
-                Fabricate(:issue_comment, issue: issue, user: current_user)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: invalid_attributes }
-              expect(response).to be_successful
+          context "when turbo_stream request" do
+            context "with valid params" do
+              it "updates the requested issue_comment" do
+                expect do
+                  put :update, params: valid_params, as: :turbo_stream
+                  issue_comment.reload
+                end.to change(issue_comment, :body).to("New body")
+              end
+
+              it "redirects to the issue_comment" do
+                url = issue_url(issue, anchor: "comment-#{issue_comment.id}")
+                put :update, params: valid_params, as: :turbo_stream
+                expect(response).to redirect_to(url)
+              end
+            end
+
+            context "with invalid params" do
+              it "returns a success response ('edit' template)" do
+                put :update, params: invalid_params, as: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
         end
 
         context "for someone else's IssueComment" do
+          let!(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+
           context "when html request" do
             it "doesn't update the requested issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue)
               expect do
-                put :update, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param,
-                                       issue_comment: new_attributes }
+                put :update, params: valid_params
                 issue_comment.reload
               end.not_to change(issue_comment, :body)
             end
 
             it "should be unauthorized" do
-              issue_comment = Fabricate(:issue_comment, issue: issue)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes }
+              put :update, params: valid_params
               expect_to_be_unauthorized(response)
             end
           end
 
-          context "when js request" do
+          context "when turbo_stream request" do
             it "doesn't update the requested issue_comment" do
-              issue_comment = Fabricate(:issue_comment, issue: issue)
               expect do
-                put :update, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param,
-                                       issue_comment: new_attributes },
-                             xhr: true
+                put :update, params: valid_params, as: :turbo_stream
                 issue_comment.reload
               end.not_to change(issue_comment, :body)
             end
 
             it "should be unauthorized" do
-              issue_comment = Fabricate(:issue_comment, issue: issue)
-              put :update, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param,
-                                     issue_comment: new_attributes },
-                           xhr: true
+              put :update, params: valid_params, as: :turbo_stream
               expect(response).to have_http_status(403)
             end
           end
@@ -476,22 +430,36 @@ RSpec.describe IssueCommentsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let!(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+    let(:params) { { issue_id: issue.to_param, id: issue_comment.to_param } }
+
     context "for an admin" do
       before { sign_in(admin) }
 
-      it "destroys the requested issue_comment" do
-        issue_comment = Fabricate(:issue_comment, issue: issue)
-        expect do
-          delete :destroy, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param }
-        end.to change(IssueComment, :count).by(-1)
+      context "when html request" do
+        it "destroys the requested issue_comment" do
+          expect do
+            delete :destroy, params: params
+          end.to change(IssueComment, :count).by(-1)
+        end
+
+        it "redirects to the issue_comments list" do
+          delete :destroy, params: params
+          expect(response).to redirect_to(issue_url(issue))
+        end
       end
 
-      it "redirects to the issue_comments list" do
-        issue_comment = Fabricate(:issue_comment, issue: issue)
-        delete :destroy, params: { issue_id: issue.to_param,
-                                   id: issue_comment.to_param }
-        expect(response).to redirect_to(issue_url(issue))
+      context "when turbo_stream request" do
+        it "destroys the requested issue_comment" do
+          expect do
+            delete :destroy, params: params, as: :turbo_stream
+          end.to change(IssueComment, :count).by(-1)
+        end
+
+        it "returns a success response" do
+          delete :destroy, params: params, as: :turbo_stream
+          expect(response).to be_successful
+        end
       end
     end
 
@@ -501,19 +469,30 @@ RSpec.describe IssueCommentsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        it "doesn't destroy the requested issue_comment" do
-          issue_comment = Fabricate(:issue_comment, issue: issue)
-          expect do
-            delete :destroy, params: { issue_id: issue.to_param,
-                                       id: issue_comment.to_param }
-          end.not_to change(IssueComment, :count)
+        context "when html request" do
+          it "doesn't destroy the requested issue_comment" do
+            expect do
+              delete :destroy, params: params
+            end.not_to change(IssueComment, :count)
+          end
+
+          it "should be unauthorized" do
+            delete :destroy, params: params
+            expect_to_be_unauthorized(response)
+          end
         end
 
-        it "should be unauthorized" do
-          issue_comment = Fabricate(:issue_comment, issue: issue)
-          delete :destroy, params: { issue_id: issue.to_param,
-                                     id: issue_comment.to_param }
-          expect_to_be_unauthorized(response)
+        context "when turbo_stream request" do
+          it "doesn't destroy the requested issue_comment" do
+            expect do
+              delete :destroy, params: params, as: :turbo_stream
+            end.not_to change(IssueComment, :count)
+          end
+
+          it "should be unauthorized" do
+            delete :destroy, params: params, as: :turbo_stream
+            expect(response).to have_http_status(403)
+          end
         end
       end
     end

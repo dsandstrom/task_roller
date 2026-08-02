@@ -35,7 +35,7 @@
               <%= link_to 'delete',
                           task_task_comment_path(object, comment),
                           method: :delete, class: 'destroy-link',
-                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
+                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
             <% end %>
           <% else %>
             <% if can?(:update, comment) %>
@@ -47,7 +47,7 @@
               <%= link_to 'delete',
                           issue_issue_comment_path(object, comment),
                           method: :delete, class: 'destroy-link',
-                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
+                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
             <% end %>
           <% end %>
         </p>

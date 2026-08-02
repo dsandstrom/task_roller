@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: allow uploading screenshots
 
 class IssueCommentsController < ApplicationController
@@ -7,43 +5,35 @@ class IssueCommentsController < ApplicationController
   load_and_authorize_resource through: :issue, through_association: :comments
 
   def show
-    respond_to do |format|
-      format.html do
-        redirect_to issue_path(@issue, anchor: "comment-#{@issue_comment.id}")
-      end
-      format.js
-    end
+    redirect_to issue_path(@issue, anchor: "comment-#{@issue_comment.id}")
   end
 
-  def new
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
+  def new; end
 
-  def edit
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
+  def edit; end
 
   def create
     if @issue_comment.save
       @issue_comment.subscribe_user
       @issue_comment.notify_subscribers
-      create_success
+
+      respond_to do |format|
+        format.html { redirect_to redirect_url, notice: create_notice }
+        format.turbo_stream
+      end
     else
-      create_failure
+      render :new
     end
   end
 
   def update
     if @issue_comment.update(issue_comment_params)
-      update_success
+      respond_to do |format|
+        format.html { redirect_to redirect_url, notice: update_notice }
+        format.turbo_stream { redirect_to redirect_url }
+      end
     else
-      update_failure
+      render :edit
     end
   end
 
@@ -51,9 +41,7 @@ class IssueCommentsController < ApplicationController
     @issue_comment.destroy
 
     respond_to do |format|
-      format.html do
-        redirect_to @issue, notice: 'Comment was successfully destroyed.'
-      end
+      format.html { redirect_to @issue, notice: destroy_notice }
       format.turbo_stream
     end
   end
@@ -69,34 +57,15 @@ class IssueCommentsController < ApplicationController
         issue_url(@issue, anchor: "comment-#{@issue_comment.id}")
     end
 
-    def create_success
-      respond_to do |format|
-        format.html { redirect_to redirect_url }
-        format.js { render :show }
-        format.turbo_stream
-      end
+    def create_notice
+      'Comment was successfully added.'
     end
 
-    def create_failure
-      respond_to do |format|
-        format.html { render :new }
-        format.js { render :new }
-      end
+    def update_notice
+      'Comment was successfully updated.'
     end
 
-    def update_success
-      respond_to do |format|
-        format.html do
-          redirect_to redirect_url, notice: 'Comment was successfully updated.'
-        end
-        format.js { render :show }
-      end
-    end
-
-    def update_failure
-      respond_to do |format|
-        format.html { render :edit }
-        format.js { render :edit }
-      end
+    def destroy_notice
+      'Comment was successfully removed.'
     end
 end
