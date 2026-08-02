@@ -1,47 +1,37 @@
-# frozen_string_literal: true
-
 class TaskCommentsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :comments
 
   def show
-    respond_to do |format|
-      format.html do
-        redirect_to task_path(@task, anchor: "comment-#{@task_comment.id}")
-      end
-      format.js
-    end
+    redirect_to task_path(@task, anchor: "comment-#{@task_comment.id}")
   end
 
-  def new
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
+  def new; end
 
-  def edit
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
+  def edit; end
 
   def create
     if @task_comment.save
       @task_comment.subscribe_user
       @task_comment.notify_subscribers
-      create_success
+
+      respond_to do |format|
+        format.html { redirect_to redirect_url }
+        format.turbo_stream
+      end
     else
-      create_failure
+      render :new
     end
   end
 
   def update
     if @task_comment.update(task_comment_params)
-      update_success
+      respond_to do |format|
+        format.html { redirect_to redirect_url, notice: update_notice }
+        format.turbo_stream { redirect_to redirect_url }
+      end
     else
-      update_failure
+      render :edit
     end
   end
 
@@ -49,9 +39,7 @@ class TaskCommentsController < ApplicationController
     @task_comment.destroy
 
     respond_to do |format|
-      format.html do
-        redirect_to @task, notice: 'Comment was successfully destroyed.'
-      end
+      format.html { redirect_to @task, notice: destroy_notice }
       format.turbo_stream
     end
   end
@@ -66,34 +54,11 @@ class TaskCommentsController < ApplicationController
       params.require(:task_comment).permit(:body)
     end
 
-    def create_success
-      respond_to do |format|
-        format.html { redirect_to redirect_url }
-        format.js { render :show }
-        format.turbo_stream
-      end
+    def update_notice
+      'Comment was successfully updated.'
     end
 
-    def create_failure
-      respond_to do |format|
-        format.html { render :new }
-        format.js { render :new }
-      end
-    end
-
-    def update_success
-      respond_to do |format|
-        format.html do
-          redirect_to redirect_url, notice: 'Comment was successfully updated.'
-        end
-        format.js { render :show }
-      end
-    end
-
-    def update_failure
-      respond_to do |format|
-        format.html { render :edit }
-        format.js { render :edit }
-      end
+    def destroy_notice
+      'Comment was successfully destroyed.'
     end
 end
