@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskSubscriptionsController, type: :controller do
@@ -12,9 +10,18 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        it "returns a success response" do
-          get :new, params: { task_id: task.to_param }
-          expect(response).to be_successful
+        context "when html request" do
+          it "returns a success response" do
+            get :new, params: { task_id: task.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when turbo_stream request" do
+          it "returns a success response" do
+            get :new, params: { task_id: task.to_param }, as: :turbo_stream
+            expect(response).to be_successful
+          end
         end
       end
     end
@@ -59,17 +66,19 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
           end
         end
 
-        context "when js request" do
+        context "when turbo_stream request" do
           context "with valid params" do
             it "creates a new TaskSubscription" do
               expect do
-                post :create, params: { task_id: task.to_param }, xhr: true
+                post :create, params: { task_id: task.to_param },
+                              as: :turbo_stream
               end.to change(current_user.task_subscriptions, :count).by(1)
             end
 
-            it "renders :show" do
-              post :create, params: { task_id: task.to_param }, xhr: true
-              expect(response).to be_successful
+            it "redirects to the requested task" do
+              post :create, params: { task_id: task.to_param },
+                            as: :turbo_stream
+              expect(response).to redirect_to(task)
             end
           end
 
@@ -80,12 +89,14 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
 
             it "doesn't create a new TaskSubscription" do
               expect do
-                post :create, params: { task_id: task.to_param }, xhr: true
+                post :create, params: { task_id: task.to_param },
+                              as: :turbo_stream
               end.not_to change(TaskSubscription, :count)
             end
 
             it "renders new" do
-              post :create, params: { task_id: task.to_param }, xhr: true
+              post :create, params: { task_id: task.to_param },
+                            as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -101,39 +112,87 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their task_subscription" do
-          it "destroys the requested task_subscription" do
-            task_subscription =
+        context "when html request" do
+          context "when their task_subscription" do
+            let!(:task_subscription) do
               Fabricate(:task_subscription, task: task, user: current_user)
-            expect do
+            end
+
+            it "destroys the requested task_subscription" do
+              expect do
+                delete :destroy, params: { task_id: task.to_param,
+                                           id: task_subscription.to_param }
+              end.to change(current_user.task_subscriptions, :count).by(-1)
+            end
+
+            it "redirects to the task_subscriptions list" do
               delete :destroy, params: { task_id: task.to_param,
                                          id: task_subscription.to_param }
-            end.to change(current_user.task_subscriptions, :count).by(-1)
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "redirects to the task_subscriptions list" do
-            task_subscription =
-              Fabricate(:task_subscription, task: task, user: current_user)
-            delete :destroy, params: { task_id: task.to_param,
-                                       id: task_subscription.to_param }
-            expect(response).to redirect_to(task)
+          context "when someone else's task_subscription" do
+            let!(:task_subscription) do
+              Fabricate(:task_subscription, task: task)
+            end
+
+            it "doesn't destroys the requested task_subscription" do
+              expect do
+                delete :destroy, params: { task_id: task.to_param,
+                                           id: task_subscription.to_param }
+              end.not_to change(TaskSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_subscription.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 
-        context "when someone else's task_subscription" do
-          it "doesn't destroys the requested task_subscription" do
-            task_subscription = Fabricate(:task_subscription, task: task)
-            expect do
+        context "when turbo_stream request" do
+          context "when their task_subscription" do
+            let!(:task_subscription) do
+              Fabricate(:task_subscription, task: task, user: current_user)
+            end
+
+            it "destroys the requested task_subscription" do
+              expect do
+                delete :destroy, params: { task_id: task.to_param,
+                                           id: task_subscription.to_param },
+                                 as: :turbo_stream
+              end.to change(current_user.task_subscriptions, :count).by(-1)
+            end
+
+            it "redirects to the task_subscriptions list" do
               delete :destroy, params: { task_id: task.to_param,
-                                         id: task_subscription.to_param }
-            end.not_to change(TaskSubscription, :count)
+                                         id: task_subscription.to_param },
+                               as: :turbo_stream
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "should be unauthorized" do
-            task_subscription = Fabricate(:task_subscription, task: task)
-            delete :destroy, params: { task_id: task.to_param,
-                                       id: task_subscription.to_param }
-            expect_to_be_unauthorized(response)
+          context "when someone else's task_subscription" do
+            let!(:task_subscription) do
+              Fabricate(:task_subscription, task: task)
+            end
+
+            it "doesn't destroys the requested task_subscription" do
+              expect do
+                delete :destroy, params: { task_id: task.to_param,
+                                           id: task_subscription.to_param },
+                                 as: :turbo_stream
+              end.not_to change(TaskSubscription, :count)
+            end
+
+            it "should be unauthorized" do
+              delete :destroy, params: { task_id: task.to_param,
+                                         id: task_subscription.to_param },
+                               as: :turbo_stream
+              expect(response).to have_http_status(:forbidden)
+            end
           end
         end
       end
