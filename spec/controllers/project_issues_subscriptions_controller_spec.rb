@@ -6,6 +6,8 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
   let(:user) { Fabricate(:user_worker) }
 
   describe "GET #new" do
+    let(:params) { { project_id: project.to_param } }
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -14,15 +16,14 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
         context "when html request" do
           it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
+            get :new, params: params
             expect(response).to be_successful
           end
         end
 
         context "when turbo_stream request" do
           it "returns a success response" do
-            get :new, params: { project_id: project.to_param },
-                      as: :turbo_stream
+            get :new, params: params, as: :turbo_stream
             expect(response).to be_successful
           end
         end
@@ -31,6 +32,8 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:params) { { project_id: project.to_param } }
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -41,13 +44,13 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
           context "with valid params" do
             it "creates a new ProjectIssuesSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param }
+                post :create, params: params
               end.to change(current_user.project_issues_subscriptions, :count)
                 .by(1)
             end
 
             it "redirects to the requested project" do
-              post :create, params: { project_id: project.to_param }
+              post :create, params: params
               expect(response).to redirect_to(project)
             end
           end
@@ -60,12 +63,12 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
             it "doesn't create a new ProjectIssuesSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param }
+                post :create, params: params
               end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "renders new" do
-              post :create, params: { project_id: project.to_param }
+              post :create, params: params
               expect(response).to be_successful
             end
           end
@@ -75,15 +78,13 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
           context "with valid params" do
             it "creates a new ProjectIssuesSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param },
-                              as: :turbo_stream
+                post :create, params: params, as: :turbo_stream
               end.to change(current_user.project_issues_subscriptions, :count)
                 .by(1)
             end
 
             it "redirects to the requested project" do
-              post :create, params: { project_id: project.to_param },
-                            as: :turbo_stream
+              post :create, params: params, as: :turbo_stream
               expect(response).to redirect_to(project)
             end
           end
@@ -96,14 +97,12 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
             it "doesn't create a new ProjectIssuesSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param },
-                              as: :turbo_stream
+                post :create, params: params, as: :turbo_stream
               end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "renders new" do
-              post :create, params: { project_id: project.to_param },
-                            as: :turbo_stream
+              post :create, params: params, as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -113,6 +112,8 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let(:params) { { project_id: project.to_param, id: subscription.to_param } }
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -121,42 +122,37 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
         context "when html request" do
           context "when their project_issues_subscription" do
+            let!(:subscription) do
+              Fabricate(:project_issues_subscription, project: project,
+                                                      user: current_user)
+            end
+
             it "destroys the requested project_issues_subscription" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project,
-                                                        user: current_user)
               expect do
-                delete :destroy, params: { project_id: project.to_param,
-                                           id: subscription.to_param }
+                delete :destroy, params: params
               end.to change(current_user.project_issues_subscriptions, :count)
                 .by(-1)
             end
 
             it "redirects to the requested project" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project,
-                                                        user: current_user)
-              delete :destroy, params: { project_id: project.to_param,
-                                         id: subscription.to_param }
+              delete :destroy, params: params
               expect(response).to redirect_to(project)
             end
           end
 
           context "when someone else's project_issues_subscription" do
+            let!(:subscription) do
+              Fabricate(:project_issues_subscription, project: project)
+            end
+
             it "doesn't destroys the requested project_issues_subscription" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project)
               expect do
-                delete :destroy, params: { project_id: project.to_param,
-                                           id: subscription.to_param }
+                delete :destroy, params: params
               end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "should be unauthorized" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project)
-              delete :destroy, params: { project_id: project.to_param,
-                                         id: subscription.to_param }
+              delete :destroy, params: params
               expect_to_be_unauthorized(response)
             end
           end
@@ -164,46 +160,37 @@ RSpec.describe ProjectIssuesSubscriptionsController, type: :controller do
 
         context "when turbo_stream request" do
           context "when their project_issues_subscription" do
+            let!(:subscription) do
+              Fabricate(:project_issues_subscription, project: project,
+                                                      user: current_user)
+            end
+
             it "destroys the requested project_issues_subscription" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project,
-                                                        user: current_user)
               expect do
-                delete :destroy, params: { project_id: project.to_param,
-                                           id: subscription.to_param },
-                                 as: :turbo_stream
+                delete :destroy, params: params, as: :turbo_stream
               end.to change(current_user.project_issues_subscriptions, :count)
                 .by(-1)
             end
 
             it "redirects to the requested project" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project,
-                                                        user: current_user)
-              delete :destroy, params: { project_id: project.to_param,
-                                         id: subscription.to_param },
-                               as: :turbo_stream
+              delete :destroy, params: params, as: :turbo_stream
               expect(response).to redirect_to(project)
             end
           end
 
           context "when someone else's project_issues_subscription" do
+            let!(:subscription) do
+              Fabricate(:project_issues_subscription, project: project)
+            end
+
             it "doesn't destroys the requested project_issues_subscription" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project)
               expect do
-                delete :destroy, params: { project_id: project.to_param,
-                                           id: subscription.to_param },
-                                 as: :turbo_stream
+                delete :destroy, params: params, as: :turbo_stream
               end.not_to change(ProjectIssuesSubscription, :count)
             end
 
             it "should be unauthorized" do
-              subscription =
-                Fabricate(:project_issues_subscription, project: project)
-              delete :destroy, params: { project_id: project.to_param,
-                                         id: subscription.to_param },
-                               as: :turbo_stream
+              delete :destroy, params: params, as: :turbo_stream
               expect(response).to have_http_status(:forbidden)
             end
           end
