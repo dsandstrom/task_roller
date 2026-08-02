@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CategoryTasksSubscriptionsController < ApplicationController
   load_and_authorize_resource :category
   load_and_authorize_resource through: :category
@@ -8,45 +6,33 @@ class CategoryTasksSubscriptionsController < ApplicationController
 
   def create
     if @category_tasks_subscription.save
-      create_success
+      respond_to do |format|
+        format.html do
+          redirect_back fallback_location: @category, notice: notice
+        end
+        format.turbo_stream { redirect_back fallback_location: @category }
+      end
     else
-      create_failure
+      render :new
     end
   end
 
   def destroy
-    notice = "No longer subscribed to future tasks for #{@category.name}"
     @category_tasks_subscription.destroy
+
     respond_to do |format|
       format.html { redirect_back fallback_location: @category, notice: notice }
-      format.js { new_js }
+      format.turbo_stream { redirect_back fallback_location: @category }
     end
   end
 
   private
 
-    def create_success
-      notice = "Subscribed to future tasks for #{@category.name}"
-      respond_to do |format|
-        format.html do
-          redirect_back fallback_location: @category, notice: notice
-        end
-        format.js { render :show }
-      end
+    def create_notice
+      "Subscribed to future tasks for #{@category.name}"
     end
 
-    def create_failure
-      respond_to do |format|
-        format.html { render :new }
-        format.js { new_js }
-      end
-    end
-
-    def new_js
-      @category_tasks_subscription =
-        @category.category_tasks_subscriptions.build(user_id: current_user_id)
-      authorize! :create, @category_tasks_subscription
-
-      render :new
+    def destroy_notice
+      "No longer subscribed to future tasks for #{@category.name}"
     end
 end
