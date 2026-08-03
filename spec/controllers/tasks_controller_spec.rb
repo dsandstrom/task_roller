@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TasksController, type: :controller do
@@ -82,14 +80,6 @@ RSpec.describe TasksController, type: :controller do
             expect(response).to be_successful
           end
         end
-
-        context "for a js request" do
-          it "returns a success response" do
-            Fabricate(:task, issue: issue)
-            get :index, params: { issue_id: issue.to_param }, xhr: true
-            expect(response).to be_successful
-          end
-        end
       end
     end
 
@@ -153,14 +143,6 @@ RSpec.describe TasksController, type: :controller do
           it "returns a success response" do
             Fabricate(:task, issue: issue)
             get :index, params: { issue_id: issue.to_param }
-            expect(response).to be_successful
-          end
-        end
-
-        context "for a js request" do
-          it "returns a success response" do
-            Fabricate(:task, issue: issue)
-            get :index, params: { issue_id: issue.to_param }, xhr: true
             expect(response).to be_successful
           end
         end
@@ -418,14 +400,6 @@ RSpec.describe TasksController, type: :controller do
               expect(response).to be_successful
             end
           end
-
-          context "for a js request" do
-            it "returns a success response" do
-              Fabricate(:task, issue: issue)
-              get :index, params: { issue_id: issue.to_param }, xhr: true
-              expect(response).to be_successful
-            end
-          end
         end
       end
     end
@@ -677,14 +651,6 @@ RSpec.describe TasksController, type: :controller do
             it "returns a success response" do
               Fabricate(:task, issue: issue)
               get :index, params: { issue_id: issue.to_param }
-              expect(response).to be_successful
-            end
-          end
-
-          context "for a js request" do
-            it "returns a success response" do
-              Fabricate(:task, issue: issue)
-              get :index, params: { issue_id: issue.to_param }, xhr: true
               expect(response).to be_successful
             end
           end

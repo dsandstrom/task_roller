@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # FIXME: when same task on page, issue gets added to first
 # TODO: show description in partial?
 
@@ -27,13 +25,8 @@ class TasksController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html do
-        set_user_resources
-        set_task_resources
-      end
-      format.js
-    end
+    set_user_resources
+    set_task_resources
   end
 
   def new
