@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskNotificationsController, type: :controller do
@@ -15,55 +13,68 @@ RSpec.describe TaskNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested task_notification belongs to them" do
+          let!(:task_notification) do
+            Fabricate(:task_notification, task: task, user: current_user)
+          end
+
           context "for an html request" do
             it "destroys the requested task_notification" do
-              task_notification = Fabricate(:task_notification,
-                                            task: task, user: current_user)
               expect do
                 delete :destroy, params: { id: task_notification.to_param }
               end.to change(TaskNotification, :count).by(-1)
             end
 
             it "redirects to the task" do
-              task_notification = Fabricate(:task_notification,
-                                            task: task, user: current_user)
               delete :destroy, params: { id: task_notification.to_param }
               expect(response).to redirect_to(task)
             end
           end
 
-          context "for an ajax request" do
+          context "for a turbo_stream request" do
             it "destroys the requested task_notification" do
-              task_notification = Fabricate(:task_notification,
-                                            task: task, user: current_user)
               expect do
                 delete :destroy, params: { id: task_notification.to_param },
-                                 xhr: true
+                                 as: :turbo_stream
               end.to change(TaskNotification, :count).by(-1)
             end
 
-            it "renders destroy" do
-              task_notification = Fabricate(:task_notification,
-                                            task: task, user: current_user)
+            it "redirects to the task" do
               delete :destroy, params: { id: task_notification.to_param },
-                               xhr: true
-              expect(response).to be_successful
+                               as: :turbo_stream
+              expect(response).to redirect_to(task)
             end
           end
         end
 
         context "when requested task_notification doesn't belong to them" do
-          it "doesn't destroy the requested task_notification" do
-            task_notification = Fabricate(:task_notification, task: task)
-            expect do
+          let!(:task_notification) { Fabricate(:task_notification, task: task) }
+
+          context "for an html request" do
+            it "doesn't destroy the requested task_notification" do
+              expect do
+                delete :destroy, params: { id: task_notification.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
               delete :destroy, params: { id: task_notification.to_param }
-            end.not_to change(TaskNotification, :count)
+              expect_to_be_unauthorized(response)
+            end
           end
 
-          it "redirects to unauthorized" do
-            task_notification = Fabricate(:task_notification, task: task)
-            delete :destroy, params: { id: task_notification.to_param }
-            expect_to_be_unauthorized(response)
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested task_notification" do
+              expect do
+                delete :destroy, params: { id: task_notification.to_param },
+                                 as: :turbo_stream
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: task_notification.to_param },
+                               as: :turbo_stream
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end
@@ -76,34 +87,38 @@ RSpec.describe TaskNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested task_notification belongs to them" do
-          it "destroys the requested task_notification" do
-            task_notification = Fabricate(:task_notification,
-                                          task: task, user: current_user)
-            expect do
-              delete :destroy, params: { id: task_notification.to_param }
-            end.to change(TaskNotification, :count).by(-1)
+          let!(:task_notification) do
+            Fabricate(:task_notification, task: task, user: current_user)
           end
 
-          it "redirects to the task" do
-            task_notification = Fabricate(:task_notification,
-                                          task: task, user: current_user)
-            delete :destroy, params: { id: task_notification.to_param }
-            expect(response).to redirect_to(task)
+          context "for an html request" do
+            it "destroys the requested task_notification" do
+              expect do
+                delete :destroy, params: { id: task_notification.to_param }
+              end.to change(TaskNotification, :count).by(-1)
+            end
+
+            it "redirects to the task" do
+              delete :destroy, params: { id: task_notification.to_param }
+              expect(response).to redirect_to(task)
+            end
           end
         end
 
         context "when requested task_notification doesn't belong to them" do
-          it "doesn't destroy the requested task_notification" do
-            task_notification = Fabricate(:task_notification, task: task)
-            expect do
-              delete :destroy, params: { id: task_notification.to_param }
-            end.not_to change(TaskNotification, :count)
-          end
+          let!(:task_notification) { Fabricate(:task_notification, task: task) }
 
-          it "redirects to unauthorized" do
-            task_notification = Fabricate(:task_notification, task: task)
-            delete :destroy, params: { id: task_notification.to_param }
-            expect_to_be_unauthorized(response)
+          context "for an html request" do
+            it "doesn't destroy the requested task_notification" do
+              expect do
+                delete :destroy, params: { id: task_notification.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: task_notification.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
       end
@@ -138,17 +153,17 @@ RSpec.describe TaskNotificationsController, type: :controller do
             end
           end
 
-          context "for an ajax request" do
+          context "for a turbo_stream request" do
             it "destroys the requested task's notifications" do
               expect do
                 delete :bulk_destroy, params: { task_id: task.to_param },
-                                      xhr: true
+                                      as: :turbo_stream
               end.to change(TaskNotification, :count).by(-1)
             end
 
-            it "renders :destroy" do
+            it "renders :bulk_destroy" do
               delete :bulk_destroy, params: { task_id: task.to_param },
-                                    xhr: true
+                                    as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -157,15 +172,17 @@ RSpec.describe TaskNotificationsController, type: :controller do
         context "when no task_notifications" do
           before { Fabricate(:task_notification, task: task) }
 
-          it "doesn't destroy the requested task's notifications" do
-            expect do
-              delete :bulk_destroy, params: { task_id: task.to_param }
-            end.not_to change(TaskNotification, :count)
-          end
+          context "for an html request" do
+            it "doesn't destroy the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
 
-          it "redirects to the task" do
-            delete :bulk_destroy, params: { task_id: task.to_param }
-            expect(response).to redirect_to(task)
+            it "redirects to the task" do
+              delete :bulk_destroy, params: { task_id: task.to_param }
+              expect(response).to redirect_to(task)
+            end
           end
         end
       end
@@ -183,30 +200,64 @@ RSpec.describe TaskNotificationsController, type: :controller do
             Fabricate(:task_notification, task: task, user: current_user)
           end
 
-          it "destroys the requested task's notifications" do
-            expect do
+          context "for an html request" do
+            it "destroys the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param }
+              end.to change(TaskNotification, :count).by(-1)
+            end
+
+            it "redirects to the task" do
               delete :bulk_destroy, params: { task_id: task.to_param }
-            end.to change(TaskNotification, :count).by(-1)
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "redirects to the task" do
-            delete :bulk_destroy, params: { task_id: task.to_param }
-            expect(response).to redirect_to(task)
+          context "for a turbo_stream request" do
+            it "destroys the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param },
+                                      as: :turbo_stream
+              end.to change(TaskNotification, :count).by(-1)
+            end
+
+            it "renders success" do
+              delete :bulk_destroy, params: { task_id: task.to_param },
+                                    as: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
         context "when no task_notifications" do
           before { Fabricate(:task_notification, task: task) }
 
-          it "doesn't destroy the requested task's notifications" do
-            expect do
+          context "for an html request" do
+            it "doesn't destroy the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "redirects to the task" do
               delete :bulk_destroy, params: { task_id: task.to_param }
-            end.not_to change(TaskNotification, :count)
+              expect(response).to redirect_to(task)
+            end
           end
 
-          it "redirects to the task" do
-            delete :bulk_destroy, params: { task_id: task.to_param }
-            expect(response).to redirect_to(task)
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param },
+                                      as: :turbo_stream
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "renders success" do
+              delete :bulk_destroy, params: { task_id: task.to_param },
+                                    as: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
@@ -218,15 +269,32 @@ RSpec.describe TaskNotificationsController, type: :controller do
             Fabricate(:task_notification, task: task, user: current_user)
           end
 
-          it "doesn't destroy the requested task's notifications" do
-            expect do
+          context "for an html request" do
+            it "doesn't destroy the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "should be unauthorized" do
               delete :bulk_destroy, params: { task_id: task.to_param }
-            end.not_to change(TaskNotification, :count)
+              expect_to_be_unauthorized(response)
+            end
           end
 
-          it "should be unauthorized" do
-            delete :bulk_destroy, params: { task_id: task.to_param }
-            expect_to_be_unauthorized(response)
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested task's notifications" do
+              expect do
+                delete :bulk_destroy, params: { task_id: task.to_param },
+                                      as: :turbo_stream
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "should be unauthorized" do
+              delete :bulk_destroy, params: { task_id: task.to_param },
+                                    as: :turbo_stream
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end

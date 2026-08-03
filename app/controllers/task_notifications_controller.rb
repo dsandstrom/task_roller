@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskNotificationsController < ApplicationController
   load_and_authorize_resource :task, only: :bulk_destroy
   load_and_authorize_resource only: :destroy
@@ -13,7 +11,7 @@ class TaskNotificationsController < ApplicationController
         redirect_back fallback_location: @task,
                       notice: 'Notification was successfully dismissed.'
       end
-      format.js
+      format.turbo_stream { redirect_back fallback_location: @task }
     end
   end
 
@@ -25,7 +23,6 @@ class TaskNotificationsController < ApplicationController
         redirect_back fallback_location: @task,
                       notice: 'Notifications were successfully dismissed.'
       end
-      format.js
       format.turbo_stream
     end
   end
