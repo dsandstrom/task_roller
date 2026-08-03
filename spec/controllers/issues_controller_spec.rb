@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssuesController, type: :controller do
@@ -644,16 +642,6 @@ RSpec.describe IssuesController, type: :controller do
               expect(response).to be_successful
             end
           end
-
-          context "for a js request" do
-            it "returns a success response" do
-              issue = Fabricate(:issue, project: project)
-              task = Fabricate(:task, project: project, issue: issue)
-              get :show, params: { id: issue.to_param, task_id: task.to_param },
-                         xhr: true
-              expect(response).to be_successful
-            end
-          end
         end
       end
     end
@@ -870,16 +858,6 @@ RSpec.describe IssuesController, type: :controller do
               expect(response).to be_successful
             end
           end
-
-          context "for a js request" do
-            it "returns a success response" do
-              issue = Fabricate(:issue, project: project)
-              task = Fabricate(:task, project: project, issue: issue)
-              get :show, params: { id: issue.to_param, task_id: task.to_param },
-                         xhr: true
-              expect(response).to be_successful
-            end
-          end
         end
       end
     end
@@ -1067,16 +1045,6 @@ RSpec.describe IssuesController, type: :controller do
               issue = Fabricate(:issue, project: project)
               task = Fabricate(:task, project: project, issue: issue)
               get :show, params: { id: issue.to_param, task_id: task.to_param }
-              expect(response).to be_successful
-            end
-          end
-
-          context "for a js request" do
-            it "returns a success response" do
-              issue = Fabricate(:issue, project: project)
-              task = Fabricate(:task, project: project, issue: issue)
-              get :show, params: { id: issue.to_param, task_id: task.to_param },
-                         xhr: true
               expect(response).to be_successful
             end
           end

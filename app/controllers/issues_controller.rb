@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: add one place to add issues (able to pick project there)
 # TODO: add all issues page, filter by category/project
 # TODO: add general search
@@ -26,13 +24,11 @@ class IssuesController < ApplicationController
 
   def show
     # TODO: destroy 'new' notifications for current_user
+    # want to destroy after visit, maybe set variable, then destroy
     @user = @issue.user
     @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
 
-    respond_to do |format|
-      format.html { set_issue_variables }
-      format.js
-    end
+    set_issue_variables
   end
 
   def new
