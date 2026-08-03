@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueNotificationsController, type: :controller do
@@ -15,55 +13,70 @@ RSpec.describe IssueNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested issue_notification belongs to them" do
+          let!(:issue_notification) do
+            Fabricate(:issue_notification, issue: issue, user: current_user)
+          end
+
           context "for an html request" do
             it "destroys the requested issue_notification" do
-              issue_notification = Fabricate(:issue_notification,
-                                             issue: issue, user: current_user)
               expect do
                 delete :destroy, params: { id: issue_notification.to_param }
               end.to change(IssueNotification, :count).by(-1)
             end
 
             it "redirects to the issue" do
-              issue_notification = Fabricate(:issue_notification,
-                                             issue: issue, user: current_user)
               delete :destroy, params: { id: issue_notification.to_param }
               expect(response).to redirect_to(issue)
             end
           end
 
-          context "for an ajax request" do
+          context "for a turbo_stream request" do
             it "destroys the requested issue_notification" do
-              issue_notification = Fabricate(:issue_notification,
-                                             issue: issue, user: current_user)
               expect do
                 delete :destroy, params: { id: issue_notification.to_param },
-                                 xhr: true
+                                 as: :turbo_stream
               end.to change(IssueNotification, :count).by(-1)
             end
 
             it "renders :destroy" do
-              issue_notification = Fabricate(:issue_notification,
-                                             issue: issue, user: current_user)
               delete :destroy, params: { id: issue_notification.to_param },
-                               xhr: true
-              expect(response).to be_successful
+                               as: :turbo_stream
+              expect(response).to redirect_to(issue)
             end
           end
         end
 
         context "when requested issue_notification doesn't belong to them" do
-          it "doesn't destroy the requested issue_notification" do
-            issue_notification = Fabricate(:issue_notification, issue: issue)
-            expect do
-              delete :destroy, params: { id: issue_notification.to_param }
-            end.not_to change(IssueNotification, :count)
+          let!(:issue_notification) do
+            Fabricate(:issue_notification, issue: issue)
           end
 
-          it "redirects to unauthorized" do
-            issue_notification = Fabricate(:issue_notification, issue: issue)
-            delete :destroy, params: { id: issue_notification.to_param }
-            expect_to_be_unauthorized(response)
+          context "for an html request" do
+            it "doesn't destroy the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param }
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: issue_notification.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
+
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param },
+                                 as: :turbo_stream
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: issue_notification.to_param },
+                               as: :turbo_stream
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end
@@ -76,34 +89,70 @@ RSpec.describe IssueNotificationsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when requested issue_notification belongs to them" do
-          it "destroys the requested issue_notification" do
-            issue_notification = Fabricate(:issue_notification,
-                                           issue: issue, user: current_user)
-            expect do
-              delete :destroy, params: { id: issue_notification.to_param }
-            end.to change(IssueNotification, :count).by(-1)
+          let!(:issue_notification) do
+            Fabricate(:issue_notification, issue: issue, user: current_user)
           end
 
-          it "redirects to the issue" do
-            issue_notification = Fabricate(:issue_notification,
-                                           issue: issue, user: current_user)
-            delete :destroy, params: { id: issue_notification.to_param }
-            expect(response).to redirect_to(issue)
+          context "for an html request" do
+            it "destroys the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param }
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "redirects to the issue" do
+              delete :destroy, params: { id: issue_notification.to_param }
+              expect(response).to redirect_to(issue)
+            end
+          end
+
+          context "for a turbo_stream request" do
+            it "destroys the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param },
+                                 as: :turbo_stream
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "redirects to the issue" do
+              delete :destroy, params: { id: issue_notification.to_param },
+                               as: :turbo_stream
+              expect(response).to redirect_to(issue)
+            end
           end
         end
 
         context "when requested issue_notification doesn't belong to them" do
-          it "doesn't destroy the requested issue_notification" do
-            issue_notification = Fabricate(:issue_notification, issue: issue)
-            expect do
-              delete :destroy, params: { id: issue_notification.to_param }
-            end.not_to change(IssueNotification, :count)
+          let!(:issue_notification) do
+            Fabricate(:issue_notification, issue: issue)
           end
 
-          it "redirects to unauthorized" do
-            issue_notification = Fabricate(:issue_notification, issue: issue)
-            delete :destroy, params: { id: issue_notification.to_param }
-            expect_to_be_unauthorized(response)
+          context "for an html request" do
+            it "doesn't destroy the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param }
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: issue_notification.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
+
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested issue_notification" do
+              expect do
+                delete :destroy, params: { id: issue_notification.to_param },
+                                 as: :turbo_stream
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "redirects to unauthorized" do
+              delete :destroy, params: { id: issue_notification.to_param },
+                               as: :turbo_stream
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end
@@ -138,17 +187,17 @@ RSpec.describe IssueNotificationsController, type: :controller do
             end
           end
 
-          context "for an ajax request" do
+          context "for a turbo_stream request" do
             it "destroys the requested issue's notifications" do
               expect do
                 delete :bulk_destroy, params: { issue_id: issue.to_param },
-                                      xhr: true
+                                      as: :turbo_stream
               end.to change(IssueNotification, :count).by(-1)
             end
 
             it "renders :destroy" do
               delete :bulk_destroy, params: { issue_id: issue.to_param },
-                                    xhr: true
+                                    as: :turbo_stream
               expect(response).to be_successful
             end
           end
@@ -157,15 +206,32 @@ RSpec.describe IssueNotificationsController, type: :controller do
         context "when no issue_notifications" do
           before { Fabricate(:issue_notification, issue: issue) }
 
-          it "doesn't destroy the requested issue's notifications" do
-            expect do
+          context "for an html request" do
+            it "doesn't destroy the requested issue's notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param }
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "redirects to the issue" do
               delete :bulk_destroy, params: { issue_id: issue.to_param }
-            end.not_to change(IssueNotification, :count)
+              expect(response).to redirect_to(issue)
+            end
           end
 
-          it "redirects to the issue" do
-            delete :bulk_destroy, params: { issue_id: issue.to_param }
-            expect(response).to redirect_to(issue)
+          context "for a turbo_stream request" do
+            it "doesn't destroy the requested issue's notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                      as: :turbo_stream
+              end.not_to change(IssueNotification, :count)
+            end
+
+            it "renders success" do
+              delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                    as: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
       end
@@ -177,21 +243,45 @@ RSpec.describe IssueNotificationsController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when they have notifications for the requested issue" do
-          before do
-            Fabricate(:issue_notification, issue: issue)
-            Fabricate(:issue_notification, issue: issue, user: current_user)
-          end
+        context "for an html request" do
+          context "when they have notifications for the requested issue" do
+            before do
+              Fabricate(:issue_notification, issue: issue)
+              Fabricate(:issue_notification, issue: issue, user: current_user)
+            end
 
-          it "destroys the requested issue's notifications" do
-            expect do
+            it "destroys the requested issue's notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param }
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "redirects to the issue" do
               delete :bulk_destroy, params: { issue_id: issue.to_param }
-            end.to change(IssueNotification, :count).by(-1)
+              expect(response).to redirect_to(issue)
+            end
           end
+        end
 
-          it "redirects to the issue" do
-            delete :bulk_destroy, params: { issue_id: issue.to_param }
-            expect(response).to redirect_to(issue)
+        context "for a turbo_stream request" do
+          context "when they have notifications for the requested issue" do
+            before do
+              Fabricate(:issue_notification, issue: issue)
+              Fabricate(:issue_notification, issue: issue, user: current_user)
+            end
+
+            it "destroys the requested issue's notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                      as: :turbo_stream
+              end.to change(IssueNotification, :count).by(-1)
+            end
+
+            it "renders success" do
+              delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                    as: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
@@ -218,15 +308,32 @@ RSpec.describe IssueNotificationsController, type: :controller do
             Fabricate(:issue_notification, issue: issue, user: current_user)
           end
 
-          it "doesn't destroy any issue_notifications" do
-            expect do
+          context "for an html request" do
+            it "doesn't destroy any issue_notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param }
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "should be unauthorized" do
               delete :bulk_destroy, params: { issue_id: issue.to_param }
-            end.not_to change(TaskNotification, :count)
+              expect_to_be_unauthorized(response)
+            end
           end
 
-          it "should be unauthorized" do
-            delete :bulk_destroy, params: { issue_id: issue.to_param }
-            expect_to_be_unauthorized(response)
+          context "for a turbo_stream request" do
+            it "doesn't destroy any issue_notifications" do
+              expect do
+                delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                      as: :turbo_stream
+              end.not_to change(TaskNotification, :count)
+            end
+
+            it "should be unauthorized" do
+              delete :bulk_destroy, params: { issue_id: issue.to_param },
+                                    as: :turbo_stream
+              expect(response).to have_http_status(403)
+            end
           end
         end
       end

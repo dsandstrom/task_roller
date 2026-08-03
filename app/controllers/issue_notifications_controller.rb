@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueNotificationsController < ApplicationController
   load_and_authorize_resource :issue, only: :bulk_destroy
   load_and_authorize_resource only: :destroy
@@ -10,10 +8,9 @@ class IssueNotificationsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @issue,
-                      notice: 'Notification was successfully dismissed.'
+        redirect_back fallback_location: @issue, notice: destroy_notice
       end
-      format.js
+      format.turbo_stream { redirect_back fallback_location: @issue }
     end
   end
 
@@ -22,10 +19,8 @@ class IssueNotificationsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @issue,
-                      notice: 'Notifications were successfully dismissed.'
+        redirect_back fallback_location: @issue, notice: destroy_notice
       end
-      format.js
       format.turbo_stream
     end
   end
@@ -36,5 +31,9 @@ class IssueNotificationsController < ApplicationController
       @destroyed_id = @issue_notification.id
       @issue = @issue_notification.issue
       @issue_comment = @issue_notification.issue_comment
+    end
+
+    def destroy_notice
+      'Notification was successfully dismissed.'
     end
 end
