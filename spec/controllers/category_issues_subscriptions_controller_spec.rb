@@ -428,9 +428,9 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
               ).by(-1)
             end
 
-            it "renders :new" do
+            it "redirects to category" do
               delete :destroy, params: params, as: :turbo_stream
-              expect(response).to be_successful
+              expect(response).to redirect_to(category)
             end
           end
 
