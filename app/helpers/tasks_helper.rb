@@ -268,7 +268,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       confirm = 'Are you sure you want to cancel the review?'
 
       ['cancel review', task_review_path(task, review),
-       { method: :delete, class: 'button-warning',
+       { class: 'button-warning',
          data: { turbo_confirm: confirm, turbo_method: :delete } }]
     end
 
@@ -277,7 +277,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       return unless review
 
       links = []
-      links << cancel_review_link if can?(:destroy, review)
+      links << cancel_review_link(task, review) if can?(:destroy, review)
       links
     end
 
