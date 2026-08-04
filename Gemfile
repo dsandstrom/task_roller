@@ -47,8 +47,7 @@ gem 'acts_as_list', '~> 1.2.6'
 gem 'redcarpet', '~> 3.6.1'
 
 gem 'cancancan', '~> 3.6.1'
-# Need to update rails, to update devise to 5
-gem 'devise', '~> 4.9'
+gem 'devise', '~> 5.0'
 # GitHub API
 gem 'octokit', '~> 10.0'
 gem 'omniauth-github', '~> 2.0'
@@ -81,9 +80,8 @@ group :development, :test do
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
-  gem 'rspec', '~> 3.10'
-  # rspec-rails 8 requires rails 7
-  gem 'rspec-rails', '~>  6.0'
+  gem 'rspec', '~> 3.13'
+  gem 'rspec-rails', '~>  7.1'
   gem 'selenium-webdriver', '~> 4.26'
 end
 

@@ -331,4 +331,9 @@ Devise.setup do |config|
   # password is changed. Defaults to true, so a user is signed in automatically
   # after changing a password.
   # config.sign_in_after_change_password = true
+
+  # New defaults for turbo
+  # TODO: change to :unprocessable_content after updating ruby/rack(?)
+  # config.responder.error_status = :unprocessable_content
+  config.responder.redirect_status = :see_other
 end
