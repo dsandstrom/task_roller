@@ -233,8 +233,8 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
-        assert_select "a[data-method='delete'][href='#{first_url}']"
-        assert_select "a[data-method='delete'][href='#{second_url}']"
+        assert_select "a[data-turbo-method='delete'][href='#{first_url}']"
+        assert_select "a[data-turbo-method='delete'][href='#{second_url}']"
       end
     end
 
@@ -280,7 +280,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
 
       it "doesn't render open issue link" do
@@ -318,7 +318,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_connection_path(@source_connection)
-        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]"
       end
 
       it "doesn't render close issue link" do
@@ -350,7 +350,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
     end
 
@@ -387,7 +387,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_resolution_path(@issue, @resolution)
-        assert_select "a[data-method='delete'][href='#{url}']"
+        assert_select "a[data-turbo-method='delete'][href='#{url}']"
       end
 
       it "doesn't render close issue link" do
@@ -421,7 +421,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
 
       it "doesn't render close issue link" do
@@ -510,7 +510,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
 
@@ -543,7 +543,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]"
         end
       end
     end
@@ -618,7 +618,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
 
@@ -649,7 +649,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]"
         end
       end
 
@@ -670,14 +670,14 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_resolution_path(@issue, @resolution)
-          assert_select "a[data-method='delete'][href='#{url}']"
+          assert_select "a[data-turbo-method='delete'][href='#{url}']"
         end
 
         it "renders reopen issue link" do
           render template: subject, layout: "layouts/application"
 
           url = issue_reopenings_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
     end
@@ -801,7 +801,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_connection_path(@source_connection)
-        assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]"
       end
     end
 
@@ -843,8 +843,8 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
-        assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
-        assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
+        assert_select "a[data-turbo-method='delete'][href='#{first_url}']", count: 0
+        assert_select "a[data-turbo-method='delete'][href='#{second_url}']", count: 0
       end
     end
 
@@ -855,7 +855,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_closures_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
 
       it "doesn't render open issue link" do
@@ -910,7 +910,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
 
       it "doesn't render close issue link" do
@@ -964,7 +964,7 @@ RSpec.describe "issues/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         url = issue_reopenings_path(@issue)
-        assert_select "a[href='#{url}'][data-method='post']"
+        assert_select "a[href='#{url}'][data-turbo-method='post']"
       end
     end
 
@@ -1029,7 +1029,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_closures_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
 
@@ -1053,7 +1053,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]"
         end
       end
 
@@ -1074,7 +1074,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_reopenings_path(@issue)
-          assert_select "a[href='#{url}'][data-method='post']"
+          assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
     end
@@ -1484,7 +1484,7 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-method=\"delete\"][href=\"#{url}\"]", count: 0
+          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]", count: 0
         end
       end
 
@@ -1527,9 +1527,9 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered).not_to have_link(nil, href: first_edit_url)
           expect(rendered).to have_link(nil, href: second_edit_url)
 
-          assert_select "a[data-method='delete'][href='#{first_url}']",
+          assert_select "a[data-turbo-method='delete'][href='#{first_url}']",
                         count: 0
-          assert_select "a[data-method='delete'][href='#{second_url}']",
+          assert_select "a[data-turbo-method='delete'][href='#{second_url}']",
                         count: 0
         end
       end

@@ -18,7 +18,7 @@
     <p>
       <%= link_to 'delete resolution and reopen',
                   issue_resolution_path(issue, resolution),
-                  method: :delete, data: { turbo_confirm: confirm },
+                  data: { turbo_confirm: confirm, turbo_method: :delete },
                   class: 'destroy-link' %>
     </p>
   <% end %>
