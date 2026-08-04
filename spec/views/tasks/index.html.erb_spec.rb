@@ -10,7 +10,7 @@ RSpec.describe "tasks/index", type: :view do
 
     before do
       enable_can(view, admin)
-      controller.extra_params = { :user_id => admin.id }
+      controller.extra_params = { user_id: admin.id }
     end
 
     context "when category" do
@@ -150,7 +150,7 @@ RSpec.describe "tasks/index", type: :view do
 
       before do
         enable_can(view, current_user)
-        controller.extra_params = { :user_id => current_user.id }
+        controller.extra_params = { user_id: current_user.id }
       end
 
       context "when project" do
@@ -224,7 +224,7 @@ RSpec.describe "tasks/index", type: :view do
 
       before do
         enable_can(view, current_user)
-        controller.extra_params = { :user_id => current_user.id }
+        controller.extra_params = { user_id: current_user.id }
       end
 
       context "when project" do

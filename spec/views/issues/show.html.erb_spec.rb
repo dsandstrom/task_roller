@@ -841,8 +841,10 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).not_to have_link(nil, href: first_edit_url)
         expect(rendered).to have_link(nil, href: second_edit_url)
 
-        assert_select "a[data-turbo-method='delete'][href='#{first_url}']", count: 0
-        assert_select "a[data-turbo-method='delete'][href='#{second_url}']", count: 0
+        assert_select "a[data-turbo-method='delete'][href='#{first_url}']",
+                      count: 0
+        assert_select "a[data-turbo-method='delete'][href='#{second_url}']",
+                      count: 0
       end
     end
 
@@ -1482,7 +1484,8 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
 
           url = issue_connection_path(@source_connection)
-          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]", count: 0
+          assert_select "a[data-turbo-method=\"delete\"][href=\"#{url}\"]",
+                        count: 0
         end
       end
 

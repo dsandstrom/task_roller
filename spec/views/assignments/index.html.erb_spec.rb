@@ -11,7 +11,7 @@ RSpec.describe "assignments/index", type: :view do
     before do
       enable_can(view, admin)
       # so /users/:user_id gets added to request url
-      controller.extra_params = { :user_id => admin.id }
+      controller.extra_params = { user_id: admin.id }
     end
 
     context "when their assignments" do
@@ -101,7 +101,7 @@ RSpec.describe "assignments/index", type: :view do
 
       before do
         enable_can(view, current_user)
-        controller.extra_params = { :user_id => current_user.id }
+        controller.extra_params = { user_id: current_user.id }
       end
 
       context "when their assignments" do
@@ -168,7 +168,7 @@ RSpec.describe "assignments/index", type: :view do
 
       before do
         enable_can(view, current_user)
-        controller.extra_params = { :user_id => current_user.id }
+        controller.extra_params = { user_id: current_user.id }
       end
 
       context "when their assignments" do
