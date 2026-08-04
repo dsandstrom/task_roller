@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "assignments/index", type: :view do
@@ -10,7 +8,11 @@ RSpec.describe "assignments/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
 
-    before { enable_can(view, admin) }
+    before do
+      enable_can(view, admin)
+      # so /users/:user_id gets added to request url
+      controller.extra_params = { :user_id => admin.id }
+    end
 
     context "when their assignments" do
       let(:first_task) { Fabricate(:task, project: project) }
@@ -40,7 +42,7 @@ RSpec.describe "assignments/index", type: :view do
         assert_select "#task-#{second_task.id}"
         second_url = edit_task_path(second_task)
         expect(rendered).to have_link(nil, href: second_url)
-        issue_url = task_issue_path(second_task, issue)
+        issue_url = task_issue_previews_path(second_task)
         expect(rendered).to have_link(nil, href: issue_url)
       end
     end
@@ -66,7 +68,7 @@ RSpec.describe "assignments/index", type: :view do
         assert_select "#task-#{second_task.id}"
         second_url = edit_task_path(second_task)
         expect(rendered).to have_link(nil, href: second_url)
-        issue_url = task_issue_path(second_task, issue)
+        issue_url = task_issue_previews_path(second_task)
         expect(rendered).to have_link(nil, href: issue_url)
       end
     end
@@ -97,7 +99,10 @@ RSpec.describe "assignments/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_can(view, current_user) }
+      before do
+        enable_can(view, current_user)
+        controller.extra_params = { :user_id => current_user.id }
+      end
 
       context "when their assignments" do
         let(:first_task) do
@@ -122,7 +127,7 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          issue_url = task_issue_path(second_task, issue)
+          issue_url = task_issue_previews_path(second_task)
           expect(rendered).to have_link(nil, href: issue_url)
         end
       end
@@ -150,7 +155,7 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          issue_url = task_issue_path(second_task, issue)
+          issue_url = task_issue_previews_path(second_task)
           expect(rendered).to have_link(nil, href: issue_url)
         end
       end
@@ -161,7 +166,10 @@ RSpec.describe "assignments/index", type: :view do
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
-      before { enable_can(view, current_user) }
+      before do
+        enable_can(view, current_user)
+        controller.extra_params = { :user_id => current_user.id }
+      end
 
       context "when their assignments" do
         let(:first_task) { Fabricate(:task, project: project) }
@@ -184,7 +192,7 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          issue_url = task_issue_path(second_task, issue)
+          issue_url = task_issue_previews_path(second_task)
           expect(rendered).to have_link(nil, href: issue_url)
         end
       end
@@ -210,7 +218,7 @@ RSpec.describe "assignments/index", type: :view do
           assert_select "#task-#{second_task.id}"
           second_url = edit_task_path(second_task)
           expect(rendered).not_to have_link(nil, href: second_url)
-          issue_url = task_issue_path(second_task, issue)
+          issue_url = task_issue_previews_path(second_task)
           expect(rendered).to have_link(nil, href: issue_url)
         end
       end
