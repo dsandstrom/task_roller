@@ -11,7 +11,7 @@ class IssuesController < ApplicationController
   authorize_resource only: :index
 
   before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_issue_types, only: :new
+  before_action :check_for_issue_types?, only: :new
 
   def index
     @source = build_source
@@ -81,7 +81,7 @@ class IssuesController < ApplicationController
       @issue_types = IssueType.all
     end
 
-    def check_for_issue_types
+    def check_for_issue_types?
       return true if @issue_types&.any?
 
       redirect_url = can?(:create, IssueType) ? issue_types_url : root_url

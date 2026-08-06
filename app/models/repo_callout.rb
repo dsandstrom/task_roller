@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 class RepoCallout < ApplicationRecord
   ACTION_OPTIONS = %w[start pause complete].freeze
   MESSAGE_REGEX = /
     ((starts?|fix(?:e[ds])?|progress(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
-    (?:task)?\s?[\#\-]?
+    (?:task)?\s?[\#-]?
     (\d+))
   /ix
 
@@ -45,7 +43,7 @@ class RepoCallout < ApplicationRecord
     when 'start'
       start_task
     when 'pause'
-      pause_task
+      pause_task?
     when 'complete'
       finish_task
     end
@@ -83,7 +81,7 @@ class RepoCallout < ApplicationRecord
       task.progressions.create(user: user, repo_callout_id: id)
     end
 
-    def pause_task
+    def pause_task?
       # TODO: set repo_callout_id (may conflict if set when started)
       unfinished_progressions.all?(&:finish)
     end
@@ -91,6 +89,6 @@ class RepoCallout < ApplicationRecord
     def finish_task
       return if task.closed?
 
-      task.finish if task.reviews.create(user: user, repo_callout_id: id)
+      task.finish? if task.reviews.create(user: user, repo_callout_id: id)
     end
 end

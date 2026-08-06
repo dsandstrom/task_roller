@@ -10,9 +10,9 @@ class IssueSubscriptionsController < ApplicationController
     if @issue_subscription.save
       respond_to do |format|
         format.html do
-          redirect_back fallback_location: @issue, notice: create_notice
+          redirect_back_or_to(@issue, notice: create_notice)
         end
-        format.turbo_stream { redirect_back fallback_location: @issue }
+        format.turbo_stream { redirect_back_or_to(@issue) }
       end
     else
       render :new
@@ -24,9 +24,9 @@ class IssueSubscriptionsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @issue, notice: destroy_notice
+        redirect_back_or_to(@issue, notice: destroy_notice)
       end
-      format.turbo_stream { redirect_back fallback_location: @issue }
+      format.turbo_stream { redirect_back_or_to(@issue) }
     end
   end
 

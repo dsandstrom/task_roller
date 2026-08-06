@@ -1992,7 +1992,7 @@ RSpec.describe Task, type: :model do
         progression = Fabricate(:unfinished_progression, task: task)
 
         expect do
-          task.finish
+          task.finish?
           progression.reload
         end.to change(progression, :finished).to(true)
       end
@@ -2001,13 +2001,13 @@ RSpec.describe Task, type: :model do
         Fabricate(:unfinished_progression, task: task)
 
         expect do
-          task.finish
+          task.finish?
           task.reload
         end.not_to change(task, :status)
       end
 
       it "returns true" do
-        expect(task.finish).to eq(true)
+        expect(task.finish?).to eq(true)
       end
     end
 
@@ -2016,12 +2016,12 @@ RSpec.describe Task, type: :model do
 
       it "doesn't raise an error" do
         expect do
-          task.finish
+          task.finish?
         end.not_to raise_error
       end
 
       it "returns true" do
-        expect(task.finish).to eq(true)
+        expect(task.finish?).to eq(true)
       end
     end
 
@@ -2037,7 +2037,7 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns false" do
-        expect(task.finish).to eq(false)
+        expect(task.finish?).to eq(false)
       end
     end
   end

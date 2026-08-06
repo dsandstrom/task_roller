@@ -33,7 +33,7 @@ parameters:
     default: '18.4'
   ruby_version:
     type: string
-    default: '3.3.11'
+    default: '3.4.10'
   bundler_version:
     type: string
     default: '4.0.15'

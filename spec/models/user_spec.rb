@@ -1539,7 +1539,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscribed_issues_with_notifications
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([second_issue, first_issue])
         end
       end
@@ -1559,7 +1559,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscribed_issues_with_notifications(order_by: false)
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([second_issue, first_issue])
         end
       end
@@ -1579,7 +1579,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscribed_issues_with_notifications(order_by: true)
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([first_issue, second_issue])
         end
       end
@@ -1623,7 +1623,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscribed_tasks_with_notifications
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([second_task, first_task])
         end
       end
@@ -1643,7 +1643,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscribed_tasks_with_notifications(order_by: false)
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([second_task, first_task])
         end
       end
@@ -1663,7 +1663,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscribed_tasks_with_notifications(order_by: true)
-                .order("updated_at desc")
+                .order(updated_at: :desc)
           ).to eq([first_task, second_task])
         end
       end
@@ -1719,7 +1719,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscriptions_with_notifications
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([second_issue.id, first_issue.id])
         end
       end
@@ -1739,7 +1739,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscriptions_with_notifications(order_by: false)
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([second_issue.id, first_issue.id])
         end
       end
@@ -1759,7 +1759,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue" do
           expect(
             user.subscriptions_with_notifications(order_by: true)
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([first_issue.id, second_issue.id])
         end
       end
@@ -1781,7 +1781,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscriptions_with_notifications
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([second_task.id, first_task.id])
         end
       end
@@ -1801,7 +1801,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscriptions_with_notifications(order_by: false)
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([second_task.id, first_task.id])
         end
       end
@@ -1821,7 +1821,7 @@ RSpec.describe User, type: :model do
         it "returns it's task" do
           expect(
             user.subscriptions_with_notifications(order_by: true)
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([first_task.id, second_task.id])
         end
       end
@@ -1843,7 +1843,7 @@ RSpec.describe User, type: :model do
         it "returns it's issue and task" do
           expect(
             user.subscriptions_with_notifications(order_by: true)
-                .order("updated_at desc").map(&:id)
+                .order(updated_at: :desc).map(&:id)
           ).to eq([first_issue.id, first_task.id])
         end
       end
