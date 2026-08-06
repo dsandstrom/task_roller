@@ -252,13 +252,13 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @current_review ||= current_reviews.order(created_at: :desc).first
   end
 
-  def finish
+  def finish?
     progressions&.unfinished&.all?(&:finish)
   end
 
   def close(current_user = nil)
     reviews.pending.each { |r| r.update(approved: false) }
-    return false unless finish
+    return false unless finish?
 
     update closed: true
     update_status(current_user)

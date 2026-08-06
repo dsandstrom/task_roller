@@ -102,7 +102,9 @@ module Api
         def github_user
           return unless user_payload
 
-          @github_user ||= User.find_by(github_id: user_payload[:id])
+          return @github_user if defined?(@github_user)
+
+          @github_user = User.find_by(github_id: user_payload[:id])
           return @github_user if @github_user
           return unless github_user_valid?
 
@@ -114,7 +116,9 @@ module Api
         def github_issue
           return unless issue_payload?
 
-          @github_issue ||= Issue.find_by(github_id: issue_payload[:id])
+          return @github_issue if defined?(@github_issue)
+
+          @github_issue = Issue.find_by(github_id: issue_payload[:id])
           return @github_issue if @github_issue
           return unless github_user
 

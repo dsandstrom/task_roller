@@ -30,8 +30,8 @@ class Seeds
     6.times do
       name = Faker::Commerce.unique.department
 
-      category = Category.create!(name: name, visible: random_visible,
-                                  internal: random_internal)
+      category = Category.create!(name: name, visible: random_visible?,
+                                  internal: random_internal?)
       create_category_subscriptions(category)
       create_projects(category)
     end
@@ -281,8 +281,11 @@ class Seeds
       rand(11).times do
         name = Faker::App.unique.name
 
-        project = category.projects.create!(name: name, visible: random_visible,
-                                            internal: random_internal)
+        project = category.projects.create!(
+          name: name,
+          visible: random_visible?,
+          internal: random_internal?
+        )
         create_project_subscriptions(project)
       end
     end
@@ -312,11 +315,11 @@ class Seeds
       end
     end
 
-    def random_visible
+    def random_visible?
       rand(2).zero?
     end
 
-    def random_internal
+    def random_internal?
       rand(4).zero?
     end
 

@@ -10,7 +10,7 @@ class ReviewsController < ApplicationController
 
   def create
     if @review.save
-      @task.finish
+      @task.finish?
       @task.update_status
       redirect_back_or_to(@task, notice: 'Review was successfully created.')
     else
