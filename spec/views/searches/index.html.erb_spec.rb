@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "searches/index", type: :view do
@@ -11,7 +9,11 @@ RSpec.describe "searches/index", type: :view do
     before { enable_can(view, current_user) }
 
     context "when search_results" do
-      before { assign(:search_results, page([issue, task])) }
+      before do
+        issue
+        task
+        assign(:search_results, page(SearchResult.all))
+      end
 
       it "renders issues" do
         render
@@ -27,7 +29,7 @@ RSpec.describe "searches/index", type: :view do
     end
 
     context "when no search_results" do
-      before { assign(:search_results, page([])) }
+      before { assign(:search_results, page(SearchResult.all)) }
 
       it "doesn't render issues and tasks" do
         render
