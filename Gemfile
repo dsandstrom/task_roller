@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby '3.3.11'
+ruby '3.4.10'
 
 gem 'rails', '~> 7.0.0'
 # Use postgresql as the database for Active Record
@@ -95,7 +95,7 @@ group :development do
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
   # 1.72 introduces plugins
-  gem 'rubocop', '~> 1.71.0', require: false
+  gem 'rubocop', '~> 1.89.0', require: false
   gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
