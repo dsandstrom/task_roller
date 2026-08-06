@@ -79,6 +79,7 @@ group :development, :test do
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
+  gem 'ostruct', '~> 0.6' # used by guard-rspec
   gem 'rspec', '~> 3.13'
   gem 'rspec-rails', '~>  7.1'
   gem 'selenium-webdriver', '~> 4.26'
