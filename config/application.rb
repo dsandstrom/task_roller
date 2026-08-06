@@ -49,5 +49,8 @@ module TaskRoller
     config.active_job.queue_adapter = :sucker_punch
 
     config.action_mailer.deliver_later_queue_name = :mailers
+
+    # New 7.1 default
+    config.add_autoload_paths_to_load_path = false
   end
 end
