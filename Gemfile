@@ -22,6 +22,8 @@ gem 'jsbundling-rails', '~> 1.3'
 gem 'propshaft', '~> 1.3.2'
 gem 'turbo-rails', '~> 2.0'
 
+gem 'syslog', '~> 0.4'
+
 # 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
 gem 'concurrent-ruby', '< 1.3.5'
