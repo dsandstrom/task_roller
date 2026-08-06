@@ -125,7 +125,10 @@ RSpec.describe "categories/show", type: :view do
 
     context "when tasks and issues" do
       before(:each) do
-        issues_and_tasks = [first_issue, first_task, second_issue, second_task]
+        first_issue
+        first_task
+        second_issue
+        second_task
         assign(:search_results, page(SearchResult.filter_by(filters)))
       end
 
@@ -165,8 +168,10 @@ RSpec.describe "categories/show", type: :view do
 
       context "when tasks and issues" do
         before(:each) do
-          issues_and_tasks =
-            [first_issue, first_task, second_issue, second_task]
+          first_issue
+          first_task
+          second_issue
+          second_task
           assign(:search_results, page(SearchResult.filter_by(filters)))
         end
 
