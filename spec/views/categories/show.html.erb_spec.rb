@@ -1,21 +1,21 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "categories/show", type: :view do
   let(:subject) { "categories/show" }
   let(:category) { Fabricate(:category) }
+  let(:other_category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
+  let(:other_project) { Fabricate(:project, category: other_category) }
   let(:first_issue) { Fabricate(:issue, project: project) }
   let(:second_issue) { Fabricate(:issue, project: project) }
   let(:first_task) { Fabricate(:task, project: project) }
   let(:second_task) { Fabricate(:task, project: project) }
   let(:edit_url) { edit_category_path(@category) }
+  let(:filters) { { project_ids: [project.id] } }
 
   before(:each) do
     @category = category
-    @projects = assign(:projects, [])
-    @search_results = assign(:search_results, page([]))
+    @projects = assign(:projects, [project])
   end
 
   context "for an admin" do
@@ -24,9 +24,12 @@ RSpec.describe "categories/show", type: :view do
     before { enable_can(view, current_user) }
 
     context "when tasks and issues" do
-      before(:each) do
-        issues_and_tasks = [first_issue, first_task, second_issue, second_task]
-        @search_results = assign(:search_results, page(issues_and_tasks))
+      before do
+        first_issue
+        first_task
+        second_issue
+        second_task
+        assign(:search_results, page(SearchResult.filter_by(filters)))
       end
 
       it "renders name" do
@@ -52,7 +55,10 @@ RSpec.describe "categories/show", type: :view do
       end
 
       context "when category doesn't have an archived project" do
-        before { Fabricate(:invisible_project) }
+        before do
+          Fabricate(:invisible_project)
+          assign(:search_results, page(SearchResult.filter_by(filters)))
+        end
 
         it "doesn't render archived projects link" do
           render
@@ -63,8 +69,8 @@ RSpec.describe "categories/show", type: :view do
       end
 
       it "renders a list of issues" do
-        other_issue =
-          Fabricate(:issue, project: Fabricate(:project, category: category))
+        other_issue = Fabricate(:issue, project: other_project)
+        assign(:search_results, page(SearchResult.filter_by(filters)))
 
         render
         assert_select "#issue-#{first_issue.id}", count: 1
@@ -73,8 +79,8 @@ RSpec.describe "categories/show", type: :view do
       end
 
       it "renders a list of tasks" do
-        other_task =
-          Fabricate(:task, project: Fabricate(:project, category: category))
+        other_task = Fabricate(:task, project: other_project)
+        assign(:search_results, page(SearchResult.filter_by(filters)))
 
         render
         assert_select "#task-#{first_task.id}", count: 1
@@ -88,7 +94,7 @@ RSpec.describe "categories/show", type: :view do
         first_task.task_type.destroy
         first_task.reload
         Fabricate(:task_type)
-        @search_results = assign(:search_results, page([first_task]))
+        assign(:search_results, page(SearchResult.filter_by(filters)))
       end
 
       it "renders broken tasks" do
@@ -102,7 +108,7 @@ RSpec.describe "categories/show", type: :view do
         first_issue.issue_type.destroy
         first_issue.reload
         Fabricate(:issue_type)
-        @search_results = assign(:search_results, page([first_issue]))
+        assign(:search_results, page(SearchResult.filter_by(filters)))
       end
 
       it "renders broken issues" do
@@ -120,7 +126,7 @@ RSpec.describe "categories/show", type: :view do
     context "when tasks and issues" do
       before(:each) do
         issues_and_tasks = [first_issue, first_task, second_issue, second_task]
-        @search_results = assign(:search_results, page(issues_and_tasks))
+        assign(:search_results, page(SearchResult.filter_by(filters)))
       end
 
       it "renders edit category link" do
@@ -130,8 +136,8 @@ RSpec.describe "categories/show", type: :view do
       end
 
       it "renders a list of issues and tasks " do
-        other_issue =
-          Fabricate(:issue, project: Fabricate(:project, category: category))
+        other_issue = Fabricate(:issue, project: other_project)
+        assign(:search_results, page(SearchResult.filter_by(filters)))
 
         render
         assert_select "#issue-#{first_issue.id}", count: 1
@@ -140,8 +146,8 @@ RSpec.describe "categories/show", type: :view do
       end
 
       it "renders a list of tasks" do
-        other_task =
-          Fabricate(:task, project: Fabricate(:project, category: category))
+        other_task = Fabricate(:task, project: other_project)
+        assign(:search_results, page(SearchResult.filter_by(filters)))
 
         render
         assert_select "#task-#{first_task.id}", count: 1
@@ -161,7 +167,7 @@ RSpec.describe "categories/show", type: :view do
         before(:each) do
           issues_and_tasks =
             [first_issue, first_task, second_issue, second_task]
-          @search_results = assign(:search_results, page(issues_and_tasks))
+          assign(:search_results, page(SearchResult.filter_by(filters)))
         end
 
         it "doesn't render the edit category link" do
@@ -172,6 +178,7 @@ RSpec.describe "categories/show", type: :view do
 
         it "doesn't render archived projects link" do
           Fabricate(:invisible_project, category: category)
+          assign(:search_results, page(SearchResult.filter_by(filters)))
 
           render
 
@@ -180,8 +187,8 @@ RSpec.describe "categories/show", type: :view do
         end
 
         it "renders a list of issues" do
-          other_issue =
-            Fabricate(:issue, project: Fabricate(:project, category: category))
+          other_issue = Fabricate(:issue, project: other_project)
+          assign(:search_results, page(SearchResult.filter_by(filters)))
 
           render
           assert_select "#issue-#{first_issue.id}", count: 1
@@ -190,8 +197,8 @@ RSpec.describe "categories/show", type: :view do
         end
 
         it "renders a list of tasks" do
-          other_task =
-            Fabricate(:task, project: Fabricate(:project, category: category))
+          other_task = Fabricate(:task, project: other_project)
+          assign(:search_results, page(SearchResult.filter_by(filters)))
 
           render
           assert_select "#task-#{first_task.id}", count: 1
