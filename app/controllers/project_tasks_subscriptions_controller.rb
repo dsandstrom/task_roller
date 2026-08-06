@@ -8,9 +8,9 @@ class ProjectTasksSubscriptionsController < ApplicationController
     if @project_tasks_subscription.save
       respond_to do |format|
         format.html do
-          redirect_back fallback_location: @project, notice: create_notice
+          redirect_back_or_to(@project, notice: create_notice)
         end
-        format.turbo_stream { redirect_back fallback_location: @project }
+        format.turbo_stream { redirect_back_or_to(@project) }
       end
     else
       render :new
@@ -21,8 +21,8 @@ class ProjectTasksSubscriptionsController < ApplicationController
     @project_tasks_subscription.destroy
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: @project, notice: notice }
-      format.turbo_stream { redirect_back fallback_location: @project }
+      format.html { redirect_back_or_to(@project, notice: notice) }
+      format.turbo_stream { redirect_back_or_to(@project) }
     end
   end
 

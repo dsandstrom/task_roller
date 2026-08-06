@@ -8,10 +8,10 @@ class TaskNotificationsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @task,
-                      notice: 'Notification was successfully dismissed.'
+        redirect_back_or_to(@task,
+                            notice: 'Notification was successfully dismissed.')
       end
-      format.turbo_stream { redirect_back fallback_location: @task }
+      format.turbo_stream { redirect_back_or_to(@task) }
     end
   end
 
@@ -20,8 +20,8 @@ class TaskNotificationsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_back fallback_location: @task,
-                      notice: 'Notifications were successfully dismissed.'
+        redirect_back_or_to(@task,
+                            notice: 'Notifications were successfully dismissed.')
       end
       format.turbo_stream
     end

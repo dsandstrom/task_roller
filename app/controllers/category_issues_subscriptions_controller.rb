@@ -8,9 +8,9 @@ class CategoryIssuesSubscriptionsController < ApplicationController
     if @category_issues_subscription.save
       respond_to do |format|
         format.html do
-          redirect_back fallback_location: @category, notice: notice
+          redirect_back_or_to(@category, notice: notice)
         end
-        format.turbo_stream { redirect_back fallback_location: @category }
+        format.turbo_stream { redirect_back_or_to(@category) }
       end
     else
       render :new
@@ -21,8 +21,8 @@ class CategoryIssuesSubscriptionsController < ApplicationController
     @category_issues_subscription.destroy
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: @category, notice: notice }
-      format.turbo_stream { redirect_back fallback_location: @category }
+      format.html { redirect_back_or_to(@category, notice: notice) }
+      format.turbo_stream { redirect_back_or_to(@category) }
     end
   end
 

@@ -4,7 +4,7 @@ class RepoCallout < ApplicationRecord
   ACTION_OPTIONS = %w[start pause complete].freeze
   MESSAGE_REGEX = /
     ((starts?|fix(?:e[ds])?|progress(?:e[ds])?|(?:pause|close|complete)[ds]?)\s
-    (?:task)?\s?[\#\-]?
+    (?:task)?\s?[\#-]?
     (\d+))
   /ix
 

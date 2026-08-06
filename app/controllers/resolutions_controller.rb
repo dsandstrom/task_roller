@@ -10,8 +10,8 @@ class ResolutionsController < ApplicationController
 
   def approve
     if @resolution.approve
-      redirect_back fallback_location: @issue,
-                    notice: 'Task was successfully marked resolved.'
+      redirect_back_or_to(@issue,
+                          notice: 'Task was successfully marked resolved.')
     else
       render :new
     end
@@ -19,8 +19,8 @@ class ResolutionsController < ApplicationController
 
   def disapprove
     if @resolution.disapprove
-      redirect_back fallback_location: @issue,
-                    notice: 'Task was successfully marked unresolved.'
+      redirect_back_or_to(@issue,
+                          notice: 'Task was successfully marked unresolved.')
     else
       render :new
     end
@@ -29,8 +29,8 @@ class ResolutionsController < ApplicationController
   def destroy
     @resolution.destroy
     @issue.reopen(current_user) if @issue.current_resolutions.none?
-    redirect_back fallback_location: @issue,
-                  notice: 'Resolution was successfully destroyed.'
+    redirect_back_or_to(@issue,
+                        notice: 'Resolution was successfully destroyed.')
   end
 
   private

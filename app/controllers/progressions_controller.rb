@@ -9,8 +9,8 @@ class ProgressionsController < ApplicationController
   def create
     if @progression.save
       @task.update_status
-      redirect_back fallback_location: @task,
-                    notice: 'Progress successfully started on task.'
+      redirect_back_or_to(@task,
+                          notice: 'Progress successfully started on task.')
     else
       render :new
     end
@@ -25,8 +25,7 @@ class ProgressionsController < ApplicationController
   def finish
     if @progression.finish
       @task.update_status
-      redirect_back fallback_location: @task,
-                    notice: 'Progress was successfully finished.'
+      redirect_back_or_to(@task, notice: 'Progress was successfully finished.')
     else
       render :edit
     end
