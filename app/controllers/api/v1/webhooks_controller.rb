@@ -22,7 +22,7 @@ module Api
         end
 
         dump_github_issue
-        head :unprocessable_entity
+        head :unprocessable_content
       end
 
       private
