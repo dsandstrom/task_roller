@@ -51,7 +51,7 @@ commands:
       - run:
           name: Lint Ruby Code
           command: |
-            bundle exec rubocop \
+            bin/rubocop \
             --require rubocop/formatter/junit_formatter \
             --format RuboCop::Formatter::JUnitFormatter \
             --out /tmp/test-results/rubocop/results.xml

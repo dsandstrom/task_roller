@@ -34,4 +34,4 @@ jobs:
         bundle install --jobs 4
 
     - name: Run RuboCop
-      run: bundle exec rubocop --format github --format clang
+      run: bin/rubocop --format github --format clang
