@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # require 'turbolinks'
 
 # Assuming you have not yet modified this file, each configuration option below
@@ -333,7 +331,6 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   # New defaults for turbo
-  # TODO: change to :unprocessable_content after updating ruby/rack(?)
-  # config.responder.error_status = :unprocessable_content
+  config.responder.error_status = :unprocessable_content
   config.responder.redirect_status = :see_other
 end

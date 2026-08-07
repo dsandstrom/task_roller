@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Users::RegistrationsController, type: :controller do
@@ -134,7 +132,7 @@ RSpec.describe Users::RegistrationsController, type: :controller do
         context "with invalid params" do
           it "returns a success response ('new' template)" do
             post :create, params: { user: invalid_attributes }
-            expect(response).to be_successful
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
       end
@@ -174,7 +172,7 @@ RSpec.describe Users::RegistrationsController, type: :controller do
         context "with invalid params" do
           it "returns a success response (i.e. 'edit' template)" do
             put :update, params: { user: invalid_attributes }
-            expect(response).to be_successful
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
       end
@@ -201,7 +199,7 @@ RSpec.describe Users::RegistrationsController, type: :controller do
         context "with invalid params" do
           it "returns a success response (i.e. 'edit' template)" do
             put :update, params: { user: invalid_attributes }
-            expect(response).to be_successful
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
       end
@@ -238,7 +236,7 @@ RSpec.describe Users::RegistrationsController, type: :controller do
           context "with invalid params" do
             it "returns a success response (i.e. 'edit' template)" do
               put :update, params: { user: invalid_attributes }
-              expect(response).to be_successful
+              expect(response).to have_http_status(:unprocessable_content)
             end
           end
         end
