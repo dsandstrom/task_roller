@@ -27,7 +27,8 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
           "number" => 2,
           "title" => "New Issue API Test",
           "user" => {
-            "login" => "user", "id" => 4321,
+            "login" => "user",
+            "id" => 4321,
             "node_id" => "zzz=",
             "avatar_url" => "https://avatars.githubusercontent.com/u/4321",
             "gravatar_id" => "",
@@ -39,18 +40,27 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             "starred_url" => "#{api_url}/users/user/starred{/owner}{/repo}",
             "subscriptions_url" => "#{api_url}/users/user/subscriptions"
           },
-          "labels" => [], "state" => "open", "locked" => false,
-          "assignee" => nil, "assignees" => [], "milestone" => nil,
-          "comments" => 0, "created_at" => "2021-01-23T20:52:46Z",
-          "updated_at" => "2021-01-23T20:52:46Z", "closed_at" => nil,
-          "author_association" => "OWNER", "active_lock_reason" => nil,
-          "body" => "Testing api", "performed_via_github_app" => nil
+          "labels" => [],
+          "state" => "open",
+          "locked" => false,
+          "assignee" => nil,
+          "assignees" => [],
+          "milestone" => nil,
+          "comments" => 0,
+          "created_at" => "2021-01-23T20:52:46Z",
+          "updated_at" => "2021-01-23T20:52:46Z",
+          "closed_at" => nil,
+          "author_association" => "OWNER",
+          "active_lock_reason" => nil,
+          "body" => "Testing api",
+          "performed_via_github_app" => nil
         },
         "repository" => {
           "id" => 543
         },
         "sender" => {
-          "login" => "user", "id" => 876
+          "login" => "user",
+          "id" => 876
         }
       }
     end

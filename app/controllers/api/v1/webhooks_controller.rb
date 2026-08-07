@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: allow customizing which project & issue_type is picked
 # TODO: import comments?
 # TODO: use only master/main branch
@@ -190,6 +188,11 @@ module Api
           user
         end
 
+        def request_body
+          request.body.rewind
+          request.body.read
+        end
+
         def verify_github_signature
           unless app_secret.present? && request_signature.present?
             head :forbidden
@@ -197,8 +200,9 @@ module Api
           end
 
           code = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'),
-                                         app_secret, request.body.read)
+                                         app_secret, request_body)
           signature = "sha256=#{code}"
+
           return if Rack::Utils.secure_compare(signature, request_signature)
 
           head :unauthorized
