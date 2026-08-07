@@ -25,7 +25,7 @@ gem 'propshaft', '~> 1.3.2'
 gem 'turbo-rails', '~> 2.0'
 
 # no longer defaults in ruby 4
-gem 'irb', '~> 1.14'
+gem 'irb', '~> 1.18'
 gem 'syslog', '~> 0.4'
 
 # 1.3.7 has error uninitialized constant
@@ -61,11 +61,11 @@ gem 'omniauth-github', '~> 2.0'
 # https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
 gem 'omniauth-rails_csrf_protection', '~> 2.0'
 # Not in faraday anymore (used by octokit)
-gem 'faraday-retry', '~> 1.0'
+gem 'faraday-retry', '~> 2.4'
 
 gem 'kaminari', '~> 1.2.2'
 
-gem 'faker', '~> 3.5.3', require: false
+gem 'faker', '~> 3.8', require: false
 
 gem 'rollbar', '~> 3.1'
 
