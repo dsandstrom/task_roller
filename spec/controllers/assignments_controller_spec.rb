@@ -12,7 +12,7 @@ RSpec.describe AssignmentsController, type: :controller do
   end
 
   let(:blank_attributes) do
-    { "assignee_ids[]" => nil }
+    { "assignee_ids" => [""] }
   end
 
   describe "GET #index" do
