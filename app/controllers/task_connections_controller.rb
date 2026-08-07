@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskConnectionsController < ApplicationController
   before_action :load_and_authorize, only: %i[new create]
   authorize_resource only: %i[new create]
@@ -42,6 +40,6 @@ class TaskConnectionsController < ApplicationController
     end
 
     def task_connection_params
-      params.require(:task_connection).permit(:target_id)
+      params.expect(task_connection: [:target_id])
     end
 end

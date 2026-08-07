@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class EmployeeTypesController < ApplicationController
   load_and_authorize_resource :user
   before_action :authorize_promotion, except: :destroy
@@ -48,7 +46,7 @@ class EmployeeTypesController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:employee_type)
+      params.expect(user: [:employee_type])
     end
 
     def destroy_redirect(user)

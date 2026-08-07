@@ -55,7 +55,7 @@ module Users
       def build_resource(hash = {})
         super
         resource.employee_type ||= 'Reporter'
-        authorize! params[:action].to_sym, resource
+        authorize! params.expect(:action).to_sym, resource
       end
 
       # Authenticates the current scope and gets the current resource from the
@@ -63,7 +63,7 @@ module Users
       # runs on edit, update, destroy
       def authenticate_scope!
         super
-        authorize! params[:action].to_sym, resource
+        authorize! params.expect(:action).to_sym, resource
       end
 
       def after_update_path_for(resource)

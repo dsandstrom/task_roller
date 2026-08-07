@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AssignmentsController < ApplicationController
   load_and_authorize_resource :user, only: :index
   load_and_authorize_resource through: :user, class: 'Task', only: :index
@@ -25,11 +23,11 @@ class AssignmentsController < ApplicationController
   private
 
     def load_and_authorize_task
-      @task = Task.find(params[:id])
+      @task = Task.find(params.expect(:id))
       authorize! :assign, @task
     end
 
     def task_params
-      params.require(:task).permit(assignee_ids: [])
+      params.expect(task: { assignee_ids: [] })
     end
 end

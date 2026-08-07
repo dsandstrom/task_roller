@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MoveTasksController < ApplicationController
   load_and_authorize_resource :task
   before_action :authorize_move
@@ -21,6 +19,6 @@ class MoveTasksController < ApplicationController
     end
 
     def task_params
-      params.require(:task).permit(:project_id)
+      params.expect(task: [:project_id])
     end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskTypesController < ApplicationController
   load_and_authorize_resource
 
@@ -34,6 +32,6 @@ class TaskTypesController < ApplicationController
   private
 
     def task_type_params
-      params.require(:task_type).permit(:name, :icon, :color)
+      params.expect(task_type: %i[name icon color])
     end
 end

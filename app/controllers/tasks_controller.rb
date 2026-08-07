@@ -79,13 +79,13 @@ class TasksController < ApplicationController
         category_id: Category }.each do |key, model|
         next unless params[key]
 
-        return model.find(params[key])
+        return model.find(params.expect(key))
       end
     end
 
     def task_params
-      params.require(:task).permit(:summary, :description, :task_type_id,
-                                   :issue_id, assignee_ids: [])
+      params.expect(task: [:summary, :description, :task_type_id, :issue_id,
+                           { assignee_ids: [] }])
     end
 
     def set_form_options

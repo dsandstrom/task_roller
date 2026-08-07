@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueConnectionsController < ApplicationController
   before_action :load_and_authorize, only: %i[new create]
   authorize_resource only: %i[new create]
@@ -44,6 +42,6 @@ class IssueConnectionsController < ApplicationController
     end
 
     def issue_connection_params
-      params.require(:issue_connection).permit(:target_id)
+      params.expect(issue_connection: [:target_id])
     end
 end

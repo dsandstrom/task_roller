@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MoveIssuesController < ApplicationController
   load_and_authorize_resource :issue
   before_action :authorize_move
@@ -21,6 +19,6 @@ class MoveIssuesController < ApplicationController
     end
 
     def issue_params
-      params.require(:issue).permit(:project_id)
+      params.expect(issue: [:project_id])
     end
 end
