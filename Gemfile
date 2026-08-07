@@ -91,7 +91,7 @@ group :development, :test do
   gem 'ostruct', '~> 0.6' # used by guard-rspec
   gem 'rspec', '~> 3.13'
   gem 'rspec-rails', '~>  8.0'
-  gem 'selenium-webdriver', '~> 4.26'
+  gem 'selenium-webdriver', '~> 4.46'
 end
 
 group :development do
@@ -113,7 +113,7 @@ group :development do
   # background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 4.7'
   gem 'spring-watcher-listen', '~> 2.1'
-  gem 'web-console', '>= 3.3.0'
+  gem 'web-console', '~> 4.2'
 end
 
 group :test do
