@@ -28,11 +28,11 @@
 #  `"X-Download-Options" => "noopen"`.
 #++
 Rails.application.config.action_dispatch.default_headers = {
-  "X-Frame-Options" => "SAMEORIGIN",
-  "X-XSS-Protection" => "0",
-  "X-Content-Type-Options" => "nosniff",
-  "X-Permitted-Cross-Domain-Policies" => "none",
-  "Referrer-Policy" => "strict-origin-when-cross-origin"
+  'X-Frame-Options' => 'SAMEORIGIN',
+  'X-XSS-Protection' => '0',
+  'X-Content-Type-Options' => 'nosniff',
+  'X-Permitted-Cross-Domain-Policies' => 'none',
+  'Referrer-Policy' => 'strict-origin-when-cross-origin'
 }
 
 ###
@@ -180,9 +180,7 @@ Rails.application.config.active_support
 # `config.load_defaults 7.1` does not set this value for environments other than
 # development and test.
 #++
-if Rails.env.local?
-  Rails.application.config.log_file_size = 100 * 1024 * 1024
-end
+Rails.application.config.log_file_size = 100 * 1024 * 1024 if Rails.env.local?
 
 ###
 # Enable raising on assignment to attr_readonly attributes. The previous
@@ -192,9 +190,10 @@ end
 Rails.application.config.active_record.raise_on_assign_to_attr_readonly = true
 
 ###
-# Enable validating only parent-related columns for presence when the parent is mandatory.
-# The previous behavior was to validate the presence of the parent record, which performed an extra query
-# to get the parent every time the child record was updated, even when parent has not changed.
+# Enable validating only parent-related columns for presence when the parent is
+# mandatory. The previous behavior was to validate the presence of the parent
+# record, which performed an extra query to get the parent every time the child
+# record was updated, even when parent has not changed.
 #++
 Rails.application.config.active_record
      .belongs_to_required_validates_foreign_key = false
@@ -207,8 +206,9 @@ Rails.application.config.precompile_filter_parameters = true
 
 ###
 # Enable before_committed! callbacks on all enrolled records in a transaction.
-# The previous behavior was to only run the callbacks on the first copy of a record
-# if there were multiple copies of the same record enrolled in the transaction.
+# The previous behavior was to only run the callbacks on the first copy of a
+# record if there were multiple copies of the same record enrolled in the
+# transaction.
 #++
 Rails.application.config.active_record.before_committed_on_all_records = true
 
