@@ -83,8 +83,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'dotenv-rails', '~> 3.2'
-  # fabrication 3 requires ruby 3.2
-  gem 'fabrication', '~> 2'
+  gem 'fabrication', '~> 3.0'
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
@@ -104,7 +103,6 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
-  # 1.72 introduces plugins
   gem 'rubocop', '~> 1.89.0', require: false
   gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
