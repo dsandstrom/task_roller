@@ -42,6 +42,6 @@ class IssueTypesController < ApplicationController
   private
 
     def issue_type_params
-      params.require(:issue_type).permit(:name, :icon, :color)
+      params.expect(issue_type: %i[name icon color])
     end
 end

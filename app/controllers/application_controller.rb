@@ -17,21 +17,21 @@ class ApplicationController < ActionController::Base
   private
 
     def set_issue_type
-      @issue_type = authorize(IssueType.find(params[:id]))
+      @issue_type = authorize(IssueType.find(params.expect(:id)))
     end
 
     def set_task_type
-      @task_type = authorize(TaskType.find(params[:id]))
+      @task_type = authorize(TaskType.find(params.expect(:id)))
     end
 
     def set_category
-      @category = Category.find(params[:category_id])
+      @category = Category.find(params.expect(:category_id))
     end
 
     def set_project
-      return unless @category && params[:project_id]
+      return unless @category && params.expect(:project_id)
 
-      @project = @category.projects.find(params[:project_id])
+      @project = @category.projects.find(params.expect(:project_id))
     end
 
     def build_filters

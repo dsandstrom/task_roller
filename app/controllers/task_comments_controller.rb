@@ -51,7 +51,7 @@ class TaskCommentsController < ApplicationController
     end
 
     def task_comment_params
-      params.require(:task_comment).permit(:body)
+      params.expect(task_comment: [:body])
     end
 
     def update_notice

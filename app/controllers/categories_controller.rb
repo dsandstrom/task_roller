@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: auto submit filters form on change
 # TODO: should changing type, change form url
 
@@ -57,7 +55,7 @@ class CategoriesController < ApplicationController
   private
 
     def category_params
-      params.require(:category).permit(:name, :visible, :internal)
+      params.expect(category: %i[name visible internal])
     end
 
     def filters

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ProjectsController < ApplicationController
   load_and_authorize_resource :category, except: %i[show edit update]
   load_and_authorize_resource through: :category,
@@ -55,7 +53,7 @@ class ProjectsController < ApplicationController
   private
 
     def project_params
-      params.require(:project).permit(:category_id, :name, :visible, :internal)
+      params.expect(project: %i[category_id name visible internal])
     end
 
     def filters

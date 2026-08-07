@@ -26,7 +26,7 @@ class IssuesController < ApplicationController
     # TODO: destroy 'new' notifications for current_user
     # want to destroy after visit, maybe set variable, then destroy
     @user = @issue.user
-    @task = @issue.tasks.find(params[:task_id]) if params[:task_id]
+    @task = @issue.tasks.find(params.expect(:task_id)) if params[:task_id]
 
     set_issue_variables
   end
@@ -74,7 +74,7 @@ class IssuesController < ApplicationController
   private
 
     def issue_params
-      params.require(:issue).permit(:summary, :description, :issue_type_id)
+      params.expect(issue: %i[summary description issue_type_id])
     end
 
     def set_form_options
@@ -91,11 +91,11 @@ class IssuesController < ApplicationController
 
     def build_source
       if params[:user_id]
-        User.find(params[:user_id])
+        User.find(params.expect(:user_id))
       elsif params[:project_id]
-        Project.find(params[:project_id])
+        Project.find(params.expect(:project_id))
       else
-        Category.find(params[:category_id])
+        Category.find(params.expect(:category_id))
       end
     end
 
