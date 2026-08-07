@@ -117,7 +117,7 @@ end
 group :test do
   # for circleci support
   gem 'rspec_junit_formatter', require: false
-  gem 'shoulda-matchers', '~> 5.1'
+  gem 'shoulda-matchers', '~> 8.0'
   gem 'timecop', '~> 0.9'
   gem 'webmock', '~> 3.26'
 end
