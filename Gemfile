@@ -74,6 +74,9 @@ gem 'rollbar', '~> 3.1'
 # combine issues/tasks for searching
 gem 'scenic', '~> 1.9'
 
+# already a dependency of rails gems, but needs to be required
+gem 'rails-html-sanitizer', '~> 1.7', require: true
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console

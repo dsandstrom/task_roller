@@ -252,6 +252,7 @@ Rails.application.config.active_record
 #++
 Rails.application.config.active_record.generate_secure_token_on = :initialize
 
+# TODO: enable new cache format after deploying to prod
 ###
 # ** Please read carefully, this must be configured in config/application.rb **
 #
@@ -278,8 +279,8 @@ Rails.application.config.active_record.generate_secure_token_on = :initialize
 # In previous versions of Rails, Action View always used
 # `Rails::HTML4::Sanitizer` as its vendor.
 #++
-# Rails.application.config.action_view.sanitizer_vendor =
-#   Rails::HTML::Sanitizer.best_supported_vendor
+Rails.application.config.action_view.sanitizer_vendor =
+  Rails::HTML::Sanitizer.best_supported_vendor
 
 ###
 # Configure Action Text to use an HTML5 standards-compliant sanitizer when it is
@@ -292,8 +293,8 @@ Rails.application.config.active_record.generate_secure_token_on = :initialize
 # In previous versions of Rails, Action Text always used
 # `Rails::HTML4::Sanitizer` as its vendor.
 #++
-# Rails.application.config.action_text.sanitizer_vendor =
-#   Rails::HTML::Sanitizer.best_supported_vendor
+Rails.application.config.action_text.sanitizer_vendor =
+  Rails::HTML::Sanitizer.best_supported_vendor
 
 ###
 # Configure the log level used by the DebugExceptions middleware when logging

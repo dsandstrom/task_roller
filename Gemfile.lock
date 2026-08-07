@@ -536,6 +536,7 @@ DEPENDENCIES
   puma (~> 8.0)
   rack (~> 2.0)
   rails (~> 7.1.0)
+  rails-html-sanitizer (~> 1.7)
   rails_live_reload (~> 0.5)
   redcarpet (~> 3.6.1)
   rollbar (~> 3.1)
