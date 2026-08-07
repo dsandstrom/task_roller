@@ -7,6 +7,9 @@ end
 
 ruby '3.4.10'
 
+# Lock rack at 2 because 3 breaks tests
+gem 'rack', '~> 2.0'
+
 gem 'rails', '~> 7.1.0'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.6.3'
