@@ -7,7 +7,10 @@ end
 
 ruby '3.4.10'
 
-gem 'rails', '~> 7.0.0'
+# Lock rack at 2 because 3 breaks tests
+gem 'rack', '~> 2.0'
+
+gem 'rails', '~> 7.1.0'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.6.3'
 # Use Puma as the app server
@@ -22,6 +25,8 @@ gem 'jsbundling-rails', '~> 1.3'
 gem 'propshaft', '~> 1.3.2'
 gem 'turbo-rails', '~> 2.0'
 
+# no longer defaults in ruby 4
+gem 'irb', '~> 1.14'
 gem 'syslog', '~> 0.4'
 
 # 1.3.7 has error uninitialized constant
@@ -68,6 +73,9 @@ gem 'rollbar', '~> 3.1'
 # https://github.com/scenic-views/scenic
 # combine issues/tasks for searching
 gem 'scenic', '~> 1.9'
+
+# already a dependency of rails gems, but needs to be required
+gem 'rails-html-sanitizer', '~> 1.7', require: true
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
