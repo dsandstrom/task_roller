@@ -9,7 +9,7 @@ ruby '3.4.10'
 
 gem 'rack', '~> 3.0'
 
-gem 'rails', '~> 7.1.0'
+gem 'rails', '~> 7.2.0'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.6.3'
 # Use Puma as the app server
@@ -25,12 +25,12 @@ gem 'propshaft', '~> 1.3.2'
 gem 'turbo-rails', '~> 2.0'
 
 # no longer defaults in ruby 4
-gem 'irb', '~> 1.14'
+gem 'irb', '~> 1.18'
 gem 'syslog', '~> 0.4'
 
 # 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
-gem 'concurrent-ruby', '< 1.3.5'
+gem 'concurrent-ruby', '~> 1.3.8'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -61,11 +61,11 @@ gem 'omniauth-github', '~> 2.0'
 # https://github.com/omniauth/omniauth/wiki/Upgrading-to-2.0#rails
 gem 'omniauth-rails_csrf_protection', '~> 2.0'
 # Not in faraday anymore (used by octokit)
-gem 'faraday-retry', '~> 1.0'
+gem 'faraday-retry', '~> 2.4'
 
 gem 'kaminari', '~> 1.2.2'
 
-gem 'faker', '~> 3.5.3', require: false
+gem 'faker', '~> 3.8', require: false
 
 gem 'rollbar', '~> 3.1'
 
@@ -83,15 +83,14 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 3.32'
   gem 'dotenv-rails', '~> 3.2'
-  # fabrication 3 requires ruby 3.2
-  gem 'fabrication', '~> 2'
+  gem 'fabrication', '~> 3.0'
   gem 'guard', '~> 2.0'
   gem 'guard-bundler', require: false
   gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'ostruct', '~> 0.6' # used by guard-rspec
   gem 'rspec', '~> 3.13'
-  gem 'rspec-rails', '~>  7.1'
-  gem 'selenium-webdriver', '~> 4.26'
+  gem 'rspec-rails', '~>  8.0'
+  gem 'selenium-webdriver', '~> 4.46'
 end
 
 group :development do
@@ -104,7 +103,6 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
-  # 1.72 introduces plugins
   gem 'rubocop', '~> 1.89.0', require: false
   gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
@@ -113,13 +111,13 @@ group :development do
   # background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 4.7'
   gem 'spring-watcher-listen', '~> 2.1'
-  gem 'web-console', '>= 3.3.0'
+  gem 'web-console', '~> 4.2'
 end
 
 group :test do
   # for circleci support
   gem 'rspec_junit_formatter', require: false
-  gem 'shoulda-matchers', '~> 5.1'
+  gem 'shoulda-matchers', '~> 8.0'
   gem 'timecop', '~> 0.9'
   gem 'webmock', '~> 3.26'
 end
