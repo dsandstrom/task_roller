@@ -30,7 +30,7 @@ gem 'syslog', '~> 0.4'
 
 # 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
-gem 'concurrent-ruby', '< 1.3.5'
+gem 'concurrent-ruby', '~> 1.3.8'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
