@@ -9,7 +9,7 @@ ruby '3.4.10'
 
 gem 'rack', '~> 3.0'
 
-gem 'rails', '~> 7.1.0'
+gem 'rails', '~> 7.2.0'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.6.3'
 # Use Puma as the app server
@@ -90,6 +90,7 @@ group :development, :test do
   gem 'guard-rspec', '~> 4.7.3', require: false
   gem 'ostruct', '~> 0.6' # used by guard-rspec
   gem 'rspec', '~> 3.13'
+  # TODO: update rspec-rails to 8
   gem 'rspec-rails', '~>  7.1'
   gem 'selenium-webdriver', '~> 4.26'
 end
