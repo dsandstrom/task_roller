@@ -11,6 +11,8 @@ RailsLiveReload.configure do |config|
   config.watch %r{app/helpers/.+\.rb}, reload: :always
   # config.watch %r{config/locales/.+\.yml}, reload: :always
 
+  config.watch %r{app/assets/builds/.+\.(css|js)}, reload: :always
+
   # Ignored folders & files
   # config.ignore %r{node_modules/}
 
