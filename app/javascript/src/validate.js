@@ -6,6 +6,8 @@
  * http://rickharrison.github.com/validate.js
  */
 
+// npm version has a bug because of undefined variable
+
 (function(window, document, undefined) {
     /*
      * If you would like an application-wide config, change these defaults.
