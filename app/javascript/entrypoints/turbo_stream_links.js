@@ -1,3 +1,4 @@
+// Disable link after clicking so it can't be double clicked
 class TurboStreamLink {
   constructor(elem) {
     this.elem = elem;
