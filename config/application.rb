@@ -11,7 +11,6 @@ require 'action_mailer/railtie'
 require 'action_mailbox/engine'
 require 'action_text/engine'
 require 'action_view/railtie'
-# require "action_cable/engine"
 require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
@@ -45,8 +44,6 @@ module TaskRoller
       g.request_specs false
       g.routing_specs false
     end
-
-    config.active_job.queue_adapter = :sucker_punch
 
     config.action_mailer.deliver_later_queue_name = :mailers
 
