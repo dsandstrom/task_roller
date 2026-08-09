@@ -14,42 +14,14 @@
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>
 
-          <% if @assignees.any? %>
-            <dl class="task-assignees">
-              <% @assignees.each do |assignee| %>
-                <%= render 'shared/assignee',
-                           assignee: assignee, task: @task %>
-              <% end %>
-            </dl>
-
-            <% unless @task.in_review? %>
-              <% if can?(:assign, @task) %>
-                <p>
-                  <%= link_to 'reassign',
-                              edit_assignment_path(@task),
-                              id: 'task_assignment_link',
-                              class: 'secondary-link' %>
-                </p>
-              <% end %>
-            <% end %>
-          <% else %>
-            <p>
-              no one
-              <%# TODO: add form with ajax with first click, then toggle hide class %>
-              <% unless @task.in_review? %>
-                <% if can?(:assign, @task) %>
-                  <%= divider %>
-                  <%= link_to 'assign someone',
-                              edit_assignment_path(@task),
-                              id: 'task_assignment_link',
-                              class: 'secondary-link' %>
-                <% end %>
-              <% end %>
-            </p>
+          <%= turbo_frame_tag :turbo_task_assigned do %>
+            <%= render 'tasks/assigned',
+                       task: @task, assignees: @assignees %>
           <% end %>
 
-          <% if !@task.in_review? && can?(:assign, @task) %>
-            <%= render 'assignments/form', task: @task %>
+          <%= turbo_frame_tag :turbo_task_assignments_form do %>
+            <%= render 'tasks/assignment_link',
+                       task: @task, assignees: @assignees %>
           <% end %>
 
           <% if @task.in_review? %>

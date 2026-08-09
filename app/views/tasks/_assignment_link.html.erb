@@ -1,0 +1,17 @@
+<% return unless can?(:assign, task) && !task.in_review? %>
+
+<p>
+  <% if assignees.any? %>
+      <%= link_to 'reassign',
+                  edit_assignment_path(task),
+                  id: 'task_assignment_link',
+                  class: 'secondary-link turbo-stream-link',
+                  data: { turbo_stream: true } %>
+  <% else %>
+    <%= link_to 'assign someone',
+                edit_assignment_path(task),
+                id: 'task_assignment_link',
+                class: 'secondary-link turbo-stream-link',
+                data: { turbo_stream: true } %>
+  <% end %>
+</p>
