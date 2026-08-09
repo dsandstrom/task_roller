@@ -1,0 +1,6 @@
+<%= turbo_stream.update :turbo_task_assignments_form,
+                        partial: 'assignments/form',
+                        locals: { task: @task } %>
+<%= turbo_stream.prepend :turbo_task_assignments_form,
+                         partial: 'assignments/hide_link',
+                         locals: { task: @task } %>

@@ -1,0 +1,9 @@
+<% if assignees.any? %>
+  <dl class="task-assignees">
+    <% assignees.each do |assignee| %>
+      <%= render 'shared/assignee', assignee: assignee, task: task %>
+    <% end %>
+  </dl>
+<% else %>
+  <p>no one</p>
+<% end %>

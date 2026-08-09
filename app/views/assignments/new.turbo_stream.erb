@@ -1,0 +1,3 @@
+<%= turbo_stream.update :turbo_task_assignments_form,
+                        partial: 'tasks/assignment_link',
+                        locals: { task: @task, assignees: @assignees } %>

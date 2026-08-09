@@ -59,6 +59,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :task_comments, except: :index
     resources :task_subscriptions, only: %i[new create destroy]
     resources :issue_previews, only: :index
+    resources :assignments, only: :new
     resources :progressions, only: %i[new create destroy] do
       member do
         patch :finish
