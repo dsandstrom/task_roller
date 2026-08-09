@@ -275,6 +275,15 @@ RSpec.describe User, type: :model do
       expect(User.assignable_employees)
         .to contain_exactly(user_reviewer, user_worker)
     end
+
+    it "includes any provided users" do
+      user_admin = Fabricate(:user_admin)
+      user_worker = Fabricate(:user_worker)
+      Fabricate(:user_reporter)
+
+      expect(User.assignable_employees([user_admin]))
+        .to contain_exactly(user_admin, user_worker)
+    end
   end
 
   describe ".destroyed_name" do

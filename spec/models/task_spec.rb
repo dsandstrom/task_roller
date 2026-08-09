@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Task, type: :model do
@@ -1546,8 +1544,56 @@ RSpec.describe Task, type: :model do
 
     before { Fabricate(:user_worker) }
 
-    it "returns User.assignable_employees" do
-      expect(task.assignable).to eq(User.assignable_employees)
+    context "when task is unassigned" do
+      it "returns User.assignable_employees" do
+        expect(task.assignable).to eq(User.assignable_employees)
+      end
+    end
+
+    context "when task is assigned to worker" do
+      let(:assigned) { Fabricate(:user_worker) }
+
+      before do
+        Fabricate(:task_assignee, task: task, assignee: assigned)
+      end
+
+      it "returns User.assignable_employees" do
+        expect(task.assignable).to eq(User.assignable_employees)
+      end
+
+      it "includes assigned worker" do
+        expect(task.assignable).to include(assigned)
+      end
+    end
+
+    context "when task is assigned to admin" do
+      let(:assigned) { Fabricate(:user_admin) }
+
+      before do
+        Fabricate(:task_assignee, task: task, assignee: assigned)
+      end
+
+      it "includes assigned admin" do
+        expect(task.assignable).to include(assigned)
+      end
+    end
+
+    context "when task is assigned to worker and admin" do
+      let(:assigned_worker) { Fabricate(:user_worker) }
+      let(:assigned_admin) { Fabricate(:user_admin) }
+
+      before do
+        Fabricate(:task_assignee, task: task, assignee: assigned_worker)
+        Fabricate(:task_assignee, task: task, assignee: assigned_admin)
+      end
+
+      it "includes assigned worker" do
+        expect(task.assignable).to include(assigned_worker)
+      end
+
+      it "includes assigned admin" do
+        expect(task.assignable).to include(assigned_admin)
+      end
     end
   end
 

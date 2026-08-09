@@ -213,7 +213,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # TODO: add options to categories/projects on which users are assignable
   def assignable
-    @assignable ||= User.assignable_employees
+    @assignable ||= User.assignable_employees(assignees)
   end
 
   def reviewable
