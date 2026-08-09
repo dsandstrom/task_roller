@@ -36,10 +36,6 @@
         margin-bottom: 0;
         resize: none;
       }
-
-      &.hidden-form {
-        display: none;
-      }
     }
 
     .button {
@@ -185,12 +181,6 @@
     }
 
     .comment-body {
-      display: none;
-    }
-  }
-
-  &.with-hidden-form {
-    form:not(.new-comment-form) {
       display: none;
     }
   }

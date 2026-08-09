@@ -1,5 +1,4 @@
 import {Form} from './../src/form';
-import {HiddenForm} from './../src/hidden_form';
 import hljs from 'highlight.js';
 
 let currentForms = [];
@@ -7,8 +6,6 @@ const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'issue_form', 'category_form', 'project_form',
                    'issue_comment_form', 'task_comment_form',
                    'task_form', 'user_password_form'];
-let hiddenForms = new Map();
-hiddenForms.set('task_assignment_link', 'task_assignment_form');
 
 const initForm = function (element) {
   let form = new Form(element);
@@ -51,15 +48,6 @@ const syntaxHighlight = function (event) {
 document.addEventListener('turbo:load', function(event) {
   initForms(event);
   syntaxHighlight();
-
-  // toggle hidden sidebar forms
-  for (let [linkId, formId] of hiddenForms) {
-    const linkElem = document.getElementById(linkId);
-    const formElem = document.getElementById(formId);
-    if (!linkElem || !formElem) return;
-
-    new HiddenForm(linkElem, formElem);
-  }
 });
 
 // After markdown editor is added
