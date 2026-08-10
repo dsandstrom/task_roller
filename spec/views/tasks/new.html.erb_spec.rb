@@ -1,10 +1,9 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "tasks/new", type: :view do
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
+  let(:issue) { Fabricate(:issue, project: project) }
   let(:task_type) { Fabricate(:task_type) }
   let(:url) { project_tasks_path(project) }
 
@@ -15,6 +14,7 @@ RSpec.describe "tasks/new", type: :view do
     assign(:task, project.tasks.build)
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
+    assign(:issue_options, [[issue.id_and_summary, issue.id]])
   end
 
   context "for a reporter" do

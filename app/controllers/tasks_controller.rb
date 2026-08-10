@@ -17,11 +17,6 @@ class TasksController < ApplicationController
     @tasks = build_tasks.accessible_by(current_ability)
                         .with_notifications(current_user, order_by: order_by)
                         .filter_by(build_filters).page(params[:page])
-
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
   end
 
   def show
@@ -36,32 +31,22 @@ class TasksController < ApplicationController
   def edit; end
 
   def create
-    if @task.save
-      @task.subscribe_users
-      @task.update_status(current_user)
-      @task.issue&.update_status(current_user)
-      redirect_to @task, success: 'Task was successfully created.'
-    else
-      set_form_options
-      render :new
+    respond_to do |format|
+      format.html { create_html }
+      format.turbo_stream { create_turbo }
     end
   end
 
   def update
-    if @task.update(task_params)
-      @task.subscribe_assignees
-      @task.update_status(current_user)
-      @task.issue&.update_status(current_user)
-      redirect_to @task, success: 'Task was successfully updated.'
-    else
-      set_form_options
-      render :edit
+    respond_to do |format|
+      format.html { update_html }
+      format.turbo_stream { create_turbo }
     end
   end
 
   def destroy
     @task.destroy
-    redirect_to @project, success: 'Task was successfully destroyed.'
+    redirect_to @project, success: 'Task was successfully removed.'
   end
 
   private
@@ -102,9 +87,14 @@ class TasksController < ApplicationController
     end
 
     def build_issue_options
-      @task.project.issues.map do |issue|
-        [issue.id_and_summary, issue.id]
+      options =
+        @task.project.issues.all_non_closed.map do |issue|
+          [issue.id_and_summary, issue.id]
+        end
+      if @task.issue
+        options = [[@task.issue.id_and_summary, @task.issue_id]] | options
       end
+      options
     end
 
     def build_tasks
@@ -145,5 +135,35 @@ class TasksController < ApplicationController
 
     def order_by
       @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
+    end
+
+    def create_html
+      if @task.save
+        @task.subscribe_users
+        @task.update_status(current_user)
+        @task.issue&.update_status(current_user)
+        redirect_to @task, success: 'Task was successfully added.'
+      else
+        set_form_options
+        render :new
+      end
+    end
+
+    def create_turbo
+      return if params[:task][:issue_id].blank?
+
+      @issue = Issue.find(params.expect(task: [:issue_id])[:issue_id])
+    end
+
+    def update_html
+      if @task.update(task_params)
+        @task.subscribe_assignees
+        @task.update_status(current_user)
+        @task.issue&.update_status(current_user)
+        redirect_to @task, success: 'Task was successfully updated.'
+      else
+        set_form_options
+        render :edit
+      end
     end
 end

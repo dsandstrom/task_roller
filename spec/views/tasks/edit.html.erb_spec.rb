@@ -1,15 +1,18 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "tasks/edit", type: :view do
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
+  let(:issue) { Fabricate(:issue, project: project) }
+
   before(:each) do
-    @category = assign(:category, Fabricate(:category))
-    @project = assign(:project, Fabricate(:project, category: @category))
+    @category = assign(:category, category)
+    @project = assign(:project, project)
     @task_types = assign(:task_types, [Fabricate(:task_type)])
     @task = assign(:task, Fabricate(:task, project: @project))
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
+    assign(:issue_options, [[issue.id_and_summary, issue.id]])
   end
 
   let(:url) { task_path(@task) }
