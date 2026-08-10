@@ -7,12 +7,13 @@ const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'issue_comment_form', 'task_comment_form',
                    'task_form', 'user_password_form'];
 
-const initForm = function (element) {
+const initForm = function (element, focusForm = false) {
   let form = new Form(element);
 
   element.classList.add('with-validation');
   currentForms.push(form);
-  form.focus();
+
+  if (focusForm) form.focus();
 }
 
 const initForms = function (event) {
@@ -23,10 +24,10 @@ const initForms = function (event) {
   });
 }
 
-const initTurboForm = function (event) {
+const initTurboForm = function (event, focusForm = false) {
   let formElem = event.target.querySelector('form');
 
-  initForm(formElem);
+  initForm(formElem, focusForm);
 }
 
 const resetCurrentForms = function () {
@@ -62,7 +63,7 @@ document.addEventListener('turbo:frame-load', function(event) {
   } else {
     // After edit
     eventComment.classList.add('with-form');
-    initTurboForm(event);
+    initTurboForm(event, true);
   }
 });
 
