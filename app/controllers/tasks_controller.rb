@@ -32,45 +32,15 @@ class TasksController < ApplicationController
 
   def create
     respond_to do |format|
-      format.html do
-        if @task.save
-          @task.subscribe_users
-          @task.update_status(current_user)
-          @task.issue&.update_status(current_user)
-          redirect_to @task, success: 'Task was successfully added.'
-        else
-          set_form_options
-          render :new
-        end
-      end
-
-      format.turbo_stream do
-        if params[:task][:issue_id].present?
-          @issue = Issue.find(params[:task][:issue_id])
-        end
-      end
+      format.html { create_html }
+      format.turbo_stream { create_turbo }
     end
   end
 
   def update
     respond_to do |format|
-      format.html do
-        if @task.update(task_params)
-          @task.subscribe_assignees
-          @task.update_status(current_user)
-          @task.issue&.update_status(current_user)
-          redirect_to @task, success: 'Task was successfully updated.'
-        else
-          set_form_options
-          render :edit
-        end
-      end
-
-      format.turbo_stream do
-        if params[:task][:issue_id].present?
-          @issue = Issue.find(params[:task][:issue_id])
-        end
-      end
+      format.html { update_html }
+      format.turbo_stream { create_turbo }
     end
   end
 
@@ -165,5 +135,35 @@ class TasksController < ApplicationController
 
     def order_by
       @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
+    end
+
+    def create_html
+      if @task.save
+        @task.subscribe_users
+        @task.update_status(current_user)
+        @task.issue&.update_status(current_user)
+        redirect_to @task, success: 'Task was successfully added.'
+      else
+        set_form_options
+        render :new
+      end
+    end
+
+    def create_turbo
+      return if params[:task][:issue_id].blank?
+
+      @issue = Issue.find(params.expect(task: [:issue_id])[:issue_id])
+    end
+
+    def update_html
+      if @task.update(task_params)
+        @task.subscribe_assignees
+        @task.update_status(current_user)
+        @task.issue&.update_status(current_user)
+        redirect_to @task, success: 'Task was successfully updated.'
+      else
+        set_form_options
+        render :edit
+      end
     end
 end

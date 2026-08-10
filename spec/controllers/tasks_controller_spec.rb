@@ -1217,13 +1217,18 @@ RSpec.describe TasksController, type: :controller do
                   expect do
                     post :create, params: { project_id: project.to_param,
                                             task: valid_attributes }
-                  end.to(have_enqueued_job.with do |mailer, action, time, options|
-                    expect(mailer).to eq("TaskMailer")
-                    expect(action).to eq("new")
-                    expect(time).to eq("deliver_now")
-                    expect(options)
-                      .to eq(args: [], params: { task: Task.last, user: worker })
-                  end)
+                  end.to(
+                    have_enqueued_job.with do |mailer, action, time, options|
+                      expect(mailer).to eq("TaskMailer")
+                      expect(action).to eq("new")
+                      expect(time).to eq("deliver_now")
+                      expect(options)
+                        .to eq(
+                          args: [],
+                          params: { task: Task.last, user: worker }
+                        )
+                    end
+                  )
                 end
 
                 it "creates a new worker TaskSubscription" do
@@ -1563,7 +1568,9 @@ RSpec.describe TasksController, type: :controller do
 
           context "when blank params" do
             let(:task_issue) { Fabricate(:issue, project: project) }
-            let!(:task) { Fabricate(:task, project: project, issue: task_issue) }
+            let!(:task) do
+              Fabricate(:task, project: project, issue: task_issue)
+            end
 
             it "doesn't change the task's issue_id" do
               expect do
@@ -1584,7 +1591,9 @@ RSpec.describe TasksController, type: :controller do
 
           context "when invalid params" do
             let(:task_issue) { Fabricate(:issue, project: project) }
-            let!(:task) { Fabricate(:task, project: project, issue: task_issue) }
+            let!(:task) do
+              Fabricate(:task, project: project, issue: task_issue)
+            end
 
             it "doesn't change the task's issue_id" do
               expect do
@@ -1757,7 +1766,9 @@ RSpec.describe TasksController, type: :controller do
 
         context "for html requests" do
           context "when their task" do
-            let!(:task) { Fabricate(:task, project: project, user: current_user) }
+            let!(:task) do
+              Fabricate(:task, project: project, user: current_user)
+            end
 
             it "doesn't update the requested task" do
               expect do
