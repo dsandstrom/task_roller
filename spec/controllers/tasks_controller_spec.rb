@@ -16,6 +16,10 @@ RSpec.describe TasksController, type: :controller do
 
   let(:invalid_attributes) { { summary: "" } }
 
+  let(:valid_turbo_attributes) { { issue_id: issue.id } }
+  let(:blank_turbo_attributes) { { issue_id: "" } }
+  let(:invalid_turbo_attributes) { { summary: "" } }
+
   describe "GET #index" do
     context "for an admin" do
       let(:current_user) { Fabricate(:user_admin) }
@@ -73,12 +77,10 @@ RSpec.describe TasksController, type: :controller do
       context "when issue" do
         let(:issue) { Fabricate(:issue) }
 
-        context "for an html request" do
-          it "returns a success response" do
-            Fabricate(:task, issue: issue)
-            get :index, params: { issue_id: issue.to_param }
-            expect(response).to be_successful
-          end
+        it "returns a success response" do
+          Fabricate(:task, issue: issue)
+          get :index, params: { issue_id: issue.to_param }
+          expect(response).to be_successful
         end
       end
     end
@@ -139,12 +141,10 @@ RSpec.describe TasksController, type: :controller do
       context "when issue" do
         let(:issue) { Fabricate(:issue) }
 
-        context "for an html request" do
-          it "returns a success response" do
-            Fabricate(:task, issue: issue)
-            get :index, params: { issue_id: issue.to_param }
-            expect(response).to be_successful
-          end
+        it "returns a success response" do
+          Fabricate(:task, issue: issue)
+          get :index, params: { issue_id: issue.to_param }
+          expect(response).to be_successful
         end
       end
     end
@@ -393,12 +393,10 @@ RSpec.describe TasksController, type: :controller do
         context "when issue" do
           let(:issue) { Fabricate(:issue) }
 
-          context "for an html request" do
-            it "returns a success response" do
-              Fabricate(:task, issue: issue)
-              get :index, params: { issue_id: issue.to_param }
-              expect(response).to be_successful
-            end
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
           end
         end
       end
@@ -647,12 +645,10 @@ RSpec.describe TasksController, type: :controller do
         context "when issue" do
           let(:issue) { Fabricate(:issue) }
 
-          context "for an html request" do
-            it "returns a success response" do
-              Fabricate(:task, issue: issue)
-              get :index, params: { issue_id: issue.to_param }
-              expect(response).to be_successful
-            end
+          it "returns a success response" do
+            Fabricate(:task, issue: issue)
+            get :index, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
           end
         end
       end
@@ -1173,179 +1169,218 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when project" do
-          context "with valid params" do
-            it "creates a new Project Task" do
-              expect do
+        context "for html requests" do
+          context "when project" do
+            context "with valid params" do
+              it "creates a new Project Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to change(project.tasks, :count).by(1)
+              end
+
+              it "creates a new current_user Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to change(current_user.tasks, :count).by(1)
+              end
+
+              it "creates a new current_user TaskSubscription" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to change(current_user.task_subscriptions, :count).by(1)
+              end
+
+              it "redirects to the created task" do
                 post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
-              end.to change(project.tasks, :count).by(1)
+                url = task_path(Task.last)
+                expect(response).to redirect_to(url)
+              end
+
+              context "when a worker assigned" do
+                before do
+                  Fabricate(:user_worker)
+                  valid_attributes.merge! assignee_ids: [worker.id]
+                end
+
+                it "creates 2 TaskSubscriptions" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to change(TaskSubscription, :count).by(2)
+                end
+
+                it "sends email to subscribers" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to(have_enqueued_job.with do |mailer, action, time, options|
+                    expect(mailer).to eq("TaskMailer")
+                    expect(action).to eq("new")
+                    expect(time).to eq("deliver_now")
+                    expect(options)
+                      .to eq(args: [], params: { task: Task.last, user: worker })
+                  end)
+                end
+
+                it "creates a new worker TaskSubscription" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to change(worker.task_subscriptions, :count).by(1)
+                end
+              end
+
+              context "when first task for a issue" do
+                before { valid_attributes.merge! issue_id: issue.id }
+
+                it "updates issue status" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                    issue.reload
+                  end.to change(issue, :status).to("being_worked_on")
+                end
+              end
             end
 
-            it "creates a new current_user Task" do
-              expect do
+            context "with invalid params" do
+              it "doesn't create a Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: invalid_attributes }
+                end.not_to change(Task, :count)
+              end
+
+              it "returns a success response ('new' template)" do
                 post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(current_user.tasks, :count).by(1)
-            end
-
-            it "creates a new current_user TaskSubscription" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(current_user.task_subscriptions, :count).by(1)
-            end
-
-            it "redirects to the created task" do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-              url = task_path(Task.last)
-              expect(response).to redirect_to(url)
-            end
-
-            context "when a worker assigned" do
-              before do
-                Fabricate(:user_worker)
-                valid_attributes.merge! assignee_ids: [worker.id]
-              end
-
-              it "creates 2 TaskSubscriptions" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-                end.to change(TaskSubscription, :count).by(2)
-              end
-
-              it "sends email to subscribers" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-                end.to(have_enqueued_job.with do |mailer, action, time, options|
-                  expect(mailer).to eq("TaskMailer")
-                  expect(action).to eq("new")
-                  expect(time).to eq("deliver_now")
-                  expect(options)
-                    .to eq(args: [], params: { task: Task.last, user: worker })
-                end)
-              end
-
-              it "creates a new worker TaskSubscription" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-                end.to change(worker.task_subscriptions, :count).by(1)
+                                        task: invalid_attributes }
+                expect(response).to be_successful
               end
             end
 
-            context "when first task for a issue" do
-              before { valid_attributes.merge! issue_id: issue.id }
+            context "when assigning" do
+              let(:user) { Fabricate(:user_worker) }
 
-              it "updates issue status" do
+              before { valid_attributes.merge!(assignee_ids: [user.id]) }
+
+              it "creates an assignment" do
                 expect do
                   post :create, params: { project_id: project.to_param,
                                           task: valid_attributes }
-                  issue.reload
-                end.to change(issue, :status).to("being_worked_on")
+                end.to change(user.assignments, :count).by(1)
               end
             end
           end
 
-          context "with invalid params" do
-            it "doesn't create a Task" do
-              expect do
+          context "when project and issue" do
+            before do
+              valid_attributes.merge! issue_id: issue.to_param
+              invalid_attributes.merge! issue_id: issue.to_param
+            end
+
+            context "with valid params" do
+              it "creates a new Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to change(issue.tasks, :count).by(1)
+              end
+
+              it "redirects to the created task" do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+                url = task_path(Task.last)
+                expect(response).to redirect_to(url)
+              end
+            end
+
+            context "with invalid params" do
+              it "doesn't create a Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: invalid_attributes }
+                end.not_to change(Task, :count)
+              end
+
+              it "returns a success response ('new' template)" do
                 post :create, params: { project_id: project.to_param,
                                         task: invalid_attributes }
+                expect(response).to be_successful
+              end
+            end
+          end
+
+          context "when someone subscribed to category" do
+            let(:user) { Fabricate(:user_reviewer) }
+
+            before do
+              Fabricate(:category_tasks_subscription, user: user,
+                                                      category: category)
+            end
+
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(user.task_subscriptions, :count).by(1)
+            end
+          end
+
+          context "when someone subscribed to project" do
+            let(:user) { Fabricate(:user_reviewer) }
+
+            before do
+              Fabricate(:project_tasks_subscription, user: user,
+                                                     project: project)
+            end
+
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(user.task_subscriptions, :count).by(1)
+            end
+          end
+        end
+
+        context "for turbo_stream requests" do
+          context "with valid params" do
+            it "doesn't create a new Task" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_turbo_attributes },
+                              as: :turbo_stream
               end.not_to change(Task, :count)
             end
 
-            it "returns a success response ('new' template)" do
+            it "renders successfully" do
               post :create, params: { project_id: project.to_param,
-                                      task: invalid_attributes }
+                                      task: valid_turbo_attributes },
+                            as: :turbo_stream
               expect(response).to be_successful
             end
           end
 
-          context "when assigning" do
-            let(:user) { Fabricate(:user_worker) }
-
-            before { valid_attributes.merge!(assignee_ids: [user.id]) }
-
-            it "creates an assignment" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(user.assignments, :count).by(1)
-            end
-          end
-        end
-
-        context "when project and issue" do
-          before do
-            valid_attributes.merge! issue_id: issue.to_param
-            invalid_attributes.merge! issue_id: issue.to_param
-          end
-
-          context "with valid params" do
-            it "creates a new Task" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(issue.tasks, :count).by(1)
-            end
-
-            it "redirects to the created task" do
+          context "with blank params" do
+            it "renders successfully" do
               post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-              url = task_path(Task.last)
-              expect(response).to redirect_to(url)
+                                      task: blank_turbo_attributes },
+                            as: :turbo_stream
+              expect(response).to be_successful
             end
           end
 
           context "with invalid params" do
-            it "doesn't create a Task" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: invalid_attributes }
-              end.not_to change(Task, :count)
-            end
-
-            it "returns a success response ('new' template)" do
+            it "renders successfully" do
               post :create, params: { project_id: project.to_param,
-                                      task: invalid_attributes }
+                                      task: invalid_turbo_attributes },
+                            as: :turbo_stream
               expect(response).to be_successful
             end
-          end
-        end
-
-        context "when someone subscribed to category" do
-          let(:user) { Fabricate(:user_reviewer) }
-
-          before do
-            Fabricate(:category_tasks_subscription, user: user,
-                                                    category: category)
-          end
-
-          it "creates a new IssueSubscription" do
-            expect do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-            end.to change(user.task_subscriptions, :count).by(1)
-          end
-        end
-
-        context "when someone subscribed to project" do
-          let(:user) { Fabricate(:user_reviewer) }
-
-          before do
-            Fabricate(:project_tasks_subscription, user: user,
-                                                   project: project)
-          end
-
-          it "creates a new IssueSubscription" do
-            expect do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-            end.to change(user.task_subscriptions, :count).by(1)
           end
         end
       end
@@ -1357,17 +1392,36 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        it "doesn't create a Task" do
-          expect do
+        context "for html requests" do
+          it "doesn't create a Task" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+            end.not_to change(Task, :count)
+          end
+
+          it "should be unauthorized" do
             post :create, params: { project_id: project.to_param,
                                     task: valid_attributes }
-          end.not_to change(Task, :count)
+            expect_to_be_unauthorized(response)
+          end
         end
 
-        it "should be unauthorized" do
-          post :create, params: { project_id: project.to_param,
-                                  task: valid_attributes }
-          expect_to_be_unauthorized(response)
+        context "for turbo_stream requests" do
+          it "doesn't create a Task" do
+            expect do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_turbo_attributes },
+                            as: :turbo_stream
+            end.not_to change(Task, :count)
+          end
+
+          it "should be forbidden" do
+            post :create, params: { project_id: project.to_param,
+                                    task: valid_turbo_attributes },
+                          as: :turbo_stream
+            expect_to_be_forbidden(response)
+          end
         end
       end
     end
@@ -1382,104 +1436,170 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their task" do
-          context "with valid params" do
-            it "updates the requested task's summary" do
-              task = Fabricate(:task, project: project, user: current_user)
-              expect do
+        context "for html requests" do
+          context "when their task" do
+            context "with valid params" do
+              it "updates the requested task's summary" do
+                task = Fabricate(:task, project: project, user: current_user)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  task.reload
+                end.to change(task, :summary).to("New Summary")
+              end
+
+              it "updates the requested task's status" do
+                task = Fabricate(:task, project: project, user: current_user)
+                Fabricate(:progression, task: task)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  task.reload
+                end.to change(task, :status).to("in_progress")
+              end
+
+              it "redirects to the task" do
+                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
-                task.reload
-              end.to change(task, :summary).to("New Summary")
+                url = task_url(task)
+                expect(response).to redirect_to(url)
+              end
+
+              context "when a new worker assigned" do
+                let(:reassigned) { Fabricate(:user_worker) }
+                let(:stay_assigned) { Fabricate(:user_worker) }
+                let(:assignee_ids) { [reassigned.id, stay_assigned.id] }
+                let(:new_assignee_ids) { [worker.id, stay_assigned.id] }
+
+                let(:task) do
+                  Fabricate(:task, project: project, user: current_user,
+                                   assignee_ids: assignee_ids)
+                end
+
+                before do
+                  Fabricate(:user_worker)
+                  Fabricate(:task_subscription, task: task, user: reassigned)
+                  Fabricate(:task_subscription, task: task, user: stay_assigned)
+                  new_attributes.merge! assignee_ids: new_assignee_ids
+                end
+
+                it "creates 1 TaskSubscriptions" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.to change(TaskSubscription, :count).by(1)
+                end
+
+                it "creates a new worker TaskSubscription" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.to change(worker.task_subscriptions, :count).by(1)
+                end
+
+                it "doesn't change reassigned worker TaskSubscription" do
+                  task
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.not_to change(reassigned.task_subscriptions, :count)
+                end
+
+                it "doesn't change stay_assigned worker TaskSubscription" do
+                  task
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.not_to change(stay_assigned.task_subscriptions, :count)
+                end
+              end
             end
 
-            it "updates the requested task's status" do
-              task = Fabricate(:task, project: project, user: current_user)
-              Fabricate(:progression, task: task)
-              expect do
+            context "with invalid params" do
+              it "returns a success response ('edit' template)" do
+                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
-                                       task: new_attributes }
-                task.reload
-              end.to change(task, :status).to("in_progress")
-            end
-
-            it "redirects to the task" do
-              task = Fabricate(:task, project: project, user: current_user)
-              put :update, params: { id: task.to_param,
-                                     task: new_attributes }
-              url = task_url(task)
-              expect(response).to redirect_to(url)
-            end
-
-            context "when a new worker assigned" do
-              let(:reassigned) { Fabricate(:user_worker) }
-              let(:stay_assigned) { Fabricate(:user_worker) }
-              let(:assignee_ids) { [reassigned.id, stay_assigned.id] }
-              let(:new_assignee_ids) { [worker.id, stay_assigned.id] }
-
-              let(:task) do
-                Fabricate(:task, project: project, user: current_user,
-                                 assignee_ids: assignee_ids)
-              end
-
-              before do
-                Fabricate(:user_worker)
-                Fabricate(:task_subscription, task: task, user: reassigned)
-                Fabricate(:task_subscription, task: task, user: stay_assigned)
-                new_attributes.merge! assignee_ids: new_assignee_ids
-              end
-
-              it "creates 1 TaskSubscriptions" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                end.to change(TaskSubscription, :count).by(1)
-              end
-
-              it "creates a new worker TaskSubscription" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                end.to change(worker.task_subscriptions, :count).by(1)
-              end
-
-              it "doesn't change reassigned worker TaskSubscription" do
-                task
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                end.not_to change(reassigned.task_subscriptions, :count)
-              end
-
-              it "doesn't change stay_assigned worker TaskSubscription" do
-                task
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                end.not_to change(stay_assigned.task_subscriptions, :count)
+                                       task: invalid_attributes }
+                expect(response).to be_successful
               end
             end
           end
 
-          context "with invalid params" do
-            it "returns a success response ('edit' template)" do
-              task = Fabricate(:task, project: project, user: current_user)
-              put :update, params: { id: task.to_param,
-                                     task: invalid_attributes }
-              expect(response).to be_successful
+          context "when someone else's task" do
+            context "with valid params" do
+              it "updates the requested task" do
+                task = Fabricate(:task, project: project, user: current_user)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  task.reload
+                end.to change(task, :summary).to("New Summary")
+              end
             end
           end
         end
 
-        context "when someone else's task" do
-          context "with valid params" do
-            it "updates the requested task" do
-              task = Fabricate(:task, project: project, user: current_user)
+        context "for turbo_stream requests" do
+          context "when valid params" do
+            let!(:task) { Fabricate(:task, project: project) }
+
+            it "doesn't change the task's issue_id" do
               expect do
                 put :update, params: { id: task.to_param,
-                                       task: new_attributes }
+                                       task: valid_turbo_attributes },
+                             as: :turbo_stream
                 task.reload
-              end.to change(task, :summary).to("New Summary")
+              end.not_to change(task, :issue_id)
+            end
+
+            it "renders successfully" do
+              put :update, params: { id: task.to_param,
+                                     task: valid_turbo_attributes },
+                           as: :turbo_stream
+              expect(response).to be_successful
+            end
+          end
+
+          context "when blank params" do
+            let(:task_issue) { Fabricate(:issue, project: project) }
+            let!(:task) { Fabricate(:task, project: project, issue: task_issue) }
+
+            it "doesn't change the task's issue_id" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: blank_turbo_attributes },
+                             as: :turbo_stream
+                task.reload
+              end.not_to change(task, :issue_id)
+            end
+
+            it "renders successfully" do
+              put :update, params: { id: task.to_param,
+                                     task: blank_turbo_attributes },
+                           as: :turbo_stream
+              expect(response).to be_successful
+            end
+          end
+
+          context "when invalid params" do
+            let(:task_issue) { Fabricate(:issue, project: project) }
+            let!(:task) { Fabricate(:task, project: project, issue: task_issue) }
+
+            it "doesn't change the task's issue_id" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: invalid_turbo_attributes },
+                             as: :turbo_stream
+                task.reload
+              end.not_to change(task, :issue_id)
+            end
+
+            it "renders successfully" do
+              put :update, params: { id: task.to_param,
+                                     task: invalid_turbo_attributes },
+                           as: :turbo_stream
+              expect(response).to be_successful
             end
           end
         end
@@ -1492,61 +1612,138 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their task" do
-          context "with valid params" do
-            it "updates the requested task" do
-              task = Fabricate(:task, project: project, user: current_user)
+        context "for html requests" do
+          context "when their task" do
+            context "with valid params" do
+              it "updates the requested task" do
+                task = Fabricate(:task, project: project, user: current_user)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  task.reload
+                end.to change(task, :summary).to("New Summary")
+              end
+
+              it "redirects to the task" do
+                task = Fabricate(:task, project: project, user: current_user)
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+                url = task_url(task)
+                expect(response).to redirect_to(url)
+              end
+
+              it "updates the requested task's issue" do
+                task = Fabricate(:task, project: project, user: current_user,
+                                        issue: issue)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  issue.reload
+                end.to change(issue, :status).to("being_worked_on")
+              end
+            end
+
+            context "with invalid params" do
+              it "returns a success response ('edit' template)" do
+                task = Fabricate(:task, project: project, user: current_user)
+                put :update, params: { id: task.to_param,
+                                       task: invalid_attributes }
+                expect(response).to be_successful
+              end
+            end
+          end
+
+          context "when someone else's task" do
+            it "doesn't update the requested task" do
+              task = Fabricate(:task, project: project)
               expect do
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
                 task.reload
-              end.to change(task, :summary).to("New Summary")
+              end.not_to change(task, :summary)
             end
 
-            it "redirects to the task" do
-              task = Fabricate(:task, project: project, user: current_user)
+            it "should be unauthorized" do
+              task = Fabricate(:task, project: project)
               put :update, params: { id: task.to_param,
                                      task: new_attributes }
-              url = task_url(task)
-              expect(response).to redirect_to(url)
-            end
-
-            it "updates the requested task's issue" do
-              task = Fabricate(:task, project: project, user: current_user,
-                                      issue: issue)
-              expect do
-                put :update, params: { id: task.to_param,
-                                       task: new_attributes }
-                issue.reload
-              end.to change(issue, :status).to("being_worked_on")
-            end
-          end
-
-          context "with invalid params" do
-            it "returns a success response ('edit' template)" do
-              task = Fabricate(:task, project: project, user: current_user)
-              put :update, params: { id: task.to_param,
-                                     task: invalid_attributes }
-              expect(response).to be_successful
+              expect_to_be_unauthorized(response)
             end
           end
         end
 
-        context "when someone else's task" do
-          it "doesn't update the requested task" do
-            task = Fabricate(:task, project: project)
-            expect do
-              put :update, params: { id: task.to_param,
-                                     task: new_attributes }
-              task.reload
-            end.not_to change(task, :summary)
+        context "for turbo_stream requests" do
+          let(:task_issue) { Fabricate(:issue, project: project) }
+
+          let!(:task) do
+            Fabricate(:task, project: project, user: current_user,
+                             issue: task_issue)
           end
 
-          it "should be unauthorized" do
-            task = Fabricate(:task, project: project)
-            put :update, params: { id: task.to_param,
-                                   task: new_attributes }
-            expect_to_be_unauthorized(response)
+          context "when their task" do
+            context "with valid params" do
+              it "doesn't update the requested task" do
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: valid_turbo_attributes },
+                               as: :turbo_stream
+                  task.reload
+                end.not_to change(task, :issue_id)
+              end
+
+              it "renders successfully" do
+                put :update, params: { id: task.to_param,
+                                       task: valid_turbo_attributes },
+                             as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
+            context "with blank params" do
+              it "doesn't update the requested task" do
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: blank_turbo_attributes },
+                               as: :turbo_stream
+                  task.reload
+                end.not_to change(task, :issue_id)
+              end
+
+              it "renders successfully" do
+                put :update, params: { id: task.to_param,
+                                       task: blank_turbo_attributes },
+                             as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
+            context "with invalid params" do
+              it "doesn't update the requested task" do
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: invalid_turbo_attributes },
+                               as: :turbo_stream
+                  task.reload
+                end.not_to change(task, :issue_id)
+              end
+
+              it "renders successfully" do
+                put :update, params: { id: task.to_param,
+                                       task: invalid_turbo_attributes },
+                             as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+          end
+
+          context "when someone else's task" do
+            it "should be forbidden" do
+              task = Fabricate(:task, project: project)
+              put :update, params: { id: task.to_param,
+                                     task: valid_turbo_attributes },
+                           as: :turbo_stream
+              expect_to_be_forbidden(response)
+            end
           end
         end
       end
@@ -1558,39 +1755,52 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their task" do
-          it "doesn't update the requested task" do
-            task = Fabricate(:task, project: project)
-            expect do
+        context "for html requests" do
+          context "when their task" do
+            let!(:task) { Fabricate(:task, project: project, user: current_user) }
+
+            it "doesn't update the requested task" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.not_to change(task, :summary)
+            end
+
+            it "should be unauthorized" do
               put :update, params: { id: task.to_param,
                                      task: new_attributes }
-              task.reload
-            end.not_to change(task, :summary)
+              expect_to_be_unauthorized(response)
+            end
           end
 
-          it "should be unauthorized" do
-            task = Fabricate(:task, project: project)
-            put :update, params: { id: task.to_param,
-                                   task: new_attributes }
-            expect_to_be_unauthorized(response)
+          context "when someone else's task" do
+            let!(:task) { Fabricate(:task, project: project) }
+
+            it "doesn't update the requested task" do
+              expect do
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+                task.reload
+              end.not_to change(task, :summary)
+            end
+
+            it "should be unauthorized" do
+              put :update, params: { id: task.to_param,
+                                     task: new_attributes }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 
-        context "when someone else's task" do
-          it "doesn't update the requested task" do
-            task = Fabricate(:task, project: project)
-            expect do
-              put :update, params: { id: task.to_param,
-                                     task: new_attributes }
-              task.reload
-            end.not_to change(task, :summary)
-          end
+        context "for turbo_stream" do
+          let!(:task) { Fabricate(:task, project: project, user: current_user) }
 
-          it "should be unauthorized" do
-            task = Fabricate(:task, project: project)
+          it "should be forbidden" do
             put :update, params: { id: task.to_param,
-                                   task: new_attributes }
-            expect_to_be_unauthorized(response)
+                                   task: new_attributes },
+                         as: :turbo_stream
+            expect_to_be_forbidden(response)
           end
         end
       end

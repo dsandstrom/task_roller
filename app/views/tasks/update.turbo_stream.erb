@@ -1,0 +1,13 @@
+<% if @issue %>
+  <%= turbo_stream.update :turbo_task_issue_description,
+                          partial: 'issues/description_wrapper',
+                          locals: { issue: @issue, user: @issue.user } %>
+  <%= turbo_stream.update :turbo_task_issue_id,
+                          partial: 'tasks/issue_id_hidden_field',
+                          locals: { issue_id: @issue.id } %>
+<% else %>
+  <%= turbo_stream.update :turbo_task_issue_description, nil %>
+  <%= turbo_stream.update :turbo_task_issue_id,
+                          partial: 'tasks/issue_id_hidden_field',
+                          locals: { issue_id: nil } %>
+<% end %>

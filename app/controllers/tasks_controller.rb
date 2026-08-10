@@ -31,32 +31,52 @@ class TasksController < ApplicationController
   def edit; end
 
   def create
-    if @task.save
-      @task.subscribe_users
-      @task.update_status(current_user)
-      @task.issue&.update_status(current_user)
-      redirect_to @task, success: 'Task was successfully created.'
-    else
-      set_form_options
-      render :new
+    respond_to do |format|
+      format.html do
+        if @task.save
+          @task.subscribe_users
+          @task.update_status(current_user)
+          @task.issue&.update_status(current_user)
+          redirect_to @task, success: 'Task was successfully added.'
+        else
+          set_form_options
+          render :new
+        end
+      end
+
+      format.turbo_stream do
+        if params[:task][:issue_id].present?
+          @issue = Issue.find(params[:task][:issue_id])
+        end
+      end
     end
   end
 
   def update
-    if @task.update(task_params)
-      @task.subscribe_assignees
-      @task.update_status(current_user)
-      @task.issue&.update_status(current_user)
-      redirect_to @task, success: 'Task was successfully updated.'
-    else
-      set_form_options
-      render :edit
+    respond_to do |format|
+      format.html do
+        if @task.update(task_params)
+          @task.subscribe_assignees
+          @task.update_status(current_user)
+          @task.issue&.update_status(current_user)
+          redirect_to @task, success: 'Task was successfully updated.'
+        else
+          set_form_options
+          render :edit
+        end
+      end
+
+      format.turbo_stream do
+        if params[:task][:issue_id].present?
+          @issue = Issue.find(params[:task][:issue_id])
+        end
+      end
     end
   end
 
   def destroy
     @task.destroy
-    redirect_to @project, success: 'Task was successfully destroyed.'
+    redirect_to @project, success: 'Task was successfully removed.'
   end
 
   private
