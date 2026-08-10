@@ -102,9 +102,14 @@ class TasksController < ApplicationController
     end
 
     def build_issue_options
-      @task.project.issues.map do |issue|
-        [issue.id_and_summary, issue.id]
+      options =
+        @task.project.issues.all_non_closed.map do |issue|
+          [issue.id_and_summary, issue.id]
+        end
+      if @task.issue
+        options = [[@task.issue.id_and_summary, @task.issue_id]] | options
       end
+      options
     end
 
     def build_tasks
