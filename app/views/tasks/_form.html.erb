@@ -1,15 +1,17 @@
-<%= form_with(model: task, url: url,
-              html: { name: 'task_issue_description_form',
-                      class: 'top-form',
-                      data: { turbo_stream: true }}) do |form| %>
+<% if issue_options&.any? %>
+  <%= form_with(model: task, url: url,
+                html: { name: 'task_issue_description_form',
+                        class: 'top-form',
+                        data: { turbo_stream: true }}) do |form| %>
 
-  <div class="field">
-    <%= form.label :issue_id, 'Linked Issue' %>
-    <%= form.select :issue_id,
-                    options_for_select(issue_options, task.issue_id),
-                    { include_blank: '- None -' },
-                    { id: :task_issue_id, onchange: "this.form.requestSubmit()" } %>
-  </div>
+    <div class="field">
+      <%= form.label :issue_id, 'Linked Issue' %>
+      <%= form.select :issue_id,
+                      options_for_select(issue_options, task.issue_id),
+                      { include_blank: '- None -' },
+                      { id: :task_issue_id, onchange: "this.form.requestSubmit()" } %>
+    </div>
+  <% end %>
 <% end %>
 
 <%= turbo_frame_tag :turbo_task_issue_description do %>

@@ -14,7 +14,6 @@ RSpec.describe "tasks/new", type: :view do
     assign(:task, project.tasks.build)
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
-    assign(:issue_options, [[issue.id_and_summary, issue.id]])
   end
 
   context "for a reporter" do
@@ -22,14 +21,33 @@ RSpec.describe "tasks/new", type: :view do
 
     before { enable_can(view, current_user) }
 
-    it "renders new task form" do
-      render
+    context "when project has an issue" do
+      before { assign(:issue_options, [[issue.id_and_summary, issue.id]]) }
 
-      assert_select "form[action=?][method=?]", url, "post" do
-        assert_select "input[name=?]", "task[summary]"
-        assert_select "textarea[name=?]", "task[description]"
-        assert_select "input[name=?]", "task[task_type_id]"
-        assert_select "select[name=?]", "task[assignee_ids][]"
+      it "renders new task form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "input[name=?]", "task[summary]"
+          assert_select "textarea[name=?]", "task[description]"
+          assert_select "input[name=?]", "task[task_type_id]"
+          assert_select "select[name=?]", "task[assignee_ids][]"
+        end
+      end
+    end
+
+    context "when project doesn't have an issue" do
+      before { assign(:issue_options, [[]]) }
+
+      it "renders new task form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "input[name=?]", "task[summary]"
+          assert_select "textarea[name=?]", "task[description]"
+          assert_select "input[name=?]", "task[task_type_id]"
+          assert_select "select[name=?]", "task[assignee_ids][]"
+        end
       end
     end
   end
