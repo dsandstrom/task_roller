@@ -17,11 +17,6 @@ class TasksController < ApplicationController
     @tasks = build_tasks.accessible_by(current_ability)
                         .with_notifications(current_user, order_by: order_by)
                         .filter_by(build_filters).page(params[:page])
-
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
   end
 
   def show
