@@ -89,6 +89,12 @@ RSpec.describe User, type: :model do
 
       it { is_expected.not_to be_valid }
     end
+
+    context "when name contains emoji" do
+      before { subject.name = "💳 invalid name" }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe "on create" do

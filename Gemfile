@@ -75,6 +75,10 @@ gem 'scenic', '~> 1.9'
 # already a dependency of rails gems, but needs to be required
 gem 'rails-html-sanitizer', '~> 1.7', require: true
 
+# https://github.com/janlelis/unicode-emoji
+# used to disallow emojis in user name
+gem 'unicode-emoji', '~> 4.2'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger
   # console

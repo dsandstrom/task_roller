@@ -560,6 +560,7 @@ DEPENDENCIES
   syslog (~> 0.4)
   timecop (~> 0.9)
   turbo-rails (~> 2.0)
+  unicode-emoji (~> 4.2)
   web-console (~> 4.2)
   webmock (~> 3.26)
 
