@@ -58,10 +58,26 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:repo_callouts) }
 
   it { is_expected.to be_valid }
-  it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:email) }
   it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   it { is_expected.to validate_uniqueness_of(:github_id) }
+
+  describe "name validations" do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_length_of(:name).is_at_most(150) }
+
+    context "when name contains http://" do
+      before { subject.name = "http://invalid.net" }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when name contains https://" do
+      before { subject.name = "a https://invalid.net b" }
+
+      it { is_expected.not_to be_valid }
+    end
+  end
 
   describe "on create" do
     %w[Reporter Reviewer Worker Admin].each do |employee_type|

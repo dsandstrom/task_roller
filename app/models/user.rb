@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # Include default devise modules. Others available are:
   #    :timeoutable
@@ -45,7 +43,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 150 },
+                   format: { without: %r{https?:/} }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
                             allow_nil: false, on: :create
