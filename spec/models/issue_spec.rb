@@ -2212,4 +2212,16 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#issue?" do
+    it "returns true" do
+      expect(subject.issue?).to eq(true)
+    end
+  end
+
+  describe "#task?" do
+    it "returns false" do
+      expect(subject.task?).to eq(false)
+    end
+  end
 end

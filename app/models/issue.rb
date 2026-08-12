@@ -310,6 +310,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     github_message message, url
   end
 
+  def issue?
+    true
+  end
+
+  def task?
+    false
+  end
+
   private
 
     def set_opened_at
