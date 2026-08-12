@@ -421,7 +421,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def allow_display_of_email?(logged_in_user)
-      User.allow_registration? || email == logged_in_user.email ||
+      !User.allow_registration? || email == logged_in_user.email ||
         logged_in_user.admin?
     end
 end
