@@ -362,6 +362,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     notify_subscribers(options.merge(event: 'comment'))
   end
 
+  def issue?
+    false
+  end
+
+  def task?
+    true
+  end
+
   private
 
     # - closed

@@ -9,22 +9,50 @@ RSpec.describe "searches/index", type: :view do
     before { enable_can(view, current_user) }
 
     context "when search_results" do
-      before do
-        issue
-        task
-        assign(:search_results, page(SearchResult.all))
+      context "for issues and tasks" do
+        before do
+          issue
+          task
+          assign(:search_results, page(SearchResult.all))
+        end
+
+        it "renders issues" do
+          render
+
+          assert_select ".issues #issue-#{issue.id}"
+        end
+
+        it "renders tasks" do
+          render
+
+          assert_select ".tasks #task-#{task.id}"
+        end
       end
 
-      it "renders issues" do
-        render
+      context "for just issues" do
+        before do
+          issue
+          assign(:search_results, page(Issue.all))
+        end
 
-        assert_select ".issues #issue-#{issue.id}"
+        it "renders issues" do
+          render
+
+          assert_select ".issues #issue-#{issue.id}"
+        end
       end
 
-      it "renders tasks" do
-        render
+      context "for just tasks" do
+        before do
+          task
+          assign(:search_results, page(Task.all))
+        end
 
-        assert_select ".tasks #task-#{task.id}"
+        it "renders issues" do
+          render
+
+          assert_select ".tasks #task-#{task.id}"
+        end
       end
     end
 

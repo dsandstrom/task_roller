@@ -26,9 +26,27 @@ RSpec.describe SearchesController, type: :controller do
         before { sign_in(current_user) }
 
         context "when filters" do
-          it "returns a success response" do
-            get :index, params: { query: "test", order: "updated,desc" }
-            expect(response).to be_successful
+          context "for issues and tasks" do
+            it "returns a success response" do
+              get :index, params: { query: "test", order: "updated,desc" }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for tasks" do
+            it "returns a success response" do
+              get :index, params: { type: "tasks", query: "test",
+                                    order: "updated,desc" }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for issues" do
+            it "returns a success response" do
+              get :index, params: { type: "issues", query: "test",
+                                    order: "updated,desc" }
+              expect(response).to be_successful
+            end
           end
         end
 

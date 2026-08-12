@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module SearchesHelper
   def search_header(heading = nil)
     title = 'Issue & Task Search'

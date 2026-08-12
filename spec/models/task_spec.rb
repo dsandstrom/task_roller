@@ -2515,4 +2515,16 @@ RSpec.describe Task, type: :model do
       end.to have_enqueued_job.on_queue("mailers")
     end
   end
+
+  describe "#issue?" do
+    it "returns false" do
+      expect(subject.issue?).to eq(false)
+    end
+  end
+
+  describe "#task?" do
+    it "returns true" do
+      expect(subject.task?).to eq(true)
+    end
+  end
 end
