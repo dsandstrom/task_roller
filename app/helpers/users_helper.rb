@@ -50,7 +50,7 @@ module UsersHelper
   end
 
   def break_up_name(name)
-    break_up(name, 22)
+    break_up(name, 20)
   end
 
   private
