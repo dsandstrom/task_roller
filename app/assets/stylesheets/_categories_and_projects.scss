@@ -375,3 +375,10 @@
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+.users {
+  .user,
+  .new-user {
+    overflow: hidden;
+  }
+}
