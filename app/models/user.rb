@@ -8,6 +8,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
          omniauth_providers: %i[github]
   VALID_EMPLOYEE_TYPES = %w[Admin Reviewer Worker Reporter].freeze
   ASSIGNABLE_EMPLOYEE_TYPES = %w[Reviewer Worker].freeze
+  NAME_DISALLOW_REGEX = %r{(https?:/|&#?\w+;|#{Unicode::Emoji::REGEX})}
 
   has_many :task_assignees, foreign_key: :assignee_id, inverse_of: :assignee,
                             dependent: :destroy
@@ -45,7 +46,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 150 },
+                   format: { without: NAME_DISALLOW_REGEX }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
                             allow_nil: false, on: :create
