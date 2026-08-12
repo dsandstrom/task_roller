@@ -1895,7 +1895,7 @@ RSpec.describe User, type: :model do
 
       context "and user is not current_user" do
         it "returns the real email" do
-          expect(user.display_email(different_user)).to eq(user.email)
+          expect(user.display_email(different_user)).to eq("test-user@[hidden]")
         end
       end
 
@@ -1917,7 +1917,7 @@ RSpec.describe User, type: :model do
 
       context "and user is not current_user" do
         it "returns the real email" do
-          expect(user.display_email(different_user)).to eq("test-user@[hidden]")
+          expect(user.display_email(different_user)).to eq(user.email)
         end
       end
 
