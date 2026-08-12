@@ -47,6 +47,14 @@ module UsersHelper
     end
   end
 
+  def break_up(long_word, line_size = 20)
+    long_word.gsub(/(?:[^\s]{1,#{line_size}}|\S+)\K/, " ").squish
+  end
+
+  def break_up_name(name)
+    break_up(name, 22)
+  end
+
   private
 
     def user_heading_and_button(user)
