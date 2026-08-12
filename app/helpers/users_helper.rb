@@ -46,11 +46,11 @@ module UsersHelper
   end
 
   def break_up(long_word, line_size = 20)
-    long_word.gsub(/(?:[^\s]{1,#{line_size}}|\S+)\K/, ' ').squish
+    long_word.scan(/([^\s]{1,#{line_size}})/).flatten.join(' ')
   end
 
   def break_up_name(name)
-    break_up(name, 20)
+    break_up(name, 18)
   end
 
   private
