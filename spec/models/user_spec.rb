@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 EnvStruct = Struct.new(:info, :uid)
@@ -1877,6 +1875,56 @@ RSpec.describe User, type: :model do
 
       it "has right user_id" do
         expect(user.github_account.user_id).to eq(user.id)
+      end
+    end
+  end
+
+  describe "#display_email" do
+    let(:user) { Fabricate(:user_reviewer, email: "test-user@example.net") }
+    let(:different_user) { Fabricate(:user) }
+    let(:admin) { Fabricate(:user_admin) }
+
+    context "when registration is allowed" do
+      before { allow(User).to receive(:allow_registration?) { true } }
+
+      context "and user is current_user" do
+        it "returns the real email" do
+          expect(user.display_email(user)).to eq(user.email)
+        end
+      end
+
+      context "and user is not current_user" do
+        it "returns the real email" do
+          expect(user.display_email(different_user)).to eq(user.email)
+        end
+      end
+
+      context "and current_user is an admin" do
+        it "returns the real email" do
+          expect(user.display_email(admin)).to eq(user.email)
+        end
+      end
+    end
+
+    context "when registration is not allowed" do
+      before { allow(User).to receive(:allow_registration?) { false } }
+
+      context "and user is current_user" do
+        it "returns the real email" do
+          expect(user.display_email(user)).to eq(user.email)
+        end
+      end
+
+      context "and user is not current_user" do
+        it "returns the real email" do
+          expect(user.display_email(different_user)).to eq("test-user@[hidden]")
+        end
+      end
+
+      context "and current_user is an admin" do
+        it "returns the real email" do
+          expect(user.display_email(admin)).to eq(user.email)
+        end
       end
     end
   end
