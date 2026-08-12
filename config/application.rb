@@ -50,5 +50,8 @@ module TaskRoller
     # New 7.1 defaults
     config.add_autoload_paths_to_load_path = false
     config.active_support.cache_format_version = 7.1
+
+    # Disable image processing
+    config.active_storage.variant_processor = :disabled
   end
 end
