@@ -1,11 +1,11 @@
 <section id="user-<%= user.id %>" class="user">
   <h3 class="user-name">
-    <%= link_to_if can?(:read, user), user.name, user %>
+    <%= link_to_if can?(:read, user), break_up_name(user.name), user %>
   </h3>
 
   <main class="user-content">
     <p class="user-email">
-      <code><%= user.email %></code>
+      <code><%= user.display_email(current_user) %></code>
     </p>
   </main>
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module UsersHelper
   def user_header(user)
     return new_user_header(user) unless user.persisted?
@@ -45,6 +43,14 @@ module UsersHelper
       concat dropdown_menu_user_container(user)
       concat dropdown_menu_logout_container
     end
+  end
+
+  def break_up(long_word, line_size = 20)
+    long_word.gsub(/(?:[^\s]{1,#{line_size}}|\S+)\K/, ' ').squish
+  end
+
+  def break_up_name(name)
+    break_up(name, 22)
   end
 
   private

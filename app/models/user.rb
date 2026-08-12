@@ -384,6 +384,12 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @github_account ||= GithubAccount.new(self)
   end
 
+  def display_email(logged_in_user)
+    return email if allow_display_of_email?(logged_in_user)
+
+    email.sub(/@.+/, '@[hidden]')
+  end
+
   protected
 
     # https://github.com/heartcombo/devise/wiki/How-To:-Email-only-sign-up
@@ -412,5 +418,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
         '(task_subscriptions.task_id = search_results.id AND ' \
         "search_results.class_name = 'Task' AND " \
         "task_subscriptions.user_id = #{id})"
+    end
+
+    def allow_display_of_email?(logged_in_user)
+      User.allow_registration? || email == logged_in_user.email ||
+        logged_in_user.admin?
     end
 end
