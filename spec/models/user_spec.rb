@@ -77,6 +77,18 @@ RSpec.describe User, type: :model do
 
       it { is_expected.not_to be_valid }
     end
+
+    context "when name contains &copy;" do
+      before { subject.name = "invalid names &copy;" }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when name contains &#1333;" do
+      before { subject.name = "invalid names &#xa9;" }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe "on create" do

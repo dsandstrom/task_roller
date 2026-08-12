@@ -44,7 +44,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :repo_callouts, dependent: :nullify
 
   validates :name, presence: true, length: { maximum: 150 },
-                   format: { without: %r{https?:/} }
+                   format: { without: %r{(https?:/|&#?\w+;)} }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :employee_type, inclusion: { in: VALID_EMPLOYEE_TYPES },
                             allow_nil: false, on: :create
