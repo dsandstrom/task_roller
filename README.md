@@ -148,10 +148,10 @@ bin/rails rspec spec/
 
 #### Services (job queues, cache servers, search engines, etc.)
 
-I use guard to automate local development
+I use guard and foreman to automate local development
 ```sh
-bundle exec guard -g backend # start rspec and bundler watchers
-bundle exec guard -g frontend # start server (port 3000) and livereload watcher
+bundle exec guard # start rspec and bundler watchers
+bin/dev # start server (port 3000) and rails_live_reload watcher
 ```
 
 ## App Hosting
