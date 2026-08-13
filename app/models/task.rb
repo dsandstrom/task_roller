@@ -309,31 +309,29 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @siblings ||= build_siblings(issue)
   end
 
-  # rubocop:disable Naming/MemoizedInstanceVariableName
   def in_review?
-    @in_review_ ||= status == 'in_review'
+    status == 'in_review'
   end
 
   def in_progress?
-    @in_progress_ ||= status == 'in_progress'
+    status == 'in_progress'
   end
 
   def assigned?
-    @assigned_ ||= status == 'assigned'
+    status == 'assigned'
   end
 
   def unassigned?
-    @unassigned_ ||= status == 'open'
+    status == 'open'
   end
 
   def approved?
-    @approved_ ||= status == 'approved'
+    status == 'approved'
   end
 
   def duplicate?
-    @duplicate_ ||= status == 'duplicate'
+    status == 'duplicate'
   end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def update_status(current_user = nil)
     old_status = status
