@@ -247,7 +247,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:being_worked_on_issue) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
           Fabricate(:open_issue)
         end
 
@@ -262,7 +262,7 @@ RSpec.describe Issue, type: :model do
 
         before do
           Fabricate(:open_issue)
-          Fabricate(:open_task, issue: Fabricate(:issue))
+          Fabricate(:task, issue: Fabricate(:issue))
         end
 
         it "returns issues with approved tasks" do
@@ -866,8 +866,8 @@ RSpec.describe Issue, type: :model do
 
     context "when open and closed tasks" do
       before do
-        Fabricate(:open_task, issue: issue)
-        Fabricate(:closed_task, issue: issue)
+        Fabricate(:unassigned_task, issue: issue)
+        Fabricate(:approved_task, issue: issue)
         issue.reload
       end
 
@@ -883,7 +883,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:open_issue) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
           issue.update_status
         end
 
@@ -922,7 +922,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:issue) }
 
         before do
-          Fabricate(:closed_task, issue: issue)
+          Fabricate(:approved_task, issue: issue)
           issue.update_status
         end
 
@@ -937,7 +937,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:closed_issue) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
           issue.update_status
         end
 
@@ -947,13 +947,10 @@ RSpec.describe Issue, type: :model do
       end
 
       context "and has a closed task" do
-        let(:issue) { Fabricate(:issue) }
-        let(:task) { Fabricate(:closed_task, issue: issue) }
+        let(:issue) { Fabricate(:open_issue) }
+        let(:task) { Fabricate(:approved_task, issue: issue) }
 
-        before do
-          Fabricate(:approved_review, task: task)
-          issue.update_status
-        end
+        before { issue.update_status }
 
         it "returns false" do
           expect(issue.send(:open_tasks?)).to eq(false)
@@ -980,8 +977,9 @@ RSpec.describe Issue, type: :model do
     end
 
     context "with approved task and closed task" do
+      let!(:approved_task) { Fabricate(:approved_task, issue: issue) }
+
       before do
-        Fabricate(:approved_task, issue: issue)
         Fabricate(:closed_task, issue: issue)
       end
 
@@ -992,7 +990,7 @@ RSpec.describe Issue, type: :model do
 
     context "with a closed unreviewed task" do
       before do
-        Fabricate(:closed_task, issue: issue)
+        Fabricate(:duplicate_task, issue: issue)
       end
 
       it "returns false" do
@@ -1003,7 +1001,7 @@ RSpec.describe Issue, type: :model do
     context "with approved task and open task" do
       before do
         Fabricate(:approved_task, issue: issue)
-        Fabricate(:open_task, issue: issue)
+        Fabricate(:task, issue: issue)
       end
 
       it "returns false" do
@@ -1948,7 +1946,7 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when 1 open task" do
-      before { Fabricate(:open_task, issue: issue) }
+      before { Fabricate(:unassigned_task, issue: issue) }
 
       it "returns nil" do
         expect(issue.addressed_at).to be_nil
@@ -1993,6 +1991,7 @@ RSpec.describe Issue, type: :model do
           task = Fabricate(:disapproved_task, issue: issue)
         end
         review = Fabricate(:approved_review, task: task)
+        task.close
         task.update_status
 
         expect(issue.addressed_at).to eq(review.updated_at)
@@ -2004,7 +2003,7 @@ RSpec.describe Issue, type: :model do
         task = nil
         review = nil
         Timecop.freeze(2.days.ago) do
-          task = Fabricate(:closed_task, issue: issue)
+          task = Fabricate(:approved_task, issue: issue)
           Fabricate(:in_review_task, issue: issue)
         end
         Timecop.freeze(1.day.ago) do

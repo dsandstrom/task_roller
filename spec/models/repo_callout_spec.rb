@@ -457,7 +457,7 @@ RSpec.describe RepoCallout, type: :model do
       end
 
       context "while task is closed" do
-        let(:task) { Fabricate(:closed_task) }
+        let(:task) { Fabricate(:approved_task) }
 
         it "doesn't create a Progression" do
           expect do

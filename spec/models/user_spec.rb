@@ -1142,13 +1142,14 @@ RSpec.describe User, type: :model do
       it "returns all unresolved" do
         open_issue = Fabricate(:open_issue, user: user)
         being_worked_on_issue = Fabricate(:open_issue, user: user)
-        Fabricate(:open_task, issue: being_worked_on_issue)
+        Fabricate(:in_progress_task, issue: being_worked_on_issue)
         being_worked_on_issue.update_status
         addressed_issue = Fabricate(:open_issue, user: user)
         Fabricate(:approved_task, issue: addressed_issue)
         addressed_issue.update_status
         Fabricate(:closed_issue, user: user)
 
+        # FIXME: why is addressed issue in unresolved?
         expect(user.unresolved_issues)
           .to contain_exactly(open_issue, being_worked_on_issue,
                               addressed_issue)
@@ -1238,10 +1239,12 @@ RSpec.describe User, type: :model do
     end
 
     context "when user has multiple assignments" do
-      let(:in_progress_task) { Fabricate(:open_task, summary: "In Progress") }
-      let(:paused_task) { Fabricate(:open_task, summary: "Paused") }
-      let(:assigned_task) { Fabricate(:open_task, summary: "Assigned") }
-      let(:in_review_task) { Fabricate(:open_task, summary: "In Review") }
+      let(:in_progress_task) do
+        Fabricate(:in_progress_task, summary: "In Progress")
+      end
+      let(:paused_task) { Fabricate(:assigned_task, summary: "Paused") }
+      let(:assigned_task) { Fabricate(:assigned_task, summary: "Assigned") }
+      let(:in_review_task) { Fabricate(:assigned_task, summary: "In Review") }
 
       before do
         [paused_task, in_review_task, in_progress_task,
@@ -1266,9 +1269,9 @@ RSpec.describe User, type: :model do
       it "orders by tasks.created_at desc" do
         second_task = nil
         Timecop.freeze(1.week.ago) do
-          second_task = Fabricate(:open_task)
+          second_task = Fabricate(:task)
         end
-        first_task = Fabricate(:open_task)
+        first_task = Fabricate(:task)
         [second_task, first_task].each do |task|
           task.assignees << user
         end
@@ -1284,8 +1287,8 @@ RSpec.describe User, type: :model do
         first_task = nil
         second_task = nil
         Timecop.freeze(1.week.ago) do
-          second_task = Fabricate(:open_task)
-          first_task = Fabricate(:open_task)
+          second_task = Fabricate(:task)
+          first_task = Fabricate(:task)
         end
 
         [second_task, first_task].each do |task|
@@ -1308,8 +1311,8 @@ RSpec.describe User, type: :model do
         first_task = nil
         second_task = nil
         Timecop.freeze(1.week.ago) do
-          second_task = Fabricate(:open_task)
-          first_task = Fabricate(:open_task)
+          second_task = Fabricate(:task)
+          first_task = Fabricate(:task)
         end
 
         [second_task, first_task].each do |task|
@@ -1332,7 +1335,7 @@ RSpec.describe User, type: :model do
 
     context "when user commented on assigned task" do
       it "still includes it" do
-        task = Fabricate(:open_task, user: user)
+        task = Fabricate(:task, user: user)
         task.assignees << user
         Fabricate(:task_comment, task: task, user: user)
 
@@ -1352,12 +1355,12 @@ RSpec.describe User, type: :model do
 
     context "when user an open and closed task" do
       before do
-        Fabricate(:closed_task, user: user)
-        Fabricate(:open_task)
+        Fabricate(:approved_task, user: user)
+        Fabricate(:unassigned_task)
       end
 
       it "returns non-closed only" do
-        task = Fabricate(:open_task, user: user)
+        task = Fabricate(:task, user: user)
 
         expect(user.open_tasks).to eq([task])
       end
@@ -1365,13 +1368,13 @@ RSpec.describe User, type: :model do
 
     context "when user has different status tasks" do
       let(:in_progress_task) do
-        Fabricate(:open_task, user: user, summary: "In Progress")
+        Fabricate(:in_progress_task, user: user, summary: "In Progress")
       end
       let(:assigned_task) do
-        Fabricate(:open_task, user: user, summary: "Assigned")
+        Fabricate(:assigned_task, user: user, summary: "Assigned")
       end
       let(:in_review_task) do
-        Fabricate(:open_task, user: user, summary: "In Review")
+        Fabricate(:assigned_task, user: user, summary: "In Review")
       end
 
       before do
@@ -1380,7 +1383,7 @@ RSpec.describe User, type: :model do
       end
 
       it "orders by in_review, in_progress, assigned, open" do
-        open_task = Fabricate(:open_task, user: user, summary: "Open")
+        open_task = Fabricate(:task, user: user, summary: "Open")
         tasks = [in_review_task, in_progress_task, assigned_task, open_task]
         tasks.each(&:update_status)
         expect(user.open_tasks).to eq(tasks)
@@ -1393,10 +1396,10 @@ RSpec.describe User, type: :model do
         second_task = nil
 
         Timecop.freeze(1.week.ago) do
-          first_task = Fabricate(:open_task, user: user)
+          first_task = Fabricate(:task, user: user)
         end
         Timecop.freeze(1.day.ago) do
-          second_task = Fabricate(:open_task, user: user)
+          second_task = Fabricate(:task, user: user)
           Fabricate(:task_comment, task: second_task)
         end
         Fabricate(:task_comment, task: first_task)

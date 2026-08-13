@@ -181,7 +181,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def open_tasks
-    @open_tasks ||= tasks.all_non_closed
+    @open_tasks ||= tasks.all_open
   end
 
   def closed_tasks

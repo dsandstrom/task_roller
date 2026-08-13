@@ -6,6 +6,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
   STATUS_OPTIONS = {
     open: { color: 'green' },
+    unassigned: { color: 'brown' },
     assigned: { color: 'blue' },
     in_progress: { color: 'yellow' },
     in_review: { color: 'purple' },
@@ -61,7 +62,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # CLASS
 
-  def self.all_non_closed
+  def self.all_open
     where(closed: false)
   end
 
@@ -69,23 +70,22 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
-  def self.all_open
-    all_non_closed.where(status: 'open')
+  def self.all_assigned
+    all_open.where(status: 'assigned')
   end
 
-  def self.all_assigned
-    all_non_closed.where(status: 'assigned')
+  def self.all_unassigned
+    all_open.where(status: 'unassigned')
   end
 
   def self.all_in_progress
-    all_non_closed.where(status: 'in_progress')
+    all_open.where(status: 'in_progress')
   end
 
   def self.all_in_review
-    all_non_closed.where(status: 'in_review')
+    all_open.where(status: 'in_review')
   end
 
-  # TODO: change to all_completed
   def self.all_approved
     all_closed.where(status: 'approved')
   end
@@ -373,6 +373,9 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   private
 
     # - closed
+    #   - approved review - approved
+    #   - source_connection - duplicate
+    #   - closed
     # - open
     #   - reviews open = 'in review'
     #   - progressions unfinished = 'in progress'
@@ -395,7 +398,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       elsif any_assignees?
         'assigned'
       else
-        'open'
+        'unassigned'
       end
     end
 
@@ -405,6 +408,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       elsif source_connection?
         'duplicate'
       else
+        # TODO: not an acceptable status, maybe reopen
         'closed'
       end
     end
@@ -455,7 +459,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return unless issue
 
       # rubocop:disable Rails/SkipsModelValidations
-      issue.update_column :open_tasks_count, issue.tasks.all_non_closed.count
+      issue.update_column :open_tasks_count, issue.tasks.all_open.count
       # rubocop:enable Rails/SkipsModelValidations
     end
 

@@ -363,7 +363,7 @@ RSpec.describe TaskAssigneesController, type: :controller do
               delete :destroy, params: { task_id: task.to_param,
                                          id: task_assignee.to_param }
               task.reload
-            end.to change(task, :status).to("open")
+            end.to change(task, :status).to("unassigned")
           end
 
           it "finishes requested task's progressions" do

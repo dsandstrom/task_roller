@@ -11,8 +11,7 @@
       All
     <% end %>
 
-    <% %i[open assigned in_progress in_review approved duplicate
-          closed].each do |status| %>
+    <% %i[open unassigned in_progress in_review approved closed].each do |status| %>
       <%
         color = Task::STATUS_OPTIONS[status][:color]
         klass = roller_radio_button_label_class(color)

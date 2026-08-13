@@ -457,7 +457,7 @@ RSpec.describe ReviewsController, type: :controller do
               put :disapprove, params: { task_id: task.to_param,
                                          id: review.to_param }
               task.reload
-            end.to change(task, :status).to("open")
+            end.to change(task, :status).to("unassigned")
           end
 
           it "subscribes the reviewer" do
