@@ -6,7 +6,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
   STATUS_OPTIONS = {
     open: { color: 'green' },
-    unassigned: { color: 'brown' },
+    unassigned: { color: 'blue' },
     assigned: { color: 'blue' },
     in_progress: { color: 'yellow' },
     in_review: { color: 'purple' },
