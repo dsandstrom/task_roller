@@ -367,37 +367,27 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def open_tasks?
-      return @open_tasks_ unless @open_tasks_.nil?
-
-      @open_tasks_ = open? && open_tasks.any?
+      open_tasks.any?
     end
 
     # all tasks closed, any approved
     # no approved resolution, but can have an open resolution
     def tasks_approved?
-      return @tasks_approved unless @tasks_approved.nil?
-
-      @tasks_approved =
-        !resolution_approved? && closed && open_tasks.none? &&
+      !resolution_approved? && closed && open_tasks.none? &&
         tasks.any?(&:approved?)
     end
 
     # current resolution approved
     def resolution_approved?
-      return @resolution_approved unless @resolution_approved.nil?
-
-      @resolution_approved =
-        if current_resolution
-          current_resolution.approved?
-        else
-          false
-        end
+      if current_resolution
+        current_resolution.approved?
+      else
+        false
+      end
     end
 
     def source_connection?
-      return @source_connection_ unless @source_connection_.nil?
-
-      @source_connection_ = source_connection.present?
+      source_connection.present?
     end
 
     def build_history_feed
