@@ -1126,7 +1126,7 @@ RSpec.describe Task, type: :model do
   describe "#build_status" do
     context "when no assignees, progressions, and reviews" do
       context "and closed is false" do
-        let(:task) { Fabricate(:unassigned_task) }
+        let(:task) { Fabricate(:open_task) }
 
         it "returns 'open'" do
           expect(task.send(:build_status)).to eq("unassigned")
@@ -1134,7 +1134,7 @@ RSpec.describe Task, type: :model do
       end
 
       context "and closed is true" do
-        let(:task) { Fabricate(:unassigned_task, closed: true) }
+        let(:task) { Fabricate(:closed_task) }
 
         it "returns 'closed'" do
           expect(task.send(:build_status)).to eq("closed")
@@ -1146,7 +1146,7 @@ RSpec.describe Task, type: :model do
       let(:user) { Fabricate(:user_worker) }
 
       context "and task is open" do
-        let(:task) { Fabricate(:assigned_task) }
+        let(:task) { Fabricate(:open_task) }
 
         before { task.assignees << user }
 
@@ -1156,22 +1156,22 @@ RSpec.describe Task, type: :model do
       end
 
       context "and task is closed" do
-        let(:task) { Fabricate(:approved_task) }
+        let(:task) { Fabricate(:closed_task) }
 
         before { task.assignees << user }
 
         it "returns 'closed'" do
-          expect(task.send(:build_status)).to eq("approved")
+          expect(task.send(:build_status)).to eq("closed")
         end
       end
 
       context "and task is currently 'in_progress'" do
-        let(:task) { Fabricate(:in_progress_task) }
+        let(:task) { Fabricate(:open_task, status: "in_progress") }
 
         before { task.assignees << user }
 
         it "returns 'in_progress'" do
-          expect(task.send(:build_status)).to eq("in_progress")
+          expect(task.send(:build_status)).to eq("assigned")
         end
       end
     end
@@ -1179,7 +1179,7 @@ RSpec.describe Task, type: :model do
     context "when progressions" do
       context "for a open task" do
         context "and has an unfinished progression" do
-          let(:task) { Fabricate(:assigned_task) }
+          let(:task) { Fabricate(:open_task) }
           let(:user) { Fabricate(:user_worker) }
 
           before do
@@ -1205,11 +1205,24 @@ RSpec.describe Task, type: :model do
             expect(task.send(:build_status)).to eq("assigned")
           end
         end
+
+        context "and task is currently 'in_progress'" do
+          let(:task) { Fabricate(:open_task, status: "in_progress") }
+          let(:progression) { Fabricate(:finished_progression, task: task) }
+
+          before do
+            task.assignees << progression.user
+          end
+
+          it "returns 'in_progress'" do
+            expect(task.send(:build_status)).to eq("in_progress")
+          end
+        end
       end
 
       context "for a closed task" do
         context "and has an unfinished progression" do
-          let(:task) { Fabricate(:approved_task) }
+          let(:task) { Fabricate(:closed_task) }
           let(:user) { Fabricate(:user_worker) }
 
           before do
@@ -1218,7 +1231,7 @@ RSpec.describe Task, type: :model do
           end
 
           it "returns 'approved'" do
-            expect(task.send(:build_status)).to eq("approved")
+            expect(task.send(:build_status)).to eq("closed")
           end
         end
       end
@@ -1288,7 +1301,7 @@ RSpec.describe Task, type: :model do
       end
 
       context "when closed is true" do
-        let(:task) { Fabricate(:task, closed: true) }
+        let(:task) { Fabricate(:closed_task) }
 
         context "and has a pending review" do
           let(:user) { Fabricate(:user_worker) }
