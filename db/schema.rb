@@ -10,114 +10,114 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_16_062633) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_13_210849) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "categories", force: :cascade do |t|
-    t.string "name"
-    t.boolean "visible", default: true
-    t.boolean "internal", default: false
     t.datetime "created_at", precision: nil, null: false
+    t.boolean "internal", default: false
+    t.string "name"
     t.datetime "updated_at", precision: nil, null: false
+    t.boolean "visible", default: true
     t.index ["internal"], name: "index_categories_on_internal"
     t.index ["visible"], name: "index_categories_on_visible"
   end
 
   create_table "category_issues_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["category_id", "user_id"], name: "index_category_issues_subscriptions_on_category_id_and_user_id", unique: true
   end
 
   create_table "category_tasks_subscriptions", force: :cascade do |t|
     t.integer "category_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["category_id", "user_id"], name: "index_category_tasks_subscriptions_on_category_id_and_user_id", unique: true
   end
 
   create_table "issue_closures", force: :cascade do |t|
-    t.integer "issue_id", null: false
-    t.integer "user_id"
     t.datetime "created_at", null: false
+    t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "issue_comments", force: :cascade do |t|
-    t.integer "issue_id", null: false
-    t.integer "user_id"
     t.text "body"
     t.datetime "created_at", null: false
+    t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "issue_connections", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "scheme"
     t.integer "source_id", null: false
     t.integer "target_id", null: false
-    t.string "scheme"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
   end
 
   create_table "issue_notifications", force: :cascade do |t|
-    t.integer "issue_id", null: false
-    t.integer "user_id", null: false
-    t.string "event", null: false
-    t.string "details"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "details"
+    t.string "event", null: false
     t.integer "issue_comment_id"
+    t.integer "issue_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["user_id"], name: "index_issue_notifications_on_user_id"
   end
 
   create_table "issue_reopenings", force: :cascade do |t|
-    t.integer "issue_id", null: false
-    t.integer "user_id"
     t.datetime "created_at", null: false
+    t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "issue_subscriptions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "issue_id", null: false
     t.datetime "created_at", null: false
+    t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["issue_id", "user_id"], name: "index_issue_subscriptions_on_issue_id_and_user_id", unique: true
   end
 
   create_table "issue_types", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "icon", null: false
     t.string "color", null: false
-    t.integer "position"
     t.datetime "created_at", null: false
+    t.string "icon", null: false
+    t.string "name", null: false
+    t.integer "position"
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_issue_types_on_name", unique: true
   end
 
   create_table "issues", force: :cascade do |t|
-    t.string "summary"
-    t.text "description"
-    t.integer "issue_type_id"
-    t.integer "user_id"
-    t.integer "project_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
     t.boolean "closed", default: false, null: false
-    t.datetime "opened_at"
-    t.integer "tasks_count", default: 0, null: false
-    t.integer "open_tasks_count", default: 0, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.text "description"
     t.integer "github_id"
+    t.integer "github_number"
+    t.integer "github_repo_id"
     t.string "github_url"
     t.integer "github_user_id"
+    t.integer "issue_type_id"
+    t.integer "open_tasks_count", default: 0, null: false
+    t.datetime "opened_at"
+    t.integer "project_id"
     t.string "status"
-    t.integer "github_repo_id"
-    t.integer "github_number"
+    t.string "summary"
+    t.integer "tasks_count", default: 0, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "user_id"
     t.index ["closed"], name: "index_issues_on_closed"
     t.index ["github_id"], name: "index_issues_on_github_id", unique: true
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
@@ -127,38 +127,38 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_16_062633) do
   end
 
   create_table "progressions", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
-    t.boolean "finished", default: false, null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "finished", default: false, null: false
     t.datetime "finished_at"
     t.integer "repo_callout_id"
+    t.integer "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "project_issues_subscriptions", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
+    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["project_id", "user_id"], name: "index_project_issues_subscriptions_on_project_id_and_user_id", unique: true
   end
 
   create_table "project_tasks_subscriptions", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
+    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["project_id", "user_id"], name: "index_project_tasks_subscriptions_on_project_id_and_user_id", unique: true
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string "name"
-    t.boolean "visible", default: true
-    t.boolean "internal", default: false
     t.integer "category_id"
     t.datetime "created_at", precision: nil, null: false
+    t.boolean "internal", default: false
+    t.string "name"
     t.datetime "updated_at", precision: nil, null: false
+    t.boolean "visible", default: true
     t.index ["category_id", "name"], name: "index_projects_on_category_id_and_name", unique: true
     t.index ["category_id"], name: "index_projects_on_category_id"
     t.index ["internal"], name: "index_projects_on_internal"
@@ -166,117 +166,117 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_16_062633) do
   end
 
   create_table "repo_callouts", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "task_id", null: false
     t.string "action", null: false
-    t.text "commit_message", null: false
     t.string "commit_html_url"
-    t.string "commit_sha", null: false
-    t.integer "github_commit_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text "commit_message", null: false
     t.string "commit_message_part", null: false
+    t.string "commit_sha", null: false
+    t.datetime "created_at", null: false
+    t.integer "github_commit_id"
+    t.integer "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["task_id", "commit_sha"], name: "index_repo_callouts_on_task_id_and_commit_sha", unique: true
     t.index ["task_id"], name: "index_repo_callouts_on_task_id"
   end
 
   create_table "resolutions", force: :cascade do |t|
-    t.integer "issue_id", null: false
-    t.integer "user_id"
     t.boolean "approved"
     t.datetime "created_at", null: false
+    t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
     t.boolean "approved"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "repo_callout_id"
+    t.integer "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "task_assignees", force: :cascade do |t|
-    t.integer "task_id"
     t.integer "assignee_id"
     t.datetime "created_at", precision: nil, null: false
+    t.integer "task_id"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["task_id", "assignee_id"], name: "index_task_assignees_on_task_id_and_assignee_id", unique: true
   end
 
   create_table "task_closures", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
     t.datetime "created_at", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "task_comments", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
     t.text "body"
     t.datetime "created_at", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "task_connections", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "scheme"
     t.integer "source_id", null: false
     t.integer "target_id", null: false
-    t.string "scheme"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
   end
 
   create_table "task_notifications", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id", null: false
-    t.integer "task_comment_id"
-    t.string "event", null: false
-    t.string "details"
     t.datetime "created_at", null: false
+    t.string "details"
+    t.string "event", null: false
+    t.integer "task_comment_id"
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["user_id"], name: "index_task_notifications_on_user_id"
   end
 
   create_table "task_reopenings", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
     t.datetime "created_at", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "task_subscriptions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "task_id", null: false
     t.datetime "created_at", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["task_id", "user_id"], name: "index_task_subscriptions_on_task_id_and_user_id", unique: true
   end
 
   create_table "task_types", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "icon", null: false
     t.string "color", null: false
-    t.integer "position"
     t.datetime "created_at", null: false
+    t.string "icon", null: false
+    t.string "name", null: false
+    t.integer "position"
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_task_types_on_name", unique: true
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.string "summary"
-    t.text "description"
-    t.integer "task_type_id"
-    t.integer "issue_id"
-    t.integer "user_id"
-    t.integer "project_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
     t.boolean "closed", default: false, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.text "description"
+    t.integer "issue_id"
     t.datetime "opened_at"
+    t.integer "project_id"
     t.string "status"
+    t.string "summary"
+    t.integer "task_type_id"
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "user_id"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
@@ -286,36 +286,35 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_16_062633) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email", default: "", null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.string "employee_type"
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at", precision: nil
-    t.datetime "remember_created_at", precision: nil
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at", precision: nil
-    t.datetime "last_sign_in_at", precision: nil
-    t.inet "current_sign_in_ip"
-    t.inet "last_sign_in_ip"
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "confirmation_token"
     t.datetime "confirmed_at", precision: nil
-    t.datetime "confirmation_sent_at", precision: nil
-    t.string "unconfirmed_email"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "current_sign_in_at", precision: nil
+    t.inet "current_sign_in_ip"
+    t.string "email", default: "", null: false
+    t.string "employee_type"
+    t.string "encrypted_password", default: "", null: false
     t.integer "failed_attempts", default: 0, null: false
-    t.string "unlock_token"
-    t.datetime "locked_at", precision: nil
     t.integer "github_id"
     t.string "github_username"
+    t.datetime "last_sign_in_at", precision: nil
+    t.inet "last_sign_in_ip"
+    t.datetime "locked_at", precision: nil
+    t.string "name"
+    t.datetime "remember_created_at", precision: nil
+    t.datetime "reset_password_sent_at", precision: nil
+    t.string "reset_password_token"
+    t.integer "sign_in_count", default: 0, null: false
+    t.string "unconfirmed_email"
+    t.string "unlock_token"
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["github_id"], name: "index_users_on_github_id", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
-
 
   create_view "search_results", sql_definition: <<-SQL
       SELECT issues.id,
