@@ -39,16 +39,10 @@ class RepoCallout < ApplicationRecord
   def perform_action
     return unless user && task
 
-    case action
-    when 'start'
-      start_task
-    when 'pause'
-      pause_task?
-    when 'complete'
-      finish_task
-    end
+    perform_action_on_task
 
     task.update_status
+    task.assignees << user unless task.assignees.include?(user)
   end
 
   private
@@ -75,15 +69,26 @@ class RepoCallout < ApplicationRecord
       part.match?(/fix|close|complete/i)
     end
 
+    def perform_action_on_task
+      case action
+      when 'start'
+        start_task
+      when 'pause'
+        pause_task
+      when 'complete'
+        finish_task
+      end
+    end
+
     def start_task
       return unless task.open? && unfinished_progressions.none?
 
       task.progressions.create(user: user, repo_callout_id: id)
     end
 
-    def pause_task?
+    def pause_task
       # TODO: set repo_callout_id (may conflict if set when started)
-      unfinished_progressions.all?(&:finish)
+      unfinished_progressions.each(&:finish)
     end
 
     def finish_task
