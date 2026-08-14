@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe RepoCallout, type: :model do
@@ -374,6 +372,12 @@ RSpec.describe RepoCallout, type: :model do
           subject.perform_action
         end.not_to change(Review, :count)
       end
+
+      it "doesn't assign a user" do
+        expect do
+          subject.process_commit_message
+        end.not_to change(TaskAssignee, :count)
+      end
     end
 
     context "when no user" do
@@ -452,6 +456,32 @@ RSpec.describe RepoCallout, type: :model do
             expect do
               subject.perform_action
             end.not_to change(Review, :count)
+          end
+        end
+
+        context "when user is assigned" do
+          before do
+            Fabricate(:task_assignee, task: task, assignee: user)
+          end
+
+          it "doesn't assign a user" do
+            expect do
+              subject.perform_action
+            end.not_to change(TaskAssignee, :count)
+          end
+        end
+
+        context "when user is not assigned" do
+          it "creates a TaskAssignee" do
+            expect do
+              subject.perform_action
+            end.to change(TaskAssignee, :count).by(1)
+          end
+
+          it "assigns the user" do
+            subject.perform_action
+
+            expect(task.assignees).to include(user)
           end
         end
       end
@@ -563,6 +593,32 @@ RSpec.describe RepoCallout, type: :model do
             subject.perform_action
             task.reload
           end.to change(task, :status)
+        end
+
+        context "when user is assigned" do
+          before do
+            Fabricate(:task_assignee, task: task, assignee: user)
+          end
+
+          it "doesn't assign a user" do
+            expect do
+              subject.perform_action
+            end.not_to change(TaskAssignee, :count)
+          end
+        end
+
+        context "when user is not assigned" do
+          it "creates a TaskAssignee" do
+            expect do
+              subject.perform_action
+            end.to change(TaskAssignee, :count).by(1)
+          end
+
+          it "assigns the user" do
+            subject.perform_action
+
+            expect(task.assignees).to include(user)
+          end
         end
       end
 
