@@ -14,7 +14,7 @@ issues =
     category.issues
   end
 issues_count = issues.count
-open_issues_count = issues.all_open.count
+pending_issues_count = issues.all_pending.count
 being_worked_on_issues_count = issues.all_being_worked_on.count
 closed_issues_count = issues.all_closed.count
 
@@ -25,9 +25,9 @@ tasks =
     category.tasks
   end
 tasks_count = tasks.count
-open_tasks_count = tasks.all_open.count
-in_progress_tasks_count = tasks.all_in_progress.count
+unassigned_tasks_count = tasks.all_unassigned.count
 assigned_tasks_count = tasks.all_assigned.count
+in_progress_tasks_count = tasks.all_in_progress.count
 in_review_tasks_count = tasks.all_in_review.count
 closed_tasks_count = tasks.all_closed.count
 
@@ -97,10 +97,10 @@ end
       <div name="category_issues_content" class="accordion-content">
         <% if issues_count > 0 %>
           <p class="category-stats">
-            <%= link_to category_issues_path(category, issue_status: 'open'),
+            <%= link_to category_issues_path(category, issue_status: 'pending'),
                         class: "stat green-link" do %>
-              <%= content_tag :span, open_issues_count, class: 'stat-number' %>
-              <%= content_tag :span, 'Open', class: 'stat-name' %>
+              <%= content_tag :span, pending_issues_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Pending', class: 'stat-name' %>
             <% end %>
 
             <%= link_to category_issues_path(category, issue_status: 'being_worked_on'),
@@ -141,10 +141,10 @@ end
       <div name="category_tasks_content" class="accordion-content">
         <% if tasks_count > 0 %>
           <p class="category-stats">
-            <%= link_to category_tasks_path(category, task_status: 'open'),
+            <%= link_to category_tasks_path(category, task_status: 'unassigned'),
                         class: "stat green-link" do %>
-              <%= content_tag :span, open_tasks_count, class: 'stat-number' %>
-              <%= content_tag :span, 'Open', class: 'stat-name' %>
+              <%= content_tag :span, unassigned_tasks_count, class: 'stat-number' %>
+              <%= content_tag :span, 'Unassigned', class: 'stat-name' %>
             <% end %>
 
             <%= link_to category_tasks_path(category, task_status: 'assigned'),
