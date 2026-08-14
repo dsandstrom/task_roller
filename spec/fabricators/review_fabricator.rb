@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
 Fabricator(:review) do
-  task { Fabricate(:open_task) }
+  task { Fabricate(:assigned_task) }
   user { Fabricate(:user_reviewer) }
   approved nil
 end

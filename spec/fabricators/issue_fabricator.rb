@@ -1,25 +1,19 @@
-# frozen_string_literal: true
-
 Fabricator(:issue) do
   summary { sequence(:issues) { |n| "Issue Summary #{n + 1}" } }
   description 'Issue Description'
   issue_type
   user
   project
-  status 'open'
+  status 'pending'
 end
 
-Fabricator(:open_issue, from: :issue) do
+Fabricator(:pending_issue, from: :issue, aliases: %i[open_issue]) do
   closed false
-  status 'open'
+  status 'pending'
 end
 
-Fabricator(:closed_issue, from: :issue) do
-  closed true
-  status 'closed'
-end
-
-Fabricator(:being_worked_on_issue, from: :open_issue) do
+Fabricator(:being_worked_on_issue, from: :issue) do
+  closed false
   status 'being_worked_on'
 
   after_create do |issue|
@@ -29,7 +23,8 @@ Fabricator(:being_worked_on_issue, from: :open_issue) do
   end
 end
 
-Fabricator(:addressed_issue, from: :closed_issue) do
+Fabricator(:addressed_issue, from: :issue) do
+  closed true
   status 'addressed'
 
   after_create do |issue|
@@ -39,17 +34,26 @@ Fabricator(:addressed_issue, from: :closed_issue) do
   end
 end
 
-Fabricator(:duplicate_issue, from: :closed_issue) do
+Fabricator(:duplicate_issue, from: :issue) do
+  transient :target
+
+  closed true
   status 'duplicate'
 
-  after_create do |issue|
-    return if issue.source_connection
+  before_create do |issue, transients|
+    issue.project ||= transients[:target]&.project || Fabricate(:project)
+  end
 
-    Fabricate(:issue_connection, source: issue)
+  after_create do |issue, transients|
+    next if issue.source_connection
+
+    transients[:target] ||= Fabricate(:addressed_issue, project: issue.project)
+    Fabricate(:issue_connection, source: issue, target: transients[:target])
   end
 end
 
-Fabricator(:resolved_issue, from: :closed_issue) do
+Fabricator(:resolved_issue, from: :issue, aliases: %i[closed_issue]) do
+  closed true
   status 'resolved'
 
   after_create do |issue|

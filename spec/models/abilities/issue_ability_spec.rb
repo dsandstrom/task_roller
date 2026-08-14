@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 require "cancan/matchers"
 
@@ -4619,7 +4617,7 @@ RSpec.describe Ability do
 
       context "when issue is closed" do
         context "and resolution/issue belong to them" do
-          let(:issue) { Fabricate(:closed_issue, user: admin) }
+          let(:issue) { Fabricate(:pending_issue, closed: true, user: admin) }
           let(:resolution) { Fabricate(:resolution, issue: issue, user: admin) }
 
           it { is_expected.to be_able_to(:create, resolution) }
@@ -4759,7 +4757,9 @@ RSpec.describe Ability do
 
         context "when issue is closed" do
           context "when resolution/issue belong to them" do
-            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:issue) do
+              Fabricate(:pending_issue, closed: true, user: current_user)
+            end
             let(:resolution) do
               Fabricate(:resolution, issue: issue, user: current_user)
             end
@@ -4771,7 +4771,9 @@ RSpec.describe Ability do
           end
 
           context "when resolution doesn't belong to them" do
-            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:issue) do
+              Fabricate(:pending_issue, closed: true, user: current_user)
+            end
             let(:resolution) { Fabricate(:resolution, issue: issue) }
 
             it { is_expected.not_to be_able_to(:create, resolution) }
@@ -4781,8 +4783,10 @@ RSpec.describe Ability do
           end
 
           context "when issue doesn't belong to them" do
-            let(:issue) { Fabricate(:closed_issue) }
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:issue) { Fabricate(:pending_issue, closed: true) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4922,7 +4926,10 @@ RSpec.describe Ability do
 
         context "when issue is closed" do
           context "when resolution/issue belong to them" do
-            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:issue) do
+              Fabricate(:pending_issue, closed: true, user: current_user)
+            end
+
             let(:resolution) do
               Fabricate(:resolution, issue: issue, user: current_user)
             end
@@ -5065,7 +5072,9 @@ RSpec.describe Ability do
 
         context "when issue is closed" do
           context "when resolution/issue belong to them" do
-            let(:issue) { Fabricate(:closed_issue, user: current_user) }
+            let(:issue) do
+              Fabricate(:pending_issue, closed: true, user: current_user)
+            end
             let(:resolution) do
               Fabricate(:resolution, issue: issue, user: current_user)
             end

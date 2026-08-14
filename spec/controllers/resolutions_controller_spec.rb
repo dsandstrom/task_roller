@@ -145,7 +145,7 @@ RSpec.describe ResolutionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:issue) { Fabricate(:closed_issue, project: project) }
+    let(:issue) { Fabricate(:addressed_issue, project: project) }
 
     context "for an admin" do
       before { sign_in(admin) }

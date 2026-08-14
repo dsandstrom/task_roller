@@ -68,7 +68,7 @@ RSpec.describe TaskReopeningsController, type: :controller do
             expect do
               post :create, params: { task_id: task.to_param }
               task.reload
-            end.to change(task, :status).to("open")
+            end.to change(task, :status).to("unassigned")
           end
 
           it "sends email to subscribers" do

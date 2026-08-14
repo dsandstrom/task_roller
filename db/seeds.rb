@@ -86,7 +86,7 @@ class Seeds
                            description: issue_description)
       issue = Issue.create!(attrs)
       issue.subscribe_users
-      issue.update_status
+      issue.reload.update_status
       issue
     end
 
@@ -97,9 +97,7 @@ class Seeds
                            summary: Faker::Company.bs.capitalize,
                            description: task_description)
       task = Task.create!(attrs)
-      task.subscribe_users
-      task.update_status
-      task.issue&.update_status
+      update_task_status(task)
       task
     end
 
@@ -117,20 +115,20 @@ class Seeds
         rand(2).times { create_disapproved_task(issue) }
         rand(2).times { create_in_review_task(issue) }
       end
-      issue.update_status
+      issue.reload.update_status
     end
 
     def create_addressed_issue(user)
       issue = create_issue(user_id: user.id, closed: true)
       rand(1..3).times { create_approved_task(issue) }
-      issue.update_status
+      issue.reload.update_status
       issue
     end
 
     def create_resolved_issue(user)
       issue = create_issue(user_id: user.id, closed: true)
       issue.resolutions.create!(user_id: user.id, approved: !rand(3).zero?)
-      issue.update_status
+      issue.reload.update_status
       issue
     end
 
@@ -145,7 +143,7 @@ class Seeds
       reviewer_id = random_reviewer_id
       issue.closures.create!(user_id: reviewer_id)
       issue.reopenings.create!(user_id: reviewer_id)
-      issue.update_status
+      issue.reload.update_status
       issue
     end
 
@@ -158,7 +156,7 @@ class Seeds
       IssueConnection.create!(source_id: issue.id,
                               target_id: duplicate_issue.id,
                               user_id: random_reviewer_id)
-      issue.update_status
+      issue.reload.update_status
       issue
     end
 
@@ -179,8 +177,8 @@ class Seeds
       task = create_task(closed: false, assignee_ids: [worker.id])
       task.closures.create!(user_id: reviewer.id)
       task.reopenings.create!(user_id: reviewer.id)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -189,8 +187,8 @@ class Seeds
       task = create_task(closed: true, project_id: duplicate.project_id)
       TaskConnection.create!(source_id: task.id, target_id: duplicate.id,
                              user_id: reviewer.id)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -200,23 +198,23 @@ class Seeds
 
     def create_unfinished_progression(task, worker)
       task.progressions.create!(user_id: worker.id, finished: false)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
     end
 
     def create_finished_progression(task, worker)
       task.progressions.create!(user_id: worker.id, finished: true,
                                 finished_at: Time.zone.now)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
     end
 
     def create_in_progress_task(issue)
       worker = User.workers.sample
       task = create_open_task(issue, worker)
       create_unfinished_progression(task, worker)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -225,8 +223,8 @@ class Seeds
       task = create_open_task(issue, worker)
       create_finished_progression(task, worker)
       task.reviews.create!(user_id: worker.id, approved: nil)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -235,8 +233,8 @@ class Seeds
       task = create_closed_task(issue, worker)
       create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: true)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -245,8 +243,8 @@ class Seeds
       task = create_open_task(issue, worker)
       create_finished_progression(task, worker)
       task.reviews.create!(user_id: task.user_id, approved: false)
-      task.update_status
-      task.issue&.update_status
+      task.reload.update_status
+      task.issue&.reload&.update_status
       task
     end
 
@@ -454,6 +452,12 @@ class Seeds
 
     def fake_question
       Faker::Lorem.question(word_count: 2, random_words_to_add: 4)
+    end
+
+    def update_task_status(task)
+      task.subscribe_users
+      task.reload.update_status
+      task.issue&.reload&.update_status
     end
 end
 

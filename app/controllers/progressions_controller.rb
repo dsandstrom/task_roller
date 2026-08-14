@@ -19,7 +19,7 @@ class ProgressionsController < ApplicationController
   def destroy
     @progression.destroy
     @task.update_status
-    redirect_to @task, notice: 'Progression was successfully destroyed.'
+    redirect_to @task, notice: 'Progression was successfully removed.'
   end
 
   def finish

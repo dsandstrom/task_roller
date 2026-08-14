@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: test invisible and internal tasks
 
 require "rails_helper"
@@ -337,7 +335,7 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task is closed with source_connection" do
       before do
-        @task = assign(:task, duplicate_task)
+        @task = assign(:task, duplicate_task.reload)
         @source_connection = assign(:source_connection, @task.source_connection)
       end
 
@@ -751,7 +749,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, duplicate_task)
+          @task = assign(:task, duplicate_task.reload)
           @source_connection = assign(:source_connection,
                                       @task.source_connection)
         end
@@ -859,7 +857,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, duplicate_task)
+          @task = assign(:task, duplicate_task.reload)
           @source_connection = assign(:source_connection,
                                       @task.source_connection)
         end
@@ -995,7 +993,7 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, duplicate_task)
+        @task = assign(:task, duplicate_task.reload)
         @source_connection = assign(:source_connection, @task.source_connection)
       end
 
@@ -1440,7 +1438,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, duplicate_task)
+          @task = assign(:task, duplicate_task.reload)
           @source_connection = assign(:source_connection,
                                       @task.source_connection)
         end
@@ -1590,7 +1588,7 @@ RSpec.describe "tasks/show", type: :view do
 
       context "and is closed with source_connection" do
         before do
-          @task = assign(:task, duplicate_task)
+          @task = assign(:task, duplicate_task.reload)
           @source_connection = assign(:source_connection,
                                       @task.source_connection)
         end
@@ -2095,7 +2093,7 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, duplicate_task)
+        @task = assign(:task, duplicate_task.reload)
         @source_connection = assign(:source_connection, @task.source_connection)
       end
 
@@ -2285,7 +2283,7 @@ RSpec.describe "tasks/show", type: :view do
 
     context "when task has a source_connection" do
       before do
-        @task = assign(:task, duplicate_task)
+        @task = assign(:task, duplicate_task.reload)
         @source_connection = assign(:source_connection, @task.source_connection)
       end
 

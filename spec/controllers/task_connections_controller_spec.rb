@@ -199,7 +199,7 @@ RSpec.describe TaskConnectionsController, type: :controller do
           expect do
             delete :destroy, params: { id: task_connection.to_param }
             source_task.reload
-          end.to change(source_task, :status).to("open")
+          end.to change(source_task, :status).to("unassigned")
         end
 
         it "redirects to the task_connections list" do

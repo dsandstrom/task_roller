@@ -148,7 +148,7 @@ RSpec.describe ProgressionsController, type: :controller do
 
   describe "PUT #finish" do
     let(:new_user) { Fabricate(:user_worker) }
-    let(:task) { Fabricate(:open_task, status: "in_progress") }
+    let(:task) { Fabricate(:in_progress_task) }
     let(:path) { task_path(task) }
 
     %w[admin reviewer worker].each do |employee_type|
@@ -290,7 +290,8 @@ RSpec.describe ProgressionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:task) { Fabricate(:open_task, status: "in_progress") }
+    let(:task) { Fabricate(:in_progress_task) }
+    let!(:progression) { task.progressions.first }
     let(:path) { task_path(task) }
 
     %w[admin].each do |employee_type|
@@ -300,7 +301,6 @@ RSpec.describe ProgressionsController, type: :controller do
         before { sign_in(current_user) }
 
         it "destroys the requested progression" do
-          progression = Fabricate(:progression, task: task)
           expect do
             delete :destroy, params: { task_id: task.to_param,
                                        id: progression.to_param }
@@ -308,16 +308,14 @@ RSpec.describe ProgressionsController, type: :controller do
         end
 
         it "updates the requested task" do
-          progression = Fabricate(:progression, task: task)
           expect do
             delete :destroy, params: { task_id: task.to_param,
                                        id: progression.to_param }
             task.reload
-          end.to change(task, :status).to("open")
+          end.to change(task, :status).to("assigned")
         end
 
         it "redirects to task" do
-          progression = Fabricate(:progression, task: task)
           delete :destroy, params: { task_id: task.to_param,
                                      id: progression.to_param }
           expect(response).to redirect_to(path)

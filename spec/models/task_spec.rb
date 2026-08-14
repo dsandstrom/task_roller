@@ -57,8 +57,8 @@ RSpec.describe Task, type: :model do
 
   describe "#status" do
     context "when a valid value" do
-      %w[open assigned in_progress in_review approved duplicate
-         closed].each do |value|
+      %w[unassigned assigned in_progress in_review
+         approved duplicate].each do |value|
         before { subject.status = value }
 
         it { is_expected.to be_valid }
@@ -82,24 +82,32 @@ RSpec.describe Task, type: :model do
 
   # CLASS
 
-  describe ".all_non_closed" do
+  describe ".all_open" do
     context "when no tasks" do
       before { Task.destroy_all }
 
       it "returns []" do
-        expect(Task.all_non_closed).to eq([])
+        expect(Task.all_open).to eq([])
       end
     end
 
-    context "when one open, one closed tasks" do
-      let!(:task) { Fabricate(:open_task) }
+    context "when tasks" do
+      let(:project) { Fabricate(:project) }
+      let!(:unassigned_task) { Fabricate(:unassigned_task) }
+      let!(:assigned_task) { Fabricate(:assigned_task) }
+      let!(:in_progress_task) { Fabricate(:in_progress_task) }
+      let!(:in_review_task) { Fabricate(:in_review_task) }
+      let!(:disapproved_task) { Fabricate(:disapproved_task) }
+      let(:approved_task) { Fabricate(:approved_task, project: project) }
 
       before do
-        Fabricate(:closed_task)
+        Fabricate(:duplicate_task, project: project, target: approved_task)
       end
 
-      it "returns the open one" do
-        expect(Task.all_non_closed).to eq([task])
+      it "returns the non-closed ones" do
+        expect(Task.all_open)
+          .to contain_exactly(unassigned_task, assigned_task, in_progress_task,
+                              in_review_task, disapproved_task)
       end
     end
   end
@@ -113,15 +121,20 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    context "when one closed, one closed tasks" do
-      let!(:task) { Fabricate(:closed_task) }
+    context "when tasks" do
+      let(:project) { Fabricate(:project) }
+      let(:approved_task) { Fabricate(:approved_task, project: project) }
+      let!(:duplicate_task) do
+        Fabricate(:duplicate_task, project: project, target: approved_task)
+      end
 
       before do
-        Fabricate(:open_task)
+        Fabricate(:unassigned_task)
       end
 
       it "returns the closed one" do
-        expect(Task.all_closed).to eq([task])
+        expect(Task.all_closed)
+          .to contain_exactly(approved_task, duplicate_task)
       end
     end
   end
@@ -136,7 +149,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when tasks" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:unassigned_task) }
 
       before do
         Fabricate(:pending_review, task: task)
@@ -148,7 +161,7 @@ RSpec.describe Task, type: :model do
         end
         reopened_task.reopen
 
-        Fabricate(:closed_task)
+        Fabricate(:approved_task)
 
         task.update_status
         reopened_task.update_status
@@ -170,13 +183,12 @@ RSpec.describe Task, type: :model do
     end
 
     context "when tasks" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:unassigned_task) }
 
       before do
         Fabricate(:progression, task: task)
-        Fabricate(:finished_progression,
-                  task: Fabricate(:open_task))
-        Fabricate(:closed_task)
+        Fabricate(:finished_progression, task: Fabricate(:assigned_task))
+        Fabricate(:approved_task)
         task.update_status
       end
 
@@ -197,22 +209,22 @@ RSpec.describe Task, type: :model do
 
     context "when tasks" do
       let(:worker) { Fabricate(:user_worker) }
-      let(:task) { Fabricate(:open_task, summary: "Open") }
+      let(:task) { Fabricate(:unassigned_task, summary: "Open") }
 
       before do
         task.assignees << worker
 
-        _unassigned_task = Fabricate(:open_task, summary: "Unassigned")
+        _unassigned_task = Fabricate(:unassigned_task, summary: "Unassigned")
 
-        in_progress_task = Fabricate(:open_task, summary: "In Progress")
+        in_progress_task = Fabricate(:assigned_task, summary: "In Progress")
         in_progress_task.assignees << worker
         Fabricate(:progression, task: in_progress_task)
 
-        in_review_task = Fabricate(:open_task, summary: "In Review")
+        in_review_task = Fabricate(:assigned_task, summary: "In Review")
         in_review_task.assignees << worker
         Fabricate(:pending_review, task: in_review_task)
 
-        Fabricate(:closed_task).assignees << worker
+        Fabricate(:approved_task).assignees << worker
 
         task.update_status
         in_progress_task.update_status
@@ -238,7 +250,7 @@ RSpec.describe Task, type: :model do
       let!(:task) { Fabricate(:approved_task) }
 
       before do
-        Fabricate(:open_task)
+        Fabricate(:unassigned_task)
         Fabricate(:closed_task)
         reopened_task = nil
         Timecop.freeze(1.day.ago) do
@@ -268,8 +280,8 @@ RSpec.describe Task, type: :model do
       let!(:task) { Fabricate(:duplicate_task) }
 
       before do
-        Fabricate(:open_task)
-        Fabricate(:closed_task)
+        Fabricate(:unassigned_task)
+        Fabricate(:approved_task)
       end
 
       it "returns closed tasks that have an approved current review" do
@@ -292,18 +304,18 @@ RSpec.describe Task, type: :model do
     context "when :task_status" do
       let(:in_review_task) { Fabricate(:in_review_task, project: project) }
       let(:in_progress_task) { Fabricate(:in_progress_task, project: project) }
-      let(:unassigned_task) { Fabricate(:open_task, project: project) }
-      let(:assigned_task) { Fabricate(:open_task, project: project) }
+      let(:unassigned_task) { Fabricate(:unassigned_task, project: project) }
+      let(:assigned_task) { Fabricate(:assigned_task, project: project) }
       let(:approved_task) { Fabricate(:approved_task, project: project) }
       let(:finished_task) { Fabricate(:finished_task, project: project) }
-      let(:reopened_task) { Fabricate(:closed_task, project: project) }
-      let(:closed_task) { Fabricate(:closed_task, project: project) }
+      let(:reopened_task) { Fabricate(:approved_task, project: project) }
+      let(:duplicate_task) do
+        Fabricate(:duplicate_task, project: project, target: approved_task)
+      end
 
       before do
-        _unassigned_task = Fabricate(:open_task, project: project)
-
         tasks = [assigned_task, in_review_task, in_progress_task,
-                 approved_task, finished_task, reopened_task, closed_task]
+                 approved_task, finished_task, reopened_task, duplicate_task]
         tasks.each do |task|
           task.assignees << worker
           task.update_status
@@ -339,9 +351,9 @@ RSpec.describe Task, type: :model do
       end
 
       context "is set as 'open'" do
-        it "returns unassigned tasks" do
+        it "returns non-closed tasks" do
           results = Task.filter_by(task_status: "open")
-          expect(results.count).to eq(1)
+          expect(results.count).to eq(5)
           expect(results).to match_array(category.tasks.all_open)
         end
       end
@@ -355,7 +367,7 @@ RSpec.describe Task, type: :model do
       end
 
       context "is set as 'closed'" do
-        it "returns approved/unapproved closed tasks" do
+        it "returns approved and duplicate tasks" do
           results = Task.filter_by(task_status: "closed")
           expect(results.count).to eq(2)
           expect(results).to match_array(category.tasks.all_closed)
@@ -365,7 +377,7 @@ RSpec.describe Task, type: :model do
       context "is set as 'all'" do
         it "returns all category tasks" do
           tasks = Task.filter_by(task_status: "all")
-          expect(tasks.count).to eq(8)
+          expect(tasks.count).to eq(7)
           expect(tasks).to match_array(category.tasks)
         end
       end
@@ -377,11 +389,11 @@ RSpec.describe Task, type: :model do
 
       context "is assigned to a task" do
         let!(:task) do
-          Fabricate(:open_task, project: project, assignees: [user])
+          Fabricate(:assigned_task, project: project, assignees: [user])
         end
 
         before do
-          Fabricate(:open_task, project: project)
+          Fabricate(:unassigned_task, project: project)
         end
 
         it "returns user tasks" do
@@ -391,8 +403,8 @@ RSpec.describe Task, type: :model do
 
       context "is set as user id without a task" do
         let!(:task) do
-          Fabricate(:open_task, project: project,
-                                assignees: [different_user])
+          Fabricate(:assigned_task, project: project,
+                                    assignees: [different_user])
         end
 
         it "returns []" do
@@ -402,7 +414,8 @@ RSpec.describe Task, type: :model do
 
       context "is blank" do
         let!(:task) do
-          Fabricate(:open_task, project: project, assignees: [different_user])
+          Fabricate(:assigned_task, project: project,
+                                    assignees: [different_user])
         end
 
         it "returns all user tasks" do
@@ -464,11 +477,11 @@ RSpec.describe Task, type: :model do
 
     context "when :task_status and :query" do
       context "is 'open' and 'gamma'" do
-        let!(:task) { Fabricate(:open_task, summary: "Gamma Good") }
+        let!(:task) { Fabricate(:task, summary: "Gamma Good") }
 
         before do
-          Fabricate(:closed_task, summary: "Closed gamma")
-          Fabricate(:open_task)
+          Fabricate(:approved_task, summary: "Closed gamma")
+          Fabricate(:unassigned_task)
         end
 
         it "returns matching task" do
@@ -1116,7 +1129,7 @@ RSpec.describe Task, type: :model do
         let(:task) { Fabricate(:open_task) }
 
         it "returns 'open'" do
-          expect(task.send(:build_status)).to eq("open")
+          expect(task.send(:build_status)).to eq("unassigned")
         end
       end
 
@@ -1158,7 +1171,7 @@ RSpec.describe Task, type: :model do
         before { task.assignees << user }
 
         it "returns 'in_progress'" do
-          expect(task.send(:build_status)).to eq("in_progress")
+          expect(task.send(:build_status)).to eq("assigned")
         end
       end
     end
@@ -1192,6 +1205,19 @@ RSpec.describe Task, type: :model do
             expect(task.send(:build_status)).to eq("assigned")
           end
         end
+
+        context "and task is currently 'in_progress'" do
+          let(:task) { Fabricate(:open_task, status: "in_progress") }
+          let(:progression) { Fabricate(:finished_progression, task: task) }
+
+          before do
+            task.assignees << progression.user
+          end
+
+          it "returns 'in_progress'" do
+            expect(task.send(:build_status)).to eq("in_progress")
+          end
+        end
       end
 
       context "for a closed task" do
@@ -1204,7 +1230,7 @@ RSpec.describe Task, type: :model do
             Fabricate(:unfinished_progression, task: task)
           end
 
-          it "returns 'closed'" do
+          it "returns 'approved'" do
             expect(task.send(:build_status)).to eq("closed")
           end
         end
@@ -1213,10 +1239,9 @@ RSpec.describe Task, type: :model do
 
     context "when reviews" do
       context "when closed is false" do
-        let(:task) { Fabricate(:open_task) }
+        let(:task) { Fabricate(:unassigned_task) }
 
         context "and has a pending review" do
-          let(:task) { Fabricate(:open_task) }
           let(:user) { Fabricate(:user_worker) }
 
           before do
@@ -1287,7 +1312,7 @@ RSpec.describe Task, type: :model do
             Fabricate(:pending_review, task: task)
           end
 
-          it "returns 'assigned'" do
+          it "returns 'closed'" do
             expect(task.send(:build_status)).to eq("closed")
           end
         end
@@ -1690,7 +1715,7 @@ RSpec.describe Task, type: :model do
     let(:subscriber) { Fabricate(:user_reporter) }
 
     context "when open" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:task) }
 
       it "changes closed to true" do
         expect do
@@ -1716,7 +1741,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when closed" do
-      let(:task) { Fabricate(:closed_task) }
+      let(:task) { Fabricate(:approved_task) }
 
       it "doesn't change task" do
         expect do
@@ -1771,7 +1796,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when a finished progression" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:task) }
       let!(:progression) { Fabricate(:finished_progression, task: task) }
 
       it "changes closed to true" do
@@ -1824,7 +1849,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when an pending review" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:task) }
       let!(:review) { Fabricate(:pending_review, task: task) }
 
       it "changes closed to true" do
@@ -1848,7 +1873,7 @@ RSpec.describe Task, type: :model do
 
     context "when an open issue" do
       let(:issue) { Fabricate(:open_issue) }
-      let(:task) { Fabricate(:open_task, issue: issue) }
+      let(:task) { Fabricate(:task, issue: issue) }
 
       before { Fabricate(:approved_review, task: task) }
 
@@ -1880,7 +1905,7 @@ RSpec.describe Task, type: :model do
       end
 
       context "that has other open tasks" do
-        before { Fabricate(:open_task, issue: issue) }
+        before { Fabricate(:task, issue: issue) }
 
         it "changes closed to true" do
           expect do
@@ -1909,7 +1934,7 @@ RSpec.describe Task, type: :model do
       end
 
       context "that has other closed tasks" do
-        before { Fabricate(:closed_task, issue: issue) }
+        before { Fabricate(:approved_task, issue: issue) }
 
         it "changes closed to true" do
           expect do
@@ -1944,7 +1969,7 @@ RSpec.describe Task, type: :model do
     let(:subscriber) { Fabricate(:user_reporter) }
 
     context "when closed" do
-      let(:task) { Fabricate(:closed_task) }
+      let(:task) { Fabricate(:approved_task) }
 
       before do
         task.update opened_at: 1.week.ago
@@ -1968,7 +1993,7 @@ RSpec.describe Task, type: :model do
         expect do
           task.reopen
           task.reload
-        end.to change(task, :status).to("open")
+        end.to change(task, :status).to("unassigned")
       end
 
       it "sends email to subscribers" do
@@ -1995,7 +2020,7 @@ RSpec.describe Task, type: :model do
 
         before do
           task.update issue: issue
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
         end
 
         it "doesn't run open on the issue" do
@@ -2006,7 +2031,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when open" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:unassigned_task) }
 
       before do
         task.update opened_at: 1.week.ago
@@ -2058,7 +2083,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when no unfinished progressions" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:assigned_task) }
 
       it "doesn't raise an error" do
         expect do
@@ -2072,7 +2097,7 @@ RSpec.describe Task, type: :model do
     end
 
     context "when invalid progression" do
-      let(:task) { Fabricate(:open_task) }
+      let(:task) { Fabricate(:assigned_task) }
       let(:progression) { Fabricate(:unfinished_progression, task: task) }
 
       before do
@@ -2089,7 +2114,7 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#finish_progressions" do
-    let(:task) { Fabricate(:open_task) }
+    let(:task) { Fabricate(:assigned_task) }
     let(:user) { Fabricate(:user_worker) }
 
     before { task.assignees << user }
@@ -2140,7 +2165,7 @@ RSpec.describe Task, type: :model do
     context "when creating a task without an issue" do
       it "doesn't raise an error" do
         expect do
-          Fabricate(:open_task, issue: nil)
+          Fabricate(:task, issue: nil)
         end.not_to raise_error
       end
     end
@@ -2148,7 +2173,7 @@ RSpec.describe Task, type: :model do
     context "when creating an open task for an issue" do
       it "should change issue's open_tasks_count" do
         expect do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
         end.to change(issue, :open_tasks_count).to(1)
       end
     end
@@ -2156,14 +2181,14 @@ RSpec.describe Task, type: :model do
     context "when creating a closed task for an issue" do
       it "should not change issue's closed_tasks_count" do
         expect do
-          Fabricate(:closed_task, issue: issue)
+          Fabricate(:approved_task, issue: issue)
         end.not_to change(issue, :open_tasks_count).from(0)
       end
     end
 
     context "when closing an open task" do
       it "should change issue's closed_tasks_count" do
-        task = Fabricate(:open_task, issue: issue)
+        task = Fabricate(:task, issue: issue)
         expect do
           task.close
           issue.reload

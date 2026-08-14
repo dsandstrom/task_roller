@@ -261,7 +261,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
     def issue_status_user_links(issue)
       return unless can?(:create, new_resolution(issue))
 
-      options = %w[addressed open being_worked_on]
+      options = %w[addressed pending being_worked_on]
       return unless options.any? { |status| issue.status == status }
 
       if issue.status == 'addressed'

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Issue, type: :model do
@@ -40,8 +38,8 @@ RSpec.describe Issue, type: :model do
 
   describe "#status" do
     context "when a valid value" do
-      %w[open being_worked_on addressed resolved duplicate
-         closed].each do |value|
+      %w[open pending being_worked_on addressed
+         resolved duplicate closed].each do |value|
         before { subject.status = value }
 
         it { is_expected.to be_valid }
@@ -83,29 +81,31 @@ RSpec.describe Issue, type: :model do
 
   # CLASS
 
-  describe ".all_non_closed" do
-    let!(:issue) { Fabricate(:open_issue) }
+  describe ".all_open" do
+    let!(:pending_issue) { Fabricate(:pending_issue) }
+    let!(:being_worked_on_issue) { Fabricate(:being_worked_on_issue) }
 
     before do
       Fabricate(:closed_issue)
     end
 
     it "returns non-closed issues" do
-      expect(Issue.all_non_closed).to eq([issue])
+      expect(Issue.all_open)
+        .to contain_exactly(pending_issue, being_worked_on_issue)
     end
   end
 
-  describe ".all_open" do
-    let!(:issue) { Fabricate(:open_issue) }
+  describe ".all_pending" do
+    let!(:issue) { Fabricate(:pending_issue) }
 
     before do
       Fabricate(:closed_issue)
       Fabricate(:being_worked_on_issue)
-      Fabricate(:closed_issue, status: "open")
+      Fabricate(:closed_issue, status: "pending")
     end
 
     it "returns non-closed issues without a task" do
-      expect(Issue.all_open).to eq([issue])
+      expect(Issue.all_pending).to eq([issue])
     end
   end
 
@@ -118,15 +118,21 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context "when one closed, one closed issues" do
-      let!(:issue) { Fabricate(:closed_issue) }
-
-      before do
-        Fabricate(:open_issue)
+    context "when issues" do
+      let(:project) { Fabricate(:project) }
+      let!(:addressed_issue) { Fabricate(:addressed_issue, project: project) }
+      let!(:resolved_issue) { Fabricate(:resolved_issue) }
+      let!(:duplicate_issue) do
+        Fabricate(:duplicate_issue, project: project, target: addressed_issue)
       end
 
-      it "returns the closed one" do
-        expect(Issue.all_closed).to eq([issue])
+      before do
+        Fabricate(:pending_issue)
+      end
+
+      it "returns the closed ones" do
+        expect(Issue.all_closed)
+          .to contain_exactly(addressed_issue, duplicate_issue, resolved_issue)
       end
     end
   end
@@ -174,13 +180,13 @@ RSpec.describe Issue, type: :model do
       Fabricate(:pending_resolution)
       Fabricate(:disapproved_resolution)
 
-      reopened_issue = Fabricate(:closed_issue)
+      reopened_issue = Fabricate(:addressed_issue)
       Timecop.freeze(1.day.ago) do
         Fabricate(:approved_resolution, issue: reopened_issue)
       end
 
-      open_issue = Fabricate(:open_issue)
-      Fabricate(:approved_resolution, issue: open_issue)
+      pending_issue = Fabricate(:pending_issue)
+      Fabricate(:approved_resolution, issue: pending_issue)
     end
 
     it "returns issues with current approved resolutions" do
@@ -214,32 +220,49 @@ RSpec.describe Issue, type: :model do
   describe ".filter_by" do
     context "when no issues" do
       it "returns []" do
-        expect(Issue.filter_by(issue_status: "open")).to eq([])
+        expect(Issue.filter_by(issue_status: "pending")).to eq([])
       end
     end
 
     context "when :issue_status" do
       context "is set as 'open'" do
-        let!(:issue) { Fabricate(:open_issue) }
+        let!(:pending_issue) { Fabricate(:pending_issue) }
+        let!(:being_worked_on_issue) { Fabricate(:being_worked_on_issue) }
 
         before do
           Fabricate(:closed_issue)
         end
 
         it "returns non-closed issues" do
-          expect(Issue.filter_by(issue_status: "open")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "open"))
+            .to contain_exactly(pending_issue, being_worked_on_issue)
+        end
+      end
+
+      context "is set as 'pending'" do
+        let!(:issue) { Fabricate(:pending_issue) }
+
+        before do
+          Fabricate(:being_worked_on_issue)
+          Fabricate(:closed_issue)
+        end
+
+        it "returns non-closed issues" do
+          expect(Issue.filter_by(issue_status: "pending")).to eq([issue])
         end
       end
 
       context "is set as 'closed'" do
-        let!(:issue) { Fabricate(:closed_issue) }
+        let!(:resolved_issue) { Fabricate(:resolved_issue) }
+        let!(:addressed_issue) { Fabricate(:addressed_issue) }
 
         before do
-          Fabricate(:open_issue)
+          Fabricate(:pending_issue)
         end
 
         it "returns non-closed issues" do
-          expect(Issue.filter_by(issue_status: "closed")).to eq([issue])
+          expect(Issue.filter_by(issue_status: "closed"))
+            .to contain_exactly(resolved_issue, addressed_issue)
         end
       end
 
@@ -247,7 +270,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:being_worked_on_issue) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
           Fabricate(:open_issue)
         end
 
@@ -262,7 +285,7 @@ RSpec.describe Issue, type: :model do
 
         before do
           Fabricate(:open_issue)
-          Fabricate(:open_task, issue: Fabricate(:issue))
+          Fabricate(:task, issue: Fabricate(:issue))
         end
 
         it "returns issues with approved tasks" do
@@ -866,8 +889,8 @@ RSpec.describe Issue, type: :model do
 
     context "when open and closed tasks" do
       before do
-        Fabricate(:open_task, issue: issue)
-        Fabricate(:closed_task, issue: issue)
+        Fabricate(:unassigned_task, issue: issue)
+        Fabricate(:approved_task, issue: issue)
         issue.reload
       end
 
@@ -883,7 +906,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:open_issue) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:task, issue: issue)
           issue.update_status
         end
 
@@ -922,7 +945,7 @@ RSpec.describe Issue, type: :model do
         let(:issue) { Fabricate(:issue) }
 
         before do
-          Fabricate(:closed_task, issue: issue)
+          Fabricate(:approved_task, issue: issue)
           issue.update_status
         end
 
@@ -934,26 +957,23 @@ RSpec.describe Issue, type: :model do
 
     context "for a closed issue" do
       context "and has an open task" do
-        let(:issue) { Fabricate(:closed_issue) }
+        let(:issue) { Fabricate(:issue, closed: true) }
 
         before do
-          Fabricate(:open_task, issue: issue)
+          Fabricate(:unassigned_task, issue: issue)
           issue.update_status
         end
 
         it "returns true" do
-          expect(issue.send(:open_tasks?)).to eq(false)
+          expect(issue.send(:open_tasks?)).to eq(true)
         end
       end
 
       context "and has a closed task" do
-        let(:issue) { Fabricate(:issue) }
-        let(:task) { Fabricate(:closed_task, issue: issue) }
+        let(:issue) { Fabricate(:open_issue) }
+        let(:task) { Fabricate(:approved_task, issue: issue) }
 
-        before do
-          Fabricate(:approved_review, task: task)
-          issue.update_status
-        end
+        before { issue.update_status }
 
         it "returns false" do
           expect(issue.send(:open_tasks?)).to eq(false)
@@ -963,7 +983,7 @@ RSpec.describe Issue, type: :model do
   end
 
   describe "#tasks_approved?" do
-    let(:issue) { Fabricate(:closed_issue) }
+    let(:issue) { Fabricate(:issue, closed: true) }
 
     context "with no tasks" do
       it "returns false" do
@@ -980,8 +1000,9 @@ RSpec.describe Issue, type: :model do
     end
 
     context "with approved task and closed task" do
+      let!(:approved_task) { Fabricate(:approved_task, issue: issue) }
+
       before do
-        Fabricate(:approved_task, issue: issue)
         Fabricate(:closed_task, issue: issue)
       end
 
@@ -992,7 +1013,7 @@ RSpec.describe Issue, type: :model do
 
     context "with a closed unreviewed task" do
       before do
-        Fabricate(:closed_task, issue: issue)
+        Fabricate(:duplicate_task, issue: issue)
       end
 
       it "returns false" do
@@ -1003,7 +1024,7 @@ RSpec.describe Issue, type: :model do
     context "with approved task and open task" do
       before do
         Fabricate(:approved_task, issue: issue)
-        Fabricate(:open_task, issue: issue)
+        Fabricate(:task, issue: issue)
       end
 
       it "returns false" do
@@ -1046,7 +1067,7 @@ RSpec.describe Issue, type: :model do
   end
 
   describe "#resolution_approved?" do
-    let(:issue) { Fabricate(:closed_issue) }
+    let(:issue) { Fabricate(:issue) }
 
     context "with no resolutions" do
       it "returns false" do
@@ -1202,11 +1223,11 @@ RSpec.describe Issue, type: :model do
           allow(issue).to receive(:open_tasks?) { false }
         end
 
-        it "changes status to 'open'" do
+        it "changes status to 'pending'" do
           expect do
             issue.update_status
             issue.reload
-          end.to change(issue, :status).to("open")
+          end.to change(issue, :status).to("pending")
         end
 
         it "creates one notification" do
@@ -1268,8 +1289,8 @@ RSpec.describe Issue, type: :model do
         end
       end
 
-      context "and is originally open" do
-        let(:issue) { Fabricate(:issue, status: "open") }
+      context "and is originally pending" do
+        let(:issue) { Fabricate(:issue, status: "pending") }
 
         before do
           allow(issue).to receive(:open_tasks?) { false }
@@ -1305,11 +1326,11 @@ RSpec.describe Issue, type: :model do
       context "and is originally nil status" do
         let(:issue) { Fabricate(:issue, status: nil) }
 
-        it "changes status to 'open'" do
+        it "changes status to 'pending'" do
           expect do
             issue.update_status
             issue.reload
-          end.to change(issue, :status).to("open")
+          end.to change(issue, :status).to("pending")
         end
 
         it "emails subscribers" do
@@ -1373,7 +1394,7 @@ RSpec.describe Issue, type: :model do
       end
 
       context "and user already has a 'new' notification" do
-        let(:issue) { Fabricate(:issue, status: "open") }
+        let(:issue) { Fabricate(:issue, status: "pending") }
         let!(:issue_notification) do
           Fabricate(:issue_notification, issue: issue, user: reporter,
                                          event: "new")
@@ -1421,7 +1442,7 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when closed is true" do
-      let(:issue) { Fabricate(:closed_issue) }
+      let(:issue) { Fabricate(:pending_issue, closed: true) }
 
       before { issue.update_attribute :status, "almostclosed" }
 
@@ -1603,11 +1624,11 @@ RSpec.describe Issue, type: :model do
         end.to change(issue, :closed).to(false)
       end
 
-      it "changes status to 'open'" do
+      it "changes status to 'pending'" do
         expect do
           issue.reopen
           issue.reload
-        end.to change(issue, :status).to("open")
+        end.to change(issue, :status).to("pending")
       end
 
       it "changes opened_at" do
@@ -1622,8 +1643,8 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context "when open" do
-      let(:issue) { Fabricate(:open_issue) }
+    context "when pending" do
+      let(:issue) { Fabricate(:pending_issue) }
 
       before do
         issue.update opened_at: 1.week.ago
@@ -1948,7 +1969,7 @@ RSpec.describe Issue, type: :model do
     end
 
     context "when 1 open task" do
-      before { Fabricate(:open_task, issue: issue) }
+      before { Fabricate(:unassigned_task, issue: issue) }
 
       it "returns nil" do
         expect(issue.addressed_at).to be_nil
@@ -1993,6 +2014,7 @@ RSpec.describe Issue, type: :model do
           task = Fabricate(:disapproved_task, issue: issue)
         end
         review = Fabricate(:approved_review, task: task)
+        task.close
         task.update_status
 
         expect(issue.addressed_at).to eq(review.updated_at)
@@ -2004,7 +2026,7 @@ RSpec.describe Issue, type: :model do
         task = nil
         review = nil
         Timecop.freeze(2.days.ago) do
-          task = Fabricate(:closed_task, issue: issue)
+          task = Fabricate(:approved_task, issue: issue)
           Fabricate(:in_review_task, issue: issue)
         end
         Timecop.freeze(1.day.ago) do
