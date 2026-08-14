@@ -88,7 +88,7 @@ class TasksController < ApplicationController
 
     def build_issue_options
       options =
-        @task.project.issues.all_non_closed.map do |issue|
+        @task.project.issues.all_open.map do |issue|
           [issue.id_and_summary, issue.id]
         end
       if @task.issue

@@ -1140,18 +1140,18 @@ RSpec.describe User, type: :model do
 
     context "when user has issues" do
       it "returns all unresolved" do
-        open_issue = Fabricate(:open_issue, user: user)
-        being_worked_on_issue = Fabricate(:open_issue, user: user)
+        pending_issue = Fabricate(:pending_issue, user: user)
+        being_worked_on_issue = Fabricate(:pending_issue, user: user)
         Fabricate(:in_progress_task, issue: being_worked_on_issue)
         being_worked_on_issue.update_status
-        addressed_issue = Fabricate(:open_issue, user: user)
+        addressed_issue = Fabricate(:pending_issue, user: user)
         Fabricate(:approved_task, issue: addressed_issue)
         addressed_issue.update_status
         Fabricate(:closed_issue, user: user)
 
         # FIXME: why is addressed issue in unresolved?
         expect(user.unresolved_issues)
-          .to contain_exactly(open_issue, being_worked_on_issue,
+          .to contain_exactly(pending_issue, being_worked_on_issue,
                               addressed_issue)
       end
 

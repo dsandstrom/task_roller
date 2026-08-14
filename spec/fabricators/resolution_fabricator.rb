@@ -8,9 +8,9 @@ Fabricator(:resolution) do
   before_create do |resolution|
     resolution.issue ||=
       if resolution.user
-        Fabricate(:closed_issue, user: resolution.user)
+        Fabricate(:pending_issue, user: resolution.user)
       else
-        Fabricate(:closed_issue)
+        Fabricate(:pending_issue)
       end
   end
 end

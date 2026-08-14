@@ -9,6 +9,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
   STATUS_OPTIONS = {
     open: { color: 'green' },
+    pending: { color: 'brown' },
     being_worked_on: { color: 'yellow' },
     addressed: { color: 'red' },
     resolved: { color: 'blue' },
@@ -52,7 +53,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # CLASS
 
-  def self.all_non_closed
+  def self.all_open
     where(closed: false)
   end
 
@@ -60,8 +61,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(closed: true)
   end
 
-  def self.all_open
-    where(closed: false, status: 'open')
+  def self.all_pending
+    where(closed: false, status: 'pending')
   end
 
   def self.all_being_worked_on
@@ -350,7 +351,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       if open_tasks?
         'being_worked_on'
       else
-        'open'
+        'pending'
       end
     end
 
@@ -455,7 +456,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def enqueue_repo_job(old_status)
       return unless octokit
 
-      if status == 'open'
+      if status == 'pending'
         if old_status.nil?
           OpenRepoIssueJob.perform_later self
         else

@@ -236,7 +236,7 @@ RSpec.describe Api::V1::WebhooksController, type: :controller do
             expect(issue.github_id).to eq(1234)
             expect(issue.github_repo_id).to eq(543)
             expect(issue.github_number).to eq(2)
-            expect(issue.status).to eq("open")
+            expect(issue.status).to eq("pending")
           end
 
           it "enqueues OpenRepoIssueJob" do

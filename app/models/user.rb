@@ -282,7 +282,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def unresolved_issues
     @unresolved_issues ||=
       issues
-      .all_non_closed.left_joins(:comments).references(:comments)
+      .all_open.left_joins(:comments).references(:comments)
       .select(UNRESOLVED_ISSUES_QUERY)
       .where('issue_comments.id IS NULL OR issue_comments.user_id != ?', id)
       .group(:id).order(UNRESOLVED_ISSUES_ORDER)
