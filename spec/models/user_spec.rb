@@ -1146,13 +1146,12 @@ RSpec.describe User, type: :model do
         being_worked_on_issue.update_status
         addressed_issue = Fabricate(:pending_issue, user: user)
         Fabricate(:approved_task, issue: addressed_issue)
+        addressed_issue.close
         addressed_issue.update_status
         Fabricate(:closed_issue, user: user)
 
-        # FIXME: why is addressed issue in unresolved?
         expect(user.unresolved_issues)
-          .to contain_exactly(pending_issue, being_worked_on_issue,
-                              addressed_issue)
+          .to contain_exactly(pending_issue, being_worked_on_issue)
       end
 
       it "orders by issues.created_at desc" do
