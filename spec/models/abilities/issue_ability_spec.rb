@@ -4509,6 +4509,8 @@ RSpec.describe Ability do
   end
 
   describe "Resolution model" do
+    let(:user) { Fabricate(:user_worker) }
+
     describe "for an admin" do
       let(:admin) { Fabricate(:user_admin) }
       subject(:ability) { Ability.new(admin) }
@@ -4538,7 +4540,7 @@ RSpec.describe Ability do
 
         context "and resolution doesn't belong to them" do
           let(:issue) { Fabricate(:issue, project: project, user: admin) }
-          let(:resolution) { Fabricate(:resolution, issue: issue) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: user) }
 
           it { is_expected.not_to be_able_to(:create, resolution) }
           it { is_expected.to be_able_to(:read, resolution) }
@@ -4572,7 +4574,7 @@ RSpec.describe Ability do
 
         context "and resolution doesn't belong to them" do
           let(:issue) { Fabricate(:issue, project: project, user: admin) }
-          let(:resolution) { Fabricate(:resolution, issue: issue) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: user) }
 
           it { is_expected.not_to be_able_to(:create, resolution) }
           it { is_expected.to be_able_to(:read, resolution) }
@@ -4606,7 +4608,7 @@ RSpec.describe Ability do
 
         context "and resolution doesn't belong to them" do
           let(:issue) { Fabricate(:issue, project: project, user: admin) }
-          let(:resolution) { Fabricate(:resolution, issue: issue) }
+          let(:resolution) { Fabricate(:resolution, issue: issue, user: user) }
 
           it { is_expected.not_to be_able_to(:create, resolution) }
           it { is_expected.to be_able_to(:read, resolution) }
@@ -4654,7 +4656,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4695,7 +4699,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4736,7 +4742,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4774,7 +4782,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:pending_issue, closed: true, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4784,9 +4794,7 @@ RSpec.describe Ability do
 
           context "when issue doesn't belong to them" do
             let(:issue) { Fabricate(:pending_issue, closed: true) }
-            let(:resolution) do
-              Fabricate(:resolution, issue: issue)
-            end
+            let(:resolution) { Fabricate(:resolution, issue: issue) }
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4823,7 +4831,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4864,7 +4874,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -4905,7 +4917,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.not_to be_able_to(:read, resolution) }
@@ -4969,7 +4983,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.to be_able_to(:read, resolution) }
@@ -5010,7 +5026,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.not_to be_able_to(:read, resolution) }
@@ -5051,7 +5069,9 @@ RSpec.describe Ability do
             let(:issue) do
               Fabricate(:issue, project: project, user: current_user)
             end
-            let(:resolution) { Fabricate(:resolution, issue: issue) }
+            let(:resolution) do
+              Fabricate(:resolution, issue: issue, user: user)
+            end
 
             it { is_expected.not_to be_able_to(:create, resolution) }
             it { is_expected.not_to be_able_to(:read, resolution) }

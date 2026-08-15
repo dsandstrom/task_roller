@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
-# TODO: should be issue user
 Fabricator(:resolution) do
-  user { Fabricate(:user_worker) }
   approved nil
 
   before_create do |resolution|
@@ -12,6 +8,7 @@ Fabricator(:resolution) do
       else
         Fabricate(:pending_issue)
       end
+    resolution.user ||= resolution.issue.user
   end
 end
 
