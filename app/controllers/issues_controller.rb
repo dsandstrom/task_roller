@@ -1,8 +1,6 @@
 # TODO: add one place to add issues (able to pick project there)
 # TODO: add all issues page, filter by category/project
-# TODO: add general search
 # TODO: allow to update status of multiple issues/task
-# TODO: clear notification after going to show
 
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
