@@ -98,7 +98,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.assignable_employees(additional_users = [])
-    employees(ASSIGNABLE_EMPLOYEE_TYPES) | additional_users
+    additional_users | employees(ASSIGNABLE_EMPLOYEE_TYPES)
   end
 
   def self.destroyed_name
