@@ -1,10 +1,3 @@
-# frozen_string_literal: true
-
-# FIXME: when unauthorized and expects to load into a frame, get js error
-# Error: The response (200) did not contain the expected
-# <turbo-frame id="turbo_issue_481"> and will be ignored. To perform a full page
-# visit instead, set turbo-visit-control to reload.
-
 class TaskAbility < BaseAbility
   def activate
     if user.admin?

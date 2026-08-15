@@ -1,6 +1,3 @@
-# FIXME: when same task on page, issue gets added to first
-# TODO: show description in partial?
-
 class TasksController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]
@@ -80,6 +77,7 @@ class TasksController < ApplicationController
     end
 
     def build_assignee_options
+      # TODO: use User.assignable_employees
       %w[Worker Reviewer].map do |type|
         employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
         [type.pluralize, employees]
