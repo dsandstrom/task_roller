@@ -1,5 +1,3 @@
-# TODO: remove all js responses after done with turbfying
-
 class IssueSubscriptionsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue
