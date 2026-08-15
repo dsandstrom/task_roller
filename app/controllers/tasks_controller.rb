@@ -77,6 +77,7 @@ class TasksController < ApplicationController
     end
 
     def build_assignee_options
+      # TODO: use User.assignable_employees
       %w[Worker Reviewer].map do |type|
         employees = User.employees(type).map { |u| [u.name_and_email, u.id] }
         [type.pluralize, employees]
