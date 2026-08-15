@@ -39,10 +39,10 @@ class RepoCallout < ApplicationRecord
   def perform_action
     return unless user && task
 
+    task.assignees << user unless task.assignees.include?(user)
     perform_action_on_task
 
     task.update_status
-    task.assignees << user unless task.assignees.include?(user)
   end
 
   private
