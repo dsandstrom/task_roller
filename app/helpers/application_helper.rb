@@ -4,7 +4,6 @@ module ApplicationHelper
   DATE_FORMAT = '%-m/%-d'
   TIME_FORMAT = '%-l:%M%P'
 
-  # TODO: test
   def format_date(value)
     return if value.blank?
 
