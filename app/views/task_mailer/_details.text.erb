@@ -1,5 +1,8 @@
 Task Details
 -
+<%= "Type: #{task.task_type&.name}" %>
+<%= "Status: #{task.status&.titleize}" %>
+
 <%= task.summary %>
 
 <%= task.description %>
