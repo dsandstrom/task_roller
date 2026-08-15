@@ -1583,7 +1583,7 @@ RSpec.describe Task, type: :model do
       end
 
       it "returns User.assignable_employees" do
-        expect(task.assignable).to eq(User.assignable_employees)
+        expect(task.assignable).to match_array(User.assignable_employees)
       end
 
       it "includes assigned worker" do

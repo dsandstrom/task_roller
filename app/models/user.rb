@@ -98,7 +98,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.assignable_employees(additional_users = [])
-    employees(ASSIGNABLE_EMPLOYEE_TYPES) | additional_users
+    additional_users | employees(ASSIGNABLE_EMPLOYEE_TYPES)
   end
 
   def self.destroyed_name
@@ -423,6 +423,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def allow_display_of_email?(logged_in_user)
+      # TODO: email is showing in task assigne form - allow for reviewer?
       !User.allow_registration? || email == logged_in_user.email ||
         logged_in_user.admin?
     end
