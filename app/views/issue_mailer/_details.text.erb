@@ -1,5 +1,8 @@
 Issue Details
 -
+<%= "Type: #{issue.issue_type&.name}" %>
+<%= "Status: #{issue.status&.titleize}" %>
+
 <%= issue.summary %>
 
 <%= issue.description %>

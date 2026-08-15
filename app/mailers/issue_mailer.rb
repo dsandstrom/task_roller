@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# TODO: add issue_type & status to email
-
 class IssueMailer < ApplicationMailer
   attr_accessor :issue, :user
 

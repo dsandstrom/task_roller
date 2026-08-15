@@ -1,8 +1,3 @@
-# frozen_string_literal: true
-
-# TODO: test redirect if not logged in
-# TODO: test redirect to login if non-employee
-
 class ApplicationController < ActionController::Base
   FILTER_OPTIONS = %i[issue_status task_status type issue_type_id task_type_id
                       project_ids order query].freeze

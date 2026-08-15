@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskMailer < ApplicationMailer
   attr_accessor :task, :user
 

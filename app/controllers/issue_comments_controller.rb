@@ -1,5 +1,3 @@
-# TODO: allow uploading screenshots
-
 class IssueCommentsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :comments

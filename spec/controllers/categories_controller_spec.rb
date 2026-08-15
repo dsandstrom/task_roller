@@ -6,15 +6,37 @@ RSpec.describe CategoriesController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
   describe "GET #index" do
+    before { Fabricate(:category) }
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
         it "returns a success response" do
-          _category = Fabricate(:category)
           get :index
           expect(response).to be_successful
         end
+      end
+    end
+
+    context "for a guest" do
+      it "redirects to root" do
+        get :index
+        expect(response).to redirect_to("/auth/sign_in")
+      end
+    end
+
+    context "for a canceled user" do
+      let(:user) { Fabricate(:user) }
+
+      before do
+        user.update(employee_type: nil)
+        sign_in(user)
+      end
+
+      it "redirects to root" do
+        get :index
+        expect(response).to redirect_to("/auth/sign_in")
       end
     end
   end
