@@ -53,4 +53,8 @@ class ApplicationController < ActionController::Base
     def current_user_id
       @current_user_id ||= current_user&.id
     end
+
+    def order_by
+      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
+    end
 end

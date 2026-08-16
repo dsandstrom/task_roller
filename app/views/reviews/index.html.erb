@@ -1,11 +1,13 @@
-<%= task_header(@task) %>
+<%= user_header(@user) %>
 
-<h2>Reviews</h2>
+<header class="tasks-header">
+  <h2>Tasks Ready for Review</h2>
+</header>
 
 <div class="reviews">
-  <% if @reviews.any? %>
-    <%= render @reviews, task: @task %>
+  <% if @tasks.any? %>
+    <%= render 'tasks/tasks', tasks: @tasks, show_status_filter: false %>
   <% else %>
-    <p class="no-reviews">no reviews</p>
+    <p class="no-reviews">all caught up</p>
   <% end %>
 </div>

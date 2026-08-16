@@ -16,6 +16,51 @@ RSpec.describe ReviewsController, type: :controller do
     { user_id: "" }
   end
 
+  describe "GET #index" do
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { sign_in(current_user) }
+
+        context "when no reviews ready" do
+          it "returns a success response" do
+            get :index, params: { user_id: current_user.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when a review ready" do
+          before do
+            Fabricate(:pending_review)
+            Fabricate(:approved_review)
+          end
+
+          it "returns a success response" do
+            get :index, params: { user_id: current_user.to_param }
+            expect(response).to be_successful
+          end
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before do
+          sign_in(current_user)
+          Fabricate(:pending_review)
+        end
+
+        it "should be unauthorized" do
+          get :index, params: { user_id: current_user.to_param }
+          expect_to_be_unauthorized(response)
+        end
+      end
+    end
+  end
+
   describe "GET #new" do
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do

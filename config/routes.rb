@@ -1,10 +1,9 @@
-# frozen_string_literal: true
-
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :users, only: nil do
     resources :issues, only: :index
     resources :tasks, only: :index
     resources :assignments, only: :index
+    resources :reviews, only: :index
   end
 
   get 'users/:user_id/employee_types/new' => 'employee_types#new',
