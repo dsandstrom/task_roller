@@ -1,6 +1,8 @@
 <%
 path ||= request.path
 return unless path
+
+show_status_filter = true unless show_status_filter == false
 %>
 
 <div class="filters-wrapper">
@@ -14,7 +16,7 @@ return unless path
 
   <%= form_tag path, method: :get, class: "task-filter-form" do %>
     <%= render 'shared/string_filter_field', placeholder: 'tasks' %>
-    <%= render 'tasks/status_filter_field' %>
+    <%= render 'tasks/status_filter_field' if show_status_filter %>
     <%= render 'tasks/task_type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 

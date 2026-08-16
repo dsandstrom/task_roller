@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # TODO: show stats in user partials
 # issues opened, tasks worked on, etc
 
