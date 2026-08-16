@@ -1919,6 +1919,7 @@ RSpec.describe User, type: :model do
     let(:user) { Fabricate(:user_reviewer, email: "test-user@example.net") }
     let(:different_user) { Fabricate(:user) }
     let(:admin) { Fabricate(:user_admin) }
+    let(:reviewer) { Fabricate(:user_reviewer) }
 
     context "when registration is allowed" do
       before { allow(User).to receive(:allow_registration?) { true } }
@@ -1938,6 +1939,12 @@ RSpec.describe User, type: :model do
       context "and current_user is an admin" do
         it "returns the real email" do
           expect(user.display_email(admin)).to eq(user.email)
+        end
+      end
+
+      context "and current_user is an reviewer" do
+        it "returns the real email" do
+          expect(user.display_email(reviewer)).to eq(user.email)
         end
       end
     end
@@ -1960,6 +1967,12 @@ RSpec.describe User, type: :model do
       context "and current_user is an admin" do
         it "returns the real email" do
           expect(user.display_email(admin)).to eq(user.email)
+        end
+      end
+
+      context "and current_user is an reviewer" do
+        it "returns the real email" do
+          expect(user.display_email(reviewer)).to eq(user.email)
         end
       end
     end
