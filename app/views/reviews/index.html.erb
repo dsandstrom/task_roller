@@ -5,7 +5,7 @@
 </header>
 
 <div class="reviews">
-  <% if @tasks.any? %>
+  <% if @tasks.any? || searching? %>
     <%= render 'tasks/tasks', tasks: @tasks, show_status_filter: false %>
   <% else %>
     <p class="no-reviews">all caught up</p>
