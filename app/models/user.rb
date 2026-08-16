@@ -423,8 +423,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     def allow_display_of_email?(logged_in_user)
-      # TODO: email is showing in task assigne form - allow for reviewer?
       !User.allow_registration? || email == logged_in_user.email ||
-        logged_in_user.admin?
+        logged_in_user.admin? || logged_in_user.reviewer?
     end
 end
