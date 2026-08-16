@@ -121,8 +121,4 @@ class IssuesController < ApplicationController
       @subscription = @issue.issue_subscriptions
                             .find_or_initialize_by(user_id: current_user_id)
     end
-
-    def order_by
-      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
-    end
 end

@@ -131,10 +131,6 @@ class TasksController < ApplicationController
                            .find_or_initialize_by(user_id: current_user_id)
     end
 
-    def order_by
-      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
-    end
-
     def create_html
       if @task.save
         @task.subscribe_users

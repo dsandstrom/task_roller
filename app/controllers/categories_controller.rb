@@ -70,10 +70,6 @@ class CategoriesController < ApplicationController
                            project: :category)
     end
 
-    def order_by
-      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
-    end
-
     def redirect_url
       @redirect_url ||=
         if @category.visible?

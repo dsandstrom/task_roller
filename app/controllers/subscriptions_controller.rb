@@ -33,8 +33,4 @@ class SubscriptionsController < ApplicationController
         current_user.subscriptions_with_notifications(order_by: order_by)
       end
     end
-
-    def order_by
-      @order_by ||= params[:order].blank? || params[:order] == 'updated,desc'
-    end
 end
