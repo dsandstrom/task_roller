@@ -13,6 +13,8 @@ export class Form {
     this.button = this.form.querySelector("[type='submit']");
     if (!this.button) return;
 
+    this.keyupValidate = false;
+
     this.afterValidate = this.afterValidate.bind(this);
     this.initEditors()
     this.validator = this.initValidator();
@@ -174,8 +176,10 @@ export class Form {
       if (!inputNode) return;
 
       inputNode.addEventListener('keyup', (event) => {
-        form.validateField(event.target, event.target.value);
-        form.afterValidate(form.validator.errors, event);
+        if (form.keyupValidate) {
+          form.validateField(event.target, event.target.value);
+          form.afterValidate(form.validator.errors, event);
+        }
       })
     });
   }
@@ -217,6 +221,8 @@ export class Form {
   afterValidate(errors, event) {
     this.clearErrors();
     if (!errors.length) return true;
+
+    this.keyupValidate = true;
 
     for (let error of errors) {
       this.displayError(error);
