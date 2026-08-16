@@ -143,6 +143,11 @@
       margin: 0;
     }
   }
+
+  .user-name,
+  .user-email {
+    overflow: hidden;
+  }
 }
 
 .category-tags,
