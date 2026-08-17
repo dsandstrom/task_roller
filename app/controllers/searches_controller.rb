@@ -1,5 +1,3 @@
-# TODO: carry over search params to links, so a link back can be added
-
 class SearchesController < ApplicationController
   before_action :authorize_search
   before_action :verify_filters, only: :index

@@ -1,7 +1,3 @@
-# TODO: add one place to add issues (able to pick project there)
-# TODO: add all issues page, filter by category/project
-# TODO: allow to update status of multiple issues/task
-
 class IssuesController < ApplicationController
   load_and_authorize_resource :project, only: %i[new create destroy]
   load_and_authorize_resource through: :project, only: %i[new create destroy]
@@ -21,8 +17,6 @@ class IssuesController < ApplicationController
   end
 
   def show
-    # TODO: destroy 'new' notifications for current_user
-    # want to destroy after visit, maybe set variable, then destroy
     @user = @issue.user
     @task = @issue.tasks.find(params.expect(:task_id)) if params[:task_id]
 
@@ -35,7 +29,6 @@ class IssuesController < ApplicationController
                                      user_id: current_user_id)
       authorize! :create, @issue
     else
-      # TODO: raise error in ApplicationController and rescue/redirect
       redirect_url = can?(:create, IssueType) ? issue_types_url : @project
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end

@@ -221,9 +221,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # group up progression dates to make something readable
-  # TODO: "3/5-3/6, 3/7-3/8" -> "3/5-3/8"
-  # TODO: "3/6, 3/6-3/8" -> "3/6-3/8"
-  # TODO: finished only? ("3/6-")
   def task_progress(task)
     task_progressions(task).map do |progression|
       start_date = progression.start_date
@@ -271,7 +268,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
 
-  # TODO: add recently addressed issues?
   # for reporters/show view
   # link to user/issues which will be filterable
   UNRESOLVED_ISSUES_ORDER =

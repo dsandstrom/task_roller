@@ -23,9 +23,6 @@ class SearchResult < ApplicationRecord
 
   # CLASS
 
-  # TODO: find categories & projects
-  # TODO: search issue's tasks and task's issues
-  # TODO: if "issue-123", search issues
   def self.filter_by(filters = {})
     project_ids = filters[:project_ids]
     return none if project_ids&.none?

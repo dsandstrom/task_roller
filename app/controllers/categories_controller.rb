@@ -1,6 +1,3 @@
-# TODO: auto submit filters form on change
-# TODO: should changing type, change form url
-
 class CategoriesController < ApplicationController
   load_and_authorize_resource except: :archived
 

@@ -46,7 +46,6 @@ class Resolution < ApplicationRecord
     update(approved: true) && issue.close(user)
   end
 
-  # TODO: should Resolution#disapprove re-open the issue or wait for reviewer
   def disapprove
     return false unless issue.valid?
 

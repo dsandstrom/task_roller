@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# TODO: allow users without passwords (github), to add one
-
 module Users
   class RegistrationsController < Devise::RegistrationsController
     # rubocop:disable Rails/LexicallyScopedActionFilter

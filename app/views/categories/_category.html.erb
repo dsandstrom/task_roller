@@ -1,5 +1,4 @@
 <%
-# TODO: show relavant notifications (category issue/task changed)
 projects =
   if category.visible?
     category.projects.all_visible.accessible_by(current_ability)
