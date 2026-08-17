@@ -7,7 +7,7 @@ RSpec.describe RepoCallout, type: :model do
   before do
     @repo_callout =
       RepoCallout.new(task_id: task.id, user_id: user.id, action: "complete",
-                      commit_sha: "zzzyyyxxxx",
+                      id: 2, commit_sha: "zzzyyyxxxx",
                       commit_message: "Update repo\nFixes #12",
                       commit_message_part: "Fixes #12")
   end
@@ -504,9 +504,10 @@ RSpec.describe RepoCallout, type: :model do
       end
 
       context "while task is open" do
-        context "and user has an unfinished progression" do
+        context "and user has unfinished progression without repo_callout_id" do
           let!(:progression) do
-            Fabricate(:unfinished_progression, task: task, user: user)
+            Fabricate(:unfinished_progression, task: task, user: user,
+                                               repo_callout_id: nil)
           end
 
           it "finishes it" do
@@ -514,6 +515,13 @@ RSpec.describe RepoCallout, type: :model do
               subject.perform_action
               progression.reload
             end.to change(progression, :finished).to(true)
+          end
+
+          it "sets repo_callout_id" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.to change(progression, :repo_callout_id).to(2)
           end
 
           it "doesn't create a new Progression" do
@@ -533,6 +541,27 @@ RSpec.describe RepoCallout, type: :model do
               subject.perform_action
               task.reload
             end.to change(task, :status)
+          end
+        end
+
+        context "and user has unfinished progression with repo_callout_id" do
+          let!(:progression) do
+            Fabricate(:unfinished_progression, task: task, user: user,
+                                               repo_callout_id: "repo-123")
+          end
+
+          it "finishes it" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.to change(progression, :finished).to(true)
+          end
+
+          it "sets repo_callout_id" do
+            expect do
+              subject.perform_action
+              progression.reload
+            end.to change(progression, :repo_callout_id).to(2)
           end
         end
       end

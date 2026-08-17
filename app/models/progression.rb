@@ -33,8 +33,10 @@ class Progression < ApplicationRecord
 
   # INSTANCE
 
-  def finish
-    update finished: true, finished_at: Time.zone.now
+  def finish(attrs = {})
+    attrs.merge!(finished: true, finished_at: Time.zone.now)
+
+    update attrs
   end
 
   def start_date

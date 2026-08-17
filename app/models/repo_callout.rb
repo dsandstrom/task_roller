@@ -87,8 +87,9 @@ class RepoCallout < ApplicationRecord
     end
 
     def pause_task
-      # TODO: set repo_callout_id (may conflict if set when started)
-      unfinished_progressions.each(&:finish)
+      unfinished_progressions.each do |progression|
+        progression.finish(repo_callout_id: id)
+      end
     end
 
     def finish_task
