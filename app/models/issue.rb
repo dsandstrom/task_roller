@@ -24,7 +24,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_one :source_connection, class_name: 'IssueConnection',
                               foreign_key: :source_id, dependent: :destroy,
                               inverse_of: :source
-  # TODO: add better name
   has_one :duplicatee, through: :source_connection, class_name: 'Issue',
                        source: :target
   has_many :target_connections, class_name: 'IssueConnection',
@@ -152,7 +151,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # INSTANCE
 
-  # TODO: shortened version for IssueMailer?
   def description_html
     @description_html ||= RollerMarkdown.new.render(description) || ''
   end

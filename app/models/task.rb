@@ -33,7 +33,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_one :source_connection, class_name: 'TaskConnection',
                               foreign_key: :source_id, dependent: :destroy,
                               inverse_of: :source
-  # TODO: add better name
   has_one :duplicatee, through: :source_connection, class_name: 'Task',
                        source: :target
   has_many :target_connections, class_name: 'TaskConnection',
@@ -259,7 +258,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     close_issue(current_user)
   end
 
-  # TODO: show outdated reviews in history
   def reopen(current_user = nil)
     return false unless update(closed: false, opened_at: Time.zone.now)
 
