@@ -151,7 +151,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # need to copy data from session whenever a user is initialized before sign
   # up, we just need to implement new_with_session in our model. Here is an
   # example that copies the facebook email if available:
-  # TODO: set confirmed_at?
   def self.new_with_session(params, session)
     super.tap do |user|
       data = session['devise.github_data']

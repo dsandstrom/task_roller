@@ -92,7 +92,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_closed.where(status: 'duplicate')
   end
 
-  # TODO: order open issues first by default
   def self.filter_by(filters = {})
     id, query = SearchResult.split_id(filters[:query])
 
