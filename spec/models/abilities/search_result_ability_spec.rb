@@ -1,11 +1,7 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 require "cancan/matchers"
 
 RSpec.describe Ability do
-  # TODO: when task_search_result
-
   describe "SearchResult model" do
     context "when class_name is 'Issue'" do
       describe "for an admin" do

@@ -182,7 +182,6 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    # TODO: add reviews
     def task_open_status_reviewer_links(task)
       return if task.in_review?
 

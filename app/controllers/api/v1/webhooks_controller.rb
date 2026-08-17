@@ -1,6 +1,3 @@
-# TODO: allow customizing which project & issue_type is picked
-# TODO: import comments?
-# TODO: use only master/main branch
 # payload has "ref" => "refs/heads/master"
 # "repository" "default_branch" => "master"
 

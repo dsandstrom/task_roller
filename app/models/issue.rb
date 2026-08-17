@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# FIXME: issue closure for invalid issue, not closed
-# issue user destroyed, add closure, shows as open
-# FIXME: if issue is addressed, reopened, marked duplicate -> still addressed
-
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'issues.updated_at desc'
   STATUS_OPTIONS = {
@@ -99,7 +95,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     send("all_#{status}")
   end
 
-  # TODO: search text in associated comments too (comments.body)
   def self.filter_by_string(query)
     return all if query.blank?
 
@@ -114,7 +109,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(issue_type_id: issue_type_id)
   end
 
-  # TODO: include issues thru issue_connections, but order id match first
   def self.filter_by_id(query)
     return all if query.blank?
 

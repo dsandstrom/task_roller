@@ -1,6 +1,3 @@
-# TODO: show stats in user partials
-# issues opened, tasks worked on, etc
-
 class UsersController < ApplicationController
   load_and_authorize_resource
   load_resource :active_assignments, through: :user, singleton: true,
@@ -16,7 +13,6 @@ class UsersController < ApplicationController
     @unemployed = @users.unemployed
   end
 
-  # TODO: add with_notifications
   def show
     @unresolved_issues =
       @unresolved_issues.all_visible.accessible_by(current_ability)

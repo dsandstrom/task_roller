@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# TODO: show category & project subscriptions
-
 class SubscriptionsController < ApplicationController
   authorize_resource :issue_subscription
 
