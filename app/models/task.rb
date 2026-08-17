@@ -397,7 +397,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       elsif source_connection?
         'duplicate'
       else
-        # TODO: not an acceptable status, maybe reopen
         'closed'
       end
     end
@@ -464,7 +463,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
     end
 
-    # TODO: add assigned, or progressions grouped by user
     def build_history_feed
       feed = []
       [closures, reopenings, concluded_reviews].each do |collection|
