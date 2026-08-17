@@ -347,14 +347,7 @@ class Seeds
 
     def comment_body
       body = "#{fake_paragraphs}\n\n"
-      body +=
-        if rand(4).zero?
-          "#{Faker::Markdown.random('table')}\n\n"
-        elsif rand(5).zero?
-          "> #{Faker::TvShows::Simpsons.quote}\n\n"
-        else
-          ""
-        end
+      body += fake_code_or_quote
       body += fake_paragraphs
       body
     end
@@ -452,6 +445,16 @@ class Seeds
 
     def fake_question
       Faker::Lorem.question(word_count: 2, random_words_to_add: 4)
+    end
+
+    def fake_code_or_quote
+      if rand(4).zero?
+        "#{Faker::Markdown.random('table')}\n\n"
+      elsif rand(5).zero?
+        "> #{Faker::TvShows::Simpsons.quote}\n\n"
+      else
+        ''
+      end
     end
 
     def update_task_status(task)
