@@ -1,6 +1,3 @@
-# TODO: add quotes to comments
-# Faker::TvShows::Simpsons.quote
-
 require 'faker'
 
 class Seeds
@@ -350,15 +347,24 @@ class Seeds
 
     def comment_body
       body = "#{fake_paragraphs}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body +=
+        if rand(4).zero?
+          "#{Faker::Markdown.random('table')}\n\n"
+        elsif rand(5).zero?
+          "> #{Faker::TvShows::Simpsons.quote}\n\n"
+        else
+          ""
+        end
       body += fake_paragraphs
       body
     end
 
     def comment_question
-      body = "#{fake_paragraphs} "
+      body = ''
+      body += "> #{Faker::TvShows::Simpsons.quote}\n\n" if rand(3).zero?
+      body += "#{fake_paragraphs} "
       body += "#{fake_question}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(4).zero?
       body += "#{fake_paragraphs} "
       body += fake_question
       body
