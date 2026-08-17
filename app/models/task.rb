@@ -129,7 +129,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # used by .filter_by
-  # TODO: search text in associated comments too (comments.body)
   def self.filter_by_string(query)
     return all if query.blank?
 
@@ -156,7 +155,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(task_type_id: task_type_id)
   end
 
-  # TODO: include tasks thru task_connections, but order id match first
   def self.filter_by_id(query)
     return all if query.blank?
 
@@ -209,7 +207,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     !closed?
   end
 
-  # TODO: add options to categories/projects on which users are assignable
   def assignable
     @assignable ||= User.assignable_employees(assignees)
   end
@@ -286,7 +283,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     assignees.each { |u| task_subscriptions.create(user_id: u.id) }
   end
 
-  # TODO: use ActiveJob
   def subscribe_users
     subscribe_user
     subscribe_assignees

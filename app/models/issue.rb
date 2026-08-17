@@ -226,7 +226,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue_subscriptions.create(user_id: subscriber.id)
   end
 
-  # TODO: use ActiveJob
   def subscribe_users
     subscribe_user
     category.issue_subscribers.each { |u| subscribe_user(u) }
@@ -249,7 +248,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # feed of closures, reopenings, duplicate, tasks, resolutions
-  # TODO: add addressed_at (hardcoded on show right now)
   def history_feed
     @history_feed ||= build_history_feed
   end
