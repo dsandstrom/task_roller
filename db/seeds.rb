@@ -399,7 +399,7 @@ class Seeds
     def issue_description
       body = "#{fake_paragraphs} "
       body += "#{fake_question}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "\n#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
       body += "#{fake_paragraphs} "
       body += fake_question
       body
@@ -407,7 +407,7 @@ class Seeds
 
     def task_description
       body = "#{fake_paragraphs}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "\n#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
       body += fake_paragraphs
       body
     end
