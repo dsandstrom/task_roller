@@ -150,7 +150,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   # https://github.com/heartcombo/devise/wiki/
   # How-To:-Allow-users-to-edit-their-password
-  # FIXME: omniauth uses /auth/auth/
+  # devise already adds /auth, so full path is /auth/auth/github/callback
+  # Example: https://your-url.tld/auth/auth/github/callback
   devise_for :users,
              path: 'auth', skip: :registrations,
              controllers: { confirmations: 'users/confirmations',

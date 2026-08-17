@@ -24,7 +24,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_one :source_connection, class_name: 'IssueConnection',
                               foreign_key: :source_id, dependent: :destroy,
                               inverse_of: :source
-  # TODO: add better name
   has_one :duplicatee, through: :source_connection, class_name: 'Issue',
                        source: :target
   has_many :target_connections, class_name: 'IssueConnection',
@@ -152,7 +151,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   # INSTANCE
 
-  # TODO: shortened version for IssueMailer?
   def description_html
     @description_html ||= RollerMarkdown.new.render(description) || ''
   end
@@ -226,7 +224,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue_subscriptions.create(user_id: subscriber.id)
   end
 
-  # TODO: use ActiveJob
   def subscribe_users
     subscribe_user
     category.issue_subscribers.each { |u| subscribe_user(u) }
@@ -249,7 +246,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # feed of closures, reopenings, duplicate, tasks, resolutions
-  # TODO: add addressed_at (hardcoded on show right now)
   def history_feed
     @history_feed ||= build_history_feed
   end

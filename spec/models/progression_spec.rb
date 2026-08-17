@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Progression, type: :model do
@@ -77,22 +75,64 @@ RSpec.describe Progression, type: :model do
     let(:task) { Fabricate(:open_task) }
 
     context "when unfinished" do
-      it "changes it's finished to true" do
-        progression = Fabricate(:unfinished_progression, task: task)
+      context "without extra attrs" do
+        it "changes it's finished to true" do
+          progression = Fabricate(:unfinished_progression, task: task)
 
-        expect do
-          progression.finish
-          progression.reload
-        end.to change(progression, :finished).to(true)
+          expect do
+            progression.finish
+            progression.reload
+          end.to change(progression, :finished).to(true)
+        end
+
+        it "sets it's finished_at" do
+          progression = Fabricate(:unfinished_progression, task: task)
+
+          expect do
+            progression.finish
+            progression.reload
+          end.to change(progression, :finished_at).from(nil)
+        end
+
+        it "doesn't set it's repo_callout_id" do
+          progression = Fabricate(:unfinished_progression, task: task)
+
+          expect do
+            progression.finish
+            progression.reload
+          end.not_to change(progression, :repo_callout_id)
+        end
       end
 
-      it "sets it's finished_at" do
-        progression = Fabricate(:unfinished_progression, task: task)
+      context "with extra attrs" do
+        let(:attrs) { { repo_callout_id: "5" } }
 
-        expect do
-          progression.finish
-          progression.reload
-        end.to change(progression, :finished_at).from(nil)
+        it "changes it's finished to true" do
+          progression = Fabricate(:unfinished_progression, task: task)
+
+          expect do
+            progression.finish(attrs)
+            progression.reload
+          end.to change(progression, :finished).to(true)
+        end
+
+        it "sets it's finished_at" do
+          progression = Fabricate(:unfinished_progression, task: task)
+
+          expect do
+            progression.finish(attrs)
+            progression.reload
+          end.to change(progression, :finished_at).from(nil)
+        end
+
+        it "sets it's extra attr" do
+          progression = Fabricate(:unfinished_progression, task: task)
+
+          expect do
+            progression.finish(attrs)
+            progression.reload
+          end.to change(progression, :repo_callout_id).to(5)
+        end
       end
     end
 

@@ -1,12 +1,3 @@
-# frozen_string_literal: true
-
-# TODO: add quotes to comments
-# Faker::TvShows::Simpsons.quote
-
-# TODO: approve, disapprove, close current issues/tasks
-# make it look like action is happening to older issues
-# TODO: move class to separate file so can just create issue/task types
-
 require 'faker'
 
 class Seeds
@@ -356,15 +347,17 @@ class Seeds
 
     def comment_body
       body = "#{fake_paragraphs}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += fake_code_or_quote
       body += fake_paragraphs
       body
     end
 
     def comment_question
-      body = "#{fake_paragraphs} "
+      body = ''
+      body += "> #{Faker::TvShows::Simpsons.quote}\n\n" if rand(3).zero?
+      body += "#{fake_paragraphs} "
       body += "#{fake_question}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "#{Faker::Markdown.random('table')}\n\n" if rand(4).zero?
       body += "#{fake_paragraphs} "
       body += fake_question
       body
@@ -399,7 +392,7 @@ class Seeds
     def issue_description
       body = "#{fake_paragraphs} "
       body += "#{fake_question}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "\n#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
       body += "#{fake_paragraphs} "
       body += fake_question
       body
@@ -407,7 +400,7 @@ class Seeds
 
     def task_description
       body = "#{fake_paragraphs}\n\n"
-      body += "#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
+      body += "\n#{Faker::Markdown.random('table')}\n\n" if rand(2).zero?
       body += fake_paragraphs
       body
     end
@@ -452,6 +445,16 @@ class Seeds
 
     def fake_question
       Faker::Lorem.question(word_count: 2, random_words_to_add: 4)
+    end
+
+    def fake_code_or_quote
+      if rand(4).zero?
+        "#{Faker::Markdown.random('table')}\n\n"
+      elsif rand(5).zero?
+        "> #{Faker::TvShows::Simpsons.quote}\n\n"
+      else
+        ''
+      end
     end
 
     def update_task_status(task)

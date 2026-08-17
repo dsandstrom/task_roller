@@ -175,7 +175,7 @@ module Api
           user = User.find_by(github_username: payload[:username])
           return user if user
 
-          # FIXME: commit doesn't send id, so not valid
+          # not valid for commits because they don't send id
           u = { github_id: payload[:id], github_username: payload[:username],
                 name: payload[:name] }
           return if u.any? { |_, value| value.blank? }

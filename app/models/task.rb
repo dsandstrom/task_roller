@@ -33,7 +33,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_one :source_connection, class_name: 'TaskConnection',
                               foreign_key: :source_id, dependent: :destroy,
                               inverse_of: :source
-  # TODO: add better name
   has_one :duplicatee, through: :source_connection, class_name: 'Task',
                        source: :target
   has_many :target_connections, class_name: 'TaskConnection',
@@ -92,7 +91,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     all_closed.where(status: 'duplicate')
   end
 
-  # TODO: order open issues first by default
   def self.filter_by(filters = {})
     id, query = SearchResult.split_id(filters[:query])
 
@@ -129,7 +127,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # used by .filter_by
-  # TODO: search text in associated comments too (comments.body)
   def self.filter_by_string(query)
     return all if query.blank?
 
@@ -156,7 +153,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     where(task_type_id: task_type_id)
   end
 
-  # TODO: include tasks thru task_connections, but order id match first
   def self.filter_by_id(query)
     return all if query.blank?
 
@@ -209,7 +205,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     !closed?
   end
 
-  # TODO: add options to categories/projects on which users are assignable
   def assignable
     @assignable ||= User.assignable_employees(assignees)
   end
@@ -263,7 +258,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     close_issue(current_user)
   end
 
-  # TODO: show outdated reviews in history
   def reopen(current_user = nil)
     return false unless update(closed: false, opened_at: Time.zone.now)
 
@@ -286,7 +280,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     assignees.each { |u| task_subscriptions.create(user_id: u.id) }
   end
 
-  # TODO: use ActiveJob
   def subscribe_users
     subscribe_user
     subscribe_assignees
@@ -404,7 +397,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       elsif source_connection?
         'duplicate'
       else
-        # TODO: not an acceptable status, maybe reopen
         'closed'
       end
     end
@@ -471,7 +463,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
     end
 
-    # TODO: add assigned, or progressions grouped by user
     def build_history_feed
       feed = []
       [closures, reopenings, concluded_reviews].each do |collection|
