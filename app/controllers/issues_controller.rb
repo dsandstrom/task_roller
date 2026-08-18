@@ -4,8 +4,10 @@ class IssuesController < ApplicationController
   load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
-  before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_issue_types?, only: :new
+  before_action :set_new_form_options, only: :new
+  before_action :set_edit_form_options, only: :edit
+  before_action :issue_types_exist?, only: %i[new edit]
+  before_action :projects_exist?, only: :new
 
   def index
     @source = build_source
@@ -26,16 +28,7 @@ class IssuesController < ApplicationController
   def new
     authorize! :create, Issue
 
-    @project_options = build_project_options
-
-    if @issue_types.any? && @project_options.any?
-      @issue = build_issue
-    elsif @issue_types.any?
-      redirect_to root_url, alert: 'App Error: Projects are required'
-    else
-      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
-      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
-    end
+    @issue = build_issue
   end
 
   def edit; end
@@ -46,7 +39,7 @@ class IssuesController < ApplicationController
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully created.'
     else
-      set_form_options
+      set_new_form_options
       render :new
     end
   end
@@ -56,7 +49,7 @@ class IssuesController < ApplicationController
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully updated.'
     else
-      set_form_options
+      set_edit_form_options
       render :edit
     end
   end
@@ -76,15 +69,27 @@ class IssuesController < ApplicationController
       params.expect(issue: %i[summary description issue_type_id])
     end
 
-    def set_form_options
+    def set_new_form_options
+      @issue_types = IssueType.all
+      @project_options = build_project_options
+    end
+
+    def set_edit_form_options
       @issue_types = IssueType.all
     end
 
-    def check_for_issue_types?
+    def issue_types_exist?
       return true if @issue_types&.any?
 
       redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
+      false
+    end
+
+    def projects_exist?
+      return true if @project_options&.any?
+
+      redirect_to root_url, alert: 'App Error: Projects are required'
       false
     end
 
@@ -111,8 +116,8 @@ class IssuesController < ApplicationController
     end
 
     def build_issue
-      Issue.new(user_id: current_user_id, issue_type_id: @issue_types.first.id,
-                project_id: params[:project_id])
+      current_user.issues.build(issue_type_id: @issue_types.first.id,
+                                project_id: params[:project_id])
     end
 
     def build_project_options
