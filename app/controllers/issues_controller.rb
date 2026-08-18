@@ -1,7 +1,7 @@
 class IssuesController < ApplicationController
-  load_and_authorize_resource :project, only: %i[new create destroy]
-  load_and_authorize_resource through: :project, only: %i[new create destroy]
-  load_and_authorize_resource only: %i[show edit update]
+  load_and_authorize_resource :project, only: %i[destroy]
+  load_and_authorize_resource through: :project, only: %i[destroy]
+  load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
   before_action :set_form_options, only: %i[new edit]
@@ -24,12 +24,16 @@ class IssuesController < ApplicationController
   end
 
   def new
-    if @issue_types&.any?
-      @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
-                                     user_id: current_user_id)
-      authorize! :create, @issue
+    authorize! :create, Issue
+
+    @project_options = build_project_options
+
+    if @issue_types.any? && @project_options.any?
+      @issue = build_issue
+    elsif @issue_types.any?
+      redirect_to root_url, alert: 'App Error: Projects are required'
     else
-      redirect_url = can?(:create, IssueType) ? issue_types_url : @project
+      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
     end
   end
@@ -48,7 +52,7 @@ class IssuesController < ApplicationController
   end
 
   def update
-    if @issue.update(issue_params)
+    if @issue.update(issue_update_params)
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully updated.'
     else
@@ -65,6 +69,10 @@ class IssuesController < ApplicationController
   private
 
     def issue_params
+      params.expect(issue: %i[summary description issue_type_id project_id])
+    end
+
+    def issue_update_params
       params.expect(issue: %i[summary description issue_type_id])
     end
 
@@ -100,6 +108,22 @@ class IssuesController < ApplicationController
         issues = issues.all_visible
       end
       issues
+    end
+
+    def build_issue
+      Issue.new(user_id: current_user_id, issue_type_id: @issue_types.first.id,
+                project_id: params[:project_id])
+    end
+
+    def build_project_options
+      Category.all_visible.accessible_by(current_ability).map do |category|
+        projects = category.projects.all_visible
+                           .accessible_by(current_ability).map do |project|
+          [project.name, project.id]
+        end
+
+        [category.name, projects] if projects.any?
+      end.compact
     end
 
     def set_issue_variables

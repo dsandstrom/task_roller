@@ -1057,55 +1057,201 @@ RSpec.describe IssuesController, type: :controller do
     context "for an admin" do
       before { sign_in(admin) }
 
-      context "when an IssueType and a User" do
-        before do
-          Fabricate(:issue_type)
-          Fabricate(:user_reporter)
+      context "when IssueType and Project" do
+        before { Fabricate(:issue_type) }
+
+        context "and project_id param" do
+          it "returns a success response" do
+            get :new, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
         end
 
-        it "returns a success response" do
-          get :new, params: { category_id: category.to_param,
-                              project_id: project.to_param }
-          expect(response).to be_successful
+        context "and no params" do
+          before { Fabricate(:project) }
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
         end
       end
 
       context "when no IssueTypes" do
-        before { Fabricate(:user_reporter) }
+        before { Fabricate(:project) }
 
         it "redirects to issue_types_url" do
-          get :new, params: { category_id: category.to_param,
-                              project_id: project.to_param }
+          get :new
           expect(response).to redirect_to(issue_types_url)
+        end
+      end
+
+      context "when internal Project" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:internal_project)
+        end
+
+        it "returns a success response" do
+          get :new
+          expect(response).to be_successful
+        end
+      end
+
+      context "when no Projects" do
+        before { Fabricate(:issue_type) }
+
+        it "redirects to root_url" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no visible Projects" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:invisible_project)
+        end
+
+        it "redirects to root_url" do
+          get :new
+          expect(response).to redirect_to(root_url)
         end
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
-        context "when an IssueType and a User" do
+        context "when an IssueType and Project" do
+          before { Fabricate(:issue_type) }
+
+          context "and project_id param" do
+            it "returns a success response" do
+              get :new, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "and no params" do
+            before { Fabricate(:project) }
+
+            it "returns a success response" do
+              get :new
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when internal Project" do
           before do
             Fabricate(:issue_type)
-            Fabricate(:user_reporter)
+            Fabricate(:internal_project)
           end
 
           it "returns a success response" do
-            get :new, params: { category_id: category.to_param,
-                                project_id: project.to_param }
+            get :new
             expect(response).to be_successful
           end
         end
 
         context "when no IssueTypes" do
-          before { Fabricate(:user_reporter) }
+          before { Fabricate(:project) }
 
-          it "redirects to project" do
-            get :new, params: { category_id: category.to_param,
-                                project_id: project.to_param }
+          it "redirects to root" do
+            get :new
             expect(response).to redirect_to(root_url)
           end
+        end
+
+        context "when no Projects" do
+          before { Fabricate(:issue_type) }
+
+          it "redirects to root" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when no visible Projects" do
+          before do
+            Fabricate(:issue_type)
+            Fabricate(:invisible_project)
+          end
+
+          it "redirects to root" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+      end
+    end
+
+    context "for a reporter" do
+      let(:reporter) { Fabricate(:user_reporter) }
+
+      before { sign_in(reporter) }
+
+      context "when an IssueType and Project" do
+        before { Fabricate(:issue_type) }
+
+        context "and project_id param" do
+          it "returns a success response" do
+            get :new, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "and no params" do
+          before { Fabricate(:project) }
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
+        end
+      end
+
+      context "when internal Project" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:internal_project)
+        end
+
+        it "redirect_to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no IssueTypes" do
+        before { Fabricate(:project) }
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no Projects" do
+        before { Fabricate(:issue_type) }
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no visible Projects" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:invisible_project)
+        end
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
         end
       end
     end
@@ -1130,9 +1276,29 @@ RSpec.describe IssuesController, type: :controller do
           expect(response).to be_successful
         end
       end
+
+      context "for Issue from internal project" do
+        let(:project) { Fabricate(:internal_project) }
+
+        it "returns a success response" do
+          issue = Fabricate(:issue, project: project, user: admin)
+          get :edit, params: { id: issue.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "for Issue from invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+
+        it "returns a success response" do
+          issue = Fabricate(:issue, project: project, user: admin)
+          get :edit, params: { id: issue.to_param }
+          expect(response).to be_successful
+        end
+      end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -1153,28 +1319,225 @@ RSpec.describe IssuesController, type: :controller do
             expect_to_be_unauthorized(response)
           end
         end
+
+        context "for Issue form internal" do
+          let(:project) { Fabricate(:internal_project) }
+
+          it "returns a success response" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+            get :edit, params: { id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "for Issue form invisible" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          it "should be unauthorized" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+            get :edit, params: { id: issue.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+    end
+
+    context "for a reporter" do
+      let(:current_user) { Fabricate(:user_reporter) }
+
+      before { sign_in(current_user) }
+
+      context "for their own Issue" do
+        it "returns a success response" do
+          issue = Fabricate(:issue, project: project, user: current_user)
+          get :edit, params: { id: issue.to_param }
+          expect(response).to be_successful
+        end
+      end
+
+      context "for someone else's Issue" do
+        it "should be unauthorized" do
+          issue = Fabricate(:issue, project: project)
+          get :edit, params: { id: issue.to_param }
+          expect_to_be_unauthorized(response)
+        end
+      end
+
+      context "for Issue form internal" do
+        let(:project) { Fabricate(:internal_project) }
+
+        it "should be unauthorized" do
+          issue = Fabricate(:issue, project: project, user: current_user)
+          get :edit, params: { id: issue.to_param }
+          expect_to_be_unauthorized(response)
+        end
+      end
+
+      context "for Issue form invisible" do
+        let(:project) { Fabricate(:invisible_project) }
+
+        it "should be unauthorized" do
+          issue = Fabricate(:issue, project: project, user: current_user)
+          get :edit, params: { id: issue.to_param }
+          expect_to_be_unauthorized(response)
+        end
       end
     end
   end
 
   describe "POST #create" do
-    User::VALID_EMPLOYEE_TYPES.each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         before { sign_in(current_user) }
 
+        context "when visible/external project" do
+          context "with valid params" do
+            before { valid_attributes[:project_id] = project.to_param }
+
+            it "creates a new Issue" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issues, :count).by(1)
+            end
+
+            it "sets new Issue status as 'pending'" do
+              post :create, params: { issue: valid_attributes }
+              issue = Issue.last
+              expect(issue).not_to be_nil
+              expect(issue.status).to eq("pending")
+            end
+
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
+            it "redirects to the created issue" do
+              post :create, params: { issue: valid_attributes }
+              url = issue_path(Issue.last)
+              expect(response).to redirect_to(url)
+            end
+
+            context "when someone subscribed to category" do
+              let(:user) { Fabricate(:user_reviewer) }
+
+              before do
+                Fabricate(:category_issues_subscription, user: user,
+                                                         category: category)
+              end
+
+              it "creates a new IssueSubscription" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to change(user.issue_subscriptions, :count).by(1)
+              end
+
+              it "sends email to subscribers" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to(have_enqueued_job.with do |mailer, action, time, options|
+                  expect(mailer).to eq("IssueMailer")
+                  expect(action).to eq("new")
+                  expect(time).to eq("deliver_now")
+                  expect(options)
+                    .to eq(args: [], params: { issue: Issue.last, user: user })
+                end)
+              end
+            end
+
+            context "when someone subscribed to project" do
+              let(:user) { Fabricate(:user_reviewer) }
+
+              before do
+                Fabricate(:project_issues_subscription, user: user,
+                                                        project: project)
+              end
+
+              it "creates a new IssueSubscription" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to change(user.issue_subscriptions, :count).by(1)
+              end
+            end
+          end
+
+          context "with invalid params" do
+            before { invalid_attributes[:project_id] = project.to_param }
+
+            it "doesn't create a new Issue" do
+              expect do
+                post :create, params: { issue: invalid_attributes }
+              end.not_to change(Issue, :count)
+            end
+
+            it "returns a success response ('new' template)" do
+              post :create, params: { issue: invalid_attributes }
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when visible/internal project" do
+          let(:project) { Fabricate(:internal_project) }
+
+          context "with valid params" do
+            before { valid_attributes[:project_id] = project.to_param }
+
+            it "creates a new Issue" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issues, :count).by(1)
+            end
+
+            it "redirects to the created issue" do
+              post :create, params: { issue: valid_attributes }
+              url = issue_path(Issue.last)
+              expect(response).to redirect_to(url)
+            end
+          end
+        end
+
+        context "when invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          context "with valid params" do
+            before { valid_attributes[:project_id] = project.to_param }
+
+            it "doen't create a new Issue" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.not_to change(Issue, :count)
+            end
+
+            it "redirects to unauthorized" do
+              post :create, params: { issue: valid_attributes }
+              expect_to_be_unauthorized(response)
+            end
+          end
+        end
+      end
+    end
+
+    context "for a reporter" do
+      let(:current_user) { Fabricate(:user_reporter) }
+
+      before { sign_in(current_user) }
+
+      context "when visible/external project" do
         context "with valid params" do
+          before { valid_attributes[:project_id] = project.to_param }
+
           it "creates a new Issue" do
             expect do
-              post :create, params: { project_id: project.to_param,
-                                      issue: valid_attributes }
+              post :create, params: { issue: valid_attributes }
             end.to change(current_user.issues, :count).by(1)
           end
 
           it "sets new Issue status as 'pending'" do
-            post :create, params: { project_id: project.to_param,
-                                    issue: valid_attributes }
+            post :create, params: { issue: valid_attributes }
             issue = Issue.last
             expect(issue).not_to be_nil
             expect(issue.status).to eq("pending")
@@ -1182,14 +1545,12 @@ RSpec.describe IssuesController, type: :controller do
 
           it "creates a new IssueSubscription" do
             expect do
-              post :create, params: { project_id: project.to_param,
-                                      issue: valid_attributes }
+              post :create, params: { issue: valid_attributes }
             end.to change(current_user.issue_subscriptions, :count).by(1)
           end
 
           it "redirects to the created issue" do
-            post :create, params: { project_id: project.to_param,
-                                    issue: valid_attributes }
+            post :create, params: { issue: valid_attributes }
             url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
           end
@@ -1204,15 +1565,13 @@ RSpec.describe IssuesController, type: :controller do
 
             it "creates a new IssueSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param,
-                                        issue: valid_attributes }
+                post :create, params: { issue: valid_attributes }
               end.to change(user.issue_subscriptions, :count).by(1)
             end
 
             it "sends email to subscribers" do
               expect do
-                post :create, params: { project_id: project.to_param,
-                                        issue: valid_attributes }
+                post :create, params: { issue: valid_attributes }
               end.to(have_enqueued_job.with do |mailer, action, time, options|
                 expect(mailer).to eq("IssueMailer")
                 expect(action).to eq("new")
@@ -1233,25 +1592,62 @@ RSpec.describe IssuesController, type: :controller do
 
             it "creates a new IssueSubscription" do
               expect do
-                post :create, params: { project_id: project.to_param,
-                                        issue: valid_attributes }
+                post :create, params: { issue: valid_attributes }
               end.to change(user.issue_subscriptions, :count).by(1)
             end
           end
         end
 
         context "with invalid params" do
+          before { invalid_attributes[:project_id] = project.to_param }
+
           it "doesn't create a new Issue" do
             expect do
-              post :create, params: { project_id: project.to_param,
-                                      issue: invalid_attributes }
+              post :create, params: { issue: invalid_attributes }
             end.not_to change(Issue, :count)
           end
 
           it "returns a success response ('new' template)" do
-            post :create, params: { project_id: project.to_param,
-                                    issue: invalid_attributes }
+            post :create, params: { issue: invalid_attributes }
             expect(response).to be_successful
+          end
+        end
+      end
+
+      context "when visible/internal project" do
+        let(:project) { Fabricate(:internal_project) }
+
+        context "with valid params" do
+          before { valid_attributes[:project_id] = project.to_param }
+
+          it "doen't create a new Issue" do
+            expect do
+              post :create, params: { issue: valid_attributes }
+            end.not_to change(Issue, :count)
+          end
+
+          it "redirects to unauthorized" do
+            post :create, params: { issue: valid_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+
+      context "when invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+
+        context "with valid params" do
+          before { valid_attributes[:project_id] = project.to_param }
+
+          it "doen't create a new Issue" do
+            expect do
+              post :create, params: { issue: valid_attributes }
+            end.not_to change(Issue, :count)
+          end
+
+          it "redirects to unauthorized" do
+            post :create, params: { issue: valid_attributes }
+            expect_to_be_unauthorized(response)
           end
         end
       end
@@ -1338,10 +1734,100 @@ RSpec.describe IssuesController, type: :controller do
             expect(response).to be_successful
           end
         end
+
+        context "with new project_id in params" do
+          let(:new_project) { Fabricate(:project) }
+
+          before { new_attributes[:project_id] = new_project.id }
+
+          it "doesn't update the project" do
+            issue = Fabricate(:issue, project: project)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.not_to change(issue, :project_id)
+          end
+        end
+      end
+
+      context "for Issue from internal project" do
+        let(:project) { Fabricate(:internal_project) }
+
+        context "with valid params" do
+          it "updates the requested issue summary" do
+            issue = Fabricate(:issue, project: project, user: admin)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :summary).to("New Summary")
+          end
+
+          it "updates the requested issue status" do
+            issue = Fabricate(:issue, project: project, user: admin)
+            issue.update_attribute :closed, true
+            Fabricate(:approved_resolution, issue: issue)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :status).to("resolved")
+          end
+
+          it "redirects to the issue" do
+            issue = Fabricate(:issue, project: project, user: admin)
+            url = issue_url(issue)
+
+            put :update, params: { id: issue.to_param,
+                                   issue: new_attributes }
+            expect(response).to redirect_to(url)
+          end
+        end
+      end
+
+      context "for Issue from invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+
+        context "with valid params" do
+          it "updates the requested issue summary" do
+            issue = Fabricate(:issue, project: project, user: admin)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :summary).to("New Summary")
+          end
+
+          it "updates the requested issue status" do
+            issue = Fabricate(:issue, project: project, user: admin)
+            issue.update_attribute :closed, true
+            Fabricate(:approved_resolution, issue: issue)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :status).to("resolved")
+          end
+
+          it "redirects to the issue" do
+            issue = Fabricate(:issue, project: project, user: admin)
+            url = issue_url(issue)
+
+            put :update, params: { id: issue.to_param,
+                                   issue: new_attributes }
+            expect(response).to redirect_to(url)
+          end
+        end
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -1382,6 +1868,150 @@ RSpec.describe IssuesController, type: :controller do
         context "for someone else's Issue" do
           it "should be unauthorized" do
             issue = Fabricate(:issue, project: project)
+            put :update, params: { id: issue.to_param,
+                                   issue: new_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "for Issue from internal project" do
+          let(:project) { Fabricate(:internal_project) }
+
+          context "with valid params" do
+            it "updates the requested issue" do
+              issue = Fabricate(:issue, project: project, user: current_user)
+
+              expect do
+                put :update, params: { id: issue.to_param,
+                                       issue: new_attributes }
+                issue.reload
+              end.to change(issue, :summary).to("New Summary")
+            end
+
+            it "redirects to the issue" do
+              issue = Fabricate(:issue, project: project, user: current_user)
+              url = issue_url(issue)
+
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              expect(response).to redirect_to(url)
+            end
+          end
+        end
+
+        context "for Issue from invisible project" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          context "with valid params" do
+            it "doesn't update the requested issue" do
+              issue = Fabricate(:issue, project: project, user: current_user)
+
+              expect do
+                put :update, params: { id: issue.to_param,
+                                       issue: new_attributes }
+                issue.reload
+              end.not_to change(issue, :summary)
+            end
+
+            it "redirects to unauthorized" do
+              issue = Fabricate(:issue, project: project, user: current_user)
+
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              expect_to_be_unauthorized(response)
+            end
+          end
+        end
+      end
+    end
+
+    context "for a reporter" do
+      let(:current_user) { Fabricate(:user_reporter) }
+
+      before { sign_in(current_user) }
+
+      context "for their own Issue" do
+        context "with valid params" do
+          it "updates the requested issue" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.to change(issue, :summary).to("New Summary")
+          end
+
+          it "redirects to the issue" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+            url = issue_url(issue)
+
+            put :update, params: { id: issue.to_param,
+                                   issue: new_attributes }
+            expect(response).to redirect_to(url)
+          end
+        end
+
+        context "with invalid params" do
+          it "returns a success response ('edit' template)" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+            put :update, params: { id: issue.to_param,
+                                   issue: invalid_attributes }
+            expect(response).to be_successful
+          end
+        end
+      end
+
+      context "for someone else's Issue" do
+        it "should be unauthorized" do
+          issue = Fabricate(:issue, project: project)
+          put :update, params: { id: issue.to_param,
+                                 issue: new_attributes }
+          expect_to_be_unauthorized(response)
+        end
+      end
+
+      context "for Issue from internal project" do
+        let(:project) { Fabricate(:internal_project) }
+
+        context "with valid params" do
+          it "doesn't update the requested issue" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.not_to change(issue, :summary)
+          end
+
+          it "redirects to unauthorized" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+
+            put :update, params: { id: issue.to_param,
+                                   issue: new_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
+      end
+
+      context "for Issue from invisible project" do
+        let(:project) { Fabricate(:invisible_project) }
+
+        context "with valid params" do
+          it "doesn't update the requested issue" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+
+            expect do
+              put :update, params: { id: issue.to_param,
+                                     issue: new_attributes }
+              issue.reload
+            end.not_to change(issue, :summary)
+          end
+
+          it "redirects to unauthorized" do
+            issue = Fabricate(:issue, project: project, user: current_user)
+
             put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect_to_be_unauthorized(response)
