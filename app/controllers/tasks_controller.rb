@@ -5,7 +5,7 @@ class TasksController < ApplicationController
   authorize_resource only: :index
 
   before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_task_types?, only: %i[new edit]
+  before_action :task_types_exist?, only: %i[new edit]
 
   def index
     @source = build_source
@@ -48,7 +48,7 @@ class TasksController < ApplicationController
 
   private
 
-    def check_for_task_types?
+    def task_types_exist?
       return true if @task_types&.any?
 
       redirect_url = can?(:create, TaskType) ? issue_types_url : root_url
