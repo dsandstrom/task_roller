@@ -48,17 +48,6 @@ class MoveTasksController < ApplicationController
       params.expect(task: [:project_id])
     end
 
-    def build_project_options
-      Category.all_visible.accessible_by(current_ability).map do |category|
-        projects = category.projects.all_visible
-                           .accessible_by(current_ability).map do |project|
-          [project.name, project.id]
-        end
-
-        [category.name, projects] if projects.any?
-      end.compact
-    end
-
     def set_form_options
       @project_options = build_project_options
     end
@@ -68,24 +57,5 @@ class MoveTasksController < ApplicationController
       @task.task_type = @task_types.first
       @assignee_options = build_assignee_options
       @issue_options = build_issue_options
-    end
-
-    def build_assignee_options
-      User.assignable_employees([current_user])
-          .group_by(&:employee_type)
-          .map do |type, type_employees|
-        [type.pluralize, type_employees.map { |u| [u.name_and_email, u.id] }]
-      end
-    end
-
-    def build_issue_options
-      options =
-        @task.project.issues.all_open.map do |issue|
-          [issue.id_and_summary, issue.id]
-        end
-      if @task.issue
-        options = [[@task.issue.id_and_summary, @task.issue_id]] | options
-      end
-      options
     end
 end

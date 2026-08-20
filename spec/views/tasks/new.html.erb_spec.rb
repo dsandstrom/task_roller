@@ -6,6 +6,7 @@ RSpec.describe "tasks/new", type: :view do
   let(:issue) { Fabricate(:issue, project: project) }
   let(:task_type) { Fabricate(:task_type) }
   let(:url) { project_tasks_path(project) }
+  let(:move_url) { projects_task_path }
 
   before(:each) do
     assign(:category, category)
@@ -14,6 +15,7 @@ RSpec.describe "tasks/new", type: :view do
     assign(:task, project.tasks.build)
     assign(:user_options, [["Type 1", [["Name 1", 12], ["Name 2", 14]]]])
     assign(:assignee_options, [["Type 2", [["Name 3", 48], ["Name 4", 8]]]])
+    assign(:project_options, [[project.name, project.to_param]])
   end
 
   context "for a reporter" do
@@ -33,6 +35,20 @@ RSpec.describe "tasks/new", type: :view do
           assert_select "input[name=?]", "task[task_type_id]"
           assert_select "select[name=?]", "task[assignee_ids][]"
         end
+      end
+
+      it "renders new move_task form" do
+        render
+
+        assert_select "form[action=?][method=?]", move_url, "post" do
+          assert_select "select[name=?]", "task[project_id]"
+        end
+      end
+
+      it "renders turbo_frame" do
+        render
+
+        assert_select "turbo-frame[id=?]", "turbo_task_form"
       end
     end
 
