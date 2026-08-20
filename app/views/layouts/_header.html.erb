@@ -33,6 +33,9 @@
           <% if can?(:create, Issue) %>
             <%= menu_link 'Report Issue', new_issue_path %>
           <% end %>
+          <% if can?(:create, Task) %>
+            <%= menu_link 'Plan Task', new_projects_task_path %>
+          <% end %>
         <% end %>
       </div>
 

@@ -148,6 +148,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
            as: "project_#{roller}_subscription"
   end
 
+  get 'projects/tasks/new' => 'move_tasks#new', as: 'new_projects_task'
+  post 'projects/tasks' => 'move_tasks#create', as: 'projects_task'
+
   # https://github.com/heartcombo/devise/wiki/
   # How-To:-Allow-users-to-edit-their-password
   # devise already adds /auth, so full path is /auth/auth/github/callback

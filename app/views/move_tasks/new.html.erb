@@ -1,0 +1,20 @@
+<h2>Plan Task</h2>
+
+<%= form_with(model: @task, url: projects_task_url,
+              html: { name: 'move_tasks_form',
+                      class: 'top-form',
+                      data: { turbo_stream: true } }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :project_id %>
+    <%= form.select :project_id,
+                    grouped_options_for_select(@project_options, @task.project_id),
+                    { include_blank: '- Select Project -' },
+                    { id: :task_project_id, onchange: "this.form.requestSubmit()" } %>
+  </div>
+<% end %>
+
+<%= turbo_frame_tag :turbo_task_form %>
+
+<%= link_to 'Back', :back %>
