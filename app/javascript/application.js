@@ -2,6 +2,7 @@
 
 import '@hotwired/turbo-rails'
 
+import './entrypoints/custom_events'
 import './entrypoints/accordions'
 import './entrypoints/check_boxes'
 import './entrypoints/dropdowns'
