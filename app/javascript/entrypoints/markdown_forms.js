@@ -8,9 +8,10 @@ const formNames = ['issue_type_form', 'task_type_form', 'user_form',
                    'task_form', 'user_password_form'];
 
 const initForm = function (element, focusForm = false) {
-  let form = new Form(element);
+  const form = new Form(element);
+  const cssClass = 'with-validation'
 
-  element.classList.add('with-validation');
+  element.classList.add(cssClass);
   currentForms.push(form);
 
   if (focusForm) form.focus();
@@ -73,6 +74,24 @@ document.addEventListener('turbo:before-stream-render', function(event) {
   if (!newComment) return;
 
   newComment.classList.remove('with-form');
+});
+
+document.addEventListener('turbo:after-stream-render', function(event) {
+  let skipForm = false;
+
+  formNames.forEach((name, i) => {
+    event.target.getElementsByName(name).forEach((element) => {
+      currentForms.forEach((currentForm, i) => {
+        if (currentForm.form == element) skipForm = true;
+      });
+
+      if (!skipForm) {
+        initForm(element);
+      }
+
+      skipForm = false;
+    });
+  });
 });
 
 document.addEventListener('turbo:visit', function() {
