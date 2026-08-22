@@ -1,8 +1,15 @@
 <%= form_with(model: task, url: projects_task_path,
               html: { name: 'move_tasks_form',
                       class: 'top-form',
+                      id: 'task_project_form',
                       data: { turbo_stream: true } }) do |form| %>
   <%= form_errors(form.object) %>
+
+  <%= form.hidden_field :summary, id: 'task_project_summary' %>
+  <%= form.hidden_field :description, id: 'task_project_description' %>
+  <%= form.hidden_field :task_type_id, id: 'task_project_task_type_id' %>
+  <%= form.hidden_field :assignee_ids, id: 'task_project_assignee_ids',
+                                       multiple: true %>
 
   <div class="field">
     <%= form.label :project_id %>

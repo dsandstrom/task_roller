@@ -2,6 +2,7 @@
   <%= form_with(model: task, url: url,
                 html: { name: 'task_issue_description_form',
                         class: 'top-form',
+                        id: 'task_issue_form',
                         data: { turbo_stream: true }}) do |form| %>
 
     <div class="field">
@@ -20,6 +21,7 @@
 
 <%= form_with(model: task, url: url,
               html: { name: 'task_form',
+                      id: 'task_full_form',
                       data: { turbo: false } }) do |form| %>
   <%= form_errors(form.object) %>
 
