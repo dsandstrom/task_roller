@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module TasksHelper # rubocop:disable Metrics/ModuleLength
   def task_header(task)
     project = task.project

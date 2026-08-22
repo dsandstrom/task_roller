@@ -52,6 +52,7 @@ export class MarkdownEditor {
         italic: '_'
       },
       element: this.elem,
+      forceSync: true,
       placeholder: 'Start typing here...',
       promptURLs: false,
       status: false,

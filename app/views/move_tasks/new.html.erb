@@ -1,0 +1,8 @@
+<h2>Plan Task</h2>
+
+<%= render 'new_form', task: @task,
+                       project_options: @project_options %>
+
+<%= turbo_frame_tag :turbo_task_form %>
+
+<%= link_to 'Back', :back %>

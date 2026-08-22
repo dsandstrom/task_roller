@@ -2,7 +2,7 @@ class RadioButtonLabel {
   constructor(elem) {
     this.elem = elem;
     this.radio = this.elem.querySelector('input');
-    this.elem.classList.add('roller-radio-button-label');
+    this.elem.classList.add(radioButtonLabelClass);
     this.toggleDisabledClass();
   }
 
@@ -22,7 +22,10 @@ class RadioButtonLabel {
 class RadioButtons {
   constructor(elem) {
     this.labels = [];
+
     for (var label of elem.querySelectorAll('label')) {
+      if (label.classList.contains(radioButtonLabelClass)) continue;
+
       this.labels.push(new RadioButtonLabel(label));
     }
     if (!this.labels.length) return;
@@ -48,6 +51,16 @@ class RadioButtons {
   }
 }
 
+function initRadioButtons() {
+  for (let id of radioButtonIds) {
+    const labels = document.getElementById(id);
+    if (!labels) continue;
+
+    new RadioButtons(labels);
+  }
+}
+
+const radioButtonLabelClass = 'roller-radio-button-label';
 const radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
                         'task_type_color_labels', 'task_type_icon_labels',
                         'issue_issue_type_labels', 'task_task_type_labels',
@@ -57,10 +70,9 @@ const radioButtonIds = ['issue_type_color_labels', 'issue_type_icon_labels',
                         'task_type_labels', 'search_type_labels'];
 
 document.addEventListener('turbo:load', function() {
-  for (let id of radioButtonIds) {
-    const labels = document.getElementById(id);
-    if (!labels) continue;
+  initRadioButtons()
+});
 
-    new RadioButtons(labels);
-  }
+document.addEventListener('turbo:after-stream-render', function() {
+  initRadioButtons()
 });

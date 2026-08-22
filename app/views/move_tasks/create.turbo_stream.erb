@@ -1,0 +1,7 @@
+<%= turbo_stream.update :turbo_task_form,
+                        partial: 'tasks/form',
+                        locals: { task: @task, task_types: @task_types,
+                                  url: project_tasks_path(@task.project),
+                                  user_options: @user_options,
+                                  assignee_options: @assignee_options,
+                                  issue_options: @issue_options } %>

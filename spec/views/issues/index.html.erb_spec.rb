@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "issues/index", type: :view do
@@ -69,7 +67,7 @@ RSpec.describe "issues/index", type: :view do
       it "renders new issue link" do
         render template: subject, layout: "layouts/application"
 
-        url = new_project_issue_path(project)
+        url = new_issue_path(project_id: project.to_param)
         expect(rendered).to have_link(nil, href: url)
       end
     end
@@ -169,7 +167,7 @@ RSpec.describe "issues/index", type: :view do
         it "renders new issue link" do
           render template: subject, layout: "layouts/application"
 
-          url = new_project_issue_path(project)
+          url = new_issue_path(project_id: project.to_param)
           expect(rendered).to have_link(nil, href: url)
         end
 

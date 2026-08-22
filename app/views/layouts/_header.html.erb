@@ -24,10 +24,17 @@
         <% @project ||= @source if @source && @source.is_a?(Project)  %>
         <% if @project %>
           <% if can?(:create, new_issue(@project)) %>
-            <%= menu_link 'Report Issue', new_project_issue_path(@project) %>
+            <%= menu_link 'Report Issue', new_issue_path(project_id: @project.to_param) %>
           <% end %>
           <% if can?(:create, new_task(@project)) %>
             <%= menu_link 'Plan Task', new_project_task_path(@project) %>
+          <% end %>
+        <% else %>
+          <% if can?(:create, Issue) %>
+            <%= menu_link 'Report Issue', new_issue_path %>
+          <% end %>
+          <% if can?(:create, Task) %>
+            <%= menu_link 'Plan Task', new_projects_task_path %>
           <% end %>
         <% end %>
       </div>

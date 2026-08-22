@@ -1,11 +1,13 @@
 class IssuesController < ApplicationController
-  load_and_authorize_resource :project, only: %i[new create destroy]
-  load_and_authorize_resource through: :project, only: %i[new create destroy]
-  load_and_authorize_resource only: %i[show edit update]
+  load_and_authorize_resource :project, only: %i[destroy]
+  load_and_authorize_resource through: :project, only: %i[destroy]
+  load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
-  before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_issue_types?, only: :new
+  before_action :set_new_form_options, only: :new
+  before_action :set_edit_form_options, only: :edit
+  before_action :issue_types_exist?, only: %i[new edit]
+  before_action :projects_exist?, only: :new
 
   def index
     @source = build_source
@@ -24,14 +26,10 @@ class IssuesController < ApplicationController
   end
 
   def new
-    if @issue_types&.any?
-      @issue = @project.issues.build(issue_type_id: @issue_types.first.id,
-                                     user_id: current_user_id)
-      authorize! :create, @issue
-    else
-      redirect_url = can?(:create, IssueType) ? issue_types_url : @project
-      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
-    end
+    authorize! :create, Issue
+
+    @issue = build_issue
+    @project = @issue.project if @issue.project
   end
 
   def edit; end
@@ -42,17 +40,17 @@ class IssuesController < ApplicationController
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully created.'
     else
-      set_form_options
+      set_new_form_options
       render :new
     end
   end
 
   def update
-    if @issue.update(issue_params)
+    if @issue.update(issue_update_params)
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully updated.'
     else
-      set_form_options
+      set_edit_form_options
       render :edit
     end
   end
@@ -65,18 +63,34 @@ class IssuesController < ApplicationController
   private
 
     def issue_params
+      params.expect(issue: %i[summary description issue_type_id project_id])
+    end
+
+    def issue_update_params
       params.expect(issue: %i[summary description issue_type_id])
     end
 
-    def set_form_options
+    def set_new_form_options
+      @issue_types = IssueType.all
+      @project_options = build_project_options
+    end
+
+    def set_edit_form_options
       @issue_types = IssueType.all
     end
 
-    def check_for_issue_types?
+    def issue_types_exist?
       return true if @issue_types&.any?
 
       redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
+      false
+    end
+
+    def projects_exist?
+      return true if @project_options&.any?
+
+      redirect_to root_url, alert: 'App Error: Projects are required'
       false
     end
 
@@ -100,6 +114,22 @@ class IssuesController < ApplicationController
         issues = issues.all_visible
       end
       issues
+    end
+
+    def build_issue
+      current_user.issues.build(issue_type_id: @issue_types.first.id,
+                                project_id: params[:project_id])
+    end
+
+    def build_project_options
+      Category.all_visible.accessible_by(current_ability).map do |category|
+        projects = category.projects.all_visible
+                           .accessible_by(current_ability).map do |project|
+          [project.name, project.id]
+        end
+
+        [category.name, projects] if projects.any?
+      end.compact
     end
 
     def set_issue_variables

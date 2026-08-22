@@ -32,11 +32,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :projects, only: %i[show edit update] do
-    resources :issues, only: %i[index new create destroy]
+    resources :issues, only: %i[index destroy]
     resources :tasks, only: %i[index new create destroy]
   end
 
-  resources :issues, only: %i[show edit update] do
+  resources :issues, only: %i[show new create edit update] do
     resources :issue_comments, except: :index
     resources :issue_subscriptions, only: %i[new create destroy]
     resources :task_previews, only: :index
@@ -147,6 +147,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       "project_#{roller}_subscriptions#destroy",
            as: "project_#{roller}_subscription"
   end
+
+  get 'projects/tasks/new' => 'move_tasks#new', as: 'new_projects_task'
+  post 'projects/tasks' => 'move_tasks#create', as: 'projects_task'
 
   # https://github.com/heartcombo/devise/wiki/
   # How-To:-Allow-users-to-edit-their-password

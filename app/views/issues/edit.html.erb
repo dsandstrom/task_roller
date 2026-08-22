@@ -3,6 +3,6 @@
 <h2>Edit Issue</h2>
 
 <%= render 'form', issue: @issue, issue_types: @issue_types,
-                   url: issue_path(@issue), user_options: @user_options %>
+                   url: issue_path(@issue), project_options: nil %>
 
 <%= link_to 'Back to issue', issue_path(@issue) %>

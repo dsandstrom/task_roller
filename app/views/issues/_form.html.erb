@@ -1,15 +1,17 @@
-<%= form_with(model: issue, url: url, local: true,
+<%= form_with(model: issue, url: url,
               html: { name: 'issue_form' }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <% if user_options&.any? %>
-    <div class="field">
-      <%= form.label :user_id, 'Reporter' %>
-      <%= form.select :user_id,
-                      grouped_options_for_select(user_options, issue.user_id),
-                      {}, id: :issue_user_id %>
-    </div>
-  <% end %>
+  <div class="field">
+    <%= form.label :project_id %>
+    <% if project_options&.any? %>
+      <%= form.select :project_id,
+                      grouped_options_for_select(project_options, issue.project_id),
+                      {}, id: :issue_project_id %>
+    <% else %>
+      <%= form.text_field :project_id, value: issue.project&.name, disabled: true %>
+    <% end %>
+  </div>
 
   <div class="field">
     <%= form.label :issue_type_id, 'Type' %>

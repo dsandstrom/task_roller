@@ -4,8 +4,9 @@ class TasksController < ApplicationController
   load_and_authorize_resource only: %i[show edit update]
   authorize_resource only: :index
 
-  before_action :set_form_options, only: %i[new edit]
-  before_action :check_for_task_types?, only: %i[new edit]
+  before_action :set_new_form_options, only: :new
+  before_action :set_form_options, only: :edit
+  before_action :task_types_exist?, only: %i[new edit]
 
   def index
     @source = build_source
@@ -17,12 +18,13 @@ class TasksController < ApplicationController
   end
 
   def show
+    @project = @task.project
     set_user_resources
     set_task_resources
   end
 
   def new
-    @task.task_type = @task_types.first
+    @task.task_type ||= @task_types.first
   end
 
   def edit; end
@@ -48,7 +50,7 @@ class TasksController < ApplicationController
 
   private
 
-    def check_for_task_types?
+    def task_types_exist?
       return true if @task_types&.any?
 
       redirect_url = can?(:create, TaskType) ? issue_types_url : root_url
@@ -76,23 +78,9 @@ class TasksController < ApplicationController
       @issue_options = build_issue_options
     end
 
-    def build_assignee_options
-      User.assignable_employees([current_user])
-          .group_by(&:employee_type)
-          .map do |type, type_employees|
-        [type.pluralize, type_employees.map { |u| [u.name_and_email, u.id] }]
-      end
-    end
-
-    def build_issue_options
-      options =
-        @task.project.issues.all_open.map do |issue|
-          [issue.id_and_summary, issue.id]
-        end
-      if @task.issue
-        options = [[@task.issue.id_and_summary, @task.issue_id]] | options
-      end
-      options
+    def set_new_form_options
+      set_form_options
+      @project_options = build_project_options
     end
 
     def build_tasks
@@ -138,7 +126,7 @@ class TasksController < ApplicationController
         @task.issue&.update_status(current_user)
         redirect_to @task, success: 'Task was successfully added.'
       else
-        set_form_options
+        set_new_form_options
         render :new
       end
     end

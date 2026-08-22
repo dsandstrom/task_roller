@@ -1,11 +1,16 @@
 <%= project_header(@project) %>
 
-<h2>New Task</h2>
+<h2>Plan Task</h2>
 
-<%= render 'form', task: @task, task_types: @task_types,
-                   url: project_tasks_path(@project),
-                   user_options: @user_options,
-                   assignee_options: @assignee_options,
-                   issue_options: @issue_options %>
+<%= render 'move_tasks/new_form', task: @task,
+                                  project_options: @project_options %>
+
+<%= turbo_frame_tag :turbo_task_form do %>
+  <%= render 'form', task: @task, task_types: @task_types,
+                     url: project_tasks_path(@project),
+                     user_options: @user_options,
+                     assignee_options: @assignee_options,
+                     issue_options: @issue_options %>
+<% end %>
 
 <%= link_to 'Back', :back %>
