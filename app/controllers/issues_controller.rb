@@ -29,6 +29,7 @@ class IssuesController < ApplicationController
     authorize! :create, Issue
 
     @issue = build_issue
+    @project = @issue.project if @issue.project
   end
 
   def edit; end
