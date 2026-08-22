@@ -24,6 +24,7 @@ RSpec.describe "issues/show", type: :view do
       assign(:notifications, [])
       assign(:subscription, issue_subscription)
       assign(:user, issue.user)
+      assign(:project, project)
     end
 
     context "when project" do

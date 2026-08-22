@@ -18,6 +18,7 @@ class TasksController < ApplicationController
   end
 
   def show
+    @project = @task.project
     set_user_resources
     set_task_resources
   end

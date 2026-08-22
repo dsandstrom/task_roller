@@ -31,6 +31,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:subscription, task_subscription)
       assign(:user, task.user)
       assign(:siblings, nil)
+      assign(:project, project)
     end
 
     context "when project" do
