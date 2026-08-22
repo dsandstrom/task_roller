@@ -68,7 +68,7 @@ RSpec.describe MoveTasksController, type: :controller do
 
         context "when turbo_stream request" do
           context "with valid params" do
-            it "redirects to new_project_task_path" do
+            it "renders create" do
               post :create, params: { task: valid_attributes },
                             as: :turbo_stream
               expect(response).to be_successful
@@ -90,6 +90,54 @@ RSpec.describe MoveTasksController, type: :controller do
               post :create, params: { task: valid_attributes },
                             as: :turbo_stream
               expect_to_be_forbidden(response)
+            end
+          end
+
+          context "with valid params for full task" do
+            before do
+              valid_attributes.merge!(
+                summary: "Summary",
+                description: "Description",
+                task_type_id: Fabricate(:task_type).to_param,
+                issue_id: Fabricate(:issue, project: project).to_param,
+                assignee_ids: [Fabricate(:user_worker).to_param]
+              )
+            end
+
+            it "renders create" do
+              post :create, params: { task: valid_attributes },
+                            as: :turbo_stream
+              expect(response).to be_successful
+            end
+          end
+
+          context "with javascript assignee_ids" do
+            let(:first_worker) { Fabricate(:user_worker) }
+            let(:second_worker) { Fabricate(:user_worker) }
+            let(:assignee_ids) { "#{first_worker.id}, #{second_worker.id}" }
+
+            before { valid_attributes.merge!(assignee_ids: [assignee_ids]) }
+
+            it "renders create" do
+              post :create, params: { task: valid_attributes },
+                            as: :turbo_stream
+              expect(response).to be_successful
+            end
+          end
+
+          context "with rails assignee_ids" do
+            let(:first_worker) { Fabricate(:user_worker) }
+            let(:second_worker) { Fabricate(:user_worker) }
+            let(:assignee_ids) do
+              [first_worker.id.to_s, second_worker.id.to_s]
+            end
+
+            before { valid_attributes.merge!(assignee_ids: [assignee_ids]) }
+
+            it "renders create" do
+              post :create, params: { task: valid_attributes },
+                            as: :turbo_stream
+              expect(response).to be_successful
             end
           end
         end

@@ -24,7 +24,7 @@ class TasksController < ApplicationController
   end
 
   def new
-    @task.task_type = @task_types.first
+    @task.task_type ||= @task_types.first
   end
 
   def edit; end
