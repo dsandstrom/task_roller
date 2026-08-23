@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe TasksController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:task_type) { Fabricate(:task_type) }
   let(:user) { Fabricate(:user_reporter) }
   let(:category) { Fabricate(:category) }
@@ -1163,6 +1165,10 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
+    after do
+      clear_enqueued_jobs
+    end
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -1186,11 +1192,20 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(current_user.tasks, :count).by(1)
               end
 
-              it "creates a new current_user TaskSubscription" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-                end.to change(current_user.task_subscriptions, :count).by(1)
+              it "enqueues a TaskSubscriptionsJob" do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+
+                expect(TaskSubscriptionsJob)
+                  .to have_been_enqueued.exactly(:once)
+              end
+
+              it "enqueues a TaskAssigneesSubscriptionsJob" do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+
+                expect(TaskAssigneesSubscriptionsJob)
+                  .to have_been_enqueued.exactly(:once)
               end
 
               it "redirects to the created task" do
@@ -1206,36 +1221,20 @@ RSpec.describe TasksController, type: :controller do
                   valid_attributes.merge! assignee_ids: [worker.id]
                 end
 
-                it "creates 2 TaskSubscriptions" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to change(TaskSubscription, :count).by(2)
+                it "enqueues a TaskSubscriptionsJob" do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+
+                  expect(TaskSubscriptionsJob)
+                    .to have_been_enqueued.exactly(:once)
                 end
 
-                it "sends email to subscribers" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to(
-                    have_enqueued_job.with do |mailer, action, time, options|
-                      expect(mailer).to eq("TaskMailer")
-                      expect(action).to eq("new")
-                      expect(time).to eq("deliver_now")
-                      expect(options)
-                        .to eq(
-                          args: [],
-                          params: { task: Task.last, user: worker }
-                        )
-                    end
-                  )
-                end
+                it "enqueues a TaskAssigneesSubscriptionsJob" do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
 
-                it "creates a new worker TaskSubscription" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to change(worker.task_subscriptions, :count).by(1)
+                  expect(TaskAssigneesSubscriptionsJob)
+                    .to have_been_enqueued.exactly(:once)
                 end
               end
 
@@ -1327,11 +1326,20 @@ RSpec.describe TasksController, type: :controller do
                                                       category: category)
             end
 
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(user.task_subscriptions, :count).by(1)
+            it "enqueues a TaskSubscriptionsJob" do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+
+              expect(TaskSubscriptionsJob)
+                .to have_been_enqueued.exactly(:once)
+            end
+
+            it "enqueues a TaskAssigneesSubscriptionsJob" do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+
+              expect(TaskAssigneesSubscriptionsJob)
+                .to have_been_enqueued.exactly(:once)
             end
           end
 
@@ -1343,11 +1351,20 @@ RSpec.describe TasksController, type: :controller do
                                                      project: project)
             end
 
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(user.task_subscriptions, :count).by(1)
+            it "enqueues a TaskSubscriptionsJob" do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+
+              expect(TaskSubscriptionsJob)
+                .to have_been_enqueued.exactly(:once)
+            end
+
+            it "enqueues a TaskAssigneesSubscriptionsJob" do
+              post :create, params: { project_id: project.to_param,
+                                      task: valid_attributes }
+
+              expect(TaskAssigneesSubscriptionsJob)
+                .to have_been_enqueued.exactly(:once)
             end
           end
         end
@@ -1489,34 +1506,14 @@ RSpec.describe TasksController, type: :controller do
                   new_attributes.merge! assignee_ids: new_assignee_ids
                 end
 
-                it "creates 1 TaskSubscriptions" do
-                  expect do
-                    put :update, params: { id: task.to_param,
-                                           task: new_attributes }
-                  end.to change(TaskSubscription, :count).by(1)
-                end
+                it "generates a TaskAssigneesSubscriptionsJob" do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
 
-                it "creates a new worker TaskSubscription" do
-                  expect do
-                    put :update, params: { id: task.to_param,
-                                           task: new_attributes }
-                  end.to change(worker.task_subscriptions, :count).by(1)
-                end
-
-                it "doesn't change reassigned worker TaskSubscription" do
-                  task
-                  expect do
-                    put :update, params: { id: task.to_param,
-                                           task: new_attributes }
-                  end.not_to change(reassigned.task_subscriptions, :count)
-                end
-
-                it "doesn't change stay_assigned worker TaskSubscription" do
-                  task
-                  expect do
-                    put :update, params: { id: task.to_param,
-                                           task: new_attributes }
-                  end.not_to change(stay_assigned.task_subscriptions, :count)
+                  expect(TaskAssigneesSubscriptionsJob)
+                    .to have_been_enqueued.exactly(:once)
+                  expect(TaskAssigneesSubscriptionsJob)
+                    .to have_been_enqueued.with(task)
                 end
               end
             end

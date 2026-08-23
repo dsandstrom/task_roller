@@ -121,7 +121,8 @@ class TasksController < ApplicationController
 
     def create_html
       if @task.save
-        @task.subscribe_users
+        TaskSubscriptionsJob.perform_later(@task)
+        TaskAssigneesSubscriptionsJob.perform_later(@task)
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
         redirect_to @task, success: 'Task was successfully added.'
@@ -139,7 +140,7 @@ class TasksController < ApplicationController
 
     def update_html
       if @task.update(task_params)
-        @task.subscribe_assignees
+        TaskAssigneesSubscriptionsJob.perform_later(@task)
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
         redirect_to @task, success: 'Task was successfully updated.'
