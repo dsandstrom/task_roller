@@ -1188,6 +1188,13 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(current_user.tasks, :count).by(1)
               end
 
+              it "creates a new current_user TaskSubscription" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.to change(current_user.task_subscriptions, :count).by(1)
+              end
+
               it "enqueues a TaskSubscriptionsJob" do
                 post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
@@ -1456,9 +1463,12 @@ RSpec.describe TasksController, type: :controller do
 
         context "for html requests" do
           context "when their task" do
+            let!(:task) do
+              Fabricate(:task, project: project, user: current_user)
+            end
+
             context "with valid params" do
               it "updates the requested task's summary" do
-                task = Fabricate(:task, project: project, user: current_user)
                 expect do
                   put :update, params: { id: task.to_param,
                                          task: new_attributes }
@@ -1467,7 +1477,6 @@ RSpec.describe TasksController, type: :controller do
               end
 
               it "updates the requested task's status" do
-                task = Fabricate(:task, project: project, user: current_user)
                 Fabricate(:progression, task: task)
                 expect do
                   put :update, params: { id: task.to_param,
@@ -1477,7 +1486,6 @@ RSpec.describe TasksController, type: :controller do
               end
 
               it "redirects to the task" do
-                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
                 url = task_url(task)
@@ -1502,7 +1510,7 @@ RSpec.describe TasksController, type: :controller do
                   new_attributes.merge! assignee_ids: new_assignee_ids
                 end
 
-                it "generates a TaskAssigneesSubscriptionsJob" do
+                it "enqueues a TaskAssigneesSubscriptionsJob" do
                   put :update, params: { id: task.to_param,
                                          task: new_attributes }
 
@@ -1516,10 +1524,16 @@ RSpec.describe TasksController, type: :controller do
 
             context "with invalid params" do
               it "returns a success response ('edit' template)" do
-                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
                                        task: invalid_attributes }
                 expect(response).to be_successful
+              end
+
+              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+                put :update, params: { id: task.to_param,
+                                       task: invalid_attributes }
+
+                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
             end
           end
@@ -1551,6 +1565,14 @@ RSpec.describe TasksController, type: :controller do
               end.not_to change(task, :issue_id)
             end
 
+            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+              put :update, params: { id: task.to_param,
+                                     task: valid_attributes },
+                           as: :turbo_stream
+
+              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
+            end
+
             it "renders successfully" do
               put :update, params: { id: task.to_param,
                                      task: valid_turbo_attributes },
@@ -1572,6 +1594,14 @@ RSpec.describe TasksController, type: :controller do
                              as: :turbo_stream
                 task.reload
               end.not_to change(task, :issue_id)
+            end
+
+            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+              put :update, params: { id: task.to_param,
+                                     task: blank_turbo_attributes },
+                           as: :turbo_stream
+
+              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
             end
 
             it "renders successfully" do
@@ -1597,6 +1627,14 @@ RSpec.describe TasksController, type: :controller do
               end.not_to change(task, :issue_id)
             end
 
+            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+              put :update, params: { id: task.to_param,
+                                     task: invalid_attributes },
+                           as: :turbo_stream
+
+              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
+            end
+
             it "renders successfully" do
               put :update, params: { id: task.to_param,
                                      task: invalid_turbo_attributes },
@@ -1616,9 +1654,10 @@ RSpec.describe TasksController, type: :controller do
 
         context "for html requests" do
           context "when their task" do
+            let!(:task) { Fabricate(:task, project: project, user: current_user) }
+
             context "with valid params" do
               it "updates the requested task" do
-                task = Fabricate(:task, project: project, user: current_user)
                 expect do
                   put :update, params: { id: task.to_param,
                                          task: new_attributes }
@@ -1626,8 +1665,17 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(task, :summary).to("New Summary")
               end
 
+              it "enqueues a TaskAssigneesSubscriptionsJob" do
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+
+                expect(TaskAssigneesSubscriptionsJob)
+                  .to have_been_enqueued.exactly(:once)
+                expect(TaskAssigneesSubscriptionsJob)
+                  .to have_been_enqueued.with(task)
+              end
+
               it "redirects to the task" do
-                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
                 url = task_url(task)
@@ -1647,7 +1695,6 @@ RSpec.describe TasksController, type: :controller do
 
             context "with invalid params" do
               it "returns a success response ('edit' template)" do
-                task = Fabricate(:task, project: project, user: current_user)
                 put :update, params: { id: task.to_param,
                                        task: invalid_attributes }
                 expect(response).to be_successful
@@ -1656,19 +1703,22 @@ RSpec.describe TasksController, type: :controller do
           end
 
           context "when someone else's task" do
+            let!(:task) { Fabricate(:task, project: project) }
+
             it "doesn't update the requested task" do
-              task = Fabricate(:task, project: project)
               expect do
-                put :update, params: { id: task.to_param,
-                                       task: new_attributes }
+                put :update, params: { id: task.to_param, task: new_attributes }
                 task.reload
               end.not_to change(task, :summary)
             end
 
+            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+              put :update, params: { id: task.to_param, task: new_attributes }
+              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
+            end
+
             it "should be unauthorized" do
-              task = Fabricate(:task, project: project)
-              put :update, params: { id: task.to_param,
-                                     task: new_attributes }
+              put :update, params: { id: task.to_param, task: new_attributes }
               expect_to_be_unauthorized(response)
             end
           end
@@ -1691,6 +1741,14 @@ RSpec.describe TasksController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.not_to change(task, :issue_id)
+              end
+
+              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+                put :update, params: { id: task.to_param,
+                                       task: valid_turbo_attributes },
+                             as: :turbo_stream
+
+                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
 
               it "renders successfully" do
@@ -1727,6 +1785,14 @@ RSpec.describe TasksController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.not_to change(task, :issue_id)
+              end
+
+              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+                put :update, params: { id: task.to_param,
+                                       task: invalid_turbo_attributes },
+                             as: :turbo_stream
+
+                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
 
               it "renders successfully" do
@@ -1769,6 +1835,13 @@ RSpec.describe TasksController, type: :controller do
                                        task: new_attributes }
                 task.reload
               end.not_to change(task, :summary)
+            end
+
+            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
+              put :update, params: { id: task.to_param,
+                                     task: new_attributes }
+
+              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
             end
 
             it "should be unauthorized" do

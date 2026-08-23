@@ -17,12 +17,10 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
           Fabricate(:project_issues_subscription, project: project)
         end
 
-        it "generates TaskSubscriptionJob for the task user" do
+        it "doesn't generate any TaskSubscriptionJobs" do
           subject.perform_now task
 
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, task.user)
+          expect(TaskSubscriptionJob).not_to have_been_enqueued
         end
       end
 
@@ -37,9 +35,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         it "generates TaskSubscriptionJob for the task user" do
           subject.perform_now task
 
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:twice)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, task.user)
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
             .to have_been_enqueued.with(task, subscriber)
         end
@@ -56,9 +52,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         it "generates TaskSubscriptionJob for the task user" do
           subject.perform_now task
 
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:twice)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, task.user)
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
             .to have_been_enqueued.with(task, subscriber)
         end
@@ -77,9 +71,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         it "generates TaskSubscriptionJob for the task user" do
           subject.perform_now task
 
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:twice)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, task.user)
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
             .to have_been_enqueued.with(task, subscriber)
         end

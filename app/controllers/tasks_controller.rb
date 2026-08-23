@@ -121,6 +121,7 @@ class TasksController < ApplicationController
 
     def create_html
       if @task.save
+        @task.subscribe_user
         TaskSubscriptionsJob.perform_later(@task)
         TaskAssigneesSubscriptionsJob.perform_later(@task)
         @task.update_status(current_user)

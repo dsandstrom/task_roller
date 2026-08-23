@@ -6,8 +6,7 @@ class TaskSubscriptionsJob < ApplicationJob
   def perform(task)
     return unless task
 
-    subscribers = [task.user] |
-                  task.category.task_subscribers |
+    subscribers = task.category.task_subscribers |
                   task.project.task_subscribers
 
     subscribers.each do |u|
