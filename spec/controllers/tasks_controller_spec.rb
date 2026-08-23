@@ -1654,7 +1654,9 @@ RSpec.describe TasksController, type: :controller do
 
         context "for html requests" do
           context "when their task" do
-            let!(:task) { Fabricate(:task, project: project, user: current_user) }
+            let!(:task) do
+              Fabricate(:task, project: project, user: current_user)
+            end
 
             context "with valid params" do
               it "updates the requested task" do
