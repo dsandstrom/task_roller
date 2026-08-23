@@ -6,10 +6,6 @@ RSpec.describe TaskAssigneesSubscriptionsJob, type: :job do
   subject { described_class }
 
   describe "#perform" do
-    after do
-      clear_enqueued_jobs
-    end
-
     context "when given task" do
       context "without any assignees" do
         let(:task) { Fabricate(:task, assignees: []) }
