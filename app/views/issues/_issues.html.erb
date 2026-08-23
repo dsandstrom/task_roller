@@ -1,25 +1,5 @@
-<% if issues.any? || searching? %>
-  <%= render 'shared/page_links', collection: issues %>
-<% end %>
-
-<div class="columns">
-  <div class="first-column">
-    <% if issues.any? || searching? %>
-      <div class="issues">
-        <% issues.each do |issue|  %>
-          <%= turbo_frame_tag "turbo_issue_#{issue.id}" do %><%= render issue %><% end %>
-        <% end %>
-      </div>
-
-      <%= render 'shared/simple_page_links', collection: issues %>
-    <% else %>
-      <p class="no-issue">None yet</p>
-    <% end %>
-  </div>
-
-  <div class="second-column">
-    <% if issues.any? || searching? %>
-      <%= render 'issues/filter_form', issues: issues %>
-    <% end %>
-  </div>
+<div class="issues">
+  <% issues.each do |issue|  %>
+    <%= turbo_frame_tag "turbo_issue_#{issue.id}" do %><%= render issue %><% end %>
+  <% end %>
 </div>

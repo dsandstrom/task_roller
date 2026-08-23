@@ -15,9 +15,7 @@
                       class: 'button button-clear' %>
         </p>
       </header>
-      <div class="tasks">
-        <%= render @active_assignments %>
-      </div>
+      <%= render 'tasks/tasks', tasks: @active_assignments %>
     </div>
   <% end %>
 
@@ -31,9 +29,7 @@
                       class: 'button button-clear' %>
         </p>
       </header>
-      <div class="tasks">
-        <%= render @open_tasks %>
-      </div>
+      <%= render 'tasks/tasks', tasks: @open_tasks %>
     </div>
   <% end %>
 
@@ -47,9 +43,7 @@
                       class: 'button button-clear' %>
         </p>
       </header>
-      <div class="issues">
-        <%= render @unresolved_issues %>
-      </div>
+      <%= render 'issues/issues', issues: @unresolved_issues %>
     </div>
   <% end %>
 </div>
