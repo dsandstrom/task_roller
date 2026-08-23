@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe IssuesController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue_type) { Fabricate(:issue_type) }
@@ -1409,10 +1411,16 @@ RSpec.describe IssuesController, type: :controller do
               expect(issue.status).to eq("pending")
             end
 
-            it "creates a new IssueSubscription" do
+            it "creates a new IssueSubscription for the current_user" do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
+            it "enqueues a IssueSubscriptionsJob" do
+              post :create, params: { issue: valid_attributes }
+
+              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
             end
 
             it "redirects to the created issue" do
@@ -1429,22 +1437,11 @@ RSpec.describe IssuesController, type: :controller do
                                                          category: category)
               end
 
-              it "creates a new IssueSubscription" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to change(user.issue_subscriptions, :count).by(1)
-              end
+              it "enqueues a IssueSubscriptionsJob" do
+                post :create, params: { issue: valid_attributes }
 
-              it "sends email to subscribers" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to(have_enqueued_job.with do |mailer, action, time, options|
-                  expect(mailer).to eq("IssueMailer")
-                  expect(action).to eq("new")
-                  expect(time).to eq("deliver_now")
-                  expect(options)
-                    .to eq(args: [], params: { issue: Issue.last, user: user })
-                end)
+                expect(IssueSubscriptionsJob)
+                  .to have_been_enqueued.exactly(:once)
               end
             end
 
@@ -1456,10 +1453,11 @@ RSpec.describe IssuesController, type: :controller do
                                                         project: project)
               end
 
-              it "creates a new IssueSubscription" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to change(user.issue_subscriptions, :count).by(1)
+              it "enqueues a IssueSubscriptionsJob" do
+                post :create, params: { issue: valid_attributes }
+
+                expect(IssueSubscriptionsJob)
+                  .to have_been_enqueued.exactly(:once)
               end
             end
           end
@@ -1490,6 +1488,12 @@ RSpec.describe IssuesController, type: :controller do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(current_user.issues, :count).by(1)
+            end
+
+            it "creates a new IssueSubscription for the current_user" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
             it "redirects to the created issue" do
@@ -1543,10 +1547,16 @@ RSpec.describe IssuesController, type: :controller do
             expect(issue.status).to eq("pending")
           end
 
-          it "creates a new IssueSubscription" do
+          it "creates a new IssueSubscription for the current_user" do
             expect do
               post :create, params: { issue: valid_attributes }
             end.to change(current_user.issue_subscriptions, :count).by(1)
+          end
+
+          it "enqueues a IssueSubscriptionsJob" do
+            post :create, params: { issue: valid_attributes }
+
+            expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
           end
 
           it "redirects to the created issue" do
@@ -1563,22 +1573,10 @@ RSpec.describe IssuesController, type: :controller do
                                                        category: category)
             end
 
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to change(user.issue_subscriptions, :count).by(1)
-            end
+            it "enqueues a IssueSubscriptionsJob" do
+              post :create, params: { issue: valid_attributes }
 
-            it "sends email to subscribers" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to(have_enqueued_job.with do |mailer, action, time, options|
-                expect(mailer).to eq("IssueMailer")
-                expect(action).to eq("new")
-                expect(time).to eq("deliver_now")
-                expect(options)
-                  .to eq(args: [], params: { issue: Issue.last, user: user })
-              end)
+              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
             end
           end
 
@@ -1590,10 +1588,10 @@ RSpec.describe IssuesController, type: :controller do
                                                       project: project)
             end
 
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to change(user.issue_subscriptions, :count).by(1)
+            it "enqueues a IssueSubscriptionsJob" do
+              post :create, params: { issue: valid_attributes }
+
+              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
             end
           end
         end

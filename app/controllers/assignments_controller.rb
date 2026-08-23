@@ -56,7 +56,7 @@ class AssignmentsController < ApplicationController
 
     def update_task_status
       @task.update_status
-      @task.subscribe_assignees
+      TaskAssigneesSubscriptionsJob.perform_later(@task)
     end
 
     def update_notice

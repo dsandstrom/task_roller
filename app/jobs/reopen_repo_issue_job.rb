@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ReopenRepoIssueJob < RepoIssueJob
   def perform(*)
     super
