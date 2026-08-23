@@ -24,8 +24,6 @@ class RadioButtons {
     this.labels = [];
 
     for (var label of elem.querySelectorAll('label')) {
-      if (label.classList.contains(radioButtonLabelClass)) continue;
-
       this.labels.push(new RadioButtonLabel(label));
     }
     if (!this.labels.length) return;
