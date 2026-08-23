@@ -36,7 +36,7 @@ class IssuesController < ApplicationController
 
   def create
     if @issue.save
-      @issue.subscribe_users
+      IssueSubscriptionsJob.perform_later(@issue)
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully created.'
     else
