@@ -1411,6 +1411,12 @@ RSpec.describe IssuesController, type: :controller do
               expect(issue.status).to eq("pending")
             end
 
+            it "creates a new IssueSubscription for the current_user" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
             it "enqueues a IssueSubscriptionsJob" do
               post :create, params: { issue: valid_attributes }
 
@@ -1484,6 +1490,12 @@ RSpec.describe IssuesController, type: :controller do
               end.to change(current_user.issues, :count).by(1)
             end
 
+            it "creates a new IssueSubscription for the current_user" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(current_user.issue_subscriptions, :count).by(1)
+            end
+
             it "redirects to the created issue" do
               post :create, params: { issue: valid_attributes }
               url = issue_path(Issue.last)
@@ -1533,6 +1545,12 @@ RSpec.describe IssuesController, type: :controller do
             issue = Issue.last
             expect(issue).not_to be_nil
             expect(issue.status).to eq("pending")
+          end
+
+          it "creates a new IssueSubscription for the current_user" do
+            expect do
+              post :create, params: { issue: valid_attributes }
+            end.to change(current_user.issue_subscriptions, :count).by(1)
           end
 
           it "enqueues a IssueSubscriptionsJob" do

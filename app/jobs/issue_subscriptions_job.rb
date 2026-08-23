@@ -6,8 +6,7 @@ class IssueSubscriptionsJob < ApplicationJob
   def perform(issue)
     return unless issue
 
-    subscribers = [issue.user] |
-                  issue.category.issue_subscribers |
+    subscribers = issue.category.issue_subscribers |
                   issue.project.issue_subscribers
 
     subscribers.each do |u|
