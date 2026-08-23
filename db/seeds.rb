@@ -76,7 +76,7 @@ class Seeds
                            summary: Faker::Company.catch_phrase,
                            description: issue_description)
       issue = Issue.create!(attrs)
-      IssueSubscriptionsJob.perform_later
+      IssueSubscriptionsJob.perform_later(issue)
       issue.reload.update_status
       issue
     end
@@ -458,7 +458,7 @@ class Seeds
     end
 
     def update_task_status(task)
-      TaskSubscriptionsJob.perform_later
+      TaskSubscriptionsJob.perform_later(task)
       task.reload.update_status
       task.issue&.reload&.update_status
     end
