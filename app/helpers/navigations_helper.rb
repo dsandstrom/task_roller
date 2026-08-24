@@ -1,9 +1,8 @@
-# frozen_string_literal: true
-
 module NavigationsHelper
-  def root_nav
-    links = [['Subscriptions', subscriptions_path], ['Categories', root_path]]
-    links << ['App Setup', issue_types_path] if can?(:read, IssueType)
+  def app_setup_nav
+    return unless can?(:read, IssueType)
+
+    links = [['Issue & Task Types', issue_types_path]]
 
     content_tag :p, class: 'page-nav user-nav' do
       safe_join(navitize(links))

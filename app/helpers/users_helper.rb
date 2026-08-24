@@ -166,10 +166,13 @@ module UsersHelper
     end
 
     def user_dropdown_links(user)
-      [['My Dashboard', user_path(user)],
-       ['Account Settings', edit_user_path(user)],
-       ['All Users', users_path],
-       ['Subscriptions', subscriptions_path]]
+      links =
+        [['My Dashboard', user_path(user)],
+         ['Account Settings', edit_user_path(user)],
+         ['All Users', users_path],
+         ['Subscriptions', subscriptions_path]]
+      links << ['App Setup', issue_types_path] if can?(:read, IssueType)
+      links
     end
 
     def users_nav_links(show_unemployed)
