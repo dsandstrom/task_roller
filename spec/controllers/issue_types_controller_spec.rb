@@ -101,7 +101,7 @@ RSpec.describe IssueTypesController, type: :controller do
         end
 
         context "with invalid params" do
-          it "returns a success response (i.e. to display the 'new' template)" do
+          it "returns a success response" do
             post :create, params: { issue_type: invalid_attributes }
             expect(response).to be_successful
           end
@@ -147,7 +147,7 @@ RSpec.describe IssueTypesController, type: :controller do
         end
 
         context "with invalid params" do
-          it "returns a success response (i.e. to display the 'edit' template)" do
+          it "returns a success response" do
             issue_type = Fabricate(:issue_type)
             put :update, params: { id: issue_type.to_param,
                                    issue_type: invalid_attributes }

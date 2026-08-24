@@ -42,6 +42,10 @@ module ApplicationHelper
     safe_join([' ', divider, ' '])
   end
 
+  def break_up(long_word, line_size = 20)
+    long_word.scan(/([^\s]{1,#{line_size}})/).flatten.join(' ')
+  end
+
   private
 
     def enable_page_title(title)
