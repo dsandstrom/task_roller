@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module FormsHelper
   def form_errors(obj)
     return if obj.errors.none?
@@ -14,6 +12,13 @@ module FormsHelper
   def field_label_and_message(form, field_name, message, label_value = nil)
     content_tag :div, class: 'field-label-and-message' do
       concat form.label(field_name, label_value)
+      concat content_tag :span, message, class: 'field-message'
+    end
+  end
+
+  def field_label_and_message_tag(field_name, message, label_value = nil)
+    content_tag :div, class: 'field-label-and-message' do
+      concat label_tag(field_name, label_value)
       concat content_tag :span, message, class: 'field-message'
     end
   end

@@ -3,12 +3,13 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= form.label :project_id %>
     <% if project_options&.any? %>
+      <%= form.label :project_id %>
       <%= form.select :project_id,
                       grouped_options_for_select(project_options, issue.project_id),
                       {}, id: :issue_project_id %>
     <% else %>
+      <%= field_label_and_message form, :project_id, 'Locked' %>
       <%= form.text_field :project_id, value: issue.project&.name, disabled: true %>
     <% end %>
   </div>

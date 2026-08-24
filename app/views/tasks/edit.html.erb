@@ -2,6 +2,11 @@
 
 <h2>Edit Task</h2>
 
+<div class="field">
+  <%= field_label_and_message_tag :task_project_id, 'Locked', 'Project' %>
+  <%= text_field_tag :task_project_id, @task.project&.name, disabled: true %>
+</div>
+
 <%= render 'form', task: @task, task_types: @task_types,
                    url: task_path(@task),
                    user_options: @user_options,
