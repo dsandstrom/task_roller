@@ -1,0 +1,15 @@
+<%= content_for :header do %>
+  <h1>Task Type Migrator</h1>
+  <%= app_setup_nav %>
+<% end %>
+
+<%= content_tag :h2, "#{@task_type.name} tasks" %>
+
+<% if @task_types.any? %>
+  <%= render 'form', task_type: @task_type,
+                     task_types: @task_types %>
+<% else %>
+  <p>Add another task type first</p>
+<% end %>
+
+<p><%= link_to 'Back', :back %></p>

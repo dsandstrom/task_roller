@@ -98,6 +98,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   post '/issue_types/:issue_type_id/migration' =>
     'issue_type_migrations#create',
        as: :issue_type_migrations
+  get '/task_types/:task_type_id/migration' => 'task_type_migrations#new',
+      as: :new_task_type_migration
+  post '/task_types/:task_type_id/migration' => 'task_type_migrations#create',
+       as: :task_type_migrations
 
   get 'search' => 'searches#new', as: :search
   get 'search/results' => 'searches#index', as: :search_results

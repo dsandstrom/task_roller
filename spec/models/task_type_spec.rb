@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskType, type: :model do
@@ -96,6 +94,28 @@ RSpec.describe TaskType, type: :model do
         _third = Fabricate(:task_type)
 
         expect(first.reposition("something else")).to be_falsy
+      end
+    end
+  end
+
+  describe "#any_tasks?" do
+    context "when TaskType has no tasks" do
+      let(:task_type) { Fabricate(:task_type) }
+
+      before { Fabricate(:task) }
+
+      it "returns false" do
+        expect(task_type.any_tasks?).to eq(false)
+      end
+    end
+
+    context "when TaskType has an task" do
+      let(:task_type) { Fabricate(:task_type) }
+
+      before { Fabricate(:task, task_type: task_type) }
+
+      it "returns true" do
+        expect(task_type.any_tasks?).to eq(true)
       end
     end
   end
