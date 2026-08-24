@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 require "cancan/matchers"
 
@@ -5556,7 +5554,19 @@ RSpec.describe Ability do
       end
     end
 
-    %i[reviewer worker reporter].each do |employee_type|
+    %i[reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        subject(:ability) { Ability.new(current_user) }
+
+        it { is_expected.to be_able_to(:create, task_type) }
+        it { is_expected.to be_able_to(:read, task_type) }
+        it { is_expected.to be_able_to(:update, task_type) }
+        it { is_expected.not_to be_able_to(:destroy, task_type) }
+      end
+    end
+
+    %i[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         subject(:ability) { Ability.new(current_user) }
