@@ -26,6 +26,28 @@ RSpec.describe "issue_types/index", type: :view do
       assert_select "#task-type-#{second_task_type.id}", count: 1
     end
 
+    it "renders sorting links" do
+      render
+
+      expect(rendered).to have_link(
+        nil,
+        href: reposition_issue_type_path(first_issue_type, sort: 'down')
+      )
+      expect(rendered).to have_link(
+        nil,
+        href: reposition_issue_type_path(second_issue_type, sort: 'up')
+      )
+
+      expect(rendered).to have_link(
+        nil,
+        href: reposition_task_type_path(first_task_type, sort: 'down')
+      )
+      expect(rendered).to have_link(
+        nil,
+        href: reposition_task_type_path(second_task_type, sort: 'up')
+      )
+    end
+
     it "renders new type links" do
       render
 
