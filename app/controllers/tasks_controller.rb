@@ -121,7 +121,7 @@ class TasksController < ApplicationController
 
     def create_html
       if @task.save
-        subscribe_users
+        @task.subscribe_users
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
         redirect_to @task, success: 'Task was successfully added.'
@@ -139,7 +139,7 @@ class TasksController < ApplicationController
 
     def update_html
       if @task.update(task_params)
-        TaskAssigneesSubscriptionsJob.perform_later(@task)
+        @task.subscribe_assignees
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
         redirect_to @task, success: 'Task was successfully updated.'
@@ -147,11 +147,5 @@ class TasksController < ApplicationController
         set_form_options
         render :edit
       end
-    end
-
-    def subscribe_users
-      @task.subscribe_user
-      TaskSubscriptionsJob.perform_later(@task)
-      TaskAssigneesSubscriptionsJob.perform_later(@task)
     end
 end
