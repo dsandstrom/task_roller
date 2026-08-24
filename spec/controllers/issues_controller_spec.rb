@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe IssuesController, type: :controller do
-  include ActiveJob::TestHelper
-
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue_type) { Fabricate(:issue_type) }
@@ -1056,80 +1054,10 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "GET #new" do
-    %w[admin reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
-        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
+    context "for an admin" do
+      before { sign_in(admin) }
 
-        context "when IssueType and Project" do
-          before { Fabricate(:issue_type) }
-
-          context "and project_id param" do
-            it "returns a success response" do
-              get :new, params: { project_id: project.to_param }
-              expect(response).to be_successful
-            end
-          end
-
-          context "and no params" do
-            before { Fabricate(:project) }
-
-            it "returns a success response" do
-              get :new
-              expect(response).to be_successful
-            end
-          end
-        end
-
-        context "when no IssueTypes" do
-          before { Fabricate(:project) }
-
-          it "redirects to issue_types_url" do
-            get :new
-            expect(response).to redirect_to(issue_types_url)
-          end
-        end
-
-        context "when internal Project" do
-          before do
-            Fabricate(:issue_type)
-            Fabricate(:internal_project)
-          end
-
-          it "returns a success response" do
-            get :new
-            expect(response).to be_successful
-          end
-        end
-
-        context "when no Projects" do
-          before { Fabricate(:issue_type) }
-
-          it "redirects to root_url" do
-            get :new
-            expect(response).to redirect_to(root_url)
-          end
-        end
-
-        context "when no visible Projects" do
-          before do
-            Fabricate(:issue_type)
-            Fabricate(:invisible_project)
-          end
-
-          it "redirects to root_url" do
-            get :new
-            expect(response).to redirect_to(root_url)
-          end
-        end
-      end
-    end
-
-    context "for a worker" do
-      let(:worker) { Fabricate(:user_worker) }
-
-      before { sign_in(worker) }
-
-      context "when an IssueType and Project" do
+      context "when IssueType and Project" do
         before { Fabricate(:issue_type) }
 
         context "and project_id param" do
@@ -1149,6 +1077,15 @@ RSpec.describe IssuesController, type: :controller do
         end
       end
 
+      context "when no IssueTypes" do
+        before { Fabricate(:project) }
+
+        it "redirects to issue_types_url" do
+          get :new
+          expect(response).to redirect_to(issue_types_url)
+        end
+      end
+
       context "when internal Project" do
         before do
           Fabricate(:issue_type)
@@ -1161,19 +1098,10 @@ RSpec.describe IssuesController, type: :controller do
         end
       end
 
-      context "when no IssueTypes" do
-        before { Fabricate(:project) }
-
-        it "redirects to root" do
-          get :new
-          expect(response).to redirect_to(root_url)
-        end
-      end
-
       context "when no Projects" do
         before { Fabricate(:issue_type) }
 
-        it "redirects to root" do
+        it "redirects to root_url" do
           get :new
           expect(response).to redirect_to(root_url)
         end
@@ -1185,9 +1113,77 @@ RSpec.describe IssuesController, type: :controller do
           Fabricate(:invisible_project)
         end
 
-        it "redirects to root" do
+        it "redirects to root_url" do
           get :new
           expect(response).to redirect_to(root_url)
+        end
+      end
+    end
+
+    %w[reviewer worker].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
+
+        context "when an IssueType and Project" do
+          before { Fabricate(:issue_type) }
+
+          context "and project_id param" do
+            it "returns a success response" do
+              get :new, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "and no params" do
+            before { Fabricate(:project) }
+
+            it "returns a success response" do
+              get :new
+              expect(response).to be_successful
+            end
+          end
+        end
+
+        context "when internal Project" do
+          before do
+            Fabricate(:issue_type)
+            Fabricate(:internal_project)
+          end
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no IssueTypes" do
+          before { Fabricate(:project) }
+
+          it "redirects to root" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when no Projects" do
+          before { Fabricate(:issue_type) }
+
+          it "redirects to root" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when no visible Projects" do
+          before do
+            Fabricate(:issue_type)
+            Fabricate(:invisible_project)
+          end
+
+          it "redirects to root" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
         end
       end
     end
@@ -1413,16 +1409,10 @@ RSpec.describe IssuesController, type: :controller do
               expect(issue.status).to eq("pending")
             end
 
-            it "creates a new IssueSubscription for the current_user" do
+            it "creates a new IssueSubscription" do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(current_user.issue_subscriptions, :count).by(1)
-            end
-
-            it "enqueues a IssueSubscriptionsJob" do
-              post :create, params: { issue: valid_attributes }
-
-              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
             end
 
             it "redirects to the created issue" do
@@ -1439,11 +1429,22 @@ RSpec.describe IssuesController, type: :controller do
                                                          category: category)
               end
 
-              it "enqueues a IssueSubscriptionsJob" do
-                post :create, params: { issue: valid_attributes }
+              it "creates a new IssueSubscription" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to change(user.issue_subscriptions, :count).by(1)
+              end
 
-                expect(IssueSubscriptionsJob)
-                  .to have_been_enqueued.exactly(:once)
+              it "sends email to subscribers" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to(have_enqueued_job.with do |mailer, action, time, options|
+                  expect(mailer).to eq("IssueMailer")
+                  expect(action).to eq("new")
+                  expect(time).to eq("deliver_now")
+                  expect(options)
+                    .to eq(args: [], params: { issue: Issue.last, user: user })
+                end)
               end
             end
 
@@ -1455,11 +1456,10 @@ RSpec.describe IssuesController, type: :controller do
                                                         project: project)
               end
 
-              it "enqueues a IssueSubscriptionsJob" do
-                post :create, params: { issue: valid_attributes }
-
-                expect(IssueSubscriptionsJob)
-                  .to have_been_enqueued.exactly(:once)
+              it "creates a new IssueSubscription" do
+                expect do
+                  post :create, params: { issue: valid_attributes }
+                end.to change(user.issue_subscriptions, :count).by(1)
               end
             end
           end
@@ -1490,12 +1490,6 @@ RSpec.describe IssuesController, type: :controller do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(current_user.issues, :count).by(1)
-            end
-
-            it "creates a new IssueSubscription for the current_user" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
             it "redirects to the created issue" do
@@ -1549,16 +1543,10 @@ RSpec.describe IssuesController, type: :controller do
             expect(issue.status).to eq("pending")
           end
 
-          it "creates a new IssueSubscription for the current_user" do
+          it "creates a new IssueSubscription" do
             expect do
               post :create, params: { issue: valid_attributes }
             end.to change(current_user.issue_subscriptions, :count).by(1)
-          end
-
-          it "enqueues a IssueSubscriptionsJob" do
-            post :create, params: { issue: valid_attributes }
-
-            expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
           end
 
           it "redirects to the created issue" do
@@ -1575,10 +1563,22 @@ RSpec.describe IssuesController, type: :controller do
                                                        category: category)
             end
 
-            it "enqueues a IssueSubscriptionsJob" do
-              post :create, params: { issue: valid_attributes }
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(user.issue_subscriptions, :count).by(1)
+            end
 
-              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
+            it "sends email to subscribers" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to(have_enqueued_job.with do |mailer, action, time, options|
+                expect(mailer).to eq("IssueMailer")
+                expect(action).to eq("new")
+                expect(time).to eq("deliver_now")
+                expect(options)
+                  .to eq(args: [], params: { issue: Issue.last, user: user })
+              end)
             end
           end
 
@@ -1590,10 +1590,10 @@ RSpec.describe IssuesController, type: :controller do
                                                       project: project)
             end
 
-            it "enqueues a IssueSubscriptionsJob" do
-              post :create, params: { issue: valid_attributes }
-
-              expect(IssueSubscriptionsJob).to have_been_enqueued.exactly(:once)
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { issue: valid_attributes }
+              end.to change(user.issue_subscriptions, :count).by(1)
             end
           end
         end
