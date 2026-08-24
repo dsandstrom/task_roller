@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe TasksController, type: :controller do
-  include ActiveJob::TestHelper
-
   let(:task_type) { Fabricate(:task_type) }
   let(:user) { Fabricate(:user_reporter) }
   let(:category) { Fabricate(:category) }
@@ -1161,22 +1159,6 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(current_user.task_subscriptions, :count).by(1)
               end
 
-              it "enqueues a TaskSubscriptionsJob" do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-
-                expect(TaskSubscriptionsJob)
-                  .to have_been_enqueued.exactly(:once)
-              end
-
-              it "enqueues a TaskAssigneesSubscriptionsJob" do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-
-                expect(TaskAssigneesSubscriptionsJob)
-                  .to have_been_enqueued.exactly(:once)
-              end
-
               it "redirects to the created task" do
                 post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
@@ -1190,20 +1172,36 @@ RSpec.describe TasksController, type: :controller do
                   valid_attributes.merge! assignee_ids: [worker.id]
                 end
 
-                it "enqueues a TaskSubscriptionsJob" do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-
-                  expect(TaskSubscriptionsJob)
-                    .to have_been_enqueued.exactly(:once)
+                it "creates 2 TaskSubscriptions" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to change(TaskSubscription, :count).by(2)
                 end
 
-                it "enqueues a TaskAssigneesSubscriptionsJob" do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
+                it "sends email to subscribers" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to(
+                    have_enqueued_job.with do |mailer, action, time, options|
+                      expect(mailer).to eq("TaskMailer")
+                      expect(action).to eq("new")
+                      expect(time).to eq("deliver_now")
+                      expect(options)
+                        .to eq(
+                          args: [],
+                          params: { task: Task.last, user: worker }
+                        )
+                    end
+                  )
+                end
 
-                  expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.exactly(:once)
+                it "creates a new worker TaskSubscription" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to change(worker.task_subscriptions, :count).by(1)
                 end
               end
 
@@ -1295,20 +1293,11 @@ RSpec.describe TasksController, type: :controller do
                                                       category: category)
             end
 
-            it "enqueues a TaskSubscriptionsJob" do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-
-              expect(TaskSubscriptionsJob)
-                .to have_been_enqueued.exactly(:once)
-            end
-
-            it "enqueues a TaskAssigneesSubscriptionsJob" do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-
-              expect(TaskAssigneesSubscriptionsJob)
-                .to have_been_enqueued.exactly(:once)
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(user.task_subscriptions, :count).by(1)
             end
           end
 
@@ -1320,20 +1309,11 @@ RSpec.describe TasksController, type: :controller do
                                                      project: project)
             end
 
-            it "enqueues a TaskSubscriptionsJob" do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-
-              expect(TaskSubscriptionsJob)
-                .to have_been_enqueued.exactly(:once)
-            end
-
-            it "enqueues a TaskAssigneesSubscriptionsJob" do
-              post :create, params: { project_id: project.to_param,
-                                      task: valid_attributes }
-
-              expect(TaskAssigneesSubscriptionsJob)
-                .to have_been_enqueued.exactly(:once)
+            it "creates a new IssueSubscription" do
+              expect do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end.to change(user.task_subscriptions, :count).by(1)
             end
           end
         end
@@ -1476,14 +1456,34 @@ RSpec.describe TasksController, type: :controller do
                   new_attributes.merge! assignee_ids: new_assignee_ids
                 end
 
-                it "enqueues a TaskAssigneesSubscriptionsJob" do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
+                it "creates 1 TaskSubscriptions" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.to change(TaskSubscription, :count).by(1)
+                end
 
-                  expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.exactly(:once)
-                  expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.with(task)
+                it "creates a new worker TaskSubscription" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.to change(worker.task_subscriptions, :count).by(1)
+                end
+
+                it "doesn't change reassigned worker TaskSubscription" do
+                  task
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.not_to change(reassigned.task_subscriptions, :count)
+                end
+
+                it "doesn't change stay_assigned worker TaskSubscription" do
+                  task
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                  end.not_to change(stay_assigned.task_subscriptions, :count)
                 end
               end
             end
@@ -1493,13 +1493,6 @@ RSpec.describe TasksController, type: :controller do
                 put :update, params: { id: task.to_param,
                                        task: invalid_attributes }
                 expect(response).to be_successful
-              end
-
-              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-                put :update, params: { id: task.to_param,
-                                       task: invalid_attributes }
-
-                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
             end
           end
@@ -1531,14 +1524,6 @@ RSpec.describe TasksController, type: :controller do
               end.not_to change(task, :issue_id)
             end
 
-            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-              put :update, params: { id: task.to_param,
-                                     task: valid_attributes },
-                           as: :turbo_stream
-
-              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
-            end
-
             it "renders successfully" do
               put :update, params: { id: task.to_param,
                                      task: valid_turbo_attributes },
@@ -1562,14 +1547,6 @@ RSpec.describe TasksController, type: :controller do
               end.not_to change(task, :issue_id)
             end
 
-            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-              put :update, params: { id: task.to_param,
-                                     task: blank_turbo_attributes },
-                           as: :turbo_stream
-
-              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
-            end
-
             it "renders successfully" do
               put :update, params: { id: task.to_param,
                                      task: blank_turbo_attributes },
@@ -1591,14 +1568,6 @@ RSpec.describe TasksController, type: :controller do
                              as: :turbo_stream
                 task.reload
               end.not_to change(task, :issue_id)
-            end
-
-            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-              put :update, params: { id: task.to_param,
-                                     task: invalid_attributes },
-                           as: :turbo_stream
-
-              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
             end
 
             it "renders successfully" do
@@ -1633,16 +1602,6 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(task, :summary).to("New Summary")
               end
 
-              it "enqueues a TaskAssigneesSubscriptionsJob" do
-                put :update, params: { id: task.to_param,
-                                       task: new_attributes }
-
-                expect(TaskAssigneesSubscriptionsJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskAssigneesSubscriptionsJob)
-                  .to have_been_enqueued.with(task)
-              end
-
               it "redirects to the task" do
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
@@ -1671,22 +1630,19 @@ RSpec.describe TasksController, type: :controller do
           end
 
           context "when someone else's task" do
-            let!(:task) { Fabricate(:task, project: project) }
-
             it "doesn't update the requested task" do
+              task = Fabricate(:task, project: project)
               expect do
-                put :update, params: { id: task.to_param, task: new_attributes }
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
                 task.reload
               end.not_to change(task, :summary)
             end
 
-            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-              put :update, params: { id: task.to_param, task: new_attributes }
-              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
-            end
-
             it "should be unauthorized" do
-              put :update, params: { id: task.to_param, task: new_attributes }
+              task = Fabricate(:task, project: project)
+              put :update, params: { id: task.to_param,
+                                     task: new_attributes }
               expect_to_be_unauthorized(response)
             end
           end
@@ -1709,14 +1665,6 @@ RSpec.describe TasksController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.not_to change(task, :issue_id)
-              end
-
-              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-                put :update, params: { id: task.to_param,
-                                       task: valid_turbo_attributes },
-                             as: :turbo_stream
-
-                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
 
               it "renders successfully" do
@@ -1753,14 +1701,6 @@ RSpec.describe TasksController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.not_to change(task, :issue_id)
-              end
-
-              it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-                put :update, params: { id: task.to_param,
-                                       task: invalid_turbo_attributes },
-                             as: :turbo_stream
-
-                expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
               end
 
               it "renders successfully" do
@@ -1803,13 +1743,6 @@ RSpec.describe TasksController, type: :controller do
                                        task: new_attributes }
                 task.reload
               end.not_to change(task, :summary)
-            end
-
-            it "doesn't enqueue any TaskAssigneesSubscriptionsJobs" do
-              put :update, params: { id: task.to_param,
-                                     task: new_attributes }
-
-              expect(TaskAssigneesSubscriptionsJob).not_to have_been_enqueued
             end
 
             it "should be unauthorized" do

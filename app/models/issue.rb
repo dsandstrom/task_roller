@@ -224,6 +224,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue_subscriptions.create(user_id: subscriber.id)
   end
 
+  def subscribe_users
+    subscribe_user
+    category.issue_subscribers.each { |u| subscribe_user(u) }
+    project.issue_subscribers.each { |u| subscribe_user(u) }
+  end
+
   def approved_tasks
     @approved_tasks ||= tasks.all_approved
   end
