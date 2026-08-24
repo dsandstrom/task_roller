@@ -34,15 +34,19 @@ Add and customize issue and task types below:
             <% end %>
           <% end %>
         </p>
-      <% end %>
-
-      <% if can?(:destroy, issue_type) %>
-        <p>
-          <%= link_to 'Remove', issue_type,
-                      method: :delete, class: 'link-warning',
-                      data: { turbo_method: :delete,
-                              turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
-        </p>
+        <% if issue_type.any_issues? %>
+          <p>
+            <%= link_to 'Migrate issues',
+                        new_issue_type_migration_path(issue_type) %>
+          </p>
+        <% elsif can?(:destroy, issue_type) %>
+          <p>
+            <%= link_to 'Remove', issue_type,
+                        method: :delete, class: 'destroy-link',
+                        data: { turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
+          </p>
+        <% end %>
       <% end %>
     </div>
   <% end %>

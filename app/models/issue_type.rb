@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueType < ApplicationRecord
   ICON_OPTIONS = IconFileReader.new.options.freeze
   COLOR_OPTIONS = %w[default blue brown green purple red yellow].freeze
@@ -23,5 +21,9 @@ class IssueType < ApplicationRecord
     end
 
     false
+  end
+
+  def any_issues?
+    Issue.where(issue_type: self).any?
   end
 end
