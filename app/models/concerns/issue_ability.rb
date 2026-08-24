@@ -30,6 +30,8 @@ class IssueAbility < BaseAbility
     end
 
     def activate_reviewer
+      ability.can %i[read create update], IssueType
+
       activate_visible_abilities
       activate_visible_read_abilities
       activate_visible_review_abilities

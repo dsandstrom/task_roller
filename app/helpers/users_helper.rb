@@ -45,10 +45,6 @@ module UsersHelper
     end
   end
 
-  def break_up(long_word, line_size = 20)
-    long_word.scan(/([^\s]{1,#{line_size}})/).flatten.join(' ')
-  end
-
   def break_up_name(name)
     break_up(name, 18)
   end
@@ -166,10 +162,13 @@ module UsersHelper
     end
 
     def user_dropdown_links(user)
-      [['My Dashboard', user_path(user)],
-       ['Account Settings', edit_user_path(user)],
-       ['All Users', users_path],
-       ['Subscriptions', subscriptions_path]]
+      links =
+        [['My Dashboard', user_path(user)],
+         ['Account Settings', edit_user_path(user)],
+         ['All Users', users_path],
+         ['Subscriptions', subscriptions_path]]
+      links << ['App Setup', issue_types_path] if can?(:read, IssueType)
+      links
     end
 
     def users_nav_links(show_unemployed)

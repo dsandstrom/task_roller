@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe RepositionIssueTypesController, type: :controller do
@@ -9,47 +7,49 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
   describe "PUT #update" do
     before { Fabricate(:issue_type) }
 
-    context "for an admin" do
-      before { sign_in(Fabricate(:user_admin)) }
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { sign_in(Fabricate("user_#{employee_type}")) }
 
-      context "with valid params" do
-        it "updates the requested issue_type's position" do
-          issue_type = Fabricate(:issue_type)
-          expect do
+        context "with valid params" do
+          it "updates the requested issue_type's position" do
+            issue_type = Fabricate(:issue_type)
+            expect do
+              put :update, params: { id: issue_type.to_param,
+                                     sort: valid_attributes }
+              issue_type.reload
+            end.to change(issue_type, :position).from(2).to(1)
+          end
+
+          it "redirects to the issue_type list" do
+            issue_type = Fabricate(:issue_type)
             put :update, params: { id: issue_type.to_param,
                                    sort: valid_attributes }
-            issue_type.reload
-          end.to change(issue_type, :position).from(2).to(1)
+            expect(response).to redirect_to(issue_types_url)
+          end
         end
 
-        it "redirects to the issue_type list" do
-          issue_type = Fabricate(:issue_type)
-          put :update, params: { id: issue_type.to_param,
-                                 sort: valid_attributes }
-          expect(response).to redirect_to(issue_types_url)
-        end
-      end
+        context "with invalid params" do
+          it "doesn't update the requested issue_type" do
+            issue_type = Fabricate(:issue_type)
+            expect do
+              put :update, params: { id: issue_type.to_param,
+                                     sort: invalid_attributes }
+              issue_type.reload
+            end.not_to change(issue_type, :position)
+          end
 
-      context "with invalid params" do
-        it "doesn't update the requested issue_type" do
-          issue_type = Fabricate(:issue_type)
-          expect do
+          it "redirects to the issue_type list" do
+            issue_type = Fabricate(:issue_type)
             put :update, params: { id: issue_type.to_param,
                                    sort: invalid_attributes }
-            issue_type.reload
-          end.not_to change(issue_type, :position)
-        end
-
-        it "redirects to the issue_type list" do
-          issue_type = Fabricate(:issue_type)
-          put :update, params: { id: issue_type.to_param,
-                                 sort: invalid_attributes }
-          expect(response).to redirect_to(issue_types_url)
+            expect(response).to redirect_to(issue_types_url)
+          end
         end
       end
     end
 
-    %w[reviewer worker reporter].each do |employee_type|
+    %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type}")) }
 

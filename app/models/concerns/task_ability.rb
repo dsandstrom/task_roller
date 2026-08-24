@@ -30,6 +30,8 @@ class TaskAbility < BaseAbility
     end
 
     def activate_reviewer
+      ability.can %i[read create update], TaskType
+
       activate_visible_abilities
       activate_visible_assigned_abilities
       activate_invisible_read_abilities
