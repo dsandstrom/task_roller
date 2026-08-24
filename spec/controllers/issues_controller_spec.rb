@@ -1054,77 +1054,11 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "GET #new" do
-    context "for an admin" do
-      before { sign_in(admin) }
-
-      context "when IssueType and Project" do
-        before { Fabricate(:issue_type) }
-
-        context "and project_id param" do
-          it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
-            expect(response).to be_successful
-          end
-        end
-
-        context "and no params" do
-          before { Fabricate(:project) }
-
-          it "returns a success response" do
-            get :new
-            expect(response).to be_successful
-          end
-        end
-      end
-
-      context "when no IssueTypes" do
-        before { Fabricate(:project) }
-
-        it "redirects to issue_types_url" do
-          get :new
-          expect(response).to redirect_to(issue_types_url)
-        end
-      end
-
-      context "when internal Project" do
-        before do
-          Fabricate(:issue_type)
-          Fabricate(:internal_project)
-        end
-
-        it "returns a success response" do
-          get :new
-          expect(response).to be_successful
-        end
-      end
-
-      context "when no Projects" do
-        before { Fabricate(:issue_type) }
-
-        it "redirects to root_url" do
-          get :new
-          expect(response).to redirect_to(root_url)
-        end
-      end
-
-      context "when no visible Projects" do
-        before do
-          Fabricate(:issue_type)
-          Fabricate(:invisible_project)
-        end
-
-        it "redirects to root_url" do
-          get :new
-          expect(response).to redirect_to(root_url)
-        end
-      end
-    end
-
-    %w[reviewer worker].each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type.downcase}")) }
 
-        context "when an IssueType and Project" do
+        context "when IssueType and Project" do
           before { Fabricate(:issue_type) }
 
           context "and project_id param" do
@@ -1144,6 +1078,15 @@ RSpec.describe IssuesController, type: :controller do
           end
         end
 
+        context "when no IssueTypes" do
+          before { Fabricate(:project) }
+
+          it "redirects to issue_types_url" do
+            get :new
+            expect(response).to redirect_to(issue_types_url)
+          end
+        end
+
         context "when internal Project" do
           before do
             Fabricate(:issue_type)
@@ -1156,19 +1099,10 @@ RSpec.describe IssuesController, type: :controller do
           end
         end
 
-        context "when no IssueTypes" do
-          before { Fabricate(:project) }
-
-          it "redirects to root" do
-            get :new
-            expect(response).to redirect_to(root_url)
-          end
-        end
-
         context "when no Projects" do
           before { Fabricate(:issue_type) }
 
-          it "redirects to root" do
+          it "redirects to root_url" do
             get :new
             expect(response).to redirect_to(root_url)
           end
@@ -1180,10 +1114,78 @@ RSpec.describe IssuesController, type: :controller do
             Fabricate(:invisible_project)
           end
 
-          it "redirects to root" do
+          it "redirects to root_url" do
             get :new
             expect(response).to redirect_to(root_url)
           end
+        end
+      end
+    end
+
+    context "for a worker" do
+      let(:worker) { Fabricate(:user_worker) }
+
+      before { sign_in(worker) }
+
+      context "when an IssueType and Project" do
+        before { Fabricate(:issue_type) }
+
+        context "and project_id param" do
+          it "returns a success response" do
+            get :new, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "and no params" do
+          before { Fabricate(:project) }
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
+        end
+      end
+
+      context "when internal Project" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:internal_project)
+        end
+
+        it "returns a success response" do
+          get :new
+          expect(response).to be_successful
+        end
+      end
+
+      context "when no IssueTypes" do
+        before { Fabricate(:project) }
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no Projects" do
+        before { Fabricate(:issue_type) }
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context "when no visible Projects" do
+        before do
+          Fabricate(:issue_type)
+          Fabricate(:invisible_project)
+        end
+
+        it "redirects to root" do
+          get :new
+          expect(response).to redirect_to(root_url)
         end
       end
     end
