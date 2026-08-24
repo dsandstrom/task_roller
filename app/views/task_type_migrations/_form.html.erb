@@ -1,0 +1,17 @@
+<%= form_with(model: task_type,
+              url: task_type_migrations_path(task_type),
+              method: :post,
+              html: { name: 'task_type_migration_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= required_field_label form, :new_task_type_id %>
+    <%= form.collection_select :new_task_type_id, task_types, :id, :name,
+                               html: { id: :new_task_type, include_blank: true } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Migrate", class: 'button button-warning',
+                               data: { turbo_confirm: "Are you sure, this action can't be reversed?" } %>
+  </div>
+<% end %>

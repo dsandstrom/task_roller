@@ -98,4 +98,26 @@ RSpec.describe IssueType, type: :model do
       end
     end
   end
+
+  describe "#any_issues?" do
+    context "when IssueType has no issues" do
+      let(:issue_type) { Fabricate(:issue_type) }
+
+      before { Fabricate(:issue) }
+
+      it "returns false" do
+        expect(issue_type.any_issues?).to eq(false)
+      end
+    end
+
+    context "when IssueType has an issue" do
+      let(:issue_type) { Fabricate(:issue_type) }
+
+      before { Fabricate(:issue, issue_type: issue_type) }
+
+      it "returns true" do
+        expect(issue_type.any_issues?).to eq(true)
+      end
+    end
+  end
 end

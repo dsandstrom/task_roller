@@ -1,0 +1,15 @@
+<%= content_for :header do %>
+  <h1>Issue Type Migrator</h1>
+  <%= app_setup_nav %>
+<% end %>
+
+<%= content_tag :h2, "#{@issue_type.name} issues" %>
+
+<% if @issue_types.any? %>
+  <%= render 'form', issue_type: @issue_type,
+                     issue_types: @issue_types %>
+<% else %>
+  <p>Add another issue type first</p>
+<% end %>
+
+<p><%= link_to 'Back', :back %></p>

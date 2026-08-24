@@ -22,27 +22,31 @@ Add and customize issue and task types below:
           <% unless issue_type.first?  %>
             <%= link_to reposition_issue_type_path(issue_type, sort: 'up'),
                         class: 'issue-type-sort-up', title: 'Move Up',
-                        method: :patch do %>
+                        method: :patch, data: { turbo_method: :patch } do %>
               <i class="icon-arrow-up"></i>
             <% end %>
           <% end %>
           <% unless issue_type.last?  %>
             <%= link_to reposition_issue_type_path(issue_type, sort: 'down'),
                         class: 'issue-type-sort-down', title: 'Move Down',
-                        method: :patch do %>
+                        method: :patch, data: { turbo_method: :patch } do %>
               <i class="icon-arrow-down"></i>
             <% end %>
           <% end %>
         </p>
-      <% end %>
-
-      <% if can?(:destroy, issue_type) %>
-        <p>
-          <%= link_to 'Remove', issue_type,
-                      method: :delete, class: 'link-warning',
-                      data: { turbo_method: :delete,
-                              turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
-        </p>
+        <% if issue_type.any_issues? %>
+          <p>
+            <%= link_to 'Migrate issues',
+                        new_issue_type_migration_path(issue_type) %>
+          </p>
+        <% elsif can?(:destroy, issue_type) %>
+          <p>
+            <%= link_to 'Remove', issue_type,
+                        method: :delete, class: 'destroy-link',
+                        data: { turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
+          </p>
+        <% end %>
       <% end %>
     </div>
   <% end %>
@@ -70,27 +74,32 @@ Add and customize issue and task types below:
           <% unless task_type.first?  %>
             <%= link_to reposition_task_type_path(task_type, sort: 'up'),
                         class: 'task-type-sort-up', title: 'Move Up',
-                        method: :patch do %>
+                        method: :patch, data: { turbo_method: :patch } do %>
               <i class="icon-arrow-up"></i>
             <% end %>
           <% end %>
           <% unless task_type.last?  %>
             <%= link_to reposition_task_type_path(task_type, sort: 'down'),
                         class: 'task-type-sort-down', title: 'Move Down',
-                        method: :patch do %>
+                        method: :patch, data: { turbo_method: :patch } do %>
               <i class="icon-arrow-down"></i>
             <% end %>
           <% end %>
         </p>
-      <% end %>
 
-      <% if can?(:destroy, task_type) %>
-        <p>
-          <%= link_to 'Remove', task_type,
-                      method: :delete, class: 'link-warning',
-                      data: { turbo_method: :delete,
-                              turbo_confirm: "Are you sure you want to remove the '#{task_type.name}' task type?" } %>
-        </p>
+        <% if task_type.any_tasks? %>
+          <p>
+            <%= link_to 'Migrate tasks',
+                        new_task_type_migration_path(task_type) %>
+          </p>
+        <% elsif can?(:destroy, task_type) %>
+          <p>
+            <%= link_to 'Remove', task_type,
+                        method: :delete, class: 'destroy-link',
+                        data: { turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to remove the '#{task_type.name}' task type?" } %>
+          </p>
+        <% end %>
       <% end %>
     </div>
   <% end %>

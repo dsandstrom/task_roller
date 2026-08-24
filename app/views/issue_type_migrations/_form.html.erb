@@ -1,0 +1,17 @@
+<%= form_with(model: issue_type,
+              url: issue_type_migrations_path(issue_type),
+              method: :post,
+              html: { name: 'issue_type_migration_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= required_field_label form, :new_issue_type_id %>
+    <%= form.collection_select :new_issue_type_id, issue_types, :id, :name,
+                               html: { id: :new_issue_type, include_blank: true } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Migrate", class: 'button button-warning',
+                               data: { turbo_confirm: "Are you sure, this action can't be reversed?" } %>
+  </div>
+<% end %>
