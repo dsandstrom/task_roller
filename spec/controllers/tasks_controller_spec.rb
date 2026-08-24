@@ -1131,6 +1131,10 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
+    after do
+      clear_enqueued_jobs
+    end
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }

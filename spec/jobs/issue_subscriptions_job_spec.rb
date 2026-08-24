@@ -10,6 +10,10 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
   subject { described_class }
 
   describe "#perform" do
+    after do
+      clear_enqueued_jobs
+    end
+
     context "when given issue" do
       context "without any category and project subscribers" do
         before do
