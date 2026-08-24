@@ -997,7 +997,7 @@ RSpec.describe TasksController, type: :controller do
   describe "GET #new" do
     before { Fabricate(:task_type) }
 
-    %w[admin].each do |employee_type|
+    %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
@@ -1029,40 +1029,6 @@ RSpec.describe TasksController, type: :controller do
           it "redirects to issue_types_url" do
             get :new, params: { project_id: project.to_param }
             expect(response).to redirect_to(issue_types_url)
-          end
-        end
-      end
-    end
-
-    %w[reviewer].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type}") }
-
-        before { sign_in(current_user) }
-
-        context "when project" do
-          it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
-
-            expect(response).to be_successful
-          end
-        end
-
-        context "when project and issue" do
-          it "returns a success response" do
-            get :new, params: { project_id: project.to_param,
-                                issue_id: issue.to_param }
-
-            expect(response).to be_successful
-          end
-        end
-
-        context "when no TaskTypes" do
-          before { TaskType.destroy_all }
-
-          it "redirects to project" do
-            get :new, params: { project_id: project.to_param }
-            expect(response).to redirect_to(root_url)
           end
         end
       end
