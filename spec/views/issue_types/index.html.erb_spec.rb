@@ -31,20 +31,20 @@ RSpec.describe "issue_types/index", type: :view do
 
       expect(rendered).to have_link(
         nil,
-        href: reposition_issue_type_path(first_issue_type, sort: 'down')
+        href: reposition_issue_type_path(first_issue_type, sort: "down")
       )
       expect(rendered).to have_link(
         nil,
-        href: reposition_issue_type_path(second_issue_type, sort: 'up')
+        href: reposition_issue_type_path(second_issue_type, sort: "up")
       )
 
       expect(rendered).to have_link(
         nil,
-        href: reposition_task_type_path(first_task_type, sort: 'down')
+        href: reposition_task_type_path(first_task_type, sort: "down")
       )
       expect(rendered).to have_link(
         nil,
-        href: reposition_task_type_path(second_task_type, sort: 'up')
+        href: reposition_task_type_path(second_task_type, sort: "up")
       )
     end
 
