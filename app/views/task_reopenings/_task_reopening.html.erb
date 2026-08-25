@@ -1,6 +1,8 @@
 <%
-  value = "reopened (##{task_reopening.task_id}): "\
-          "#{format_date task_reopening.created_at}"
+show_id = true unless show_id == false
+
+id_part = " (##{task_reopening.task_id})" if show_id
+value = "reopened#{id_part}: #{format_date task_reopening.created_at}"
 %>
 
 <%= content_tag :dt, task_reopening.user&.name_or_email,

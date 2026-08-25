@@ -1,9 +1,12 @@
+<%
+show_id = true unless show_id == false
+%>
 <% if history.is_a?(TaskReopening) %>
-  <%= render history %>
+  <%= render history, show_id: show_id %>
 <% elsif history.is_a?(TaskClosure) %>
-  <%= render history %>
+  <%= render history, show_id: show_id %>
 <% elsif history.is_a?(Review) %>
-  <%= render history %>
+  <%= render history, show_id: show_id %>
 <% elsif history.is_a?(TaskConnection) %>
   <%= render history %>
 <% elsif history.is_a?(Task) %>
@@ -19,7 +22,7 @@
       if review.pending?
         title = link_to_if(can?(:read, user), user.name_or_email,
                            user_assignments_path(user))
-        value =  "submitted task for review (##{history.id}): #{format_date review.created_at}"
+        value = "submitted task for review (##{history.id}): #{format_date review.created_at}"
       else
         if review.approved?
           assigned = history.assigned.map do |assignee|
@@ -27,10 +30,10 @@
                        user_assignments_path(assignee))
           end
           title = safe_join(assigned, ', ')
-          value =  "completed task (##{history.id}): #{format_date review.updated_at}"
+          value = "completed task (##{history.id}): #{format_date review.updated_at}"
         else
           title = user.name_or_email
-          value =  "#{review.status} task (##{history.id}): #{format_date review.updated_at}"
+          value = "#{review.status} task (##{history.id}): #{format_date review.updated_at}"
         end
       end
     elsif history.open?

@@ -1,6 +1,8 @@
 <%
-  value = "closed (##{task_closure.task_id}): "\
-          "#{format_date task_closure.created_at}"
+show_id = true unless show_id == false
+
+id_part =  " (##{task_closure.task_id})" if show_id
+value = "closed#{id_part}: #{format_date task_closure.created_at}"
 %>
 
 <%= content_tag :dt, task_closure.user&.name_or_email,

@@ -3,7 +3,7 @@
 <% elsif history.is_a?(IssueClosure) %>
   <%= render history %>
 <% elsif history.is_a?(Task) %>
-  <%= render 'tasks/history', history: history %>
+  <%= render 'tasks/history', history: history, show_id: true %>
 <% elsif history.is_a?(Resolution) %>
   <%= render 'resolutions/history', history: history %>
 <% elsif history.is_a?(IssueConnection) %>
