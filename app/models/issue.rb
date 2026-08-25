@@ -260,22 +260,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     enqueue_repo_job(old_status)
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
-    notify_subscribers(options)
+    IssueSubscribersNotifierJob.perform_later(self, options)
+    true
   end
 
-  def notify_of_comment(options)
-    comment = options.delete(:comment)
-    return unless comment
+  def notify_of_comment(comment)
+    options = { event: 'comment', current_user: comment.user,
+                issue_comment: comment }
 
-    options[:issue_comment] = comment
-    options[:current_user] =
-      if options[:current_user]
-        [options[:current_user], comment.user]
-      else
-        comment.user
-      end
-
-    notify_subscribers(options.merge(event: 'comment'))
+    IssueSubscribersNotifierJob.perform_later(self, options)
   end
 
   def octokit

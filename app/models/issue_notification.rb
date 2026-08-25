@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueNotification < ApplicationRecord
   EVENT_OPTIONS = %w[comment new status].freeze
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueComment < ApplicationRecord
   validates :body, presence: true
 
@@ -20,6 +18,6 @@ class IssueComment < ApplicationRecord
   end
 
   def notify_subscribers
-    issue&.notify_of_comment(comment: self)
+    issue&.notify_of_comment(self)
   end
 end
