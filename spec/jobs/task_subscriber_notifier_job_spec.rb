@@ -169,5 +169,15 @@ RSpec.describe TaskSubscriberNotifierJob, type: :job do
         )
       end
     end
+
+    context "for invalid options" do
+      let(:options) { { event: "" } }
+
+      it "doesn't create a notification" do
+        expect do
+          subject.perform_now task, subscriber, options
+        end.not_to change(TaskNotification, :count)
+      end
+    end
   end
 end

@@ -4,8 +4,9 @@ class IssueSubscriberNotifierJob < ApplicationJob
   def perform(issue, subscriber, options)
     options.merge!(user: subscriber)
     notification = find_or_create_notification(issue, subscriber, options)
-
     notification.send_email
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.debug { "IssueNotification invalid:\n#{e.inspect}" }
   end
 
   private
