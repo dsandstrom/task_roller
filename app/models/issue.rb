@@ -382,42 +382,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       feed.flatten.sort_by(&:created_at)
     end
 
-    def subscribers_except(users)
-      if users
-        if users.is_a?(Array)
-          subscribers.where.not(id: users.map(&:id))
-        else
-          subscribers.where.not(id: users.id)
-        end
-      else
-        subscribers
-      end
-    end
-
-    def notify_subscribers(options)
-      current_user = options.delete(:current_user)
-      subscribers_except(current_user).each do |subscriber|
-        notify_subscriber(subscriber, options)
-      end
-      true
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug { "IssueNotification invalid:\n#{e.inspect}" }
-      false
-    end
-
-    def notify_subscriber(subscriber, options)
-      if options[:event] == 'status'
-        notification = notifications.find_by(user_id: subscriber.id,
-                                             event: 'status')
-      end
-      if notification
-        notification.update options
-      else
-        notification = notifications.create!(options.merge(user: subscriber))
-      end
-      notification.send_email
-    end
-
     def notification_options(old_status)
       if old_status.present?
         { event: 'status', details: "#{old_status},#{status}" }
