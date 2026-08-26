@@ -8,7 +8,7 @@ class TaskSubscribersNotifierJob < ApplicationJob
 
     current_user = options.delete(:current_user)
     subscribers_except(current_user).each do |subscriber|
-      TaskSubscriberNotifierJob.perform_later(task, subscriber, options)
+      TaskNotifierJob.perform_later(task, subscriber, options)
     end
   end
 

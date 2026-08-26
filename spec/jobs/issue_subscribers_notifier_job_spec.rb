@@ -22,12 +22,12 @@ RSpec.describe IssueSubscribersNotifierJob, type: :job do
           Fabricate(:issue_subscription, issue: issue, user: subscriber)
         end
 
-        it "enqueues one IssueSubscriberNotifierJob" do
+        it "enqueues one IssueNotifierJob" do
           subject.perform_now issue, bulk_options
 
-          expect(IssueSubscriberNotifierJob)
+          expect(IssueNotifierJob)
             .to have_been_enqueued.exactly(:once)
-          expect(IssueSubscriberNotifierJob)
+          expect(IssueNotifierJob)
             .to have_been_enqueued.with(issue, subscriber, options)
         end
       end
@@ -40,24 +40,24 @@ RSpec.describe IssueSubscribersNotifierJob, type: :job do
           Fabricate(:issue_subscription, issue: issue, user: subscriber)
         end
 
-        it "enqueues one IssueSubscriberNotifierJob" do
+        it "enqueues one IssueNotifierJob" do
           subject.perform_now issue, bulk_options
 
-          expect(IssueSubscriberNotifierJob)
+          expect(IssueNotifierJob)
             .to have_been_enqueued.exactly(:twice)
-          expect(IssueSubscriberNotifierJob)
+          expect(IssueNotifierJob)
             .to have_been_enqueued.with(issue, subscriber, options)
-          expect(IssueSubscriberNotifierJob)
+          expect(IssueNotifierJob)
             .to have_been_enqueued.with(issue, current_user, options)
         end
       end
     end
 
     context "for an issue without subscribers" do
-      it "doesn't enqueue a IssueSubscriberNotifierJob" do
+      it "doesn't enqueue a IssueNotifierJob" do
         subject.perform_now issue, options
 
-        expect(IssueSubscriberNotifierJob).not_to have_been_enqueued
+        expect(IssueNotifierJob).not_to have_been_enqueued
       end
     end
   end

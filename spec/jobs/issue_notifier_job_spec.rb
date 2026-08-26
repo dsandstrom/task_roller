@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe IssueSubscriberNotifierJob, type: :job do
+RSpec.describe IssueNotifierJob, type: :job do
   let(:issue) { Fabricate(:issue) }
   let(:subscriber) { Fabricate(:user) }
 

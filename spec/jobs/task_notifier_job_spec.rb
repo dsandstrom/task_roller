@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TaskSubscriberNotifierJob, type: :job do
+RSpec.describe TaskNotifierJob, type: :job do
   let(:task) { Fabricate(:task) }
   let(:subscriber) { Fabricate(:user) }
 
