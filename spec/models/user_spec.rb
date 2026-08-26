@@ -1146,7 +1146,7 @@ RSpec.describe User, type: :model do
         being_worked_on_issue.update_status
         addressed_issue = Fabricate(:pending_issue, user: user)
         Fabricate(:approved_task, issue: addressed_issue)
-        addressed_issue.close
+        addressed_issue.close?
         addressed_issue.update_status
         Fabricate(:closed_issue, user: user)
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueReopeningsController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :reopenings
@@ -10,7 +8,7 @@ class IssueReopeningsController < ApplicationController
     notice = 'Issue was successfully reopened.'
 
     if @issue_reopening.save
-      @issue.reopen(current_user)
+      @issue.reopen?(current_user)
       @issue_reopening.subscribe_user
       redirect_to @issue, notice: notice
     else

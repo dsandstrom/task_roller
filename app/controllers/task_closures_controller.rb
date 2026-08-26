@@ -8,7 +8,7 @@ class TaskClosuresController < ApplicationController
     notice = 'Task was successfully closed.'
 
     if @task_closure.save
-      @task.close(current_user)
+      @task.close?(current_user)
       @task_closure.subscribe_user
       redirect_to @task, notice: notice
     else

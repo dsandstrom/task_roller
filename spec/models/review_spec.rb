@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Review, type: :model do
@@ -55,7 +53,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -66,7 +64,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -77,7 +75,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -116,7 +114,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -127,7 +125,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -138,7 +136,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -177,7 +175,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -188,7 +186,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -199,7 +197,7 @@ RSpec.describe Review, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_review, task: task)
           end
-          task.reopen
+          task.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -258,24 +256,24 @@ RSpec.describe Review, type: :model do
 
   # INSTANCE
 
-  describe "#approve" do
+  describe "#approve?" do
     context "when pending" do
       let(:review) { Fabricate(:pending_review) }
 
       it "changes approved to true" do
         expect do
-          review.approve
+          review.approve?
           review.reload
         end.to change(review, :approved).to(true)
       end
 
-      it "runs task.close" do
-        expect(review.task).to receive(:close)
-        review.approve
+      it "runs task.close?" do
+        expect(review.task).to receive(:close?)
+        review.approve?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.approve?).to eq(true)
       end
 
       context "and given a user" do
@@ -283,7 +281,7 @@ RSpec.describe Review, type: :model do
 
         it "changes user_id" do
           expect do
-            review.approve(new_user)
+            review.approve?(new_user)
             review.reload
           end.to change(review, :user_id).to(new_user.id)
         end
@@ -295,18 +293,18 @@ RSpec.describe Review, type: :model do
 
       it "changes approved to true" do
         expect do
-          review.approve
+          review.approve?
           review.reload
         end.to change(review, :approved).to(true)
       end
 
-      it "runs task.close" do
-        expect(review.task).to receive(:close)
-        review.approve
+      it "runs task.close?" do
+        expect(review.task).to receive(:close?)
+        review.approve?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.approve?).to eq(true)
       end
     end
 
@@ -315,18 +313,18 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.approve
+          review.approve?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "runs task.close" do
-        expect(review.task).to receive(:close)
-        review.approve
+      it "runs task.close?" do
+        expect(review.task).to receive(:close?)
+        review.approve?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.approve?).to eq(true)
       end
     end
 
@@ -337,18 +335,18 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.approve
+          review.approve?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.close" do
-        expect(review.task).not_to receive(:close)
-        review.approve
+      it "doesn't run task.close?" do
+        expect(review.task).not_to receive(:close?)
+        review.approve?
       end
 
       it "returns false" do
-        expect(review.approve).to eq(false)
+        expect(review.approve?).to eq(false)
       end
     end
 
@@ -359,40 +357,40 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.approve
+          review.approve?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.close" do
-        expect(review.task).not_to receive(:close)
-        review.approve
+      it "doesn't run task.close?" do
+        expect(review.task).not_to receive(:close?)
+        review.approve?
       end
 
       it "returns false" do
-        expect(review.approve).to eq(false)
+        expect(review.approve?).to eq(false)
       end
     end
   end
 
-  describe "#disapprove" do
+  describe "#disapprove?" do
     context "when pending" do
       let(:review) { Fabricate(:pending_review) }
 
       it "changes approved to false" do
         expect do
-          review.disapprove
+          review.disapprove?
           review.reload
         end.to change(review, :approved).to(false)
       end
 
-      it "runs task.reopen" do
-        expect(review.task).to receive(:reopen)
-        review.disapprove
+      it "runs task.reopen?" do
+        expect(review.task).to receive(:reopen?)
+        review.disapprove?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.disapprove?).to eq(true)
       end
 
       context "and given a user" do
@@ -400,7 +398,7 @@ RSpec.describe Review, type: :model do
 
         it "changes user_id" do
           expect do
-            review.disapprove(new_user)
+            review.disapprove?(new_user)
             review.reload
           end.to change(review, :user_id).to(new_user.id)
         end
@@ -412,18 +410,18 @@ RSpec.describe Review, type: :model do
 
       it "changes approved to false" do
         expect do
-          review.disapprove
+          review.disapprove?
           review.reload
         end.to change(review, :approved).to(false)
       end
 
-      it "runs task.reopen" do
-        expect(review.task).to receive(:reopen)
-        review.disapprove
+      it "runs task.reopen?" do
+        expect(review.task).to receive(:reopen?)
+        review.disapprove?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.disapprove?).to eq(true)
       end
     end
 
@@ -432,18 +430,18 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.disapprove
+          review.disapprove?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "runs task.reopen" do
-        expect(review.task).to receive(:reopen)
-        review.disapprove
+      it "runs task.reopen?" do
+        expect(review.task).to receive(:reopen?)
+        review.disapprove?
       end
 
       it "returns true" do
-        expect(review.approve).to eq(true)
+        expect(review.disapprove?).to eq(true)
       end
     end
 
@@ -454,18 +452,18 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.disapprove
+          review.disapprove?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.reopen" do
-        expect(review.task).not_to receive(:reopen)
-        review.disapprove
+      it "doesn't run task.reopen?" do
+        expect(review.task).not_to receive(:reopen?)
+        review.disapprove?
       end
 
       it "returns false" do
-        expect(review.approve).to eq(false)
+        expect(review.disapprove?).to eq(false)
       end
     end
 
@@ -476,18 +474,18 @@ RSpec.describe Review, type: :model do
 
       it "doesn't change review" do
         expect do
-          review.disapprove
+          review.disapprove?
           review.reload
         end.not_to change(review, :approved)
       end
 
-      it "doesn't run task.reopen" do
-        expect(review.task).not_to receive(:reopen)
-        review.disapprove
+      it "doesn't run task.reopen?" do
+        expect(review.task).not_to receive(:reopen?)
+        review.disapprove?
       end
 
       it "returns false" do
-        expect(review.approve).to eq(false)
+        expect(review.disapprove?).to eq(false)
       end
     end
   end

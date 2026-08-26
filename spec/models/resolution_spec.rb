@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Resolution, type: :model do
@@ -54,7 +52,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -65,7 +63,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -76,7 +74,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -115,7 +113,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -126,7 +124,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -137,7 +135,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -176,7 +174,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:pending_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -187,7 +185,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:approved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -198,7 +196,7 @@ RSpec.describe Resolution, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:disapproved_resolution, issue: issue)
           end
-          issue.reopen
+          issue.reopen?
         end
 
         it { is_expected.to be_valid }
@@ -246,24 +244,24 @@ RSpec.describe Resolution, type: :model do
 
   # INSTANCE
 
-  describe "#approve" do
+  describe "#approve?" do
     context "when pending" do
       let(:resolution) { Fabricate(:pending_resolution) }
 
       it "changes approved to true" do
         expect do
-          resolution.approve
+          resolution.approve?
           resolution.reload
         end.to change(resolution, :approved).to(true)
       end
 
       it "runs issue.close" do
-        expect(resolution.issue).to receive(:close)
-        resolution.approve
+        expect(resolution.issue).to receive(:close?)
+        resolution.approve?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.approve?).to eq(true)
       end
     end
 
@@ -272,18 +270,18 @@ RSpec.describe Resolution, type: :model do
 
       it "changes approved to true" do
         expect do
-          resolution.approve
+          resolution.approve?
           resolution.reload
         end.to change(resolution, :approved).to(true)
       end
 
       it "runs issue.close" do
-        expect(resolution.issue).to receive(:close)
-        resolution.approve
+        expect(resolution.issue).to receive(:close?)
+        resolution.approve?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.approve?).to eq(true)
       end
     end
 
@@ -292,18 +290,18 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.approve
+          resolution.approve?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
       it "runs issue.close" do
-        expect(resolution.issue).to receive(:close)
-        resolution.approve
+        expect(resolution.issue).to receive(:close?)
+        resolution.approve?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.approve?).to eq(true)
       end
     end
 
@@ -314,18 +312,18 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.approve
+          resolution.approve?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
       it "doesn't run issue.close" do
-        expect(resolution.issue).not_to receive(:close)
-        resolution.approve
+        expect(resolution.issue).not_to receive(:close?)
+        resolution.approve?
       end
 
       it "returns false" do
-        expect(resolution.approve).to eq(false)
+        expect(resolution.approve?).to eq(false)
       end
     end
 
@@ -336,40 +334,40 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.approve
+          resolution.approve?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
       it "doesn't run issue.close" do
-        expect(resolution.issue).not_to receive(:close)
-        resolution.approve
+        expect(resolution.issue).not_to receive(:close?)
+        resolution.approve?
       end
 
       it "returns false" do
-        expect(resolution.approve).to eq(false)
+        expect(resolution.approve?).to eq(false)
       end
     end
   end
 
-  describe "#disapprove" do
+  describe "#disapprove?" do
     context "when pending" do
       let(:resolution) { Fabricate(:pending_resolution) }
 
       it "changes approved to false" do
         expect do
-          resolution.disapprove
+          resolution.disapprove?
           resolution.reload
         end.to change(resolution, :approved).to(false)
       end
 
-      it "runs issue.reopen" do
-        expect(resolution.issue).to receive(:reopen)
-        resolution.disapprove
+      it "runs issue.reopen?" do
+        expect(resolution.issue).to receive(:reopen?)
+        resolution.disapprove?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.disapprove?).to eq(true)
       end
     end
 
@@ -378,18 +376,18 @@ RSpec.describe Resolution, type: :model do
 
       it "changes approved to false" do
         expect do
-          resolution.disapprove
+          resolution.disapprove?
           resolution.reload
         end.to change(resolution, :approved).to(false)
       end
 
-      it "runs issue.reopen" do
-        expect(resolution.issue).to receive(:reopen)
-        resolution.disapprove
+      it "runs issue.reopen?" do
+        expect(resolution.issue).to receive(:reopen?)
+        resolution.disapprove?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.disapprove?).to eq(true)
       end
     end
 
@@ -398,18 +396,18 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.disapprove
+          resolution.disapprove?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
-      it "runs issue.reopen" do
-        expect(resolution.issue).to receive(:reopen)
-        resolution.disapprove
+      it "runs issue.reopen?" do
+        expect(resolution.issue).to receive(:reopen?)
+        resolution.disapprove?
       end
 
       it "returns true" do
-        expect(resolution.approve).to eq(true)
+        expect(resolution.disapprove?).to eq(true)
       end
     end
 
@@ -420,18 +418,18 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.disapprove
+          resolution.disapprove?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
-      it "doesn't run issue.reopen" do
-        expect(resolution.issue).not_to receive(:reopen)
-        resolution.disapprove
+      it "doesn't run issue.reopen?" do
+        expect(resolution.issue).not_to receive(:reopen?)
+        resolution.disapprove?
       end
 
       it "returns false" do
-        expect(resolution.approve).to eq(false)
+        expect(resolution.disapprove?).to eq(false)
       end
     end
 
@@ -442,18 +440,18 @@ RSpec.describe Resolution, type: :model do
 
       it "doesn't change resolution" do
         expect do
-          resolution.disapprove
+          resolution.disapprove?
           resolution.reload
         end.not_to change(resolution, :approved)
       end
 
-      it "doesn't run issue.reopen" do
-        expect(resolution.issue).not_to receive(:reopen)
-        resolution.disapprove
+      it "doesn't run issue.reopen?" do
+        expect(resolution.issue).not_to receive(:reopen?)
+        resolution.disapprove?
       end
 
       it "returns false" do
-        expect(resolution.approve).to eq(false)
+        expect(resolution.disapprove?).to eq(false)
       end
     end
   end

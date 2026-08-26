@@ -9,7 +9,7 @@ class ResolutionsController < ApplicationController
   def new; end
 
   def approve
-    if @resolution.approve
+    if @resolution.approve?
       redirect_back_or_to(@issue,
                           notice: 'Task was successfully marked resolved.')
     else
@@ -18,7 +18,7 @@ class ResolutionsController < ApplicationController
   end
 
   def disapprove
-    if @resolution.disapprove
+    if @resolution.disapprove?
       redirect_back_or_to(@issue,
                           notice: 'Task was successfully marked unresolved.')
     else
@@ -28,7 +28,7 @@ class ResolutionsController < ApplicationController
 
   def destroy
     @resolution.destroy
-    @issue.reopen(current_user) if @issue.current_resolutions.none?
+    @issue.reopen?(current_user) if @issue.current_resolutions.none?
     redirect_back_or_to(@issue,
                         notice: 'Resolution was successfully destroyed.')
   end

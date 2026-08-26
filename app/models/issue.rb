@@ -207,14 +207,17 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @unresolved = open? && current_resolutions.none?
   end
 
-  def close(current_user = nil)
-    update closed: true
+  def close?(current_user = nil)
+    return false unless update(closed: true)
+
     update_status(current_user)
+    true
   end
 
-  def reopen(current_user = nil)
+  def reopen?(current_user = nil)
     update closed: false, opened_at: Time.zone.now
     update_status(current_user)
+    true
   end
 
   def subscribe_user(subscriber = nil)
@@ -255,13 +258,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return true if old_status == status
+    return if old_status == status
 
     enqueue_repo_job(old_status)
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
     IssueSubscribersNotifierJob.perform_later(self, options)
-    true
   end
 
   def notify_of_comment(comment)

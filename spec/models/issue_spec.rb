@@ -1114,7 +1114,7 @@ RSpec.describe Issue, type: :model do
         Timecop.freeze(1.day.ago) do
           Fabricate(:approved_resolution, issue: issue)
         end
-        issue.reopen
+        issue.reopen?
       end
 
       it "returns false" do
@@ -1127,7 +1127,7 @@ RSpec.describe Issue, type: :model do
         Timecop.freeze(1.day.ago) do
           Fabricate(:disapproved_resolution, issue: issue)
         end
-        issue.reopen
+        issue.reopen?
       end
 
       it "returns false" do
@@ -1141,7 +1141,7 @@ RSpec.describe Issue, type: :model do
           Fabricate(:disapproved_resolution, issue: issue)
         end
         Timecop.freeze(1.day.ago) do
-          issue.reopen
+          issue.reopen?
         end
         Fabricate(:approved_resolution, issue: issue)
       end
@@ -1246,10 +1246,6 @@ RSpec.describe Issue, type: :model do
             expect(IssueSubscribersNotifierJob)
               .to have_been_enqueued.with(issue, job_options)
           end
-
-          it "returns true" do
-            expect(issue.update_status).to eq(true)
-          end
         end
 
         context "when given current_user" do
@@ -1275,10 +1271,6 @@ RSpec.describe Issue, type: :model do
               .to have_been_enqueued.exactly(:once)
             expect(IssueSubscribersNotifierJob)
               .to have_been_enqueued.with(issue, job_options)
-          end
-
-          it "returns true" do
-            expect(issue.update_status(reporter)).to eq(true)
           end
         end
       end
@@ -1311,10 +1303,6 @@ RSpec.describe Issue, type: :model do
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.with(issue, job_options)
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and is originally pending" do
@@ -1338,10 +1326,6 @@ RSpec.describe Issue, type: :model do
             issue.update_status
           end.not_to have_enqueued_job
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and is originally nil status" do
@@ -1363,10 +1347,6 @@ RSpec.describe Issue, type: :model do
             .to have_been_enqueued.exactly(:once)
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.with(issue, { event: "new" })
-        end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
         end
       end
 
@@ -1405,10 +1385,6 @@ RSpec.describe Issue, type: :model do
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.with(issue, job_options)
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and user already has a 'new' notification" do
@@ -1445,10 +1421,6 @@ RSpec.describe Issue, type: :model do
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.with(issue, job_options)
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
     end
 
@@ -1468,10 +1440,6 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and tasks_approved? returns true" do
@@ -1485,10 +1453,6 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("addressed")
-        end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
         end
       end
 
@@ -1504,10 +1468,6 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("resolved")
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and tasks_approved?, resolved? return false" do
@@ -1522,10 +1482,6 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
 
       context "and duplicate? returns true" do
@@ -1539,34 +1495,30 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("duplicate")
         end
-
-        it "returns true" do
-          expect(issue.update_status).to eq(true)
-        end
       end
     end
   end
 
-  describe "#close" do
+  describe "#close?" do
     context "when open" do
       let(:issue) { Fabricate(:open_issue) }
 
       it "changes closed to true" do
         expect do
-          issue.close
+          issue.close?
           issue.reload
         end.to change(issue, :closed).to(true)
       end
 
       it "changes status to 'closed'" do
         expect do
-          issue.close
+          issue.close?
           issue.reload
         end.to change(issue, :status).to("closed")
       end
 
       it "returns true" do
-        expect(issue.close(reporter)).to eq(true)
+        expect(issue.close?(reporter)).to eq(true)
       end
     end
 
@@ -1575,25 +1527,25 @@ RSpec.describe Issue, type: :model do
 
       it "doesn't change closed" do
         expect do
-          issue.close
+          issue.close?
           issue.reload
         end.not_to change(issue, :closed)
       end
 
       it "doesn't change status" do
         expect do
-          issue.close
+          issue.close?
           issue.reload
         end.not_to change(issue, :status)
       end
 
       it "returns true" do
-        expect(issue.close).to eq(true)
+        expect(issue.close?).to eq(true)
       end
     end
   end
 
-  describe "#reopen" do
+  describe "#reopen?" do
     context "when closed" do
       let(:issue) { Fabricate(:closed_issue) }
 
@@ -1603,27 +1555,27 @@ RSpec.describe Issue, type: :model do
 
       it "changes closed to false" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.to change(issue, :closed).to(false)
       end
 
       it "changes status to 'pending'" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.to change(issue, :status).to("pending")
       end
 
       it "changes opened_at" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.to change(issue, :opened_at)
       end
 
       it "returns true" do
-        expect(issue.reopen(reporter)).to eq(true)
+        expect(issue.reopen?(reporter)).to eq(true)
       end
     end
 
@@ -1636,27 +1588,27 @@ RSpec.describe Issue, type: :model do
 
       it "doesn't change closed" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.not_to change(issue, :closed)
       end
 
       it "doesn't change status" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.not_to change(issue, :status)
       end
 
       it "changes opened_at" do
         expect do
-          issue.reopen
+          issue.reopen?
           issue.reload
         end.to change(issue, :opened_at)
       end
 
       it "returns true" do
-        expect(issue.reopen).to eq(true)
+        expect(issue.reopen?).to eq(true)
       end
     end
   end
@@ -1782,7 +1734,7 @@ RSpec.describe Issue, type: :model do
           Fabricate(:approved_resolution, issue: issue)
         end
         Timecop.freeze(1.hour.ago) do
-          issue.reopen
+          issue.reopen?
         end
         issue.reload
         expect(issue.current_resolution).to be_nil
@@ -1998,7 +1950,7 @@ RSpec.describe Issue, type: :model do
           task = Fabricate(:disapproved_task, issue: issue)
         end
         review = Fabricate(:approved_review, task: task)
-        task.close
+        task.close?
         task.update_status
 
         expect(issue.addressed_at).to eq(review.updated_at)

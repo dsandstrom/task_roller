@@ -161,7 +161,7 @@ RSpec.describe Task, type: :model do
           reopened_task = Fabricate(:task)
           Fabricate(:pending_review, task: reopened_task)
         end
-        reopened_task.reopen
+        reopened_task.reopen?
 
         Fabricate(:approved_task)
 
@@ -258,7 +258,7 @@ RSpec.describe Task, type: :model do
         Timecop.freeze(1.day.ago) do
           reopened_task = Fabricate(:approved_task)
         end
-        reopened_task.reopen
+        reopened_task.reopen?
 
         task.update_status
       end
@@ -324,7 +324,7 @@ RSpec.describe Task, type: :model do
         end
 
         Timecop.freeze(2.days.from_now) do
-          reopened_task.reopen
+          reopened_task.reopen?
         end
       end
 
@@ -979,7 +979,7 @@ RSpec.describe Task, type: :model do
     context "when reviews" do
       before do
         Timecop.freeze(1.week.ago) do
-          task.reopen
+          task.reopen?
         end
       end
 
@@ -1694,7 +1694,7 @@ RSpec.describe Task, type: :model do
           Fabricate(:approved_review, task: task)
         end
         Timecop.freeze(1.hour.ago) do
-          task.reopen
+          task.reopen?
         end
         task.reload
         expect(task.current_review).to be_nil
@@ -1702,7 +1702,7 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "#close" do
+  describe "#close?" do
     let(:current_user) { Fabricate(:user_reporter) }
     let(:subscriber) { Fabricate(:user_reporter) }
 
@@ -1715,20 +1715,20 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes the tasks's status to 'closed'" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :status).to("closed")
       end
 
       it "enqueues TaskSubscribersNotifierJob" do
-        task.close(current_user)
+        task.close?(current_user)
 
         expect(TaskSubscribersNotifierJob)
           .to have_been_enqueued.exactly(:once)
@@ -1742,14 +1742,14 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change task" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "doesn't change the tasks's status" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :status)
       end
@@ -1757,7 +1757,7 @@ RSpec.describe Task, type: :model do
       it "doesn't enqueue any jobs" do
         task.subscribers << subscriber
         expect do
-          task.close
+          task.close?
         end.not_to have_enqueued_job
       end
     end
@@ -1768,27 +1768,27 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes it's finished to true" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.to change(progression, :finished).to(true)
       end
 
       it "changes the tasks's status to 'closed'" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :status).to("closed")
       end
 
       it "returns true" do
-        expect(task.close(worker)).to eq(true)
+        expect(task.close?(worker)).to eq(true)
       end
     end
 
@@ -1798,20 +1798,20 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "doesn't change it's finished" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.not_to change(progression, :finished)
       end
 
       it "returns true" do
-        expect(task.close).to eq(true)
+        expect(task.close?).to eq(true)
       end
     end
 
@@ -1828,20 +1828,20 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change it's closed" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :closed).from(false)
       end
 
       it "doesn't change it's finished" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.not_to change(progression, :finished)
       end
 
       it "returns false" do
-        expect(task.close).to eq(false)
+        expect(task.close?).to eq(false)
       end
     end
 
@@ -1851,20 +1851,20 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes the review's approved to false" do
         expect do
-          task.close
+          task.close?
           review.reload
         end.to change(review, :approved).to(false)
       end
 
       it "returns true" do
-        expect(task.close).to eq(true)
+        expect(task.close?).to eq(true)
       end
     end
 
@@ -1877,27 +1877,27 @@ RSpec.describe Task, type: :model do
       context "that has no other tasks" do
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "changes the issues's closed to true" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :closed).to(true)
         end
 
         it "changes the issues's status to 'addressed'" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
 
@@ -1906,27 +1906,27 @@ RSpec.describe Task, type: :model do
 
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "doesn't change the issues's closed" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.not_to change(issue, :closed)
         end
 
         it "doesn't change the issues's status" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.not_to change(issue, :status)
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
 
@@ -1935,33 +1935,33 @@ RSpec.describe Task, type: :model do
 
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "changes the issues's closed to true" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :closed).to(true)
         end
 
         it "changes the issues's status to 'addressed'" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
     end
   end
 
-  describe "#reopen" do
+  describe "#reopen?" do
     let(:current_user) { Fabricate(:user_reporter) }
     let(:subscriber) { Fabricate(:user_reporter) }
 
@@ -1978,27 +1978,27 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to false" do
         expect do
-          task.reopen(worker)
+          task.reopen?(worker)
           task.reload
         end.to change(task, :closed).to(false)
       end
 
       it "changes opened_at" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :opened_at)
       end
 
       it "changes status" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :status).to("unassigned")
       end
 
       it "enqueues TaskSubscribersNotifierJob" do
-        task.reopen(current_user)
+        task.reopen?(current_user)
 
         expect(TaskSubscribersNotifierJob)
           .to have_been_enqueued.exactly(:once)
@@ -2012,8 +2012,8 @@ RSpec.describe Task, type: :model do
         before { task.update issue: issue }
 
         it "runs open on the issue" do
-          expect(issue).to receive(:reopen)
-          task.reopen
+          expect(issue).to receive(:reopen?)
+          task.reopen?
         end
       end
 
@@ -2026,8 +2026,8 @@ RSpec.describe Task, type: :model do
         end
 
         it "doesn't run open on the issue" do
-          expect(issue).not_to receive(:reopen)
-          task.reopen
+          expect(issue).not_to receive(:reopen?)
+          task.reopen?
         end
       end
     end
@@ -2041,14 +2041,14 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change task" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "changes opened_at" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :opened_at)
       end
@@ -2192,7 +2192,7 @@ RSpec.describe Task, type: :model do
       it "should change issue's closed_tasks_count" do
         task = Fabricate(:task, issue: issue)
         expect do
-          task.close
+          task.close?
           issue.reload
         end.to change(issue, :open_tasks_count).by(-1)
       end

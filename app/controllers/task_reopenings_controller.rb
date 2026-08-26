@@ -8,7 +8,7 @@ class TaskReopeningsController < ApplicationController
     notice = 'Task was successfully reopened.'
 
     if @task_reopening.save
-      @task.reopen(current_user)
+      @task.reopen?(current_user)
       @task_reopening.subscribe_user
       redirect_to @task, notice: notice
     else

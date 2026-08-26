@@ -249,22 +249,23 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish)
   end
 
-  def close(current_user = nil)
+  def close?(current_user = nil)
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish?
 
     update closed: true
     update_status(current_user)
-    close_issue(current_user)
+    close_issue?(current_user)
+    true
   end
 
-  def reopen(current_user = nil)
+  def reopen?(current_user = nil)
     return false unless update(closed: false, opened_at: Time.zone.now)
 
     update_status(current_user)
     return true unless issue&.closed?
 
-    issue.reopen(current_user)
+    issue.reopen?(current_user)
   end
 
   def subscribe_user(subscriber = nil)
@@ -429,10 +430,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       issue.open_tasks.where.not(tasks: { id: id }).none?
     end
 
-    def close_issue(current_user = nil)
+    def close_issue?(current_user = nil)
       return true unless issue && last_task_for_issue?
 
-      issue.close(current_user)
+      issue.close?(current_user)
     end
 
     def update_issue_counts
