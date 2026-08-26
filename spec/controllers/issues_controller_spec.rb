@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe IssuesController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue_type) { Fabricate(:issue_type) }
@@ -1388,6 +1390,8 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:job_options) { { event: "new", current_user: current_user } }
+
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -1423,46 +1427,13 @@ RSpec.describe IssuesController, type: :controller do
               expect(response).to redirect_to(url)
             end
 
-            context "when someone subscribed to category" do
-              let(:user) { Fabricate(:user_reviewer) }
+            it "enqueues IssueSubscribersNotifierJob" do
+              post :create, params: { issue: valid_attributes }
 
-              before do
-                Fabricate(:category_issues_subscription, user: user,
-                                                         category: category)
-              end
-
-              it "creates a new IssueSubscription" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to change(user.issue_subscriptions, :count).by(1)
-              end
-
-              it "sends email to subscribers" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to(have_enqueued_job.with do |mailer, action, time, options|
-                  expect(mailer).to eq("IssueMailer")
-                  expect(action).to eq("new")
-                  expect(time).to eq("deliver_now")
-                  expect(options)
-                    .to eq(args: [], params: { issue: Issue.last, user: user })
-                end)
-              end
-            end
-
-            context "when someone subscribed to project" do
-              let(:user) { Fabricate(:user_reviewer) }
-
-              before do
-                Fabricate(:project_issues_subscription, user: user,
-                                                        project: project)
-              end
-
-              it "creates a new IssueSubscription" do
-                expect do
-                  post :create, params: { issue: valid_attributes }
-                end.to change(user.issue_subscriptions, :count).by(1)
-              end
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.exactly(:once)
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.with(Issue.last, job_options)
             end
           end
 
@@ -1545,10 +1516,13 @@ RSpec.describe IssuesController, type: :controller do
             expect(issue.status).to eq("pending")
           end
 
-          it "creates a new IssueSubscription" do
-            expect do
-              post :create, params: { issue: valid_attributes }
-            end.to change(current_user.issue_subscriptions, :count).by(1)
+          it "enqueues IssueSubscribersNotifierJob" do
+            post :create, params: { issue: valid_attributes }
+
+            expect(IssueSubscribersNotifierJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(IssueSubscribersNotifierJob)
+              .to have_been_enqueued.with(Issue.last, job_options)
           end
 
           it "redirects to the created issue" do
@@ -1569,18 +1543,6 @@ RSpec.describe IssuesController, type: :controller do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(user.issue_subscriptions, :count).by(1)
-            end
-
-            it "sends email to subscribers" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to(have_enqueued_job.with do |mailer, action, time, options|
-                expect(mailer).to eq("IssueMailer")
-                expect(action).to eq("new")
-                expect(time).to eq("deliver_now")
-                expect(options)
-                  .to eq(args: [], params: { issue: Issue.last, user: user })
-              end)
             end
           end
 

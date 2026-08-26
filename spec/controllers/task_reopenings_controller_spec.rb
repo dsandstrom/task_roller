@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskReopeningsController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:task) { Fabricate(:closed_task) }
   let(:current_user) { Fabricate(:user_reporter) }
   let(:subscriber) { Fabricate(:user_reporter) }
@@ -36,6 +36,11 @@ RSpec.describe TaskReopeningsController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:job_options) do
+      { event: "status", details: "closed,unassigned",
+        current_user: current_user }
+    end
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -57,6 +62,15 @@ RSpec.describe TaskReopeningsController, type: :controller do
             end.to change(current_user.task_subscriptions, :count).by(1)
           end
 
+          it "enqueues TaskSubscribersNotifierJob" do
+            post :create, params: { task_id: task.to_param }
+
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.with(task, job_options)
+          end
+
           it "opens the task" do
             expect do
               post :create, params: { task_id: task.to_param }
@@ -69,14 +83,6 @@ RSpec.describe TaskReopeningsController, type: :controller do
               post :create, params: { task_id: task.to_param }
               task.reload
             end.to change(task, :status).to("unassigned")
-          end
-
-          it "sends email to subscribers" do
-            task.subscribers << current_user
-            task.subscribers << subscriber
-            expect do
-              post :create, params: { task_id: task.to_param }
-            end.to have_enqueued_job.on_queue("mailers")
           end
 
           it "redirects to the created task_reopening" do
@@ -103,6 +109,12 @@ RSpec.describe TaskReopeningsController, type: :controller do
           expect do
             post :create, params: { task_id: task.to_param }
           end.not_to change(TaskSubscription, :count)
+        end
+
+        it "doesn't enqueue any jobs" do
+          expect do
+            post :create, params: { task_id: task.to_param }
+          end.not_to have_enqueued_job
         end
 
         it "doesn't open the task" do

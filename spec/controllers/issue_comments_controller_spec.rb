@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe IssueCommentsController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
@@ -104,6 +106,11 @@ RSpec.describe IssueCommentsController, type: :controller do
       { issue_id: issue.to_param, issue_comment: invalid_attributes }
     end
 
+    let(:job_options) do
+      { event: "comment", issue_comment: IssueComment.last,
+        current_user: current_user }
+    end
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -116,6 +123,15 @@ RSpec.describe IssueCommentsController, type: :controller do
               expect do
                 post :create, params: valid_params
               end.to change(current_user.issue_comments, :count).by(1)
+            end
+
+            it "enqueues IssueSubscribersNotifierJob" do
+              post :create, params: valid_params
+
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.exactly(:once)
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.with(issue, job_options)
             end
 
             it "redirects to the created issue_comment" do
@@ -143,36 +159,6 @@ RSpec.describe IssueCommentsController, type: :controller do
                   post :create, params: valid_params
                 end.not_to change(IssueSubscription, :count)
               end
-
-              it "doesn't send an email" do
-                expect do
-                  post :create, params: valid_params
-                end.not_to have_enqueued_job
-              end
-            end
-
-            context "when someone else subscribed to issue" do
-              let(:user_reporter) { Fabricate(:user_reporter) }
-
-              before do
-                Fabricate(:issue_subscription, issue: issue,
-                                               user: user_reporter)
-              end
-
-              it "sends an email" do
-                expect do
-                  post :create, params: valid_params
-                end.to(have_enqueued_job.with do |mailer, action, time, options|
-                  # IssueComment.last is nil unless you add another block
-                  expect(mailer).to eq("IssueMailer")
-                  expect(action).to eq("comment")
-                  expect(time).to eq("deliver_now")
-                  expect(options)
-                    .to eq(args: [], params: { issue: issue,
-                                               user: user_reporter,
-                                               comment: IssueComment.last })
-                end)
-              end
             end
           end
 
@@ -183,43 +169,36 @@ RSpec.describe IssueCommentsController, type: :controller do
               end.to change(current_user.issue_comments, :count).by(1)
             end
 
+            it "enqueues IssueSubscribersNotifierJob" do
+              post :create, params: valid_params, as: :turbo_stream
+
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.exactly(:once)
+              expect(IssueSubscribersNotifierJob)
+                .to have_been_enqueued.with(issue, job_options)
+            end
+
             it "redirects to the created issue_comment" do
               post :create, params: valid_params, as: :turbo_stream
               expect(response).to be_successful
-            end
-
-            context "when someone else subscribed to issue" do
-              let(:user_reporter) { Fabricate(:user_reporter) }
-
-              before do
-                Fabricate(:issue_subscription, issue: issue,
-                                               user: user_reporter)
-              end
-
-              it "sends an email" do
-                expect do
-                  post :create, params: valid_params, as: :turbo_stream
-                end.to(
-                  have_enqueued_job.with do |mailer, action, time, options|
-                    # IssueComment.last is nil unless you add another block
-                    expect(mailer).to eq("IssueMailer")
-                    expect(action).to eq("comment")
-                    expect(time).to eq("deliver_now")
-                    expect(options)
-                      .to eq(
-                        args: [],
-                        params: { issue: issue, user: user_reporter,
-                                  comment: IssueComment.last }
-                      )
-                  end
-                )
-              end
             end
           end
         end
 
         context "with invalid params" do
           context "when html request" do
+            it "doesn't create a new IssueComment" do
+              expect do
+                post :create, params: invalid_params
+              end.not_to change(IssueComment, :count)
+            end
+
+            it "doesn't enqueue any jobs" do
+              expect do
+                post :create, params: invalid_params
+              end.not_to have_enqueued_job
+            end
+
             it "returns a success response ('new' template)" do
               post :create, params: invalid_params
               expect(response).to be_successful
@@ -227,6 +206,18 @@ RSpec.describe IssueCommentsController, type: :controller do
           end
 
           context "when turbo_stream request" do
+            it "doesn't create a new IssueComment" do
+              expect do
+                post :create, params: invalid_params, as: :turbo_stream
+              end.not_to change(IssueComment, :count)
+            end
+
+            it "doesn't enqueue any jobs" do
+              expect do
+                post :create, params: invalid_params, as: :turbo_stream
+              end.not_to have_enqueued_job
+            end
+
             it "returns a success response ('new' template)" do
               post :create, params: invalid_params, as: :turbo_stream
               expect(response).to be_successful

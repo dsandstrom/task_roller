@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskReopeningsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :reopenings

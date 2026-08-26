@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskClosuresController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:task) { Fabricate(:open_task) }
   let(:current_user) { Fabricate(:user_reporter) }
   let(:subscriber) { Fabricate(:user_reporter) }
@@ -62,6 +62,11 @@ RSpec.describe TaskClosuresController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:job_options) do
+      { event: "status", details: "unassigned,closed",
+        current_user: current_user }
+    end
+
     %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -76,19 +81,20 @@ RSpec.describe TaskClosuresController, type: :controller do
             end.to change(task.closures, :count).by(1)
           end
 
-          it "sends email to subscribers" do
-            task.subscribers << current_user
-            task.subscribers << subscriber
-            expect do
-              post :create, params: { task_id: task.to_param }
-            end.to have_enqueued_job.on_queue("mailers")
-          end
-
           it "creates a new TaskSubscription for the current_user" do
             expect do
               post :create, params: { task_id: task.to_param }
               task.reload
             end.to change(current_user.task_subscriptions, :count).by(1)
+          end
+
+          it "enqueues TaskSubscribersNotifierJob" do
+            post :create, params: { task_id: task.to_param }
+
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.with(task, job_options)
           end
 
           it "closes the task" do
@@ -137,6 +143,15 @@ RSpec.describe TaskClosuresController, type: :controller do
               end.to change(current_user.task_subscriptions, :count).by(1)
             end
 
+            it "enqueues TaskSubscribersNotifierJob" do
+              post :create, params: { task_id: task.to_param }
+
+              expect(TaskSubscribersNotifierJob)
+                .to have_been_enqueued.exactly(:once)
+              expect(TaskSubscribersNotifierJob)
+                .to have_been_enqueued.with(task, job_options)
+            end
+
             it "closes the task" do
               expect do
                 post :create, params: { task_id: task.to_param }
@@ -164,6 +179,12 @@ RSpec.describe TaskClosuresController, type: :controller do
             expect do
               post :create, params: { task_id: task.to_param }
             end.not_to change(TaskSubscription, :count)
+          end
+
+          it "doesn't enqueue any jobs" do
+            expect do
+              post :create, params: { task_id: task.to_param }
+            end.not_to have_enqueued_job
           end
 
           it "doesn't close the task" do
@@ -197,6 +218,12 @@ RSpec.describe TaskClosuresController, type: :controller do
           expect do
             post :create, params: { task_id: task.to_param }
           end.not_to change(TaskSubscription, :count)
+        end
+
+        it "doesn't enqueue any jobs" do
+          expect do
+            post :create, params: { task_id: task.to_param }
+          end.not_to have_enqueued_job
         end
 
         it "doesn't close the task" do

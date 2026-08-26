@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe TasksController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:task_type) { Fabricate(:task_type) }
   let(:user) { Fabricate(:user_reporter) }
   let(:category) { Fabricate(:category) }
@@ -1129,6 +1131,8 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:job_options) { { event: "new", current_user: current_user } }
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
@@ -1179,29 +1183,21 @@ RSpec.describe TasksController, type: :controller do
                   end.to change(TaskSubscription, :count).by(2)
                 end
 
-                it "sends email to subscribers" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to(
-                    have_enqueued_job.with do |mailer, action, time, options|
-                      expect(mailer).to eq("TaskMailer")
-                      expect(action).to eq("new")
-                      expect(time).to eq("deliver_now")
-                      expect(options)
-                        .to eq(
-                          args: [],
-                          params: { task: Task.last, user: worker }
-                        )
-                    end
-                  )
-                end
-
                 it "creates a new worker TaskSubscription" do
                   expect do
                     post :create, params: { project_id: project.to_param,
                                             task: valid_attributes }
                   end.to change(worker.task_subscriptions, :count).by(1)
+                end
+
+                it "enqueues TaskSubscribersNotifierJob" do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+
+                  expect(TaskSubscribersNotifierJob)
+                    .to have_been_enqueued.exactly(:once)
+                  expect(TaskSubscribersNotifierJob)
+                    .to have_been_enqueued.with(Task.last, job_options)
                 end
               end
 
@@ -1224,6 +1220,13 @@ RSpec.describe TasksController, type: :controller do
                   post :create, params: { project_id: project.to_param,
                                           task: invalid_attributes }
                 end.not_to change(Task, :count)
+              end
+
+              it "doesn't enqueue any jobs" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: invalid_attributes }
+                end.not_to have_enqueued_job
               end
 
               it "returns a success response ('new' template)" do
