@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskComment < ApplicationRecord
   validates :body, presence: true
 
@@ -20,6 +18,6 @@ class TaskComment < ApplicationRecord
   end
 
   def notify_subscribers
-    task&.notify_of_comment(comment: self)
+    task&.notify_of_comment(self)
   end
 end

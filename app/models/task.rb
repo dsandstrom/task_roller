@@ -333,22 +333,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
-    notify_subscribers(options)
+    TaskSubscribersNotifierJob.perform_later(self, options)
   end
 
-  def notify_of_comment(options)
-    comment = options.delete(:comment)
-    return unless comment
+  def notify_of_comment(comment)
+    options = { event: 'comment', task_comment: comment,
+                current_user: comment.user }
 
-    options[:task_comment] = comment
-    options[:current_user] =
-      if options[:current_user]
-        [options[:current_user], comment.user]
-      else
-        comment.user
-      end
-
-    notify_subscribers(options.merge(event: 'comment'))
+    TaskSubscribersNotifierJob.perform_later(self, options)
   end
 
   def issue?
