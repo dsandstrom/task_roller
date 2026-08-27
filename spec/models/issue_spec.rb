@@ -1338,15 +1338,13 @@ RSpec.describe Issue, type: :model do
           end.to change(issue, :status).to("pending")
         end
 
-        it "enqueues IssueSubscribersNotifierJob" do
+        it "doesn't enqueue IssueSubscribersNotifierJob" do
           issue.subscribers << reporter
 
           issue.update_status
 
           expect(IssueSubscribersNotifierJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(IssueSubscribersNotifierJob)
-            .to have_been_enqueued.with(issue, { event: "new" })
+            .not_to have_been_enqueued
         end
       end
 

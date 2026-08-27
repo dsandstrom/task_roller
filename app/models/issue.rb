@@ -255,9 +255,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return if old_status == status
 
     enqueue_repo_job(old_status)
+    return if old_status.blank? # sending via SubsciptionJob
+
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
-    # TODO: only if not new
     IssueSubscribersNotifierJob.perform_later(self, options)
   end
 

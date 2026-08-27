@@ -1427,16 +1427,13 @@ RSpec.describe IssuesController, type: :controller do
               expect(IssueSubscriptionsJob)
                 .to have_been_enqueued.exactly(:once)
               expect(IssueSubscriptionsJob)
-                .to have_been_enqueued.with(Issue.last)
+                .to have_been_enqueued.with(Issue.last, send_new: true)
             end
 
-            it "enqueues IssueSubscribersNotifierJob" do
+            it "doesn't enqueue IssueSubscribersNotifierJob" do
               post :create, params: { issue: valid_attributes }
 
-              expect(IssueSubscribersNotifierJob)
-                .to have_been_enqueued.exactly(:once)
-              expect(IssueSubscribersNotifierJob)
-                .to have_been_enqueued.with(Issue.last, job_options)
+              expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
             end
 
             it "redirects to the created issue" do
@@ -1537,16 +1534,13 @@ RSpec.describe IssuesController, type: :controller do
             expect(IssueSubscriptionsJob)
               .to have_been_enqueued.exactly(:once)
             expect(IssueSubscriptionsJob)
-              .to have_been_enqueued.with(Issue.last)
+              .to have_been_enqueued.with(Issue.last, send_new: true)
           end
 
-          it "enqueues IssueSubscribersNotifierJob" do
+          it "doesn't enqueue IssueSubscribersNotifierJob" do
             post :create, params: { issue: valid_attributes }
 
-            expect(IssueSubscribersNotifierJob)
-              .to have_been_enqueued.exactly(:once)
-            expect(IssueSubscribersNotifierJob)
-              .to have_been_enqueued.with(Issue.last, job_options)
+            expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
           end
 
           it "redirects to the created issue" do
