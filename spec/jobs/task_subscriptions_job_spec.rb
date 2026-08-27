@@ -37,7 +37,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
           expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber)
+            .to have_been_enqueued.with(task, subscriber, {})
         end
       end
 
@@ -54,7 +54,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
           expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber)
+            .to have_been_enqueued.with(task, subscriber, {})
         end
       end
 
@@ -73,7 +73,7 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
           expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber)
+            .to have_been_enqueued.with(task, subscriber, {})
         end
       end
 
@@ -90,7 +90,24 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
           expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, task.user)
+            .to have_been_enqueued.with(task, task.user, {})
+        end
+      end
+
+      context "when given options" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:project_tasks_subscription, project: project,
+                                                 user: subscriber)
+        end
+
+        it "generates IssueSubscriptionJob for the task user" do
+          subject.perform_now task, send_new: true
+
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionJob)
+            .to have_been_enqueued.with(task, subscriber, send_new: true)
         end
       end
     end

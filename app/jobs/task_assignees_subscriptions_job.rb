@@ -3,12 +3,11 @@ class TaskAssigneesSubscriptionsJob < ApplicationJob
 
   attr_accessor :task
 
-  def perform(task)
+  def perform(task, **options)
     return unless task
 
     task.assignees.each do |u|
-      # TODO: send 'new' notification
-      TaskSubscriptionJob.perform_later(task, u)
+      TaskSubscriptionJob.perform_later(task, u, options)
     end
   end
 end

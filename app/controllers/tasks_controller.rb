@@ -151,8 +151,7 @@ class TasksController < ApplicationController
 
     def subscribe_users
       @task.subscribe_user
-      # TODO: send 'new' notification
-      TaskSubscriptionsJob.perform_later(@task)
-      TaskAssigneesSubscriptionsJob.perform_later(@task)
+      TaskSubscriptionsJob.perform_later(@task, send_new: true)
+      TaskAssigneesSubscriptionsJob.perform_later(@task, send_new: true)
     end
 end

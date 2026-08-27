@@ -1183,7 +1183,7 @@ RSpec.describe TasksController, type: :controller do
                   expect(TaskAssigneesSubscriptionsJob)
                     .to have_been_enqueued.exactly(:once)
                   expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.with(Task.last)
+                    .to have_been_enqueued.with(Task.last, send_new: true)
                 end
 
                 it "enqueues TaskSubscriptionsJob" do
@@ -1193,7 +1193,7 @@ RSpec.describe TasksController, type: :controller do
                   expect(TaskSubscriptionsJob)
                     .to have_been_enqueued.exactly(:once)
                   expect(TaskSubscriptionsJob)
-                    .to have_been_enqueued.with(Task.last)
+                    .to have_been_enqueued.with(Task.last, send_new: true)
                 end
 
                 it "enqueues TaskSubscribersNotifierJob" do

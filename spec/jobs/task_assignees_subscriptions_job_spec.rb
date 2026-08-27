@@ -26,7 +26,20 @@ RSpec.describe TaskAssigneesSubscriptionsJob, type: :job do
 
           expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, assignee)
+            .to have_been_enqueued.with(task, assignee, {})
+        end
+      end
+
+      context "when given options" do
+        let(:assignee) { Fabricate(:user_worker) }
+        let(:task) { Fabricate(:task, assignees: [assignee]) }
+
+        it "generates a TaskSubscriptionJob for the assignee" do
+          subject.perform_now task, send_new: true
+
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionJob)
+            .to have_been_enqueued.with(task, assignee, send_new: true)
         end
       end
     end
