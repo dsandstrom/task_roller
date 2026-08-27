@@ -1176,18 +1176,24 @@ RSpec.describe TasksController, type: :controller do
                   valid_attributes.merge! assignee_ids: [worker.id]
                 end
 
-                it "creates 2 TaskSubscriptions" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to change(TaskSubscription, :count).by(2)
+                it "enqueues TaskAssigneesSubscriptionsJob" do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+
+                  expect(TaskAssigneesSubscriptionsJob)
+                    .to have_been_enqueued.exactly(:once)
+                  expect(TaskAssigneesSubscriptionsJob)
+                    .to have_been_enqueued.with(Task.last)
                 end
 
-                it "creates a new worker TaskSubscription" do
-                  expect do
-                    post :create, params: { project_id: project.to_param,
-                                            task: valid_attributes }
-                  end.to change(worker.task_subscriptions, :count).by(1)
+                it "enqueues TaskSubscriptionsJob" do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+
+                  expect(TaskSubscriptionsJob)
+                    .to have_been_enqueued.exactly(:once)
+                  expect(TaskSubscriptionsJob)
+                    .to have_been_enqueued.with(Task.last)
                 end
 
                 it "enqueues TaskSubscribersNotifierJob" do
@@ -1285,38 +1291,6 @@ RSpec.describe TasksController, type: :controller do
                                         task: invalid_attributes }
                 expect(response).to be_successful
               end
-            end
-          end
-
-          context "when someone subscribed to category" do
-            let(:user) { Fabricate(:user_reviewer) }
-
-            before do
-              Fabricate(:category_tasks_subscription, user: user,
-                                                      category: category)
-            end
-
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(user.task_subscriptions, :count).by(1)
-            end
-          end
-
-          context "when someone subscribed to project" do
-            let(:user) { Fabricate(:user_reviewer) }
-
-            before do
-              Fabricate(:project_tasks_subscription, user: user,
-                                                     project: project)
-            end
-
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { project_id: project.to_param,
-                                        task: valid_attributes }
-              end.to change(user.task_subscriptions, :count).by(1)
             end
           end
         end

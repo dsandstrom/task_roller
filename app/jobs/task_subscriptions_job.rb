@@ -8,6 +8,7 @@ class TaskSubscriptionsJob < ApplicationJob
                   task.project.task_subscribers
 
     subscribers.each do |u|
+      # TODO: send 'new' notification
       TaskSubscriptionJob.perform_later(task, u)
     end
   end

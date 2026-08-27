@@ -227,12 +227,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     issue_subscriptions.create(user_id: subscriber.id)
   end
 
-  def subscribe_users
-    subscribe_user
-    category.issue_subscribers.each { |u| subscribe_user(u) }
-    project.issue_subscribers.each { |u| subscribe_user(u) }
-  end
-
   def approved_tasks
     @approved_tasks ||= tasks.all_approved
   end
@@ -263,6 +257,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     enqueue_repo_job(old_status)
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
+    # TODO: only if not new
     IssueSubscribersNotifierJob.perform_later(self, options)
   end
 

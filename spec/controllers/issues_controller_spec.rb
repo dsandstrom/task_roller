@@ -1415,16 +1415,19 @@ RSpec.describe IssuesController, type: :controller do
               expect(issue.status).to eq("pending")
             end
 
-            it "creates a new IssueSubscription" do
+            it "creates a IssueSubscription for the current_user" do
               expect do
                 post :create, params: { issue: valid_attributes }
               end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
-            it "redirects to the created issue" do
+            it "enqueues IssueSubscriptionsJob" do
               post :create, params: { issue: valid_attributes }
-              url = issue_path(Issue.last)
-              expect(response).to redirect_to(url)
+
+              expect(IssueSubscriptionsJob)
+                .to have_been_enqueued.exactly(:once)
+              expect(IssueSubscriptionsJob)
+                .to have_been_enqueued.with(Issue.last)
             end
 
             it "enqueues IssueSubscribersNotifierJob" do
@@ -1434,6 +1437,12 @@ RSpec.describe IssuesController, type: :controller do
                 .to have_been_enqueued.exactly(:once)
               expect(IssueSubscribersNotifierJob)
                 .to have_been_enqueued.with(Issue.last, job_options)
+            end
+
+            it "redirects to the created issue" do
+              post :create, params: { issue: valid_attributes }
+              url = issue_path(Issue.last)
+              expect(response).to redirect_to(url)
             end
           end
 
@@ -1516,6 +1525,21 @@ RSpec.describe IssuesController, type: :controller do
             expect(issue.status).to eq("pending")
           end
 
+          it "creates a IssueSubscription for the current_user" do
+            expect do
+              post :create, params: { issue: valid_attributes }
+            end.to change(current_user.issue_subscriptions, :count).by(1)
+          end
+
+          it "enqueues IssueSubscriptionsJob" do
+            post :create, params: { issue: valid_attributes }
+
+            expect(IssueSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(IssueSubscriptionsJob)
+              .to have_been_enqueued.with(Issue.last)
+          end
+
           it "enqueues IssueSubscribersNotifierJob" do
             post :create, params: { issue: valid_attributes }
 
@@ -1529,36 +1553,6 @@ RSpec.describe IssuesController, type: :controller do
             post :create, params: { issue: valid_attributes }
             url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
-          end
-
-          context "when someone subscribed to category" do
-            let(:user) { Fabricate(:user_reviewer) }
-
-            before do
-              Fabricate(:category_issues_subscription, user: user,
-                                                       category: category)
-            end
-
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to change(user.issue_subscriptions, :count).by(1)
-            end
-          end
-
-          context "when someone subscribed to project" do
-            let(:user) { Fabricate(:user_reviewer) }
-
-            before do
-              Fabricate(:project_issues_subscription, user: user,
-                                                      project: project)
-            end
-
-            it "creates a new IssueSubscription" do
-              expect do
-                post :create, params: { issue: valid_attributes }
-              end.to change(user.issue_subscriptions, :count).by(1)
-            end
           end
         end
 

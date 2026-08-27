@@ -7,6 +7,7 @@ class TaskAssigneesSubscriptionsJob < ApplicationJob
     return unless task
 
     task.assignees.each do |u|
+      # TODO: send 'new' notification
       TaskSubscriptionJob.perform_later(task, u)
     end
   end

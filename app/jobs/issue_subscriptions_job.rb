@@ -8,6 +8,7 @@ class IssueSubscriptionsJob < ApplicationJob
                   issue.project.issue_subscribers
 
     subscribers.each do |u|
+      # TODO: send 'new' notification
       IssueSubscriptionJob.perform_later(issue, u)
     end
   end
