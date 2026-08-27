@@ -252,14 +252,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return if old_status == status
+    return self if old_status == status
 
     enqueue_repo_job(old_status)
-    return if old_status.blank? # sending via SubsciptionJob
+    return self if old_status.blank? # sending via SubsciptionJob
 
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
     IssueSubscribersNotifierJob.perform_later(self, options)
+    self
   end
 
   def notify_of_comment(comment)
