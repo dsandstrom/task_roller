@@ -1387,13 +1387,10 @@ RSpec.describe Task, type: :model do
           end.to change(task, :status).to("unassigned")
         end
 
-        it "enqueues TaskSubscribersNotifierJob" do
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
           task.update_status
 
-          expect(TaskSubscribersNotifierJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskSubscribersNotifierJob)
-            .to have_been_enqueued.with(task, job_options)
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
         end
       end
 
@@ -1409,13 +1406,10 @@ RSpec.describe Task, type: :model do
           end.to change(task, :status).to("closed")
         end
 
-        it "enqueues TaskSubscribersNotifierJob" do
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
           task.update_status
 
-          expect(TaskSubscribersNotifierJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskSubscribersNotifierJob)
-            .to have_been_enqueued.with(task, job_options)
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
         end
       end
     end
