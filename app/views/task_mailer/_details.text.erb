@@ -2,6 +2,12 @@ Task Details
 -
 <%= "Type: #{task.task_type&.name}" %>
 <%= "Status: #{task.status&.titleize}" %>
+<% if task.assignees.any? %>
+<%= "Assignees:" %>
+<% task.assignees.each do |assignee| %>
+  * <%= assignee.name %>
+<% end %>
+<% end %>
 
 <%= task.summary %>
 

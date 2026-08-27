@@ -4,6 +4,14 @@
 <%= content_tag :div do %>
   <%= content_tag :p, "Type: #{task.task_type&.name}" %>
   <%= content_tag :p, "Status: #{task.status&.titleize}" %>
+  <% if task.assignees.any? %>
+    <%= content_tag :p, "Assignees:" %>
+    <ul>
+      <% task.assignees.each do |assignee| %>
+        <%= content_tag :li, assignee.name %>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>
 
 <%= content_tag :div, task.description_html.html_safe,
