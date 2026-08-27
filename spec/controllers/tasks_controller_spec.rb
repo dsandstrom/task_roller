@@ -1196,14 +1196,11 @@ RSpec.describe TasksController, type: :controller do
                     .to have_been_enqueued.with(Task.last, send_new: true)
                 end
 
-                it "enqueues TaskSubscribersNotifierJob" do
+                it "doesn't enqueue TaskSubscribersNotifierJob" do
                   post :create, params: { project_id: project.to_param,
                                           task: valid_attributes }
 
-                  expect(TaskSubscribersNotifierJob)
-                    .to have_been_enqueued.exactly(:once)
-                  expect(TaskSubscribersNotifierJob)
-                    .to have_been_enqueued.with(Task.last, job_options)
+                  expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
                 end
               end
 
