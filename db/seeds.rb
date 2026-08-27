@@ -77,7 +77,7 @@ class Seeds
                            description: issue_description)
       issue = Issue.create!(attrs)
       issue.subscribe_user
-      IssueSubscriptionsJob.perform_later(issue)
+      IssueSubscriptionsJob.perform_later(issue, send_new: true)
       issue.reload.update_status
       issue
     end
@@ -460,8 +460,8 @@ class Seeds
 
     def update_task_status(task)
       task.subscribe_user
-      TaskSubscriptionsJob.perform_later(task)
-      TaskAssigneesSubscriptionsJob.perform_later(task)
+      TaskSubscriptionsJob.perform_later(task, send_new: true)
+      TaskAssigneesSubscriptionsJob.perform_later(task, send_new: true)
       task.reload.update_status
       task.issue&.reload&.update_status
     end
