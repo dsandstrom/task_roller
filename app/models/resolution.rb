@@ -40,16 +40,16 @@ class Resolution < ApplicationRecord
     @pending_
   end
 
-  def approve
-    return false unless issue.valid?
+  def approve?
+    return false unless issue.valid? && update(approved: true)
 
-    update(approved: true) && issue.close(user)
+    issue.close?(user)
   end
 
-  def disapprove
-    return false unless issue.valid?
+  def disapprove?
+    return false unless issue.valid? && update(approved: false)
 
-    update(approved: false) && issue.reopen(user)
+    issue.reopen?(user)
   end
 
   def status

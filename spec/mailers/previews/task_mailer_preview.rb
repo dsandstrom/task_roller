@@ -13,7 +13,8 @@ class TaskMailerPreview < ActionMailer::Preview
   end
 
   def new
-    options = { task: Task.all[-2], user: User.all[-2] }
+    options =
+      { task: Task.where(status: 'in_progress')[-2], user: User.all[-2] }
     TaskMailer.with(options).new
   end
 end

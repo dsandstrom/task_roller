@@ -207,14 +207,17 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     @unresolved = open? && current_resolutions.none?
   end
 
-  def close(current_user = nil)
-    update closed: true
+  def close?(current_user = nil)
+    return false unless update(closed: true)
+
     update_status(current_user)
+    true
   end
 
-  def reopen(current_user = nil)
+  def reopen?(current_user = nil)
     update closed: false, opened_at: Time.zone.now
     update_status(current_user)
+    true
   end
 
   def subscribe_user(subscriber = nil)
@@ -222,12 +225,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return unless subscriber
 
     issue_subscriptions.create(user_id: subscriber.id)
-  end
-
-  def subscribe_users
-    subscribe_user
-    category.issue_subscribers.each { |u| subscribe_user(u) }
-    project.issue_subscribers.each { |u| subscribe_user(u) }
   end
 
   def approved_tasks
@@ -255,27 +252,22 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return true if old_status == status
+    return self if old_status == status
 
     enqueue_repo_job(old_status)
+    return self if old_status.blank? # sending via SubsciptionJob
+
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
-    notify_subscribers(options)
+    IssueSubscribersNotifierJob.perform_later(self, options)
+    self
   end
 
-  def notify_of_comment(options)
-    comment = options.delete(:comment)
-    return unless comment
+  def notify_of_comment(comment)
+    options = { event: 'comment', current_user: comment.user,
+                issue_comment: comment }
 
-    options[:issue_comment] = comment
-    options[:current_user] =
-      if options[:current_user]
-        [options[:current_user], comment.user]
-      else
-        comment.user
-      end
-
-    notify_subscribers(options.merge(event: 'comment'))
+    IssueSubscribersNotifierJob.perform_later(self, options)
   end
 
   def octokit
@@ -306,6 +298,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def task?
     false
+  end
+
+  def notification_options(old_status)
+    if old_status.present?
+      { event: 'status', details: "#{old_status},#{status}" }
+    else
+      { event: 'new' }
+    end
   end
 
   private
@@ -387,50 +387,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
-    end
-
-    def subscribers_except(users)
-      if users
-        if users.is_a?(Array)
-          subscribers.where.not(id: users.map(&:id))
-        else
-          subscribers.where.not(id: users.id)
-        end
-      else
-        subscribers
-      end
-    end
-
-    def notify_subscribers(options)
-      current_user = options.delete(:current_user)
-      subscribers_except(current_user).each do |subscriber|
-        notify_subscriber(subscriber, options)
-      end
-      true
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug { "IssueNotification invalid:\n#{e.inspect}" }
-      false
-    end
-
-    def notify_subscriber(subscriber, options)
-      if options[:event] == 'status'
-        notification = notifications.find_by(user_id: subscriber.id,
-                                             event: 'status')
-      end
-      if notification
-        notification.update options
-      else
-        notification = notifications.create!(options.merge(user: subscriber))
-      end
-      notification.send_email
-    end
-
-    def notification_options(old_status)
-      if old_status.present?
-        { event: 'status', details: "#{old_status},#{status}" }
-      else
-        { event: 'new' }
-      end
     end
 
     def build_octokit

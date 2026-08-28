@@ -32,7 +32,7 @@ class ReviewsController < ApplicationController
   end
 
   def approve
-    if @review.approve(current_user)
+    if @review.approve?(current_user)
       @review.subscribe_user
       redirect_back_or_to(@task, notice: 'Task was approved.')
     else
@@ -41,7 +41,7 @@ class ReviewsController < ApplicationController
   end
 
   def disapprove
-    if @review.disapprove(current_user)
+    if @review.disapprove?(current_user)
       @review.subscribe_user
       redirect_back_or_to(@task, notice: 'Task was disapproved.')
     else

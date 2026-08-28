@@ -249,22 +249,23 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     progressions&.unfinished&.all?(&:finish)
   end
 
-  def close(current_user = nil)
+  def close?(current_user = nil)
     reviews.pending.each { |r| r.update(approved: false) }
     return false unless finish?
 
     update closed: true
     update_status(current_user)
-    close_issue(current_user)
+    close_issue?(current_user)
+    true
   end
 
-  def reopen(current_user = nil)
+  def reopen?(current_user = nil)
     return false unless update(closed: false, opened_at: Time.zone.now)
 
     update_status(current_user)
     return true unless issue&.closed?
 
-    issue.reopen(current_user)
+    issue.reopen?(current_user)
   end
 
   def subscribe_user(subscriber = nil)
@@ -278,13 +279,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return unless assignees
 
     assignees.each { |u| task_subscriptions.create(user_id: u.id) }
-  end
-
-  def subscribe_users
-    subscribe_user
-    subscribe_assignees
-    category.task_subscribers.each { |u| subscribe_user(u) }
-    project.task_subscribers.each { |u| subscribe_user(u) }
   end
 
   # feed of closures, reopenings, duplicate, tasks, reviews
@@ -329,26 +323,19 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return true if old_status == status
+    return self if old_status.blank? || old_status == status
 
     options = notification_options(old_status)
     options[:current_user] = current_user if current_user.present?
-    notify_subscribers(options)
+    TaskSubscribersNotifierJob.perform_later(self, options)
+    self
   end
 
-  def notify_of_comment(options)
-    comment = options.delete(:comment)
-    return unless comment
+  def notify_of_comment(comment)
+    options = { event: 'comment', task_comment: comment,
+                current_user: comment.user }
 
-    options[:task_comment] = comment
-    options[:current_user] =
-      if options[:current_user]
-        [options[:current_user], comment.user]
-      else
-        comment.user
-      end
-
-    notify_subscribers(options.merge(event: 'comment'))
+    TaskSubscribersNotifierJob.perform_later(self, options)
   end
 
   def issue?
@@ -357,6 +344,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def task?
     true
+  end
+
+  def notification_options(old_status)
+    if old_status.present?
+      { event: 'status', details: "#{old_status},#{status}" }
+    else
+      { event: 'new' }
+    end
   end
 
   private
@@ -437,10 +432,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       issue.open_tasks.where.not(tasks: { id: id }).none?
     end
 
-    def close_issue(current_user = nil)
+    def close_issue?(current_user = nil)
       return true unless issue && last_task_for_issue?
 
-      issue.close(current_user)
+      issue.close?(current_user)
     end
 
     def update_issue_counts
@@ -451,18 +446,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       # rubocop:enable Rails/SkipsModelValidations
     end
 
-    def subscribers_except(users)
-      if users
-        if users.is_a?(Array)
-          subscribers.where.not(id: users.map(&:id))
-        else
-          subscribers.where.not(id: users.id)
-        end
-      else
-        subscribers
-      end
-    end
-
     def build_history_feed
       feed = []
       [closures, reopenings, concluded_reviews].each do |collection|
@@ -470,38 +453,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
-    end
-
-    def notify_subscribers(options)
-      current_user = options.delete(:current_user)
-      subscribers_except(current_user).each do |subscriber|
-        notify_subscriber(subscriber, options)
-      end
-      true
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.debug { "TaskNotification invalid:\n#{e.inspect}" }
-      false
-    end
-
-    def notify_subscriber(subscriber, options)
-      if options[:event] == 'status'
-        notification = notifications.find_by(user_id: subscriber.id,
-                                             event: 'status')
-      end
-      if notification
-        notification.update options
-      else
-        notification = notifications.create!(options.merge(user: subscriber))
-      end
-      notification.send_email
-    end
-
-    def notification_options(old_status)
-      if old_status.present?
-        { event: 'status', details: "#{old_status},#{status}" }
-      else
-        { event: 'new' }
-      end
     end
 
     def build_siblings(issue)

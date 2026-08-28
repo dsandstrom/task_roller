@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Review < ApplicationRecord
   belongs_to :task
   belongs_to :user
@@ -45,20 +43,20 @@ class Review < ApplicationRecord
     @pending_
   end
 
-  def approve(user = nil)
+  def approve?(user = nil)
     return false unless task.valid?
 
     attrs = { approved: true }
     attrs.merge!(user_id: user.id) if user
-    update(attrs) && task.close
+    update(attrs) && task.close?
   end
 
-  def disapprove(user = nil)
+  def disapprove?(user = nil)
     return false unless task.valid?
 
     attrs = { approved: false }
     attrs.merge!(user_id: user.id) if user
-    update(attrs) && task.reopen
+    update(attrs) && task.reopen?
   end
 
   def status

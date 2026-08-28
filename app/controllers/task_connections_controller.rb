@@ -9,7 +9,7 @@ class TaskConnectionsController < ApplicationController
     notice = 'Task was successfully closed and marked as a duplicate.'
 
     if @task_connection.save
-      @task_connection.source.close
+      @task_connection.source.close?
       @task_connection.subscribe_user
       redirect_to @task_connection.source, notice: notice
     else
@@ -23,7 +23,7 @@ class TaskConnectionsController < ApplicationController
     authorize! :read, task
 
     if @task_connection.destroy
-      task.reopen
+      task.reopen?
       task.reopenings.create(user_id: current_user_id)
     end
     redirect_to task, notice: notice

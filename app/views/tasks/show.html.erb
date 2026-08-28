@@ -92,7 +92,7 @@
 
           <%= render partial: 'tasks/history',
                      collection: @task.history_feed,
-                     locals: { task: @task } %>
+                     locals: { task: @task, show_id: false } %>
         </dl>
       </section>
     </div><!-- first column  -->

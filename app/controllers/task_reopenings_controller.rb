@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskReopeningsController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :reopenings
@@ -10,7 +8,7 @@ class TaskReopeningsController < ApplicationController
     notice = 'Task was successfully reopened.'
 
     if @task_reopening.save
-      @task.reopen(current_user)
+      @task.reopen?(current_user)
       @task_reopening.subscribe_user
       redirect_to @task, notice: notice
     else

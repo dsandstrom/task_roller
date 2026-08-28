@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueClosuresController < ApplicationController
   load_and_authorize_resource :issue
   load_and_authorize_resource through: :issue, through_association: :closures
@@ -10,7 +8,7 @@ class IssueClosuresController < ApplicationController
     notice = 'Issue was successfully closed.'
 
     if @issue_closure.save
-      @issue.close(current_user)
+      @issue.close?(current_user)
       @issue_closure.subscribe_user
       redirect_to @issue, notice: notice
     else

@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueComment, type: :model do
+  include ActiveJob::TestHelper
+
   let(:user) { Fabricate(:user_worker) }
   let(:issue) { Fabricate(:issue) }
 
@@ -117,61 +117,48 @@ RSpec.describe IssueComment, type: :model do
   end
 
   describe "#notify_subscribers" do
-    context "when issue has subscribers" do
-      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+    let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+    let(:job_options) do
+      { event: "comment", issue_comment: issue_comment,
+        current_user: issue_comment.user }
+    end
 
+    context "when issue has subscribers" do
       before { issue.subscribers << user }
 
-      it "creates notification" do
-        expect do
-          issue_comment.notify_subscribers
-        end.to change(issue.notifications, :count).by(1)
-      end
+      it "enqueues IssueSubscribersNotifierJob" do
+        issue_comment.notify_subscribers
 
-      it "sends email" do
-        expect do
-          issue_comment.notify_subscribers
-        end.to have_enqueued_job.on_queue("mailers")
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.with(issue, job_options)
       end
     end
 
     context "when user subscribed to issue" do
-      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+      it "enqueues IssueSubscribersNotifierJob" do
+        issue_comment.notify_subscribers
 
-      before { issue.subscribers << issue_comment.user }
-
-      it "doesn't create notification" do
-        expect do
-          issue_comment.notify_subscribers
-        end.not_to change(IssueNotification, :count)
-      end
-
-      it "doesn't send email" do
-        expect do
-          issue_comment.notify_subscribers
-        end.not_to have_enqueued_job
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.with(issue, job_options)
       end
     end
 
     context "when issue doesn't have subscribers" do
-      let(:issue_comment) { Fabricate(:issue_comment, issue: issue) }
+      it "enqueues IssueSubscribersNotifierJob" do
+        issue_comment.notify_subscribers
 
-      it "doesn't create notification" do
-        expect do
-          issue_comment.notify_subscribers
-        end.not_to change(IssueNotification, :count)
-      end
-
-      it "doesn't send email" do
-        expect do
-          issue_comment.notify_subscribers
-        end.not_to have_enqueued_job
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.with(issue, job_options)
       end
     end
 
     context "when no issue" do
-      let(:issue_comment) { Fabricate(:issue_comment) }
-
       before do
         issue.subscribers << user
         issue_comment.issue_id = nil
@@ -182,11 +169,15 @@ RSpec.describe IssueComment, type: :model do
           issue_comment.notify_subscribers
         end.not_to raise_error
       end
+
+      it "doesn't enqueue IssueSubscribersNotifierJob" do
+        issue_comment.notify_subscribers
+
+        expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
+      end
     end
 
     context "when no user" do
-      let(:issue_comment) { Fabricate(:issue_comment) }
-
       before do
         issue.subscribers << user
         issue_comment.user_id = nil
@@ -196,6 +187,15 @@ RSpec.describe IssueComment, type: :model do
         expect do
           issue_comment.notify_subscribers
         end.not_to raise_error
+      end
+
+      it "enqueues IssueSubscribersNotifierJob" do
+        issue_comment.notify_subscribers
+
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(IssueSubscribersNotifierJob)
+          .to have_been_enqueued.with(issue, job_options)
       end
     end
   end

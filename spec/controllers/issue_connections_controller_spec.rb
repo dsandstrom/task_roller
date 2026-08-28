@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueConnectionsController, type: :controller do
@@ -156,8 +154,8 @@ RSpec.describe IssueConnectionsController, type: :controller do
 
   describe "DELETE #destroy" do
     before do
-      source_issue.close
-      target_issue.close
+      source_issue.close?
+      target_issue.close?
     end
 
     %w[admin reviewer].each do |employee_type|

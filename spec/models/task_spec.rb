@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Task, type: :model do
+  include ActiveJob::TestHelper
+
   let(:worker) { Fabricate(:user_worker) }
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
@@ -159,7 +161,7 @@ RSpec.describe Task, type: :model do
           reopened_task = Fabricate(:task)
           Fabricate(:pending_review, task: reopened_task)
         end
-        reopened_task.reopen
+        reopened_task.reopen?
 
         Fabricate(:approved_task)
 
@@ -256,7 +258,7 @@ RSpec.describe Task, type: :model do
         Timecop.freeze(1.day.ago) do
           reopened_task = Fabricate(:approved_task)
         end
-        reopened_task.reopen
+        reopened_task.reopen?
 
         task.update_status
       end
@@ -322,7 +324,7 @@ RSpec.describe Task, type: :model do
         end
 
         Timecop.freeze(2.days.from_now) do
-          reopened_task.reopen
+          reopened_task.reopen?
         end
       end
 
@@ -977,7 +979,7 @@ RSpec.describe Task, type: :model do
     context "when reviews" do
       before do
         Timecop.freeze(1.week.ago) do
-          task.reopen
+          task.reopen?
         end
       end
 
@@ -1352,6 +1354,7 @@ RSpec.describe Task, type: :model do
     context "when status is originally nil" do
       let(:task) { Fabricate(:task, status: nil) }
       let(:subscriber) { Fabricate(:user_worker) }
+      let(:job_options) { { event: "status", details: "closed,pending" } }
 
       before { task.subscribers << subscriber }
 
@@ -1365,37 +1368,35 @@ RSpec.describe Task, type: :model do
           end.not_to change(task, :status)
         end
 
-        it "doesn't email subscribers" do
+        it "doesn't enqueue any jobs" do
           expect do
             task.update_status
           end.not_to have_enqueued_job
         end
       end
 
-      context "and changes to 'open'" do
-        before { allow(task).to receive(:build_status) { "open" } }
+      context "and changes to 'unassigned'" do
+        let(:job_options) { { event: "new" } }
+
+        before { allow(task).to receive(:build_status) { "unassigned" } }
 
         it "changes status" do
           expect do
             task.update_status
             task.reload
-          end.to change(task, :status).to("open")
+          end.to change(task, :status).to("unassigned")
         end
 
-        it "delivers emails" do
-          expect do
-            task.update_status
-          end.to have_enqueued_job.on_queue("mailers")
-        end
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
+          task.update_status
 
-        it "creates TaskNotification" do
-          expect do
-            task.update_status
-          end.to change(TaskNotification, :count).by(1)
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
         end
       end
 
       context "and changes to 'closed'" do
+        let(:job_options) { { event: "new" } }
+
         before { allow(task).to receive(:build_status) { "closed" } }
 
         it "changes status" do
@@ -1405,28 +1406,22 @@ RSpec.describe Task, type: :model do
           end.to change(task, :status).to("closed")
         end
 
-        it "delivers email" do
-          expect do
-            task.update_status
-          end.to have_enqueued_job.on_queue("mailers")
-        end
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
+          task.update_status
 
-        it "creates TaskNotification" do
-          expect do
-            task.update_status
-          end.to change(TaskNotification, :count).by(1)
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
         end
       end
     end
 
-    context "when status is originally 'open'" do
-      let(:task) { Fabricate(:task, status: "open") }
+    context "when status is originally 'unassigned'" do
+      let(:task) { Fabricate(:task, status: "unassigned") }
       let(:subscriber) { Fabricate(:user_worker) }
 
       before { task.subscribers << subscriber }
 
-      context "and stays 'open'" do
-        before { allow(task).to receive(:build_status) { "open" } }
+      context "and stays 'unassigned'" do
+        before { allow(task).to receive(:build_status) { "unassigned" } }
 
         it "doesn't change status" do
           expect do
@@ -1435,20 +1430,18 @@ RSpec.describe Task, type: :model do
           end.not_to change(task, :status)
         end
 
-        it "doesn't email subscribers" do
+        it "doesn't enqueue any jobs" do
           expect do
             task.update_status
           end.not_to have_enqueued_job
         end
-
-        it "doesn't create TaskNotification" do
-          expect do
-            task.update_status
-          end.not_to change(TaskNotification, :count)
-        end
       end
 
       context "and changes to 'in_progress'" do
+        let(:job_options) do
+          { event: "status", details: "unassigned,in_progress" }
+        end
+
         before { allow(task).to receive(:build_status) { "in_progress" } }
 
         it "changes status" do
@@ -1458,16 +1451,13 @@ RSpec.describe Task, type: :model do
           end.to change(task, :status).to("in_progress")
         end
 
-        it "delivers email" do
-          expect do
-            task.update_status
-          end.to have_enqueued_job.on_queue("mailers")
-        end
+        it "enqueues TaskSubscribersNotifierJob" do
+          task.update_status
 
-        it "creates TaskNotification" do
-          expect do
-            task.update_status
-          end.to change(TaskNotification, :count).by(1)
+          expect(TaskSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscribersNotifierJob)
+            .to have_been_enqueued.with(task, job_options)
         end
       end
     end
@@ -1475,30 +1465,30 @@ RSpec.describe Task, type: :model do
     context "when status is originally 'in_progress'" do
       let(:task) { Fabricate(:task, status: "in_progress") }
       let(:subscriber) { Fabricate(:user_worker) }
+      let(:job_options) do
+        { event: "status", details: "in_progress,in_review" }
+      end
 
       before { task.subscribers << subscriber }
 
-      context "and changes to 'addressed'" do
+      context "and changes to 'in_review'" do
         context "with no current notifications" do
-          before { allow(task).to receive(:build_status) { "addressed" } }
+          before { allow(task).to receive(:build_status) { "in_review" } }
 
           it "changes status" do
             expect do
               task.update_status
               task.reload
-            end.to change(task, :status).to("addressed")
+            end.to change(task, :status).to("in_review")
           end
 
-          it "delivers email" do
-            expect do
-              task.update_status
-            end.to have_enqueued_job.on_queue("mailers")
-          end
+          it "enqueues TaskSubscribersNotifierJob" do
+            task.update_status
 
-          it "creates TaskNotification" do
-            expect do
-              task.update_status
-            end.to change(TaskNotification, :count).by(1)
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.with(task, job_options)
           end
         end
 
@@ -1509,41 +1499,34 @@ RSpec.describe Task, type: :model do
                                           details: "open,in_progress")
           end
 
-          before { allow(task).to receive(:build_status) { "addressed" } }
+          before { allow(task).to receive(:build_status) { "in_review" } }
 
           it "changes status" do
             expect do
               task.update_status
               task.reload
-            end.to change(task, :status).to("addressed")
+            end.to change(task, :status).to("in_review")
           end
 
-          it "delivers email" do
-            expect do
-              task.update_status
-            end.to have_enqueued_job.on_queue("mailers")
-          end
+          it "enqueues TaskSubscribersNotifierJob" do
+            task.update_status
 
-          it "doesn't create TaskNotification" do
-            expect do
-              task.update_status
-            end.not_to change(TaskNotification, :count)
-          end
-
-          it "updates the current notification" do
-            expect do
-              task.update_status
-              task_notification.reload
-            end.to change(task_notification, :details)
-              .to("in_progress,addressed")
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.with(task, job_options)
           end
         end
       end
     end
 
     context "when given current_user" do
-      let(:task) { Fabricate(:task, status: "open") }
+      let(:task) { Fabricate(:task, status: "assigned") }
       let(:subscriber) { Fabricate(:user_worker) }
+      let(:job_options) do
+        { event: "status", details: "assigned,in_progress",
+          current_user: subscriber }
+      end
 
       before { task.subscribers << subscriber }
 
@@ -1556,10 +1539,13 @@ RSpec.describe Task, type: :model do
         end.to change(task, :status).to("in_progress")
       end
 
-      it "doesn't email current_user" do
-        expect do
-          task.update_status(subscriber)
-        end.not_to have_enqueued_job
+      it "enqueues TaskSubscribersNotifierJob" do
+        task.update_status(subscriber)
+
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.with(task, job_options)
       end
     end
   end
@@ -1702,7 +1688,7 @@ RSpec.describe Task, type: :model do
           Fabricate(:approved_review, task: task)
         end
         Timecop.freeze(1.hour.ago) do
-          task.reopen
+          task.reopen?
         end
         task.reload
         expect(task.current_review).to be_nil
@@ -1710,33 +1696,38 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "#close" do
+  describe "#close?" do
     let(:current_user) { Fabricate(:user_reporter) }
     let(:subscriber) { Fabricate(:user_reporter) }
 
     context "when open" do
       let(:task) { Fabricate(:task) }
+      let(:job_options) do
+        { event: "status", details: "unassigned,closed",
+          current_user: current_user }
+      end
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes the tasks's status to 'closed'" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :status).to("closed")
       end
 
-      it "sends email to subscribers" do
-        task.subscribers << current_user
-        task.subscribers << subscriber
-        expect do
-          task.close(current_user)
-        end.to have_enqueued_job.on_queue("mailers")
+      it "enqueues TaskSubscribersNotifierJob" do
+        task.close?(current_user)
+
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.with(task, job_options)
       end
     end
 
@@ -1745,22 +1736,22 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change task" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "doesn't change the tasks's status" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :status)
       end
 
-      it "doesn't send email to subscribers" do
+      it "doesn't enqueue any jobs" do
         task.subscribers << subscriber
         expect do
-          task.close
+          task.close?
         end.not_to have_enqueued_job
       end
     end
@@ -1771,27 +1762,27 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes it's finished to true" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.to change(progression, :finished).to(true)
       end
 
       it "changes the tasks's status to 'closed'" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :status).to("closed")
       end
 
       it "returns true" do
-        expect(task.close(worker)).to eq(true)
+        expect(task.close?(worker)).to eq(true)
       end
     end
 
@@ -1801,20 +1792,20 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "doesn't change it's finished" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.not_to change(progression, :finished)
       end
 
       it "returns true" do
-        expect(task.close).to eq(true)
+        expect(task.close?).to eq(true)
       end
     end
 
@@ -1831,20 +1822,20 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change it's closed" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.not_to change(task, :closed).from(false)
       end
 
       it "doesn't change it's finished" do
         expect do
-          task.close
+          task.close?
           progression.reload
         end.not_to change(progression, :finished)
       end
 
       it "returns false" do
-        expect(task.close).to eq(false)
+        expect(task.close?).to eq(false)
       end
     end
 
@@ -1854,20 +1845,20 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to true" do
         expect do
-          task.close
+          task.close?
           task.reload
         end.to change(task, :closed).to(true)
       end
 
       it "changes the review's approved to false" do
         expect do
-          task.close
+          task.close?
           review.reload
         end.to change(review, :approved).to(false)
       end
 
       it "returns true" do
-        expect(task.close).to eq(true)
+        expect(task.close?).to eq(true)
       end
     end
 
@@ -1880,27 +1871,27 @@ RSpec.describe Task, type: :model do
       context "that has no other tasks" do
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "changes the issues's closed to true" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :closed).to(true)
         end
 
         it "changes the issues's status to 'addressed'" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
 
@@ -1909,27 +1900,27 @@ RSpec.describe Task, type: :model do
 
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "doesn't change the issues's closed" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.not_to change(issue, :closed)
         end
 
         it "doesn't change the issues's status" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.not_to change(issue, :status)
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
 
@@ -1938,38 +1929,42 @@ RSpec.describe Task, type: :model do
 
         it "changes closed to true" do
           expect do
-            task.close
+            task.close?
             task.reload
           end.to change(task, :closed).to(true)
         end
 
         it "changes the issues's closed to true" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :closed).to(true)
         end
 
         it "changes the issues's status to 'addressed'" do
           expect do
-            task.close
+            task.close?
             issue.reload
           end.to change(issue, :status).to("addressed")
         end
 
         it "returns true" do
-          expect(task.close).to eq(true)
+          expect(task.close?).to eq(true)
         end
       end
     end
   end
 
-  describe "#reopen" do
+  describe "#reopen?" do
     let(:current_user) { Fabricate(:user_reporter) }
     let(:subscriber) { Fabricate(:user_reporter) }
 
-    context "when closed" do
+    context "when approved" do
       let(:task) { Fabricate(:approved_task) }
+      let(:job_options) do
+        { event: "status", details: "approved,unassigned",
+          current_user: current_user }
+      end
 
       before do
         task.update opened_at: 1.week.ago
@@ -1977,31 +1972,32 @@ RSpec.describe Task, type: :model do
 
       it "changes closed to false" do
         expect do
-          task.reopen(worker)
+          task.reopen?(worker)
           task.reload
         end.to change(task, :closed).to(false)
       end
 
       it "changes opened_at" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :opened_at)
       end
 
       it "changes status" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :status).to("unassigned")
       end
 
-      it "sends email to subscribers" do
-        task.subscribers << current_user
-        task.subscribers << subscriber
-        expect do
-          task.reopen(current_user)
-        end.to have_enqueued_job.on_queue("mailers")
+      it "enqueues TaskSubscribersNotifierJob" do
+        task.reopen?(current_user)
+
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.with(task, job_options)
       end
 
       context "with a closed issue" do
@@ -2010,8 +2006,8 @@ RSpec.describe Task, type: :model do
         before { task.update issue: issue }
 
         it "runs open on the issue" do
-          expect(issue).to receive(:reopen)
-          task.reopen
+          expect(issue).to receive(:reopen?)
+          task.reopen?
         end
       end
 
@@ -2024,8 +2020,8 @@ RSpec.describe Task, type: :model do
         end
 
         it "doesn't run open on the issue" do
-          expect(issue).not_to receive(:reopen)
-          task.reopen
+          expect(issue).not_to receive(:reopen?)
+          task.reopen?
         end
       end
     end
@@ -2039,14 +2035,14 @@ RSpec.describe Task, type: :model do
 
       it "doesn't change task" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.not_to change(task, :closed)
       end
 
       it "changes opened_at" do
         expect do
-          task.reopen
+          task.reopen?
           task.reload
         end.to change(task, :opened_at)
       end
@@ -2190,7 +2186,7 @@ RSpec.describe Task, type: :model do
       it "should change issue's closed_tasks_count" do
         task = Fabricate(:task, issue: issue)
         expect do
-          task.close
+          task.close?
           issue.reload
         end.to change(issue, :open_tasks_count).by(-1)
       end
@@ -2290,86 +2286,6 @@ RSpec.describe Task, type: :model do
         expect do
           task.subscribe_assignees
         end.not_to change(TaskSubscription, :count)
-      end
-    end
-  end
-
-  describe "#subscribe_users" do
-    let(:user) { Fabricate(:user_reviewer) }
-    let(:task) { Fabricate(:task, user: user, project: project) }
-
-    it "runs subscribe_user" do
-      expect(task).to receive(:subscribe_user)
-      task.subscribe_users
-    end
-
-    it "runs subscribe_assignees" do
-      expect(task).to receive(:subscribe_assignees)
-      task.subscribe_users
-    end
-
-    context "when task category has a subscriber" do
-      let(:subscriber) { Fabricate(:user_reporter) }
-
-      before do
-        Fabricate(:category_tasks_subscription, category: category,
-                                                user: subscriber)
-      end
-
-      it "creates a task_subscription for the subscriber" do
-        expect do
-          task.subscribe_users
-        end.to change(subscriber.task_subscriptions, :count).by(1)
-      end
-
-      it "creates 2 task_subscriptions" do
-        expect do
-          task.subscribe_users
-        end.to change(TaskSubscription, :count).by(2)
-      end
-    end
-
-    context "when task project has a subscriber" do
-      let(:subscriber) { Fabricate(:user_reporter) }
-
-      before do
-        Fabricate(:project_tasks_subscription, project: project,
-                                               user: subscriber)
-      end
-
-      it "creates a task_subscription for the subscriber" do
-        expect do
-          task.subscribe_users
-        end.to change(subscriber.task_subscriptions, :count).by(1)
-      end
-
-      it "creates 2 task_subscriptions" do
-        expect do
-          task.subscribe_users
-        end.to change(TaskSubscription, :count).by(2)
-      end
-    end
-
-    context "when task category/project subscriber" do
-      let(:subscriber) { Fabricate(:user_reporter) }
-
-      before do
-        Fabricate(:project_tasks_subscription, project: project,
-                                               user: subscriber)
-        Fabricate(:category_tasks_subscription, category: category,
-                                                user: subscriber)
-      end
-
-      it "creates a task_subscription for the subscriber" do
-        expect do
-          task.subscribe_users
-        end.to change(subscriber.task_subscriptions, :count).by(1)
-      end
-
-      it "creates 2 task_subscriptions" do
-        expect do
-          task.subscribe_users
-        end.to change(TaskSubscription, :count).by(2)
       end
     end
   end
@@ -2508,36 +2424,23 @@ RSpec.describe Task, type: :model do
   describe "#notify_of_comment" do
     let(:task) { Fabricate(:task) }
     let(:comment) { Fabricate(:task_comment, task: task) }
-    let(:user) { Fabricate(:user_reporter) }
     let(:current_user) { Fabricate(:user_reporter) }
+    let(:job_options) do
+      { event: "comment", task_comment: comment, current_user: comment.user }
+    end
 
     before do
       task.subscribers << worker
       task.subscribers << comment.user
-      Fabricate(:user_reporter)
     end
 
-    it "creates one notification" do
-      task.subscribers << current_user
-      expect do
-        task.notify_of_comment(comment: comment, current_user: current_user)
-      end.to change(TaskNotification, :count).by(1)
-    end
+    it "enqueues TaskSubscribersNotifierJob" do
+      task.notify_of_comment(comment)
 
-    it "creates notification" do
-      task.notify_of_comment(comment: comment)
-
-      notification = TaskNotification.last
-      expect(notification).not_to be_nil
-
-      expect(notification.event).to eq("comment")
-      expect(notification.task_comment).to eq(comment)
-    end
-
-    it "enqueues one email" do
-      expect do
-        task.notify_of_comment(comment: comment)
-      end.to have_enqueued_job.on_queue("mailers")
+      expect(TaskSubscribersNotifierJob)
+        .to have_been_enqueued.exactly(:once)
+      expect(TaskSubscribersNotifierJob)
+        .to have_been_enqueued.with(task, job_options)
     end
   end
 
@@ -2550,6 +2453,21 @@ RSpec.describe Task, type: :model do
   describe "#task?" do
     it "returns true" do
       expect(subject.task?).to eq(true)
+    end
+  end
+
+  describe "#notification_options" do
+    context "when given nil" do
+      it "returns new status" do
+        expect(subject.notification_options(nil)).to eq({ event: "new" })
+      end
+    end
+
+    context "when given a status" do
+      it "returns both statuses" do
+        expect(subject.notification_options("old"))
+          .to eq({ event: "status", details: "old,#{subject.status}" })
+      end
     end
   end
 end

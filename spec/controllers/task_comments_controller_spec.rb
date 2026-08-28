@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe TaskCommentsController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
   let(:task) { Fabricate(:task, project: project) }
@@ -156,6 +158,11 @@ RSpec.describe TaskCommentsController, type: :controller do
       { task_id: task.to_param, task_comment: invalid_attributes }
     end
 
+    let(:job_options) do
+      { event: "comment", task_comment: TaskComment.last,
+        current_user: current_user }
+    end
+
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -169,6 +176,21 @@ RSpec.describe TaskCommentsController, type: :controller do
                 expect do
                   post :create, params: valid_params
                 end.to change(current_user.task_comments, :count).by(1)
+              end
+
+              it "creates a new TaskSubscription" do
+                expect do
+                  post :create, params: valid_params
+                end.to change(current_user.task_subscriptions, :count).by(1)
+              end
+
+              it "enqueues TaskSubscribersNotifierJob" do
+                post :create, params: valid_params
+
+                expect(TaskSubscribersNotifierJob)
+                  .to have_been_enqueued.exactly(:once)
+                expect(TaskSubscribersNotifierJob)
+                  .to have_been_enqueued.with(task, job_options)
               end
 
               it "redirects to the created task_comment" do
@@ -188,42 +210,22 @@ RSpec.describe TaskCommentsController, type: :controller do
                   post :create, params: valid_params
                 end.not_to change(TaskSubscription, :count)
               end
-
-              it "doesn't send an email" do
-                expect do
-                  post :create, params: valid_params
-                end.not_to have_enqueued_job
-              end
-            end
-
-            context "when someone else subscribed to task" do
-              let(:user_reporter) { Fabricate(:user_reporter) }
-
-              before do
-                Fabricate(:task_subscription, task: task, user: user_reporter)
-              end
-
-              it "sends an email" do
-                expect do
-                  post :create, params: valid_params
-                end.to(
-                  have_enqueued_job.with do |mailer, action, time, options|
-                    expect(mailer).to eq("TaskMailer")
-                    expect(action).to eq("comment")
-                    expect(time).to eq("deliver_now")
-                    expect(options)
-                      .to eq(
-                        args: [],
-                        params: { task: task, user: user_reporter,
-                                  comment: TaskComment.last }
-                      )
-                  end
-                )
-              end
             end
           end
 
           context "with invalid params" do
+            it "doesn't create a new TaskComment" do
+              expect do
+                post :create, params: invalid_params
+              end.not_to change(TaskComment, :count)
+            end
+
+            it "doesn't enqueue any jobs" do
+              expect do
+                post :create, params: invalid_params
+              end.not_to have_enqueued_job
+            end
+
             it "returns a success response ('new' template)" do
               post :create, params: invalid_params
               expect(response).to be_successful
@@ -238,6 +240,21 @@ RSpec.describe TaskCommentsController, type: :controller do
                 expect do
                   post :create, params: valid_params, as: :turbo_stream
                 end.to change(current_user.task_comments, :count).by(1)
+              end
+
+              it "creates a new TaskSubscription" do
+                expect do
+                  post :create, params: valid_params, as: :turbo_stream
+                end.to change(current_user.task_subscriptions, :count).by(1)
+              end
+
+              it "enqueues TaskSubscribersNotifierJob" do
+                post :create, params: valid_params, as: :turbo_stream
+
+                expect(TaskSubscribersNotifierJob)
+                  .to have_been_enqueued.exactly(:once)
+                expect(TaskSubscribersNotifierJob)
+                  .to have_been_enqueued.with(task, job_options)
               end
 
               it "redirects to the created task_comment" do
@@ -256,42 +273,22 @@ RSpec.describe TaskCommentsController, type: :controller do
                   post :create, params: valid_params, as: :turbo_stream
                 end.not_to change(TaskSubscription, :count)
               end
-
-              it "doesn't send an email" do
-                expect do
-                  post :create, params: valid_params, as: :turbo_stream
-                end.not_to have_enqueued_job
-              end
-            end
-
-            context "when someone else subscribed to task" do
-              let(:user_reporter) { Fabricate(:user_reporter) }
-
-              before do
-                Fabricate(:task_subscription, task: task, user: user_reporter)
-              end
-
-              it "sends an email" do
-                expect do
-                  post :create, params: valid_params, as: :turbo_stream
-                end.to(
-                  have_enqueued_job.with do |mailer, action, time, options|
-                    expect(mailer).to eq("TaskMailer")
-                    expect(action).to eq("comment")
-                    expect(time).to eq("deliver_now")
-                    expect(options)
-                      .to eq(
-                        args: [],
-                        params: { task: task, user: user_reporter,
-                                  comment: TaskComment.last }
-                      )
-                  end
-                )
-              end
             end
           end
 
           context "with invalid params" do
+            it "doesn't create a new TaskComment" do
+              expect do
+                post :create, params: invalid_params, as: :turbo_stream
+              end.not_to change(TaskComment, :count)
+            end
+
+            it "doesn't enqueue any jobs" do
+              expect do
+                post :create, params: invalid_params, as: :turbo_stream
+              end.not_to have_enqueued_job
+            end
+
             it "returns a success response ('new' template)" do
               post :create, params: invalid_params, as: :turbo_stream
               expect(response).to be_successful

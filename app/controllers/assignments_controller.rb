@@ -55,8 +55,8 @@ class AssignmentsController < ApplicationController
     end
 
     def update_task_status
-      @task.update_status
       @task.subscribe_assignees
+      @task.update_status
     end
 
     def update_notice

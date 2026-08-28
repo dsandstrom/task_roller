@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class TaskClosuresController < ApplicationController
   load_and_authorize_resource :task
   load_and_authorize_resource through: :task, through_association: :closures
@@ -10,7 +8,7 @@ class TaskClosuresController < ApplicationController
     notice = 'Task was successfully closed.'
 
     if @task_closure.save
-      @task.close(current_user)
+      @task.close?(current_user)
       @task_closure.subscribe_user
       redirect_to @task, notice: notice
     else
