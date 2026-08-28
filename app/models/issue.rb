@@ -300,6 +300,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     false
   end
 
+  def notification_options(old_status)
+    if old_status.present?
+      { event: 'status', details: "#{old_status},#{status}" }
+    else
+      { event: 'new' }
+    end
+  end
+
   private
 
     def set_opened_at
@@ -379,14 +387,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
-    end
-
-    def notification_options(old_status)
-      if old_status.present?
-        { event: 'status', details: "#{old_status},#{status}" }
-      else
-        { event: 'new' }
-      end
     end
 
     def build_octokit

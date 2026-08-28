@@ -346,6 +346,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     true
   end
 
+  def notification_options(old_status)
+    if old_status.present?
+      { event: 'status', details: "#{old_status},#{status}" }
+    else
+      { event: 'new' }
+    end
+  end
+
   private
 
     # - closed
@@ -445,14 +453,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       end
       feed << source_connection if source_connection
       feed.flatten.sort_by(&:created_at)
-    end
-
-    def notification_options(old_status)
-      if old_status.present?
-        { event: 'status', details: "#{old_status},#{status}" }
-      else
-        { event: 'new' }
-      end
     end
 
     def build_siblings(issue)

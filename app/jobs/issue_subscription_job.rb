@@ -3,6 +3,6 @@ class IssueSubscriptionJob < SubscriptionJob
     super
     return unless options[:send_new]
 
-    IssueNotifierJob.perform_later(issue, user, { event: 'new' })
+    IssueNotifierJob.perform_later(issue, user, issue.notification_options(nil))
   end
 end

@@ -2455,4 +2455,19 @@ RSpec.describe Task, type: :model do
       expect(subject.task?).to eq(true)
     end
   end
+
+  describe "#notification_options" do
+    context "when given nil" do
+      it "returns new status" do
+        expect(subject.notification_options(nil)).to eq({ event: "new" })
+      end
+    end
+
+    context "when given a status" do
+      it "returns both statuses" do
+        expect(subject.notification_options("old"))
+          .to eq({ event: "status", details: "old,#{subject.status}" })
+      end
+    end
+  end
 end
