@@ -1,7 +1,7 @@
 class IssueSubscriptionJob < SubscriptionJob
-  def perform(issue, user, send_new: false)
+  def perform(issue, user, options = {})
     super
-    return unless send_new
+    return unless options[:send_new]
 
     IssueNotifierJob.perform_later(issue, user, { event: 'new' })
   end

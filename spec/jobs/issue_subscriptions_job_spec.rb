@@ -105,7 +105,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(IssueSubscriptionJob)
-            .to have_been_enqueued.with(issue, subscriber, send_new: true)
+            .to have_been_enqueued.with(issue, subscriber, { send_new: true })
         end
       end
     end

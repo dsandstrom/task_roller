@@ -27,14 +27,14 @@ RSpec.describe IssueSubscriptionJob, type: :job do
       context "and send_new is false" do
         it "doesn't enqueue any jobs" do
           expect do
-            subject.perform_now issue, user, send_new: false
+            subject.perform_now issue, user, { send_new: false }
           end.not_to have_enqueued_job
         end
       end
 
       context "and send_new is true" do
         it "enqueues IssueNotifierJob for the issue and user" do
-          subject.perform_now issue, user, send_new: true
+          subject.perform_now issue, user, { send_new: true }
 
           expect(IssueNotifierJob).to have_been_enqueued.exactly(:once)
           expect(IssueNotifierJob)

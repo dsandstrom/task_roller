@@ -1,7 +1,7 @@
 class TaskSubscriptionJob < SubscriptionJob
-  def perform(task, user, send_new: false)
+  def perform(task, user, options = {})
     super
-    return unless send_new
+    return unless options[:send_new]
 
     TaskNotifierJob.perform_later(task, user, { event: 'new' })
   end
