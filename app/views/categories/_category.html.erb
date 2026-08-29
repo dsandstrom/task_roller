@@ -3,7 +3,7 @@ projects =
   if category.visible?
     category.projects.all_visible.accessible_by(current_ability)
   else
-    category.projects
+    category.projects.order(position: :asc).accessible_by(current_ability)
   end
 projects_count = projects.count
 issues =

@@ -4,6 +4,7 @@ class MoveTasksController < ApplicationController
   before_action :authorize_create, only: %i[new create]
   before_action :set_form_options, only: %i[new create]
   before_action :set_task, only: :create
+  before_action :set_categories, only: :edit
 
   def new
     @task = current_user.tasks.build
@@ -28,6 +29,7 @@ class MoveTasksController < ApplicationController
     if @task.update(task_params)
       redirect_to @task, notice: 'Task was successfully moved.'
     else
+      set_categories
       render :edit
     end
   end
@@ -65,6 +67,10 @@ class MoveTasksController < ApplicationController
       @task.task_type ||= @task_types.first
       @assignee_options = build_assignee_options
       @issue_options = build_issue_options
+    end
+
+    def set_categories
+      @categories = Category.accessible_by(current_ability).order(:position)
     end
 
     # javascript copies the ids to the hidden field strangely

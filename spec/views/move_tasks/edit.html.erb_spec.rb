@@ -1,10 +1,9 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "move_tasks/edit", type: :view do
   before(:each) do
     @task = assign(:task, Fabricate(:task))
+    assign(:categories, [@task.category])
   end
 
   context "for a reviewer" do

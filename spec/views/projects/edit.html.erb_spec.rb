@@ -9,6 +9,7 @@ RSpec.describe "projects/edit", type: :view do
   before(:each) do
     @category = assign(:category, category)
     @project = assign(:project, Fabricate(:project, category: @category))
+    assign(:categories, [category])
   end
 
   context "for a reviewer" do

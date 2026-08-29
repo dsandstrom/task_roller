@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Project < ApplicationRecord
   belongs_to :category
   has_many :issues, dependent: :destroy
@@ -11,17 +9,19 @@ class Project < ApplicationRecord
   has_many :task_subscribers, through: :project_tasks_subscriptions,
                               foreign_key: :user_id, source: :user
 
+  acts_as_list scope: :category
+
   validates :name, presence: true, length: { maximum: 250 },
                    uniqueness: { scope: :category_id, case_sensitive: false }
 
   # CLASS
 
   def self.all_visible
-    where(visible: true)
+    where(visible: true).order(position: :asc)
   end
 
   def self.all_invisible
-    where(visible: false)
+    where(visible: false).order(position: :asc)
   end
 
   # INSTANCE

@@ -9,6 +9,7 @@ RSpec.describe "projects/new", type: :view do
   before(:each) do
     assign(:category, category)
     assign(:project, category.projects.build)
+    assign(:categories, [category])
   end
 
   it "renders new project form" do
