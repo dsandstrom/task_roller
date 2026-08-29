@@ -223,8 +223,8 @@ RSpec.describe Category, type: :model do
     context "when category is internal" do
       let(:category) { Fabricate(:internal_category) }
 
-      it "returns name only" do
-        expect(category.name_and_tag).to eq(category.name)
+      it "returns name and internal tag" do
+        expect(category.name_and_tag).to eq("#{category.name} (internal)")
       end
     end
 
@@ -233,6 +233,15 @@ RSpec.describe Category, type: :model do
 
       it "returns name and archived tag" do
         expect(category.name_and_tag).to eq("#{category.name} (archived)")
+      end
+    end
+
+    context "when category is invisible and internal" do
+      let(:category) { Fabricate(:invisible_category, internal: true) }
+
+      it "returns name and archived tag" do
+        expect(category.name_and_tag)
+          .to eq("#{category.name} (archived, internal)")
       end
     end
 

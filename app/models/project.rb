@@ -60,4 +60,19 @@ class Project < ApplicationRecord
     end
     @totally_visible_
   end
+
+  def name_and_tag
+    @name_and_tag ||= build_name_and_tag
+  end
+
+  private
+
+    def build_name_and_tag
+      tags = []
+
+      tags << 'archived' unless visible? && category.visible?
+      tags << 'internal' if internal? || category.internal?
+
+      "#{name}#{" (#{tags.join(', ')})" if tags.any?}"
+    end
 end

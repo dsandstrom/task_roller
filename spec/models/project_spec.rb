@@ -299,4 +299,167 @@ RSpec.describe Project, type: :model do
       end
     end
   end
+
+  describe "#name_and_tag" do
+    context "when category is visible" do
+      let(:category) { Fabricate(:category) }
+
+      context "and project is visible" do
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns name only" do
+          expect(project.name_and_tag).to eq(project.name)
+        end
+      end
+
+      context "and project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "returns name and archived tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (archived)")
+        end
+      end
+
+      context "and project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "returns name and internal tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (internal)")
+        end
+      end
+
+      context "and project is invisible and internal" do
+        let(:project) do
+          Fabricate(:invisible_project, internal: true, category: category)
+        end
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+    end
+
+    context "when category is invisible" do
+      let(:category) { Fabricate(:invisible_category) }
+
+      context "and project is visible" do
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns name and archived tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (archived)")
+        end
+      end
+
+      context "and project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "returns name and archived tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (archived)")
+        end
+      end
+
+      context "and project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+
+      context "and project is invisible and internal" do
+        let(:project) do
+          Fabricate(:invisible_project, internal: true, category: category)
+        end
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+    end
+
+    context "when category is internal" do
+      let(:category) { Fabricate(:internal_category) }
+
+      context "and project is visible" do
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns name and internal tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (internal)")
+        end
+      end
+
+      context "and project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+
+      context "and project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "returns name and internal tag" do
+          expect(project.name_and_tag).to eq("#{project.name} (internal)")
+        end
+      end
+
+      context "and project is invisible and internal" do
+        let(:project) do
+          Fabricate(:invisible_project, internal: true, category: category)
+        end
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+    end
+
+    context "when category is internal and invisible" do
+      let(:category) { Fabricate(:invisible_category, internal: true) }
+
+      context "and project is visible" do
+        let(:project) { Fabricate(:project, category: category) }
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+
+      context "and project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+
+      context "and project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+
+      context "and project is invisible and internal" do
+        let(:project) do
+          Fabricate(:invisible_project, internal: true, category: category)
+        end
+
+        it "returns name and archived and internal tags" do
+          expect(project.name_and_tag)
+            .to eq("#{project.name} (archived, internal)")
+        end
+      end
+    end
+  end
 end

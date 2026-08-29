@@ -54,6 +54,17 @@ class Category < ApplicationRecord
   end
 
   def name_and_tag
-    @name_and_tag ||= "#{name}#{' (archived)' unless visible?}"
+    @name_and_tag ||= build_name_and_tag
   end
+
+  private
+
+    def build_name_and_tag
+      tags = []
+
+      tags << 'archived' unless visible?
+      tags << 'internal' if internal?
+
+      "#{name}#{" (#{tags.join(', ')})" if tags.any?}"
+    end
 end
