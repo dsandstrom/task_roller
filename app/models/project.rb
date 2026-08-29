@@ -17,11 +17,11 @@ class Project < ApplicationRecord
   # CLASS
 
   def self.all_visible
-    where(visible: true).order(position: :asc)
+    where(visible: true).order(:position)
   end
 
   def self.all_invisible
-    where(visible: false).order(position: :asc)
+    where(visible: false).order(:position)
   end
 
   # INSTANCE
