@@ -1,0 +1,35 @@
+<%= category_reposition_header %>
+
+<div class="categories categories-and-projects">
+  <% @categories.each do |category| %>
+    <div id="category-<%= category.id %>" class="category-and-projects">
+      <%= content_tag :h3, category.name, class: 'category-name' %>
+      <%= category_tags(category) %>
+
+      <div class="category-buttons">
+        <%= link_to 'Move Up',
+                    reposition_category_path(category, sort: 'up'),
+                    class: 'button button-outline category-up',
+                    title: 'Move Up',
+                    method: :patch, data: { turbo_method: :patch } %>
+        <%= link_to 'Move Down',
+                    reposition_category_path(category, sort: 'down'),
+                    class: 'button button-outline category-up',
+                    title: 'Move Down',
+                    method: :patch, data: { turbo_method: :patch } %>
+
+      </div>
+
+      <% if category.projects.any? %>
+        <ol class="category-projects-list">
+          <% category.projects.each do |project| %>
+            <%= content_tag :li, id: "project-#{project.id}",
+                                 class: 'category-project' do %>
+              <%= content_tag :span, project.name, class: 'category-project-name' %>
+            <% end %>
+          <% end %>
+        </ol>
+      <% end %>
+    </div>
+  <% end %>
+</div>

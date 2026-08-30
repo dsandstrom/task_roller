@@ -17,6 +17,7 @@
   .category,
   .no-category,
   .new-category,
+  .category-and-projects,
   .project,
   .no-project,
   .new-project,
@@ -28,14 +29,13 @@
   .category,
   .project,
   .new-category,
+  .category-and-projects,
   .new-project,
   .user,
   .new-user {
     display: flex;
     position: relative;
     flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid $light-gray;
     text-align: center;
 
     .button {
@@ -48,6 +48,41 @@
 
       &:nth-child(n + 2) {
         margin-left: .5rem;
+      }
+    }
+  }
+
+  .category,
+  .project,
+  .new-category,
+  .new-project,
+  .user,
+  .new-user {
+    justify-content: space-between;
+    border: 1px solid $border-color;
+  }
+
+  .category-and-projects {
+    justify-content: flex-start;
+
+    .category-name {
+      border: 1px solid $border-color;
+      text-align: center;
+    }
+
+    .category-projects {
+      text-align: left;
+    }
+
+    .button {
+      margin: 0;
+
+      &:first-child {
+        margin-left: 1px;
+      }
+
+      &:last-child {
+        margin-right: 1px;
       }
     }
   }
@@ -342,6 +377,17 @@
   }
 }
 
+.category-projects-list {
+  margin: 0;
+
+  li {
+    margin: 0;
+    padding: .5rem;
+    border: 1px solid $border-color;
+    border-width: 0 1px 1px;
+  }
+}
+
 @include breakpoint(medium up) {
   .categories,
   .category-projects,
@@ -357,6 +403,7 @@
     .project,
     .user,
     .new-category,
+    .category-and-projects,
     .new-project,
     .new-user {
       min-width: 0;

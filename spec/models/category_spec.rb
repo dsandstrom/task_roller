@@ -255,4 +255,66 @@ RSpec.describe Category, type: :model do
       end
     end
   end
+
+  describe "#reposition" do
+    context "when 'up'" do
+      it "sorts category up one" do
+        _first = Fabricate(:category)
+        _second = Fabricate(:category)
+        third = Fabricate(:category)
+
+        expect do
+          third.reposition("up")
+        end.to change(third, :position).from(3).to(2)
+      end
+
+      it "returns true" do
+        _first = Fabricate(:category)
+        _second = Fabricate(:category)
+        third = Fabricate(:category)
+
+        expect(third.reposition("up")).to be_truthy
+      end
+    end
+
+    context "when 'down'" do
+      it "sorts category up one" do
+        first = Fabricate(:category)
+        _second = Fabricate(:category)
+        _third = Fabricate(:category)
+
+        expect do
+          first.reposition("down")
+        end.to change(first, :position).from(1).to(2)
+      end
+
+      it "returns true" do
+        first = Fabricate(:category)
+        _second = Fabricate(:category)
+        _third = Fabricate(:category)
+
+        expect(first.reposition("down")).to be_truthy
+      end
+    end
+
+    context "when 'something else'" do
+      it "doesn't change the category" do
+        first = Fabricate(:category)
+        _second = Fabricate(:category)
+        _third = Fabricate(:category)
+
+        expect do
+          first.reposition("something else")
+        end.not_to change(first, :position)
+      end
+
+      it "returns false" do
+        first = Fabricate(:category)
+        _second = Fabricate(:category)
+        _third = Fabricate(:category)
+
+        expect(first.reposition("something else")).to be_falsy
+      end
+    end
+  end
 end

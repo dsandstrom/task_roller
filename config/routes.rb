@@ -21,6 +21,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get 'help/issue_types' => 'help#issue_types', as: :issue_types_help
   get 'help/user_types' => 'help#user_types', as: :user_types_help
 
+  get 'reposition' => 'reposition_categories#index',
+      as: 'reposition_categories'
+  patch 'categories/:id/reposition' => 'reposition_categories#update',
+        as: 'reposition_category'
+
   resources :categories do
     collection { get :archived }
 

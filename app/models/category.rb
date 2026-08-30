@@ -57,6 +57,17 @@ class Category < ApplicationRecord
     @name_and_tag ||= build_name_and_tag
   end
 
+  def reposition(direction)
+    case direction
+    when 'up'
+      return move_higher
+    when 'down'
+      return move_lower
+    end
+
+    false
+  end
+
   private
 
     def build_name_and_tag
