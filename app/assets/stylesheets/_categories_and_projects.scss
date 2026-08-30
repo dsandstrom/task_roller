@@ -68,6 +68,7 @@
     .category-name {
       border: 1px solid $border-color;
       text-align: center;
+      cursor: move;
     }
 
     .category-projects {
@@ -84,6 +85,15 @@
       &:last-child {
         margin-right: 1px;
       }
+    }
+
+    .category-sortable-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 2.5rem;
+      color: $color-primary;
+      line-height: 1;
     }
   }
 
@@ -374,6 +384,12 @@
   &.active {
     display: block;
     height: 100%;
+  }
+}
+
+.categories-and-projects {
+  .sortable-ghost {
+    border: 1px dashed $dark-gray;
   }
 }
 
