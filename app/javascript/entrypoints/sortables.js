@@ -14,10 +14,11 @@ document.addEventListener('turbo:load', function() {
   });
 });
 
-// TODO: don't send if didn't move
 function rePositionCategory(event) {
-  const { newIndex, item } = event;
+  const { oldIndex, newIndex, item } = event;
   const url = item.dataset["sortableUrl"];
+
+  if (oldIndex == newIndex) return;
 
   patch(url, {
     body: JSON.stringify({ category: { new_position: newIndex + 1 } }),
