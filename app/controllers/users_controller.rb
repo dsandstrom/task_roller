@@ -50,7 +50,7 @@ class UsersController < ApplicationController
 
     def user_params
       keys = @user&.persisted? ? %i[name] : %i[name email employee_type]
-      params.require(:user).permit(keys)
+      params.expect(user: keys)
     end
 
     def employee_type
