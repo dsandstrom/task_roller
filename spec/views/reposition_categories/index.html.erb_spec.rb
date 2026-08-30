@@ -19,11 +19,11 @@ RSpec.describe "reposition_categories/index", type: :view do
       it "renders a list of categories" do
         render
 
-        assert_select "#category-#{first_category.id} .category-name",
+        assert_select "#category-#{first_category.id} .category-name h3",
                       text: first_category.name
-        assert_select "#category-#{second_category.id} .category-name",
+        assert_select "#category-#{second_category.id} .category-name h3",
                       text: second_category.name
-        assert_select "#category-#{third_category.id} .category-name",
+        assert_select "#category-#{third_category.id} .category-name h3",
                       text: third_category.name
       end
     end
