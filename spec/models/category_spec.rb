@@ -25,6 +25,68 @@ RSpec.describe Category, type: :model do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_length_of(:name).is_at_most(200) }
 
+  describe "validate #new_position_numericality" do
+    let(:category) { Fabricate(:category) }
+
+    context "when nil" do
+      before { category.new_position = nil }
+
+      it { expect(category).to be_valid }
+    end
+
+    context "when blank" do
+      before { category.new_position = "" }
+
+      it { expect(category).to be_valid }
+    end
+
+    context "when string" do
+      before { category.new_position = "something" }
+
+      it { expect(category).not_to be_valid }
+    end
+
+    context "when 0" do
+      before { category.new_position = 0 }
+
+      it { expect(category).not_to be_valid }
+    end
+
+    context "when 1" do
+      before do
+        category.new_position = 1
+      end
+
+      it { expect(category).to be_valid }
+    end
+
+    context "when two categories" do
+      before do
+        Fabricate(:category)
+        category
+        Fabricate(:category)
+      end
+
+      context "and given 1" do
+        before { category.new_position = 1 }
+
+        it { expect(category).to be_valid }
+      end
+
+      context "and given 3" do
+        before { category.new_position = 3 }
+
+        it { expect(category).to be_valid }
+      end
+
+      context "and given 4" do
+        before { category.new_position = 4 }
+
+        it { expect(category).not_to be_valid }
+      end
+    end
+  end
+
   # CLASS
 
   describe ".all_visible" do
@@ -257,63 +319,116 @@ RSpec.describe Category, type: :model do
   end
 
   describe "#reposition" do
-    context "when 'up'" do
-      it "sorts category up one" do
-        _first = Fabricate(:category)
-        _second = Fabricate(:category)
-        third = Fabricate(:category)
+    let!(:first) { Fabricate(:category) }
+    let!(:second) { Fabricate(:category) }
+    let!(:third) { Fabricate(:category) }
 
+    context "when new_position is 1" do
+      before do
+        third.new_position = 1
+      end
+
+      it "sorts category to first position" do
         expect do
-          third.reposition("up")
+          third.reposition
+          third.reload
+        end.to change(third, :position).from(3).to(1)
+      end
+
+      it "returns true" do
+        expect(third.reposition).to be_truthy
+      end
+    end
+
+    context "when new_position is 3" do
+      before do
+        second.new_position = 3
+      end
+
+      it "sorts category to third position" do
+        expect do
+          second.reposition
+          second.reload
+        end.to change(second, :position).from(2).to(3)
+      end
+
+      it "moves other categories" do
+        expect do
+          second.reposition
+          third.reload
         end.to change(third, :position).from(3).to(2)
       end
 
       it "returns true" do
-        _first = Fabricate(:category)
-        _second = Fabricate(:category)
-        third = Fabricate(:category)
-
-        expect(third.reposition("up")).to be_truthy
+        expect(second.reposition).to be_truthy
       end
     end
 
-    context "when 'down'" do
-      it "sorts category up one" do
-        first = Fabricate(:category)
-        _second = Fabricate(:category)
-        _third = Fabricate(:category)
-
-        expect do
-          first.reposition("down")
-        end.to change(first, :position).from(1).to(2)
+    context "when first category and new_position is 1" do
+      before do
+        first.new_position = 1
       end
 
-      it "returns true" do
-        first = Fabricate(:category)
-        _second = Fabricate(:category)
-        _third = Fabricate(:category)
-
-        expect(first.reposition("down")).to be_truthy
-      end
-    end
-
-    context "when 'something else'" do
       it "doesn't change the category" do
-        first = Fabricate(:category)
-        _second = Fabricate(:category)
-        _third = Fabricate(:category)
-
         expect do
-          first.reposition("something else")
+          first.reposition
+          first.reload
         end.not_to change(first, :position)
       end
 
       it "returns false" do
-        first = Fabricate(:category)
-        _second = Fabricate(:category)
-        _third = Fabricate(:category)
+        expect(first.reposition).to be_falsy
+      end
+    end
 
-        expect(first.reposition("something else")).to be_falsy
+    context "when new_position is too large" do
+      before do
+        first.new_position = 10
+      end
+
+      it "doesn't change the category" do
+        expect do
+          first.reposition
+          first.reload
+        end.not_to change(first, :position)
+      end
+
+      it "returns false" do
+        expect(first.reposition).to be_falsy
+      end
+    end
+
+    context "when new_position is 0" do
+      before do
+        third.new_position = 0
+      end
+
+      it "doesn't change the category" do
+        expect do
+          third.reposition
+          third.reload
+        end.not_to change(third, :position)
+      end
+
+      it "returns false" do
+        expect(third.reposition).to be_falsy
+      end
+    end
+
+    context "when new_position is nil" do
+      before do
+        third.new_position = nil
+      end
+
+      it "doesn't change the category" do
+        expect do
+          third.reposition
+          third.reload
+        end.not_to change(third, :position)
+      end
+
+      it "returns false" do
+        expect(third.reposition).to be_falsy
       end
     end
   end

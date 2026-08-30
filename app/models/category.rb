@@ -11,7 +11,10 @@ class Category < ApplicationRecord
 
   acts_as_list
 
+  attr_accessor :new_position
+
   validates :name, presence: true, length: { maximum: 200 }
+  validate :new_position_numericality
 
   # CLASS
 
@@ -57,18 +60,32 @@ class Category < ApplicationRecord
     @name_and_tag ||= build_name_and_tag
   end
 
-  def reposition(direction)
-    case direction
-    when 'up'
-      return move_higher
-    when 'down'
-      return move_lower
-    end
+  def reposition
+    return false if new_position.blank?
 
+    insert_at(new_position) || false
+  rescue ArgumentError => e
+    logger.debug "ArgumentError: #{e}"
     false
   end
 
   private
+
+    def new_position_numericality
+      return if new_position.blank?
+
+      unless new_position.instance_of?(Integer)
+        return errors.add(:new_position, 'must be an integer')
+      end
+
+      unless new_position.positive?
+        return errors.add(:new_position, 'must greater than 0')
+      end
+
+      return if new_position <= Category.count
+
+      errors.add(:new_position, "must less than #{Category.count + 1}")
+    end
 
     def build_name_and_tag
       tags = []
