@@ -26,8 +26,8 @@ RSpec.describe RepositionCategoriesController, type: :controller do
   end
 
   describe "PUT #update" do
-    let(:valid_attributes) { "up" }
-    let(:invalid_attributes) { "" }
+    let(:valid_attributes) { { new_position: 1 } }
+    let(:invalid_attributes) { { new_position: "" } }
 
     before { Fabricate(:category) }
 
@@ -40,7 +40,7 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             category = Fabricate(:category)
             expect do
               put :update, params: { id: category.to_param,
-                                     sort: valid_attributes }
+                                     category: valid_attributes }
               category.reload
             end.to change(category, :position).from(2).to(1)
           end
@@ -48,7 +48,7 @@ RSpec.describe RepositionCategoriesController, type: :controller do
           it "redirects to the category list" do
             category = Fabricate(:category)
             put :update, params: { id: category.to_param,
-                                   sort: valid_attributes }
+                                   category: valid_attributes }
             expect(response).to redirect_to(reposition_categories_path)
           end
         end
@@ -58,7 +58,7 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             category = Fabricate(:category)
             expect do
               put :update, params: { id: category.to_param,
-                                     sort: invalid_attributes }
+                                     category: invalid_attributes }
               category.reload
             end.not_to change(category, :position)
           end
@@ -66,7 +66,7 @@ RSpec.describe RepositionCategoriesController, type: :controller do
           it "redirects to the category list" do
             category = Fabricate(:category)
             put :update, params: { id: category.to_param,
-                                   sort: invalid_attributes }
+                                   category: invalid_attributes }
             expect(response).to redirect_to(reposition_categories_path)
           end
         end
@@ -80,7 +80,7 @@ RSpec.describe RepositionCategoriesController, type: :controller do
         it "redirects to unauthorized" do
           category = Fabricate(:category)
           put :update, params: { id: category.to_param,
-                                 sort: valid_attributes }
+                                 category: valid_attributes }
           expect_to_be_unauthorized(response)
         end
       end
