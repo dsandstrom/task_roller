@@ -3,6 +3,7 @@ class ProjectsController < ApplicationController
   load_and_authorize_resource through: :category,
                               except: %i[archived show edit update]
   load_and_authorize_resource only: %i[show edit update]
+  before_action :set_categories, only: %i[new edit]
 
   def index
     @projects = @projects.all_visible if @category.visible?
@@ -33,6 +34,7 @@ class ProjectsController < ApplicationController
     if @project.save
       redirect_to @project, notice: 'Project was successfully created.'
     else
+      set_categories
       render :new
     end
   end
@@ -41,6 +43,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project, notice: 'Project was successfully updated.'
     else
+      set_categories
       render :edit
     end
   end
@@ -54,6 +57,10 @@ class ProjectsController < ApplicationController
 
     def project_params
       params.expect(project: %i[category_id name visible internal])
+    end
+
+    def set_categories
+      @categories = Category.accessible_by(current_ability).order(:position)
     end
 
     def filters

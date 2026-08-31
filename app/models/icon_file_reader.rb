@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IconFileReader
   FONT_FILE = Rails.root.join('app/assets/fonts/task-roller.svg')
   RESERVED_ICON_NAMES =

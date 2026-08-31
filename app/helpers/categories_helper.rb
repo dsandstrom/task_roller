@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module CategoriesHelper
   def category_tags(category)
     content_tag :p, class: 'category-tags' do
@@ -30,7 +28,17 @@ module CategoriesHelper
     enable_page_title categories_heading
 
     content_for :header do
-      concat content_tag(:h1, categories_heading)
+      concat category_index_columns
+      concat categories_nav
+    end
+  end
+
+  def category_reposition_header
+    title = 'Re-Order Categories & Projects'
+    enable_page_title title
+
+    content_for :header do
+      concat content_tag(:h1, title)
       concat categories_nav
     end
   end
@@ -45,7 +53,7 @@ module CategoriesHelper
         when 'new'
           'New Category'
         else
-          'Categories &  Projects'
+          'Categories & Projects'
         end
     end
 
@@ -137,5 +145,27 @@ module CategoriesHelper
       content_tag :div, class: 'second-column' do
         content_tag :p, safe_join(buttons)
       end
+    end
+
+    def category_index_columns
+      columns = []
+      columns << content_tag(
+        :div,
+        content_tag(:h1, categories_heading), class: 'first-column'
+      )
+
+      columns << category_index_second_column if can?(:update, Category)
+
+      content_tag(:div, safe_join(columns), class: 'columns')
+    end
+
+    def category_index_second_column
+      content_tag(
+        :div,
+        safe_join(
+          navitize([['Set Order', reposition_categories_path]], class: 'button')
+        ),
+        class: 'second-column'
+      )
     end
 end

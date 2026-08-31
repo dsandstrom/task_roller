@@ -88,6 +88,13 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   patch '/reposition_task_types/:id/:sort' => 'reposition_task_types#update',
         as: :reposition_task_type
 
+  get 'reposition' => 'reposition_categories#index',
+      as: 'reposition_categories'
+  patch 'categories/:id/reposition' => 'reposition_categories#update',
+        as: 'reposition_category'
+  patch 'projects/:id/reposition' => 'reposition_projects#update',
+        as: 'reposition_project'
+
   resources :assignments, only: %i[edit update]
 
   get '/tasks/:task_id/issues/:id' => 'issues#show', as: :task_issue

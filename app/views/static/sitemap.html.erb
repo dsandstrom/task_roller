@@ -21,7 +21,7 @@
             <%= link_to category.name, category_path(category) %>
 
             <ul>
-              <% category.projects.each do |project| %>
+              <% category.projects.order(:position).each do |project| %>
                 <% if can?(:read, project) %>
                   <li>
                     <%= link_to project.name, project_path(project) %>

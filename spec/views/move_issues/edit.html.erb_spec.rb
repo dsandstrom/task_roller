@@ -1,10 +1,9 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "move_issues/edit", type: :view do
   before(:each) do
     @issue = assign(:issue, Fabricate(:issue))
+    assign(:categories, [@issue.category])
   end
 
   context "for a reviewer" do

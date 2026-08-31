@@ -7,8 +7,8 @@
   <div class="field">
     <%= form.label :project_id %>
     <%= form.grouped_collection_select :project_id,
-                                       Category.all, :projects,
-                                       :name_and_tag, :id, :name %>
+                                       categories, :projects,
+                                       :name_and_tag, :id, :name_and_tag %>
   </div>
 
   <div class="actions">

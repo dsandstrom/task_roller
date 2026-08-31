@@ -17,6 +17,7 @@
   .category,
   .no-category,
   .new-category,
+  .category-and-projects,
   .project,
   .no-project,
   .new-project,
@@ -35,7 +36,7 @@
     position: relative;
     flex-direction: column;
     justify-content: space-between;
-    border: 1px solid $light-gray;
+    border: 1px solid $border-color;
     text-align: center;
 
     .button {
@@ -49,6 +50,41 @@
       &:nth-child(n + 2) {
         margin-left: .5rem;
       }
+    }
+  }
+
+  .category-and-projects {
+    justify-content: flex-start;
+
+    .category-name {
+      border: 1px solid $border-color;
+      text-align: center;
+      cursor: move;
+    }
+
+    .category-projects {
+      text-align: left;
+    }
+
+    .button {
+      margin: 0;
+
+      &:first-child {
+        margin-left: 1px;
+      }
+
+      &:last-child {
+        margin-right: 1px;
+      }
+    }
+
+    .category-sortable-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: $color-primary;
+      font-size: 2.5rem;
+      line-height: 1;
     }
   }
 
@@ -342,6 +378,98 @@
   }
 }
 
+.categories-and-projects {
+  margin-top: 2.5rem;
+
+  .sortable-ghost {
+    outline: 1px dashed $dark-gray;
+  }
+
+  .sortable-drag {
+    opacity: .5;
+  }
+
+  .category-name {
+    .tag {
+      margin: 0;
+      font-size: 1.2rem;
+
+      &:nth-child(n + 2) {
+        margin-left: .5rem;
+      }
+    }
+  }
+}
+
+$project-position-width: 4rem;
+
+.category-projects-wrapper {
+  display: flex;
+  border: 1px solid $border-color;
+  border-width: 0 1px;
+
+  .category-project-position,
+  .category-project {
+    border-bottom: 1px solid $border-color;
+  }
+
+  .category-project-position {
+    border-right: 1px solid $border-color;
+  }
+
+  .category-project {
+    cursor: move;
+  }
+
+  .category-project-name {
+    font-weight: bold;
+    line-height: 1.1;
+  }
+
+  .category-project-tags {
+    margin-left: 1rem;
+  }
+
+  .tag {
+    @include tag;
+    font-size: .65em;
+  }
+}
+
+.category-projects-positions {
+  width: $project-position-width;
+}
+
+.category-projects-list {
+  width: 100%;
+
+  .category-project {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    margin: 0;
+    padding: 0 1rem;
+  }
+}
+
+.category-project-position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $project-position-width;
+  color: $dark-gray;
+  font-family: $code-font;
+  font-size: .8em;
+}
+
+.project-sortable-handle {
+  padding: 0 .5rem;
+  color: $color-primary;
+  line-height: 1;
+}
+
 @include breakpoint(medium up) {
   .categories,
   .category-projects,
@@ -357,6 +485,7 @@
     .project,
     .user,
     .new-category,
+    .category-and-projects,
     .new-project,
     .new-user {
       min-width: 0;

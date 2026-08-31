@@ -1,6 +1,7 @@
 class MoveIssuesController < ApplicationController
   load_and_authorize_resource :issue
   before_action :authorize_move
+  before_action :set_categories
 
   def edit; end
 
@@ -9,6 +10,7 @@ class MoveIssuesController < ApplicationController
       redirect_to @issue, notice: 'Issue was successfully moved.'
     else
       render :edit
+      set_categories
     end
   end
 
@@ -20,5 +22,9 @@ class MoveIssuesController < ApplicationController
 
     def issue_params
       params.expect(issue: [:project_id])
+    end
+
+    def set_categories
+      @categories = Category.accessible_by(current_ability).order(:position)
     end
 end
