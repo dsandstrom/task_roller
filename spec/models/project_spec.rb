@@ -13,6 +13,8 @@ RSpec.describe Project, type: :model do
   it { is_expected.to respond_to(:visible) }
   it { is_expected.to respond_to(:internal) }
   it { is_expected.to respond_to(:category_id) }
+  it { is_expected.to respond_to(:position) }
+  it { is_expected.to respond_to(:new_position) }
 
   it { is_expected.to belong_to(:category).required }
 
@@ -30,6 +32,78 @@ RSpec.describe Project, type: :model do
       .case_insensitive.scoped_to(:category_id)
   end
   it { is_expected.to validate_length_of(:name).is_at_most(250) }
+
+  describe "validate #new_position_numericality" do
+    let(:project) { Fabricate(:project, category: category) }
+
+    context "when nil" do
+      before { project.new_position = nil }
+
+      it { expect(project).to be_valid }
+    end
+
+    context "when blank" do
+      before { project.new_position = "" }
+
+      it { expect(project).to be_valid }
+    end
+
+    context "when string" do
+      before { project.new_position = "something" }
+
+      it { expect(project).not_to be_valid }
+    end
+
+    context "when 0" do
+      before { project.new_position = 0 }
+
+      it { expect(project).not_to be_valid }
+    end
+
+    context "when 1" do
+      before do
+        project.new_position = 1
+      end
+
+      it { expect(project).to be_valid }
+    end
+
+    context "when no category" do
+      before do
+        project.category = nil
+        project.new_position = 1
+      end
+
+      it { expect(project).not_to be_valid }
+    end
+
+    context "when two projects" do
+      before do
+        Fabricate(:project)
+        Fabricate(:project, category: category)
+        project
+        Fabricate(:project, category: category)
+      end
+
+      context "and given 1" do
+        before { project.new_position = 1 }
+
+        it { expect(project).to be_valid }
+      end
+
+      context "and given 3" do
+        before { project.new_position = 3 }
+
+        it { expect(project).to be_valid }
+      end
+
+      context "and given 4" do
+        before { project.new_position = 4 }
+
+        it { expect(project).not_to be_valid }
+      end
+    end
+  end
 
   # CLASS
 
@@ -459,6 +533,126 @@ RSpec.describe Project, type: :model do
           expect(project.name_and_tag)
             .to eq("#{project.name} (archived, internal)")
         end
+      end
+    end
+  end
+
+  describe "#reposition" do
+    let(:category) { Fabricate(:category) }
+    let!(:first) { Fabricate(:project, category: category) }
+    let!(:second) { Fabricate(:project, category: category) }
+    let!(:third) { Fabricate(:project, category: category) }
+
+    before do
+      Fabricate(:project)
+    end
+
+    context "when new_position is 1" do
+      before do
+        third.new_position = 1
+      end
+
+      it "sorts project to first position" do
+        expect do
+          third.reposition
+          third.reload
+        end.to change(third, :position).from(3).to(1)
+      end
+
+      it "returns true" do
+        expect(third.reposition).to be_truthy
+      end
+    end
+
+    context "when new_position is 3" do
+      before do
+        second.new_position = 3
+      end
+
+      it "sorts project to third position" do
+        expect do
+          second.reposition
+          second.reload
+        end.to change(second, :position).from(2).to(3)
+      end
+
+      it "moves other categories" do
+        expect do
+          second.reposition
+          third.reload
+        end.to change(third, :position).from(3).to(2)
+      end
+
+      it "returns true" do
+        expect(second.reposition).to be_truthy
+      end
+    end
+
+    context "when first project and new_position is 1" do
+      before do
+        first.new_position = 1
+      end
+
+      it "doesn't change the project" do
+        expect do
+          first.reposition
+          first.reload
+        end.not_to change(first, :position)
+      end
+
+      it "returns false" do
+        expect(first.reposition).to be_falsy
+      end
+    end
+
+    context "when new_position is too large" do
+      before do
+        first.new_position = 10
+      end
+
+      it "doesn't change the project" do
+        expect do
+          first.reposition
+          first.reload
+        end.not_to change(first, :position)
+      end
+
+      it "returns false" do
+        expect(first.reposition).to be_falsy
+      end
+    end
+
+    context "when new_position is 0" do
+      before do
+        third.new_position = 0
+      end
+
+      it "doesn't change the project" do
+        expect do
+          third.reposition
+          third.reload
+        end.not_to change(third, :position)
+      end
+
+      it "returns false" do
+        expect(third.reposition).to be_falsy
+      end
+    end
+
+    context "when new_position is nil" do
+      before do
+        third.new_position = nil
+      end
+
+      it "doesn't change the project" do
+        expect do
+          third.reposition
+          third.reload
+        end.not_to change(third, :position)
+      end
+
+      it "returns false" do
+        expect(third.reposition).to be_falsy
       end
     end
   end

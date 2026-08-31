@@ -11,8 +11,11 @@ class Project < ApplicationRecord
 
   acts_as_list scope: :category
 
+  attr_accessor :new_position
+
   validates :name, presence: true, length: { maximum: 250 },
                    uniqueness: { scope: :category_id, case_sensitive: false }
+  validate :new_position_numericality
 
   # CLASS
 
@@ -65,7 +68,40 @@ class Project < ApplicationRecord
     @name_and_tag ||= build_name_and_tag
   end
 
+  def reposition
+    return false if new_position.blank?
+
+    insert_at(new_position) || false
+  rescue ArgumentError => e
+    logger.debug "ArgumentError: #{e}"
+    false
+  end
+
   private
+
+    def max_position
+      @max_position ||= category&.projects&.count
+    end
+
+    def new_position_ready?
+      new_position.present? && !!max_position
+    end
+
+    def new_position_numericality
+      return unless new_position_ready?
+
+      unless new_position.instance_of?(Integer)
+        return errors.add(:new_position, 'must be an integer')
+      end
+
+      unless new_position.positive?
+        return errors.add(:new_position, 'must greater than 0')
+      end
+
+      return unless new_position > max_position
+
+      errors.add(:new_position, "must less than #{max_position + 1}")
+    end
 
     def build_name_and_tag
       tags = []

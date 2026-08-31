@@ -8,6 +8,8 @@ RSpec.describe Category, type: :model do
   it { is_expected.to respond_to(:name) }
   it { is_expected.to respond_to(:visible) }
   it { is_expected.to respond_to(:internal) }
+  it { is_expected.to respond_to(:position) }
+  it { is_expected.to respond_to(:new_position) }
 
   it { is_expected.to have_many(:projects).dependent(:destroy) }
   it { is_expected.to have_many(:issues).through(:projects) }

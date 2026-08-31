@@ -82,9 +82,10 @@ class Category < ApplicationRecord
         return errors.add(:new_position, 'must greater than 0')
       end
 
-      return if new_position <= Category.count
+      max_position = Category.count
+      return unless max_position && new_position > max_position
 
-      errors.add(:new_position, "must less than #{Category.count + 1}")
+      errors.add(:new_position, "must less than #{max_position + 1}")
     end
 
     def build_name_and_tag
