@@ -1,5 +1,7 @@
 <%= category_reposition_header %>
 
+<p>Drag and drop categories and projects to sort</p>
+
 <div class="categories categories-and-projects">
   <% @categories.each do |category| %>
     <% projects = category.projects.accessible_by(current_ability).order(:position) %>
@@ -14,18 +16,30 @@
       </div>
 
       <% if projects.any? %>
-        <ol class="category-projects-list">
-          <% projects.each do |project| %>
-            <%= content_tag :li, id: "project-#{project.id}",
-                                 class: 'category-project',
-                                 data: { sortable_url: reposition_project_url(project) } do %>
-              <%= content_tag :span, project.name,
-                              class: 'category-project-name' %>
-              <%= content_tag :span, icon('hamburger'),
-                              class: 'sortable-handle project-sortable-handle' %>
+        <div class="category-projects-wrapper">
+          <div class="category-projects-positions">
+            <% projects.size.times do |i| %>
+              <%= content_tag :div, (i + 1),
+                              class: 'category-project-position' %>
             <% end %>
-          <% end %>
-        </ol>
+          </div>
+
+          <div class="category-projects-list">
+            <% projects.each do |project| %>
+              <%= content_tag :div, id: "project-#{project.id}",
+                                    class: 'category-project',
+                                    data: { sortable_url: reposition_project_url(project) } do %>
+                <span class="category-project-name-and-tags">
+                  <%= content_tag :span, project.name,
+                                  class: 'category-project-name' %>
+                  <span class="category-project-tags"><%= project_invisible_tag(project) %><%= internal_tag(project) %></span>
+                </span>
+                <%= content_tag :span, icon('hamburger'),
+                                class: 'sortable-handle project-sortable-handle' %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
       <% end %>
     <% end %>
   <% end %>
