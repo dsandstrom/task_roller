@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe RepositionCategoriesController, type: :controller do
   describe "GET #index" do
+    before { Fabricate(:category) }
+
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
         before { sign_in(Fabricate("user_#{employee_type}")) }
@@ -26,6 +28,8 @@ RSpec.describe RepositionCategoriesController, type: :controller do
   end
 
   describe "PUT #update" do
+    let(:category) { Fabricate(:category) }
+
     let(:valid_attributes) { { new_position: 1 } }
     let(:invalid_attributes) { { new_position: "" } }
 
@@ -38,7 +42,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
         context "with valid params" do
           context "for html request" do
             it "updates the requested category's position" do
-              category = Fabricate(:category)
               expect do
                 put :update, params: { id: category.to_param,
                                        category: valid_attributes }
@@ -47,7 +50,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             end
 
             it "redirects to the category list" do
-              category = Fabricate(:category)
               put :update, params: { id: category.to_param,
                                      category: valid_attributes }
               expect(response).to redirect_to(reposition_categories_path)
@@ -56,7 +58,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
 
           context "for json request" do
             it "updates the requested category's position" do
-              category = Fabricate(:category)
               expect do
                 put :update, params: { id: category.to_param,
                                        category: valid_attributes },
@@ -66,7 +67,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             end
 
             it "responds with ok" do
-              category = Fabricate(:category)
               put :update, params: { id: category.to_param,
                                      category: valid_attributes },
                            as: :json
@@ -78,7 +78,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
         context "with invalid params" do
           context "for html request" do
             it "doesn't update the requested category" do
-              category = Fabricate(:category)
               expect do
                 put :update, params: { id: category.to_param,
                                        category: invalid_attributes }
@@ -87,7 +86,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             end
 
             it "redirects to the category list" do
-              category = Fabricate(:category)
               put :update, params: { id: category.to_param,
                                      category: invalid_attributes }
               expect(response).to redirect_to(reposition_categories_path)
@@ -96,7 +94,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
 
           context "for json request" do
             it "doesn't update the requested category" do
-              category = Fabricate(:category)
               expect do
                 put :update, params: { id: category.to_param,
                                        category: invalid_attributes },
@@ -106,7 +103,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
             end
 
             it "responds with unprocessable_content" do
-              category = Fabricate(:category)
               put :update, params: { id: category.to_param,
                                      category: invalid_attributes },
                            as: :json
@@ -123,7 +119,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
 
         context "for html request" do
           it "redirects to unauthorized" do
-            category = Fabricate(:category)
             put :update, params: { id: category.to_param,
                                    category: valid_attributes }
             expect_to_be_unauthorized(response)
@@ -132,7 +127,6 @@ RSpec.describe RepositionCategoriesController, type: :controller do
 
         context "for json request" do
           it "redirects to unauthorized" do
-            category = Fabricate(:category)
             put :update, params: { id: category.to_param,
                                    category: valid_attributes },
                          as: :json

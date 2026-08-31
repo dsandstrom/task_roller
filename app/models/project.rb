@@ -9,7 +9,7 @@ class Project < ApplicationRecord
   has_many :task_subscribers, through: :project_tasks_subscriptions,
                               foreign_key: :user_id, source: :user
 
-  acts_as_list scope: :category
+  acts_as_list scope: :category_id
 
   attr_accessor :new_position
 

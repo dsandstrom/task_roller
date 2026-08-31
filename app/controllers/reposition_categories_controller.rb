@@ -6,7 +6,8 @@ class RepositionCategoriesController < ApplicationController
     authorize! :update, Category
 
     @categories = Category.accessible_by(current_ability)
-                          .order('categories.position asc').preload(:projects)
+                          .order('categories.position asc')
+                          .preload(:projects)
   end
 
   def update

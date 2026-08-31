@@ -2,6 +2,7 @@
 
 <div class="categories categories-and-projects">
   <% @categories.each do |category| %>
+    <% projects = category.projects.accessible_by(current_ability).order(:position) %>
     <%= content_tag :div, id: "category-#{category.id}",
                           class: 'category-and-projects',
                           data: { sortable_url: reposition_category_url(category) } do %>
@@ -12,11 +13,12 @@
                         class: 'sortable-handle category-sortable-handle' %>
       </div>
 
-      <% if category.projects.any? %>
+      <% if projects.any? %>
         <ol class="category-projects-list">
-          <% category.projects.each do |project| %>
+          <% projects.each do |project| %>
             <%= content_tag :li, id: "project-#{project.id}",
-                                 class: 'category-project' do %>
+                                 class: 'category-project',
+                                 data: { sortable_url: reposition_project_url(project) } do %>
               <%= content_tag :span, project.name,
                               class: 'category-project-name' %>
               <%= content_tag :span, icon('hamburger'),
