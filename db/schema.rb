@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_02_230152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -273,6 +273,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.text "description"
     t.integer "issue_id"
     t.datetime "opened_at"
+    t.integer "priority_level", default: 4, null: false
     t.integer "project_id"
     t.string "status"
     t.string "summary"
@@ -281,6 +282,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.integer "user_id"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
+    t.index ["priority_level"], name: "index_tasks_on_priority_level"
     t.index ["project_id"], name: "index_tasks_on_project_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
