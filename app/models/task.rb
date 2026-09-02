@@ -2,6 +2,12 @@
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
+  PRIORITY_LEVEL_OPTIONS = {
+    "Low" => 4,
+    "Medium" => 3,
+    "High" => 2,
+    "Critical" => 1
+  }.freeze
   STATUS_OPTIONS = {
     open: { color: 'green' },
     unassigned: { color: 'brown' },
@@ -53,6 +59,8 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   validates :description, presence: true, length: { maximum: 2000 }
   validates :status, inclusion: { in: STATUS_OPTIONS.keys.map(&:to_s) },
                      allow_nil: true
+  validates :priority_level, presence: true,
+                             inclusion: { in: PRIORITY_LEVEL_OPTIONS.values }
 
   after_create :set_opened_at
   after_save :update_issue_counts

@@ -23,6 +23,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to respond_to(:task_type_id) }
   it { is_expected.to respond_to(:project_id) }
   it { is_expected.to respond_to(:opened_at) }
+  it { is_expected.to respond_to(:priority_level) }
   it { is_expected.to respond_to(:category) }
 
   # User.assigned_to
@@ -34,6 +35,15 @@ RSpec.describe Task, type: :model do
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
   it { is_expected.to validate_presence_of(:description) }
   it { is_expected.to validate_length_of(:description).is_at_most(2000) }
+  it { is_expected.to validate_presence_of(:priority_level) }
+  it do
+    is_expected.to validate_inclusion_of(:priority_level).in_array([1, 2, 3, 4])
+  end
+  it do
+    is_expected.to validate_inclusion_of(:status)
+      .in_array(%w[unassigned assigned in_progress in_review approved
+                   duplicate])
+  end
 
   it { is_expected.to belong_to(:user).required }
   it { is_expected.to belong_to(:task_type).required }
@@ -56,31 +66,6 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:reopenings) }
   it { is_expected.to have_many(:notifications).dependent(:destroy) }
   it { is_expected.to have_many(:repo_callouts) }
-
-  describe "#status" do
-    context "when a valid value" do
-      %w[unassigned assigned in_progress in_review
-         approved duplicate].each do |value|
-        before { subject.status = value }
-
-        it { is_expected.to be_valid }
-      end
-    end
-
-    context "when nil" do
-      before { subject.status = nil }
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when an invalid value" do
-      ["notopen", "", "in progress"].each do |value|
-        before { subject.status = value }
-
-        it { is_expected.not_to be_valid }
-      end
-    end
-  end
 
   # CLASS
 
