@@ -380,14 +380,16 @@
 
 .categories-and-projects {
   margin-top: 2.5rem;
-  padding: 0 1px;
-
-  .sortable-ghost {
-    outline: 1px dashed $dark-gray;
-  }
 
   .sortable-drag {
     opacity: .5;
+  }
+
+  .category-and-projects,
+  .category-project {
+    &.sortable-ghost {
+      border: 1px dashed $gray;
+    }
   }
 
   .category-name {
