@@ -69,7 +69,7 @@ class TasksController < ApplicationController
 
     def task_params
       params.expect(task: [:summary, :description, :task_type_id, :issue_id,
-                           { assignee_ids: [] }])
+                           :priority_level, { assignee_ids: [] }])
     end
 
     def set_form_options
