@@ -1,5 +1,6 @@
 class TaskTypeMigrationsController < ApplicationController
-  load_and_authorize_resource :task_type
+  load_resource :task_type
+  before_action :authorize_migrate
   before_action :build_task_type_options, only: :new
 
   def new; end
@@ -18,6 +19,10 @@ class TaskTypeMigrationsController < ApplicationController
   end
 
   private
+
+    def authorize_migrate
+      authorize! :migrate, @task_type
+    end
 
     def task_type_params
       params.expect(task_type: %i[new_task_type_id])

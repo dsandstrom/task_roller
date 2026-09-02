@@ -4492,6 +4492,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, issue_type) }
         it { is_expected.to be_able_to(:update, issue_type) }
         it { is_expected.to be_able_to(:destroy, issue_type) }
+        it { is_expected.to be_able_to(:migrate, issue_type) }
       end
     end
 
@@ -4504,6 +4505,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, issue_type) }
         it { is_expected.to be_able_to(:update, issue_type) }
         it { is_expected.not_to be_able_to(:destroy, issue_type) }
+        it { is_expected.not_to be_able_to(:migrate, issue_type) }
       end
     end
 
@@ -4516,6 +4518,7 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, issue_type) }
         it { is_expected.not_to be_able_to(:update, issue_type) }
         it { is_expected.not_to be_able_to(:destroy, issue_type) }
+        it { is_expected.not_to be_able_to(:migrate, issue_type) }
       end
     end
   end

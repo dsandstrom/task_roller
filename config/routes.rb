@@ -83,9 +83,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :task_notifications, only: :destroy
   resources :issue_types, except: %i[show]
   resources :task_types, except: %i[index show]
-  patch '/reposition_issue_types/:id/:sort' => 'reposition_issue_types#update',
+  patch '/reposition_issue_types/:id' => 'reposition_issue_types#update',
         as: :reposition_issue_type
-  patch '/reposition_task_types/:id/:sort' => 'reposition_task_types#update',
+  patch '/reposition_task_types/:id' => 'reposition_task_types#update',
         as: :reposition_task_type
 
   get 'reposition' => 'reposition_categories#index',

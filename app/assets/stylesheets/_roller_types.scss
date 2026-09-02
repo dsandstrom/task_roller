@@ -282,19 +282,66 @@ $tag-border-radius: 2 * $border-radius;
 
 .issue-types,
 .task-types {
+  margin-bottom: 2rem;
+
+  .issue-type-tag,
+  .task-type-tag {
+    margin: 0;
+    padding: .5rem;
+    border-radius: $tag-border-radius $tag-border-radius 0 0;
+  }
+
+  .issue-type-header,
+  .task-type-header {
+    position: relative;
+
+    &:hover {
+      cursor: move;
+    }
+
+    .sortable-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 2rem;
+    }
+  }
+
+  .issue-type-body,
+  .task-type-body {
+    line-height: 1.2;
+    text-align: center;
+  }
+
   .issue-type,
   .task-type {
-    display: grid;
-    grid-column-gap: 2rem;
-    grid-template-columns: 2fr 1fr 1fr;
-    align-items: center;
     margin-bottom: 1.5rem;
+    border: 1px solid $border-color;
+    border-radius: $tag-border-radius $tag-border-radius 0 0;
 
-    p,
-    .status-tag,
-    .issue-type-tag {
-      margin-bottom: 0;
+    &.sortable-ghost {
+      border: 1px dashed $gray;
     }
+
+    p {
+      margin: 1rem .25rem;
+    }
+  }
+}
+
+@include breakpoint(medium up) {
+  .issue-types,
+  .task-types {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@include breakpoint(large up) {
+  .issue-types,
+  .task-types {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
 
@@ -319,5 +366,16 @@ a {
   .status-value,
   .assign-value {
     border-right: 1px solid rgba($black, .2);
+  }
+}
+
+.new-type-link {
+  display: inline-block;
+  padding: .2rem 0;
+
+  &.roller-type-color-default {
+    &:hover {
+      background-color: $off-white;
+    }
   }
 }

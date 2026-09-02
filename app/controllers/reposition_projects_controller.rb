@@ -21,7 +21,7 @@ class RepositionProjectsController < ApplicationController
       respond_to do |format|
         format.html do
           redirect_to reposition_categories_path,
-                      notice: "#{@project.name} was successfully moved "
+                      notice: "#{@project.name} was successfully moved."
         end
         format.json { head :ok }
       end
@@ -31,7 +31,7 @@ class RepositionProjectsController < ApplicationController
       respond_to do |format|
         format.html do
           redirect_to reposition_categories_path,
-                      notice: "#{@project.name} was unable to be moved "
+                      notice: "#{@project.name} was unable to be moved."
         end
         format.json { head :unprocessable_content }
       end

@@ -17,7 +17,7 @@ class TaskAbility < BaseAbility
       activate_reviewer
       activate_invisible_abilities
 
-      ability.can :manage, TaskType
+      ability.can %i[manage migrate], TaskType
 
       [Task, TaskComment, Progression, Review].each do |model_name|
         ability.can :update, model_name

@@ -5,8 +5,7 @@ class RepositionCategoriesController < ApplicationController
   def index
     authorize! :update, Category
 
-    @categories = Category.accessible_by(current_ability)
-                          .order('categories.position asc')
+    @categories = Category.order('categories.position asc')
                           .preload(:projects)
   end
 
@@ -30,7 +29,7 @@ class RepositionCategoriesController < ApplicationController
       respond_to do |format|
         format.html do
           redirect_to reposition_categories_path,
-                      notice: "#{@category.name} was successfully moved "
+                      notice: "#{@category.name} was successfully moved."
         end
         format.json { head :ok }
       end
@@ -40,7 +39,7 @@ class RepositionCategoriesController < ApplicationController
       respond_to do |format|
         format.html do
           redirect_to reposition_categories_path,
-                      notice: "#{@category.name} was unable to be moved "
+                      notice: "#{@category.name} was unable to be moved."
         end
         format.json { head :unprocessable_content }
       end

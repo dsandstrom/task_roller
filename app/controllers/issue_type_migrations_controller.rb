@@ -1,5 +1,6 @@
 class IssueTypeMigrationsController < ApplicationController
-  load_and_authorize_resource :issue_type
+  load_resource :issue_type
+  before_action :authorize_migrate
   before_action :build_issue_type_options, only: :new
 
   def new; end
@@ -18,6 +19,10 @@ class IssueTypeMigrationsController < ApplicationController
   end
 
   private
+
+    def authorize_migrate
+      authorize! :migrate, @issue_type
+    end
 
     def issue_type_params
       params.expect(issue_type: %i[new_issue_type_id])
