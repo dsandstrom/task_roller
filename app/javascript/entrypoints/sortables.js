@@ -10,6 +10,7 @@ document.addEventListener('turbo:load', function() {
 
   if (categories) {
     new Sortable(categories, {
+      handle: '.category-name',
       onEnd: rePositionCategory
     })
   }
@@ -22,12 +23,14 @@ document.addEventListener('turbo:load', function() {
 
   if (issueTypes) {
     new Sortable(issueTypes, {
+      handle: '.issue-type-header',
       onEnd: rePositionIssueType
     })
   }
 
   if (taskTypes) {
     new Sortable(taskTypes, {
+      handle: '.task-type-header',
       onEnd: rePositionTaskType
     })
   }

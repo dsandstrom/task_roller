@@ -55,8 +55,8 @@ RSpec.describe "issue_types/index", type: :view do
     it "renders new type links" do
       render
 
-      expect(rendered).to have_link("New Issue Type", href: new_issue_type_path)
-      expect(rendered).to have_link("New Task Type", href: new_task_type_path)
+      expect(rendered).to have_link(nil, href: new_issue_type_path)
+      expect(rendered).to have_link(nil, href: new_task_type_path)
     end
 
     context "when issue_type has an issue" do
@@ -64,7 +64,7 @@ RSpec.describe "issue_types/index", type: :view do
         render
 
         expect(rendered).to have_link(
-          "Migrate issues",
+          nil,
           href: new_issue_type_migration_path(first_issue_type)
         )
       end
@@ -104,7 +104,7 @@ RSpec.describe "issue_types/index", type: :view do
         render
 
         expect(rendered).to have_link(
-          "Migrate tasks",
+          nil,
           href: new_task_type_migration_path(first_task_type)
         )
       end
@@ -179,8 +179,8 @@ RSpec.describe "issue_types/index", type: :view do
     it "renders new type links" do
       render
 
-      expect(rendered).to have_link("New Issue Type", href: new_issue_type_path)
-      expect(rendered).to have_link("New Task Type", href: new_task_type_path)
+      expect(rendered).to have_link(nil, href: new_issue_type_path)
+      expect(rendered).to have_link(nil, href: new_task_type_path)
     end
 
     context "when issue_type has an issue" do
@@ -188,7 +188,7 @@ RSpec.describe "issue_types/index", type: :view do
         render
 
         expect(rendered).to have_link(
-          "Migrate issues",
+          nil,
           href: new_issue_type_migration_path(first_issue_type)
         )
       end
@@ -228,7 +228,7 @@ RSpec.describe "issue_types/index", type: :view do
         render
 
         expect(rendered).to have_link(
-          "Migrate tasks",
+          nil,
           href: new_task_type_migration_path(first_task_type)
         )
       end

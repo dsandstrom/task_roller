@@ -5,74 +5,97 @@
   <%= app_setup_nav %>
 <% end %>
 
-Add and customize issue and task types below:
+<p>Add and customize issue and task types below</p>
+
 <h2>Issue Types</h2>
+
+<p>Drag and drop to sort</p>
 
 <div id="sortable-issue-types" class="issue-types">
   <% @issue_types&.each do |issue_type| %>
     <%= content_tag :div, id: "issue-type-#{issue_type.id}",
                           class: 'issue-type',
                           data: { sortable_url: reposition_issue_type_url(issue_type.to_param) } do %>
-      <p>
+      <div class="issue-type-header">
         <%= issue_type_tag(issue_type) %>
-      </p>
+        <%= content_tag :span, icon('arrow-expand'), class: 'sortable-handle' %>
+      </div>
 
-      <p>
-        <%= link_to 'Edit', edit_issue_type_path(issue_type) %>
-      </p>
-      <% if issue_type.any_issues? %>
+      <div class="issue-type-body">
         <p>
-          <%= link_to 'Migrate issues',
-                      new_issue_type_migration_path(issue_type) %>
+          <%= link_to 'Edit Type', edit_issue_type_path(issue_type) %>
         </p>
-      <% elsif can?(:destroy, issue_type) %>
-        <p>
-          <%= link_to 'Remove', issue_type,
-                      method: :delete, class: 'destroy-link',
-                      data: { turbo_method: :delete,
-                              turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
-        </p>
-      <% end %>
+        <% if issue_type.any_issues? %>
+          <p>
+            <%= link_to 'Migrate Issues',
+                        new_issue_type_migration_path(issue_type) %>
+          </p>
+        <% elsif can?(:destroy, issue_type) %>
+          <p>
+            <%= link_to 'Remove', issue_type,
+                        method: :delete, class: 'destroy-link',
+                        data: { turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to remove the '#{issue_type.name}' issue type?" } %>
+          </p>
+        <% end %>
+      </div>
     <% end %>
   <% end %>
 </div>
 
 <% if can?(:create, IssueType) %>
-  <p><%= link_to 'New Issue Type', new_issue_type_path %></p>
+  <p>
+    <%= link_to new_issue_type_path,
+                class: 'issue-type-tag roller-type-color-default new-type-link' do %>
+      <%= icon('plus') %><span class="type-value">Add Issue Type</span>
+    <% end %>
+  </p>
 <% end %>
-
 <hr>
 
 <h2>Task Types</h2>
+
+<p>Drag and drop to sort</p>
 
 <div id="sortable-task-types" class="task-types">
   <% @task_types&.each do |task_type| %>
     <%= content_tag :div, id: "task-type-#{task_type.id}",
                           class: 'task-type',
                           data: { sortable_url: reposition_task_type_url(task_type.to_param) } do %>
-      <p>
-        <%= link_to_if can?(:edit, task_type),
-                       task_type_tag(task_type),
-                       edit_task_type_path(task_type) %>
-      </p>
 
-      <% if task_type.any_tasks? %>
+      <div class="task-type-header">
+        <%= task_type_tag(task_type) %>
+        <%= content_tag :span, icon('arrow-expand'), class: 'sortable-handle' %>
+      </div>
+
+      <div class="task-type-body">
         <p>
-          <%= link_to 'Migrate tasks',
-                      new_task_type_migration_path(task_type) %>
+          <%= link_to 'Edit Type', edit_task_type_path(task_type) %>
         </p>
-      <% elsif can?(:destroy, task_type) %>
-        <p>
-          <%= link_to 'Remove', task_type,
-                      method: :delete, class: 'destroy-link',
-                      data: { turbo_method: :delete,
-                              turbo_confirm: "Are you sure you want to remove the '#{task_type.name}' task type?" } %>
-        </p>
-      <% end %>
+
+        <% if task_type.any_tasks? %>
+          <p>
+            <%= link_to 'Migrate Tasks',
+                        new_task_type_migration_path(task_type) %>
+          </p>
+        <% elsif can?(:destroy, task_type) %>
+          <p>
+            <%= link_to 'Remove', task_type,
+                        method: :delete, class: 'destroy-link',
+                        data: { turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to remove the '#{task_type.name}' task type?" } %>
+          </p>
+        <% end %>
+      </div>
     <% end %>
   <% end %>
 </div>
 
 <% if can?(:create, TaskType) %>
-  <p><%= link_to 'New Task Type', new_task_type_path %></p>
+  <p>
+    <%= link_to new_task_type_path,
+                class: 'task-type-tag roller-type-color-default new-type-link' do %>
+      <%= icon('plus') %><span class="type-value">Add Task Type</span>
+    <% end %>
+  </p>
 <% end %>
