@@ -1,49 +1,87 @@
 require "rails_helper"
 
 RSpec.describe RepositionIssueTypesController, type: :controller do
-  let(:valid_attributes) { "up" }
-  let(:invalid_attributes) { "" }
+  let(:valid_attributes) { { new_position: "1" } }
+  let(:invalid_attributes) { { new_position: "" } }
 
-  describe "PUT #update" do
+  describe "PATCH #update" do
     before { Fabricate(:issue_type) }
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
+        let!(:issue_type) { Fabricate(:issue_type) }
+
         before { sign_in(Fabricate("user_#{employee_type}")) }
 
         context "with valid params" do
-          it "updates the requested issue_type's position" do
-            issue_type = Fabricate(:issue_type)
-            expect do
-              put :update, params: { id: issue_type.to_param,
-                                     sort: valid_attributes }
-              issue_type.reload
-            end.to change(issue_type, :position).from(2).to(1)
+          context "for html request" do
+            it "updates the requested issue_type's position" do
+              expect do
+                patch :update, params: { id: issue_type.to_param,
+                                         issue_type: valid_attributes }
+                issue_type.reload
+              end.to change(issue_type, :position).from(2).to(1)
+            end
+
+            it "redirects to the issue_type list" do
+              patch :update, params: { id: issue_type.to_param,
+                                       issue_type: valid_attributes }
+              expect(response).to redirect_to(issue_types_url)
+            end
           end
 
-          it "redirects to the issue_type list" do
-            issue_type = Fabricate(:issue_type)
-            put :update, params: { id: issue_type.to_param,
-                                   sort: valid_attributes }
-            expect(response).to redirect_to(issue_types_url)
+          context "for json request" do
+            it "updates the requested issue_type's position" do
+              expect do
+                patch :update, params: { id: issue_type.to_param,
+                                         issue_type: valid_attributes },
+                               as: :json
+                issue_type.reload
+              end.to change(issue_type, :position).from(2).to(1)
+            end
+
+            it "redirects to the issue_type list" do
+              patch :update, params: { id: issue_type.to_param,
+                                       issue_type: valid_attributes },
+                             as: :json
+              expect(response).to have_http_status(:ok)
+            end
           end
         end
 
         context "with invalid params" do
-          it "doesn't update the requested issue_type" do
-            issue_type = Fabricate(:issue_type)
-            expect do
-              put :update, params: { id: issue_type.to_param,
-                                     sort: invalid_attributes }
-              issue_type.reload
-            end.not_to change(issue_type, :position)
+          context "for html request" do
+            it "doesn't update the requested issue_type" do
+              expect do
+                patch :update, params: { id: issue_type.to_param,
+                                         issue_type: invalid_attributes }
+                issue_type.reload
+              end.not_to change(issue_type, :position)
+            end
+
+            it "redirects to the issue_type list" do
+              patch :update, params: { id: issue_type.to_param,
+                                       issue_type: invalid_attributes }
+              expect(response).to redirect_to(issue_types_url)
+            end
           end
 
-          it "redirects to the issue_type list" do
-            issue_type = Fabricate(:issue_type)
-            put :update, params: { id: issue_type.to_param,
-                                   sort: invalid_attributes }
-            expect(response).to redirect_to(issue_types_url)
+          context "for json request" do
+            it "doesn't update the requested issue_type" do
+              expect do
+                patch :update, params: { id: issue_type.to_param,
+                                         issue_type: invalid_attributes },
+                               as: :json
+                issue_type.reload
+              end.not_to change(issue_type, :position)
+            end
+
+            it "redirects to the issue_type list" do
+              patch :update, params: { id: issue_type.to_param,
+                                       issue_type: invalid_attributes },
+                             as: :json
+              expect(response).to have_http_status(:unprocessable_content)
+            end
           end
         end
       end
@@ -51,13 +89,25 @@ RSpec.describe RepositionIssueTypesController, type: :controller do
 
     %w[worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
+        let!(:issue_type) { Fabricate(:issue_type) }
+
         before { sign_in(Fabricate("user_#{employee_type}")) }
 
-        it "redirects to unauthorized" do
-          issue_type = Fabricate(:issue_type)
-          put :update, params: { id: issue_type.to_param,
-                                 sort: valid_attributes }
-          expect_to_be_unauthorized(response)
+        context "for html request" do
+          it "redirects to unauthorized" do
+            patch :update, params: { id: issue_type.to_param,
+                                     issue_type: valid_attributes }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "for json request" do
+          it "redirects to unauthorized" do
+            patch :update, params: { id: issue_type.to_param,
+                                     issue_type: valid_attributes },
+                           as: :json
+            expect_to_be_forbidden(response)
+          end
         end
       end
     end
