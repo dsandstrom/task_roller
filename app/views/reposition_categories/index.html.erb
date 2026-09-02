@@ -2,9 +2,9 @@
 
 <p>Drag and drop categories and projects to sort</p>
 
-<div class="categories categories-and-projects">
+<div id="sortable-categories" class="categories categories-and-projects">
   <% @categories.each do |category| %>
-    <% projects = category.projects.accessible_by(current_ability).order(:position) %>
+    <% projects = category.projects.order(:position) %>
     <%= content_tag :div, id: "category-#{category.id}",
                           class: 'category-and-projects',
                           data: { sortable_url: reposition_category_url(category) } do %>
@@ -24,7 +24,7 @@
             <% end %>
           </div>
 
-          <div class="category-projects-list">
+          <div class="category-projects-list sortable-projects">
             <% projects.each do |project| %>
               <%= content_tag :div, id: "project-#{project.id}",
                                     class: 'category-project',

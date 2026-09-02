@@ -26,6 +26,47 @@ RSpec.describe "reposition_categories/index", type: :view do
         assert_select "#category-#{third_category.id} .category-name h3",
                       text: third_category.name
       end
+
+      it "renders categories' reposition url" do
+        first_url = reposition_category_url(first_category)
+        second_url = reposition_category_url(second_category)
+        third_url = reposition_category_url(third_category)
+
+        render
+
+        assert_select "#category-#{first_category.id}" \
+                      "[data-sortable-url='#{first_url}']"
+        assert_select "#category-#{second_category.id}" \
+                      "[data-sortable-url='#{second_url}']"
+        assert_select "#category-#{third_category.id}" \
+                      "[data-sortable-url='#{third_url}']"
+      end
+
+      context "when category has projects" do
+        let!(:first_project) { Fabricate(:project, category: first_category) }
+        let!(:second_project) { Fabricate(:project, category: first_category) }
+
+        it "renders a list of projects" do
+          render
+
+          assert_select "#project-#{first_project.id} .category-project-name",
+                        text: first_project.name
+          assert_select "#project-#{second_project.id} .category-project-name",
+                        text: second_project.name
+        end
+
+        it "renders projects' sortable url" do
+          first_url = reposition_project_url(first_project)
+          second_url = reposition_project_url(second_project)
+
+          render
+
+          assert_select "#project-#{first_project.id}" \
+                        "[data-sortable-url='#{first_url}']"
+          assert_select "#project-#{second_project.id}" \
+                        "[data-sortable-url='#{second_url}']"
+        end
+      end
     end
   end
 end
