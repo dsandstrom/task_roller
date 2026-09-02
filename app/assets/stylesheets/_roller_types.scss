@@ -309,8 +309,8 @@ $tag-border-radius: 2 * $border-radius;
 
   .issue-type-body,
   .task-type-body {
-    text-align: center;
     line-height: 1.2;
+    text-align: center;
   }
 
   .issue-type,
@@ -333,8 +333,8 @@ $tag-border-radius: 2 * $border-radius;
   .issue-types,
   .task-types {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     grid-gap: 1rem;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
