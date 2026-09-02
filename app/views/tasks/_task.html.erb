@@ -8,6 +8,14 @@
 
   css_class = 'task'
   css_class += ' with-notification' if notifications.any?
+
+  if container.present?
+    preview_url = task_issue_previews_path(task, container: container)
+    frame_tag = "#{container}_turbo_task_issue_#{task.id}"
+  else
+    preview_url = task_issue_previews_path(task)
+    frame_tag = "turbo_task_issue_#{task.id}"
+  end
 %>
 
 <%= content_tag :section, id: "task-#{task.id}", class: css_class do %>
@@ -41,7 +49,7 @@
 
       <% if issue %>
         <p>
-          <%= link_to task_issue_previews_path(task),
+          <%= link_to preview_url,
                       class: "turbo-stream-link",
                       data: { turbo_stream: true } do %>
             Preview <%= content_tag :span, "Issue ##{issue.id}", class: 'issue-id' %>
@@ -92,5 +100,5 @@
     </footer>
   <% end %>
 
-  <%= turbo_frame_tag "turbo_task_issue_#{task.id}", class: "task-issue-wrapper" %>
+  <%= turbo_frame_tag frame_tag, class: "task-issue-wrapper" %>
 <% end %>

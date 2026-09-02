@@ -1,3 +1,7 @@
-<%= turbo_stream.replace "turbo_task_issue_#{@task.id}",
+<%
+frame_tag = "turbo_task_issue_#{@task.id}"
+frame_tag = "#{@container}_#{frame_tag}" if @container.present?
+%>
+<%= turbo_stream.replace frame_tag,
                          partial: 'tasks/issue',
                          locals: { task: @task, issue: @issue } %>
