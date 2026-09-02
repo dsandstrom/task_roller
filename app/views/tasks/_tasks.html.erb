@@ -1,5 +1,7 @@
+<% container ||= nil %>
+
 <div class="tasks">
   <% tasks.each do |task| %>
-    <%= turbo_frame_tag "turbo_task_#{task.id}" do %><%= render task %><% end %>
+    <%= turbo_frame_tag "turbo_task_#{task.id}" do %><%= render task, container: container %><% end %>
   <% end %>
 </div>

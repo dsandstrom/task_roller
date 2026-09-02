@@ -3,6 +3,7 @@ class IssuePreviewsController < ApplicationController
 
   def index
     @issue = @task.issue
+    @container = params[:container]
 
     respond_to do |format|
       format.html

@@ -15,7 +15,8 @@
                       class: 'button button-clear' %>
         </p>
       </header>
-      <%= render 'tasks/tasks', tasks: @active_assignments %>
+      <%= render 'tasks/tasks', tasks: @active_assignments,
+                                container: 'user_assignments' %>
     </div>
   <% end %>
 
@@ -29,7 +30,8 @@
                       class: 'button button-clear' %>
         </p>
       </header>
-      <%= render 'tasks/tasks', tasks: @open_tasks %>
+      <%= render 'tasks/tasks', tasks: @open_tasks,
+                                container: 'user_tasks' %>
     </div>
   <% end %>
 
