@@ -5551,6 +5551,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, task_type) }
         it { is_expected.to be_able_to(:update, task_type) }
         it { is_expected.to be_able_to(:destroy, task_type) }
+        it { is_expected.to be_able_to(:migrate, task_type) }
       end
     end
 
@@ -5563,6 +5564,7 @@ RSpec.describe Ability do
         it { is_expected.to be_able_to(:read, task_type) }
         it { is_expected.to be_able_to(:update, task_type) }
         it { is_expected.not_to be_able_to(:destroy, task_type) }
+        it { is_expected.not_to be_able_to(:migrate, task_type) }
       end
     end
 
@@ -5575,6 +5577,7 @@ RSpec.describe Ability do
         it { is_expected.not_to be_able_to(:read, task_type) }
         it { is_expected.not_to be_able_to(:update, task_type) }
         it { is_expected.not_to be_able_to(:destroy, task_type) }
+        it { is_expected.not_to be_able_to(:migrate, task_type) }
       end
     end
   end

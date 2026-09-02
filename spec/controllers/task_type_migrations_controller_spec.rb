@@ -6,7 +6,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
 
     before { Fabricate(:task_type) }
 
-    %w[admin reviewer].each do |employee_type|
+    %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -20,7 +20,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
       end
     end
 
-    %w[worker reporter].each do |employee_type|
+    %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -42,7 +42,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
     let(:valid_params) { { new_task_type_id: new_task_type.to_param } }
     let(:invalid_params) { { new_task_type_id: "" } }
 
-    %w[admin reviewer].each do |employee_type|
+    %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -88,7 +88,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
       end
     end
 
-    %w[worker reporter].each do |employee_type|
+    %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let!(:task) { Fabricate(:task, task_type: task_type) }

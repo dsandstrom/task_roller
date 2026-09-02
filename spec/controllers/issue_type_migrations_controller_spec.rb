@@ -6,7 +6,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
 
     before { Fabricate(:issue_type) }
 
-    %w[admin reviewer].each do |employee_type|
+    %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -20,7 +20,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
       end
     end
 
-    %w[worker reporter].each do |employee_type|
+    %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -42,7 +42,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
     let(:valid_params) { { new_issue_type_id: new_issue_type.to_param } }
     let(:invalid_params) { { new_issue_type_id: "" } }
 
-    %w[admin reviewer].each do |employee_type|
+    %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
@@ -88,7 +88,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
       end
     end
 
-    %w[worker reporter].each do |employee_type|
+    %w[reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let!(:issue) { Fabricate(:issue, issue_type: issue_type) }

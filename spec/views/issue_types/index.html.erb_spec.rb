@@ -184,10 +184,10 @@ RSpec.describe "issue_types/index", type: :view do
     end
 
     context "when issue_type has an issue" do
-      it "renders migration link" do
+      it "doesn't render migration link" do
         render
 
-        expect(rendered).to have_link(
+        expect(rendered).not_to have_link(
           nil,
           href: new_issue_type_migration_path(first_issue_type)
         )
@@ -224,10 +224,10 @@ RSpec.describe "issue_types/index", type: :view do
     end
 
     context "when task_type has an task" do
-      it "renders migration link" do
+      it "doesn't render migration link" do
         render
 
-        expect(rendered).to have_link(
+        expect(rendered).not_to have_link(
           nil,
           href: new_task_type_migration_path(first_task_type)
         )

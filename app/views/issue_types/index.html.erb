@@ -5,7 +5,10 @@
   <%= app_setup_nav %>
 <% end %>
 
-<p>Add and customize issue and task types below</p>
+<p>
+  Add and customize issue and task types below. Please note, before removing a type,
+  an admin must migrate all issues/tasks to a different type.
+</p>
 
 <h2>Issue Types</h2>
 
@@ -25,7 +28,7 @@
         <p>
           <%= link_to 'Edit Type', edit_issue_type_path(issue_type) %>
         </p>
-        <% if issue_type.any_issues? %>
+        <% if issue_type.any_issues? && can?(:migrate, issue_type) %>
           <p>
             <%= link_to 'Migrate Issues',
                         new_issue_type_migration_path(issue_type) %>
@@ -73,7 +76,7 @@
           <%= link_to 'Edit Type', edit_task_type_path(task_type) %>
         </p>
 
-        <% if task_type.any_tasks? %>
+        <% if task_type.any_tasks? && can?(:migrate, task_type) %>
           <p>
             <%= link_to 'Migrate Tasks',
                         new_task_type_migration_path(task_type) %>

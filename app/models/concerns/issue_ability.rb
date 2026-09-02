@@ -17,7 +17,7 @@ class IssueAbility < BaseAbility
       activate_reviewer
       activate_invisible_abilities
 
-      ability.can :manage, IssueType
+      ability.can %i[manage migrate], IssueType
 
       [Issue, IssueComment, Resolution].each do |model_name|
         ability.can :update, model_name
