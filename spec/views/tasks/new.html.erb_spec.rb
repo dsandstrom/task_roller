@@ -34,6 +34,7 @@ RSpec.describe "tasks/new", type: :view do
           assert_select "textarea[name=?]", "task[description]"
           assert_select "input[name=?]", "task[task_type_id]"
           assert_select "select[name=?]", "task[assignee_ids][]"
+          assert_select "select[name=?]", "task[priority_level]"
         end
       end
 
@@ -63,6 +64,7 @@ RSpec.describe "tasks/new", type: :view do
           assert_select "textarea[name=?]", "task[description]"
           assert_select "input[name=?]", "task[task_type_id]"
           assert_select "select[name=?]", "task[assignee_ids][]"
+          assert_select "select[name=?]", "task[priority_level]"
         end
       end
     end

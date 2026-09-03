@@ -54,6 +54,11 @@ RSpec.describe "tasks/show", type: :view do
         assert_select ".task-user", @task.user.name_or_email
       end
 
+      it "renders task's priority_level" do
+        render
+        assert_select ".task-priority-level", "Low"
+      end
+
       it "renders new task_comment form" do
         render
 
