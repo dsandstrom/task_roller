@@ -48,7 +48,7 @@
   <div class="field">
     <%= form.label :priority_level, 'Priority' %>
     <%= form.select :priority_level,
-                    options_for_select(Task::PRIORITY_LEVEL_OPTIONS, task.priority_level) %>
+                    options_for_select(Task::PRIORITY_LEVEL_OPTIONS.invert, task.priority_level) %>
   </div>
 
   <div class="field">
