@@ -30,9 +30,9 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     content_tag :span, safe_join(tags), class: 'project-tags task-tags'
   end
 
-  def task_tags(task)
+  def task_tags(task, priority: false)
     tags = [task_status_button(task, dropdown: false),
-            task_type_button(task, dropdown: false)]
+            task_type_button(task, dropdown: false, priority: priority)]
 
     content_tag :div, class: 'task-tags' do
       safe_join(tags)
@@ -136,13 +136,15 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       content_tag :span, safe_join(parts), class: klass
     end
 
-    def task_type_button(task, dropdown: false)
+    def task_type_button(task, dropdown: false, priority: false)
       task_type = task.task_type
       return unless task_type
 
       klass = "task-type-tag #{roller_type_color(task_type)}"
+      type_name = task_type.name
+      type_name = "Lvl #{task.priority_level} #{type_name}" if priority
       parts = [roller_type_icon(task_type),
-               content_tag(:span, task_type.name, class: 'type-value')]
+               content_tag(:span, type_name, class: 'type-value')]
       if dropdown
         parts << task_type_dropdown_link
         klass += ' task-type-button'
