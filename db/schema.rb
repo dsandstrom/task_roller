@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_230152) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_03_035426) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -326,6 +326,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_230152) do
       issues.description,
       issues.closed,
       issues.status,
+      NULL::integer AS priority_level,
       issues.opened_at,
       issues.issue_type_id AS type_id,
       issues.user_id,
@@ -341,6 +342,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_230152) do
       tasks.description,
       tasks.closed,
       tasks.status,
+      tasks.priority_level,
       tasks.opened_at,
       tasks.task_type_id AS type_id,
       tasks.user_id,

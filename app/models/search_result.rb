@@ -75,7 +75,7 @@ class SearchResult < ApplicationRecord
 
   def self.with_notifications(user, order_by: false)
     attrs = %w[id project_id user_id issue_id class_name created_at updated_at
-               summary description status type_id]
+               summary description status type_id priority_level]
     preloads = [:project, :user, :issue, :assignees, { project: :category }]
     search_results = joins(user.notifications_query).select(attrs).group(attrs)
                                                     .preload(preloads)
