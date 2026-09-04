@@ -71,6 +71,14 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     Review.new(task_id: task.id, user_id: current_user.id)
   end
 
+  def task_priority_level_options(task)
+    options = Task::PRIORITY_LEVEL_OPTIONS.invert.map do |key, val|
+      ["#{val} - #{key}", val]
+    end
+
+    options_for_select(options, task.priority_level)
+  end
+
   private
 
     def task_header_title(task)
