@@ -153,10 +153,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       type_name = "Lvl #{task.priority_level} #{type_name}" if priority
       parts = [roller_type_icon(task_type),
                content_tag(:span, type_name, class: 'type-value')]
-      if dropdown
-        parts << task_type_dropdown_link
-        klass += ' task-type-button'
-      end
+
+      parts << task_type_dropdown_link if dropdown
+      klass += ' task-type-button' if dropdown
+
       content_tag :span, safe_join(parts), class: klass
     end
 

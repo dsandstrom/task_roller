@@ -3,10 +3,10 @@
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   DEFAULT_ORDER = 'tasks.updated_at desc'
   PRIORITY_LEVEL_OPTIONS = {
-    4 => "Low",
-    3 => "Medium",
-    2 => "High",
-    1 => "Critical"
+    4 => 'Low',
+    3 => 'Medium',
+    2 => 'High',
+    1 => 'Critical'
   }.freeze
   STATUS_OPTIONS = {
     open: { color: 'green' },
