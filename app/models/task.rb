@@ -147,11 +147,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return DEFAULT_ORDER if order.blank?
 
     column, direction = order.split(',')
-    return DEFAULT_ORDER unless direction &&
-                                %w[created updated].include?(column) &&
-                                %w[asc desc].include?(direction)
 
-    "tasks.#{column}_at #{direction}"
+    return DEFAULT_ORDER unless valid_filter_order?(column, direction)
+
+    if column == 'priority'
+      "tasks.priority_level #{direction}, tasks.created_at asc"
+    else
+      "tasks.#{column}_at #{direction}"
+    end
   end
 
   def self.filter_by_type(task_type_id)
@@ -360,6 +363,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     else
       { event: 'new' }
     end
+  end
+
+  private_class_method def self.valid_filter_order?(column, direction)
+    direction.present? && %w[created updated priority].include?(column) &&
+      %w[asc desc].include?(direction)
   end
 
   private

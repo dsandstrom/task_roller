@@ -557,6 +557,24 @@ RSpec.describe Task, type: :model do
         end
       end
 
+      context "is set as 'priority,asc'" do
+        it "orders by priority_level asc" do
+          first_task = nil
+          second_task = nil
+
+          Timecop.freeze(1.hour.ago) do
+            second_task = Fabricate(:task, project: project, priority_level: 3)
+          end
+
+          Timecop.freeze(1.day.ago) do
+            first_task = Fabricate(:task, project: project, priority_level: 2)
+          end
+
+          options = { order: "priority,asc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
       context "is set as 'notupdated,desc'" do
         it "orders by updated_at desc" do
           second_task = Fabricate(:task, project: project)
