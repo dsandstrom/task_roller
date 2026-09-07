@@ -83,11 +83,7 @@ class Seeds
     end
 
     def create_task(attrs = {})
-      attrs.reverse_merge!(task_type_id: TaskType.ids.sample,
-                           user_id: User.reviewers.ids.sample,
-                           project_id: Project.ids.sample,
-                           summary: Faker::Company.bs.capitalize,
-                           description: task_description)
+      attrs.reverse_merge!(sample_task_attrs)
       task = Task.create!(attrs)
       update_task_status(task)
       task
@@ -463,7 +459,22 @@ class Seeds
       TaskSubscriptionsJob.perform_later(task, send_new: true)
       TaskAssigneesSubscriptionsJob.perform_later(task, send_new: true)
       task.reload.update_status
-      task.issue&.reload&.update_status
+      return unless task.issue
+
+      task.issue.reload
+      task.issue.update_status
+      task.issue.update_priority_level
+    end
+
+    def sample_task_attrs
+      {
+        task_type_id: TaskType.ids.sample,
+        user_id: User.reviewers.ids.sample,
+        project_id: Project.ids.sample,
+        summary: Faker::Company.bs.capitalize,
+        description: task_description,
+        priority_level: Task::PRIORITY_LEVEL_OPTIONS.keys.sample
+      }
     end
 end
 
