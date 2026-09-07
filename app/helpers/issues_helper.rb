@@ -33,18 +33,12 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
 
   def issue_tags(issue)
     tags = [
-      issue_status_tag(issue),
+      issue_status_button(issue, with_dropdown: false),
       issue_type_tag(issue.issue_type, priority_level: issue.priority_level)
     ]
 
     content_tag :p, class: 'issue-tags' do
       safe_join(tags)
-    end
-  end
-
-  def issue_status_tags(issue)
-    content_tag :div, class: 'issue-tags' do
-      issue_status_tag(issue)
     end
   end
 
@@ -117,21 +111,6 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
         "New Issue for #{title}"
       else
         "Issues from #{title}"
-      end
-    end
-
-    def issue_status_tag(issue)
-      value = issue.status
-      return unless value
-
-      option = Issue::STATUS_OPTIONS[value.parameterize.underscore.to_sym]
-      return unless option
-
-      color = option[:color]
-      return unless color
-
-      content_tag :span, class: "status-tag roller-type-color-#{color}" do
-        content_tag :span, value.titleize, class: 'status-value'
       end
     end
 

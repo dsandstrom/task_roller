@@ -10,11 +10,12 @@ module RollerTypesHelper
                     priority_level: priority_level
   end
 
-  def task_type_tag(task_type)
+  def task_type_tag(task_type, priority_level: nil)
     return unless task_type
 
     roller_type_tag task_type,
-                    "task-type-tag #{roller_type_color(task_type)}"
+                    "task-type-tag #{roller_type_color(task_type)}",
+                    priority_level: priority_level
   end
 
   def issue_type_icon_tag(issue_type)
