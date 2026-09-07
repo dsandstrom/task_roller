@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe SearchResult, type: :model do
+  include TestMethods
+
   before { @search_result = SearchResult.new }
 
   subject { @search_result }
@@ -303,6 +303,151 @@ RSpec.describe SearchResult, type: :model do
           expect(search_results.count).to eq(1)
           search_result = search_results.first
           expect(search_result.id).to eq(issue.id)
+        end
+      end
+    end
+
+    context "when :order" do
+      let(:task) { Fabricate(:task, summary: "Test", priority_level: 3) }
+      let(:issue) { Fabricate(:issue, summary: "Test", priority_level: 2) }
+
+      let(:options) { { query: "Test" } }
+
+      context "is unset" do
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,desc'" do
+        before do
+          options.merge! order: "updated,desc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,asc'" do
+        before do
+          options.merge! order: "updated,asc"
+        end
+
+        it "orders by updated_at asc" do
+          task
+          issue
+
+          Timecop.freeze(1.day.ago) do
+            issue.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'created,desc'" do
+        before do
+          options.merge! order: "created,desc"
+        end
+
+        it "orders by created_at desc" do
+          Timecop.freeze(1.day.ago) do
+            task
+          end
+
+          Timecop.freeze(1.hour.ago) do
+            issue
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'created,asc'" do
+        before do
+          options.merge! order: "created,asc"
+        end
+
+        it "orders by created_at asc" do
+          Timecop.freeze(1.day.ago) do
+            issue
+          end
+
+          Timecop.freeze(1.hour.ago) do
+            task
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'priority,asc'" do
+        before do
+          options.merge! order: "priority,asc"
+        end
+
+        it "orders by priority_level asc" do
+          issue
+          task
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'notupdated,desc'" do
+        before do
+          options.merge! order: "notupdated,desc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,notdesc'" do
+        before do
+          options.merge! order: "updated,notdesc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
         end
       end
     end

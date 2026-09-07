@@ -52,11 +52,13 @@ class SearchResult < ApplicationRecord
     return DEFAULT_ORDER if order.blank?
 
     column, direction = order.split(',')
-    return DEFAULT_ORDER unless direction &&
-                                %w[created updated].include?(column) &&
-                                %w[asc desc].include?(direction)
+    return DEFAULT_ORDER unless valid_filter_order?(column, direction)
 
-    "search_results.#{column}_at #{direction}"
+    if column == 'priority'
+      "search_results.priority_level #{direction}, search_results.created_at asc"
+    else
+      "search_results.#{column}_at #{direction}"
+    end
   end
 
   def self.split_id(query)
@@ -92,6 +94,11 @@ class SearchResult < ApplicationRecord
       "search_results.#{column} = :id"
     end.join(' OR ')
     where(filters, id: query.to_i)
+  end
+
+  private_class_method def self.valid_filter_order?(column, direction)
+    direction.present? && %w[created updated priority].include?(column) &&
+      %w[asc desc].include?(direction)
   end
 
   # INSTANCE
