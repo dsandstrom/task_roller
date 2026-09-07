@@ -471,7 +471,8 @@ RSpec.describe Issue, type: :model do
           second_issue = nil
 
           Timecop.freeze(1.hour.ago) do
-            second_issue = Fabricate(:issue, project: project, priority_level: 3)
+            second_issue =
+              Fabricate(:issue, project: project, priority_level: 3)
           end
 
           Timecop.freeze(1.day.ago) do
