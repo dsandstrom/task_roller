@@ -11,6 +11,19 @@
         <% end %>
       <% end %>
 
+      <% if @issue.priority_level.present? %>
+        <section class="issue-priority-level">
+          <h4 class="issue-column-title">Priority</h4>
+          <p>
+            <%= @issue.priority_level %>
+            <%= divider %>
+            <%= content_tag :strong,
+                            Task::PRIORITY_LEVEL_OPTIONS[@issue.priority_level],
+                            class: 'issue-priority-level' %>
+          </p>
+        </section>
+      <% end %>
+
       <% case @issue.status %>
       <% when 'resolved' %>
         <% if can?(:destroy, @issue.current_resolution) %>

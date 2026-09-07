@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module IssuesHelper # rubocop:disable Metrics/ModuleLength
   def issue_header(issue)
     project = issue.project
@@ -34,7 +32,10 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
   end
 
   def issue_tags(issue)
-    tags = [issue_status_tag(issue), issue_type_tag(issue.issue_type)]
+    tags = [
+      issue_status_tag(issue),
+      issue_type_tag(issue.issue_type, priority_level: issue.priority_level)
+    ]
 
     content_tag :p, class: 'issue-tags' do
       safe_join(tags)

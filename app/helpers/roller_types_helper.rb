@@ -1,14 +1,13 @@
-# frozen_string_literal: true
-
 # colors in roller_types.scss
 # default (gray), blue, brown, green, purple, red, yellow
 
 module RollerTypesHelper
-  def issue_type_tag(issue_type)
+  def issue_type_tag(issue_type, priority_level: nil)
     return unless issue_type
 
     roller_type_tag issue_type,
-                    "issue-type-tag #{roller_type_color(issue_type)}"
+                    "issue-type-tag #{roller_type_color(issue_type)}",
+                    priority_level: priority_level
   end
 
   def task_type_tag(task_type)
@@ -60,10 +59,17 @@ module RollerTypesHelper
 
   private
 
-    def roller_type_tag(roller_type, css_class)
+    def roller_type_tag(roller_type, css_class, priority_level: nil)
+      name =
+        if priority_level.present?
+          "Lvl #{priority_level} #{roller_type.name}"
+        else
+          roller_type.name
+        end
+
       content_tag :span, class: css_class do
         concat roller_type_icon(roller_type)
-        concat content_tag(:span, roller_type.name, class: 'type-value')
+        concat content_tag(:span, name, class: 'type-value')
       end
     end
 
