@@ -37,83 +37,72 @@ RSpec.describe SearchResult, type: :model do
   # CLASS
 
   describe ".filter_by_string" do
-    context "when no tasks" do
+    context "when no issues or tasks" do
       it "returns []" do
         expect(SearchResult.filter_by_string("alpha")).to eq([])
       end
     end
 
-    context "when tasks" do
-      context "and query is ''" do
+    context "when issues and tasks" do
+      context "for query ''" do
+        let!(:issue) { Fabricate(:issue) }
         let!(:task) { Fabricate(:task) }
 
-        it "returns all tasks" do
-          search_results = SearchResult.filter_by(query: "")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by_string("")
+
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
         end
       end
 
-      context "and query matches an task's summary" do
-        let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
-
+      context "for query 'alpha'" do
         before do
-          Fabricate(:task, summary: "Beta Gamma")
+          Fabricate(:issue, summary: "Zeta", description: "Zeta")
+          Fabricate(:task, summary: "Beta Gamma", description: "Beta Gamma")
         end
 
-        it "returns one task" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
-        end
-      end
+        context "which matches a task's summary" do
+          let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
 
-      context "and query matches an task's description" do
-        let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
-
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns one task" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
-        end
-      end
-
-      context "and query doesn't match an task" do
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns none" do
-          expect(SearchResult.filter_by_string("alpha")).to eq([])
-        end
-      end
-
-      context "and query matches one task's summary, another's description" do
-        let!(:first_task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
-        let!(:second_task) do
-          Fabricate(:task, description: "Alpha Beta Gamma")
-        end
-
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns both tasks" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(2)
-
-          assert search_results.any? do |search_result|
-            search_result.id == first_task.id
+          it "returns the task" do
+            search_results = SearchResult.filter_by_string("alpha")
+            expect(map_class_id(search_results)).to eq([["Task", task.id]])
           end
-          assert search_results.any? do |search_result|
-            search_result.id == second_task.id
+        end
+
+        context "which matches a task's description" do
+          let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
+
+          it "returns the task" do
+            search_results = SearchResult.filter_by_string("alpha")
+            expect(map_class_id(search_results)).to eq([["Task", task.id]])
+          end
+        end
+
+        context "which doesn't match an issue or task" do
+          it "returns none" do
+            expect(SearchResult.filter_by_string("alpha")).to eq([])
+          end
+        end
+
+        context "which matches an issue's summary" do
+          let!(:issue) { Fabricate(:issue, summary: "Alpha Beta Gamma") }
+
+          it "returns the issue" do
+            search_results = SearchResult.filter_by_string("alpha")
+            expect(map_class_id(search_results)).to eq([["Issue", issue.id]])
+          end
+        end
+
+        context "which matches a task's summary and an issue's description" do
+          let!(:issue) { Fabricate(:issue, description: "Alpha Beta Gamma") }
+          let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+
+          it "returns the issue" do
+            search_results = SearchResult.filter_by_string("alpha")
+            expect(map_class_id(search_results))
+              .to contain_exactly(["Issue", issue.id], ["Task", task.id])
           end
         end
       end
