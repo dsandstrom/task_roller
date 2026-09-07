@@ -1,4 +1,3 @@
-<% show_priority = false unless show_priority == true %>
 <div class="field">
   <%= label_tag :order %>
 
@@ -18,13 +17,11 @@
       Added
     <% end %>
 
-    <% if show_priority %>
-      <%= label_tag :order_priority_asc,
-                    class: roller_radio_button_label_class('brown') do %>
-        <%= radio_button_tag :order, 'priority,asc',
-                             params[:order] == 'priority,asc' %>
-        Priority
-      <% end %>
+    <%= label_tag :order_priority_asc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'priority,asc',
+                           params[:order] == 'priority,asc' %>
+      Priority
     <% end %>
   </div>
 </div>
