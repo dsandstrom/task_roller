@@ -1601,24 +1601,170 @@ RSpec.describe TasksController, type: :controller do
                 expect(response).to redirect_to(url)
               end
 
-              it "updates the issue's priority_level" do
-                task = Fabricate(:task, project: project, user: current_user,
-                                        issue: issue)
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                  issue.reload
-                end.to change(issue, :priority_level).to(4)
+              context "when changing priority_level" do
+                let(:issue) do
+                  Fabricate(:issue, project: project, status: "being_worked_on",
+                                    priority_level: 4)
+                end
+
+                before do
+                  new_attributes.merge! priority_level: 2
+                end
+
+                context "for an issue's only task" do
+                  let!(:task) do
+                    Fabricate(:task, project: project, user: current_user,
+                                     issue: issue)
+                  end
+
+                  it "updates the issue's priority_level" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      issue.reload
+                    end.to change(issue, :priority_level).to(2)
+                  end
+
+                  it "doesn't update the issue's status" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      issue.reload
+                    end.not_to change(issue, :status)
+                  end
+                end
               end
 
-              it "updates the requested task's issue" do
-                task = Fabricate(:task, project: project, user: current_user,
-                                        issue: issue)
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: new_attributes }
-                  issue.reload
-                end.to change(issue, :status).to("being_worked_on")
+              context "when moving task to a new issue without any tasks" do
+                let(:old_issue) do
+                  Fabricate(:issue, project: project, status: "being_worked_on",
+                                    priority_level: 4)
+                end
+
+                let(:new_issue) do
+                  Fabricate(:issue, project: project, status: "pending",
+                                    priority_level: nil)
+                end
+
+                context "and old issue will have no tasks" do
+                  let!(:task) do
+                    Fabricate(:task, project: project, user: current_user,
+                                     issue: old_issue)
+                  end
+
+                  before do
+                    new_attributes.merge! issue_id: new_issue.to_param
+                  end
+
+                  it "updates the new issue's status" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      new_issue.reload
+                    end.to change(new_issue, :status).to("being_worked_on")
+                  end
+
+                  it "updates the new issue's priority_level" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      new_issue.reload
+                    end.to change(new_issue, :priority_level).to(4)
+                  end
+
+                  it "updates the old issue's status" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      old_issue.reload
+                    end.to change(old_issue, :status).to("pending")
+                  end
+
+                  it "updates the old issue's priority_level" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      old_issue.reload
+                    end.to change(old_issue, :priority_level).to(nil)
+                  end
+                end
+
+                context "and old issue will still have tasks" do
+                  let!(:task) do
+                    Fabricate(:task, project: project, user: current_user,
+                                     issue: old_issue)
+                  end
+
+                  before do
+                    Fabricate(:task, project: project, issue: old_issue,
+                                     priority_level: 4)
+                    new_attributes.merge! issue_id: new_issue.to_param
+                  end
+
+                  it "updates the new issue's status" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      new_issue.reload
+                    end.to change(new_issue, :status).to("being_worked_on")
+                  end
+
+                  it "updates the new issue's priority_level" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      new_issue.reload
+                    end.to change(new_issue, :priority_level).to(4)
+                  end
+
+                  it "doesn't update the old issue's status" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      old_issue.reload
+                    end.not_to change(old_issue, :status)
+                  end
+
+                  it "doesn't update the old issue's priority_level" do
+                    expect do
+                      put :update, params: { id: task.to_param,
+                                             task: new_attributes }
+                      old_issue.reload
+                    end.not_to change(old_issue, :priority_level)
+                  end
+                end
+              end
+
+              context "when removing issue from task" do
+                let(:old_issue) do
+                  Fabricate(:issue, project: project, status: "being_worked_on",
+                                    priority_level: 4)
+                end
+
+                let!(:task) do
+                  Fabricate(:task, project: project, user: current_user,
+                                   issue: old_issue)
+                end
+
+                before do
+                  new_attributes.merge! issue_id: nil
+                end
+
+                it "updates the old issue's status" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                    old_issue.reload
+                  end.to change(old_issue, :status).to("pending")
+                end
+
+                it "updates the old issue's priority_level" do
+                  expect do
+                    put :update, params: { id: task.to_param,
+                                           task: new_attributes }
+                    old_issue.reload
+                  end.to change(old_issue, :priority_level).to(nil)
+                end
               end
             end
 
