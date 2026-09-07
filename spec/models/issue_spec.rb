@@ -465,6 +465,24 @@ RSpec.describe Issue, type: :model do
         end
       end
 
+      context "is set as 'priority,asc'" do
+        it "orders by priority_level asc" do
+          first_issue = nil
+          second_issue = nil
+
+          Timecop.freeze(1.hour.ago) do
+            second_issue = Fabricate(:issue, project: project, priority_level: 3)
+          end
+
+          Timecop.freeze(1.day.ago) do
+            first_issue = Fabricate(:issue, project: project, priority_level: 2)
+          end
+
+          options = { order: "priority,asc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+        end
+      end
+
       context "is set as 'notupdated,desc'" do
         it "orders by updated_at desc" do
           second_issue = Fabricate(:issue)

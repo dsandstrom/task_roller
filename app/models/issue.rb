@@ -119,11 +119,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return DEFAULT_ORDER if order.blank?
 
     column, direction = order.split(',')
-    return DEFAULT_ORDER unless direction &&
-                                %w[created updated].include?(column) &&
-                                %w[asc desc].include?(direction)
 
-    "issues.#{column}_at #{direction}"
+    return DEFAULT_ORDER unless valid_filter_order?(column, direction)
+
+    if column == 'priority'
+      "issues.priority_level #{direction}, issues.created_at asc"
+    else
+      "issues.#{column}_at #{direction}"
+    end
   end
 
   def self.all_visible
@@ -312,6 +315,11 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return unless tasks
 
     update(priority_level: tasks.minimum(:priority_level))
+  end
+
+  private_class_method def self.valid_filter_order?(column, direction)
+    direction.present? && %w[created updated priority].include?(column) &&
+      %w[asc desc].include?(direction)
   end
 
   private
