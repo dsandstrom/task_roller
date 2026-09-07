@@ -308,6 +308,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def update_priority_level
+    return unless tasks
+
+    update(priority_level: tasks.minimum(:priority_level))
+  end
+
   private
 
     def set_opened_at

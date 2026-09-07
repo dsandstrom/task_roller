@@ -2108,4 +2108,66 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#update_priority_level" do
+    context "when issue has no tasks" do
+      let(:issue) { Fabricate(:issue) }
+
+      it "doesn't change the priority_level" do
+        expect do
+          issue.update_priority_level
+          issue.reload
+        end.not_to change(issue, :priority_level)
+      end
+    end
+
+    context "when issue has one task" do
+      let(:issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:task, issue: issue, priority_level: 3)
+      end
+
+      it "changes the priority_level to match the task" do
+        expect do
+          issue.update_priority_level
+          issue.reload
+        end.to change(issue, :priority_level).from(nil).to(3)
+      end
+
+      context "and gets a second task" do
+        let(:issue) { Fabricate(:issue, priority_level: 3) }
+
+        before do
+          Fabricate(:task, issue: issue, priority_level: 3)
+        end
+
+        context "that has a lower priority_level" do
+          before do
+            Fabricate(:task, issue: issue, priority_level: 2)
+          end
+
+          it "changes the priority_level to match the second task" do
+            expect do
+              issue.update_priority_level
+              issue.reload
+            end.to change(issue, :priority_level).from(3).to(2)
+          end
+        end
+
+        context "that has a higher priority_level" do
+          before do
+            Fabricate(:task, issue: issue, priority_level: 4)
+          end
+
+          it "doesn't change the priority_level" do
+            expect do
+              issue.update_priority_level
+              issue.reload
+            end.not_to change(issue, :priority_level).from(3)
+          end
+        end
+      end
+    end
+  end
 end
