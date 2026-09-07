@@ -1267,6 +1267,14 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(issue.tasks, :count).by(1)
               end
 
+              it "updates the issue's priority_level" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                  issue.reload
+                end.to change(issue, :priority_level).to(4)
+              end
+
               it "redirects to the created task" do
                 post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
@@ -1281,6 +1289,14 @@ RSpec.describe TasksController, type: :controller do
                   post :create, params: { project_id: project.to_param,
                                           task: invalid_attributes }
                 end.not_to change(Task, :count)
+              end
+
+              it "doesn't update the issue's priority_level" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: invalid_attributes }
+                  issue.reload
+                end.not_to change(issue, :priority_level)
               end
 
               it "returns a success response ('new' template)" do
@@ -1562,6 +1578,8 @@ RSpec.describe TasksController, type: :controller do
         before { sign_in(current_user) }
 
         context "for html requests" do
+          let(:issue) { Fabricate(:issue, project: project, priority_level: 2) }
+
           context "when their task" do
             let!(:task) do
               Fabricate(:task, project: project, user: current_user)
@@ -1581,6 +1599,16 @@ RSpec.describe TasksController, type: :controller do
                                        task: new_attributes }
                 url = task_url(task)
                 expect(response).to redirect_to(url)
+              end
+
+              it "updates the issue's priority_level" do
+                task = Fabricate(:task, project: project, user: current_user,
+                                        issue: issue)
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  issue.reload
+                end.to change(issue, :priority_level).to(4)
               end
 
               it "updates the requested task's issue" do

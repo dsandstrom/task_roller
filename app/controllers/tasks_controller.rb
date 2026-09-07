@@ -124,6 +124,7 @@ class TasksController < ApplicationController
         subscribe_users
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
+        @task.issue&.update_priority_level
         redirect_to @task, success: 'Task was successfully added.'
       else
         set_new_form_options
@@ -142,6 +143,7 @@ class TasksController < ApplicationController
         @task.subscribe_assignees
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
+        @task.issue&.update_priority_level
         redirect_to @task, success: 'Task was successfully updated.'
       else
         set_form_options
