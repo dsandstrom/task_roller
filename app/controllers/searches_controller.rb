@@ -34,8 +34,10 @@ class SearchesController < ApplicationController
       end
     end
 
+    # default strategy shows inaccessible issues/tasks
     def build_issues_and_tasks
-      SearchResult.accessible_by(current_ability).filter_by(filters)
+      SearchResult.accessible_by(current_ability, :index, strategy: :left_join)
+                  .filter_by(filters)
                   .preload(:project, :user, :issue, :assignees,
                            project: :category)
     end
