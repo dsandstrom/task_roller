@@ -83,7 +83,7 @@ RSpec.describe "issues/show", type: :view do
       end
 
       context "and has tasks" do
-        let!(:task) { Fabricate(:task, issue: @issue) }
+        let!(:task) { Fabricate(:task, issue: @issue, priority_level: 2) }
 
         before do
           @issue.update_priority_level
@@ -96,7 +96,7 @@ RSpec.describe "issues/show", type: :view do
 
         it "renders issue's priority_level" do
           render
-          assert_select ".issue-priority-level", "Low"
+          assert_select ".issue-priority-level", "High"
         end
       end
 

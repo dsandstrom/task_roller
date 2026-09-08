@@ -4,7 +4,7 @@ RSpec.describe "tasks/show", type: :view do
   let(:subject) { "tasks/show" }
   let(:category) { Fabricate(:category) }
   let(:project) { Fabricate(:project, category: category) }
-  let(:task) { Fabricate(:task, project: project) }
+  let(:task) { Fabricate(:task, project: project, priority_level: 3) }
   let(:closed_task) { Fabricate(:closed_task, project: project) }
   let(:in_review_task) { Fabricate(:in_review_task, project: project) }
   let(:duplicate_task) { Fabricate(:duplicate_task, project: project) }
@@ -56,7 +56,7 @@ RSpec.describe "tasks/show", type: :view do
 
       it "renders task's priority_level" do
         render
-        assert_select ".task-priority-level", "Low"
+        assert_select ".task-priority-level", "Medium"
       end
 
       it "renders new task_comment form" do
