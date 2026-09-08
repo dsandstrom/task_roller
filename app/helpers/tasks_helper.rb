@@ -440,11 +440,10 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       edit_dropdown = task_edit_dropdown(task)
       status_dropdown = task_status_dropdown(task)
 
-      assign = build_task_assign_button(task, assign_dropdown.present?)
-      status = task_status_button(task, with_dropdown: status_dropdown.present?)
-      type = task_type_button(task, with_dropdown: edit_dropdown.present?)
-
-      [project_invisible_tag(project), project_internal_tag(project), type,
-       status, assign, assign_dropdown, edit_dropdown, status_dropdown].compact
+      [project_invisible_tag(project), project_internal_tag(project),
+       task_type_button(task, with_dropdown: edit_dropdown.present?),
+       task_status_button(task, with_dropdown: status_dropdown.present?),
+       build_task_assign_button(task, assign_dropdown.present?),
+       assign_dropdown, edit_dropdown, status_dropdown].compact
     end
 end
