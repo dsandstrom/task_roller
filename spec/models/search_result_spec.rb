@@ -39,7 +39,8 @@ RSpec.describe SearchResult, type: :model do
   describe ".filter_by_string" do
     context "when no issues or tasks" do
       it "returns []" do
-        expect(SearchResult.filter_by_string("alpha")).to eq([])
+        expect(SearchResult.filter_by_string("search_results", "alpha"))
+          .to eq([])
       end
     end
 
@@ -49,7 +50,7 @@ RSpec.describe SearchResult, type: :model do
         let!(:task) { Fabricate(:task) }
 
         it "returns all issues and tasks" do
-          search_results = SearchResult.filter_by_string("")
+          search_results = SearchResult.filter_by_string("search_results", "")
 
           expect(map_class_id(search_results))
             .to contain_exactly(["Issue", issue.id], ["Task", task.id])
@@ -66,7 +67,8 @@ RSpec.describe SearchResult, type: :model do
           let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
 
           it "returns the task" do
-            search_results = SearchResult.filter_by_string("alpha")
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
             expect(map_class_id(search_results)).to eq([["Task", task.id]])
           end
         end
@@ -75,14 +77,16 @@ RSpec.describe SearchResult, type: :model do
           let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
 
           it "returns the task" do
-            search_results = SearchResult.filter_by_string("alpha")
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
             expect(map_class_id(search_results)).to eq([["Task", task.id]])
           end
         end
 
         context "which doesn't match an issue or task" do
           it "returns none" do
-            expect(SearchResult.filter_by_string("alpha")).to eq([])
+            expect(SearchResult.filter_by_string("search_results", "alpha"))
+              .to eq([])
           end
         end
 
@@ -90,7 +94,8 @@ RSpec.describe SearchResult, type: :model do
           let!(:issue) { Fabricate(:issue, summary: "Alpha Beta Gamma") }
 
           it "returns the issue" do
-            search_results = SearchResult.filter_by_string("alpha")
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
             expect(map_class_id(search_results)).to eq([["Issue", issue.id]])
           end
         end
@@ -100,7 +105,8 @@ RSpec.describe SearchResult, type: :model do
           let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
 
           it "returns the issue" do
-            search_results = SearchResult.filter_by_string("alpha")
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
             expect(map_class_id(search_results))
               .to contain_exactly(["Issue", issue.id], ["Task", task.id])
           end

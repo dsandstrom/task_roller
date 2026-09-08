@@ -545,7 +545,7 @@ RSpec.describe Issue, type: :model do
   describe ".filter_by_string" do
     context "when no issues" do
       it "returns []" do
-        expect(Issue.filter_by_string("alpha")).to eq([])
+        expect(Issue.filter_by_string("issues", "alpha")).to eq([])
       end
     end
 
@@ -554,7 +554,7 @@ RSpec.describe Issue, type: :model do
         let!(:issue) { Fabricate(:issue) }
 
         it "returns all issues" do
-          expect(Issue.filter_by_string("")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "")).to eq([issue])
         end
       end
 
@@ -566,7 +566,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns one issue" do
-          expect(Issue.filter_by_string("alpha")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([issue])
         end
       end
 
@@ -578,7 +578,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns one issue" do
-          expect(Issue.filter_by_string("alpha")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([issue])
         end
       end
 
@@ -588,7 +588,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns none" do
-          expect(Issue.filter_by_string("alpha")).to eq([])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([])
         end
       end
 
@@ -603,7 +603,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns both issues" do
-          expect(Issue.filter_by_string("alpha"))
+          expect(Issue.filter_by_string("issues", "alpha"))
             .to contain_exactly(first_issue, second_issue)
         end
       end

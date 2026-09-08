@@ -626,7 +626,7 @@ RSpec.describe Task, type: :model do
   describe ".filter_by_string" do
     context "when no tasks" do
       it "returns []" do
-        expect(Task.filter_by_string("alpha")).to eq([])
+        expect(Task.filter_by_string("tasks", "alpha")).to eq([])
       end
     end
 
@@ -635,7 +635,7 @@ RSpec.describe Task, type: :model do
         let!(:task) { Fabricate(:task) }
 
         it "returns all tasks" do
-          expect(Task.filter_by_string("")).to eq([task])
+          expect(Task.filter_by_string("tasks", "")).to eq([task])
         end
       end
 
@@ -647,7 +647,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns one task" do
-          expect(Task.filter_by_string("alpha")).to eq([task])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([task])
         end
       end
 
@@ -659,7 +659,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns one task" do
-          expect(Task.filter_by_string("alpha")).to eq([task])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([task])
         end
       end
 
@@ -669,7 +669,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns none" do
-          expect(Task.filter_by_string("alpha")).to eq([])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([])
         end
       end
 
@@ -684,7 +684,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns both tasks" do
-          expect(Task.filter_by_string("alpha"))
+          expect(Task.filter_by_string("tasks", "alpha"))
             .to contain_exactly(first_task, second_task)
         end
       end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SearchResult < ApplicationRecord
+  include Filter
+
   DEFAULT_ORDER = 'search_results.updated_at desc'
 
   self.primary_key = :id
@@ -26,19 +28,12 @@ class SearchResult < ApplicationRecord
     return none if project_ids&.none?
 
     id, query = split_id(filters[:query])
-    results = filter_by_id(id)
-    results = results.filter_by_string(query)
-                     .filter_by_projects(filters[:project_ids])
-    results.order(build_order_param(filters[:order]))
-  end
+    order = build_order_param('search_results', DEFAULT_ORDER, filters[:order])
 
-  def self.filter_by_string(query)
-    return all if query.blank?
-
-    filters = %w[summary description].map do |column|
-      "search_results.#{column} ILIKE :query"
-    end.join(' OR ')
-    where(filters, query: "%#{query}%")
+    filter_by_id(id)
+      .filter_by_string('search_results', query)
+      .filter_by_projects(filters[:project_ids])
+      .order(order)
   end
 
   def self.filter_by_projects(project_ids)
@@ -46,27 +41,6 @@ class SearchResult < ApplicationRecord
     return all if project_ids.blank?
 
     where(project_id: project_ids)
-  end
-
-  def self.build_order_param(order)
-    return DEFAULT_ORDER if order.blank?
-
-    column, direction = order.split(',')
-    return DEFAULT_ORDER unless valid_filter_order?(column, direction)
-
-    if column == 'priority'
-      "search_results.priority_level #{direction}, search_results.created_at asc"
-    else
-      "search_results.#{column}_at #{direction}"
-    end
-  end
-
-  def self.split_id(query)
-    return unless query
-
-    number = query[/\d+/]
-    query = query.sub(/(issue|task)?\s?[#-]?\d+\s?/i, '') if number
-    [number&.to_i, query]
   end
 
   def self.all_visible
@@ -94,11 +68,6 @@ class SearchResult < ApplicationRecord
       "search_results.#{column} = :id"
     end.join(' OR ')
     where(filters, id: query.to_i)
-  end
-
-  private_class_method def self.valid_filter_order?(column, direction)
-    direction.present? && %w[created updated priority].include?(column) &&
-      %w[asc desc].include?(direction)
   end
 
   # INSTANCE

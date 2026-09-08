@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  include Filter
+
   DEFAULT_ORDER = 'tasks.updated_at desc'
   PRIORITY_LEVEL_OPTIONS = {
     4 => 'Low',
@@ -100,25 +102,16 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.filter_by(filters = {})
-    id, query = SearchResult.split_id(filters[:query])
+    id, query = split_id(filters[:query])
+    order = build_order_param('tasks', DEFAULT_ORDER, filters[:order])
 
     includes(task_assignees: :assignee, issue: :user)
-      .filter_by_status(filters[:task_status])
+      .filter_by_status(STATUS_OPTIONS.keys, filters[:task_status])
       .filter_by_type(filters[:task_type_id])
       .filter_by_id(id)
-      .filter_by_string(query)
+      .filter_by_string('tasks', query)
       .filter_by_assigned_id(filters[:assigned])
-      .order(build_order_param(filters[:order]))
-  end
-
-  # used by .filter_by
-  def self.filter_by_status(status)
-    return all unless status
-
-    options = STATUS_OPTIONS.keys
-    return all unless options.include?(status.to_sym)
-
-    send("all_#{status}")
+      .order(order)
   end
 
   # used by .filter_by
@@ -134,40 +127,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
-  # used by .filter_by
-  def self.filter_by_string(query)
-    return all if query.blank?
-
-    where('tasks.summary ILIKE :query OR tasks.description ILIKE :query',
-          query: "%#{query}%")
-  end
-
-  # used by .filter_by
-  def self.build_order_param(order)
-    return DEFAULT_ORDER if order.blank?
-
-    column, direction = order.split(',')
-
-    return DEFAULT_ORDER unless valid_filter_order?(column, direction)
-
-    if column == 'priority'
-      "tasks.priority_level #{direction}, tasks.created_at asc"
-    else
-      "tasks.#{column}_at #{direction}"
-    end
-  end
-
   def self.filter_by_type(task_type_id)
     return all if task_type_id.blank?
     return none unless TaskType.find_by(id: task_type_id)
 
     where(task_type_id: task_type_id)
-  end
-
-  def self.filter_by_id(query)
-    return all if query.blank?
-
-    where(id: query.to_i)
   end
 
   def self.all_visible
@@ -363,11 +327,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     else
       { event: 'new' }
     end
-  end
-
-  private_class_method def self.valid_filter_order?(column, direction)
-    direction.present? && %w[created updated priority].include?(column) &&
-      %w[asc desc].include?(direction)
   end
 
   private
