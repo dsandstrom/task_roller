@@ -46,6 +46,11 @@
   </div>
 
   <div class="field">
+    <%= form.label :priority_level, 'Priority' %>
+    <%= form.select :priority_level, task_priority_level_options(task) %>
+  </div>
+
+  <div class="field">
     <%= required_field_label form, :summary %>
     <%= form.text_field :summary, id: :task_summary,
                         autofocus: true %>

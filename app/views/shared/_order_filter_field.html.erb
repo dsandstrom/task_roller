@@ -7,14 +7,21 @@
       <%= radio_button_tag :order, 'updated,desc',
                            (params[:order].blank? ||
                               params[:order] == 'updated,desc') %>
-      Last Updated
+      Updated
     <% end %>
 
     <%= label_tag :order_created_asc,
                   class: roller_radio_button_label_class('brown') do %>
       <%= radio_button_tag :order, 'created,asc',
                            params[:order] == 'created,asc' %>
-      First Added
+      Added
+    <% end %>
+
+    <%= label_tag :order_priority_asc,
+                  class: roller_radio_button_label_class('brown') do %>
+      <%= radio_button_tag :order, 'priority,asc',
+                           params[:order] == 'priority,asc' %>
+      Priority
     <% end %>
   </div>
 </div>

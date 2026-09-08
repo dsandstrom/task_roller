@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  include Filter
+
   DEFAULT_ORDER = 'issues.updated_at desc'
   STATUS_OPTIONS = {
     open: { color: 'green' },
@@ -76,29 +78,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.filter_by(filters = {})
-    id, query = SearchResult.split_id(filters[:query])
+    id, query = split_id(filters[:query])
+    order = build_order_param('issues', DEFAULT_ORDER, filters[:order])
 
-    filter_by_status(filters[:issue_status])
+    filter_by_status(STATUS_OPTIONS.keys, filters[:issue_status])
       .filter_by_type(filters[:issue_type_id])
       .filter_by_id(id)
-      .filter_by_string(query)
-      .order(build_order_param(filters[:order]))
-  end
-
-  def self.filter_by_status(status)
-    return all unless status
-
-    options = STATUS_OPTIONS.keys
-    return all unless options.include?(status.to_sym)
-
-    send("all_#{status}")
-  end
-
-  def self.filter_by_string(query)
-    return all if query.blank?
-
-    where('issues.summary ILIKE :query OR issues.description ILIKE :query',
-          query: "%#{query}%")
+      .filter_by_string('issues', query)
+      .order(order)
   end
 
   def self.filter_by_type(issue_type_id)
@@ -106,24 +93,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     return none unless IssueType.find_by(id: issue_type_id)
 
     where(issue_type_id: issue_type_id)
-  end
-
-  def self.filter_by_id(query)
-    return all if query.blank?
-
-    where(id: query.to_i)
-  end
-
-  # used by .filter
-  def self.build_order_param(order)
-    return DEFAULT_ORDER if order.blank?
-
-    column, direction = order.split(',')
-    return DEFAULT_ORDER unless direction &&
-                                %w[created updated].include?(column) &&
-                                %w[asc desc].include?(direction)
-
-    "issues.#{column}_at #{direction}"
   end
 
   def self.all_visible
@@ -306,6 +275,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     else
       { event: 'new' }
     end
+  end
+
+  def update_priority_level
+    return unless tasks
+
+    update(priority_level: tasks.minimum(:priority_level))
   end
 
   private

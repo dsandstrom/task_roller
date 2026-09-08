@@ -10,6 +10,18 @@
           <%= render(@subscription, task: @task) %>
         <% end %>
       <% end %>
+
+      <section class="task-priority-level">
+        <h4 class="task-column-title">Priority</h4>
+        <p>
+          <%= @task.priority_level %>
+          <%= divider %>
+          <%= content_tag :strong,
+                          Task::PRIORITY_LEVEL_OPTIONS[@task.priority_level],
+                          class: 'task-priority-level' %>
+        </p>
+      </section>
+
       <% if @task.open? %>
         <section class="task-assignees-wrapper">
           <h4 class="task-column-title">Assigned</h4>

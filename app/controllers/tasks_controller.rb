@@ -69,7 +69,7 @@ class TasksController < ApplicationController
 
     def task_params
       params.expect(task: [:summary, :description, :task_type_id, :issue_id,
-                           { assignee_ids: [] }])
+                           :priority_level, { assignee_ids: [] }])
     end
 
     def set_form_options
@@ -124,6 +124,7 @@ class TasksController < ApplicationController
         subscribe_users
         @task.update_status(current_user)
         @task.issue&.update_status(current_user)
+        @task.issue&.update_priority_level
         redirect_to @task, success: 'Task was successfully added.'
       else
         set_new_form_options
@@ -138,15 +139,29 @@ class TasksController < ApplicationController
     end
 
     def update_html
+      old_issue = @task.issue
       if @task.update(task_params)
         @task.subscribe_assignees
         @task.update_status(current_user)
-        @task.issue&.update_status(current_user)
+        update_issues(old_issue)
         redirect_to @task, success: 'Task was successfully updated.'
       else
         set_form_options
         render :edit
       end
+    end
+
+    def update_issues(old_issue)
+      new_issue = @task.issue
+
+      if new_issue
+        new_issue.update_status(current_user)
+        new_issue.update_priority_level
+      end
+      return unless old_issue && old_issue != new_issue
+
+      old_issue.update_status(current_user)
+      old_issue.update_priority_level
     end
 
     def subscribe_users

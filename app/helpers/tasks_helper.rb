@@ -20,9 +20,9 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     edit_dropdown = task_edit_dropdown(task)
     status_dropdown = task_status_dropdown(task)
 
-    assign_button = task_assign_button(task, dropdown: assign_dropdown.present?)
+    assign_button = task_assign_button(task)
     status_button = task_status_button(task, dropdown: status_dropdown.present?)
-    type_button = task_type_button(task, dropdown: edit_dropdown.present?)
+    type_button = task_type_button(task)
     tags = [project_invisible_tag(project), project_internal_tag(project),
             type_button, status_button, assign_button, assign_dropdown,
             edit_dropdown, status_dropdown].compact
@@ -32,7 +32,7 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
   def task_tags(task)
     tags = [task_status_button(task, dropdown: false),
-            task_type_button(task, dropdown: false)]
+            task_type_tag(task.task_type, priority_level: task.priority_level)]
 
     content_tag :div, class: 'task-tags' do
       safe_join(tags)
@@ -69,6 +69,14 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
 
   def new_review(task)
     Review.new(task_id: task.id, user_id: current_user.id)
+  end
+
+  def task_priority_level_options(task)
+    options = Task::PRIORITY_LEVEL_OPTIONS.invert.map do |key, val|
+      ["#{val} - #{key}", val]
+    end
+
+    options_for_select(options, task.priority_level)
   end
 
   private
@@ -136,17 +144,15 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       content_tag :span, safe_join(parts), class: klass
     end
 
-    def task_type_button(task, dropdown: false)
+    def task_type_button(task)
       task_type = task.task_type
       return unless task_type
 
-      klass = "task-type-tag #{roller_type_color(task_type)}"
+      klass = "task-type-tag #{roller_type_color(task_type)} task-type-button"
       parts = [roller_type_icon(task_type),
-               content_tag(:span, task_type.name, class: 'type-value')]
-      if dropdown
-        parts << task_type_dropdown_link
-        klass += ' task-type-button'
-      end
+               content_tag(:span, task_type.name, class: 'type-value'),
+               task_type_dropdown_link]
+
       content_tag :span, safe_join(parts), class: klass
     end
 
@@ -396,14 +402,13 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    def task_assign_button(task, dropdown: false)
+    def task_assign_button(task)
       value, color = task_assign_button_value(task)
-      klass = "task-assign-tag roller-type-color-#{color}"
-      parts = [content_tag(:span, value, class: 'assign-value')]
-      if dropdown
-        parts << task_assign_dropdown_link
-        klass += ' task-button assign-button'
-      end
+      klass =
+        "task-assign-tag roller-type-color-#{color} task-button assign-button"
+      parts = [content_tag(:span, value, class: 'assign-value'),
+               task_assign_dropdown_link]
+
       content_tag :span, safe_join(parts), class: klass
     end
 

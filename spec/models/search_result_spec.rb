@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe SearchResult, type: :model do
+  include TestMethods
+
   before { @search_result = SearchResult.new }
 
   subject { @search_result }
@@ -11,6 +11,7 @@ RSpec.describe SearchResult, type: :model do
   it { is_expected.to respond_to(:description) }
   it { is_expected.to respond_to(:closed) }
   it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:priority_level) }
   it { is_expected.to respond_to(:opened_at) }
   it { is_expected.to respond_to(:type_id) }
   it { is_expected.to respond_to(:user_id) }
@@ -36,83 +37,78 @@ RSpec.describe SearchResult, type: :model do
   # CLASS
 
   describe ".filter_by_string" do
-    context "when no tasks" do
+    context "when no issues or tasks" do
       it "returns []" do
-        expect(SearchResult.filter_by_string("alpha")).to eq([])
+        expect(SearchResult.filter_by_string("search_results", "alpha"))
+          .to eq([])
       end
     end
 
-    context "when tasks" do
-      context "and query is ''" do
+    context "when issues and tasks" do
+      context "for query ''" do
+        let!(:issue) { Fabricate(:issue) }
         let!(:task) { Fabricate(:task) }
 
-        it "returns all tasks" do
-          search_results = SearchResult.filter_by(query: "")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by_string("search_results", "")
+
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
         end
       end
 
-      context "and query matches an task's summary" do
-        let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
-
+      context "for query 'alpha'" do
         before do
-          Fabricate(:task, summary: "Beta Gamma")
+          Fabricate(:issue, summary: "Zeta", description: "Zeta")
+          Fabricate(:task, summary: "Beta Gamma", description: "Beta Gamma")
         end
 
-        it "returns one task" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
-        end
-      end
+        context "which matches a task's summary" do
+          let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
 
-      context "and query matches an task's description" do
-        let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
-
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns one task" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(1)
-          search_result = search_results.first
-          expect(search_result.id).to eq(task.id)
-        end
-      end
-
-      context "and query doesn't match an task" do
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns none" do
-          expect(SearchResult.filter_by_string("alpha")).to eq([])
-        end
-      end
-
-      context "and query matches one task's summary, another's description" do
-        let!(:first_task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
-        let!(:second_task) do
-          Fabricate(:task, description: "Alpha Beta Gamma")
-        end
-
-        before do
-          Fabricate(:task, description: "Beta Gamma")
-        end
-
-        it "returns both tasks" do
-          search_results = SearchResult.filter_by(query: "alpha")
-          expect(search_results.count).to eq(2)
-
-          assert search_results.any? do |search_result|
-            search_result.id == first_task.id
+          it "returns the task" do
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
+            expect(map_class_id(search_results)).to eq([["Task", task.id]])
           end
-          assert search_results.any? do |search_result|
-            search_result.id == second_task.id
+        end
+
+        context "which matches a task's description" do
+          let!(:task) { Fabricate(:task, description: "Alpha Beta Gamma") }
+
+          it "returns the task" do
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
+            expect(map_class_id(search_results)).to eq([["Task", task.id]])
+          end
+        end
+
+        context "which doesn't match an issue or task" do
+          it "returns none" do
+            expect(SearchResult.filter_by_string("search_results", "alpha"))
+              .to eq([])
+          end
+        end
+
+        context "which matches an issue's summary" do
+          let!(:issue) { Fabricate(:issue, summary: "Alpha Beta Gamma") }
+
+          it "returns the issue" do
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
+            expect(map_class_id(search_results)).to eq([["Issue", issue.id]])
+          end
+        end
+
+        context "which matches a task's summary and an issue's description" do
+          let!(:issue) { Fabricate(:issue, description: "Alpha Beta Gamma") }
+          let!(:task) { Fabricate(:task, summary: "Alpha Beta Gamma") }
+
+          it "returns the issue" do
+            search_results =
+              SearchResult.filter_by_string("search_results", "alpha")
+            expect(map_class_id(search_results))
+              .to contain_exactly(["Issue", issue.id], ["Task", task.id])
           end
         end
       end
@@ -302,6 +298,151 @@ RSpec.describe SearchResult, type: :model do
           expect(search_results.count).to eq(1)
           search_result = search_results.first
           expect(search_result.id).to eq(issue.id)
+        end
+      end
+    end
+
+    context "when :order" do
+      let(:task) { Fabricate(:task, summary: "Test", priority_level: 3) }
+      let(:issue) { Fabricate(:issue, summary: "Test", priority_level: 2) }
+
+      let(:options) { { query: "Test" } }
+
+      context "is unset" do
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,desc'" do
+        before do
+          options.merge! order: "updated,desc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,asc'" do
+        before do
+          options.merge! order: "updated,asc"
+        end
+
+        it "orders by updated_at asc" do
+          task
+          issue
+
+          Timecop.freeze(1.day.ago) do
+            issue.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'created,desc'" do
+        before do
+          options.merge! order: "created,desc"
+        end
+
+        it "orders by created_at desc" do
+          Timecop.freeze(1.day.ago) do
+            task
+          end
+
+          Timecop.freeze(1.hour.ago) do
+            issue
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'created,asc'" do
+        before do
+          options.merge! order: "created,asc"
+        end
+
+        it "orders by created_at asc" do
+          Timecop.freeze(1.day.ago) do
+            issue
+          end
+
+          Timecop.freeze(1.hour.ago) do
+            task
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'priority,asc'" do
+        before do
+          options.merge! order: "priority,asc"
+        end
+
+        it "orders by priority_level asc" do
+          issue
+          task
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'notupdated,desc'" do
+        before do
+          options.merge! order: "notupdated,desc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
+        end
+      end
+
+      context "is set as 'updated,notdesc'" do
+        before do
+          options.merge! order: "updated,notdesc"
+        end
+
+        it "orders by updated_at desc" do
+          issue
+          task
+
+          Timecop.freeze(1.day.ago) do
+            task.touch
+          end
+
+          expect(map_class_id(described_class.filter_by(options)))
+            .to eq([["Issue", issue.id], ["Task", task.id]])
         end
       end
     end

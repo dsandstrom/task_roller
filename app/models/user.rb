@@ -239,10 +239,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   # order by:
-  # task has open progression by user
-  # task has progressions by user
-  # no progressions or reviews
+  # unfinished progression by user
   # pending review
+  # priority level
+  # any progressions by user
   # comment by another user
   ACTIVE_ASSIGNMENTS_QUERY =
     'tasks.*, ' \
@@ -254,15 +254,14 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     'COALESCE(MAX(task_comments.created_at), MAX(progressions.created_at), ' \
     'tasks.created_at) AS order_date'
   ACTIVE_ASSIGNMENTS_ORDER =
-    { unfinished_progressions_count: :desc, pending_reviews_count: :asc,
-      progressions_count: :desc, order_date: :desc }.freeze
+    { unfinished_progressions_count: :desc, pending_reviews_count: :desc,
+      priority_level: :asc, progressions_count: :desc,
+      order_date: :desc }.freeze
   def active_assignments
-    comments_query =
-      'LEFT OUTER JOIN task_comments ON ' \
-      "(tasks.id = task_comments.task_id AND task_comments.user_id != #{id})"
     @active_assignments ||=
       assignments
-      .left_joins(:progressions, :reviews).joins(comments_query)
+      .left_joins(:reviews).joins(active_assignments_comments_query)
+      .joins(active_assignments_progressions_query)
       .all_open.select(ACTIVE_ASSIGNMENTS_QUERY)
       .group(:id).order(ACTIVE_ASSIGNMENTS_ORDER)
   end
@@ -288,6 +287,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   # in progress
   # assigned
   # open
+  # priority
   #
   # order:
   # comment by another user, progression, created_at
@@ -300,7 +300,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     'tasks.created_at) AS order_date'
   OPENS_TASKS_ORDER =
     { pending_reviews_count: :desc, progressions_count: :desc,
-      order_date: :desc }.freeze
+      priority_level: :asc, order_date: :desc }.freeze
   def open_tasks
     @open_tasks ||=
       tasks
@@ -402,19 +402,27 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   private
 
     def issue_subscriptions_query
-      @issue_subscriptions_query ||=
-        'LEFT OUTER JOIN issue_subscriptions ON ' \
+      'LEFT OUTER JOIN issue_subscriptions ON ' \
         '(issue_subscriptions.issue_id = search_results.id AND ' \
         "search_results.class_name = 'Issue' AND " \
         "issue_subscriptions.user_id = #{id})"
     end
 
     def task_subscriptions_query
-      @task_subscriptions_query ||=
-        'LEFT OUTER JOIN task_subscriptions ON ' \
+      'LEFT OUTER JOIN task_subscriptions ON ' \
         '(task_subscriptions.task_id = search_results.id AND ' \
         "search_results.class_name = 'Task' AND " \
         "task_subscriptions.user_id = #{id})"
+    end
+
+    def active_assignments_comments_query
+      'LEFT OUTER JOIN task_comments ON ' \
+        "(tasks.id = task_comments.task_id AND task_comments.user_id != #{id})"
+    end
+
+    def active_assignments_progressions_query
+      'LEFT OUTER JOIN progressions ON ' \
+        "(tasks.id = progressions.task_id AND progressions.user_id = #{id})"
     end
 
     def allow_display_of_email?(logged_in_user)

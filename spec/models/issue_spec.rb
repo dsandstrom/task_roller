@@ -465,6 +465,25 @@ RSpec.describe Issue, type: :model do
         end
       end
 
+      context "is set as 'priority,asc'" do
+        it "orders by priority_level asc" do
+          first_issue = nil
+          second_issue = nil
+
+          Timecop.freeze(1.hour.ago) do
+            second_issue =
+              Fabricate(:issue, project: project, priority_level: 3)
+          end
+
+          Timecop.freeze(1.day.ago) do
+            first_issue = Fabricate(:issue, project: project, priority_level: 2)
+          end
+
+          options = { order: "priority,asc" }
+          expect(Issue.filter_by(options)).to eq([first_issue, second_issue])
+        end
+      end
+
       context "is set as 'notupdated,desc'" do
         it "orders by updated_at desc" do
           second_issue = Fabricate(:issue)
@@ -526,7 +545,7 @@ RSpec.describe Issue, type: :model do
   describe ".filter_by_string" do
     context "when no issues" do
       it "returns []" do
-        expect(Issue.filter_by_string("alpha")).to eq([])
+        expect(Issue.filter_by_string("issues", "alpha")).to eq([])
       end
     end
 
@@ -535,7 +554,7 @@ RSpec.describe Issue, type: :model do
         let!(:issue) { Fabricate(:issue) }
 
         it "returns all issues" do
-          expect(Issue.filter_by_string("")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "")).to eq([issue])
         end
       end
 
@@ -547,7 +566,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns one issue" do
-          expect(Issue.filter_by_string("alpha")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([issue])
         end
       end
 
@@ -559,7 +578,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns one issue" do
-          expect(Issue.filter_by_string("alpha")).to eq([issue])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([issue])
         end
       end
 
@@ -569,7 +588,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns none" do
-          expect(Issue.filter_by_string("alpha")).to eq([])
+          expect(Issue.filter_by_string("issues", "alpha")).to eq([])
         end
       end
 
@@ -584,7 +603,7 @@ RSpec.describe Issue, type: :model do
         end
 
         it "returns both issues" do
-          expect(Issue.filter_by_string("alpha"))
+          expect(Issue.filter_by_string("issues", "alpha"))
             .to contain_exactly(first_issue, second_issue)
         end
       end
@@ -2105,6 +2124,68 @@ RSpec.describe Issue, type: :model do
       it "returns both statuses" do
         expect(subject.notification_options("old"))
           .to eq({ event: "status", details: "old,#{subject.status}" })
+      end
+    end
+  end
+
+  describe "#update_priority_level" do
+    context "when issue has no tasks" do
+      let(:issue) { Fabricate(:issue) }
+
+      it "doesn't change the priority_level" do
+        expect do
+          issue.update_priority_level
+          issue.reload
+        end.not_to change(issue, :priority_level)
+      end
+    end
+
+    context "when issue has one task" do
+      let(:issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:task, issue: issue, priority_level: 3)
+      end
+
+      it "changes the priority_level to match the task" do
+        expect do
+          issue.update_priority_level
+          issue.reload
+        end.to change(issue, :priority_level).from(nil).to(3)
+      end
+
+      context "and gets a second task" do
+        let(:issue) { Fabricate(:issue, priority_level: 3) }
+
+        before do
+          Fabricate(:task, issue: issue, priority_level: 3)
+        end
+
+        context "that has a lower priority_level" do
+          before do
+            Fabricate(:task, issue: issue, priority_level: 2)
+          end
+
+          it "changes the priority_level to match the second task" do
+            expect do
+              issue.update_priority_level
+              issue.reload
+            end.to change(issue, :priority_level).from(3).to(2)
+          end
+        end
+
+        context "that has a higher priority_level" do
+          before do
+            Fabricate(:task, issue: issue, priority_level: 4)
+          end
+
+          it "doesn't change the priority_level" do
+            expect do
+              issue.update_priority_level
+              issue.reload
+            end.not_to change(issue, :priority_level).from(3)
+          end
+        end
       end
     end
   end

@@ -77,12 +77,26 @@ RSpec.describe "issues/show", type: :view do
         expect(rendered).to have_link(nil, href: new_issue_move_path(@issue))
       end
 
-      context "and has tasks" do
-        it "renders a list of tasks" do
-          task = Fabricate(:task, issue: @issue)
+      it "doesn't render issues's priority_level" do
+        render
+        assert_select ".issue-priority-level", count: 0
+      end
 
+      context "and has tasks" do
+        let!(:task) { Fabricate(:task, issue: @issue, priority_level: 2) }
+
+        before do
+          @issue.update_priority_level
+        end
+
+        it "renders a list of tasks" do
           render
           assert_select "#task-#{task.id}"
+        end
+
+        it "renders issue's priority_level" do
+          render
+          assert_select ".issue-priority-level", "High"
         end
       end
 

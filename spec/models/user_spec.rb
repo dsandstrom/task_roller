@@ -1244,10 +1244,13 @@ RSpec.describe User, type: :model do
       let(:paused_task) { Fabricate(:assigned_task, summary: "Paused") }
       let(:assigned_task) { Fabricate(:assigned_task, summary: "Assigned") }
       let(:in_review_task) { Fabricate(:assigned_task, summary: "In Review") }
+      let(:critical_task) do
+        Fabricate(:assigned_task, summary: "Critical", priority_level: 1)
+      end
 
       before do
         [paused_task, in_review_task, in_progress_task,
-         assigned_task].each do |task|
+         assigned_task, critical_task].each do |task|
           task.assignees << user
         end
         Fabricate(:finished_progression, task: paused_task, user: user)
@@ -1256,8 +1259,8 @@ RSpec.describe User, type: :model do
       end
 
       it "orders tasks by in progress, with progressions, assigned" do
-        tasks = [in_progress_task, paused_task, assigned_task,
-                 in_review_task]
+        tasks = [in_progress_task, in_review_task, critical_task, paused_task,
+                 assigned_task]
         tasks.each(&:update_status)
         expect(user.active_assignments).to match_array(tasks)
         expect(user.active_assignments).to eq(tasks)
@@ -1298,6 +1301,7 @@ RSpec.describe User, type: :model do
           Fabricate(:finished_progression, task: second_task, user: user)
         end
         Fabricate(:finished_progression, task: first_task, user: user)
+        Fabricate(:finished_progression, task: second_task)
 
         tasks = [first_task, second_task]
         tasks.each(&:update_status)
@@ -1421,6 +1425,22 @@ RSpec.describe User, type: :model do
           Fabricate(:progression, task: second_task)
         end
         Fabricate(:progression, task: first_task)
+
+        tasks = [first_task, second_task]
+        tasks.each(&:update_status)
+        expect(user.open_tasks).to eq(tasks)
+      end
+
+      it "orders by priority_level" do
+        first_task = nil
+        second_task = nil
+
+        Timecop.freeze(1.week.ago) do
+          first_task = Fabricate(:open_task, user: user, priority_level: 3)
+        end
+        Timecop.freeze(1.day.ago) do
+          second_task = Fabricate(:open_task, user: user, priority_level: 4)
+        end
 
         tasks = [first_task, second_task]
         tasks.each(&:update_status)

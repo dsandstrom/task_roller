@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_07_222926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -113,6 +113,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.integer "issue_type_id"
     t.integer "open_tasks_count", default: 0, null: false
     t.datetime "opened_at"
+    t.integer "priority_level"
     t.integer "project_id"
     t.string "status"
     t.string "summary"
@@ -122,6 +123,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.index ["closed"], name: "index_issues_on_closed"
     t.index ["github_id"], name: "index_issues_on_github_id", unique: true
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
+    t.index ["priority_level"], name: "index_issues_on_priority_level"
     t.index ["project_id"], name: "index_issues_on_project_id"
     t.index ["status"], name: "index_issues_on_status"
     t.index ["user_id"], name: "index_issues_on_user_id"
@@ -273,6 +275,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.text "description"
     t.integer "issue_id"
     t.datetime "opened_at"
+    t.integer "priority_level", default: 4, null: false
     t.integer "project_id"
     t.string "status"
     t.string "summary"
@@ -281,6 +284,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
     t.integer "user_id"
     t.index ["closed"], name: "index_tasks_on_closed"
     t.index ["issue_id"], name: "index_tasks_on_issue_id"
+    t.index ["priority_level"], name: "index_tasks_on_priority_level"
     t.index ["project_id"], name: "index_tasks_on_project_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
@@ -324,6 +328,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
       issues.description,
       issues.closed,
       issues.status,
+      issues.priority_level,
       issues.opened_at,
       issues.issue_type_id AS type_id,
       issues.user_id,
@@ -339,6 +344,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_28_231715) do
       tasks.description,
       tasks.closed,
       tasks.status,
+      tasks.priority_level,
       tasks.opened_at,
       tasks.task_type_id AS type_id,
       tasks.user_id,

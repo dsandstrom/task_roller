@@ -23,6 +23,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to respond_to(:task_type_id) }
   it { is_expected.to respond_to(:project_id) }
   it { is_expected.to respond_to(:opened_at) }
+  it { is_expected.to respond_to(:priority_level) }
   it { is_expected.to respond_to(:category) }
 
   # User.assigned_to
@@ -34,6 +35,15 @@ RSpec.describe Task, type: :model do
   it { is_expected.to validate_length_of(:summary).is_at_most(200) }
   it { is_expected.to validate_presence_of(:description) }
   it { is_expected.to validate_length_of(:description).is_at_most(2000) }
+  it { is_expected.to validate_presence_of(:priority_level) }
+  it do
+    is_expected.to validate_inclusion_of(:priority_level).in_array([1, 2, 3, 4])
+  end
+  it do
+    is_expected.to validate_inclusion_of(:status)
+      .in_array(%w[unassigned assigned in_progress in_review approved
+                   duplicate])
+  end
 
   it { is_expected.to belong_to(:user).required }
   it { is_expected.to belong_to(:task_type).required }
@@ -56,31 +66,6 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:reopenings) }
   it { is_expected.to have_many(:notifications).dependent(:destroy) }
   it { is_expected.to have_many(:repo_callouts) }
-
-  describe "#status" do
-    context "when a valid value" do
-      %w[unassigned assigned in_progress in_review
-         approved duplicate].each do |value|
-        before { subject.status = value }
-
-        it { is_expected.to be_valid }
-      end
-    end
-
-    context "when nil" do
-      before { subject.status = nil }
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when an invalid value" do
-      ["notopen", "", "in progress"].each do |value|
-        before { subject.status = value }
-
-        it { is_expected.not_to be_valid }
-      end
-    end
-  end
 
   # CLASS
 
@@ -572,6 +557,24 @@ RSpec.describe Task, type: :model do
         end
       end
 
+      context "is set as 'priority,asc'" do
+        it "orders by priority_level asc" do
+          first_task = nil
+          second_task = nil
+
+          Timecop.freeze(1.hour.ago) do
+            second_task = Fabricate(:task, project: project, priority_level: 3)
+          end
+
+          Timecop.freeze(1.day.ago) do
+            first_task = Fabricate(:task, project: project, priority_level: 2)
+          end
+
+          options = { order: "priority,asc" }
+          expect(Task.filter_by(options)).to eq([first_task, second_task])
+        end
+      end
+
       context "is set as 'notupdated,desc'" do
         it "orders by updated_at desc" do
           second_task = Fabricate(:task, project: project)
@@ -623,7 +626,7 @@ RSpec.describe Task, type: :model do
   describe ".filter_by_string" do
     context "when no tasks" do
       it "returns []" do
-        expect(Task.filter_by_string("alpha")).to eq([])
+        expect(Task.filter_by_string("tasks", "alpha")).to eq([])
       end
     end
 
@@ -632,7 +635,7 @@ RSpec.describe Task, type: :model do
         let!(:task) { Fabricate(:task) }
 
         it "returns all tasks" do
-          expect(Task.filter_by_string("")).to eq([task])
+          expect(Task.filter_by_string("tasks", "")).to eq([task])
         end
       end
 
@@ -644,7 +647,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns one task" do
-          expect(Task.filter_by_string("alpha")).to eq([task])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([task])
         end
       end
 
@@ -656,7 +659,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns one task" do
-          expect(Task.filter_by_string("alpha")).to eq([task])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([task])
         end
       end
 
@@ -666,7 +669,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns none" do
-          expect(Task.filter_by_string("alpha")).to eq([])
+          expect(Task.filter_by_string("tasks", "alpha")).to eq([])
         end
       end
 
@@ -681,7 +684,7 @@ RSpec.describe Task, type: :model do
         end
 
         it "returns both tasks" do
-          expect(Task.filter_by_string("alpha"))
+          expect(Task.filter_by_string("tasks", "alpha"))
             .to contain_exactly(first_task, second_task)
         end
       end
