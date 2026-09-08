@@ -16,22 +16,13 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
   end
 
   def project_and_task_tags(project, task)
-    assign_dropdown = task_assign_dropdown(task)
-    edit_dropdown = task_edit_dropdown(task)
-    status_dropdown = task_status_dropdown(task)
-
-    assign_button = task_assign_button(task)
-    status_button = task_status_button(task, dropdown: status_dropdown.present?)
-    type_button = task_type_button(task)
-    tags = [project_invisible_tag(project), project_internal_tag(project),
-            type_button, status_button, assign_button, assign_dropdown,
-            edit_dropdown, status_dropdown].compact
-
-    content_tag :span, safe_join(tags), class: 'project-tags task-tags'
+    content_tag :span,
+                safe_join(build_project_and_task_tags(project, task)),
+                class: 'project-tags task-tags'
   end
 
   def task_tags(task)
-    tags = [task_status_button(task, dropdown: false),
+    tags = [task_status_button(task, with_dropdown: false),
             task_type_tag(task.task_type, priority_level: task.priority_level)]
 
     content_tag :div, class: 'task-tags' do
@@ -130,28 +121,32 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       option[:color]
     end
 
-    def task_status_button(task, dropdown: false)
+    def task_status_button(task, with_dropdown: false)
       value = task.status
       return unless value
 
       klass =
         "status-tag roller-type-color-#{task_status_color(value)}"
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
-      if dropdown
+      if with_dropdown
         parts << status_dropdown_link
-        klass += ' status-button'
+        klass += ' task-button'
       end
       content_tag :span, safe_join(parts), class: klass
     end
 
-    def task_type_button(task)
+    def task_type_button(task, with_dropdown: true)
       task_type = task.task_type
       return unless task_type
 
-      klass = "task-type-tag #{roller_type_color(task_type)} task-type-button"
+      klass = "task-type-tag #{roller_type_color(task_type)}"
       parts = [roller_type_icon(task_type),
-               content_tag(:span, task_type.name, class: 'type-value'),
-               task_type_dropdown_link]
+               content_tag(:span, task_type.name, class: 'type-value')]
+
+      if with_dropdown
+        parts << task_type_dropdown_link
+        klass += ' task-button'
+      end
 
       content_tag :span, safe_join(parts), class: klass
     end
@@ -402,12 +397,16 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    def task_assign_button(task)
+    def task_assign_button(task, with_dropdown: true)
       value, color = task_assign_button_value(task)
       klass =
-        "task-assign-tag roller-type-color-#{color} task-button assign-button"
-      parts = [content_tag(:span, value, class: 'assign-value'),
-               task_assign_dropdown_link]
+        "task-assign-tag roller-type-color-#{color}"
+      parts = [content_tag(:span, value, class: 'assign-value')]
+
+      if with_dropdown
+        parts << task_assign_dropdown_link
+        klass += ' task-button'
+      end
 
       content_tag :span, safe_join(parts), class: klass
     end
@@ -428,5 +427,23 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
       link_to '', 'javascript:void(0)',
               class: 'dropdown-link task-assign-dropdown-link',
               title: 'Assignment Options'
+    end
+
+    def build_task_assign_button(task, with_dropdown)
+      return unless can?(:create, TaskAssignee)
+
+      task_assign_button(task, with_dropdown: with_dropdown)
+    end
+
+    def build_project_and_task_tags(project, task)
+      assign_dropdown = task_assign_dropdown(task)
+      edit_dropdown = task_edit_dropdown(task)
+      status_dropdown = task_status_dropdown(task)
+
+      [project_invisible_tag(project), project_internal_tag(project),
+       task_type_button(task, with_dropdown: edit_dropdown.present?),
+       task_status_button(task, with_dropdown: status_dropdown.present?),
+       build_task_assign_button(task, assign_dropdown.present?),
+       assign_dropdown, edit_dropdown, status_dropdown].compact
     end
 end
