@@ -129,7 +129,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
       parts = [content_tag(:span, value.titleize, class: 'status-value')]
       if with_dropdown
         parts << status_dropdown_link
-        klass += ' status-button'
+        klass += ' issue-button'
       end
       content_tag :span, safe_join(parts), class: klass
     end
@@ -143,7 +143,7 @@ module IssuesHelper # rubocop:disable Metrics/ModuleLength
                content_tag(:span, issue_type.name, class: 'type-value')]
       if with_dropdown
         parts << issue_type_dropdown_link
-        klass += ' issue-type-button'
+        klass += ' issue-button'
       end
       content_tag :span, safe_join(parts), class: klass
     end

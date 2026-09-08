@@ -954,11 +954,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
-      # it "doesn't render new task assignment link" do
-      #   render template: subject, layout: "layouts/application"
-      #   expect(rendered)
-      #     .not_to have_link(nil, href: task_task_assignees_path(@task))
-      # end
+      it "renders task self assignment link" do
+        render template: subject, layout: "layouts/application"
+        expect(rendered)
+          .to have_link(nil, href: task_task_assignees_path(@task))
+      end
 
       it "renders move task link" do
         render template: subject, layout: "layouts/application"
@@ -987,12 +987,11 @@ RSpec.describe "tasks/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_assignment_path(@task))
       end
 
-      # self assign link is visible
-      # it "doesn't render new task assignment link" do
-      #   render template: subject, layout: "layouts/application"
-      #   expect(rendered)
-      #     .not_to have_link(nil, href: task_task_assignees_path(@task))
-      # end
+      it "renders task self assignment link" do
+        render template: subject, layout: "layouts/application"
+        expect(rendered)
+          .to have_link(nil, href: task_task_assignees_path(@task))
+      end
     end
 
     context "when task has a source_connection" do
@@ -1139,6 +1138,12 @@ RSpec.describe "tasks/show", type: :view do
         render template: subject, layout: "layouts/application"
         url = disapprove_task_review_path(@task, @review)
         expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render task self assignment link" do
+        render template: subject, layout: "layouts/application"
+        expect(rendered)
+          .not_to have_link(nil, href: task_task_assignees_path(@task))
       end
     end
 
@@ -1355,7 +1360,7 @@ RSpec.describe "tasks/show", type: :view do
             .not_to have_link(nil, href: edit_assignment_path(@task))
         end
 
-        it "doesn't render new task assignment link" do
+        it "doesn't render task self assignment link" do
           render
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
@@ -1395,7 +1400,7 @@ RSpec.describe "tasks/show", type: :view do
             .not_to have_link(nil, href: edit_assignment_path(@task))
         end
 
-        it "doesn't render new task assignment link" do
+        it "doesn't render task self assignment link" do
           render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: task_task_assignees_path(@task))
@@ -1688,6 +1693,12 @@ RSpec.describe "tasks/show", type: :view do
         end
       end
 
+      it "doesn't render edit link" do
+        render template: subject, layout: "layouts/application"
+        url = edit_task_path(@task)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
       it "doesn't render new task connection link" do
         render template: subject, layout: "layouts/application"
         url = new_task_connection_path(@task)
@@ -1705,7 +1716,7 @@ RSpec.describe "tasks/show", type: :view do
           .not_to have_link(nil, href: edit_assignment_path(@task))
       end
 
-      it "renders new task assignment link" do
+      it "renders task self assignment link" do
         render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: task_task_assignees_path(@task))
@@ -2270,6 +2281,11 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render move task link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
+      end
+
+      it "doesn't render assigned to me tag" do
+        render template: subject, layout: "layouts/application"
+        assert_select ".task-assign-tag", count: 0
       end
     end
 
