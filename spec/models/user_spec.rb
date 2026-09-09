@@ -1826,7 +1826,8 @@ RSpec.describe User, type: :model do
           Timecop.freeze(1.day.ago) do
             Fabricate(:issue_subscription, issue: second_issue, user: user)
           end
-          Fabricate(:issue_notification, issue: first_issue, user: user)
+          Fabricate(:issue_new_notification, issue: first_issue, user: user)
+          Fabricate(:issue_status_notification, issue: first_issue, user: user)
           Fabricate(:issue_notification, issue: second_issue)
         end
 

@@ -341,18 +341,30 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     tasks.order('COUNT(task_notifications.id) DESC')
   end
 
-  def subscriptions_with_notifications(order_by: false)
+  def subscriptions_select_list(order_by_notifications)
     attrs = %w[id project_id user_id issue_id class_name created_at updated_at
                summary description status type_id priority_level]
+    select_list = 'search_results.'
+    select_list += attrs.join(', search_results.')
+    return select_list unless order_by_notifications
+
+    select_list + ', case when issue_notifications.issue_id IS NOT NULL ' \
+                  'then 1 else 0 end AS issue_notifications_count, ' \
+                  'case when task_notifications.task_id IS NOT NULL ' \
+                  'then 1 else 0 end AS task_notifications_count'
+  end
+
+  def subscriptions_with_notifications(order_by: false)
     search_results =
       subscriptions.joins(notifications_query)
-                   .select(attrs).group(attrs)
+                   .select(subscriptions_select_list(order_by))
+                   .distinct
                    .preload(:project, :user, :issue, :assignees,
                             project: :category)
     return search_results unless order_by
 
-    search_results.order('COUNT(issue_notifications.id) DESC')
-                  .order('COUNT(task_notifications.id) DESC')
+    search_results.order(issue_notifications_count: :desc)
+                  .order(task_notifications_count: :desc)
   end
 
   # block non-employees from devise
