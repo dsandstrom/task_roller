@@ -1755,6 +1755,17 @@ RSpec.describe User, type: :model do
         expect(user.subscriptions_with_notifications.map(&:id))
           .to eq([first_issue.id])
       end
+
+      it "return it's issue as a SearchResult" do
+        search_result = user.subscriptions_with_notifications.first
+
+        expect(search_result.class).to eq(SearchResult)
+
+        %i[id project_id user_id issue_id class_name created_at updated_at
+           summary description status type_id priority_level].each do |method|
+          expect(search_result).to respond_to(method)
+        end
+      end
     end
 
     context "when task_subscription" do

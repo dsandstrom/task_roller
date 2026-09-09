@@ -343,7 +343,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def subscriptions_with_notifications(order_by: false)
     attrs = %w[id project_id user_id issue_id class_name created_at updated_at
-               summary description status type_id]
+               summary description status type_id priority_level]
     search_results =
       subscriptions.joins(notifications_query)
                    .select(attrs).group(attrs)

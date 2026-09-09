@@ -1,15 +1,15 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe "subscriptions/index", type: :view do
   User::VALID_EMPLOYEE_TYPES.each do |employee_type|
     context "for a #{employee_type}" do
       let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
-      let(:issue) { Fabricate(:issue, user: current_user) }
-      let(:task) { Fabricate(:task, user: current_user) }
+      let(:issue) { Fabricate(:issue) }
+      let(:task) { Fabricate(:task) }
 
       before do
+        Fabricate(:issue_subscription, issue: issue, user: current_user)
+        Fabricate(:task_subscription, task: task, user: current_user)
         enable_can(view, current_user)
         assign(:subscriptions, page([issue, task]))
       end
