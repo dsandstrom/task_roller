@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe IssueConnectionsController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:source_issue) { Fabricate(:issue) }
   let(:target_issue) { Fabricate(:issue, project: source_issue.project) }
   let(:valid_attributes) { { target_id: target_issue.to_param } }
