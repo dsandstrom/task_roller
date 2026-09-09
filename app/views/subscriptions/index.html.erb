@@ -13,7 +13,9 @@
     <div class="first-column">
       <% if @subscriptions.any? || searching? %>
         <div class="issues tasks">
-          <%= render @subscriptions %>
+          <% @subscriptions.each do |subscription| %>
+            <%= search_result_turbo_frame(subscription) %>
+          <% end %>
         </div>
 
         <%= render 'shared/simple_page_links',
