@@ -23,7 +23,7 @@ RSpec.describe TaskSubscriptionJob, type: :job do
       end
 
       context "and send_new is true" do
-        it "enqueues IssueNotifierJob for the task and user" do
+        it "enqueues TaskNotifierJob for the task and user" do
           subject.perform_now task, user, send_new: true
 
           expect(TaskNotifierJob).to have_been_enqueued.exactly(:once)
