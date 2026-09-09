@@ -22,11 +22,7 @@
 
   <div class="first-column">
     <% if @search_results.any? || searching? %>
-      <div class="issues tasks">
-        <% @search_results.each do |search_result| %>
-          <%= search_result_turbo_frame(search_result) %>
-        <% end %>
-      </div>
+      <%= render 'search_results/search_results', search_results: @search_results %>
 
       <%= render 'shared/simple_page_links',
                  collection: @search_results %>

@@ -12,11 +12,7 @@
   <div class="columns">
     <div class="first-column">
       <% if @subscriptions.any? || searching? %>
-        <div class="issues tasks">
-          <% @subscriptions.each do |subscription| %>
-            <%= search_result_turbo_frame(subscription) %>
-          <% end %>
-        </div>
+        <%= render 'search_results/search_results', search_results: @subscriptions %>
 
         <%= render 'shared/simple_page_links',
                    collection: @subscriptions %>
