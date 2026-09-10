@@ -29,9 +29,7 @@ RSpec.describe TasksController, type: :controller do
       before { sign_in(current_user) }
 
       context "when category is invisible and internal" do
-        let(:category) do
-          Fabricate(:category, visible: false, internal: true)
-        end
+        let(:category) { Fabricate(:category, visible: false, internal: true) }
         let(:project) { Fabricate(:project, category: category) }
 
         it "returns a success response" do
@@ -163,6 +161,7 @@ RSpec.describe TasksController, type: :controller do
               let(:category) do
                 Fabricate(:category, visible: true, internal: false)
               end
+
               let(:project) { Fabricate(:project, category: category) }
 
               it "returns a success response" do
@@ -176,6 +175,7 @@ RSpec.describe TasksController, type: :controller do
                 let(:category) do
                   Fabricate(:category, visible: true, internal: true)
                 end
+
                 let(:project) { Fabricate(:project, category: category) }
 
                 it "returns a success response" do
@@ -206,6 +206,7 @@ RSpec.describe TasksController, type: :controller do
                 let(:category) do
                   Fabricate(:category, visible: false, internal: true)
                 end
+
                 let(:project) { Fabricate(:project, category: category) }
 
                 it "should be unauthorized" do
@@ -358,6 +359,7 @@ RSpec.describe TasksController, type: :controller do
             let(:category) do
               Fabricate(:category, visible: false, internal: false)
             end
+
             let(:project) do
               Fabricate(:project, category: category, visible: true,
                                   internal: false)
@@ -415,6 +417,7 @@ RSpec.describe TasksController, type: :controller do
               let(:category) do
                 Fabricate(:category, visible: true, internal: false)
               end
+
               let(:project) { Fabricate(:project, category: category) }
 
               it "returns a success response" do
@@ -428,6 +431,7 @@ RSpec.describe TasksController, type: :controller do
                 let(:category) do
                   Fabricate(:category, visible: true, internal: true)
                 end
+
                 let(:project) { Fabricate(:project, category: category) }
 
                 it "should be unauthorized" do
@@ -445,6 +449,7 @@ RSpec.describe TasksController, type: :controller do
               let(:category) do
                 Fabricate(:category, visible: false, internal: false)
               end
+
               let(:project) { Fabricate(:project, category: category) }
 
               it "should be unauthorized" do
@@ -458,6 +463,7 @@ RSpec.describe TasksController, type: :controller do
                 let(:category) do
                   Fabricate(:category, visible: false, internal: true)
                 end
+
                 let(:project) { Fabricate(:project, category: category) }
 
                 it "should be unauthorized" do
@@ -610,6 +616,7 @@ RSpec.describe TasksController, type: :controller do
             let(:category) do
               Fabricate(:category, visible: false, internal: false)
             end
+
             let(:project) do
               Fabricate(:project, category: category, visible: true,
                                   internal: false)
@@ -666,6 +673,7 @@ RSpec.describe TasksController, type: :controller do
           let(:category) do
             Fabricate(:category, visible: false, internal: true)
           end
+
           let(:project) do
             Fabricate(:project, category: category, visible: false,
                                 internal: true)
@@ -674,21 +682,43 @@ RSpec.describe TasksController, type: :controller do
           before { sign_in(current_user) }
 
           context "when someone else's task" do
+            let(:task) { Fabricate(:task, project: project) }
+
             it "returns a success response" do
-              task = Fabricate(:task, project: project)
-              get :show, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: task.to_param }
+              get :show, params: { id: task.to_param }
               expect(response).to be_successful
+            end
+
+            context "and user doesn't have notifications for the task" do
+              before do
+                Fabricate(:task_notification, user: current_user)
+              end
+
+              it "doesn't enqueue a TaskNotificationsRemovalJob" do
+                get :show, params: { id: task.to_param }
+                expect(TaskNotificationsRemovalJob).not_to have_been_enqueued
+              end
+            end
+
+            context "and user has a notification for the task" do
+              before do
+                Fabricate(:task_notification, task: task, user: current_user)
+              end
+
+              it "enqueues a TaskNotificationsRemovalJob" do
+                get :show, params: { id: task.to_param }
+                expect(TaskNotificationsRemovalJob)
+                  .to have_been_enqueued.exactly(:once)
+                expect(TaskNotificationsRemovalJob)
+                  .to have_been_enqueued.with(task, current_user)
+              end
             end
           end
 
           context "when their task" do
             it "returns a success response" do
               task = Fabricate(:task, project: project, user: current_user)
-              get :show, params: { category_id: category.to_param,
-                                   project_id: project.to_param,
-                                   id: task.to_param }
+              get :show, params: { id: task.to_param }
               expect(response).to be_successful
             end
           end
@@ -713,14 +743,40 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
+                let(:task) { Fabricate(:task, project: project) }
+
                 before { sign_in(current_user) }
 
                 it "returns a success response" do
-                  task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect(response).to be_successful
+                end
+
+                context "and user doesn't have notifications for the task" do
+                  before do
+                    Fabricate(:task_notification, user: current_user)
+                  end
+
+                  it "doesn't enqueue a TaskNotificationsRemovalJob" do
+                    get :show, params: { id: task.to_param }
+                    expect(TaskNotificationsRemovalJob)
+                      .not_to have_been_enqueued
+                  end
+                end
+
+                context "and user has a notification for the task" do
+                  before do
+                    Fabricate(:task_notification, task: task,
+                                                  user: current_user)
+                  end
+
+                  it "enqueues a TaskNotificationsRemovalJob" do
+                    get :show, params: { id: task.to_param }
+                    expect(TaskNotificationsRemovalJob)
+                      .to have_been_enqueued.exactly(:once)
+                    expect(TaskNotificationsRemovalJob)
+                      .to have_been_enqueued.with(task, current_user)
+                  end
                 end
               end
 
@@ -734,9 +790,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect(response).to be_successful
                 end
               end
@@ -753,9 +807,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -778,9 +830,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect(response).to be_successful
                 end
               end
@@ -795,9 +845,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "returns a success response" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect(response).to be_successful
                 end
               end
@@ -814,9 +862,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -841,9 +887,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -870,14 +914,40 @@ RSpec.describe TasksController, type: :controller do
                                       internal: false)
                 end
 
+                let(:task) { Fabricate(:task, project: project) }
+
                 before { sign_in(current_user) }
 
                 it "returns a success response" do
-                  task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect(response).to be_successful
+                end
+
+                context "and user doesn't have notifications for the task" do
+                  before do
+                    Fabricate(:task_notification, user: current_user)
+                  end
+
+                  it "doesn't enqueue a TaskNotificationsRemovalJob" do
+                    get :show, params: { id: task.to_param }
+                    expect(TaskNotificationsRemovalJob)
+                      .not_to have_been_enqueued
+                  end
+                end
+
+                context "and user has a notification for the task" do
+                  before do
+                    Fabricate(:task_notification, task: task,
+                                                  user: current_user)
+                  end
+
+                  it "enqueues a TaskNotificationsRemovalJob" do
+                    get :show, params: { id: task.to_param }
+                    expect(TaskNotificationsRemovalJob)
+                      .to have_been_enqueued.exactly(:once)
+                    expect(TaskNotificationsRemovalJob)
+                      .to have_been_enqueued.with(task, current_user)
+                  end
                 end
               end
 
@@ -891,9 +961,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -910,9 +978,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -935,9 +1001,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -954,9 +1018,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -981,9 +1043,7 @@ RSpec.describe TasksController, type: :controller do
 
                 it "should be unauthorized" do
                   task = Fabricate(:task, project: project)
-                  get :show, params: { category_id: category.to_param,
-                                       project_id: project.to_param,
-                                       id: task.to_param }
+                  get :show, params: { id: task.to_param }
                   expect_to_be_unauthorized(response)
                 end
               end
@@ -1041,8 +1101,7 @@ RSpec.describe TasksController, type: :controller do
         before { sign_in(current_user) }
 
         it "should be unauthorized" do
-          get :new, params: { category_id: category.to_param,
-                              project_id: project.to_param }
+          get :new, params: { project_id: project.to_param }
           expect_to_be_unauthorized(response)
         end
       end
@@ -1060,8 +1119,7 @@ RSpec.describe TasksController, type: :controller do
           it "returns a success response" do
             task = Fabricate(:task, project: project, issue: issue,
                                     user: current_user)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
+            get :edit, params: { project_id: project.to_param,
                                  id: task.to_param }
             expect(response).to be_successful
           end
@@ -1070,8 +1128,7 @@ RSpec.describe TasksController, type: :controller do
         context "when someone else's issue" do
           it "returns a success response" do
             task = Fabricate(:task, project: project, issue: issue)
-            get :edit, params: { category_id: category.to_param,
-                                 project_id: project.to_param,
+            get :edit, params: { project_id: project.to_param,
                                  id: task.to_param }
             expect(response).to be_successful
           end

@@ -619,10 +619,36 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           context "when someone else's issue" do
+            let(:issue) { Fabricate(:issue, project: project) }
+
             it "returns a success response" do
-              issue = Fabricate(:issue, project: project)
               get :show, params: { id: issue.to_param }
               expect(response).to be_successful
+            end
+
+            context "and user doesn't have notifications for the issue" do
+              before do
+                Fabricate(:issue_notification, user: current_user)
+              end
+
+              it "doesn't enqueue an IssueNotificationsRemovalJob" do
+                get :show, params: { id: issue.to_param }
+                expect(IssueNotificationsRemovalJob).not_to have_been_enqueued
+              end
+            end
+
+            context "and user has a notification for the issue" do
+              before do
+                Fabricate(:issue_notification, issue: issue, user: current_user)
+              end
+
+              it "enqueues an IssueNotificationsRemovalJob" do
+                get :show, params: { id: issue.to_param }
+                expect(IssueNotificationsRemovalJob)
+                  .to have_been_enqueued.exactly(:once)
+                expect(IssueNotificationsRemovalJob)
+                  .to have_been_enqueued.with(issue, current_user)
+              end
             end
           end
 
@@ -668,10 +694,38 @@ RSpec.describe IssuesController, type: :controller do
                 end
 
                 context "when someone else's issue" do
+                  let(:issue) { Fabricate(:issue, project: project) }
+
                   it "returns a success response" do
-                    issue = Fabricate(:issue, project: project)
                     get :show, params: { id: issue.to_param }
                     expect(response).to be_successful
+                  end
+
+                  context "and user doesn't have notifications for the issue" do
+                    before do
+                      Fabricate(:issue_notification, user: current_user)
+                    end
+
+                    it "doesn't enqueue an IssueNotificationsRemovalJob" do
+                      get :show, params: { id: issue.to_param }
+                      expect(IssueNotificationsRemovalJob)
+                        .not_to have_been_enqueued
+                    end
+                  end
+
+                  context "and user has a notification for the issue" do
+                    before do
+                      Fabricate(:issue_notification, issue: issue,
+                                                     user: current_user)
+                    end
+
+                    it "enqueues an IssueNotificationsRemovalJob" do
+                      get :show, params: { id: issue.to_param }
+                      expect(IssueNotificationsRemovalJob)
+                        .to have_been_enqueued.exactly(:once)
+                      expect(IssueNotificationsRemovalJob)
+                        .to have_been_enqueued.with(issue, current_user)
+                    end
                   end
                 end
 
@@ -884,10 +938,38 @@ RSpec.describe IssuesController, type: :controller do
                 end
 
                 context "when someone else's issue" do
+                  let(:issue) { Fabricate(:issue, project: project) }
+
                   it "returns a success response" do
-                    issue = Fabricate(:issue, project: project)
                     get :show, params: { id: issue.to_param }
                     expect(response).to be_successful
+                  end
+
+                  context "and user doesn't have notifications for the issue" do
+                    before do
+                      Fabricate(:issue_notification, user: current_user)
+                    end
+
+                    it "doesn't enqueue an IssueNotificationsRemovalJob" do
+                      get :show, params: { id: issue.to_param }
+                      expect(IssueNotificationsRemovalJob)
+                        .not_to have_been_enqueued
+                    end
+                  end
+
+                  context "and user has a notification for the issue" do
+                    before do
+                      Fabricate(:issue_notification, issue: issue,
+                                                     user: current_user)
+                    end
+
+                    it "enqueues an IssueNotificationsRemovalJob" do
+                      get :show, params: { id: issue.to_param }
+                      expect(IssueNotificationsRemovalJob)
+                        .to have_been_enqueued.exactly(:once)
+                      expect(IssueNotificationsRemovalJob)
+                        .to have_been_enqueued.with(issue, current_user)
+                    end
                   end
                 end
 

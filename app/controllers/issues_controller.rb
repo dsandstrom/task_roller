@@ -23,6 +23,10 @@ class IssuesController < ApplicationController
     @task = @issue.tasks.find(params.expect(:task_id)) if params[:task_id]
 
     set_issue_variables
+    return if IssueNotification.where(issue: @issue, user: current_user).none?
+
+    IssueNotificationsRemovalJob.set(wait: 30.seconds)
+                                .perform_later(@issue, current_user)
   end
 
   def new
