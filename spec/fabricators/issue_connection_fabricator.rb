@@ -1,7 +1,6 @@
-# frozen_string_literal: true
-
 Fabricator(:issue_connection) do
   user
+
   source do |attrs|
     if attrs[:target]&.project
       Fabricate(:issue, project: attrs[:target].project)
@@ -9,8 +8,9 @@ Fabricator(:issue_connection) do
       Fabricate(:issue)
     end
   end
+
   target do |attrs|
-    if attrs[:source].project
+    if attrs[:source]&.project
       Fabricate(:issue, project: attrs[:source].project)
     else
       Fabricate(:issue)

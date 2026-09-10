@@ -56,10 +56,15 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:progressions) }
   it { is_expected.to have_many(:progression_users) }
   it { is_expected.to have_many(:reviews) }
+
   it { is_expected.to have_one(:source_connection).dependent(:destroy) }
   it { is_expected.to have_many(:target_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
+
+  it { is_expected.to have_many(:source_issue_branches).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_issues) }
+
   it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribers) }
   it { is_expected.to have_many(:closures) }

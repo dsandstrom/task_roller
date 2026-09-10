@@ -48,6 +48,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 dependent: :destroy, inverse_of: :target
   has_many :duplicates, through: :target_connections, class_name: 'Task',
                         source: :source
+
+  has_many :source_issue_branches, class_name: 'IssueBranch',
+                                   foreign_key: :source_task_id,
+                                   dependent: :destroy,
+                                   inverse_of: :source_task
+  has_many :branch_issues, through: :source_issue_branches, class_name: "Issue",
+                           source: :source_task
+
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user
   has_many :closures, class_name: 'TaskClosure', dependent: :destroy

@@ -79,6 +79,12 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:target_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
+
+  it { is_expected.to have_many(:source_issue_branches).dependent(:destroy) }
+  it { is_expected.to have_one(:target_issue_branch).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_issues) }
+  it { is_expected.to have_one(:trunk_issue) }
+
   it { is_expected.to have_many(:notifications).dependent(:destroy) }
 
   # CLASS

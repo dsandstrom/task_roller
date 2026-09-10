@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class IssueConnection < ApplicationRecord
   belongs_to :user
   # current issue
