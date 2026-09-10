@@ -34,12 +34,14 @@ class IssuesController < ApplicationController
 
     @issue = build_issue
     @project = @issue.project if @issue.project
+    @issue_branch = build_issue_branch
   end
 
   def edit; end
 
   def create
     if @issue.save
+      create_issue_branch
       @issue.subscribe_user
       IssueSubscriptionsJob.perform_later(@issue, send_new: true)
       @issue.update_status(current_user)
@@ -73,6 +75,10 @@ class IssuesController < ApplicationController
 
     def issue_update_params
       params.expect(issue: %i[summary description issue_type_id])
+    end
+
+    def issue_branch_params
+      params.expect(issue_branch: %i[source_issue_id source_task_id])
     end
 
     def set_new_form_options
@@ -126,6 +132,14 @@ class IssuesController < ApplicationController
                                 project_id: params[:project_id])
     end
 
+    def build_issue_branch
+      if params[:source_issue_id].present?
+        IssueBranch.new(source_issue_id: params[:source_issue_id])
+      elsif params[:source_task_id].present?
+        IssueBranch.new(source_task_id: params[:source_task_id])
+      end
+    end
+
     def build_project_options
       Category.all_visible.accessible_by(current_ability).map do |category|
         projects = category.projects.all_visible
@@ -145,8 +159,19 @@ class IssuesController < ApplicationController
                              .order(created_at: :asc)
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
-      @source_connection = @issue.source_connection
+      @trunk_issue = @issue.trunk_issue
+      @branch_issues = @issue.branch_issues
       @subscription = @issue.issue_subscriptions
                             .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def create_issue_branch
+      return unless params[:issue_branch]
+
+      IssueBranch.create(
+        target: @issue,
+        source_issue_id: issue_branch_params[:source_issue_id],
+        user: current_user
+      )
     end
 end
