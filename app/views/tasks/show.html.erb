@@ -80,6 +80,27 @@
         </section>
       <% end %>
 
+      <section class="branch-issues">
+        <h4 class="issue-column-title">Branches</h4>
+
+        <% if @branch_issues.any? %>
+          <%= render partial: 'shared/issue',
+                     collection: @branch_issues,
+                     locals: { show_status: false } %>
+        <% end %>
+
+        <p>
+          <% if can?(:create, new_issue(@task.project)) %>
+            <%= link_to "Add similar issue",
+                        new_issue_path(project_id: @task.project.to_param,
+                                       source_task_id: @task.to_param) %>
+          <% elsif can?(:create, Issue) %>
+            <%= link_to "Add similar issue",
+                        new_issue_path(source_task_id: @task.to_param) %>
+          <% end %>
+        </p>
+      </section>
+
       <h4 class="task-column-title">History</h4>
       <section class="task-history-wrapper">
         <dl class="task-history">

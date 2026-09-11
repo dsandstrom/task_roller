@@ -128,22 +128,37 @@ class IssuesController < ApplicationController
     end
 
     def build_issue
-      attrs = build_issue_from_trunk_issue
+      attrs = build_issue_from_trunk
       attrs.merge!(issue_type_id: @issue_types.first.id,
                    project_id: params[:project_id])
       current_user.issues.build(attrs)
     end
 
+    def build_issue_from_trunk
+      if @trunk_issue
+        build_issue_from_trunk_issue
+      elsif @trunk_task
+        build_issue_from_trunk_task
+      else
+        {}
+      end
+    end
+
+    def build_issue_from_trunk_task
+      {
+        summary: "#{@trunk_task.summary} (Copied from Task##{@trunk_task.id})",
+        description: "> Copied from Task##{@trunk_task.id}\n\n" \
+                     "#{@trunk_task.summary}"
+      }
+    end
+
     def build_issue_from_trunk_issue
-      attrs = {}
-      return attrs unless @trunk_issue
-
-      attrs[:summary] =
-        "#{@trunk_issue.summary} (Copied from Issue##{@trunk_issue.id})"
-      attrs[:description] =
-        "> Copied from Issue##{@trunk_issue.id}\n\n#{@trunk_issue.summary} "
-
-      attrs
+      {
+        summary: "#{@trunk_issue.summary} " \
+                 "(Copied from Issue##{@trunk_issue.id})",
+        description: "> Copied from Issue##{@trunk_issue.id}\n\n" \
+                     "#{@trunk_issue.summary}"
+      }
     end
 
     def build_issue_branch
@@ -151,7 +166,7 @@ class IssuesController < ApplicationController
         @trunk_issue = Issue.find(params.expect(:source_issue_id))
         IssueBranch.new(source_issue: @trunk_issue)
       elsif params[:source_task_id].present?
-        @trunk_task = Issue.find(params.expect(:source_task_id))
+        @trunk_task = Task.find(params.expect(:source_task_id))
         IssueBranch.new(source_task: @trunk_task)
       end
     end
@@ -192,6 +207,7 @@ class IssuesController < ApplicationController
       IssueBranch.create(
         target: @issue,
         source_issue_id: issue_branch_params[:source_issue_id],
+        source_task_id: issue_branch_params[:source_task_id],
         user: current_user
       )
     end

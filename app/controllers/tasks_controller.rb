@@ -106,21 +106,26 @@ class TasksController < ApplicationController
     end
 
     def set_task_resources
-      @source_connection = @task.source_connection
-      @duplicates = @task.duplicates
-      @siblings = @task.siblings
+      set_subscription
+      set_connections
       @comments = @task.comments.preload(:user)
       @notifications = @task.notifications.where(user_id: current_user_id)
                             .where(event: %w[new status])
                             .order(created_at: :desc)
       @progressions = @task.progressions.unfinished
                            .where(user_id: current_user_id)
-      set_subscription
     end
 
     def set_subscription
       @subscription = @task.task_subscriptions
                            .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def set_connections
+      @source_connection = @task.source_connection
+      @duplicates = @task.duplicates
+      @siblings = @task.siblings
+      @branch_issues = @task.branch_issues
     end
 
     def create_html

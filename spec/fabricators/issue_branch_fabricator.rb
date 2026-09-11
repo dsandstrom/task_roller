@@ -1,17 +1,21 @@
 Fabricator(:issue_branch, aliases: [:issue_branch_from_issue]) do
   user
 
-  source_issue do |attrs|
-    if attrs[:target]&.project
-      Fabricate(:issue, project: attrs[:target].project)
+  target do |attrs|
+    if attrs[:source_issue]&.project
+      Fabricate(:issue, project: attrs[:source_issue].project)
+    elsif attrs[:source_task]&.project
+      Fabricate(:issue, project: attrs[:source_task].project)
     else
       Fabricate(:issue)
     end
   end
 
-  target do |attrs|
-    if attrs[:source]&.project
-      Fabricate(:issue, project: attrs[:source].project)
+  source_issue do |attrs|
+    next if attrs[:source_task]
+
+    if attrs[:target]&.project
+      Fabricate(:issue, project: attrs[:target].project)
     else
       Fabricate(:issue)
     end

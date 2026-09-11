@@ -34,7 +34,6 @@ RSpec.describe IssueBranch, type: :model do
 
       describe "when source_issue" do
         it "should be valid" do
-          Fabricate(:issue_branch, target: source_issue)
           subject.source_issue_id = Fabricate(:issue).id
           is_expected.to be_valid
         end

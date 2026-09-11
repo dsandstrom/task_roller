@@ -15,9 +15,7 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   let(:invalid_attributes) { { summary: "" } }
-
   let(:valid_branch_attributes) { { source_issue_id: source_issue.to_param } }
-
   let(:invalid_branch_attributes) { { source_issue_id: "" } }
 
   describe "GET #index" do

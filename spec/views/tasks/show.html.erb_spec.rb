@@ -32,6 +32,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:user, task.user)
       assign(:siblings, nil)
       assign(:project, project)
+      assign(:branch_issues, [])
     end
 
     context "when project" do
@@ -87,6 +88,13 @@ RSpec.describe "tasks/show", type: :view do
       it "renders move task link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_task_move_path(@task))
+      end
+
+      it "renders issue branch link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(project_id: project.id,
+                                                  source_task_id: @task.id))
       end
     end
 
@@ -659,6 +667,22 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_task: task)
+        @task = assign(:task, task)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
     context "when task project is invisible" do
       let(:project) { Fabricate(:invisible_project, category: category) }
       let(:form_url) { new_task_task_comment_path(@task) }
@@ -692,6 +716,12 @@ RSpec.describe "tasks/show", type: :view do
         render template: subject, layout: "layouts/application"
         expect(rendered)
           .to have_link(nil, href: new_task_connection_path(@task))
+      end
+
+      it "renders issue branch link without a project" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(source_task_id: @task.id))
       end
 
       context "and assigned to a user" do
@@ -916,6 +946,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:subscription, task_subscription)
       assign(:user, task.user)
       assign(:siblings, nil)
+      assign(:branch_issues, [])
     end
 
     context "when task is open" do
@@ -963,6 +994,13 @@ RSpec.describe "tasks/show", type: :view do
       it "renders move task link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_task_move_path(@task))
+      end
+
+      it "renders issue branch link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(project_id: project.id,
+                                                  source_task_id: @task.id))
       end
     end
 
@@ -1327,6 +1365,22 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_task: task)
+        @task = assign(:task, task)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
     context "when task project is invisible" do
       let(:project) { Fabricate(:invisible_project, category: category) }
       let(:task) { Fabricate(:task, project: project, user: reviewer) }
@@ -1494,6 +1548,14 @@ RSpec.describe "tasks/show", type: :view do
           task_task_subscription_path(@task, @subscription)
           assert_select "form[data-turbo-method=?]", "delete", count: 0
         end
+      end
+
+      it "renders issue branch link without a project" do
+        @task = assign(:task, task)
+
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(source_task_id: @task.id))
       end
     end
 
@@ -1672,6 +1734,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:source_connection, Fabricate(:task_connection))
       assign(:subscription, task_subscription)
       assign(:siblings, nil)
+      assign(:branch_issues, [])
     end
 
     context "when task is open" do
@@ -1725,6 +1788,13 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render move task link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).not_to have_link(nil, href: new_task_move_path(@task))
+      end
+
+      it "renders issue branch link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(project_id: project.id,
+                                                  source_task_id: @task.id))
       end
     end
 
@@ -2200,6 +2270,22 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_task: task)
+        @task = assign(:task, task)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
     context "when their task" do
       let(:task) { Fabricate(:task, user: current_user) }
 
@@ -2230,6 +2316,7 @@ RSpec.describe "tasks/show", type: :view do
       assign(:subscription, task_subscription)
       assign(:user, task.user)
       assign(:siblings, nil)
+      assign(:branch_issues, [])
     end
 
     context "when task is open" do
@@ -2286,6 +2373,13 @@ RSpec.describe "tasks/show", type: :view do
       it "doesn't render assigned to me tag" do
         render template: subject, layout: "layouts/application"
         assert_select ".task-assign-tag", count: 0
+      end
+
+      it "renders issue branch link" do
+        render
+        expect(rendered)
+          .to have_link(nil, href: new_issue_path(project_id: project.id,
+                                                  source_task_id: @task.id))
       end
     end
 
