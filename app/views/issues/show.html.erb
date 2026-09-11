@@ -72,13 +72,40 @@
 
       <% if @duplicates.any? %>
         <section class="issue-connections">
-          <h4 class="issue-column-title">Similar Issues</h4>
+          <h4 class="issue-column-title">Duplicates</h4>
 
           <%= render partial: 'shared/issue',
                      collection: @duplicates,
                      locals: { show_status: false } %>
         </section>
       <% end %>
+
+      <% if @trunk_issue %>
+        <section class="trunk-issue">
+          <h4 class="issue-column-title">Branched From</h4>
+          <%= render 'shared/issue', issue: @trunk_issue, show_status: false %>
+        </section>
+      <% end %>
+
+      <section class="branch-issues">
+        <h4 class="issue-column-title">Branches</h4>
+
+        <% if @branch_issues.any? %>
+          <%= render partial: 'shared/issue',
+                     collection: @branch_issues,
+                     locals: { show_status: false } %>
+        <% end %>
+
+        <p>
+          <% if can?(:create, new_issue(@project)) %>
+            <%= link_to "Add similar issue",
+                        new_issue_path(project_id: @project.to_param, source_issue_id: @issue.to_param) %>
+          <% elsif can?(:create, Issue) %>
+            <%= link_to "Add similar issue",
+                        new_issue_path(source_issue_id: @issue.to_param) %>
+          <% end %>
+        </p>
+      </section>
 
       <section class="issue-history">
         <h4 class="issue-column-title">History</h4>

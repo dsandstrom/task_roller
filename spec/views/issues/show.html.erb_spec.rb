@@ -25,6 +25,8 @@ RSpec.describe "issues/show", type: :view do
       assign(:subscription, issue_subscription)
       assign(:user, issue.user)
       assign(:project, project)
+      assign(:trunk_issue, nil)
+      assign(:branch_issues, [])
     end
 
     context "when project" do
@@ -75,6 +77,13 @@ RSpec.describe "issues/show", type: :view do
       it "renders move issue link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_issue_move_path(@issue))
+      end
+
+      it "renders new issue branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
+        expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render issues's priority_level" do
@@ -445,6 +454,38 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when issue has a trunk_issue" do
+      let(:trunk_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+        @issue = assign(:issue, issue)
+        assign(:trunk_issue, trunk_issue)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+      end
+    end
+
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
     context "when issue project is internal" do
       let(:project) { Fabricate(:internal_project, category: category) }
       let(:issue) { Fabricate(:issue, project: project) }
@@ -579,6 +620,13 @@ RSpec.describe "issues/show", type: :view do
           render
           expect(rendered)
             .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
+        end
+
+        it "renders new issue branch link without a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
         end
       end
 
@@ -725,6 +773,8 @@ RSpec.describe "issues/show", type: :view do
       assign(:subscription, issue_subscription)
       assign(:notifications, [])
       assign(:user, issue.user)
+      assign(:trunk_issue, nil)
+      assign(:branch_issues, [])
     end
 
     context "when someone else's issue" do
@@ -773,6 +823,13 @@ RSpec.describe "issues/show", type: :view do
 
         url =
           new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new issue branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -831,6 +888,38 @@ RSpec.describe "issues/show", type: :view do
         duplicate = @target_connection.source
         url = issue_path(duplicate)
         expect(rendered).to have_link(nil, href: url)
+      end
+    end
+
+    context "when issue has a trunk_issue" do
+      let(:trunk_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+        @issue = assign(:issue, issue)
+        assign(:trunk_issue, trunk_issue)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+      end
+    end
+
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
       end
     end
 
@@ -1130,6 +1219,13 @@ RSpec.describe "issues/show", type: :view do
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
+
+        it "renders new issue branch link with a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
       end
 
       context "and closed with a source_connection" do
@@ -1209,6 +1305,8 @@ RSpec.describe "issues/show", type: :view do
         assign(:subscription, issue_subscription)
         assign(:notifications, [])
         assign(:user, issue.user)
+        assign(:trunk_issue, nil)
+        assign(:branch_issues, [])
       end
 
       context "when their issue" do
@@ -1280,6 +1378,13 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: new_issue_move_path(@issue))
+        end
+
+        it "renders new issue branch link" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
         end
 
         context "is addressed" do
@@ -1517,6 +1622,38 @@ RSpec.describe "issues/show", type: :view do
           duplicate = @target_connection.source
           url = issue_path(duplicate)
           expect(rendered).to have_link(nil, href: url)
+        end
+      end
+
+      context "when issue has a trunk_issue" do
+        let(:trunk_issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+          @issue = assign(:issue, issue)
+          assign(:trunk_issue, trunk_issue)
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+        end
+      end
+
+      context "when issue has a branch_issue" do
+        let(:branch_issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+          @issue = assign(:issue, issue)
+          assign(:branch_issues, [branch_issue])
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".branch-issues #issue-#{branch_issue.id}"
         end
       end
 
