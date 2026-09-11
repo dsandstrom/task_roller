@@ -32,9 +32,9 @@ class IssuesController < ApplicationController
   def new
     authorize! :create, Issue
 
+    @issue_branch = build_issue_branch
     @issue = build_issue
     @project = @issue.project if @issue.project
-    @issue_branch = build_issue_branch
   end
 
   def edit; end
@@ -128,15 +128,31 @@ class IssuesController < ApplicationController
     end
 
     def build_issue
-      current_user.issues.build(issue_type_id: @issue_types.first.id,
-                                project_id: params[:project_id])
+      attrs = build_issue_from_trunk_issue
+      attrs.merge!(issue_type_id: @issue_types.first.id,
+                   project_id: params[:project_id])
+      current_user.issues.build(attrs)
+    end
+
+    def build_issue_from_trunk_issue
+      attrs = {}
+      return attrs unless @trunk_issue
+
+      attrs[:summary] =
+        "#{@trunk_issue.summary} (Copied from Issue##{@trunk_issue.id})"
+      attrs[:description] =
+        "> Copied from Issue##{@trunk_issue.id}\n\n#{@trunk_issue.summary} "
+
+      attrs = attrs
     end
 
     def build_issue_branch
       if params[:source_issue_id].present?
-        IssueBranch.new(source_issue_id: params[:source_issue_id])
+        @trunk_issue = Issue.find(params[:source_issue_id])
+        IssueBranch.new(source_issue: @trunk_issue)
       elsif params[:source_task_id].present?
-        IssueBranch.new(source_task_id: params[:source_task_id])
+        @trunk_task = Issue.find(params[:source_task_id])
+        IssueBranch.new(source_task: @trunk_task)
       end
     end
 
