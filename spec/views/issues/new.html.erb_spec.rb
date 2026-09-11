@@ -38,9 +38,12 @@ RSpec.describe "issues/new", type: :view do
       it "doesn't render form with hidden fields" do
         render
 
-        assert_select "input[type='hidden'][name=?]", "issue_branch[source_issue_id]", count: 0
-        assert_select "input[type='hidden'][name=?]", "issue_branch[source_task_id]", count: 0
-        assert_select "input[type='hidden'][name=?]", "source_issue_id", count: 0
+        assert_select "input[type='hidden'][name=?]",
+                      "issue_branch[source_issue_id]", count: 0
+        assert_select "input[type='hidden'][name=?]",
+                      "issue_branch[source_task_id]", count: 0
+        assert_select "input[type='hidden'][name=?]", "source_issue_id",
+                      count: 0
         assert_select "input[type='hidden'][name=?]", "source_task_id", count: 0
       end
     end
@@ -54,8 +57,10 @@ RSpec.describe "issues/new", type: :view do
         render
 
         assert_select "form[action=?][method=?]", url, "post" do
-          assert_select "input[type='hidden'][name=?]", "issue_branch[source_issue_id]"
-          assert_select "input[type='hidden'][name=?]", "issue_branch[source_task_id]"
+          assert_select "input[type='hidden'][name=?]",
+                        "issue_branch[source_issue_id]"
+          assert_select "input[type='hidden'][name=?]",
+                        "issue_branch[source_task_id]"
         end
       end
     end

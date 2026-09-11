@@ -143,15 +143,15 @@ class IssuesController < ApplicationController
       attrs[:description] =
         "> Copied from Issue##{@trunk_issue.id}\n\n#{@trunk_issue.summary} "
 
-      attrs = attrs
+      attrs
     end
 
     def build_issue_branch
       if params[:source_issue_id].present?
-        @trunk_issue = Issue.find(params[:source_issue_id])
+        @trunk_issue = Issue.find(params.expect(:source_issue_id))
         IssueBranch.new(source_issue: @trunk_issue)
       elsif params[:source_task_id].present?
-        @trunk_task = Issue.find(params[:source_task_id])
+        @trunk_task = Issue.find(params.expect(:source_task_id))
         IssueBranch.new(source_task: @trunk_task)
       end
     end
@@ -168,17 +168,22 @@ class IssuesController < ApplicationController
     end
 
     def set_issue_variables
+      set_issue_connection_variables
+
       @project = @issue.project
       @comments = @issue.comments.includes(:user)
       @notifications = @issue.notifications.where(user_id: current_user_id)
                              .where(event: %w[new status])
                              .order(created_at: :asc)
+      @subscription = @issue.issue_subscriptions
+                            .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def set_issue_connection_variables
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
       @trunk_issue = @issue.trunk_issue
       @branch_issues = @issue.branch_issues
-      @subscription = @issue.issue_subscriptions
-                            .find_or_initialize_by(user_id: current_user_id)
     end
 
     def create_issue_branch
