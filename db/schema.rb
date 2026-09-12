@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_170242) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_12_214038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,9 +43,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_170242) do
 
   create_table "issue_branches", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "issue_comment_id"
     t.integer "source_issue_id"
     t.integer "source_task_id"
     t.integer "target_id", null: false
+    t.integer "task_comment_id"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
   end
