@@ -26,6 +26,7 @@ RSpec.describe "issues/show", type: :view do
       assign(:user, issue.user)
       assign(:project, project)
       assign(:trunk_issue, nil)
+      assign(:trunk_task, nil)
       assign(:branch_issues, [])
     end
 
@@ -470,6 +471,22 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when issue has a trunk_task" do
+      let(:trunk_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+        @issue = assign(:issue, issue)
+        assign(:trunk_task, trunk_task)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-task #task-#{trunk_task.id}"
+      end
+    end
+
     context "when issue has a branch_issue" do
       let(:branch_issue) { Fabricate(:issue) }
 
@@ -904,6 +921,22 @@ RSpec.describe "issues/show", type: :view do
         render
 
         assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+      end
+    end
+
+    context "when issue has a trunk_task" do
+      let(:trunk_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+        @issue = assign(:issue, issue)
+        assign(:trunk_task, trunk_task)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-task #task-#{trunk_task.id}"
       end
     end
 
@@ -1638,6 +1671,22 @@ RSpec.describe "issues/show", type: :view do
           render
 
           assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+        end
+      end
+
+      context "when issue has a trunk_task" do
+        let(:trunk_task) { Fabricate(:task) }
+
+        before do
+          Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+          @issue = assign(:issue, issue)
+          assign(:trunk_task, trunk_task)
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".trunk-task #task-#{trunk_task.id}"
         end
       end
 

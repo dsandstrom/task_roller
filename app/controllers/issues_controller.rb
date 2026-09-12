@@ -198,6 +198,7 @@ class IssuesController < ApplicationController
       @source_connection = @issue.source_connection
       @duplicates = @issue.duplicates
       @trunk_issue = @issue.trunk_issue
+      @trunk_task = @issue.trunk_task
       @branch_issues = @issue.branch_issues
     end
 

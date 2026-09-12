@@ -83,7 +83,12 @@
       <% if @trunk_issue %>
         <section class="trunk-issue">
           <h4 class="issue-column-title">Branched From</h4>
-          <%= render 'shared/issue', issue: @trunk_issue, show_status: false %>
+          <%= render('shared/issue', issue: @trunk_issue, show_status: false) %>
+        </section>
+      <% elsif @trunk_task %>
+        <section class="trunk-task">
+          <h4 class="issue-column-title">Branched From</h4>
+          <%= render('shared/task', task: @trunk_task, show_status: false) %>
         </section>
       <% end %>
 

@@ -41,14 +41,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 foreign_key: :target_id, dependent: :destroy,
                                 inverse_of: :target
   has_one :target_task_branch, class_name: 'IssueBranch',
-                                foreign_key: :target_id, dependent: :destroy,
-                                inverse_of: :target
+                               foreign_key: :target_id, dependent: :destroy,
+                               inverse_of: :target
   has_many :branch_issues, through: :source_issue_branches,
                            class_name: 'Issue', source: :target
   has_one :trunk_issue, through: :target_issue_branch, class_name: 'Issue',
                         source: :source_issue
   has_one :trunk_task, through: :target_task_branch, class_name: 'Task',
-                        source: :source_task
+                       source: :source_task
   has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user
