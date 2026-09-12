@@ -5,7 +5,9 @@
   <% if issue_branch %>
     <%= fields_for issue_branch do |issue_branch_form| %>
       <%= issue_branch_form.hidden_field :source_issue_id %>
+      <%= issue_branch_form.hidden_field :issue_comment_id %>
       <%= issue_branch_form.hidden_field :source_task_id %>
+      <%= issue_branch_form.hidden_field :task_comment_id %>
     <% end %>
   <% end %>
 

@@ -22,7 +22,7 @@
                       class: 'comment-body' %>
     </main>
 
-    <% if can?(:update, comment) || can?(:destroy, comment) %>
+    <% if can?(:update, comment) || can?(:destroy, comment) || can?(:create, Issue) %>
       <footer>
         <p>
           <% if object.is_a?(Task) %>
@@ -37,6 +37,18 @@
                           method: :delete, class: 'destroy-link',
                           data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
             <% end %>
+            <% if can?(:create, new_issue(object.project)) %>
+              <%= link_to 'Copy to new issue',
+                          new_issue_path(project_id: object.project_id,
+                                         source_task_id: object.to_param,
+                                         task_comment_id: comment.to_param),
+                                         data: { turbo_frame: '_top' } %>
+            <% elsif can?(:create, Issue) %>
+              <%= link_to 'Copy to new issue',
+                          new_issue_path(source_task_id: object.to_param,
+                                         task_comment_id: comment.to_param),
+                                         data: { turbo_frame: '_top' } %>
+            <% end %>
           <% else %>
             <% if can?(:update, comment) %>
               <%= link_to 'edit',
@@ -48,6 +60,18 @@
                           issue_issue_comment_path(object, comment),
                           method: :delete, class: 'destroy-link',
                           data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
+            <% end %>
+            <% if can?(:create, new_issue(object.project)) %>
+              <%= link_to 'Copy to new issue',
+                          new_issue_path(project_id: object.project_id,
+                                         source_issue_id: object.to_param,
+                                         issue_comment_id: comment.to_param),
+                                         data: { turbo_frame: '_top' } %>
+            <% elsif can?(:create, Issue) %>
+              <%= link_to 'Copy to new issue',
+                          new_issue_path(source_issue_id: object.to_param,
+                                         issue_comment_id: comment.to_param),
+                                         data: { turbo_frame: '_top' } %>
             <% end %>
           <% end %>
         </p>

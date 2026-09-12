@@ -651,6 +651,28 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{first_url}']"
         assert_select "a[data-method='delete'][href='#{second_url}']"
       end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @second_comment.id
+          )
+        )
+      end
     end
 
     context "when task has a sibling" do
@@ -799,6 +821,52 @@ RSpec.describe "tasks/show", type: :view do
           render template: subject, layout: "layouts/application"
           url = task_connection_path(@source_connection)
           assert_select "a[data-method=\"delete\"][href=\"#{url}\"]"
+        end
+      end
+
+      context "when comments" do
+        before do
+          @task = assign(:task, task)
+          @first_comment = Fabricate(:task_comment, task: @task)
+          @second_comment = Fabricate(:task_comment, task: @task, user: admin)
+          @comments = assign(:comments, [@first_comment, @second_comment])
+        end
+
+        it "renders a list of comments" do
+          render
+
+          assert_select "#comment-#{@first_comment.id}"
+          assert_select "#comment-#{@second_comment.id}"
+
+          first_url = task_task_comment_path(@task, @first_comment)
+          first_edit_url = edit_task_task_comment_path(@task, @first_comment)
+          second_url = task_task_comment_path(@task, @second_comment)
+          second_edit_url = edit_task_task_comment_path(@task, @second_comment)
+          expect(rendered).to have_link(nil, href: first_edit_url)
+          expect(rendered).to have_link(nil, href: second_edit_url)
+
+          assert_select "a[data-method='delete'][href='#{first_url}']"
+          assert_select "a[data-method='delete'][href='#{second_url}']"
+        end
+
+        it "renders a new issue from comment links" do
+          render
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              source_task_id: @task.id,
+              task_comment_id: @first_comment.id
+            )
+          )
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              source_task_id: @task.id,
+              task_comment_id: @second_comment.id
+            )
+          )
         end
       end
     end
@@ -1208,6 +1276,28 @@ RSpec.describe "tasks/show", type: :view do
 
         assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
+      end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @second_comment.id
+          )
+        )
       end
     end
 
@@ -2268,6 +2358,28 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
       end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @second_comment.id
+          )
+        )
+      end
     end
 
     context "when issue has a branch_issue" do
@@ -2593,6 +2705,28 @@ RSpec.describe "tasks/show", type: :view do
 
         assert_select "a[data-method='delete'][href='#{first_url}']", count: 0
         assert_select "a[data-method='delete'][href='#{second_url}']", count: 0
+      end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_task_id: @task.id,
+            task_comment_id: @second_comment.id
+          )
+        )
       end
     end
 

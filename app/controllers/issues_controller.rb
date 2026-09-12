@@ -78,7 +78,8 @@ class IssuesController < ApplicationController
     end
 
     def issue_branch_params
-      params.expect(issue_branch: %i[source_issue_id source_task_id])
+      params.expect(issue_branch: %i[source_issue_id source_task_id
+                                     issue_comment_id task_comment_id])
     end
 
     def set_new_form_options
@@ -129,9 +130,10 @@ class IssuesController < ApplicationController
 
     def build_issue
       attrs = build_issue_from_trunk
-      attrs.merge!(issue_type_id: @issue_types.first.id,
-                   project_id: params[:project_id])
-      current_user.issues.build(attrs)
+      current_user.issues.build(
+        attrs.merge(issue_type_id: @issue_types.first.id,
+                    project_id: params[:project_id])
+      )
     end
 
     def build_issue_from_trunk
@@ -145,29 +147,50 @@ class IssuesController < ApplicationController
     end
 
     def build_issue_from_trunk_task
-      {
-        summary: "#{@trunk_task.summary} (Copied from Task##{@trunk_task.id})",
-        description: "> Copied from Task##{@trunk_task.id}\n\n" \
-                     "#{@trunk_task.summary}"
-      }
+      attrs = { summary: "#{@trunk_task.summary} " \
+                         "(Copied from Task##{@trunk_task.id})" }
+
+      attrs[:description] =
+        if @issue_branch.task_comment
+          "(Copied from Comment by #{@issue_branch.task_comment.user.name} " \
+            "in Task##{@trunk_task.id})\n\n---\n\n" \
+            "#{@issue_branch.task_comment.body}"
+        else
+          "(Copied from Task##{@trunk_task.id})\n\n---\n\n" \
+            "#{@trunk_task.summary}"
+        end
+      attrs[:description] += "\n\n---"
+
+      attrs
     end
 
     def build_issue_from_trunk_issue
-      {
-        summary: "#{@trunk_issue.summary} " \
-                 "(Copied from Issue##{@trunk_issue.id})",
-        description: "> Copied from Issue##{@trunk_issue.id}\n\n" \
-                     "#{@trunk_issue.summary}"
-      }
+      attrs = { summary: "#{@trunk_issue.summary} " \
+                         "(Copied from Issue##{@trunk_issue.id})" }
+
+      attrs[:description] =
+        if @issue_branch.issue_comment
+          '(Copied from Comment by ' \
+            "#{@issue_branch.issue_comment.user&.name} " \
+            "in Issue##{@trunk_issue.id})\n\n---\n\n" \
+            "#{@issue_branch.issue_comment.body}"
+        else
+          "(Copied from Issue##{@trunk_issue.id})\n\n---\n\n" \
+            "#{@trunk_issue.summary}"
+        end
+      attrs[:description] += "\n\n---"
+      attrs
     end
 
     def build_issue_branch
       if params[:source_issue_id].present?
         @trunk_issue = Issue.find(params.expect(:source_issue_id))
-        IssueBranch.new(source_issue: @trunk_issue)
+        IssueBranch.new(source_issue: @trunk_issue,
+                        issue_comment_id: params[:issue_comment_id])
       elsif params[:source_task_id].present?
         @trunk_task = Task.find(params.expect(:source_task_id))
-        IssueBranch.new(source_task: @trunk_task)
+        IssueBranch.new(source_task: @trunk_task,
+                        task_comment_id: params[:task_comment_id])
       end
     end
 
@@ -209,6 +232,8 @@ class IssuesController < ApplicationController
         target: @issue,
         source_issue_id: issue_branch_params[:source_issue_id],
         source_task_id: issue_branch_params[:source_task_id],
+        issue_comment_id: issue_branch_params[:issue_comment_id],
+        task_comment_id: issue_branch_params[:task_comment_id],
         user: current_user
       )
     end
