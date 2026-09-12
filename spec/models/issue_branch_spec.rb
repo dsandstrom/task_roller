@@ -17,9 +17,13 @@ RSpec.describe IssueBranch, type: :model do
   it { is_expected.to respond_to(:source_issue_id) }
   it { is_expected.to respond_to(:target_id) }
   it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:issue_comment_id) }
+  it { is_expected.to respond_to(:task_comment_id) }
 
   it { is_expected.to belong_to(:source_issue).optional }
   it { is_expected.to belong_to(:source_task).optional }
+  it { is_expected.to belong_to(:issue_comment).optional }
+  it { is_expected.to belong_to(:task_comment).optional }
   it { is_expected.to belong_to(:target).required }
   it { is_expected.to belong_to(:user).required }
 

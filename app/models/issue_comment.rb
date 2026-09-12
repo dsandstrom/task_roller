@@ -4,6 +4,8 @@ class IssueComment < ApplicationRecord
   belongs_to :issue, inverse_of: :comments
   belongs_to :user
   has_many :notifications, class_name: 'IssueNotification', dependent: :destroy
+  has_many :issue_branches, class_name: 'IssueBranch', dependent: :nullify,
+                            inverse_of: :issue_comment
 
   default_scope { order(created_at: :asc) }
 
