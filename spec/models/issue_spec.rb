@@ -87,6 +87,9 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_one(:trunk_issue) }
   it { is_expected.to have_one(:trunk_task) }
 
+  it { is_expected.to have_many(:source_task_branches).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_tasks) }
+
   it { is_expected.to have_many(:notifications).dependent(:destroy) }
 
   # CLASS

@@ -23,6 +23,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                       dependent: :destroy, inverse_of: :issue
   delegate :category, to: :project
   has_many :resolutions, dependent: :destroy
+
   has_one :source_connection, class_name: 'IssueConnection',
                               foreign_key: :source_id, dependent: :destroy,
                               inverse_of: :source
@@ -33,6 +34,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 inverse_of: :target
   has_many :duplicates, through: :target_connections, class_name: 'Issue',
                         source: :source
+
   has_many :source_issue_branches, class_name: 'IssueBranch',
                                    foreign_key: :source_issue_id,
                                    dependent: :destroy,
@@ -49,6 +51,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
                         source: :source_issue
   has_one :trunk_task, through: :target_task_branch, class_name: 'Task',
                        source: :source_task
+
+  has_many :source_task_branches, class_name: 'TaskBranch',
+                                  foreign_key: :source_issue_id,
+                                  dependent: :destroy,
+                                  inverse_of: :source_issue
+  has_many :branch_tasks, through: :source_task_branches,
+                          class_name: 'Task', source: :target
+
   has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user

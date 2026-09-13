@@ -1,18 +1,18 @@
 require "rails_helper"
 
-RSpec.describe IssueBranch, type: :model do
+RSpec.describe TaskBranch, type: :model do
   let(:project) { Fabricate(:project) }
-  let(:source_issue) { Fabricate(:issue, project: project) }
-  let(:target) { Fabricate(:issue, project: project) }
+  let(:source_task) { Fabricate(:task, project: project) }
+  let(:target) { Fabricate(:task, project: project) }
   let(:user) { Fabricate(:user_reviewer) }
 
   before do
-    @issue_branch = described_class.new(source_issue_id: source_issue.id,
-                                        target_id: target.id,
-                                        user_id: user.id)
+    @task_branch = described_class.new(source_task_id: source_task.id,
+                                       target_id: target.id,
+                                       user_id: user.id)
   end
 
-  subject { @issue_branch }
+  subject { @task_branch }
 
   it { is_expected.to respond_to(:source_issue_id) }
   it { is_expected.to respond_to(:source_task_id) }
@@ -69,12 +69,12 @@ RSpec.describe IssueBranch, type: :model do
 
   describe "#new_target_attrs" do
     context "when no source" do
-      let(:issue_branch) do
-        Fabricate.build(:issue_branch, source_issue: nil, source_task: nil)
+      let(:task_branch) do
+        Fabricate.build(:task_branch, source_issue: nil, source_task: nil)
       end
 
       it "returns nil" do
-        expect(issue_branch.new_target_attrs).to eq({})
+        expect(task_branch.new_target_attrs).to eq({})
       end
     end
 
@@ -84,8 +84,8 @@ RSpec.describe IssueBranch, type: :model do
       let(:task_comment) { Fabricate(:task_comment) }
 
       context "without an issue_comment" do
-        let(:issue_branch) do
-          Fabricate(:issue_branch_from_issue, source_issue: source_issue)
+        let(:task_branch) do
+          Fabricate(:task_branch_from_issue, source_issue: source_issue)
         end
 
         let(:summary) do
@@ -98,15 +98,15 @@ RSpec.describe IssueBranch, type: :model do
         end
 
         it "returns summary and description" do
-          expect(issue_branch.new_target_attrs)
+          expect(task_branch.new_target_attrs)
             .to eq({ summary: summary, description: description })
         end
       end
 
       context "with issue_comment" do
-        let(:issue_branch) do
-          Fabricate(:issue_branch_from_issue, source_issue: source_issue,
-                                              issue_comment: issue_comment)
+        let(:task_branch) do
+          Fabricate(:task_branch_from_issue, source_issue: source_issue,
+                                             issue_comment: issue_comment)
         end
 
         let(:summary) do
@@ -120,15 +120,15 @@ RSpec.describe IssueBranch, type: :model do
         end
 
         it "returns summary and description" do
-          expect(issue_branch.new_target_attrs)
+          expect(task_branch.new_target_attrs)
             .to eq({ summary: summary, description: description })
         end
       end
 
       context "with task_comment" do
-        let(:issue_branch) do
-          Fabricate(:issue_branch_from_issue, source_issue: source_issue,
-                                              task_comment: task_comment)
+        let(:task_branch) do
+          Fabricate(:task_branch_from_issue, source_issue: source_issue,
+                                             task_comment: task_comment)
         end
 
         let(:summary) do
@@ -141,7 +141,7 @@ RSpec.describe IssueBranch, type: :model do
         end
 
         it "returns summary and description" do
-          expect(issue_branch.new_target_attrs)
+          expect(task_branch.new_target_attrs)
             .to eq({ summary: summary, description: description })
         end
       end
@@ -154,7 +154,7 @@ RSpec.describe IssueBranch, type: :model do
 
       context "without an task_comment" do
         let(:task_branch) do
-          Fabricate(:issue_branch_from_task, source_task: source_task)
+          Fabricate(:task_branch_from_task, source_task: source_task)
         end
 
         let(:summary) do
@@ -174,8 +174,8 @@ RSpec.describe IssueBranch, type: :model do
 
       context "with task_comment" do
         let(:task_branch) do
-          Fabricate(:issue_branch_from_task, source_task: source_task,
-                                             task_comment: task_comment)
+          Fabricate(:task_branch_from_task, source_task: source_task,
+                                            task_comment: task_comment)
         end
 
         let(:summary) do
@@ -196,8 +196,8 @@ RSpec.describe IssueBranch, type: :model do
 
       context "with issue_comment" do
         let(:task_branch) do
-          Fabricate(:issue_branch_from_task, source_task: source_task,
-                                             issue_comment: issue_comment)
+          Fabricate(:task_branch_from_task, source_task: source_task,
+                                            issue_comment: issue_comment)
         end
 
         let(:summary) do

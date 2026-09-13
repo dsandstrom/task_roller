@@ -6,6 +6,8 @@ class TaskComment < ApplicationRecord
   has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
   has_many :issue_branches, class_name: 'IssueBranch', dependent: :nullify,
                             inverse_of: :task_comment
+  has_many :task_branches, class_name: 'TaskBranch', dependent: :nullify,
+                           inverse_of: :task_comment
 
   default_scope { order(created_at: :asc) }
 

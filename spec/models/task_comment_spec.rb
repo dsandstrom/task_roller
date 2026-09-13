@@ -24,6 +24,7 @@ RSpec.describe TaskComment, type: :model do
   it { is_expected.to belong_to(:user).required }
   it { is_expected.to have_many(:notifications) }
   it { is_expected.to have_many(:issue_branches) }
+  it { is_expected.to have_many(:task_branches) }
 
   describe "#default_scope" do
     it "orders by created_at asc" do
