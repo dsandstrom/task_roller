@@ -129,69 +129,31 @@ class IssuesController < ApplicationController
     end
 
     def build_issue
-      attrs = build_issue_from_trunk
+      attrs = @issue_branch&.new_target_attrs || {}
       current_user.issues.build(
         attrs.merge(issue_type_id: @issue_types.first.id,
                     project_id: params[:project_id])
       )
     end
 
-    def build_issue_from_trunk
-      if @trunk_issue
-        build_issue_from_trunk_issue
-      elsif @trunk_task
-        build_issue_from_trunk_task
-      else
-        {}
-      end
-    end
-
-    def build_issue_from_trunk_task
-      attrs = { summary: "#{@trunk_task.summary} " \
-                         "(Copied from Task##{@trunk_task.id})" }
-
-      attrs[:description] =
-        if @issue_branch.task_comment
-          "(Copied from Comment by #{@issue_branch.task_comment.user.name} " \
-            "in Task##{@trunk_task.id})\n\n---\n\n" \
-            "#{@issue_branch.task_comment.body}"
-        else
-          "(Copied from Task##{@trunk_task.id})\n\n---\n\n" \
-            "#{@trunk_task.summary}"
-        end
-      attrs[:description] += "\n\n---"
-
-      attrs
-    end
-
-    def build_issue_from_trunk_issue
-      attrs = { summary: "#{@trunk_issue.summary} " \
-                         "(Copied from Issue##{@trunk_issue.id})" }
-
-      attrs[:description] =
-        if @issue_branch.issue_comment
-          '(Copied from Comment by ' \
-            "#{@issue_branch.issue_comment.user&.name} " \
-            "in Issue##{@trunk_issue.id})\n\n---\n\n" \
-            "#{@issue_branch.issue_comment.body}"
-        else
-          "(Copied from Issue##{@trunk_issue.id})\n\n---\n\n" \
-            "#{@trunk_issue.summary}"
-        end
-      attrs[:description] += "\n\n---"
-      attrs
-    end
-
     def build_issue_branch
       if params[:source_issue_id].present?
-        @trunk_issue = Issue.find(params.expect(:source_issue_id))
-        IssueBranch.new(source_issue: @trunk_issue,
-                        issue_comment_id: params[:issue_comment_id])
+        build_issue_branch_from_issue
       elsif params[:source_task_id].present?
-        @trunk_task = Task.find(params.expect(:source_task_id))
-        IssueBranch.new(source_task: @trunk_task,
-                        task_comment_id: params[:task_comment_id])
+        build_issue_branch_from_task
       end
+    end
+
+    def build_issue_branch_from_issue
+      @trunk_issue = Issue.find(params.expect(:source_issue_id))
+      IssueBranch.new(source_issue: @trunk_issue,
+                      issue_comment_id: params[:issue_comment_id])
+    end
+
+    def build_issue_branch_from_task
+      @trunk_task = Task.find(params.expect(:source_task_id))
+      IssueBranch.new(source_task: @trunk_task,
+                      task_comment_id: params[:task_comment_id])
     end
 
     def build_project_options

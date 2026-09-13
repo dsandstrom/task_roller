@@ -65,4 +65,154 @@ RSpec.describe IssueBranch, type: :model do
       end
     end
   end
+
+  describe "#new_target_attrs" do
+    context "when no source" do
+      let(:issue_branch) do
+        Fabricate.build(:issue_branch, source_issue: nil, source_task: nil)
+      end
+
+      it "returns nil" do
+        expect(issue_branch.new_target_attrs).to eq({})
+      end
+    end
+
+    context "when source_issue" do
+      let(:source_issue) { Fabricate(:issue) }
+      let(:issue_comment) { Fabricate(:issue_comment, issue: source_issue) }
+      let(:task_comment) { Fabricate(:task_comment) }
+
+      context "without an issue_comment" do
+        let(:issue_branch) do
+          Fabricate(:issue_branch_from_issue, source_issue: source_issue)
+        end
+
+        let(:summary) do
+          "#{source_issue.summary} (Copied from Issue##{source_issue.id})"
+        end
+
+        let(:description) do
+          "(Copied from Issue##{source_issue.id})\n\n---\n\n" \
+            "#{source_issue.description}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(issue_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+
+      context "with issue_comment" do
+        let(:issue_branch) do
+          Fabricate(:issue_branch_from_issue, source_issue: source_issue,
+                                              issue_comment: issue_comment)
+        end
+
+        let(:summary) do
+          "#{source_issue.summary} (Copied from Issue##{source_issue.id})"
+        end
+
+        let(:description) do
+          "(Copied from comment by #{issue_comment.user.name} in " \
+            "Issue##{source_issue.id})\n\n---\n\n" \
+            "#{issue_comment.body}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(issue_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+
+      context "with task_comment" do
+        let(:issue_branch) do
+          Fabricate(:issue_branch_from_issue, source_issue: source_issue,
+                                              task_comment: task_comment)
+        end
+
+        let(:summary) do
+          "#{source_issue.summary} (Copied from Issue##{source_issue.id})"
+        end
+
+        let(:description) do
+          "(Copied from Issue##{source_issue.id})\n\n---\n\n" \
+            "#{source_issue.description}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(issue_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+    end
+
+    context "when source_task" do
+      let(:source_task) { Fabricate(:task) }
+      let(:task_comment) { Fabricate(:task_comment, task: source_task) }
+      let(:issue_comment) { Fabricate(:issue_comment) }
+
+      context "without an task_comment" do
+        let(:task_branch) do
+          Fabricate(:issue_branch_from_task, source_task: source_task)
+        end
+
+        let(:summary) do
+          "#{source_task.summary} (Copied from Task##{source_task.id})"
+        end
+
+        let(:description) do
+          "(Copied from Task##{source_task.id})\n\n---\n\n" \
+            "#{source_task.description}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(task_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+
+      context "with task_comment" do
+        let(:task_branch) do
+          Fabricate(:issue_branch_from_task, source_task: source_task,
+                                             task_comment: task_comment)
+        end
+
+        let(:summary) do
+          "#{source_task.summary} (Copied from Task##{source_task.id})"
+        end
+
+        let(:description) do
+          "(Copied from comment by #{task_comment.user.name} in " \
+            "Task##{source_task.id})\n\n---\n\n" \
+            "#{task_comment.body}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(task_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+
+      context "with issue_comment" do
+        let(:task_branch) do
+          Fabricate(:issue_branch_from_task, source_task: source_task,
+                                             issue_comment: issue_comment)
+        end
+
+        let(:summary) do
+          "#{source_task.summary} (Copied from Task##{source_task.id})"
+        end
+
+        let(:description) do
+          "(Copied from Task##{source_task.id})\n\n---\n\n" \
+            "#{source_task.description}\n\n---\n"
+        end
+
+        it "returns summary and description" do
+          expect(task_branch.new_target_attrs)
+            .to eq({ summary: summary, description: description })
+        end
+      end
+    end
+  end
 end

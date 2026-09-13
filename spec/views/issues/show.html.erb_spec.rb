@@ -799,7 +799,8 @@ RSpec.describe "issues/show", type: :view do
           first_url = issue_issue_comment_path(@issue, @first_comment)
           first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
           second_url = issue_issue_comment_path(@issue, @second_comment)
-          second_edit_url = edit_issue_issue_comment_path(@issue, @second_comment)
+          second_edit_url =
+            edit_issue_issue_comment_path(@issue, @second_comment)
           expect(rendered).to have_link(nil, href: first_edit_url)
           expect(rendered).to have_link(nil, href: second_edit_url)
 
