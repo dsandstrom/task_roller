@@ -68,5 +68,42 @@ RSpec.describe "tasks/new", type: :view do
         end
       end
     end
+
+    context "when task_branch unassigned" do
+      it "doesn't render form with task_branch fields" do
+        render
+
+        assert_select "input[name=?]", "task_branch[source_issue_id]", count: 0
+        assert_select "input[name=?]", "task_branch[source_task_id]", count: 0
+        assert_select "input[name=?]", "source_issue_id", count: 0
+        assert_select "input[name=?]", "source_task_id", count: 0
+        assert_select "input[name=?]", "task_branch[issue_comment_id]",
+                      count: 0
+        assert_select "input[name=?]", "task_branch[task_comment_id]", count: 0
+        assert_select "input[name=?]", "issue_comment_id", count: 0
+        assert_select "input[name=?]", "task_comment_id", count: 0
+      end
+    end
+
+    context "when task_branch assigned" do
+      before do
+        assign(:task_branch, Fabricate.build(:task_branch))
+      end
+
+      it "renders form with task_branch fields" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "post" do
+          assert_select "input[type='hidden'][name=?]",
+                        "task_branch[source_issue_id]"
+          assert_select "input[type='hidden'][name=?]",
+                        "task_branch[issue_comment_id]"
+          assert_select "input[type='hidden'][name=?]",
+                        "task_branch[source_task_id]"
+          assert_select "input[type='hidden'][name=?]",
+                        "task_branch[task_comment_id]"
+        end
+      end
+    end
   end
 end

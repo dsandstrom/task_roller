@@ -3,14 +3,16 @@
 <h2>Plan Task</h2>
 
 <%= render 'move_tasks/new_form', task: @task,
-                                  project_options: @project_options %>
+                                  project_options: @project_options,
+                                  task_branch: @task_branch %>
 
 <%= turbo_frame_tag :turbo_task_form do %>
   <%= render 'form', task: @task, task_types: @task_types,
                      url: project_tasks_path(@project),
                      user_options: @user_options,
                      assignee_options: @assignee_options,
-                     issue_options: @issue_options %>
+                     issue_options: @issue_options,
+                     task_branch: @task_branch %>
 <% end %>
 
 <%= link_to 'Back', :back %>

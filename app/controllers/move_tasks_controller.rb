@@ -67,6 +67,7 @@ class MoveTasksController < ApplicationController
       @task.task_type ||= @task_types.first
       @assignee_options = build_assignee_options
       @issue_options = build_issue_options
+      @task_branch = TaskBranch.new(task_branch_params)
     end
 
     def set_categories

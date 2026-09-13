@@ -87,4 +87,9 @@ class ApplicationController < ActionController::Base
         [category.name, projects] if projects.any?
       end.compact
     end
+
+    def task_branch_params
+      params.expect(task_branch: %i[source_issue_id source_task_id
+                                    issue_comment_id task_comment_id])
+    end
 end

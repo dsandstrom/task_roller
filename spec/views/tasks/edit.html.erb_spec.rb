@@ -52,5 +52,19 @@ RSpec.describe "tasks/edit", type: :view do
         end
       end
     end
+
+    it "doesn't render form with task_branch fields" do
+      render
+
+      assert_select "input[name=?]", "task_branch[source_issue_id]", count: 0
+      assert_select "input[name=?]", "task_branch[source_task_id]", count: 0
+      assert_select "input[name=?]", "source_issue_id", count: 0
+      assert_select "input[name=?]", "source_task_id", count: 0
+      assert_select "input[name=?]", "task_branch[issue_comment_id]",
+                    count: 0
+      assert_select "input[name=?]", "task_branch[task_comment_id]", count: 0
+      assert_select "input[name=?]", "issue_comment_id", count: 0
+      assert_select "input[name=?]", "task_comment_id", count: 0
+    end
   end
 end

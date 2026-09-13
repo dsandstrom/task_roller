@@ -11,6 +11,15 @@
   <%= form.hidden_field :assignee_ids, id: 'task_project_assignee_ids',
                                        multiple: true %>
 
+  <% if task_branch %>
+    <%= fields_for task_branch do |task_branch_form| %>
+      <%= task_branch_form.hidden_field :source_issue_id, id: 'task_project_source_issue_id' %>
+      <%= task_branch_form.hidden_field :issue_comment_id, id: 'task_project_issue_comment_id' %>
+      <%= task_branch_form.hidden_field :source_task_id, id: 'task_project_source_task_id' %>
+      <%= task_branch_form.hidden_field :task_comment_id, id: 'task_project_task_comment_id' %>
+    <% end %>
+  <% end %>
+
   <div class="field">
     <%= form.label :project_id %>
     <%= form.select :project_id,
