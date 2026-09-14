@@ -25,14 +25,7 @@
                       data: { turbo: false } }) do |form| %>
   <%= form_errors(form.object) %>
 
-  <% if task_branch %>
-    <%= fields_for task_branch do |task_branch_form| %>
-      <%= task_branch_form.hidden_field :source_issue_id %>
-      <%= task_branch_form.hidden_field :issue_comment_id %>
-      <%= task_branch_form.hidden_field :source_task_id %>
-      <%= task_branch_form.hidden_field :task_comment_id %>
-    <% end %>
-  <% end %>
+  <%= render('task_branches/form', task_branch: task_branch) if task_branch %>
 
   <%= turbo_frame_tag :turbo_task_issue_id do %>
     <%= render 'tasks/issue_id_hidden_field', issue_id: task.issue_id %>
