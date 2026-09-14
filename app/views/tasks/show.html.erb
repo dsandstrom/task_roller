@@ -80,12 +80,30 @@
         </section>
       <% end %>
 
-      <section class="branch-issues">
+      <% if @trunk_issue %>
+        <section class="trunk-issue">
+          <h4 class="task-column-title">Branched From</h4>
+          <%= render('shared/issue', issue: @trunk_issue, show_status: false) %>
+        </section>
+      <% elsif @trunk_task %>
+        <section class="trunk-task">
+          <h4 class="task-column-title">Branched From</h4>
+          <%= render('shared/task', task: @trunk_task, show_status: false) %>
+        </section>
+      <% end %>
+
+      <section class="branch-issues branch-tasks">
         <h4 class="issue-column-title">Branches</h4>
 
         <% if @branch_issues.any? %>
           <%= render partial: 'shared/issue',
                      collection: @branch_issues,
+                     locals: { show_status: false } %>
+        <% end %>
+
+        <% if @branch_tasks.any? %>
+          <%= render partial: 'shared/task',
+                     collection: @branch_tasks,
                      locals: { show_status: false } %>
         <% end %>
 
@@ -97,6 +115,17 @@
           <% elsif can?(:create, Issue) %>
             <%= link_to "Add similar issue",
                         new_issue_path(source_task_id: @task.to_param) %>
+          <% end %>
+        </p>
+
+        <p>
+          <% if can?(:create, new_task(@task.project)) %>
+            <%= link_to "Add similar task",
+                        new_project_task_path(@task.project,
+                                              source_task_id: @task.to_param) %>
+          <% elsif can?(:create, Task) %>
+            <%= link_to "Add similar task",
+                        new_projects_task_path(source_task_id: @task.to_param) %>
           <% end %>
         </p>
       </section>

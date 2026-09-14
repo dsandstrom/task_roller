@@ -185,6 +185,7 @@ class IssuesController < ApplicationController
       @trunk_issue = @issue.trunk_issue
       @trunk_task = @issue.trunk_task
       @branch_issues = @issue.branch_issues
+      @branch_tasks = @issue.branch_tasks
     end
 
     def create_issue_branch

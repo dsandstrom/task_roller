@@ -49,6 +49,17 @@
                                          task_comment_id: comment.to_param),
                                          data: { turbo_frame: '_top' } %>
             <% end %>
+            <% if can?(:create, new_task(object.project)) %>
+              <%= link_to 'Copy to new task',
+                          new_project_task_path(object.project, source_task_id: object.to_param,
+                                                                task_comment_id: comment.to_param),
+                                                                data: { turbo_frame: '_top' } %>
+            <% elsif can?(:create, Task) %>
+              <%= link_to 'Copy to new task',
+                          new_projects_task_path(source_task_id: object.to_param,
+                                                 task_comment_id: comment.to_param),
+                                                 data: { turbo_frame: '_top' } %>
+            <% end %>
           <% else %>
             <% if can?(:update, comment) %>
               <%= link_to 'edit',
@@ -72,6 +83,17 @@
                           new_issue_path(source_issue_id: object.to_param,
                                          issue_comment_id: comment.to_param),
                                          data: { turbo_frame: '_top' } %>
+            <% end %>
+            <% if can?(:create, new_task(object.project)) %>
+              <%= link_to 'Copy to new task',
+                          new_project_task_path(object.project, source_issue_id: object.to_param,
+                                                                issue_comment_id: comment.to_param),
+                                                                data: { turbo_frame: '_top' } %>
+            <% elsif can?(:create, Task) %>
+              <%= link_to 'Copy to new task',
+                          new_projects_task_path(source_issue_id: object.to_param,
+                                                 issue_comment_id: comment.to_param),
+                                                 data: { turbo_frame: '_top' } %>
             <% end %>
           <% end %>
         </p>

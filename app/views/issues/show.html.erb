@@ -92,12 +92,18 @@
         </section>
       <% end %>
 
-      <section class="branch-issues">
+      <section class="branch-issues branch-tasks">
         <h4 class="issue-column-title">Branches</h4>
 
         <% if @branch_issues.any? %>
           <%= render partial: 'shared/issue',
                      collection: @branch_issues,
+                     locals: { show_status: false } %>
+        <% end %>
+
+        <% if @branch_tasks.any? %>
+          <%= render partial: 'shared/task',
+                     collection: @branch_tasks,
                      locals: { show_status: false } %>
         <% end %>
 
@@ -108,6 +114,16 @@
           <% elsif can?(:create, Issue) %>
             <%= link_to "Add similar issue",
                         new_issue_path(source_issue_id: @issue.to_param) %>
+          <% end %>
+        </p>
+
+        <p>
+          <% if can?(:create, new_task(@project)) %>
+            <%= link_to "Add similar task",
+                        new_project_task_path(@project, source_issue_id: @issue.to_param) %>
+          <% elsif can?(:create, Task) %>
+            <%= link_to "Add similar task",
+                        new_projects_task_path(source_issue_id: @issue.to_param) %>
           <% end %>
         </p>
       </section>

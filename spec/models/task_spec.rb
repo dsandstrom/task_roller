@@ -69,6 +69,7 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_one(:target_task_branch).dependent(:destroy) }
   it { is_expected.to have_one(:target_issue_branch).dependent(:destroy) }
   it { is_expected.to have_one(:target_task_branch).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_tasks) }
   it { is_expected.to have_one(:trunk_issue) }
   it { is_expected.to have_one(:trunk_task) }
 

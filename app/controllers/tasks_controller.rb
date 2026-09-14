@@ -149,6 +149,9 @@ class TasksController < ApplicationController
       @duplicates = @task.duplicates
       @siblings = @task.siblings
       @branch_issues = @task.branch_issues
+      @branch_tasks = @task.branch_tasks
+      @trunk_issue = @task.trunk_issue
+      @trunk_task = @task.trunk_task
     end
 
     def create_html
