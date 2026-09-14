@@ -64,21 +64,13 @@
   </div>
 
   <% if assignee_options&.any? %>
-    <% if assignee_options.instance_of?(Hash) %>
-      <%= form.label :assignee_ids, 'Assignee' %>
+    <div class="field">
+      <%= form.label :assignee_ids, 'Assignees' %>
       <%= form.select :assignee_ids,
-                      options_for_select(assignee_options, task.assignee_ids),
+                      grouped_options_for_select(assignee_options, task.assignee_ids),
                       { include_blank: '- Unassigned -' },
-                      id: :task_assignee_ids %>
-    <% else %>
-      <div class="field">
-        <%= form.label :assignee_ids, 'Assignees' %>
-        <%= form.select :assignee_ids,
-                        grouped_options_for_select(assignee_options, task.assignee_ids),
-                        { include_blank: '- Unassigned -' },
-                        id: :task_assignee_ids, multiple: true %>
-      </div>
-    <% end %>
+                      id: :task_assignee_ids, multiple: true %>
+    </div>
   <% end %>
 
   <div class="actions">
