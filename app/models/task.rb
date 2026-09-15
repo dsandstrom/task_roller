@@ -71,7 +71,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_one :trunk_task, through: :target_task_branch, class_name: 'Task',
                        source: :source_task
   has_many :branch_tasks, through: :source_task_branches, class_name: 'Task',
-                           source: :target
+                          source: :target
 
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user

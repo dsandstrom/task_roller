@@ -7,7 +7,10 @@ RSpec.describe MoveTasksController, type: :controller do
   let(:valid_attributes) { { project_id: project.to_param } }
   let(:invalid_attributes) { { project_id: "" } }
   let(:valid_branch_attributes) { { source_task_id: source_task.to_param } }
-  let(:invalid_branch_attributes) { { source_task_id: "", source_issue_id: "" } }
+
+  let(:invalid_branch_attributes) do
+    { source_task_id: "", source_issue_id: "" }
+  end
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
@@ -82,9 +85,10 @@ RSpec.describe MoveTasksController, type: :controller do
 
             context "and invalid task_branch params" do
               it "renders create" do
-                post :create, params: { task: valid_attributes,
-                                        task_branch: invalid_branch_attributes },
-                              as: :turbo_stream
+                post :create,
+                     params: { task: valid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
                 expect(response).to be_successful
               end
             end
@@ -102,9 +106,10 @@ RSpec.describe MoveTasksController, type: :controller do
 
             context "and invalid task_branch params" do
               it "renders new" do
-                post :create, params: { task: invalid_attributes,
-                                        task_branch: invalid_branch_attributes },
-                              as: :turbo_stream
+                post :create,
+                     params: { task: invalid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
                 expect(response).to be_successful
               end
             end
@@ -143,9 +148,10 @@ RSpec.describe MoveTasksController, type: :controller do
 
             context "and invalid task_branch params" do
               it "renders create" do
-                post :create, params: { task: valid_attributes,
-                                        task_branch: invalid_branch_attributes },
-                              as: :turbo_stream
+                post :create,
+                     params: { task: valid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
                 expect(response).to be_successful
               end
             end
