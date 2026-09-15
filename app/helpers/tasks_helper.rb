@@ -70,6 +70,18 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     options_for_select(options, task.priority_level)
   end
 
+  def description_footer(object)
+    return unless display_description_footer?(object)
+
+    content_tag :footer, class: description_footer_class(object) do
+      if object.is_a?(Task)
+        task_description_footer(object)
+      else
+        issue_description_footer(object)
+      end
+    end
+  end
+
   private
 
     def task_header_title(task)
@@ -445,5 +457,77 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
        task_status_button(task, with_dropdown: status_dropdown.present?),
        build_task_assign_button(task, assign_dropdown.present?),
        assign_dropdown, edit_dropdown, status_dropdown].compact
+    end
+
+    def task_description_footer(task)
+      edit_link = task_edit_link(task)
+      create_links = task_create_links(task)
+
+      tags = []
+      tags << comment_footer_links_wrapper([edit_link]) if edit_link.present?
+      tags << comment_footer_links_wrapper(create_links) if create_links.any?
+      return if tags.none?
+
+      safe_join(tags)
+    end
+
+    def issue_description_footer(issue)
+      edit_link = issue_edit_link(issue)
+      create_links = issue_create_links(issue)
+
+      tags = []
+      tags << comment_footer_links_wrapper([edit_link]) if edit_link.present?
+      tags << comment_footer_links_wrapper(create_links) if create_links.any?
+      return if tags.none?
+
+      safe_join(tags)
+    end
+
+    def task_edit_link(task)
+      return unless can?(:update, task)
+
+      link_to('edit', edit_task_path(task))
+    end
+
+    def issue_edit_link(issue)
+      return unless can?(:update, issue)
+
+      link_to('edit', edit_issue_path(issue))
+    end
+
+    def task_create_links(task)
+      links = []
+
+      options = { source_task_id: task.to_param }
+
+      links << new_issue_link_selection(task.project, options)
+      links << new_task_link_selection(task.project, options)
+
+      links.flatten.unshift 'copy to '
+    end
+
+    def issue_create_links(issue)
+      links = []
+
+      options = { source_issue_id: issue.to_param }
+
+      links << new_issue_link_selection(issue.project, options)
+      links << new_task_link_selection(issue.project, options)
+
+      links.flatten.unshift 'copy to '
+    end
+
+    def display_description_footer?(object)
+      can?(:update, object) || can?(:create, Issue)
+    end
+
+    def description_footer_class(object)
+      css_class = 'comment-footer '
+      css_class +
+        if can?(:update, object) && can?(:create, Issue)
+          'two-link-sets'
+        else
+          'one-link-set'
+        end
     end
 end

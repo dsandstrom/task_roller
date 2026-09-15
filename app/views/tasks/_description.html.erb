@@ -1,4 +1,4 @@
-<div class="comment original-user task-description">
+<div class="comment original-user task-description hide-footer">
   <header class="task-user-date">
     <div class="header-box">
       <p><span class="task-user"><%= user.present? ? user.name_or_email : User.destroyed_name %></span>:</p>
@@ -6,4 +6,6 @@
   </header>
 
   <%= content_tag :main, task.description_html.html_safe %>
+
+  <%= description_footer(task) %>
 </div>
