@@ -30,3 +30,12 @@ document.addEventListener('turbo:load', function() {
     comments.push(new CommentFooterToggle(elem));
   }
 });
+
+// new comment added
+document.addEventListener('turbo:after-stream-render', function(event) {
+  for (var elem of document.querySelectorAll('.comment.hide-footer')) {
+    if(comments.find((c) => c.elem.id == elem.id)) continue;
+
+    comments.push(new CommentFooterToggle(elem));
+  }
+});
