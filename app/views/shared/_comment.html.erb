@@ -1,7 +1,7 @@
 <%
   notification = comment.notifications
                         .find_by(user_id: current_user.id)
-  html_class = 'comment'
+  html_class = 'comment hide-footer'
   if object.user_id == comment.user_id
     html_class += ' original-user'
   end

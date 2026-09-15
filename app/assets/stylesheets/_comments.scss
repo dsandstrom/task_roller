@@ -96,6 +96,12 @@
     border-radius: 0 0 $border-radius $border-radius;
   }
 
+  &.hide-footer {
+    footer {
+      display: none;
+    }
+  }
+
   &.with-form {
     border-width: 0;
     border-color: $dark-gray;
