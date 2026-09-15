@@ -183,25 +183,12 @@ class TasksController < ApplicationController
       if @task.update(task_params)
         @task.subscribe_assignees
         @task.update_status(current_user)
-        update_issues(old_issue)
+        @task.update_issues(old_issue, current_user)
         redirect_to @task, success: 'Task was successfully updated.'
       else
         set_form_options
         render :edit
       end
-    end
-
-    def update_issues(old_issue)
-      new_issue = @task.issue
-
-      if new_issue
-        new_issue.update_status(current_user)
-        new_issue.update_priority_level
-      end
-      return unless old_issue && old_issue != new_issue
-
-      old_issue.update_status(current_user)
-      old_issue.update_priority_level
     end
 
     def subscribe_users

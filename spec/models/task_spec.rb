@@ -2486,4 +2486,77 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#update_issues" do
+    let(:current_user) { Fabricate(:user) }
+    let(:new_issue) { Fabricate(:issue) }
+    let(:old_issue) { Fabricate(:issue) }
+
+    context "when given no old issue" do
+      context "and task has no current issue" do
+        let(:task) { Fabricate(:task, issue: nil) }
+
+        it "doesn't raise an error" do
+          expect do
+            task.update_issues(nil, current_user)
+          end.not_to raise_error
+        end
+      end
+
+      context "and task has a new issue" do
+        let(:task) { Fabricate(:task, issue: new_issue) }
+
+        it "updates the new issues's status and priority_level" do
+          expect(new_issue).to receive(:update_status).with(current_user).once
+          expect(new_issue).to receive(:update_priority_level).once
+
+          task.update_issues(nil, current_user)
+        end
+      end
+    end
+
+    context "when given an old issue" do
+      context "and task has no current issue" do
+        let(:task) { Fabricate(:task, issue: nil) }
+
+        it "updates the old issues's status and priority_level" do
+          expect(old_issue).to receive(:update_status).with(current_user).once
+          expect(old_issue).to receive(:update_priority_level).once
+
+          task.update_issues(old_issue, current_user)
+        end
+      end
+
+      context "and task has a issue" do
+        context "that is new" do
+          let(:task) { Fabricate(:task, issue: new_issue) }
+
+          it "updates the new issues's status and priority_level" do
+            expect(new_issue).to receive(:update_status).with(current_user).once
+            expect(new_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+
+          it "updates the old issues's status and priority_level" do
+            expect(old_issue).to receive(:update_status).with(current_user).once
+            expect(old_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+        end
+
+        context "that is the same" do
+          let(:task) { Fabricate(:task, issue: old_issue) }
+
+          it "updates the old issues's status and priority_level once" do
+            expect(old_issue).to receive(:update_status).with(current_user).once
+            expect(old_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+        end
+      end
+    end
+  end
 end

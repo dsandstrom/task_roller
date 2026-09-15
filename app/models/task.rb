@@ -354,6 +354,17 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def update_issues(old_issue, user)
+    if issue
+      issue.update_status(user)
+      issue.update_priority_level
+    end
+    return unless old_issue && old_issue != issue
+
+    old_issue.update_status(user)
+    old_issue.update_priority_level
+  end
+
   private
 
     # - closed
