@@ -72,11 +72,41 @@
 
       <% if @duplicates.any? %>
         <section class="issue-connections">
-          <h4 class="issue-column-title">Similar Issues</h4>
+          <h4 class="issue-column-title">Duplicates</h4>
 
           <%= render partial: 'shared/issue',
                      collection: @duplicates,
                      locals: { show_status: false } %>
+        </section>
+      <% end %>
+
+      <% if @trunk_issue %>
+        <section class="trunk-issue">
+          <h4 class="issue-column-title">Branched From</h4>
+          <%= render('shared/issue', issue: @trunk_issue, show_status: false) %>
+        </section>
+      <% elsif @trunk_task %>
+        <section class="trunk-task">
+          <h4 class="issue-column-title">Branched From</h4>
+          <%= render('shared/task', task: @trunk_task, show_status: false) %>
+        </section>
+      <% end %>
+
+      <% if @branch_issues.any? || @branch_tasks.any? %>
+        <section class="branch-issues branch-tasks">
+          <h4 class="issue-column-title">Branches</h4>
+
+          <% if @branch_issues.any? %>
+            <%= render partial: 'shared/issue',
+                       collection: @branch_issues,
+                       locals: { show_status: false } %>
+          <% end %>
+
+          <% if @branch_tasks.any? %>
+            <%= render partial: 'shared/task',
+                       collection: @branch_tasks,
+                       locals: { show_status: false } %>
+          <% end %>
         </section>
       <% end %>
 

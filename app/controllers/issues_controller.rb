@@ -32,6 +32,7 @@ class IssuesController < ApplicationController
   def new
     authorize! :create, Issue
 
+    @issue_branch = build_issue_branch
     @issue = build_issue
     @project = @issue.project if @issue.project
   end
@@ -40,6 +41,7 @@ class IssuesController < ApplicationController
 
   def create
     if @issue.save
+      create_issue_branch
       @issue.subscribe_user
       IssueSubscriptionsJob.perform_later(@issue, send_new: true)
       @issue.update_status(current_user)
@@ -73,6 +75,11 @@ class IssuesController < ApplicationController
 
     def issue_update_params
       params.expect(issue: %i[summary description issue_type_id])
+    end
+
+    def issue_branch_params
+      params.expect(issue_branch: %i[source_issue_id source_task_id
+                                     issue_comment_id task_comment_id])
     end
 
     def set_new_form_options
@@ -122,8 +129,31 @@ class IssuesController < ApplicationController
     end
 
     def build_issue
-      current_user.issues.build(issue_type_id: @issue_types.first.id,
-                                project_id: params[:project_id])
+      attrs = @issue_branch&.new_target_attrs || {}
+      current_user.issues.build(
+        attrs.merge(issue_type_id: @issue_types.first.id,
+                    project_id: params[:project_id])
+      )
+    end
+
+    def build_issue_branch
+      if params[:source_issue_id].present?
+        build_issue_branch_from_issue
+      elsif params[:source_task_id].present?
+        build_issue_branch_from_task
+      end
+    end
+
+    def build_issue_branch_from_issue
+      @trunk_issue = Issue.find(params.expect(:source_issue_id))
+      IssueBranch.new(source_issue: @trunk_issue,
+                      issue_comment_id: params[:issue_comment_id])
+    end
+
+    def build_issue_branch_from_task
+      @trunk_task = Task.find(params.expect(:source_task_id))
+      IssueBranch.new(source_task: @trunk_task,
+                      task_comment_id: params[:task_comment_id])
     end
 
     def build_project_options
@@ -138,15 +168,36 @@ class IssuesController < ApplicationController
     end
 
     def set_issue_variables
+      set_issue_connection_variables
+
       @project = @issue.project
       @comments = @issue.comments.includes(:user)
       @notifications = @issue.notifications.where(user_id: current_user_id)
                              .where(event: %w[new status])
                              .order(created_at: :asc)
-      @source_connection = @issue.source_connection
-      @duplicates = @issue.duplicates
-      @source_connection = @issue.source_connection
       @subscription = @issue.issue_subscriptions
                             .find_or_initialize_by(user_id: current_user_id)
+    end
+
+    def set_issue_connection_variables
+      @source_connection = @issue.source_connection
+      @duplicates = @issue.duplicates
+      @trunk_issue = @issue.trunk_issue
+      @trunk_task = @issue.trunk_task
+      @branch_issues = @issue.branch_issues
+      @branch_tasks = @issue.branch_tasks
+    end
+
+    def create_issue_branch
+      return unless params[:issue_branch]
+
+      IssueBranch.create(
+        target: @issue,
+        source_issue_id: issue_branch_params[:source_issue_id],
+        source_task_id: issue_branch_params[:source_task_id],
+        issue_comment_id: issue_branch_params[:issue_comment_id],
+        task_comment_id: issue_branch_params[:task_comment_id],
+        user: current_user
+      )
     end
 end

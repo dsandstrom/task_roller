@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_07_222926) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_07_222926) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["category_id", "user_id"], name: "index_category_tasks_subscriptions_on_category_id_and_user_id", unique: true
+  end
+
+  create_table "issue_branches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "issue_comment_id"
+    t.integer "source_issue_id"
+    t.integer "source_task_id"
+    t.integer "target_id", null: false
+    t.integer "task_comment_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
   end
 
   create_table "issue_closures", force: :cascade do |t|
@@ -207,6 +218,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_07_222926) do
     t.integer "task_id"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["task_id", "assignee_id"], name: "index_task_assignees_on_task_id_and_assignee_id", unique: true
+  end
+
+  create_table "task_branches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "issue_comment_id"
+    t.integer "source_issue_id"
+    t.integer "source_task_id"
+    t.integer "target_id"
+    t.integer "task_comment_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "task_closures", force: :cascade do |t|

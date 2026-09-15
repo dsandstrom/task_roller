@@ -15,6 +15,8 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   let(:invalid_attributes) { { summary: "" } }
+  let(:valid_branch_attributes) { { source_issue_id: source_issue.to_param } }
+  let(:invalid_branch_attributes) { { source_issue_id: "" } }
 
   describe "GET #index" do
     context "for an admin" do
@@ -1523,6 +1525,60 @@ RSpec.describe IssuesController, type: :controller do
               url = issue_path(Issue.last)
               expect(response).to redirect_to(url)
             end
+
+            context "and valid issue_branch params" do
+              let!(:source_issue) { Fabricate(:issue, project: project) }
+
+              it "creates a new Issue" do
+                expect do
+                  post :create,
+                       params: { issue: valid_attributes,
+                                 issue_branch: valid_branch_attributes }
+                end.to change(Issue, :count).by(1)
+              end
+
+              it "creates a new IssueBranch" do
+                expect do
+                  post :create,
+                       params: { issue: valid_attributes,
+                                 issue_branch: valid_branch_attributes }
+                end.to change(IssueBranch, :count).by(1)
+              end
+
+              it "redirects to the created issue" do
+                post :create,
+                     params: { issue: valid_attributes,
+                               issue_branch: valid_branch_attributes }
+                url = issue_path(Issue.last)
+                expect(response).to redirect_to(url)
+              end
+            end
+
+            context "and invalid issue_branch params" do
+              it "creates a new Issue" do
+                expect do
+                  post :create,
+                       params: { issue: valid_attributes,
+                                 issue_branch: invalid_branch_attributes }
+                end.to change(Issue, :count).by(1)
+              end
+
+              it "doesn't create a new IssueBranch" do
+                expect do
+                  post :create,
+                       params: { issue: valid_attributes,
+                                 issue_branch: invalid_branch_attributes }
+                end.not_to change(IssueBranch, :count)
+              end
+
+              it "redirects to the created issue" do
+                post :create,
+                     params: { issue: valid_attributes,
+                               issue_branch: invalid_branch_attributes }
+                url = issue_path(Issue.last)
+                expect(response).to redirect_to(url)
+              end
+            end
           end
 
           context "with invalid params" do
@@ -1537,6 +1593,18 @@ RSpec.describe IssuesController, type: :controller do
             it "returns a success response ('new' template)" do
               post :create, params: { issue: invalid_attributes }
               expect(response).to be_successful
+            end
+
+            context "and valid issue_branch params" do
+              let!(:source_issue) { Fabricate(:issue, project: project) }
+
+              it "doesn't create a new IssueBranch" do
+                expect do
+                  post :create,
+                       params: { issue: valid_attributes,
+                                 issue_branch: valid_branch_attributes }
+                end.not_to change(IssueBranch, :count)
+              end
             end
           end
         end
@@ -1630,6 +1698,26 @@ RSpec.describe IssuesController, type: :controller do
             url = issue_path(Issue.last)
             expect(response).to redirect_to(url)
           end
+
+          context "and valid issue_branch params" do
+            let!(:source_issue) { Fabricate(:issue, project: project) }
+
+            it "creates a new Issue" do
+              expect do
+                post :create,
+                     params: { issue: valid_attributes,
+                               issue_branch: valid_branch_attributes }
+              end.to change(Issue, :count).by(1)
+            end
+
+            it "creates a new IssueBranch" do
+              expect do
+                post :create,
+                     params: { issue: valid_attributes,
+                               issue_branch: valid_branch_attributes }
+              end.to change(IssueBranch, :count).by(1)
+            end
+          end
         end
 
         context "with invalid params" do
@@ -1644,6 +1732,18 @@ RSpec.describe IssuesController, type: :controller do
           it "returns a success response ('new' template)" do
             post :create, params: { issue: invalid_attributes }
             expect(response).to be_successful
+          end
+
+          context "and valid issue_branch params" do
+            let!(:source_issue) { Fabricate(:issue, project: project) }
+
+            it "doesn't create a new IssueBranch" do
+              expect do
+                post :create,
+                     params: { issue: valid_attributes,
+                               issue_branch: valid_branch_attributes }
+              end.not_to change(IssueBranch, :count)
+            end
           end
         end
       end

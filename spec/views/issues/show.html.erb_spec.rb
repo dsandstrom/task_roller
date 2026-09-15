@@ -25,6 +25,10 @@ RSpec.describe "issues/show", type: :view do
       assign(:subscription, issue_subscription)
       assign(:user, issue.user)
       assign(:project, project)
+      assign(:trunk_issue, nil)
+      assign(:trunk_task, nil)
+      assign(:branch_issues, [])
+      assign(:branch_tasks, [])
     end
 
     context "when project" do
@@ -75,6 +79,20 @@ RSpec.describe "issues/show", type: :view do
       it "renders move issue link" do
         render template: subject, layout: "layouts/application"
         expect(rendered).to have_link(nil, href: new_issue_move_path(@issue))
+      end
+
+      it "renders new issue branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_project_task_path(@project, source_issue_id: @issue)
+        expect(rendered).to have_link(nil, href: url)
       end
 
       it "doesn't render issues's priority_level" do
@@ -248,6 +266,50 @@ RSpec.describe "issues/show", type: :view do
 
         assert_select "a[data-turbo-method='delete'][href='#{first_url}']"
         assert_select "a[data-turbo-method='delete'][href='#{second_url}']"
+      end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_issue_id: @issue.id,
+            issue_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_issue_id: @issue.id,
+            issue_comment_id: @second_comment.id
+          )
+        )
+      end
+
+      it "renders a new task from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_project_task_path(
+            project,
+            source_issue_id: @issue.id,
+            issue_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_project_task_path(
+            project,
+            source_issue_id: @issue.id,
+            issue_comment_id: @second_comment.id
+          )
+        )
       end
     end
 
@@ -445,6 +507,70 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when issue has a trunk_issue" do
+      let(:trunk_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+        @issue = assign(:issue, issue)
+        assign(:trunk_issue, trunk_issue)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+      end
+    end
+
+    context "when issue has a trunk_task" do
+      let(:trunk_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+        @issue = assign(:issue, issue)
+        assign(:trunk_task, trunk_task)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-task #task-#{trunk_task.id}"
+      end
+    end
+
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
+    context "when issue has a branch_task" do
+      let(:branch_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:task_branch, target: branch_task, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_tasks, [branch_task])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-tasks #task-#{branch_task.id}"
+      end
+    end
+
     context "when issue project is internal" do
       let(:project) { Fabricate(:internal_project, category: category) }
       let(:issue) { Fabricate(:issue, project: project) }
@@ -580,6 +706,20 @@ RSpec.describe "issues/show", type: :view do
           expect(rendered)
             .not_to have_link(nil, href: issue_issue_subscriptions_path(@issue))
         end
+
+        it "renders new issue branch link without a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new task branch link without a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_projects_task_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
       end
 
       context "and subscribed to the issue" do
@@ -693,6 +833,74 @@ RSpec.describe "issues/show", type: :view do
           assert_select "a[href='#{url}'][data-turbo-method='post']"
         end
       end
+
+      context "when comments" do
+        before do
+          @issue = assign(:issue, issue)
+          @first_comment = Fabricate(:issue_comment, issue: @issue)
+          @second_comment = Fabricate(:issue_comment, issue: @issue,
+                                                      user: current_user)
+          @comments = assign(:comments, [@first_comment, @second_comment])
+        end
+
+        it "renders a list of comments" do
+          render
+
+          assert_select "#comment-#{@first_comment.id}"
+          assert_select "#comment-#{@second_comment.id}"
+
+          first_url = issue_issue_comment_path(@issue, @first_comment)
+          first_edit_url = edit_issue_issue_comment_path(@issue, @first_comment)
+          second_url = issue_issue_comment_path(@issue, @second_comment)
+          second_edit_url =
+            edit_issue_issue_comment_path(@issue, @second_comment)
+          expect(rendered).to have_link(nil, href: first_edit_url)
+          expect(rendered).to have_link(nil, href: second_edit_url)
+
+          assert_select "a[data-turbo-method='delete'][href='#{first_url}']"
+          assert_select "a[data-turbo-method='delete'][href='#{second_url}']"
+        end
+
+        it "renders a new issue from comment links" do
+          render
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              source_issue_id: @issue.id,
+              issue_comment_id: @first_comment.id
+            )
+          )
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              source_issue_id: @issue.id,
+              issue_comment_id: @second_comment.id
+            )
+          )
+        end
+
+        it "renders a new task from comment links" do
+          render
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_projects_task_path(
+              source_issue_id: @issue.id,
+              issue_comment_id: @first_comment.id
+            )
+          )
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_projects_task_path(
+              source_issue_id: @issue.id,
+              issue_comment_id: @second_comment.id
+            )
+          )
+        end
+      end
     end
 
     context "when issue has a notification" do
@@ -725,6 +933,9 @@ RSpec.describe "issues/show", type: :view do
       assign(:subscription, issue_subscription)
       assign(:notifications, [])
       assign(:user, issue.user)
+      assign(:trunk_issue, nil)
+      assign(:branch_issues, [])
+      assign(:branch_tasks, [])
     end
 
     context "when someone else's issue" do
@@ -773,6 +984,20 @@ RSpec.describe "issues/show", type: :view do
 
         url =
           new_project_task_path(@issue.project, task: { issue_id: @issue.id })
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new issue branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "renders new task branch link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_project_task_path(@project, source_issue_id: @issue)
         expect(rendered).to have_link(nil, href: url)
       end
 
@@ -834,6 +1059,70 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
+    context "when issue has a trunk_issue" do
+      let(:trunk_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+        @issue = assign(:issue, issue)
+        assign(:trunk_issue, trunk_issue)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+      end
+    end
+
+    context "when issue has a trunk_task" do
+      let(:trunk_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+        @issue = assign(:issue, issue)
+        assign(:trunk_task, trunk_task)
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".trunk-task #task-#{trunk_task.id}"
+      end
+    end
+
+    context "when issue has a branch_issue" do
+      let(:branch_issue) { Fabricate(:issue) }
+
+      before do
+        Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_issues, [branch_issue])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-issues #issue-#{branch_issue.id}"
+      end
+    end
+
+    context "when issue has a branch_task" do
+      let(:branch_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:task_branch, target: branch_task, source_issue: issue)
+        @issue = assign(:issue, issue)
+        assign(:branch_tasks, [branch_task])
+      end
+
+      it "displays it" do
+        render
+
+        assert_select ".branch-tasks #task-#{branch_task.id}"
+      end
+    end
+
     context "when comments" do
       before do
         @issue = assign(:issue, issue)
@@ -860,6 +1149,50 @@ RSpec.describe "issues/show", type: :view do
                       count: 0
         assert_select "a[data-turbo-method='delete'][href='#{second_url}']",
                       count: 0
+      end
+
+      it "renders a new issue from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_issue_id: @issue.id,
+            issue_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_issue_path(
+            project_id: project.id,
+            source_issue_id: @issue.id,
+            issue_comment_id: @second_comment.id
+          )
+        )
+      end
+
+      it "renders a new task from comment links" do
+        render
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_project_task_path(
+            project,
+            source_issue_id: @issue.id,
+            issue_comment_id: @first_comment.id
+          )
+        )
+
+        expect(rendered).to have_link(
+          nil,
+          href: new_project_task_path(
+            project,
+            source_issue_id: @issue.id,
+            issue_comment_id: @second_comment.id
+          )
+        )
       end
     end
 
@@ -1130,6 +1463,20 @@ RSpec.describe "issues/show", type: :view do
           url = issue_closures_path(@issue)
           expect(rendered).not_to have_link(nil, href: url)
         end
+
+        it "renders new issue branch link with a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "renders new task branch link with a project" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_projects_task_path(source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
       end
 
       context "and closed with a source_connection" do
@@ -1209,6 +1556,9 @@ RSpec.describe "issues/show", type: :view do
         assign(:subscription, issue_subscription)
         assign(:notifications, [])
         assign(:user, issue.user)
+        assign(:trunk_issue, nil)
+        assign(:branch_issues, [])
+        assign(:branch_tasks, [])
       end
 
       context "when their issue" do
@@ -1280,6 +1630,20 @@ RSpec.describe "issues/show", type: :view do
           render template: subject, layout: "layouts/application"
           expect(rendered)
             .not_to have_link(nil, href: new_issue_move_path(@issue))
+        end
+
+        it "renders new issue branch link" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_issue_path(project_id: @project.id, source_issue_id: @issue)
+          expect(rendered).to have_link(nil, href: url)
+        end
+
+        it "doesn't render new task branch link" do
+          render template: subject, layout: "layouts/application"
+
+          url = new_project_task_path(@project, source_issue_id: @issue)
+          expect(rendered).not_to have_link(nil, href: url)
         end
 
         context "is addressed" do
@@ -1520,6 +1884,70 @@ RSpec.describe "issues/show", type: :view do
         end
       end
 
+      context "when issue has a trunk_issue" do
+        let(:trunk_issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:issue_branch, target: issue, source_issue: trunk_issue)
+          @issue = assign(:issue, issue)
+          assign(:trunk_issue, trunk_issue)
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".trunk-issue #issue-#{trunk_issue.id}"
+        end
+      end
+
+      context "when issue has a trunk_task" do
+        let(:trunk_task) { Fabricate(:task) }
+
+        before do
+          Fabricate(:issue_branch, target: issue, source_task: trunk_task)
+          @issue = assign(:issue, issue)
+          assign(:trunk_task, trunk_task)
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".trunk-task #task-#{trunk_task.id}"
+        end
+      end
+
+      context "when issue has a branch_issue" do
+        let(:branch_issue) { Fabricate(:issue) }
+
+        before do
+          Fabricate(:issue_branch, target: branch_issue, source_issue: issue)
+          @issue = assign(:issue, issue)
+          assign(:branch_issues, [branch_issue])
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".branch-issues #issue-#{branch_issue.id}"
+        end
+      end
+
+      context "when issue has a branch_task" do
+        let(:branch_task) { Fabricate(:task) }
+
+        before do
+          Fabricate(:task_branch, target: branch_task, source_issue: issue)
+          @issue = assign(:issue, issue)
+          assign(:branch_tasks, [branch_task])
+        end
+
+        it "displays it" do
+          render
+
+          assert_select ".branch-tasks #task-#{branch_task.id}"
+        end
+      end
+
       context "when comments" do
         before do
           @issue = assign(:issue, issue)
@@ -1547,6 +1975,50 @@ RSpec.describe "issues/show", type: :view do
                         count: 0
           assert_select "a[data-turbo-method='delete'][href='#{second_url}']",
                         count: 0
+        end
+
+        it "renders a new issue from comment links" do
+          render
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              project_id: project.id,
+              source_issue_id: @issue.id,
+              issue_comment_id: @first_comment.id
+            )
+          )
+
+          expect(rendered).to have_link(
+            nil,
+            href: new_issue_path(
+              project_id: project.id,
+              source_issue_id: @issue.id,
+              issue_comment_id: @second_comment.id
+            )
+          )
+        end
+
+        it "doesn't render a new task from comment links" do
+          render
+
+          expect(rendered).not_to have_link(
+            nil,
+            href: new_project_task_path(
+              project,
+              source_issue_id: @issue.id,
+              issue_comment_id: @first_comment.id
+            )
+          )
+
+          expect(rendered).not_to have_link(
+            nil,
+            href: new_project_task_path(
+              project,
+              source_issue_id: @issue.id,
+              issue_comment_id: @second_comment.id
+            )
+          )
         end
       end
     end

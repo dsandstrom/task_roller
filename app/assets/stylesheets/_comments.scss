@@ -1,29 +1,4 @@
 .comments {
-  header {
-    border-bottom: 1px solid $light-gray;
-
-    p {
-      margin: 0;
-      border: 0 solid transparent;
-      border-width: 0 .5rem;
-    }
-  }
-
-  main {
-    padding: 1rem;
-  }
-
-  footer {
-    p {
-      margin: 0;
-      padding: .5rem 1rem;
-    }
-
-    &:empty {
-      display: none;
-    }
-  }
-
   form {
     margin: 0;
     padding: .5rem 1rem 1.2rem;
@@ -42,32 +17,11 @@
       margin-bottom: 0;
     }
   }
-
-  .header-box {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: .5rem;
-    background: $off-white;
-    font-family: $heading-font;
-    font-size: 1.4rem;
-  }
-
-  .comment {
-    &:first-child {
-      border-radius: $border-radius $border-radius 0 0;
-    }
-
-    &:last-child {
-      border-radius: 0 0 $border-radius $border-radius;
-    }
-  }
 }
 
 .comment,
 .editor-preview,
 .editor-preview-side {
-
   &.original-user {
     background: $off-white;
   }
@@ -134,6 +88,20 @@
   padding: 0;
   border: 1px solid $light-gray;
 
+  &:first-child {
+    border-radius: $border-radius $border-radius 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 $border-radius $border-radius;
+  }
+
+  &.hide-footer {
+    footer {
+      display: none;
+    }
+  }
+
   &.with-form {
     border-width: 0;
     border-color: $dark-gray;
@@ -152,6 +120,10 @@
       border-width: 1px 1px 0;
     }
 
+    textarea {
+      margin: 0;
+    }
+
     // scss-lint:disable SelectorFormat
     .editor-toolbar,
     .EasyMDEContainer .CodeMirror,
@@ -163,10 +135,6 @@
       margin-bottom: 0;
     }
     // scss-lint:enable SelectorFormat
-
-    textarea {
-      margin: 0;
-    }
 
     .actions {
       margin: 0;
@@ -181,6 +149,50 @@
     .comment-body {
       display: none;
     }
+  }
+
+  header {
+    border-bottom: 1px solid $light-gray;
+
+    p {
+      margin: 0;
+      border: 0 solid transparent;
+      border-width: 0 .5rem;
+    }
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  footer {
+    color: $gray;
+    font-size: .95em;
+
+    &.one-link-set {
+      p {
+        margin-left: auto;
+      }
+    }
+
+    p {
+      margin: 0;
+      padding: .5rem 1rem;
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .header-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: .5rem;
+    background: $off-white;
+    font-family: $heading-font;
+    font-size: 1.4rem;
   }
 
   .field-label-and-message {
@@ -201,5 +213,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+@include breakpoint(large up) {
+  .comment {
+    footer {
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }

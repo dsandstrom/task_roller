@@ -1,7 +1,7 @@
 <%
   notification = comment.notifications
                         .find_by(user_id: current_user.id)
-  html_class = 'comment'
+  html_class = 'comment hide-footer'
   if object.user_id == comment.user_id
     html_class += ' original-user'
   end
@@ -22,36 +22,6 @@
                       class: 'comment-body' %>
     </main>
 
-    <% if can?(:update, comment) || can?(:destroy, comment) %>
-      <footer>
-        <p>
-          <% if object.is_a?(Task) %>
-            <% if can?(:update, comment) %>
-              <%= link_to 'edit',
-                          edit_task_task_comment_path(object, comment) %>
-            <% end %>
-            <% if can?(:destroy, comment) %>
-              <%= divider %>
-              <%= link_to 'delete',
-                          task_task_comment_path(object, comment),
-                          method: :delete, class: 'destroy-link',
-                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
-            <% end %>
-          <% else %>
-            <% if can?(:update, comment) %>
-              <%= link_to 'edit',
-                          edit_issue_issue_comment_path(object, comment) %>
-            <% end %>
-            <% if can?(:destroy, comment) %>
-              <%= divider %>
-              <%= link_to 'delete',
-                          issue_issue_comment_path(object, comment),
-                          method: :delete, class: 'destroy-link',
-                          data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this comment?' } %>
-            <% end %>
-          <% end %>
-        </p>
-      </footer>
-    <% end %>
+    <%= comment_footer(object, comment) %>
   <% end %>
 </div>

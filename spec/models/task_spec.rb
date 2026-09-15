@@ -56,10 +56,23 @@ RSpec.describe Task, type: :model do
   it { is_expected.to have_many(:progressions) }
   it { is_expected.to have_many(:progression_users) }
   it { is_expected.to have_many(:reviews) }
+
   it { is_expected.to have_one(:source_connection).dependent(:destroy) }
   it { is_expected.to have_many(:target_connections).dependent(:destroy) }
   it { is_expected.to have_many(:duplicates) }
   it { is_expected.to have_one(:duplicatee) }
+
+  it { is_expected.to have_many(:source_issue_branches).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_issues) }
+
+  it { is_expected.to have_many(:source_task_branches).dependent(:destroy) }
+  it { is_expected.to have_one(:target_task_branch).dependent(:destroy) }
+  it { is_expected.to have_one(:target_issue_branch).dependent(:destroy) }
+  it { is_expected.to have_one(:target_task_branch).dependent(:destroy) }
+  it { is_expected.to have_many(:branch_tasks) }
+  it { is_expected.to have_one(:trunk_issue) }
+  it { is_expected.to have_one(:trunk_task) }
+
   it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribers) }
   it { is_expected.to have_many(:closures) }
@@ -2470,6 +2483,79 @@ RSpec.describe Task, type: :model do
       it "returns both statuses" do
         expect(subject.notification_options("old"))
           .to eq({ event: "status", details: "old,#{subject.status}" })
+      end
+    end
+  end
+
+  describe "#update_issues" do
+    let(:current_user) { Fabricate(:user) }
+    let(:new_issue) { Fabricate(:issue) }
+    let(:old_issue) { Fabricate(:issue) }
+
+    context "when given no old issue" do
+      context "and task has no current issue" do
+        let(:task) { Fabricate(:task, issue: nil) }
+
+        it "doesn't raise an error" do
+          expect do
+            task.update_issues(nil, current_user)
+          end.not_to raise_error
+        end
+      end
+
+      context "and task has a new issue" do
+        let(:task) { Fabricate(:task, issue: new_issue) }
+
+        it "updates the new issues's status and priority_level" do
+          expect(new_issue).to receive(:update_status).with(current_user).once
+          expect(new_issue).to receive(:update_priority_level).once
+
+          task.update_issues(nil, current_user)
+        end
+      end
+    end
+
+    context "when given an old issue" do
+      context "and task has no current issue" do
+        let(:task) { Fabricate(:task, issue: nil) }
+
+        it "updates the old issues's status and priority_level" do
+          expect(old_issue).to receive(:update_status).with(current_user).once
+          expect(old_issue).to receive(:update_priority_level).once
+
+          task.update_issues(old_issue, current_user)
+        end
+      end
+
+      context "and task has a issue" do
+        context "that is new" do
+          let(:task) { Fabricate(:task, issue: new_issue) }
+
+          it "updates the new issues's status and priority_level" do
+            expect(new_issue).to receive(:update_status).with(current_user).once
+            expect(new_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+
+          it "updates the old issues's status and priority_level" do
+            expect(old_issue).to receive(:update_status).with(current_user).once
+            expect(old_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+        end
+
+        context "that is the same" do
+          let(:task) { Fabricate(:task, issue: old_issue) }
+
+          it "updates the old issues's status and priority_level once" do
+            expect(old_issue).to receive(:update_status).with(current_user).once
+            expect(old_issue).to receive(:update_priority_level).once
+
+            task.update_issues(old_issue, current_user)
+          end
+        end
       end
     end
   end

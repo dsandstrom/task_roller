@@ -1188,7 +1188,16 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:source_task) { Fabricate(:task, project: project) }
     let(:job_options) { { event: "new", current_user: current_user } }
+
+    let(:valid_task_branch_attributes) do
+      { source_task_id: source_task.to_param }
+    end
+
+    let(:invalid_task_branch_attributes) do
+      { source_task_id: "", source_issue_id: "" }
+    end
 
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
@@ -1338,6 +1347,58 @@ RSpec.describe TasksController, type: :controller do
                 url = task_path(Task.last)
                 expect(response).to redirect_to(url)
               end
+
+              context "with valid task_branch params" do
+                before do
+                  source_task
+                end
+
+                it "creates a new Task" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: valid_attributes,
+                      task_branch: valid_task_branch_attributes
+                    }
+                  end.to change(Task, :count).by(1)
+                end
+
+                it "creates a new TaskBranch" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: valid_attributes,
+                      task_branch: valid_task_branch_attributes
+                    }
+                  end.to change(TaskBranch, :count).by(1)
+                end
+              end
+
+              context "with invalid task_branch params" do
+                before do
+                  source_task
+                end
+
+                it "creates a new Task" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: valid_attributes,
+                      task_branch: invalid_task_branch_attributes
+                    }
+                  end.to change(Task, :count).by(1)
+                end
+
+                it "doesn't create a new TaskBranch" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: valid_attributes,
+                      task_branch: invalid_task_branch_attributes
+                    }
+                  end.not_to change(TaskBranch, :count)
+                end
+              end
             end
 
             context "with invalid params" do
@@ -1361,6 +1422,58 @@ RSpec.describe TasksController, type: :controller do
                                         task: invalid_attributes }
                 expect(response).to be_successful
               end
+
+              context "with valid task_branch params" do
+                before do
+                  source_task
+                end
+
+                it "doesn't create a new Task" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: invalid_attributes,
+                      task_branch: valid_task_branch_attributes
+                    }
+                  end.not_to change(Task, :count)
+                end
+
+                it "doesn't create a new TaskBranch" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: invalid_attributes,
+                      task_branch: valid_task_branch_attributes
+                    }
+                  end.not_to change(TaskBranch, :count)
+                end
+              end
+
+              context "with invalid task_branch params" do
+                before do
+                  source_task
+                end
+
+                it "doesn't create a new Task" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: invalid_attributes,
+                      task_branch: invalid_task_branch_attributes
+                    }
+                  end.not_to change(Task, :count)
+                end
+
+                it "doesn't create a new TaskBranch" do
+                  expect do
+                    post :create, params: {
+                      project_id: project.to_param,
+                      task: invalid_attributes,
+                      task_branch: invalid_task_branch_attributes
+                    }
+                  end.not_to change(TaskBranch, :count)
+                end
+              end
             end
           end
         end
@@ -1373,6 +1486,17 @@ RSpec.describe TasksController, type: :controller do
                                         task: valid_turbo_attributes },
                               as: :turbo_stream
               end.not_to change(Task, :count)
+            end
+
+            it "doesn't create a new TaskBranch" do
+              expect do
+                post :create, params: {
+                                project_id: project.to_param,
+                                task: valid_turbo_attributes,
+                                task_branch: valid_task_branch_attributes
+                              },
+                              as: :turbo_stream
+              end.not_to change(TaskBranch, :count)
             end
 
             it "renders successfully" do

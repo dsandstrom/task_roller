@@ -28,6 +28,9 @@ class TasksController < ApplicationController
   end
 
   def new
+    @task_branch = build_task_branch
+    attrs = @task_branch&.new_target_attrs || {}
+    @task.assign_attributes(attrs)
     @task.task_type ||= @task_types.first
   end
 
@@ -99,6 +102,26 @@ class TasksController < ApplicationController
       tasks
     end
 
+    def build_task_branch
+      if params[:source_issue_id].present?
+        build_task_branch_from_issue
+      elsif params[:source_task_id].present?
+        build_task_branch_from_task
+      end
+    end
+
+    def build_task_branch_from_issue
+      @trunk_issue = Issue.find(params.expect(:source_issue_id))
+      TaskBranch.new(source_issue: @trunk_issue,
+                     issue_comment_id: params[:issue_comment_id])
+    end
+
+    def build_task_branch_from_task
+      @trunk_task = Task.find(params.expect(:source_task_id))
+      TaskBranch.new(source_task: @trunk_task,
+                     task_comment_id: params[:task_comment_id])
+    end
+
     def set_user_resources
       @user = @task.user
       @assignees = @task.assignees.includes(:progressions)
@@ -106,16 +129,14 @@ class TasksController < ApplicationController
     end
 
     def set_task_resources
-      @source_connection = @task.source_connection
-      @duplicates = @task.duplicates
-      @siblings = @task.siblings
+      set_subscription
+      set_connections
       @comments = @task.comments.preload(:user)
       @notifications = @task.notifications.where(user_id: current_user_id)
                             .where(event: %w[new status])
                             .order(created_at: :desc)
       @progressions = @task.progressions.unfinished
                            .where(user_id: current_user_id)
-      set_subscription
     end
 
     def set_subscription
@@ -123,17 +144,32 @@ class TasksController < ApplicationController
                            .find_or_initialize_by(user_id: current_user_id)
     end
 
+    def set_connections
+      @source_connection = @task.source_connection
+      @duplicates = @task.duplicates
+      @siblings = @task.siblings
+      @branch_issues = @task.branch_issues
+      @branch_tasks = @task.branch_tasks
+      @trunk_issue = @task.trunk_issue
+      @trunk_task = @task.trunk_task
+    end
+
     def create_html
       if @task.save
+        create_task_branch
         subscribe_users
-        @task.update_status(current_user)
-        @task.issue&.update_status(current_user)
-        @task.issue&.update_priority_level
+        update_statuses
         redirect_to @task, success: 'Task was successfully added.'
       else
         set_new_form_options
         render :new
       end
+    end
+
+    def update_statuses
+      @task.update_status(current_user)
+      @task.issue&.update_status(current_user)
+      @task.issue&.update_priority_level
     end
 
     def create_turbo
@@ -147,7 +183,7 @@ class TasksController < ApplicationController
       if @task.update(task_params)
         @task.subscribe_assignees
         @task.update_status(current_user)
-        update_issues(old_issue)
+        @task.update_issues(old_issue, current_user)
         redirect_to @task, success: 'Task was successfully updated.'
       else
         set_form_options
@@ -155,22 +191,22 @@ class TasksController < ApplicationController
       end
     end
 
-    def update_issues(old_issue)
-      new_issue = @task.issue
-
-      if new_issue
-        new_issue.update_status(current_user)
-        new_issue.update_priority_level
-      end
-      return unless old_issue && old_issue != new_issue
-
-      old_issue.update_status(current_user)
-      old_issue.update_priority_level
-    end
-
     def subscribe_users
       @task.subscribe_user
       TaskSubscriptionsJob.perform_later(@task, send_new: true)
       TaskAssigneesSubscriptionsJob.perform_later(@task, send_new: true)
+    end
+
+    def create_task_branch
+      return unless params[:task_branch]
+
+      TaskBranch.create(
+        target: @task,
+        source_issue_id: task_branch_params[:source_issue_id],
+        source_task_id: task_branch_params[:source_task_id],
+        issue_comment_id: task_branch_params[:issue_comment_id],
+        task_comment_id: task_branch_params[:task_comment_id],
+        user: current_user
+      )
     end
 end

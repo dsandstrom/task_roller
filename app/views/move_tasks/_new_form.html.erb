@@ -11,6 +11,8 @@
   <%= form.hidden_field :assignee_ids, id: 'task_project_assignee_ids',
                                        multiple: true %>
 
+  <%= render('task_branches/form', task_branch: task_branch) if task_branch %>
+
   <div class="field">
     <%= form.label :project_id %>
     <%= form.select :project_id,

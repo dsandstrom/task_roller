@@ -48,6 +48,31 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
                                 dependent: :destroy, inverse_of: :target
   has_many :duplicates, through: :target_connections, class_name: 'Task',
                         source: :source
+
+  has_many :source_issue_branches, class_name: 'IssueBranch',
+                                   foreign_key: :source_task_id,
+                                   dependent: :destroy,
+                                   inverse_of: :source_task
+  has_many :branch_issues, through: :source_issue_branches, class_name: 'Issue',
+                           source: :target
+
+  has_many :source_task_branches, class_name: 'TaskBranch',
+                                  foreign_key: :source_task_id,
+                                  dependent: :destroy,
+                                  inverse_of: :source_task
+  has_one :target_task_branch, class_name: 'TaskBranch',
+                               foreign_key: :target_id, dependent: :destroy,
+                               inverse_of: :target
+  has_one :target_issue_branch, class_name: 'TaskBranch',
+                                foreign_key: :target_id, dependent: :destroy,
+                                inverse_of: :target
+  has_one :trunk_issue, through: :target_issue_branch, class_name: 'Issue',
+                        source: :source_issue
+  has_one :trunk_task, through: :target_task_branch, class_name: 'Task',
+                       source: :source_task
+  has_many :branch_tasks, through: :source_task_branches, class_name: 'Task',
+                          source: :target
+
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user
   has_many :closures, class_name: 'TaskClosure', dependent: :destroy
@@ -327,6 +352,17 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     else
       { event: 'new' }
     end
+  end
+
+  def update_issues(old_issue, user)
+    if issue
+      issue.update_status(user)
+      issue.update_priority_level
+    end
+    return unless old_issue && old_issue != issue
+
+    old_issue.update_status(user)
+    old_issue.update_priority_level
   end
 
   private

@@ -2,9 +2,15 @@ require "rails_helper"
 
 RSpec.describe MoveTasksController, type: :controller do
   let(:project) { Fabricate(:project) }
+  let(:source_task) { Fabricate(:task, project: project) }
 
   let(:valid_attributes) { { project_id: project.to_param } }
   let(:invalid_attributes) { { project_id: "" } }
+  let(:valid_branch_attributes) { { source_task_id: source_task.to_param } }
+
+  let(:invalid_branch_attributes) do
+    { source_task_id: "", source_issue_id: "" }
+  end
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
@@ -68,18 +74,44 @@ RSpec.describe MoveTasksController, type: :controller do
 
         context "when turbo_stream request" do
           context "with valid params" do
-            it "renders create" do
-              post :create, params: { task: valid_attributes },
-                            as: :turbo_stream
-              expect(response).to be_successful
+            context "and valid task_branch params" do
+              it "renders create" do
+                post :create, params: { task: valid_attributes,
+                                        task_branch: valid_branch_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
+            context "and invalid task_branch params" do
+              it "renders create" do
+                post :create,
+                     params: { task: valid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
 
           context "with invalid params" do
-            it "renders new" do
-              post :create, params: { task: invalid_attributes },
-                            as: :turbo_stream
-              expect(response).to be_successful
+            context "and valid task_branch params" do
+              it "renders new" do
+                post :create, params: { task: invalid_attributes,
+                                        task_branch: valid_branch_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
+            context "and invalid task_branch params" do
+              it "renders new" do
+                post :create,
+                     params: { task: invalid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
 
@@ -87,7 +119,8 @@ RSpec.describe MoveTasksController, type: :controller do
             let(:project) { Fabricate(:invisible_project) }
 
             it "should be unauthorized" do
-              post :create, params: { task: valid_attributes },
+              post :create, params: { task: valid_attributes,
+                                      task_branch: valid_branch_attributes },
                             as: :turbo_stream
               expect_to_be_forbidden(response)
             end
@@ -104,10 +137,23 @@ RSpec.describe MoveTasksController, type: :controller do
               )
             end
 
-            it "renders create" do
-              post :create, params: { task: valid_attributes },
-                            as: :turbo_stream
-              expect(response).to be_successful
+            context "and valid task_branch params" do
+              it "renders create" do
+                post :create, params: { task: valid_attributes,
+                                        task_branch: valid_branch_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
+            context "and invalid task_branch params" do
+              it "renders create" do
+                post :create,
+                     params: { task: valid_attributes,
+                               task_branch: invalid_branch_attributes },
+                     as: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
 
@@ -119,7 +165,8 @@ RSpec.describe MoveTasksController, type: :controller do
             before { valid_attributes.merge!(assignee_ids: [assignee_ids]) }
 
             it "renders create" do
-              post :create, params: { task: valid_attributes },
+              post :create, params: { task: valid_attributes,
+                                      task_branch: valid_branch_attributes },
                             as: :turbo_stream
               expect(response).to be_successful
             end
@@ -135,7 +182,8 @@ RSpec.describe MoveTasksController, type: :controller do
             before { valid_attributes.merge!(assignee_ids: [assignee_ids]) }
 
             it "renders create" do
-              post :create, params: { task: valid_attributes },
+              post :create, params: { task: valid_attributes,
+                                      task_branch: valid_branch_attributes },
                             as: :turbo_stream
               expect(response).to be_successful
             end
@@ -159,7 +207,9 @@ RSpec.describe MoveTasksController, type: :controller do
 
         context "when turbo_stream request" do
           it "should be unauthorized" do
-            post :create, params: { task: valid_attributes }, as: :turbo_stream
+            post :create, params: { task: valid_attributes,
+                                    task_branch: valid_branch_attributes },
+                          as: :turbo_stream
             expect_to_be_forbidden(response)
           end
         end

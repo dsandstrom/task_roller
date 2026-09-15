@@ -1,7 +1,8 @@
 <h2>Plan Task</h2>
 
 <%= render 'new_form', task: @task,
-                       project_options: @project_options %>
+                       project_options: @project_options,
+                       task_branch: @task_branch %>
 
 <%= turbo_frame_tag :turbo_task_form %>
 
