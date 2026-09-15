@@ -169,6 +169,12 @@
     color: $gray;
     font-size: .95em;
 
+    &.one-link-set {
+      p {
+        margin-left: auto;
+      }
+    }
+
     p {
       margin: 0;
       padding: .5rem 1rem;
@@ -211,7 +217,7 @@
 }
 
 @include breakpoint(large up) {
-  .comments {
+  .comment {
     footer {
       display: flex;
       justify-content: space-between;

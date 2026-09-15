@@ -15,7 +15,7 @@ module CommentsHelper
   def comment_footer(object, comment)
     return unless display_comment_footer?(comment)
 
-    content_tag :footer, class: 'comment-footer' do
+    content_tag :footer, class: comment_footer_class(comment) do
       if object.is_a?(Task)
         task_comment_footer(object, comment)
       else
@@ -164,5 +164,15 @@ module CommentsHelper
 
     def comment_links_divider
       [' ', divider, ' ']
+    end
+
+    def comment_footer_class(comment)
+      css_class = 'comment-footer '
+      css_class +
+        if can?(:update, comment) && can?(:create, Issue)
+          'two-link-sets'
+        else
+          'one-link-set'
+        end
     end
 end
