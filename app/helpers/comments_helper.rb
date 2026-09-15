@@ -144,7 +144,7 @@ module CommentsHelper
 
     def task_comment_destroy_link(object, comment)
       link_to 'delete',
-              issue_issue_comment_path(object, comment),
+              task_task_comment_path(object, comment),
               method: :delete, class: 'destroy-link',
               data: { turbo_method: :delete,
                       turbo_confirm: comment_destroy_confirm }
