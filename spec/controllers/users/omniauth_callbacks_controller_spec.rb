@@ -1,8 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Users::OmniauthCallbacksController, type: :controller do
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "POST #github" do
     let(:example_user) { Fabricate.build(:user_reviewer) }
 

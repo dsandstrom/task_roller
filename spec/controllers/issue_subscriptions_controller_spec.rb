@@ -4,6 +4,7 @@ RSpec.describe IssueSubscriptionsController, type: :controller do
   let(:issue) { Fabricate(:issue) }
 
   before do
+    Fabricate(:task_type)
     Fabricate(:issue_subscription)
   end
 

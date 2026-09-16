@@ -1,8 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe SearchesController, type: :controller do
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do

@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe IssueTypeMigrationsController, type: :controller do
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     let(:issue_type) { Fabricate(:issue_type) }
 

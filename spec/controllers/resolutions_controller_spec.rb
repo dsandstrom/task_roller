@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe ResolutionsController, type: :controller do
@@ -7,6 +5,10 @@ RSpec.describe ResolutionsController, type: :controller do
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
   let(:admin) { Fabricate(:user_admin) }
+
+  before do
+    Fabricate(:task_type)
+  end
 
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|

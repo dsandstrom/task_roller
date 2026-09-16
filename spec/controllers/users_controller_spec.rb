@@ -1,9 +1,12 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
   let(:invalid_attributes) { { name: "", employee_type: "Reporter" } }
+
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
 
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|

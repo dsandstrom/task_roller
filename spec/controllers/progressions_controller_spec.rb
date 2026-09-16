@@ -1,9 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe ProgressionsController, type: :controller do
   let(:task) { Fabricate(:task) }
+
+  before do
+    Fabricate(:issue_type)
+  end
 
   describe "GET #new" do
     %w[admin reviewer worker].each do |employee_type|

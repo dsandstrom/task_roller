@@ -22,6 +22,11 @@ RSpec.describe TasksController, type: :controller do
   let(:blank_turbo_attributes) { { issue_id: "" } }
   let(:invalid_turbo_attributes) { { summary: "" } }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #index" do
     context "for an admin" do
       let(:current_user) { Fabricate(:user_admin) }

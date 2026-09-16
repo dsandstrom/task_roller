@@ -7,6 +7,10 @@ RSpec.describe TaskReopeningsController, type: :controller do
   let(:current_user) { Fabricate(:user_reporter) }
   let(:subscriber) { Fabricate(:user_reporter) }
 
+  before do
+    Fabricate(:issue_type)
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

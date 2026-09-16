@@ -14,6 +14,11 @@ RSpec.describe ReviewsController, type: :controller do
     { user_id: "" }
   end
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #index" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

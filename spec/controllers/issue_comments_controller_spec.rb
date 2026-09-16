@@ -11,6 +11,10 @@ RSpec.describe IssueCommentsController, type: :controller do
   let(:valid_attributes) { { body: "Body" } }
   let(:invalid_attributes) { { body: "" } }
 
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do

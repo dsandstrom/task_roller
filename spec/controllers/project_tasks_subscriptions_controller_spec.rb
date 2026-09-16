@@ -4,6 +4,11 @@ RSpec.describe ProjectTasksSubscriptionsController, type: :controller do
   let(:project) { Fabricate(:project) }
   let(:user) { Fabricate(:user_worker) }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     let(:params) { { project_id: project.to_param } }
 

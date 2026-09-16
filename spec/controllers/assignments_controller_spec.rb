@@ -15,6 +15,10 @@ RSpec.describe AssignmentsController, type: :controller do
     { "assignee_ids" => [""] }
   end
 
+  before do
+    Fabricate(:issue_type)
+  end
+
   describe "GET #index" do
     let(:user) { Fabricate(:user_worker) }
     let(:task) { Fabricate(:task) }

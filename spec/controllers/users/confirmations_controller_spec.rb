@@ -1,8 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Users::ConfirmationsController, type: :controller do
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #show" do
     context "for an unconfirmed reporter" do
       context "that just signed up" do

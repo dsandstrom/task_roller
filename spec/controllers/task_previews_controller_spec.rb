@@ -5,6 +5,10 @@ RSpec.describe TaskPreviewsController, type: :controller do
   let(:project) { Fabricate(:project, category: category) }
   let(:issue) { Fabricate(:issue, project: project) }
 
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "GET #index" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       context "for a #{employee_type}" do

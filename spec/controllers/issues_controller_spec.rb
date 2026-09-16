@@ -18,6 +18,11 @@ RSpec.describe IssuesController, type: :controller do
   let(:valid_branch_attributes) { { source_issue_id: source_issue.to_param } }
   let(:invalid_branch_attributes) { { source_issue_id: "" } }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #index" do
     context "for an admin" do
       before { sign_in(Fabricate(:user_admin)) }
@@ -1165,7 +1170,10 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "when no IssueTypes" do
-          before { Fabricate(:project) }
+          before do
+            Fabricate(:project)
+            IssueType.destroy_all
+          end
 
           it "redirects to issue_types_url" do
             get :new
@@ -1246,7 +1254,10 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no IssueTypes" do
-        before { Fabricate(:project) }
+        before do
+          Fabricate(:project)
+          IssueType.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1314,7 +1325,10 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no IssueTypes" do
-        before { Fabricate(:project) }
+        before do
+          Fabricate(:project)
+          IssueType.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1582,7 +1596,9 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           context "with invalid params" do
-            before { invalid_attributes[:project_id] = project.to_param }
+            before do
+              invalid_attributes[:project_id] = project.to_param
+            end
 
             it "doesn't create a new Issue" do
               expect do
@@ -1721,7 +1737,9 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "with invalid params" do
-          before { invalid_attributes[:project_id] = project.to_param }
+          before do
+            invalid_attributes[:project_id] = project.to_param
+          end
 
           it "doesn't create a new Issue" do
             expect do

@@ -3,6 +3,10 @@ require "rails_helper"
 RSpec.describe IssueNotificationsController, type: :controller do
   let(:issue) { Fabricate(:closed_issue) }
 
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "DELETE #destroy" do
     let(:issue) { Fabricate(:issue) }
 

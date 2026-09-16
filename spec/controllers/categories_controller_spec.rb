@@ -3,6 +3,11 @@ require "rails_helper"
 RSpec.describe CategoriesController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #index" do
     before { Fabricate(:category) }
 
