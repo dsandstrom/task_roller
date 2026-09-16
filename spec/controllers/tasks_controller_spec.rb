@@ -25,6 +25,7 @@ RSpec.describe TasksController, type: :controller do
   before do
     Fabricate(:issue_type)
     Fabricate(:task_type)
+    Fabricate(:project)
   end
 
   describe "GET #index" do
@@ -1094,6 +1095,62 @@ RSpec.describe TasksController, type: :controller do
           it "redirects to issue_types_url" do
             get :new, params: { project_id: project.to_param }
             expect(response).to redirect_to(issue_types_url)
+          end
+        end
+
+        context "when internal Project" do
+          let(:project) { Fabricate(:internal_project) }
+
+          before do
+            Project.destroy_all
+          end
+
+          it "returns a success response" do
+            get :new, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no visible Projects" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          before do
+            Project.destroy_all
+          end
+
+          it "redirects to root_url" do
+            get :new, params: { project_id: project.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
+        context "when internal Category with project" do
+          let(:project) do
+            Fabricate(:project, category: Fabricate(:internal_category))
+          end
+
+          before do
+            Project.destroy_all
+          end
+
+          it "returns a success response" do
+            get :new, params: { project_id: project.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no visible Categories" do
+          let(:project) do
+            Fabricate(:project, category: Fabricate(:invisible_category))
+          end
+
+          before do
+            Category.destroy_all
+          end
+
+          it "redirects to root_url" do
+            get :new, params: { project_id: project.to_param }
+            expect_to_be_unauthorized(response)
           end
         end
       end

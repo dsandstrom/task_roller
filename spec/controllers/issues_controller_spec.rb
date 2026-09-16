@@ -21,6 +21,7 @@ RSpec.describe IssuesController, type: :controller do
   before do
     Fabricate(:issue_type)
     Fabricate(:task_type)
+    Fabricate(:project)
   end
 
   describe "GET #index" do
@@ -1171,7 +1172,6 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when no IssueTypes" do
           before do
-            Fabricate(:project)
             IssueType.destroy_all
           end
 
@@ -1183,7 +1183,7 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when internal Project" do
           before do
-            Fabricate(:issue_type)
+            Project.destroy_all
             Fabricate(:internal_project)
           end
 
@@ -1194,7 +1194,9 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "when no Projects" do
-          before { Fabricate(:issue_type) }
+          before do
+            Project.destroy_all
+          end
 
           it "redirects to root_url" do
             get :new
@@ -1204,8 +1206,42 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when no visible Projects" do
           before do
-            Fabricate(:issue_type)
+            Project.destroy_all
             Fabricate(:invisible_project)
+          end
+
+          it "redirects to root_url" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when internal Category with project" do
+          before do
+            Fabricate(:project, category: Fabricate(:internal_category))
+          end
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no Categories" do
+          before do
+            Category.destroy_all
+          end
+
+          it "redirects to root_url" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when no visible Categories" do
+          before do
+            Category.destroy_all
+            Fabricate(:project, category: Fabricate(:invisible_category))
           end
 
           it "redirects to root_url" do
@@ -1243,7 +1279,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when internal Project" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:internal_project)
         end
 
@@ -1255,7 +1291,6 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no IssueTypes" do
         before do
-          Fabricate(:project)
           IssueType.destroy_all
         end
 
@@ -1266,7 +1301,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no Projects" do
-        before { Fabricate(:issue_type) }
+        before do
+          Project.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1276,7 +1313,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no visible Projects" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:invisible_project)
         end
 
@@ -1314,7 +1351,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when internal Project" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:internal_project)
         end
 
@@ -1326,7 +1363,6 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no IssueTypes" do
         before do
-          Fabricate(:project)
           IssueType.destroy_all
         end
 
@@ -1337,7 +1373,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no Projects" do
-        before { Fabricate(:issue_type) }
+        before do
+          Project.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1347,7 +1385,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no visible Projects" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:invisible_project)
         end
 
