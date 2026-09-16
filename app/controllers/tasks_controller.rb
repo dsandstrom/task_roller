@@ -23,7 +23,7 @@ class TasksController < ApplicationController
     set_task_resources
     return if TaskNotification.where(task: @task, user: current_user).none?
 
-    TaskNotificationsRemovalJob.set(wait: 30.seconds)
+    TaskNotificationsRemovalJob.set(wait: 20.seconds)
                                .perform_later(@task, current_user)
   end
 

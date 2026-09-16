@@ -24,7 +24,7 @@ class IssuesController < ApplicationController
     set_issue_variables
     return if IssueNotification.where(issue: @issue, user: current_user).none?
 
-    IssueNotificationsRemovalJob.set(wait: 30.seconds)
+    IssueNotificationsRemovalJob.set(wait: 20.seconds)
                                 .perform_later(@issue, current_user)
   end
 
