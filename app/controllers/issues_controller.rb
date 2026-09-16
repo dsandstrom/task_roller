@@ -6,7 +6,6 @@ class IssuesController < ApplicationController
 
   before_action :set_new_form_options, only: :new
   before_action :set_edit_form_options, only: :edit
-  before_action :issue_types_exist?, only: %i[new edit]
   before_action :projects_exist?, only: :new
 
   def index
@@ -89,14 +88,6 @@ class IssuesController < ApplicationController
 
     def set_edit_form_options
       @issue_types = IssueType.all
-    end
-
-    def issue_types_exist?
-      return true if @issue_types&.any?
-
-      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
-      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
-      false
     end
 
     def projects_exist?
