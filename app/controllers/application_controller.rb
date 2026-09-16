@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
               with: :redirect_to_issue_types
   rescue_from ApplicationError::MissingTaskTypes,
               with: :redirect_to_issue_types
+  rescue_from ApplicationError::MissingProjects,
+              with: :redirect_to_categories
 
   private
 
@@ -109,5 +111,9 @@ class ApplicationController < ActionController::Base
     def redirect_to_issue_types
       redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
       redirect_to redirect_url, alert: 'App Error: Issue Types are required'
+    end
+
+    def redirect_to_categories
+      redirect_to root_url, alert: 'App Error: Projects are required'
     end
 end
