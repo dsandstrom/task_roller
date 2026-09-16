@@ -148,12 +148,11 @@ RSpec.describe Project, type: :model do
 
     before do
       Fabricate(:invisible_project)
+      Fabricate(:project, category: invisible_category)
     end
 
     it "returns visible projects from visible categories" do
       project = Fabricate(:project)
-      invisible_category_project =
-        Fabricate(:project, category: invisible_category)
       internal_category_project =
         Fabricate(:project, category: internal_category)
 
