@@ -3,6 +3,10 @@ require "rails_helper"
 RSpec.describe TaskSubscriptionsController, type: :controller do
   let(:task) { Fabricate(:task) }
 
+  before do
+    Fabricate(:issue_type)
+  end
+
   describe "GET #new" do
     let(:params) { { task_id: task.to_param } }
 

@@ -1,10 +1,13 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe EmployeeTypesController, type: :controller do
   let(:valid_params) { { employee_type: "Worker" } }
   let(:invalid_params) { { employee_type: "" } }
+
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
 
   describe "GET #new" do
     context "for an admin" do

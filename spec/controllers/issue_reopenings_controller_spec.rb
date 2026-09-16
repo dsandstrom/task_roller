@@ -1,9 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueReopeningsController, type: :controller do
   let(:issue) { Fabricate(:closed_issue) }
+
+  before do
+    Fabricate(:task_type)
+  end
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|

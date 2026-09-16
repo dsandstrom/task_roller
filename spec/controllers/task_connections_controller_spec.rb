@@ -8,7 +8,10 @@ RSpec.describe TaskConnectionsController, type: :controller do
   let(:invalid_attributes) { { target_id: "" } }
   let(:path) { task_path(source_task) }
 
-  before { sign_in(Fabricate(:user_admin)) }
+  before do
+    Fabricate(:issue_type)
+    sign_in(Fabricate(:user_admin))
+  end
 
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|

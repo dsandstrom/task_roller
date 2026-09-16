@@ -8,6 +8,10 @@ RSpec.describe IssueConnectionsController, type: :controller do
   let(:valid_attributes) { { target_id: target_issue.to_param } }
   let(:invalid_attributes) { { target_id: "" } }
 
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

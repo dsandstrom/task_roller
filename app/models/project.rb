@@ -19,6 +19,11 @@ class Project < ApplicationRecord
 
   # CLASS
 
+  def self.all_totally_visible
+    joins(:category).where(category: { visible: true }).where(visible: true)
+                    .order(:position)
+  end
+
   def self.all_visible
     where(visible: true).order(:position)
   end

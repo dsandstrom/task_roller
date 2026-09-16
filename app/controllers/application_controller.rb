@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include SetupVerification
+
   FILTER_OPTIONS = %i[issue_status task_status type issue_type_id task_type_id
                       project_ids order query].freeze
 
@@ -6,8 +8,16 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   check_authorization unless: :devise_controller?
+  check_for_types unless: :types_controller?
 
   rescue_from CanCan::AccessDenied, with: :user_not_authorized
+
+  rescue_from ApplicationError::MissingIssueTypes,
+              with: :redirect_to_issue_types
+  rescue_from ApplicationError::MissingTaskTypes,
+              with: :redirect_to_issue_types
+  rescue_from ApplicationError::MissingProjects,
+              with: :redirect_to_categories
 
   private
 
@@ -91,5 +101,19 @@ class ApplicationController < ActionController::Base
     def task_branch_params
       params.expect(task_branch: %i[source_issue_id source_task_id
                                     issue_comment_id task_comment_id])
+    end
+
+    def types_controller?
+      is_a?(::IssueTypesController) || is_a?(::TaskTypesController) ||
+        is_a?(::HelpController) || is_a?(::StaticController)
+    end
+
+    def redirect_to_issue_types
+      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
+      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
+    end
+
+    def redirect_to_categories
+      redirect_to root_url, alert: 'App Error: Projects are required'
     end
 end

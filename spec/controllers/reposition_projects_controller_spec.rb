@@ -9,6 +9,8 @@ RSpec.describe RepositionProjectsController, type: :controller do
     let(:invalid_attributes) { { new_position: "" } }
 
     before do
+      Fabricate(:issue_type)
+      Fabricate(:task_type)
       Fabricate(:project)
       Fabricate(:project, category: category)
     end

@@ -1,11 +1,14 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe ProjectsController, type: :controller do
   let(:category) { Fabricate(:category) }
   let(:invalid_attributes) { { name: "" } }
   let(:admin) { Fabricate(:user_admin) }
+
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
 
   describe "GET #index" do
     %w[admin reviewer].each do |employee_type|

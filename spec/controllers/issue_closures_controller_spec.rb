@@ -3,6 +3,10 @@ require "rails_helper"
 RSpec.describe IssueClosuresController, type: :controller do
   let(:issue) { Fabricate(:open_issue) }
 
+  before do
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

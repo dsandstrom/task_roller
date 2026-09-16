@@ -12,6 +12,11 @@ RSpec.describe MoveTasksController, type: :controller do
     { source_task_id: "", source_issue_id: "" }
   end
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do

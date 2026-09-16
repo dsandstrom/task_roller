@@ -4,9 +4,9 @@ class TasksController < ApplicationController
   load_and_authorize_resource only: %i[show edit update]
   authorize_resource only: :index
 
+  check_for_projects
   before_action :set_new_form_options, only: :new
   before_action :set_form_options, only: :edit
-  before_action :task_types_exist?, only: %i[new edit]
 
   def index
     @source = build_source
@@ -23,7 +23,7 @@ class TasksController < ApplicationController
     set_task_resources
     return if TaskNotification.where(task: @task, user: current_user).none?
 
-    TaskNotificationsRemovalJob.set(wait: 30.seconds)
+    TaskNotificationsRemovalJob.set(wait: 20.seconds)
                                .perform_later(@task, current_user)
   end
 
@@ -56,14 +56,6 @@ class TasksController < ApplicationController
   end
 
   private
-
-    def task_types_exist?
-      return true if @task_types&.any?
-
-      redirect_url = can?(:create, TaskType) ? issue_types_url : root_url
-      redirect_to redirect_url, alert: 'App Error: Task Types are required'
-      false
-    end
 
     def build_source
       { user_id: User, project_id: Project, issue_id: Issue,

@@ -18,6 +18,12 @@ RSpec.describe IssuesController, type: :controller do
   let(:valid_branch_attributes) { { source_issue_id: source_issue.to_param } }
   let(:invalid_branch_attributes) { { source_issue_id: "" } }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+    Fabricate(:project)
+  end
+
   describe "GET #index" do
     context "for an admin" do
       before { sign_in(Fabricate(:user_admin)) }
@@ -1165,7 +1171,9 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "when no IssueTypes" do
-          before { Fabricate(:project) }
+          before do
+            IssueType.destroy_all
+          end
 
           it "redirects to issue_types_url" do
             get :new
@@ -1175,7 +1183,7 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when internal Project" do
           before do
-            Fabricate(:issue_type)
+            Project.destroy_all
             Fabricate(:internal_project)
           end
 
@@ -1186,7 +1194,9 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "when no Projects" do
-          before { Fabricate(:issue_type) }
+          before do
+            Project.destroy_all
+          end
 
           it "redirects to root_url" do
             get :new
@@ -1196,8 +1206,42 @@ RSpec.describe IssuesController, type: :controller do
 
         context "when no visible Projects" do
           before do
-            Fabricate(:issue_type)
+            Project.destroy_all
             Fabricate(:invisible_project)
+          end
+
+          it "redirects to root_url" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when internal Category with project" do
+          before do
+            Fabricate(:project, category: Fabricate(:internal_category))
+          end
+
+          it "returns a success response" do
+            get :new
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no Categories" do
+          before do
+            Category.destroy_all
+          end
+
+          it "redirects to root_url" do
+            get :new
+            expect(response).to redirect_to(root_url)
+          end
+        end
+
+        context "when no visible Categories" do
+          before do
+            Category.destroy_all
+            Fabricate(:project, category: Fabricate(:invisible_category))
           end
 
           it "redirects to root_url" do
@@ -1235,7 +1279,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when internal Project" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:internal_project)
         end
 
@@ -1246,7 +1290,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no IssueTypes" do
-        before { Fabricate(:project) }
+        before do
+          IssueType.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1255,7 +1301,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no Projects" do
-        before { Fabricate(:issue_type) }
+        before do
+          Project.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1265,7 +1313,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no visible Projects" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:invisible_project)
         end
 
@@ -1303,7 +1351,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when internal Project" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:internal_project)
         end
 
@@ -1314,7 +1362,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no IssueTypes" do
-        before { Fabricate(:project) }
+        before do
+          IssueType.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1323,7 +1373,9 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "when no Projects" do
-        before { Fabricate(:issue_type) }
+        before do
+          Project.destroy_all
+        end
 
         it "redirects to root" do
           get :new
@@ -1333,7 +1385,7 @@ RSpec.describe IssuesController, type: :controller do
 
       context "when no visible Projects" do
         before do
-          Fabricate(:issue_type)
+          Project.destroy_all
           Fabricate(:invisible_project)
         end
 
@@ -1582,7 +1634,9 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           context "with invalid params" do
-            before { invalid_attributes[:project_id] = project.to_param }
+            before do
+              invalid_attributes[:project_id] = project.to_param
+            end
 
             it "doesn't create a new Issue" do
               expect do
@@ -1721,7 +1775,9 @@ RSpec.describe IssuesController, type: :controller do
         end
 
         context "with invalid params" do
-          before { invalid_attributes[:project_id] = project.to_param }
+          before do
+            invalid_attributes[:project_id] = project.to_param
+          end
 
           it "doesn't create a new Issue" do
             expect do

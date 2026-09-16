@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe MoveIssuesController, type: :controller do
@@ -7,6 +5,10 @@ RSpec.describe MoveIssuesController, type: :controller do
 
   let(:valid_attributes) { { project_id: new_project.to_param } }
   let(:invalid_attributes) { { project_id: "" } }
+
+  before do
+    Fabricate(:task_type)
+  end
 
   describe "GET #edit" do
     %w[admin reviewer].each do |employee_type|

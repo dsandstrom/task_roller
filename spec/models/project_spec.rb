@@ -115,7 +115,7 @@ RSpec.describe Project, type: :model do
       Fabricate(:invisible_project)
     end
 
-    it "returns projects with true visible and visible category" do
+    it "returns visible projects from any category" do
       project = Fabricate(:project)
       invisible_category_project =
         Fabricate(:project, category: invisible_category)
@@ -138,6 +138,26 @@ RSpec.describe Project, type: :model do
       invisible_project = Fabricate(:invisible_project)
 
       expect(Project.all_invisible).to contain_exactly(invisible_project)
+    end
+  end
+
+  describe ".all_totally_visible" do
+    let(:category) { Fabricate(:category) }
+    let(:invisible_category) { Fabricate(:invisible_category) }
+    let(:internal_category) { Fabricate(:internal_category) }
+
+    before do
+      Fabricate(:invisible_project)
+      Fabricate(:project, category: invisible_category)
+    end
+
+    it "returns visible projects from visible categories" do
+      project = Fabricate(:project)
+      internal_category_project =
+        Fabricate(:project, category: internal_category)
+
+      expect(Project.all_totally_visible)
+        .to contain_exactly(project, internal_category_project)
     end
   end
 

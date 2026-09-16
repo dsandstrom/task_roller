@@ -1,8 +1,11 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe GithubAccountsController, type: :controller do
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "DELETE #destroy" do
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|
       let(:current_user) { Fabricate("user_#{employee_type.downcase}") }

@@ -4,6 +4,10 @@ RSpec.describe RepositionTaskTypesController, type: :controller do
   let(:valid_attributes) { { new_position: "1" } }
   let(:invalid_attributes) { { new_position: "" } }
 
+  before do
+    Fabricate(:issue_type)
+  end
+
   describe "PATCH #update" do
     before { Fabricate(:task_type) }
 

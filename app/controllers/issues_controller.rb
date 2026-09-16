@@ -4,10 +4,9 @@ class IssuesController < ApplicationController
   load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
+  check_for_projects
   before_action :set_new_form_options, only: :new
   before_action :set_edit_form_options, only: :edit
-  before_action :issue_types_exist?, only: %i[new edit]
-  before_action :projects_exist?, only: :new
 
   def index
     @source = build_source
@@ -25,7 +24,7 @@ class IssuesController < ApplicationController
     set_issue_variables
     return if IssueNotification.where(issue: @issue, user: current_user).none?
 
-    IssueNotificationsRemovalJob.set(wait: 30.seconds)
+    IssueNotificationsRemovalJob.set(wait: 20.seconds)
                                 .perform_later(@issue, current_user)
   end
 
@@ -89,21 +88,6 @@ class IssuesController < ApplicationController
 
     def set_edit_form_options
       @issue_types = IssueType.all
-    end
-
-    def issue_types_exist?
-      return true if @issue_types&.any?
-
-      redirect_url = can?(:create, IssueType) ? issue_types_url : root_url
-      redirect_to redirect_url, alert: 'App Error: Issue Types are required'
-      false
-    end
-
-    def projects_exist?
-      return true if @project_options&.any?
-
-      redirect_to root_url, alert: 'App Error: Projects are required'
-      false
     end
 
     def build_source

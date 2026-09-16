@@ -4,6 +4,11 @@ RSpec.describe CategoryIssuesSubscriptionsController, type: :controller do
   let(:category) { Fabricate(:category) }
   let(:user) { Fabricate(:user_worker) }
 
+  before do
+    Fabricate(:issue_type)
+    Fabricate(:task_type)
+  end
+
   describe "GET #new" do
     let(:params) { { category_id: category.to_param } }
 
