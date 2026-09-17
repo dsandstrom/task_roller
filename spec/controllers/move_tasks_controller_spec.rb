@@ -79,6 +79,14 @@ RSpec.describe MoveTasksController, type: :controller do
 
         context "when turbo_stream request" do
           context "with valid params" do
+            context "and no task_branch params" do
+              it "renders create" do
+                post :create, params: { task: valid_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
             context "and valid task_branch params" do
               it "renders create" do
                 post :create, params: { task: valid_attributes,
@@ -100,6 +108,14 @@ RSpec.describe MoveTasksController, type: :controller do
           end
 
           context "with invalid params" do
+            context "and no task_branch params" do
+              it "renders create" do
+                post :create, params: { task: invalid_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
+            end
+
             context "and valid task_branch params" do
               it "renders new" do
                 post :create, params: { task: invalid_attributes,
@@ -140,6 +156,14 @@ RSpec.describe MoveTasksController, type: :controller do
                 issue_id: Fabricate(:issue, project: project).to_param,
                 assignee_ids: [Fabricate(:user_worker).to_param]
               )
+            end
+
+            context "and no task_branch params" do
+              it "renders create" do
+                post :create, params: { task: valid_attributes },
+                              as: :turbo_stream
+                expect(response).to be_successful
+              end
             end
 
             context "and valid task_branch params" do
@@ -211,11 +235,21 @@ RSpec.describe MoveTasksController, type: :controller do
         end
 
         context "when turbo_stream request" do
-          it "should be unauthorized" do
-            post :create, params: { task: valid_attributes,
-                                    task_branch: valid_branch_attributes },
-                          as: :turbo_stream
-            expect_to_be_forbidden(response)
+          context "when no task_branch params" do
+            it "should be unauthorized" do
+              post :create, params: { task: valid_attributes },
+                            as: :turbo_stream
+              expect_to_be_forbidden(response)
+            end
+          end
+
+          context "when task_branch params" do
+            it "should be unauthorized" do
+              post :create, params: { task: valid_attributes,
+                                      task_branch: valid_branch_attributes },
+                            as: :turbo_stream
+              expect_to_be_forbidden(response)
+            end
           end
         end
       end
