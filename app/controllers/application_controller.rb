@@ -105,7 +105,8 @@ class ApplicationController < ActionController::Base
 
     def types_controller?
       is_a?(::IssueTypesController) || is_a?(::TaskTypesController) ||
-        is_a?(::HelpController) || is_a?(::StaticController)
+        is_a?(::HelpController) || is_a?(::StaticController) ||
+        is_a?(::CategoriesController) || is_a?(::ProjectsController)
     end
 
     def redirect_to_issue_types

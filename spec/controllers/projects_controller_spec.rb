@@ -5,11 +5,6 @@ RSpec.describe ProjectsController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
   let(:admin) { Fabricate(:user_admin) }
 
-  before do
-    Fabricate(:issue_type)
-    Fabricate(:task_type)
-  end
-
   describe "GET #index" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
