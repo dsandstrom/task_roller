@@ -5,6 +5,7 @@ module SetupVerification
     # copied from CanCanCommunity - lib/cancan/controller_additions.rb
     def check_for_types(options = {})
       block = proc do |controller|
+        next if devise_controller?
         next if IssueType.any? && TaskType.any?
         next if options[:unless] && controller.send(options[:unless])
 
