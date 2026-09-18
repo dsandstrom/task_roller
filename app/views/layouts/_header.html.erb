@@ -1,3 +1,4 @@
+<% @project ||= @source if @source && @source.is_a?(Project)  %>
 <header class="main-header">
   <div class="page">
     <% if current_user.present? %>
@@ -21,22 +22,8 @@
       </div>
 
       <div class="menu">
-        <% @project ||= @source if @source && @source.is_a?(Project)  %>
-        <% if @project %>
-          <% if can?(:create, new_issue(@project)) %>
-            <%= menu_link 'Report Issue', new_issue_path(project_id: @project.to_param) %>
-          <% end %>
-          <% if can?(:create, new_task(@project)) %>
-            <%= menu_link 'Plan Task', new_project_task_path(@project) %>
-          <% end %>
-        <% else %>
-          <% if can?(:create, Issue) %>
-            <%= menu_link 'Report Issue', new_issue_path %>
-          <% end %>
-          <% if can?(:create, Task) %>
-            <%= menu_link 'Plan Task', new_projects_task_path %>
-          <% end %>
-        <% end %>
+        <%= new_issue_menu_link(@project) %>
+        <%= new_task_menu_link(@project) %>
       </div>
 
       <div class="user-name">

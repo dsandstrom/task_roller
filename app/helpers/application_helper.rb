@@ -30,6 +30,26 @@ module ApplicationHelper
     end
   end
 
+  def new_issue_menu_link(project)
+    text = 'Report Issue'
+
+    if project && can?(:create, new_issue(project))
+      menu_link text, new_issue_path(project_id: project.to_param)
+    elsif can?(:create, Issue)
+      menu_link text, new_issue_path
+    end
+  end
+
+  def new_task_menu_link(project)
+    text = 'Plan Task'
+
+    if project && can?(:create, new_task(project))
+      menu_link text, new_project_task_path(project)
+    elsif can?(:create, Task)
+      menu_link text, new_projects_task_path
+    end
+  end
+
   def icon(name)
     content_tag :i, nil, class: "icon-#{name}"
   end
