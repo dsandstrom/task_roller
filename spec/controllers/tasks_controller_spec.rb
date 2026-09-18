@@ -25,7 +25,6 @@ RSpec.describe TasksController, type: :controller do
   before do
     Fabricate(:issue_type)
     Fabricate(:task_type)
-    Fabricate(:project)
   end
 
   describe "GET #index" do
@@ -1177,21 +1176,32 @@ RSpec.describe TasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when their issue" do
-          it "returns a success response" do
-            task = Fabricate(:task, project: project, issue: issue,
-                                    user: current_user)
-            get :edit, params: { project_id: project.to_param,
-                                 id: task.to_param }
-            expect(response).to be_successful
+        context "when their task" do
+          context "from visible project" do
+            it "returns a success response" do
+              task = Fabricate(:task, project: project, issue: issue,
+                                      user: current_user)
+              get :edit, params: { id: task.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "from invisible project" do
+            let(:project) { Fabricate(:invisible_project) }
+
+            it "returns a success response" do
+              task = Fabricate(:task, project: project, issue: issue,
+                                      user: current_user)
+              get :edit, params: { id: task.to_param }
+              expect(response).to be_successful
+            end
           end
         end
 
-        context "when someone else's issue" do
+        context "when someone else's task" do
           it "returns a success response" do
             task = Fabricate(:task, project: project, issue: issue)
-            get :edit, params: { project_id: project.to_param,
-                                 id: task.to_param }
+            get :edit, params: { id: task.to_param }
             expect(response).to be_successful
           end
         end
@@ -1268,7 +1278,7 @@ RSpec.describe TasksController, type: :controller do
         before { sign_in(current_user) }
 
         context "for html requests" do
-          context "when project" do
+          context "when visible project" do
             context "with valid params" do
               it "creates a new Project Task" do
                 expect do
@@ -1377,6 +1387,25 @@ RSpec.describe TasksController, type: :controller do
                   post :create, params: { project_id: project.to_param,
                                           task: valid_attributes }
                 end.to change(user.assignments, :count).by(1)
+              end
+            end
+          end
+
+          context "when invisible project" do
+            let(:project) { Fabricate(:invisible_project) }
+
+            context "with valid params" do
+              it "doesn't create a new Task" do
+                expect do
+                  post :create, params: { project_id: project.to_param,
+                                          task: valid_attributes }
+                end.not_to change(Task, :count)
+              end
+
+              it "should be unauthorized" do
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+                expect_to_be_unauthorized(response)
               end
             end
           end
@@ -1726,6 +1755,18 @@ RSpec.describe TasksController, type: :controller do
                 put :update, params: { id: task.to_param,
                                        task: invalid_attributes }
                 expect(response).to be_successful
+              end
+            end
+
+            context "from invisible project" do
+              let(:project) { Fabricate(:invisible_project) }
+
+              it "updates the requested task's summary" do
+                expect do
+                  put :update, params: { id: task.to_param,
+                                         task: new_attributes }
+                  task.reload
+                end.to change(task, :summary).to("New Summary")
               end
             end
           end

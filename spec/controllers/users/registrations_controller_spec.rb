@@ -3,11 +3,6 @@ require "rails_helper"
 RSpec.describe Users::RegistrationsController, type: :controller do
   let(:invalid_attributes) { { name: "" } }
 
-  before do
-    Fabricate(:issue_type)
-    Fabricate(:task_type)
-  end
-
   describe "GET #new" do
     context "for a guest" do
       before { enable_devise_user(controller) }

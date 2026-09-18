@@ -4,7 +4,7 @@ class IssuesController < ApplicationController
   load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
-  check_for_projects
+  check_for_visible_projects only: :new
   before_action :set_new_form_options, only: :new
   before_action :set_edit_form_options, only: :edit
 
@@ -83,7 +83,7 @@ class IssuesController < ApplicationController
 
     def set_new_form_options
       @issue_types = IssueType.all
-      @project_options = build_project_options
+      @project_options = build_visible_project_options
     end
 
     def set_edit_form_options
@@ -138,17 +138,6 @@ class IssuesController < ApplicationController
       @trunk_task = Task.find(params.expect(:source_task_id))
       IssueBranch.new(source_task: @trunk_task,
                       task_comment_id: params[:task_comment_id])
-    end
-
-    def build_project_options
-      Category.all_visible.accessible_by(current_ability).map do |category|
-        projects = category.projects.all_visible
-                           .accessible_by(current_ability).map do |project|
-          [project.name, project.id]
-        end
-
-        [category.name, projects] if projects.any?
-      end.compact
     end
 
     def set_issue_variables

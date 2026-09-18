@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
       options
     end
 
-    def build_project_options
+    def build_visible_project_options
       Category.all_visible.accessible_by(current_ability).map do |category|
         projects = category.projects.all_visible
                            .accessible_by(current_ability).map do |project|
@@ -98,6 +98,17 @@ class ApplicationController < ActionController::Base
       end.compact
     end
 
+    def build_all_project_options(excluded_project)
+      Category.accessible_by(current_ability).map do |category|
+        projects = category.projects_except(excluded_project)
+                           .accessible_by(current_ability).map do |project|
+          [project.name_and_tag, project.id]
+        end
+
+        [category.name_and_tag, projects] if projects.any?
+      end.compact
+    end
+
     def task_branch_params
       params.expect(task_branch: %i[source_issue_id source_task_id
                                     issue_comment_id task_comment_id])
@@ -105,7 +116,8 @@ class ApplicationController < ActionController::Base
 
     def types_controller?
       is_a?(::IssueTypesController) || is_a?(::TaskTypesController) ||
-        is_a?(::HelpController) || is_a?(::StaticController)
+        is_a?(::HelpController) || is_a?(::StaticController) ||
+        is_a?(::CategoriesController) || is_a?(::ProjectsController)
     end
 
     def redirect_to_issue_types

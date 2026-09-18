@@ -4,7 +4,7 @@ class TasksController < ApplicationController
   load_and_authorize_resource only: %i[show edit update]
   authorize_resource only: :index
 
-  check_for_projects
+  check_for_visible_projects only: :new
   before_action :set_new_form_options, only: :new
   before_action :set_form_options, only: :edit
 
@@ -79,7 +79,7 @@ class TasksController < ApplicationController
 
     def set_new_form_options
       set_form_options
-      @project_options = build_project_options
+      @project_options = build_visible_project_options
     end
 
     def build_tasks

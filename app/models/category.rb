@@ -69,6 +69,12 @@ class Category < ApplicationRecord
     false
   end
 
+  def projects_except(excluded_project = nil)
+    return projects unless excluded_project
+
+    projects.where.not(id: excluded_project.id)
+  end
+
   private
 
     def new_position_numericality

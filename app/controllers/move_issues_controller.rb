@@ -1,7 +1,7 @@
 class MoveIssuesController < ApplicationController
   load_and_authorize_resource :issue
   before_action :authorize_move
-  before_action :set_categories
+  before_action :set_project_options
 
   def edit; end
 
@@ -10,7 +10,7 @@ class MoveIssuesController < ApplicationController
       redirect_to @issue, notice: 'Issue was successfully moved.'
     else
       render :edit
-      set_categories
+      set_project_options
     end
   end
 
@@ -24,7 +24,10 @@ class MoveIssuesController < ApplicationController
       params.expect(issue: [:project_id])
     end
 
-    def set_categories
-      @categories = Category.accessible_by(current_ability).order(:position)
+    def set_project_options
+      @project_options = build_all_project_options(@issue.project)
+      return if @project_options.any?
+
+      raise ApplicationError::MissingProjects, 'Another projects is required'
     end
 end

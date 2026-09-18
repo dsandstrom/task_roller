@@ -1,9 +1,16 @@
 require "rails_helper"
 
 RSpec.describe "move_issues/edit", type: :view do
+  let(:category) { Fabricate(:category) }
+  let(:project) { Fabricate(:project, category: category) }
+  let(:new_project) { Fabricate(:project, category: category) }
+
   before(:each) do
-    @issue = assign(:issue, Fabricate(:issue))
-    assign(:categories, [@issue.category])
+    @issue = assign(:issue, Fabricate(:issue, project: project))
+    assign(
+      :project_options,
+      [[category.name_and_tag, [new_project.name_and_tag, new_project.id]]]
+    )
   end
 
   context "for a reviewer" do
