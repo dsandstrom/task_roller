@@ -434,4 +434,45 @@ RSpec.describe Category, type: :model do
       end
     end
   end
+
+  describe "#projects_except" do
+    let(:category) { Fabricate(:category) }
+    let(:different_project) { Fabricate(:project) }
+
+    context "when category has no projects" do
+      context "and not given a project" do
+        it "returns none" do
+          expect(category.projects_except).to eq([])
+        end
+      end
+
+      context "and given a project" do
+        it "returns none" do
+          expect(category.projects_except(different_project)).to eq([])
+        end
+      end
+    end
+
+    context "when category has projects" do
+      let!(:project) { Fabricate(:project, category: category) }
+
+      context "and not given a project" do
+        it "returns all category's projects" do
+          expect(category.projects_except).to eq([project])
+        end
+      end
+
+      context "and given a different project" do
+        it "returns all category's projects" do
+          expect(category.projects_except(different_project)).to eq([project])
+        end
+      end
+
+      context "and given the category's project" do
+        it "returns none" do
+          expect(category.projects_except(project)).to eq([])
+        end
+      end
+    end
+  end
 end

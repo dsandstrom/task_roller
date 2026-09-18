@@ -79,7 +79,7 @@ class TasksController < ApplicationController
 
     def set_new_form_options
       set_form_options
-      @project_options = build_project_options
+      @project_options = build_visible_project_options
     end
 
     def build_tasks

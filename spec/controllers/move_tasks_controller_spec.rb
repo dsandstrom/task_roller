@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe MoveTasksController, type: :controller do
+  let(:old_project) { Fabricate(:project) }
   let(:project) { Fabricate(:project) }
   let(:source_task) { Fabricate(:task, project: project) }
 
@@ -620,31 +621,53 @@ RSpec.describe MoveTasksController, type: :controller do
 
         before { sign_in(current_user) }
 
-        context "when visible project" do
+        context "when visible projects" do
+          before do
+            Fabricate(:project)
+          end
+
           it "returns a success response" do
-            task = Fabricate(:task, project: project)
+            task = Fabricate(:task, project: old_project)
             get :edit, params: { task_id: task.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when invisible project" do
-          let(:project) { Fabricate(:invisible_project) }
+        context "when invisible projects" do
+          let(:old_project) { Fabricate(:invisible_project) }
+
+          before do
+            Fabricate(:invisible_project)
+          end
 
           it "returns a success response" do
-            task = Fabricate(:task, project: project)
+            task = Fabricate(:task, project: old_project)
             get :edit, params: { task_id: task.to_param }
             expect(response).to be_successful
           end
         end
 
-        context "when internal project" do
-          let(:project) { Fabricate(:internal_project) }
+        context "when internal projects" do
+          let(:old_project) { Fabricate(:internal_project) }
+
+          before do
+            Fabricate(:internal_project)
+          end
 
           it "returns a success response" do
-            task = Fabricate(:task, project: project)
+            task = Fabricate(:task, project: old_project)
             get :edit, params: { task_id: task.to_param }
             expect(response).to be_successful
+          end
+        end
+
+        context "when only one project" do
+          let(:project) { Fabricate(:project) }
+
+          it "redirects to root" do
+            task = Fabricate(:task, project: project)
+            get :edit, params: { task_id: task.to_param }
+            expect(response).to redirect_to(:root)
           end
         end
       end
@@ -654,10 +677,13 @@ RSpec.describe MoveTasksController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { sign_in(current_user) }
+        before do
+          Fabricate(:project)
+          sign_in(current_user)
+        end
 
         it "should be unauthorized" do
-          task = Fabricate(:task)
+          task = Fabricate(:task, project: old_project)
           get :edit, params: { task_id: task.to_param }
           expect_to_be_unauthorized(response)
         end

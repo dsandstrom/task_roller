@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe MoveIssuesController, type: :controller do
+  let(:old_project) { Fabricate(:project) }
   let(:new_project) { Fabricate(:project) }
 
   let(:valid_attributes) { { project_id: new_project.to_param } }
@@ -17,10 +18,52 @@ RSpec.describe MoveIssuesController, type: :controller do
 
         before { sign_in(current_user) }
 
-        it "returns a success response" do
-          issue = Fabricate(:issue)
-          get :edit, params: { issue_id: issue.to_param }
-          expect(response).to be_successful
+        context "when visible projects" do
+          before do
+            Fabricate(:project)
+          end
+
+          it "returns a success response" do
+            issue = Fabricate(:issue, project: old_project)
+            get :edit, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when invisible projects" do
+          let(:old_project) { Fabricate(:invisible_project) }
+
+          before do
+            Fabricate(:invisible_project)
+          end
+
+          it "returns a success response" do
+            issue = Fabricate(:issue, project: old_project)
+            get :edit, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when internal projects" do
+          let(:old_project) { Fabricate(:internal_project) }
+
+          before do
+            Fabricate(:internal_project)
+          end
+
+          it "returns a success response" do
+            issue = Fabricate(:issue, project: old_project)
+            get :edit, params: { issue_id: issue.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when only one project" do
+          it "redirects to root" do
+            issue = Fabricate(:issue, project: new_project)
+            get :edit, params: { issue_id: issue.to_param }
+            expect(response).to redirect_to(:root)
+          end
         end
       end
     end
@@ -29,10 +72,13 @@ RSpec.describe MoveIssuesController, type: :controller do
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type}") }
 
-        before { sign_in(current_user) }
+        before do
+          Fabricate(:project)
+          sign_in(current_user)
+        end
 
         it "should be unauthorized" do
-          issue = Fabricate(:issue)
+          issue = Fabricate(:issue, project: old_project)
           get :edit, params: { issue_id: issue.to_param }
           expect_to_be_unauthorized(response)
         end
@@ -64,6 +110,10 @@ RSpec.describe MoveIssuesController, type: :controller do
         end
 
         context "with invalid params" do
+          before do
+            new_project
+          end
+
           it "doesn't update the requested issue" do
             issue = Fabricate(:issue)
             expect do

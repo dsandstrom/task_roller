@@ -6,9 +6,9 @@ class MoveTasksController < ApplicationController
 
   check_for_visible_projects only: %i[new create]
 
-  before_action :set_form_options, only: %i[new create]
+  before_action :set_visible_project_options, only: %i[new create]
   before_action :set_task, only: :create
-  before_action :set_categories, only: :edit
+  before_action :set_all_project_options, only: :edit
 
   def new
     @task = current_user.tasks.build
@@ -33,7 +33,7 @@ class MoveTasksController < ApplicationController
     if @task.update(task_params)
       redirect_to @task, notice: 'Task was successfully moved.'
     else
-      set_categories
+      set_all_project_options
       render :edit
     end
   end
@@ -57,8 +57,8 @@ class MoveTasksController < ApplicationController
                            { assignee_ids: [] }])
     end
 
-    def set_form_options
-      @project_options = build_project_options
+    def set_visible_project_options
+      @project_options = build_visible_project_options
     end
 
     def set_task
@@ -76,8 +76,11 @@ class MoveTasksController < ApplicationController
       @task_branch = TaskBranch.new(task_branch_params)
     end
 
-    def set_categories
-      @categories = Category.accessible_by(current_ability).order(:position)
+    def set_all_project_options
+      @project_options = build_all_project_options(@task.project)
+      return if @project_options.any?
+
+      raise ApplicationError::MissingProjects, 'Another projects is required'
     end
 
     # javascript copies the ids to the hidden field strangely
