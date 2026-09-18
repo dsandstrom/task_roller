@@ -21,7 +21,6 @@ RSpec.describe IssuesController, type: :controller do
   before do
     Fabricate(:issue_type)
     Fabricate(:task_type)
-    Fabricate(:project)
   end
 
   describe "GET #index" do

@@ -4,7 +4,7 @@ class IssuesController < ApplicationController
   load_and_authorize_resource only: %i[show create edit update]
   authorize_resource only: :index
 
-  check_for_projects
+  check_for_visible_projects only: :new
   before_action :set_new_form_options, only: :new
   before_action :set_edit_form_options, only: :edit
 

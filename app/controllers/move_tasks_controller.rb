@@ -1,7 +1,11 @@
 class MoveTasksController < ApplicationController
   load_and_authorize_resource :task, only: %i[edit update]
+
   before_action :authorize_move, only: %i[edit update]
   before_action :authorize_create, only: %i[new create]
+
+  check_for_visible_projects only: %i[new create]
+
   before_action :set_form_options, only: %i[new create]
   before_action :set_task, only: :create
   before_action :set_categories, only: :edit
