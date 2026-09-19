@@ -51,6 +51,24 @@ RSpec.describe "categories/index", type: :view do
         expect(rendered).not_to have_link(nil, href: archived_categories_path)
       end
     end
+
+    it "renders new issue menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_issue_path)
+    end
+
+    it "renders new task menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_projects_task_path)
+    end
+
+    it "renders reviews menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: reviews_path)
+    end
   end
 
   context "for a reviewer" do
@@ -135,6 +153,24 @@ RSpec.describe "categories/index", type: :view do
                       "delete"
       end
     end
+
+    it "renders new issue menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_issue_path)
+    end
+
+    it "renders new task menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: new_projects_task_path)
+    end
+
+    it "renders reviews menu link" do
+      render template: subject, layout: "layouts/application"
+
+      expect(rendered).to have_link(nil, href: reviews_path)
+    end
   end
 
   %w[worker reporter].each do |employee_type|
@@ -171,6 +207,24 @@ RSpec.describe "categories/index", type: :view do
         render template: subject, layout: "layouts/application"
 
         expect(rendered).not_to have_link(nil, href: archived_categories_path)
+      end
+
+      it "renders new issue menu link" do
+        render template: subject, layout: "layouts/application"
+
+        expect(rendered).to have_link(nil, href: new_issue_path)
+      end
+
+      it "doesn't render new task menu link" do
+        render template: subject, layout: "layouts/application"
+
+        expect(rendered).not_to have_link(nil, href: new_projects_task_path)
+      end
+
+      it "doesn't render reviews menu link" do
+        render template: subject, layout: "layouts/application"
+
+        expect(rendered).not_to have_link(nil, href: reviews_path)
       end
     end
   end

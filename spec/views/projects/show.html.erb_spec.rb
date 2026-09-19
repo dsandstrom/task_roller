@@ -78,6 +78,75 @@ RSpec.describe "projects/show", type: :view do
         assert_select "#task-#{second_task.id}", count: 1
         assert_select "#task-#{other_task.id}", count: 0
       end
+
+      context "when project is visible" do
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_project_task_path(project))
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
+
+      context "when project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_project_task_path(project))
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
+
+      context "when project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: new_issue_path)
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_projects_task_path)
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
     end
 
     context "when task missing type" do
@@ -169,67 +238,263 @@ RSpec.describe "projects/show", type: :view do
         assert_select "#task-#{second_task.id}", count: 1
         assert_select "#task-#{other_task.id}", count: 0
       end
+
+      context "when project is visible" do
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_project_task_path(project))
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
+
+      context "when project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_project_task_path(project))
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
+
+      context "when project is invisible" do
+        let(:project) { Fabricate(:invisible_project, category: category) }
+
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: new_issue_path)
+        end
+
+        it "renders new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_projects_task_path)
+        end
+
+        it "renders reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).to have_link(nil, href: reviews_path)
+        end
+      end
     end
   end
 
-  %w[worker reporter].each do |employee_type|
-    context "for a #{employee_type}" do
-      let(:current_user) { Fabricate("user_#{employee_type}") }
+  context "for a worker" do
+    let(:current_user) { Fabricate(:user_worker) }
 
-      before { enable_can(view, current_user) }
+    before { enable_can(view, current_user) }
 
-      context "when tasks and issues" do
-        before(:each) do
-          first_issue
-          first_task
-          second_issue
-          second_task
-          assign(:search_results,
-                 page(SearchResult.filter_by(project_ids: [project.id])))
-        end
+    context "when tasks and issues" do
+      before(:each) do
+        first_issue
+        first_task
+        second_issue
+        second_task
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+      end
 
-        it "doesn't render the edit project link" do
+      it "doesn't render the edit project link" do
+        render template: subject, layout: "layouts/application"
+
+        expect(rendered).not_to have_link(nil, href: edit_url)
+      end
+
+      it "renders new issue link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.to_param)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new task link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_project_task_path(@project)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
+
+      context "when project is visible" do
+        it "renders new issue menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).not_to have_link(nil, href: edit_url)
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
         end
 
-        it "renders new issue link" do
+        it "doesn't render new task menu link" do
           render template: subject, layout: "layouts/application"
 
-          url = new_issue_path(project_id: @project.to_param)
-          expect(rendered).to have_link(nil, href: url)
+          expect(rendered)
+            .not_to have_link(nil, href: new_project_task_path(project))
         end
 
-        it "doesn't render new task link" do
+        it "doesn't render reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          url = new_project_task_path(@project)
-          expect(rendered).not_to have_link(nil, href: url)
+          expect(rendered).not_to have_link(nil, href: reviews_path)
+        end
+      end
+
+      context "when project is internal" do
+        let(:project) { Fabricate(:internal_project, category: category) }
+
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
         end
 
-        it "renders a list of issues" do
-          other_issue =
-            Fabricate(:issue, project: Fabricate(:project, category: category))
-          assign(:search_results,
-                 page(SearchResult.filter_by(project_ids: [project.id])))
+        it "doesn't render new task menu link" do
+          render template: subject, layout: "layouts/application"
 
-          render
-          assert_select "#issue-#{first_issue.id}", count: 1
-          assert_select "#issue-#{second_issue.id}", count: 1
-          assert_select "#issue-#{other_issue.id}", count: 0
+          expect(rendered)
+            .not_to have_link(nil, href: new_project_task_path(project))
         end
 
-        it "renders a list of tasks" do
-          other_task =
-            Fabricate(:task, project: Fabricate(:project, category: category))
-          assign(:search_results,
-                 page(SearchResult.filter_by(project_ids: [project.id])))
+        it "doesn't render reviews menu link" do
+          render template: subject, layout: "layouts/application"
 
-          render
-          assert_select "#task-#{first_task.id}", count: 1
-          assert_select "#task-#{second_task.id}", count: 1
-          assert_select "#task-#{other_task.id}", count: 0
+          expect(rendered).not_to have_link(nil, href: reviews_path)
+        end
+      end
+    end
+  end
+
+  context "for a reporter" do
+    let(:current_user) { Fabricate(:user_reporter) }
+
+    before { enable_can(view, current_user) }
+
+    context "when tasks and issues" do
+      before(:each) do
+        first_issue
+        first_task
+        second_issue
+        second_task
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+      end
+
+      it "doesn't render the edit project link" do
+        render template: subject, layout: "layouts/application"
+
+        expect(rendered).not_to have_link(nil, href: edit_url)
+      end
+
+      it "renders new issue link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_issue_path(project_id: @project.to_param)
+        expect(rendered).to have_link(nil, href: url)
+      end
+
+      it "doesn't render new task link" do
+        render template: subject, layout: "layouts/application"
+
+        url = new_project_task_path(@project)
+        expect(rendered).not_to have_link(nil, href: url)
+      end
+
+      it "renders a list of issues" do
+        other_issue =
+          Fabricate(:issue, project: Fabricate(:project, category: category))
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+
+        render
+        assert_select "#issue-#{first_issue.id}", count: 1
+        assert_select "#issue-#{second_issue.id}", count: 1
+        assert_select "#issue-#{other_issue.id}", count: 0
+      end
+
+      it "renders a list of tasks" do
+        other_task =
+          Fabricate(:task, project: Fabricate(:project, category: category))
+        assign(:search_results,
+               page(SearchResult.filter_by(project_ids: [project.id])))
+
+        render
+        assert_select "#task-#{first_task.id}", count: 1
+        assert_select "#task-#{second_task.id}", count: 1
+        assert_select "#task-#{other_task.id}", count: 0
+      end
+
+      context "when project is visible" do
+        it "renders new issue menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .to have_link(nil, href: new_issue_path(project_id: project.id))
+        end
+
+        it "doesn't render new task menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered)
+            .not_to have_link(nil, href: new_project_task_path(project))
+        end
+
+        it "doesn't render reviews menu link" do
+          render template: subject, layout: "layouts/application"
+
+          expect(rendered).not_to have_link(nil, href: reviews_path)
         end
       end
     end

@@ -1153,9 +1153,35 @@ RSpec.describe IssuesController, type: :controller do
           before { Fabricate(:issue_type) }
 
           context "and project_id param" do
-            it "returns a success response" do
-              get :new, params: { project_id: project.to_param }
-              expect(response).to be_successful
+            context "for visible project" do
+              it "returns a success response" do
+                get :new, params: { project_id: project.to_param }
+                expect(response).to be_successful
+              end
+            end
+
+            context "for internal project" do
+              let(:project) { Fabricate(:internal_project, category: category) }
+
+              it "returns a success response" do
+                get :new, params: { project_id: project.to_param }
+                expect(response).to be_successful
+              end
+            end
+
+            context "for invisible project" do
+              let(:project) do
+                Fabricate(:invisible_project, category: category)
+              end
+
+              before do
+                Fabricate(:project)
+              end
+
+              it "should be unauthorized" do
+                get :new, params: { project_id: project.to_param }
+                expect_to_be_unauthorized(response)
+              end
             end
           end
 
@@ -1260,9 +1286,33 @@ RSpec.describe IssuesController, type: :controller do
         before { Fabricate(:issue_type) }
 
         context "and project_id param" do
-          it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
-            expect(response).to be_successful
+          context "for visible project" do
+            it "returns a success response" do
+              get :new, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for internal project" do
+            let(:project) { Fabricate(:internal_project, category: category) }
+
+            it "returns a success response" do
+              get :new, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for invisible project" do
+            let(:project) { Fabricate(:invisible_project, category: category) }
+
+            before do
+              Fabricate(:project)
+            end
+
+            it "should be unauthorized" do
+              get :new, params: { project_id: project.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 
@@ -1332,9 +1382,37 @@ RSpec.describe IssuesController, type: :controller do
         before { Fabricate(:issue_type) }
 
         context "and project_id param" do
-          it "returns a success response" do
-            get :new, params: { project_id: project.to_param }
-            expect(response).to be_successful
+          context "for visible project" do
+            it "returns a success response" do
+              get :new, params: { project_id: project.to_param }
+              expect(response).to be_successful
+            end
+          end
+
+          context "for internal project" do
+            let(:project) { Fabricate(:internal_project, category: category) }
+
+            before do
+              Fabricate(:project)
+            end
+
+            it "should be unauthorized" do
+              get :new, params: { project_id: project.to_param }
+              expect_to_be_unauthorized(response)
+            end
+          end
+
+          context "for invisible project" do
+            let(:project) { Fabricate(:invisible_project, category: category) }
+
+            before do
+              Fabricate(:project)
+            end
+
+            it "should be unauthorized" do
+              get :new, params: { project_id: project.to_param }
+              expect_to_be_unauthorized(response)
+            end
           end
         end
 

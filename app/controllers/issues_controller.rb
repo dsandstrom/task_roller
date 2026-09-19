@@ -33,7 +33,11 @@ class IssuesController < ApplicationController
 
     @issue_branch = build_issue_branch
     @issue = build_issue
-    @project = @issue.project if @issue.project
+
+    return unless @issue.project
+
+    authorize! :create, @issue
+    @project = @issue.project
   end
 
   def edit; end

@@ -28,7 +28,7 @@ RSpec.describe ReviewsController, type: :controller do
 
         context "when no reviews ready" do
           it "returns a success response" do
-            get :index, params: { user_id: current_user.to_param }
+            get :index
             expect(response).to be_successful
           end
         end
@@ -40,7 +40,7 @@ RSpec.describe ReviewsController, type: :controller do
           end
 
           it "returns a success response" do
-            get :index, params: { user_id: current_user.to_param }
+            get :index
             expect(response).to be_successful
           end
         end
@@ -57,7 +57,7 @@ RSpec.describe ReviewsController, type: :controller do
         end
 
         it "should be unauthorized" do
-          get :index, params: { user_id: current_user.to_param }
+          get :index
           expect_to_be_unauthorized(response)
         end
       end
