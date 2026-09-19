@@ -1,3 +1,4 @@
+<% show_status_filter = true unless show_status_filter == false %>
 <% if issues.any? || searching? %>
   <%= render 'shared/page_links', collection: issues %>
 <% end %>
@@ -15,7 +16,8 @@
 
   <div class="second-column">
     <% if issues.any? || searching? %>
-      <%= render 'issues/filter_form', issues: issues %>
+      <%= render 'issues/filter_form', issues: issues,
+                                       show_status_filter: show_status_filter %>
     <% end %>
   </div>
 </div>

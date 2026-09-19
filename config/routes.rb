@@ -38,6 +38,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :issues, only: %i[show new create edit update] do
+    collection do
+      get :pending
+    end
     resources :issue_comments, except: :index
     resources :issue_subscriptions, only: %i[new create destroy]
     resources :task_previews, only: :index

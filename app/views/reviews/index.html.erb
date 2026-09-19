@@ -1,6 +1,4 @@
-<header class="tasks-header">
-  <h2>Tasks Ready for Review</h2>
-</header>
+<%= review_header 'Tasks Ready for Review' %>
 
 <div class="reviews">
   <% if @tasks.any? || searching? %>

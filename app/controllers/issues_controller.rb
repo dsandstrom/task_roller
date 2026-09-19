@@ -17,6 +17,13 @@ class IssuesController < ApplicationController
                           .filter_by(build_filters).page(params[:page])
   end
 
+  def pending
+    authorize! :create, IssueClosure
+    @issues = Issue.all_pending.accessible_by(current_ability)
+                   .with_notifications(current_user, order_by: order_by)
+                   .filter_by(build_filters).page(params[:page])
+  end
+
   def show
     @user = @issue.user
     @task = @issue.tasks.find(params.expect(:task_id)) if params[:task_id]

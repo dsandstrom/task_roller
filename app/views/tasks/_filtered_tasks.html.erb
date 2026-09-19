@@ -1,6 +1,4 @@
-<%
-  show_status_filter = true unless show_status_filter == false
-%>
+<% show_status_filter = true unless show_status_filter == false %>
 
 <% if tasks.any? || searching? %>
   <%= render 'shared/page_links', collection: tasks %>
