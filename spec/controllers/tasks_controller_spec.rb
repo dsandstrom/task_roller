@@ -1110,6 +1110,19 @@ RSpec.describe TasksController, type: :controller do
           end
         end
 
+        context "when invisible Project" do
+          let(:project) { Fabricate(:invisible_project) }
+
+          before do
+            Fabricate(:project)
+          end
+
+          it "should be unauthorized" do
+            get :new, params: { project_id: project.to_param }
+            expect_to_be_unauthorized(response)
+          end
+        end
+
         context "when no visible Projects" do
           let(:project) { Fabricate(:invisible_project) }
 
