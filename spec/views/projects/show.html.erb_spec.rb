@@ -310,7 +310,7 @@ RSpec.describe "projects/show", type: :view do
     end
   end
 
-  context "for a worker", focus: true do
+  context "for a worker" do
     let(:current_user) { Fabricate(:user_worker) }
 
     before { enable_can(view, current_user) }
@@ -417,7 +417,7 @@ RSpec.describe "projects/show", type: :view do
     end
   end
 
-  context "for a reporter", focus: true do
+  context "for a reporter" do
     let(:current_user) { Fabricate(:user_reporter) }
 
     before { enable_can(view, current_user) }
