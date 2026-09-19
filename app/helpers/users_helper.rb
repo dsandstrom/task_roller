@@ -152,13 +152,9 @@ module UsersHelper
       links = [['Dashboard', user_path(user)],
                ['Reported Issues', user_issues_path(user)]]
       links << ['Created Tasks', user_tasks_path(user)] if user.tasks.any?
+      return links if user.assignments.none?
 
-      if user.assignments.any?
-        links << ['Assigned Tasks', user_assignments_path(user)]
-      end
-      return links unless can?(:approve, Review)
-
-      links << ['Ready for Review', user_reviews_path(user)]
+      links << ['Assigned Tasks', user_assignments_path(user)]
     end
 
     def user_dropdown_links(user)

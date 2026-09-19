@@ -3,8 +3,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :issues, only: :index
     resources :tasks, only: :index
     resources :assignments, only: :index
-    resources :reviews, only: :index
   end
+
+  resources :reviews, only: :index
 
   get 'users/:user_id/employee_types/new' => 'employee_types#new',
       as: :new_user_employee_type

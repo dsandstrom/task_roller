@@ -1,7 +1,6 @@
 class ReviewsController < ApplicationController
   load_and_authorize_resource :task, except: :index
   load_and_authorize_resource through: :task, except: :index
-  load_and_authorize_resource :user, only: :index
 
   def index
     authorize! :approve, Review
