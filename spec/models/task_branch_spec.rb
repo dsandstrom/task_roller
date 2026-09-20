@@ -214,6 +214,46 @@ RSpec.describe TaskBranch, type: :model do
             .to eq({ summary: summary, description: description })
         end
       end
+
+      context "with an issue_id" do
+        let(:source_task) { Fabricate(:task, project: project, issue: issue) }
+
+        let(:summary) do
+          "#{source_task.summary} (Copied from Task##{source_task.id})"
+        end
+
+        let(:description) do
+          "(Copied from Task##{source_task.id})\n\n---\n\n" \
+            "#{source_task.description}\n\n---\n"
+        end
+
+        context "from an closed issue" do
+          let(:issue) { Fabricate(:issue, project: project) }
+
+          let(:task_branch) do
+            Fabricate(:task_branch_from_task, source_task: source_task)
+          end
+
+          it "returns issue_id" do
+            expect(task_branch.new_target_attrs)
+              .to eq({ summary: summary, description: description,
+                       issue_id: issue.id })
+          end
+        end
+
+        context "from an closed issue" do
+          let(:issue) { Fabricate(:addressed_issue, project: project) }
+
+          let(:task_branch) do
+            Fabricate(:task_branch_from_task, source_task: source_task)
+          end
+
+          it "returns without issue_id" do
+            expect(task_branch.new_target_attrs)
+              .to eq({ summary: summary, description: description })
+          end
+        end
+      end
     end
   end
 end
