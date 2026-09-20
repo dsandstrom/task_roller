@@ -2009,4 +2009,59 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#reviewed_tasks" do
+    let(:user) { Fabricate(:user_reviewer) }
+
+    context "when user has no reviews" do
+      before do
+        Fabricate(:task, user: user)
+        Fabricate(:approved_review)
+      end
+
+      it "returns none" do
+        expect(user.reviewed_tasks).to eq([])
+      end
+    end
+
+    context "when user an approved review" do
+      let(:task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:approved_review, task: task, user: user)
+      end
+
+      it "returns it" do
+        expect(user.reviewed_tasks).to eq([task])
+      end
+    end
+
+    context "when user an disapproved review" do
+      let(:task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:disapproved_review, task: task, user: user)
+      end
+
+      it "returns it" do
+        expect(user.reviewed_tasks).to eq([task])
+      end
+    end
+
+    context "when user multiple reviews" do
+      let(:first_task) { Fabricate(:task) }
+      let(:second_task) { Fabricate(:task) }
+
+      before do
+        Fabricate(:disapproved_review, task: first_task, user: user)
+        Fabricate(:approved_review, task: first_task, user: user)
+        Fabricate(:approved_review, task: second_task, user: user)
+        Fabricate(:pending_review, user: user)
+      end
+
+      it "returns it" do
+        expect(user.reviewed_tasks).to contain_exactly(first_task, second_task)
+      end
+    end
+  end
 end

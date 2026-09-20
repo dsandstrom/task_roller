@@ -19,6 +19,39 @@ RSpec.describe ReviewsController, type: :controller do
     Fabricate(:task_type)
   end
 
+  describe "GET #index" do
+    %w[admin reviewer worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { sign_in(current_user) }
+
+        context "when requested user has reviewed tasks" do
+          let(:user) { Fabricate(:user_reviewer) }
+          let(:task) { Fabricate(:finished_task) }
+
+          before do
+            Fabricate(:approved_review, task: task, user: user)
+          end
+
+          it "returns a success response" do
+            get :index, params: { user_id: user.to_param }
+            expect(response).to be_successful
+          end
+        end
+
+        context "when requested user doesn't have reviewed tasks" do
+          let(:user) { Fabricate(:user_worker) }
+
+          it "returns a success response" do
+            get :index, params: { user_id: user.to_param }
+            expect(response).to be_successful
+          end
+        end
+      end
+    end
+  end
+
   describe "GET #new" do
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do

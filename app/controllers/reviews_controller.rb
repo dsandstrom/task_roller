@@ -1,6 +1,14 @@
 class ReviewsController < ApplicationController
   load_and_authorize_resource :task, except: :index
   load_and_authorize_resource through: :task, except: :index
+  load_and_authorize_resource :user, only: :index
+
+  def index
+    authorize! :index, Task
+
+    @tasks = @user.reviewed_tasks.accessible_by(current_ability)
+                  .filter_by(build_filters).page(params[:page])
+  end
 
   def new; end
 
