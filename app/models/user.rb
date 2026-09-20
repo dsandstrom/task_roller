@@ -45,6 +45,7 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :notifying_issues, through: :issue_notifications,
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
+  has_many :search_subscriptions, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 150 },
                    format: { without: NAME_DISALLOW_REGEX }
