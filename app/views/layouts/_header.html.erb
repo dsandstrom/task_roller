@@ -24,7 +24,7 @@
       <div class="menu">
         <%= new_issue_menu_link(@project) %>
         <%= new_task_menu_link(@project) %>
-        <%= menu_link('Review', reviews_path) if can?(:approve, Review) %>
+        <%= menu_link('Review', finished_tasks_path) if can?(:approve, Review) %>
       </div>
 
       <div class="user-name">

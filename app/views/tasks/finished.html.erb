@@ -1,0 +1,9 @@
+<%= review_header 'Tasks Ready for Review' %>
+
+<div class="reviews">
+  <% if @tasks.any? || searching? %>
+    <%= render 'tasks/filtered_tasks', tasks: @tasks, show_status_filter: false %>
+  <% else %>
+    <p class="no-reviews">all caught up</p>
+  <% end %>
+</div>

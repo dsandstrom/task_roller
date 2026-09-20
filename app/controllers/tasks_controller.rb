@@ -17,6 +17,14 @@ class TasksController < ApplicationController
                         .filter_by(build_filters).page(params[:page])
   end
 
+  def finished
+    authorize! :approve, Review
+
+    @tasks = Task.all_in_review.all_visible.accessible_by(current_ability)
+                 .with_notifications(current_user, order_by: order_by)
+                 .filter_by(build_filters).page(params[:page])
+  end
+
   def show
     @project = @task.project
     set_user_resources

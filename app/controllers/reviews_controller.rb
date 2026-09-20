@@ -2,14 +2,6 @@ class ReviewsController < ApplicationController
   load_and_authorize_resource :task, except: :index
   load_and_authorize_resource through: :task, except: :index
 
-  def index
-    authorize! :approve, Review
-
-    @tasks = Task.all_in_review.all_visible.accessible_by(current_ability)
-                 .with_notifications(current_user, order_by: order_by)
-                 .filter_by(build_filters).page(params[:page])
-  end
-
   def new; end
 
   def edit; end
