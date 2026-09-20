@@ -1,3 +1,9 @@
 <%= review_header 'Issues Waiting for Tasks or Closure' %>
 
-<%= render 'issues/filtered_issues', issues: @issues, show_status_filter: false %>
+<div class="pending">
+  <% if @issues.any? || searching? %>
+    <%= render 'issues/filtered_issues', issues: @issues, show_status_filter: false %>
+  <% else %>
+    <p class="no-pending">all caught up</p>
+  <% end %>
+</div>
