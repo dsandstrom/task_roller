@@ -44,8 +44,11 @@ class TaskBranch < ApplicationRecord
     end
 
     def new_target_attrs_from_task
-      { summary: new_target_summary(source_task),
-        description: new_target_description(source_task, task_comment) }
+      attrs = { summary: new_target_summary(source_task),
+                description: new_target_description(source_task, task_comment) }
+      return attrs unless source_task.issue_id && source_task.issue.open?
+
+      attrs.merge issue_id: source_task.issue_id
     end
 
     def new_target_summary(source)
