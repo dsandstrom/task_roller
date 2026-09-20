@@ -367,6 +367,12 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                   .order(task_notifications_count: :desc)
   end
 
+  def reviewed_tasks
+    Task.joins(:reviews)
+        .where(reviews: { user_id: id, approved: [true, false] })
+        .distinct
+  end
+
   # block non-employees from devise
   def active_for_authentication?
     super && employee?

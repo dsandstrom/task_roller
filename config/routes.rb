@@ -3,9 +3,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :issues, only: :index
     resources :tasks, only: :index
     resources :assignments, only: :index
+    resources :reviews, only: :index
   end
-
-  resources :reviews, only: :index
 
   get 'users/:user_id/employee_types/new' => 'employee_types#new',
       as: :new_user_employee_type
@@ -58,6 +57,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :tasks, only: %i[show edit update] do
+    collection do
+      get :finished
+    end
     resources :task_assignees, only: %i[new create destroy]
     resources :task_comments, except: :index
     resources :task_subscriptions, only: %i[new create destroy]

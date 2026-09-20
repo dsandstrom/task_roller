@@ -541,15 +541,24 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
 
     def review_nav
-      links = []
-      links << ['Ready for Review', reviews_path] if can?(:approve, Review)
-      if can?(:create, IssueClosure)
-        links << ['Pending Issues', pending_issues_path]
-      end
+      links = review_nav_links
       return if links.none?
 
       content_tag :p, class: 'page-nav user-nav' do
         safe_join(navitize(links))
       end
+    end
+
+    def review_nav_links
+      links = []
+
+      if can?(:approve, Review)
+        links << ['Ready for Review', finished_tasks_path]
+      end
+      if can?(:create, IssueClosure)
+        links << ['Pending Issues', pending_issues_path]
+      end
+
+      links
     end
 end

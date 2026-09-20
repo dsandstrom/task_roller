@@ -20,45 +20,33 @@ RSpec.describe ReviewsController, type: :controller do
   end
 
   describe "GET #index" do
-    %w[admin reviewer].each do |employee_type|
+    %w[admin reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         before { sign_in(current_user) }
 
-        context "when no reviews ready" do
-          it "returns a success response" do
-            get :index
-            expect(response).to be_successful
-          end
-        end
+        context "when requested user has reviewed tasks" do
+          let(:user) { Fabricate(:user_reviewer) }
+          let(:task) { Fabricate(:finished_task) }
 
-        context "when a review ready" do
           before do
-            Fabricate(:pending_review)
-            Fabricate(:approved_review)
+            Fabricate(:approved_review, task: task, user: user)
           end
 
           it "returns a success response" do
-            get :index
+            get :index, params: { user_id: user.to_param }
             expect(response).to be_successful
           end
         end
-      end
-    end
 
-    %w[worker reporter].each do |employee_type|
-      context "for a #{employee_type}" do
-        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        context "when requested user doesn't have reviewed tasks" do
+          let(:user) { Fabricate(:user_worker) }
 
-        before do
-          sign_in(current_user)
-          Fabricate(:pending_review)
-        end
-
-        it "should be unauthorized" do
-          get :index
-          expect_to_be_unauthorized(response)
+          it "returns a success response" do
+            get :index, params: { user_id: user.to_param }
+            expect(response).to be_successful
+          end
         end
       end
     end

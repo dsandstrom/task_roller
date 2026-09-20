@@ -97,7 +97,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
 
@@ -121,7 +121,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
 
@@ -144,7 +144,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
     end
@@ -257,7 +257,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
 
@@ -281,7 +281,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
 
@@ -304,7 +304,7 @@ RSpec.describe "projects/show", type: :view do
         it "renders reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).to have_link(nil, href: reviews_path)
+          expect(rendered).to have_link(nil, href: finished_tasks_path)
         end
       end
     end
@@ -387,7 +387,7 @@ RSpec.describe "projects/show", type: :view do
         it "doesn't render reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).not_to have_link(nil, href: reviews_path)
+          expect(rendered).not_to have_link(nil, href: finished_tasks_path)
         end
       end
 
@@ -411,7 +411,7 @@ RSpec.describe "projects/show", type: :view do
         it "doesn't render reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).not_to have_link(nil, href: reviews_path)
+          expect(rendered).not_to have_link(nil, href: finished_tasks_path)
         end
       end
     end
@@ -494,7 +494,7 @@ RSpec.describe "projects/show", type: :view do
         it "doesn't render reviews menu link" do
           render template: subject, layout: "layouts/application"
 
-          expect(rendered).not_to have_link(nil, href: reviews_path)
+          expect(rendered).not_to have_link(nil, href: finished_tasks_path)
         end
       end
     end
