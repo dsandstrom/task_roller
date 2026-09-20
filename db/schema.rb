@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_204445) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -210,6 +210,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
     t.integer "task_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+  end
+
+  create_table "search_subscriptions", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.integer "category_id"
+    t.datetime "created_at", null: false
+    t.boolean "include_issues", default: true, null: false
+    t.boolean "include_tasks", default: true, null: false
+    t.integer "issue_type_id"
+    t.integer "project_id"
+    t.integer "source_user_id"
+    t.string "status"
+    t.integer "task_type_id"
+    t.string "term"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
   end
 
   create_table "task_assignees", force: :cascade do |t|
