@@ -82,6 +82,15 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
     end
   end
 
+  def review_header(heading)
+    enable_page_title heading
+
+    content_for :header do
+      concat content_tag(:h1, heading)
+      concat review_nav
+    end
+  end
+
   private
 
     def task_header_title(task)
@@ -529,5 +538,18 @@ module TasksHelper # rubocop:disable Metrics/ModuleLength
         else
           'one-link-set'
         end
+    end
+
+    def review_nav
+      links = []
+      links << ['Ready for Review', reviews_path] if can?(:approve, Review)
+      if can?(:create, IssueClosure)
+        links << ['Pending Issues', pending_issues_path]
+      end
+      return if links.none?
+
+      content_tag :p, class: 'page-nav user-nav' do
+        safe_join(navitize(links))
+      end
     end
 end

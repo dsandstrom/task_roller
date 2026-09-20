@@ -1,6 +1,8 @@
 <%
   index_path ||= request.path
   return unless index_path
+
+  show_status_filter = true unless show_status_filter == false
 %>
 
 <div class="filters-wrapper">
@@ -14,7 +16,7 @@
 
   <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
     <%= render 'shared/string_filter_field', placeholder: 'issues' %>
-    <%= render 'issues/status_filter_field' %>
+    <%= render 'issues/status_filter_field' if show_status_filter %>
     <%= render 'issues/issue_type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 

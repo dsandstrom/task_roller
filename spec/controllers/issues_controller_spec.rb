@@ -609,6 +609,37 @@ RSpec.describe IssuesController, type: :controller do
     end
   end
 
+  describe "GET #pending" do
+    before do
+      Fabricate(:pending_issue)
+    end
+
+    %w[admin reviewer].each do |employee_type|
+      context "for a #{employee_type}" do
+        before { sign_in(Fabricate("user_#{employee_type}")) }
+
+        it "returns a success response" do
+          Fabricate(:issue, project: project)
+          get :pending
+          expect(response).to be_successful
+        end
+      end
+    end
+
+    %w[worker reporter].each do |employee_type|
+      context "for a #{employee_type}" do
+        let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+
+        before { sign_in(current_user) }
+
+        it "should be unauthorized" do
+          get :pending
+          expect_to_be_unauthorized(response)
+        end
+      end
+    end
+  end
+
   describe "GET #show" do
     %w[admin reviewer].each do |employee_type|
       context "for a #{employee_type}" do
