@@ -67,11 +67,15 @@ Fabricator(:approved_task, from: :task) do
   closed true
   status 'approved'
 
-  after_create do |task|
+  transient :reviewer
+
+  after_create do |task, transients|
+    transients[:reviewer] ||= Fabricate(:user_reviewer)
+
     if task.current_review
-      task.current_review.update(approved: true)
+      task.current_review.update(approved: true, user: transients[:reviewer])
     else
-      Fabricate(:approved_review, task: task)
+      Fabricate(:approved_review, task: task, user: transients[:reviewer])
     end
   end
 end
