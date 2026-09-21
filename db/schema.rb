@@ -218,10 +218,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_204445) do
     t.datetime "created_at", null: false
     t.boolean "include_issues", default: true, null: false
     t.boolean "include_tasks", default: true, null: false
+    t.string "issue_status"
     t.integer "issue_type_id"
     t.integer "project_id"
     t.integer "source_user_id"
-    t.string "status"
+    t.string "task_status"
     t.integer "task_type_id"
     t.string "term"
     t.datetime "updated_at", null: false

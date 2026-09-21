@@ -8,7 +8,8 @@ class CreateSearchSubscriptions < ActiveRecord::Migration[8.1]
       t.string :term
       t.integer :issue_type_id
       t.integer :task_type_id
-      t.string :status
+      t.string :issue_status
+      t.string :task_status
       t.integer :source_user_id
       t.integer :category_id
       t.integer :project_id
