@@ -84,6 +84,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :subscriptions, only: :index
+  resources :search_subscriptions
 
   resources :issue_notifications, only: :destroy
   resources :task_notifications, only: :destroy
