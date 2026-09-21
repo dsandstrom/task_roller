@@ -16,12 +16,18 @@ RSpec.describe SearchSubscription, type: :model do
   it { is_expected.to respond_to(:term) }
   it { is_expected.to respond_to(:issue_type_id) }
   it { is_expected.to respond_to(:task_type_id) }
-  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:issue_status) }
+  it { is_expected.to respond_to(:task_status) }
   it { is_expected.to respond_to(:source_user_id) }
   it { is_expected.to respond_to(:category_id) }
   it { is_expected.to respond_to(:project_id) }
 
   it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:source_user).optional }
+  it { is_expected.to belong_to(:category).optional }
+  it { is_expected.to belong_to(:project).optional }
+  it { is_expected.to belong_to(:issue_type).optional }
+  it { is_expected.to belong_to(:task_type).optional }
 
   it { is_expected.to be_valid }
 
@@ -81,9 +87,17 @@ RSpec.describe SearchSubscription, type: :model do
         end
       end
 
-      context "when only status is set" do
+      context "when only issue_status is set" do
         before do
-          subject.status = "pending"
+          subject.issue_status = "pending"
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when only task_status is set" do
+        before do
+          subject.task_status = "assigned"
         end
 
         it { is_expected.to be_valid }
