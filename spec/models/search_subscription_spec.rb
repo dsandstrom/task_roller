@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe SearchSubscription, type: :model do
+  include TestMethods
+
   let(:user) { Fabricate(:user) }
 
   before do
@@ -344,6 +346,393 @@ RSpec.describe SearchSubscription, type: :model do
           search_subscription.toggle
           search_subscription.reload
         end.to change(search_subscription, :active).to(true)
+      end
+    end
+  end
+
+  describe "#search_results" do
+    let(:first_category) { Fabricate(:category) }
+    let(:first_project) { Fabricate(:project, category: first_category) }
+    let(:second_project) { Fabricate(:project, category: first_category) }
+    let(:first_user) { Fabricate(:user) }
+    let(:first_issue_type) { Fabricate(:issue_type) }
+    let(:first_task_type) { Fabricate(:task_type) }
+
+    let(:invisible_project) do
+      Fabricate(:invisible_project, category: first_category)
+    end
+
+    before do
+      Fabricate(:issue, summary: "Beta", status: "pending")
+      Fabricate(:task, summary: "Gamma", status: "unassigned")
+    end
+
+    context "when term is set" do
+      let!(:first_issue) { Fabricate(:issue, summary: "Mostly Alpha Issue") }
+      let!(:first_task) do
+        Fabricate(:task, summary: "Task", description: "Definitely alpha")
+      end
+
+      before do
+        Fabricate(:issue, project: invisible_project, summary: "alpha")
+        Fabricate(:task, project: invisible_project, summary: "alpha")
+      end
+
+      context "and including issues and tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: "alpha",
+                                          include_issues: true,
+                                          include_tasks: true)
+        end
+
+        it "returns visible issues/tasks with matching summary/description" do
+          expect(map_class_id(search_subscription.search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Task", first_task.id])
+        end
+      end
+
+      context "and including only issues" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: "alpha",
+                                          include_issues: true,
+                                          include_tasks: false)
+        end
+
+        it "returns issues and tasks with matching summary/description" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Issue", first_issue.id]])
+        end
+      end
+
+      context "and including only tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: "alpha",
+                                          include_issues: false,
+                                          include_tasks: true)
+        end
+
+        it "returns issues and tasks with matching summary/description" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Task", first_task.id]])
+        end
+      end
+    end
+
+    context "when category_id is set" do
+      let!(:first_issue) { Fabricate(:issue, project: first_project) }
+      let!(:first_task) { Fabricate(:task, project: second_project) }
+
+      before do
+        Fabricate(:issue, project: invisible_project)
+        Fabricate(:task, project: invisible_project)
+      end
+
+      context "and including issues and tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          category: first_category,
+                                          include_issues: true,
+                                          include_tasks: true)
+        end
+
+        it "returns visible issues and tasks with matching category" do
+          expect(map_class_id(search_subscription.search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Task", first_task.id])
+        end
+      end
+
+      context "and including only issues" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          category: first_category,
+                                          include_issues: true,
+                                          include_tasks: false)
+        end
+
+        it "returns visible issues with matching category" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Issue", first_issue.id]])
+        end
+      end
+
+      context "and including only tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          category: first_category,
+                                          include_issues: false,
+                                          include_tasks: true)
+        end
+
+        it "returns visible tasks with matching category" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Task", first_task.id]])
+        end
+      end
+    end
+
+    context "when project_id is set" do
+      let!(:first_issue) { Fabricate(:issue, project: first_project) }
+      let!(:first_task) { Fabricate(:task, project: first_project) }
+
+      context "for a visible project" do
+        context "when including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: true)
+          end
+
+          it "returns issues and tasks with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to contain_exactly(["Issue", first_issue.id],
+                                  ["Task", first_task.id])
+          end
+        end
+
+        context "when including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: false)
+          end
+
+          it "returns issues with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to eq([["Issue", first_issue.id]])
+          end
+        end
+
+        context "when including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: false,
+                                            include_tasks: true)
+          end
+
+          it "returns tasks with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to eq([["Task", first_task.id]])
+          end
+        end
+      end
+
+      context "for an internal project" do
+        let(:first_project) { Fabricate(:internal_project) }
+
+        context "when including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: true)
+          end
+
+          it "returns issues and tasks with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to contain_exactly(["Issue", first_issue.id],
+                                  ["Task", first_task.id])
+          end
+        end
+
+        context "when including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: false)
+          end
+
+          it "returns issues with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to eq([["Issue", first_issue.id]])
+          end
+        end
+
+        context "when including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: false,
+                                            include_tasks: true)
+          end
+
+          it "returns tasks with matching project" do
+            expect(map_class_id(search_subscription.search_results))
+              .to eq([["Task", first_task.id]])
+          end
+        end
+      end
+
+      context "for an invisible project" do
+        let(:first_project) { Fabricate(:invisible_project) }
+
+        context "when including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: true)
+          end
+
+          it "returns issues and tasks with matching project" do
+            expect(search_subscription.search_results).to eq([])
+          end
+        end
+
+        context "when including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: true,
+                                            include_tasks: false)
+          end
+
+          it "returns issues with matching project" do
+            expect(search_subscription.search_results).to eq([])
+          end
+        end
+
+        context "when including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, term: nil,
+                                            project: first_project,
+                                            include_issues: false,
+                                            include_tasks: true)
+          end
+
+          it "returns tasks with matching project" do
+            expect(search_subscription.search_results).to eq([])
+          end
+        end
+      end
+    end
+
+    context "when issue_type_id is set" do
+      let!(:first_issue) { Fabricate(:issue, issue_type: first_issue_type) }
+      let!(:first_task) { Fabricate(:task, task_type: first_task_type) }
+
+      context "and including only issues" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          issue_type: first_issue_type,
+                                          include_issues: true,
+                                          include_tasks: false)
+        end
+
+        it "returns issues with matching issue_type" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Issue", first_issue.id]])
+        end
+      end
+    end
+
+    context "when task_type_id is set" do
+      let!(:first_issue) { Fabricate(:issue, issue_type: first_issue_type) }
+      let!(:first_task) { Fabricate(:task, task_type: first_task_type) }
+
+      context "and including only tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          task_type: first_task_type,
+                                          include_issues: false,
+                                          include_tasks: true)
+        end
+
+        it "returns tasks with matching task_type" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Task", first_task.id]])
+        end
+      end
+    end
+
+    context "when issue_status is set" do
+      let!(:first_issue) { Fabricate(:issue, status: "being_worked_on") }
+      let!(:first_task) { Fabricate(:task, status: "assigned") }
+
+      context "and including only issues" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          issue_status: "being_worked_on",
+                                          include_issues: true,
+                                          include_tasks: false)
+        end
+
+        it "returns issues with matching issue_type" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Issue", first_issue.id]])
+        end
+      end
+    end
+
+    context "when task_status is set" do
+      let!(:first_issue) { Fabricate(:issue, status: "being_worked_on") }
+      let!(:first_task) { Fabricate(:task, status: "assigned") }
+
+      context "and including only tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          task_status: "assigned",
+                                          include_issues: false,
+                                          include_tasks: true)
+        end
+
+        it "returns tasks with matching task_type" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Task", first_task.id]])
+        end
+      end
+    end
+
+    context "when source_user_id is set" do
+      let!(:first_issue) { Fabricate(:issue, user: first_user) }
+      let!(:first_task) { Fabricate(:task, user: first_user) }
+
+      context "and including issues and tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          source_user: first_user,
+                                          include_issues: true,
+                                          include_tasks: true)
+        end
+
+        it "returns issues and tasks with matching project" do
+          expect(map_class_id(search_subscription.search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Task", first_task.id])
+        end
+      end
+
+      context "and including only issues" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          source_user: first_user,
+                                          include_issues: true,
+                                          include_tasks: false)
+        end
+
+        it "returns issues with matching project" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Issue", first_issue.id]])
+        end
+      end
+
+      context "and including only tasks" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, term: nil,
+                                          source_user: first_user,
+                                          include_issues: false,
+                                          include_tasks: true)
+        end
+
+        it "returns tasks with matching project" do
+          expect(map_class_id(search_subscription.search_results))
+            .to eq([["Task", first_task.id]])
+        end
       end
     end
   end

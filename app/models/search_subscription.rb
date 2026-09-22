@@ -26,6 +26,10 @@ class SearchSubscription < ApplicationRecord
     update(active: !active)
   end
 
+  def search_results
+    SearchResult.filter_by(filter_attrs).all_visible
+  end
+
   private
 
     def any_search_parameter
@@ -69,5 +73,49 @@ class SearchSubscription < ApplicationRecord
       return if include_issues || include_tasks
 
       errors.add(:base, 'must include issues or tasks')
+    end
+
+    def convert_attrs
+      attrs = {}
+
+      ATTR_MAP.each do |filter_key, search_key|
+        next if %i[category_id project_id].include?(filter_key)
+
+        val = send(search_key)
+        next if val.blank?
+
+        attrs[filter_key] = val
+      end
+
+      attrs
+    end
+
+    def add_project_ids_attr(attrs)
+      if category.present?
+        attrs[:project_ids] = category.projects.all_visible.map(&:id)
+      elsif project.present?
+        attrs[:project_ids] = project.visible? ? [project_id] : []
+      end
+
+      attrs
+    end
+
+    def add_class_name_attr(attrs)
+      attrs[:class_name] =
+        if include_issues && !include_tasks
+          'Issue'
+        elsif include_tasks && !include_issues
+          'Task'
+        end
+      attrs
+    end
+
+    def filter_attrs
+      attrs = add_class_name_attr(add_project_ids_attr(convert_attrs))
+
+      attrs[:user_id] = source_user_id if source_user.present?
+      attrs[:type_id] = issue_type_id || task_type_id
+
+      attrs
     end
 end
