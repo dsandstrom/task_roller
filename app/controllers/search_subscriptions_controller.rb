@@ -5,9 +5,8 @@ class SearchSubscriptionsController < ApplicationController
 
   def show; end
 
+  # TODO: remove new?
   def new; end
-
-  def edit; end
 
   def create
     if @search_subscription.save
@@ -17,12 +16,10 @@ class SearchSubscriptionsController < ApplicationController
     end
   end
 
-  def update
-    if @search_subscription.update(search_subscription_params)
-      redirect_to search_subscriptions_url
-    else
-      render :edit
-    end
+  def toggle
+    @search_subscription.toggle
+
+    redirect_to search_subscriptions_url
   end
 
   def destroy
