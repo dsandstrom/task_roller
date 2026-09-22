@@ -25,6 +25,8 @@ RSpec.describe TaskType, type: :model do
   it { is_expected.to validate_presence_of(:color) }
   it { is_expected.to validate_inclusion_of(:color).in_array(color_options) }
 
+  it { is_expected.to have_many(:search_subscriptions).dependent(:destroy) }
+
   describe "validate #new_position_numericality" do
     let(:task_type) { Fabricate(:task_type) }
 

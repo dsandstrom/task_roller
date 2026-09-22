@@ -35,6 +35,9 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:subscribed_tasks) }
   it { is_expected.to have_many(:search_subscriptions).dependent(:destroy) }
   it do
+    is_expected.to have_many(:source_search_subscriptions).dependent(:destroy)
+  end
+  it do
     is_expected.to have_many(:category_issues_subscriptions).dependent(:destroy)
   end
   it do

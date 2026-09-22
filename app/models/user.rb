@@ -46,6 +46,10 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
   has_many :search_subscriptions, dependent: :destroy
+  has_many :source_search_subscriptions, dependent: :destroy,
+                                         class_name: 'SearchSubscription',
+                                         foreign_key: :source_user_id,
+                                         inverse_of: :source_user
 
   validates :name, presence: true, length: { maximum: 150 },
                    format: { without: NAME_DISALLOW_REGEX }

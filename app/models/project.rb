@@ -8,6 +8,7 @@ class Project < ApplicationRecord
                                foreign_key: :user_id, source: :user
   has_many :task_subscribers, through: :project_tasks_subscriptions,
                               foreign_key: :user_id, source: :user
+  has_many :search_subscriptions, dependent: :destroy
 
   acts_as_list scope: :category_id
 
