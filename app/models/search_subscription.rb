@@ -1,4 +1,15 @@
 class SearchSubscription < ApplicationRecord
+  ATTR_MAP = {
+    query: :term,
+    issue_status: :issue_status,
+    task_status: :task_status,
+    issue_type_id: :issue_type_id,
+    task_type_id: :task_type_id,
+    project_id: :project_id,
+    category_id: :category_id,
+    user_id: :source_user_id
+  }.freeze
+
   belongs_to :user
   belongs_to :source_user, class_name: 'User', optional: true
   belongs_to :category, optional: true
@@ -9,6 +20,10 @@ class SearchSubscription < ApplicationRecord
   validates :term, length: { maximum: 50 }
   validate :any_search_parameter
   validate :either_include_issues_or_tasks
+
+  def toggle
+    update(active: !active)
+  end
 
   private
 

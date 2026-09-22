@@ -155,4 +155,28 @@ RSpec.describe SearchSubscription, type: :model do
       end
     end
   end
+
+  describe "#toggle" do
+    context "for an active SearchSubscription" do
+      let(:search_subscription) { Fabricate(:search_subscription) }
+
+      it "changes active to false" do
+        expect do
+          search_subscription.toggle
+          search_subscription.reload
+        end.to change(search_subscription, :active).to(false)
+      end
+    end
+
+    context "for an inactive SearchSubscription" do
+      let(:search_subscription) { Fabricate(:inactive_search_subscription) }
+
+      it "changes active to true" do
+        expect do
+          search_subscription.toggle
+          search_subscription.reload
+        end.to change(search_subscription, :active).to(true)
+      end
+    end
+  end
 end
