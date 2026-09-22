@@ -37,6 +37,8 @@ RSpec.describe SearchSubscription, type: :model do
     describe "any_search_parameter" do
       before do
         subject.term = nil
+        subject.include_issues = false
+        subject.include_tasks = false
       end
 
       context "when term is not set" do
@@ -89,6 +91,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "when only issue_status is set" do
         before do
+          subject.include_issues = true
           subject.issue_status = "pending"
         end
 
@@ -97,6 +100,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "when only task_status is set" do
         before do
+          subject.include_tasks = true
           subject.task_status = "assigned"
         end
 
@@ -105,6 +109,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "when only source_user_id is set" do
         before do
+          subject.include_issues = true
           subject.source_user_id = Fabricate(:user).id
         end
 
@@ -113,6 +118,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "when only category_id is set" do
         before do
+          subject.include_issues = true
           subject.category_id = Fabricate(:category).id
         end
 
@@ -121,6 +127,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "when only project_id is set" do
         before do
+          subject.include_issues = true
           subject.project_id = Fabricate(:project).id
         end
 
@@ -128,7 +135,7 @@ RSpec.describe SearchSubscription, type: :model do
       end
     end
 
-    describe "include_issues_or_tasks" do
+    describe "either_include_issues_or_tasks" do
       before do
         subject.include_issues = false
         subject.include_tasks = false
@@ -152,6 +159,167 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it { is_expected.to be_valid }
+      end
+    end
+
+    describe "#either_issue_attrs_or_task_attrs" do
+      context "when both include_issues and include_tasks is true" do
+        before do
+          subject.include_issues = true
+          subject.include_tasks = true
+        end
+
+        context "when only term is set" do
+          before do
+            subject.term = "something"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when issue_type_id is set" do
+          before do
+            subject.issue_type_id = Fabricate(:issue_type).id
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when issue_status is set" do
+          before do
+            subject.issue_status = "resolved"
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when task_type_id is set" do
+          before do
+            subject.task_type_id = Fabricate(:task_type).id
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when task_status is set" do
+          before do
+            subject.task_status = "in_review"
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+      end
+
+      context "when only include_issues is true" do
+        before do
+          subject.include_issues = true
+          subject.include_tasks = false
+        end
+
+        context "when only term is set" do
+          before do
+            subject.term = "something"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when issue_type_id is set" do
+          before do
+            subject.issue_type_id = Fabricate(:issue_type).id
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when issue_status is set" do
+          before do
+            subject.issue_status = "resolved"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when isssue_type_id and isssue_status are set" do
+          before do
+            subject.issue_type_id = Fabricate(:issue_type).id
+            subject.issue_status = "resolved"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when task_type_id is set" do
+          before do
+            subject.task_type_id = Fabricate(:task_type).id
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when task_status is set" do
+          before do
+            subject.task_status = "in_review"
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+      end
+
+      context "when only include_tasks is true" do
+        before do
+          subject.include_issues = false
+          subject.include_tasks = true
+        end
+
+        context "when only term is set" do
+          before do
+            subject.term = "something"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when issue_type_id is set" do
+          before do
+            subject.issue_type_id = Fabricate(:issue_type).id
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when issue_status is set" do
+          before do
+            subject.issue_status = "resolved"
+          end
+
+          it { is_expected.not_to be_valid }
+        end
+
+        context "when task_type_id is set" do
+          before do
+            subject.task_type_id = Fabricate(:task_type).id
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when task_status is set" do
+          before do
+            subject.task_status = "in_review"
+          end
+
+          it { is_expected.to be_valid }
+        end
+
+        context "when task_type_id and task_status are set" do
+          before do
+            subject.task_type_id = Fabricate(:task_type).id
+            subject.task_status = "in_review"
+          end
+
+          it { is_expected.to be_valid }
+        end
       end
     end
   end

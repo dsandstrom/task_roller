@@ -20,6 +20,7 @@ class SearchSubscription < ApplicationRecord
   validates :term, length: { maximum: 50 }
   validate :any_search_parameter
   validate :either_include_issues_or_tasks
+  validate :either_issue_attrs_or_task_attrs
 
   def toggle
     update(active: !active)
@@ -42,6 +43,26 @@ class SearchSubscription < ApplicationRecord
 
     def status_present?
       issue_status.present? || task_status.present?
+    end
+
+    def either_issue_attrs_or_task_attrs
+      return if not_mixing_issues_with_task_parameters? &&
+                not_mixing_tasks_with_issue_parameters?
+
+      unless include_issues && include_tasks
+        return if not_mixing_issues_with_task_parameters?
+        return if not_mixing_tasks_with_issue_parameters?
+      end
+
+      errors.add(:base, 'must not mix issue and task parameters')
+    end
+
+    def not_mixing_issues_with_task_parameters?
+      include_issues && task_type_id.blank? && task_status.blank?
+    end
+
+    def not_mixing_tasks_with_issue_parameters?
+      include_tasks && issue_type_id.blank? && issue_status.blank?
     end
 
     def either_include_issues_or_tasks

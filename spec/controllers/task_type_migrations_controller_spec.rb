@@ -66,7 +66,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
 
             it "updates matching search_subscriptions' task_type" do
               search_subscription =
-                Fabricate(:search_subscription, task_type: task_type)
+                Fabricate(:tasks_search_subscription, task_type: task_type)
 
               expect do
                 post :create, params: { task_type_id: task_type.id,
@@ -95,7 +95,7 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
 
             it "doesn't update any SearchSubscriptions" do
               search_subscription =
-                Fabricate(:search_subscription, task_type: task_type)
+                Fabricate(:tasks_search_subscription, task_type: task_type)
 
               expect do
                 post :create, params: { task_type_id: task_type.id,

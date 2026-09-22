@@ -7,12 +7,12 @@ Fabricator(:inactive_search_subscription, from: :search_subscription) do
   active false
 end
 
-Fabricator(:issue_search_subscription, from: :search_subscription) do
+Fabricator(:issues_search_subscription, from: :search_subscription) do
   include_issues true
   include_tasks false
 end
 
-Fabricator(:task_search_subscription, from: :search_subscription) do
+Fabricator(:tasks_search_subscription, from: :search_subscription) do
   include_issues false
   include_tasks true
 end

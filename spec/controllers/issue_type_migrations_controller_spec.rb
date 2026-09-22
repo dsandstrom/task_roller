@@ -66,7 +66,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
 
             it "updates the search_subscription's issue_type" do
               search_subscription =
-                Fabricate(:search_subscription, issue_type: issue_type)
+                Fabricate(:issues_search_subscription, issue_type: issue_type)
 
               expect do
                 post :create, params: { issue_type_id: issue_type.id,
@@ -95,7 +95,7 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
 
             it "doesn't update the search_subscriptions" do
               search_subscription =
-                Fabricate(:search_subscription, issue_type: issue_type)
+                Fabricate(:issues_search_subscription, issue_type: issue_type)
 
               expect do
                 post :create, params: { issue_type_id: issue_type.id,
