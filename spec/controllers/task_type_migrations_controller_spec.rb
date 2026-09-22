@@ -64,6 +64,18 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
               end.to change(task, :task_type_id).to(new_task_type.id)
             end
 
+            it "updates matching search_subscriptions' task_type" do
+              search_subscription =
+                Fabricate(:search_subscription, task_type: task_type)
+
+              expect do
+                post :create, params: { task_type_id: task_type.id,
+                                        task_type: valid_params }
+                search_subscription.reload
+              end.to change(search_subscription, :task_type_id)
+                .to(new_task_type.id)
+            end
+
             it "redirects to issue_types index" do
               post :create, params: { task_type_id: task_type.id,
                                       task_type: valid_params }
@@ -79,6 +91,17 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
                                         task_type: invalid_params }
                 task.reload
               end.not_to change(task, :task_type_id)
+            end
+
+            it "doesn't update any SearchSubscriptions" do
+              search_subscription =
+                Fabricate(:search_subscription, task_type: task_type)
+
+              expect do
+                post :create, params: { task_type_id: task_type.id,
+                                        task_type: invalid_params }
+                search_subscription.reload
+              end.not_to change(search_subscription, :task_type_id)
             end
 
             it "returns a success response" do

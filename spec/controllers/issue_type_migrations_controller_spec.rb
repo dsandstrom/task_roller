@@ -64,6 +64,18 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
               end.to change(issue, :issue_type_id).to(new_issue_type.id)
             end
 
+            it "updates the search_subscription's issue_type" do
+              search_subscription =
+                Fabricate(:search_subscription, issue_type: issue_type)
+
+              expect do
+                post :create, params: { issue_type_id: issue_type.id,
+                                        issue_type: valid_params }
+                search_subscription.reload
+              end.to change(search_subscription, :issue_type_id)
+                .to(new_issue_type.id)
+            end
+
             it "redirects to issue_types index" do
               post :create, params: { issue_type_id: issue_type.id,
                                       issue_type: valid_params }
@@ -79,6 +91,17 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
                                         issue_type: invalid_params }
                 issue.reload
               end.not_to change(issue, :issue_type_id)
+            end
+
+            it "doesn't update the search_subscriptions" do
+              search_subscription =
+                Fabricate(:search_subscription, issue_type: issue_type)
+
+              expect do
+                post :create, params: { issue_type_id: issue_type.id,
+                                        issue_type: invalid_params }
+                search_subscription.reload
+              end.not_to change(search_subscription, :issue_type_id)
             end
 
             it "returns a success response" do

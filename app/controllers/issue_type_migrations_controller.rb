@@ -10,6 +10,8 @@ class IssueTypeMigrationsController < ApplicationController
     # rubocop:disable Rails/SkipsModelValidations
     Issue.where(issue_type: @issue_type)
          .update_all(issue_type_id: @new_issue_type.id)
+    SearchSubscription.where(issue_type: @issue_type)
+                      .update_all(issue_type_id: @new_issue_type.id)
     # rubocop:enable Rails/SkipsModelValidations
     redirect_to issue_types_path, notice: notice
   rescue ActiveRecord::RecordNotFound

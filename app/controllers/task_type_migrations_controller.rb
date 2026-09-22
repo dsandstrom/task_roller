@@ -10,6 +10,8 @@ class TaskTypeMigrationsController < ApplicationController
     # rubocop:disable Rails/SkipsModelValidations
     Task.where(task_type: @task_type)
         .update_all(task_type_id: @new_task_type.id)
+    SearchSubscription.where(task_type: @task_type)
+                      .update_all(task_type_id: @new_task_type.id)
     # rubocop:enable Rails/SkipsModelValidations
     redirect_to issue_types_path, notice: notice
   rescue ActiveRecord::RecordNotFound
