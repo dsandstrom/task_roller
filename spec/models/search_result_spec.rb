@@ -302,6 +302,187 @@ RSpec.describe SearchResult, type: :model do
       end
     end
 
+    context "when user_id" do
+      let(:first_user) { Fabricate(:user) }
+      let(:second_user) { Fabricate(:user) }
+
+      let!(:first_issue) { Fabricate(:issue, user: first_user) }
+      let!(:second_issue) { Fabricate(:issue, user: second_user) }
+
+      context "is blank" do
+        it "returns results from all users" do
+          search_results = SearchResult.filter_by(user_id: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Issue", second_issue.id])
+        end
+      end
+
+      context "is set" do
+        it "returns results from one user" do
+          search_results = SearchResult.filter_by(user_id: first_user.id)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id])
+        end
+      end
+    end
+
+    context "when issue_status" do
+      let(:first_user) { Fabricate(:user) }
+      let(:second_user) { Fabricate(:user) }
+
+      let!(:first_issue) { Fabricate(:issue, status: "being_worked_on") }
+      let!(:second_issue) { Fabricate(:issue, status: "resolved") }
+
+      context "is blank" do
+        it "returns results from any issue_status" do
+          search_results = SearchResult.filter_by(issue_status: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Issue", second_issue.id])
+        end
+      end
+
+      context "is set" do
+        before do
+          Fabricate(:task)
+        end
+
+        it "returns results from that status" do
+          search_results =
+            SearchResult.filter_by(issue_status: "being_worked_on")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id])
+        end
+      end
+    end
+
+    context "when task_status" do
+      let(:first_user) { Fabricate(:user) }
+      let(:second_user) { Fabricate(:user) }
+
+      let!(:first_task) { Fabricate(:task, status: "in_progress") }
+      let!(:second_task) { Fabricate(:task, status: "in_review") }
+
+      context "is blank" do
+        it "returns results from any task_status" do
+          search_results = SearchResult.filter_by(task_status: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id],
+                                ["Task", second_task.id])
+        end
+      end
+
+      context "is set" do
+        before do
+          Fabricate(:issue)
+        end
+
+        it "returns results from that status" do
+          search_results = SearchResult.filter_by(task_status: "in_progress")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id])
+        end
+      end
+    end
+
+    context "when issue_type_id" do
+      let(:first_issue_type) { Fabricate(:issue_type) }
+      let(:second_issue_type) { Fabricate(:issue_type) }
+
+      let!(:first_issue) { Fabricate(:issue, issue_type: first_issue_type) }
+      let!(:second_issue) { Fabricate(:issue, issue_type: second_issue_type) }
+
+      context "is blank" do
+        it "returns results with any issue_type_id" do
+          search_results = SearchResult.filter_by(type_id: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Issue", second_issue.id])
+        end
+      end
+
+      context "is set" do
+        before do
+          Fabricate(:task)
+        end
+
+        it "returns results with that issue_type_id" do
+          search_results =
+            SearchResult.filter_by(type_id: first_issue_type.id)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id])
+        end
+      end
+    end
+
+    context "when task_type_id" do
+      let(:first_task_type) { Fabricate(:task_type) }
+      let(:second_task_type) { Fabricate(:task_type) }
+
+      let!(:first_task) { Fabricate(:task, task_type: first_task_type) }
+      let!(:second_task) { Fabricate(:task, task_type: second_task_type) }
+
+      context "is blank" do
+        it "returns results with any task_type_id" do
+          search_results = SearchResult.filter_by(type_id: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id],
+                                ["Task", second_task.id])
+        end
+      end
+
+      context "is set" do
+        before do
+          Fabricate(:task)
+        end
+
+        it "returns results with that task_type_id" do
+          search_results =
+            SearchResult.filter_by(type_id: first_task_type.id)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id])
+        end
+      end
+    end
+
+    context "when class_name" do
+      let!(:issue) { Fabricate(:issue) }
+      let!(:task) { Fabricate(:task) }
+
+      context "is blank" do
+        it "returns issue and task results" do
+          search_results = SearchResult.filter_by(class_name: nil)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+
+      context "is set as 'Issue'" do
+        it "returns only issue results" do
+          search_results = SearchResult.filter_by(class_name: "Issue")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id])
+        end
+      end
+
+      context "is set as 'Task'" do
+        it "returns only task results" do
+          search_results = SearchResult.filter_by(class_name: "Task")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", task.id])
+        end
+      end
+
+      context "is set as 'something else'" do
+        it "returns issue and task results" do
+          search_results = SearchResult.filter_by(class_name: "something else")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+    end
+
     context "when :order" do
       let(:task) { Fabricate(:task, summary: "Test", priority_level: 3) }
       let(:issue) { Fabricate(:issue, summary: "Test", priority_level: 2) }

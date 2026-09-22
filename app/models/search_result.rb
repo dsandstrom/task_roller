@@ -27,20 +27,9 @@ class SearchResult < ApplicationRecord
     project_ids = filters[:project_ids]
     return none if project_ids&.none?
 
-    id, query = split_id(filters[:query])
-    order = build_order_param('search_results', DEFAULT_ORDER, filters[:order])
-
-    filter_by_id(id)
-      .filter_by_string('search_results', query)
-      .filter_by_projects(filters[:project_ids])
-      .order(order)
-  end
-
-  def self.filter_by_projects(project_ids)
-    return none if project_ids == []
-    return all if project_ids.blank?
-
-    where(project_id: project_ids)
+    apply_filters(filters).order(
+      build_order_param('search_results', DEFAULT_ORDER, filters[:order])
+    )
   end
 
   def self.all_visible
@@ -61,6 +50,42 @@ class SearchResult < ApplicationRecord
                   .order('COUNT(task_notifications.id) DESC')
   end
 
+  # NOTE: can't private because filter_by_id returns ActiveRecord::Relation
+  def self.filter_by_projects(project_ids)
+    return none if project_ids == []
+    return all if project_ids.blank?
+
+    where(project_id: project_ids)
+  end
+
+  def self.filter_by_user(user_id)
+    return all if user_id.blank?
+
+    where(user_id: user_id)
+  end
+
+  def self.filter_by_class_name(class_name)
+    return all unless class_name&.in?(%w[Issue Task])
+
+    where(class_name: class_name)
+  end
+
+  def self.filter_by_status(issue_status, task_status)
+    return all if issue_status.blank? && task_status.blank?
+
+    if issue_status.present?
+      where(status: issue_status)
+    else
+      where(status: task_status)
+    end
+  end
+
+  def self.filter_by_type(type_id)
+    return all if type_id.blank?
+
+    where(type_id: type_id)
+  end
+
   private_class_method def self.filter_by_id(query)
     return all if query.blank?
 
@@ -68,6 +93,18 @@ class SearchResult < ApplicationRecord
       "search_results.#{column} = :id"
     end.join(' OR ')
     where(filters, id: query.to_i)
+  end
+
+  private_class_method def self.apply_filters(filters)
+    id, query = split_id(filters[:query])
+
+    filter_by_id(id)
+      .filter_by_string('search_results', query)
+      .filter_by_projects(filters[:project_ids])
+      .filter_by_user(filters[:user_id])
+      .filter_by_class_name(filters[:class_name])
+      .filter_by_status(filters[:issue_status], filters[:task_status])
+      .filter_by_type(filters[:type_id])
   end
 
   # INSTANCE
