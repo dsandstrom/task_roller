@@ -1,1 +1,11 @@
 <%= enable_page_title 'Saved Searches' %>
+
+<h1>Saved Searches</h1>
+
+<div class="search-subscriptions">
+  <% if @search_subscriptions.any? %>
+    <%= render @search_subscriptions %>
+  <% else %>
+    <p id="no-search-subscriptions">None yet</p>
+  <% end %>
+</div>

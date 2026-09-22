@@ -25,3 +25,8 @@ show_status_filter = true unless show_status_filter == false
     </div>
   <% end %>
 </div>
+
+  <% if @search_subscription.present? %>
+    <%= render 'search_subscriptions/form',
+               search_subscription: @search_subscription %>
+  <% end %>

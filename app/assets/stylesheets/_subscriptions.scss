@@ -1,0 +1,49 @@
+.search-subscription {
+  margin-bottom: 1.5rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  color: $dark-gray;
+
+  header {
+    background-color: $off-white;
+    margin: 0;
+    padding: 1rem;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .button-wrapper {
+    margin: 0;
+  }
+
+  form,
+  .button {
+    margin: 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.search-subscription-category,
+.search-subscription-project,
+.search-subscription-source-user,
+.search-subscription-issues-tasks {
+  color: $ink;
+  font-weight: bold;
+}
+
+.search-subscription-term {
+  color: $color-quinary;
+  font-family: $code-font;
+}
+
+.search-subscription-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}

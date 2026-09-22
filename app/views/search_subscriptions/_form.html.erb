@@ -1,0 +1,21 @@
+<%= form_with(model: search_subscription,
+              html: { name: 'search_subscription_form',
+                      class: 'search-subscription-form',
+                      novalidate: 'novalidate' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <%= form.hidden_field :category_id %>
+  <%= form.hidden_field :project_id %>
+  <%= form.hidden_field :source_user_id %>
+  <%= form.hidden_field :term %>
+  <%= form.hidden_field :include_issues %>
+  <%= form.hidden_field :include_tasks %>
+  <%= form.hidden_field :issue_type_id %>
+  <%= form.hidden_field :task_type_id %>
+  <%= form.hidden_field :issue_status %>
+  <%= form.hidden_field :task_status %>
+
+  <div class="actions">
+    <%= form.submit 'Save Search' %>
+  </div>
+<% end %>

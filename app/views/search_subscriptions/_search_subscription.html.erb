@@ -1,0 +1,49 @@
+<%= content_tag :div, id: "search-subscription-#{search_subscription.id}",
+                      class: 'search-subscription' do %>
+  <header class="search-subscription-header">
+    <p class="search-subscription-parameters">
+      <% if search_subscription.category || search_subscription.project %>
+        <% if search_subscription.category %>
+          <%= content_tag :span, search_subscription.category.name, class: 'search-subscription-category' %>
+          category
+        <% else %>
+          <%= content_tag :span, search_subscription.project.name, class: 'search-subscription-project' %>
+          project
+        <% end %>
+      <% end %>
+      <% if search_subscription.include_issues && search_subscription.include_tasks %>
+        <span class="search-subscription-issues-tasks">Issues and Tasks</span>
+      <% elsif search_subscription.include_issues %>
+        <span class="search-subscription-issues-tasks">Issues</span>
+      <% else %>
+        <span class="search-subscription-issues-tasks">Tasks</span>
+      <% end %>
+      <% if search_subscription.source_user %>
+        from
+        <%= content_tag :span, search_subscription.source_user.name, class: 'search-subscription-source-user' %>
+      <% end %>
+      <% if search_subscription.term.present? %>
+        that match
+        <%= content_tag :span, "\"#{search_subscription.term}\"", class: 'search-subscription-term' %>
+      <% end %>
+    </p>
+  </header>
+
+  <main class="search-subscription-columns">
+    <div class="search-subscription-column">
+      <p class="search-subscription-links">
+        <%= link_to 'current matches', search_subscription %>
+        <%= divider %>
+        <%= link_to 'remove', search_subscription_path(search_subscription),
+                              class: 'destroy-link',
+                              data: { turbo_method: :delete,
+                                      turbo_confirm: 'Are you sure you want to remove this saved search?' } %>
+      </p>
+    </div>
+
+    <div class="search-subscription-column">
+      <%= render 'search_subscriptions/toggle_form',
+                 search_subscription: search_subscription %>
+    </div>
+  </main>
+<% end %>
