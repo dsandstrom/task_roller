@@ -3,7 +3,12 @@ class SearchSubscriptionsController < ApplicationController
 
   def index; end
 
-  def show; end
+  def show
+    @search_results =
+      @search_subscription.search_results
+                          .accessible_by(current_ability, :index,
+                                         strategy: :left_join)
+  end
 
   # TODO: remove new?
   def new; end

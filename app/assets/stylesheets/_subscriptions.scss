@@ -5,9 +5,10 @@
   color: $dark-gray;
 
   header {
-    background-color: $off-white;
     margin: 0;
     padding: 1rem;
+    border-bottom: 1px solid $border-color;
+    background-color: $off-white;
   }
 
   main {
@@ -28,10 +29,7 @@
   }
 }
 
-.search-subscription-category,
-.search-subscription-project,
-.search-subscription-source-user,
-.search-subscription-issues-tasks {
+.search-subscription-parameter {
   color: $ink;
   font-weight: bold;
 }
@@ -43,7 +41,7 @@
 
 .search-subscription-columns {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 }
