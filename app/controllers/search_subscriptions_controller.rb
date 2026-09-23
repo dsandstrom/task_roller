@@ -8,6 +8,7 @@ class SearchSubscriptionsController < ApplicationController
       @search_subscription.search_results
                           .accessible_by(current_ability, :index,
                                          strategy: :left_join)
+                          .page(params[:page])
   end
 
   # TODO: remove new?
@@ -37,8 +38,8 @@ class SearchSubscriptionsController < ApplicationController
     def search_subscription_params
       params.expect(
         search_subscription: %i[term include_issues include_tasks issue_type_id
-                                task_type_id status source_user_id category_id
-                                project_id]
+                                task_type_id issue_status task_status
+                                source_user_id category_id project_id]
       )
     end
 end
