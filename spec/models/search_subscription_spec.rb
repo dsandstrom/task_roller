@@ -736,4 +736,199 @@ RSpec.describe SearchSubscription, type: :model do
       end
     end
   end
+
+  describe "#title" do
+    let(:user) { Fabricate(:user) }
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project) }
+    let(:issue_type) { Fabricate(:issue_type) }
+    let(:task_type) { Fabricate(:task_type) }
+
+    context "when including issues and task" do
+      context "for a term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          term: "search term")
+        end
+
+        let(:title) { 'Issues and Tasks that match "search term"' }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a source_user and term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          source_user: user,
+                                          term: "search term")
+        end
+
+        let(:title) do
+          "Issues and Tasks from #{user.name} that match \"search term\""
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a category" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          term: nil,
+                                          category: category)
+        end
+
+        let(:title) { "#{category.name} category Issues and Tasks" }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a project" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          term: nil,
+                                          project: project)
+        end
+
+        let(:title) { "#{project.name} project Issues and Tasks" }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a project and term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          term: "search term",
+                                          project: project)
+        end
+
+        let(:title) do
+          "#{project.name} project Issues and Tasks that match \"search term\""
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a project, user and term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true,
+                                          source_user: user,
+                                          term: "search term",
+                                          project: project)
+        end
+
+        let(:title) do
+          "#{project.name} project Issues and Tasks from #{user.name} that " \
+            "match \"search term\""
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+    end
+
+    context "when including only issues" do
+      context "for a term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false,
+                                          term: "search term")
+        end
+
+        let(:title) { 'Issues that match "search term"' }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for project and issue_type" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false,
+                                          term: nil,
+                                          project: project,
+                                          issue_type: issue_type)
+        end
+
+        let(:title) { "#{project.name} project #{issue_type.name} Issues" }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for an issue_status and issue_type" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false,
+                                          term: nil,
+                                          issue_status: "in_progress",
+                                          issue_type: issue_type)
+        end
+
+        let(:title) { "#{issue_type.name} Issues with In Progress status" }
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+    end
+
+    context "when including only tasks" do
+      context "for a user, task_type, and term" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true,
+                                          term: "search term",
+                                          source_user: user,
+                                          task_type: task_type)
+        end
+
+        let(:title) do
+          "#{task_type.name} Tasks from #{user.name} that match " \
+            '"search term"'
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a category, user, and task_type" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true,
+                                          term: nil,
+                                          category: category,
+                                          source_user: user,
+                                          task_type: task_type)
+        end
+
+        let(:title) do
+          "#{category.name} category #{task_type.name} Tasks from #{user.name}"
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+    end
+  end
 end

@@ -30,6 +30,10 @@ class SearchSubscription < ApplicationRecord
     SearchResult.filter_by(filter_attrs).all_visible
   end
 
+  def title
+    @title ||= build_title
+  end
+
   private
 
     def any_search_parameter
@@ -117,5 +121,61 @@ class SearchSubscription < ApplicationRecord
       attrs[:type_id] = issue_type_id || task_type_id
 
       attrs
+    end
+
+    def build_title
+      text = category_project_title_part
+      text = type_title_part(text)
+      text = issues_or_tasks_title_part(text)
+      text = status_title_part(text)
+      text += " from #{source_user.name}" if source_user
+      text += " that match \"#{term}\"" if term.present?
+      text
+    end
+
+    def category_project_title_part
+      if category
+        "#{category.name} category "
+      elsif project
+        "#{project.name} project "
+      else
+        ''
+      end
+    end
+
+    def type_title_part(text)
+      return text unless issue_type || task_type
+
+      text +
+        if issue_type
+          "#{issue_type.name} "
+        else
+          "#{task_type.name} "
+        end
+    end
+
+    def issues_or_tasks_title_part(text)
+      text +
+        if include_issues && include_tasks
+          'Issues and Tasks'
+        elsif include_issues
+          'Issues'
+        else
+          'Tasks'
+        end
+    end
+
+    def status_title_part(text)
+      return text unless issue_status || task_status
+
+      text += ' with '
+      text +=
+        if issue_status
+          issue_status.titleize
+        elsif task_status
+          task_status.titleize
+        end
+
+      "#{text} status"
     end
 end
