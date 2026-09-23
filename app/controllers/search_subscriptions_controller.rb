@@ -41,11 +41,19 @@ class SearchSubscriptionsController < ApplicationController
   private
 
     def search_subscription_params
+      normalize_search_subscription_params
+
       params.expect(
         search_subscription: %i[term include_issues include_tasks issue_type_id
                                 task_type_id issue_status task_status
                                 source_user_id category_id project_id]
       )
+    end
+
+    def normalize_search_subscription_params
+      params[:search_subscription].each do |key, val|
+        params[:search_subscription][key] = nil if val.blank?
+      end
     end
 
     def find_or_initialize

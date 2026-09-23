@@ -115,6 +115,55 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
             expect(response).to be_successful
           end
         end
+
+        context "when params match an existing SearchSubscription" do
+          before do
+            current_user.search_subscriptions.build(valid_attributes).save
+            valid_attributes.merge!(issue_status: "", task_status: "")
+          end
+
+          it "doesn't create a new SearchSubscription" do
+            expect do
+              post :create, params: { search_subscription: valid_attributes }
+            end.not_to change(SearchSubscription, :count)
+          end
+
+          it "redirects to search_subscriptions" do
+            post :create, params: { search_subscription: valid_attributes }
+            expect(response)
+              .to redirect_to(search_subscription_path(SearchSubscription.last))
+          end
+        end
+
+        context "when params match an existing inactive SearchSubscription" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            **valid_attributes)
+          end
+
+          before do
+            search_subscription.update(active: false)
+          end
+
+          it "doesn't create a new SearchSubscription" do
+            expect do
+              post :create, params: { search_subscription: valid_attributes }
+            end.not_to change(SearchSubscription, :count)
+          end
+
+          it "activates the current SearchSubscription" do
+            expect do
+              post :create, params: { search_subscription: valid_attributes }
+              search_subscription.reload
+            end.to change(search_subscription, :active).to(true)
+          end
+
+          it "redirects to search_subscriptions" do
+            post :create, params: { search_subscription: valid_attributes }
+            expect(response)
+              .to redirect_to(search_subscription_path(SearchSubscription.last))
+          end
+        end
       end
     end
   end
