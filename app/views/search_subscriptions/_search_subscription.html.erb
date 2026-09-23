@@ -27,12 +27,12 @@
         from
         <%= content_tag :span, search_subscription.source_user.name, class: 'search-subscription-parameter' %>
       <% end %>
-      <% if search_subscription.issue_status || search_subscription.task_status %>
+      <% if search_subscription.issue_status.present? || search_subscription.task_status.present? %>
         with
-        <% if search_subscription.issue_status %>
-          <%= content_tag :span, search_subscription.issue_status, class: 'search-subscription-parameter' %>
-        <% elsif search_subscription.task_status %>
-          <%= content_tag :span, search_subscription.task_status, class: 'search-subscription-parameter' %>
+        <% if search_subscription.issue_status.present? %>
+          <%= content_tag :span, search_subscription.issue_status.titleize, class: 'search-subscription-parameter' %>
+        <% else %>
+          <%= content_tag :span, search_subscription.task_status.titleize, class: 'search-subscription-parameter' %>
         <% end %>
         status
       <% end %>

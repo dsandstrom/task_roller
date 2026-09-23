@@ -166,13 +166,13 @@ class SearchSubscription < ApplicationRecord
     end
 
     def status_title_part(text)
-      return text unless issue_status || task_status
+      return text unless issue_status.present? || task_status.present?
 
       text += ' with '
       text +=
-        if issue_status
+        if issue_status.present?
           issue_status.titleize
-        elsif task_status
+        else
           task_status.titleize
         end
 

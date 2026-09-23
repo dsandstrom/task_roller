@@ -95,6 +95,7 @@ RSpec.describe SearchSubscription, type: :model do
         before do
           subject.include_issues = true
           subject.issue_status = "pending"
+          subject.task_status = ""
         end
 
         it { is_expected.to be_valid }
@@ -103,6 +104,7 @@ RSpec.describe SearchSubscription, type: :model do
       context "when only task_status is set" do
         before do
           subject.include_tasks = true
+          subject.issue_status = ""
           subject.task_status = "assigned"
         end
 
@@ -430,7 +432,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including issues and tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           category: first_category,
                                           include_issues: true,
                                           include_tasks: true)
@@ -445,7 +447,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only issues" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           category: first_category,
                                           include_issues: true,
                                           include_tasks: false)
@@ -459,7 +461,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           category: first_category,
                                           include_issues: false,
                                           include_tasks: true)
@@ -479,7 +481,7 @@ RSpec.describe SearchSubscription, type: :model do
       context "for a visible project" do
         context "when including issues and tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: true)
@@ -494,7 +496,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only issues" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: false)
@@ -508,7 +510,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: false,
                                             include_tasks: true)
@@ -526,7 +528,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including issues and tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: true)
@@ -541,7 +543,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only issues" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: false)
@@ -555,7 +557,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: false,
                                             include_tasks: true)
@@ -573,7 +575,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including issues and tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: true)
@@ -586,7 +588,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only issues" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: true,
                                             include_tasks: false)
@@ -599,7 +601,7 @@ RSpec.describe SearchSubscription, type: :model do
 
         context "when including only tasks" do
           let(:search_subscription) do
-            Fabricate(:search_subscription, term: nil,
+            Fabricate(:search_subscription, term: "",
                                             project: first_project,
                                             include_issues: false,
                                             include_tasks: true)
@@ -618,7 +620,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only issues" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           issue_type: first_issue_type,
                                           include_issues: true,
                                           include_tasks: false)
@@ -637,7 +639,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           task_type: first_task_type,
                                           include_issues: false,
                                           include_tasks: true)
@@ -656,8 +658,9 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only issues" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           issue_status: "being_worked_on",
+                                          task_status: "",
                                           include_issues: true,
                                           include_tasks: false)
         end
@@ -675,7 +678,8 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
+                                          issue_status: "",
                                           task_status: "assigned",
                                           include_issues: false,
                                           include_tasks: true)
@@ -694,7 +698,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including issues and tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           source_user: first_user,
                                           include_issues: true,
                                           include_tasks: true)
@@ -709,7 +713,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only issues" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           source_user: first_user,
                                           include_issues: true,
                                           include_tasks: false)
@@ -723,7 +727,7 @@ RSpec.describe SearchSubscription, type: :model do
 
       context "and including only tasks" do
         let(:search_subscription) do
-          Fabricate(:search_subscription, term: nil,
+          Fabricate(:search_subscription, term: "",
                                           source_user: first_user,
                                           include_issues: false,
                                           include_tasks: true)
@@ -780,7 +784,7 @@ RSpec.describe SearchSubscription, type: :model do
         let(:search_subscription) do
           Fabricate(:search_subscription, include_issues: true,
                                           include_tasks: true,
-                                          term: nil,
+                                          term: "",
                                           category: category)
         end
 
@@ -795,7 +799,7 @@ RSpec.describe SearchSubscription, type: :model do
         let(:search_subscription) do
           Fabricate(:search_subscription, include_issues: true,
                                           include_tasks: true,
-                                          term: nil,
+                                          term: "",
                                           project: project)
         end
 
@@ -862,7 +866,7 @@ RSpec.describe SearchSubscription, type: :model do
         let(:search_subscription) do
           Fabricate(:search_subscription, include_issues: true,
                                           include_tasks: false,
-                                          term: nil,
+                                          term: "",
                                           project: project,
                                           issue_type: issue_type)
         end
@@ -878,12 +882,12 @@ RSpec.describe SearchSubscription, type: :model do
         let(:search_subscription) do
           Fabricate(:search_subscription, include_issues: true,
                                           include_tasks: false,
-                                          term: nil,
-                                          issue_status: "in_progress",
+                                          term: "",
+                                          issue_status: "being_worked_on",
                                           issue_type: issue_type)
         end
 
-        let(:title) { "#{issue_type.name} Issues with In Progress status" }
+        let(:title) { "#{issue_type.name} Issues with Being Worked On status" }
 
         it "returns title" do
           expect(search_subscription.title).to eq(title)
@@ -915,7 +919,7 @@ RSpec.describe SearchSubscription, type: :model do
         let(:search_subscription) do
           Fabricate(:search_subscription, include_issues: false,
                                           include_tasks: true,
-                                          term: nil,
+                                          term: "",
                                           category: category,
                                           source_user: user,
                                           task_type: task_type)
@@ -923,6 +927,25 @@ RSpec.describe SearchSubscription, type: :model do
 
         let(:title) do
           "#{category.name} category #{task_type.name} Tasks from #{user.name}"
+        end
+
+        it "returns title" do
+          expect(search_subscription.title).to eq(title)
+        end
+      end
+
+      context "for a task_type and task_status" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true,
+                                          term: "",
+                                          issue_status: "",
+                                          task_status: "in_progress",
+                                          task_type: task_type)
+        end
+
+        let(:title) do
+          "#{task_type.name.titleize} Tasks with In Progress status"
         end
 
         it "returns title" do
