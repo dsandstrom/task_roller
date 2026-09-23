@@ -1,5 +1,6 @@
 class SearchSubscriptionsController < ApplicationController
-  load_and_authorize_resource through: :current_user
+  load_and_authorize_resource through: :current_user, except: :create
+  before_action :find_or_initialize, only: :create
 
   def index; end
 
@@ -15,6 +16,10 @@ class SearchSubscriptionsController < ApplicationController
   def new; end
 
   def create
+    if @search_subscription.persisted? && !@search_subscription.active
+      @search_subscription.toggle
+    end
+
     if @search_subscription.save
       redirect_to search_subscriptions_url
     else
@@ -41,5 +46,12 @@ class SearchSubscriptionsController < ApplicationController
                                 task_type_id issue_status task_status
                                 source_user_id category_id project_id]
       )
+    end
+
+    def find_or_initialize
+      @search_subscription =
+        current_user.search_subscriptions
+                    .find_or_initialize_by(search_subscription_params)
+      authorize! :create, @search_subscription
     end
 end
