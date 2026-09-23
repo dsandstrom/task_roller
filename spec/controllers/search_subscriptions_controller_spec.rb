@@ -98,7 +98,8 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
 
           it "redirects to search_subscriptions" do
             post :create, params: { search_subscription: valid_attributes }
-            expect(response).to redirect_to(:search_subscriptions)
+            expect(response)
+              .to redirect_to(search_subscription_path(SearchSubscription.last))
           end
         end
 
