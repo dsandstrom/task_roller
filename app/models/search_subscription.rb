@@ -18,6 +18,10 @@ class SearchSubscription < ApplicationRecord
   belongs_to :task_type, optional: true
 
   validates :term, length: { maximum: 50 }
+  validates :user_id,
+            uniqueness: { scope: %i[term issue_status task_status issue_type_id
+                                    task_type_id project_id category_id] }
+
   validate :any_search_parameter
   validate :either_include_issues_or_tasks
   validate :either_issue_attrs_or_task_attrs

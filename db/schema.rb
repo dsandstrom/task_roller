@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_204445) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_205310) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -227,6 +227,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_204445) do
     t.string "term"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["user_id", "term", "issue_status", "task_status", "issue_type_id", "task_type_id", "project_id", "category_id"], name: "index_search_subscriptions_on_user_id_and_parameters", unique: true
+    t.index ["user_id"], name: "index_search_subscriptions_on_user_id"
   end
 
   create_table "task_assignees", force: :cascade do |t|

@@ -34,6 +34,12 @@ RSpec.describe SearchSubscription, type: :model do
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_length_of(:term).is_at_most(50) }
+  it do
+    is_expected
+      .to validate_uniqueness_of(:user_id)
+      .scoped_to(%i[term issue_status task_status issue_type_id task_type_id
+                    project_id category_id])
+  end
 
   describe "#validates" do
     describe "any_search_parameter" do
