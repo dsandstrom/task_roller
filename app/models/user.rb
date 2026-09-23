@@ -45,7 +45,8 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :notifying_issues, through: :issue_notifications,
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
-  has_many :search_subscriptions, dependent: :destroy
+  has_many :search_subscriptions, -> { order(:created_at) }, inverse_of: :user,
+                                                             dependent: :destroy
   has_many :source_search_subscriptions, dependent: :destroy,
                                          class_name: 'SearchSubscription',
                                          foreign_key: :source_user_id,
