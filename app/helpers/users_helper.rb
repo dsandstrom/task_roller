@@ -156,7 +156,7 @@ module UsersHelper
       if user.assignments.any?
         links << ['Assigned Tasks', user_assignments_path(user)]
       end
-      return links if user.reviews.none?
+      return links if user.reviewed_tasks.none?
 
       links << ['Reviewed Tasks', user_reviews_path(user)]
     end
