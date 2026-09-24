@@ -9,7 +9,7 @@ RSpec.describe "search_subscriptions/index", type: :view do
     end
 
     let(:second_search_subscription) do
-      Fabricate(:inactive_search_subscription, user: user)
+      Fabricate(:inactive_search_subscription, user: user, term: "different")
     end
 
     before do
