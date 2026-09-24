@@ -31,11 +31,26 @@ class SearchSubscription < ApplicationRecord
   end
 
   def search_results
-    SearchResult.filter_by(filter_attrs).all_visible
+    SearchResult.filter_by(search_result_attrs).all_visible
   end
 
   def title
     @title ||= build_title
+  end
+
+  def filter_params
+    attrs = {}
+
+    ATTR_MAP.each do |filter_key, search_key|
+      next if %i[category_id project_id user_id].include?(filter_key)
+
+      val = send(search_key)
+      next if val.blank?
+
+      attrs[filter_key] = val
+    end
+
+    attrs
   end
 
   private
@@ -83,21 +98,6 @@ class SearchSubscription < ApplicationRecord
       errors.add(:base, 'must include issues or tasks')
     end
 
-    def convert_attrs
-      attrs = {}
-
-      ATTR_MAP.each do |filter_key, search_key|
-        next if %i[category_id project_id].include?(filter_key)
-
-        val = send(search_key)
-        next if val.blank?
-
-        attrs[filter_key] = val
-      end
-
-      attrs
-    end
-
     def add_project_ids_attr(attrs)
       if category.present?
         attrs[:project_ids] = category.projects.all_visible.map(&:id)
@@ -118,8 +118,8 @@ class SearchSubscription < ApplicationRecord
       attrs
     end
 
-    def filter_attrs
-      attrs = add_class_name_attr(add_project_ids_attr(convert_attrs))
+    def search_result_attrs
+      attrs = add_class_name_attr(add_project_ids_attr(filter_params))
 
       attrs[:user_id] = source_user_id if source_user.present?
       attrs[:type_id] = issue_type_id || task_type_id
@@ -128,45 +128,44 @@ class SearchSubscription < ApplicationRecord
     end
 
     def build_title
-      text = category_project_title_part
-      text = type_title_part(text)
-      text = issues_or_tasks_title_part(text)
+      text = type_title_part(issues_or_tasks_title_part)
+      if source_user
+        text += " from #{source_user.name}"
+      elsif category || project
+        text += ' from '
+        text += category_project_title_part
+      end
       text = status_title_part(text)
-      text += " from #{source_user.name}" if source_user
       text += " that match \"#{term}\"" if term.present?
       text
     end
 
     def category_project_title_part
       if category
-        "#{category.name} category "
-      elsif project
-        "#{project.name} project "
+        category.name
       else
-        ''
+        project.name
       end
     end
 
     def type_title_part(text)
       return text unless issue_type || task_type
 
-      text +
-        if issue_type
-          "#{issue_type.name} "
-        else
-          "#{task_type.name} "
-        end
+      if issue_type
+        "#{issue_type.name} #{text}"
+      else
+        "#{task_type.name} #{text}"
+      end
     end
 
-    def issues_or_tasks_title_part(text)
-      text +
-        if include_issues && include_tasks
-          'Issues and Tasks'
-        elsif include_issues
-          'Issues'
-        else
-          'Tasks'
-        end
+    def issues_or_tasks_title_part
+      if include_issues && include_tasks
+        'Issues and Tasks'
+      elsif include_issues
+        'Issues'
+      else
+        'Tasks'
+      end
     end
 
     def status_title_part(text)
