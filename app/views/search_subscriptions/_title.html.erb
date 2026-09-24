@@ -1,0 +1,40 @@
+<p class="search-subscription-parameters">
+  <% if search_subscription.category || search_subscription.project %>
+    <% if search_subscription.category %>
+      <%= content_tag :span, search_subscription.category.name, class: 'search-subscription-parameter' %>
+      category
+    <% else %>
+      <%= content_tag :span, search_subscription.project.name, class: 'search-subscription-parameter' %>
+      project
+    <% end %>
+  <% end %>
+  <% if search_subscription.issue_type %>
+    <%= content_tag :span, search_subscription.issue_type.name, class: 'search-subscription-parameter' %>
+  <% elsif search_subscription.task_type %>
+    <%= content_tag :span, search_subscription.task_type.name, class: 'search-subscription-parameter' %>
+  <% end %>
+  <% if search_subscription.include_issues && search_subscription.include_tasks %>
+    <span class="search-subscription-parameter">Issues and Tasks</span>
+  <% elsif search_subscription.include_issues %>
+    <span class="search-subscription-parameter">Issues</span>
+  <% else %>
+    <span class="search-subscription-parameter">Tasks</span>
+  <% end %>
+  <% if search_subscription.source_user %>
+    from
+    <%= content_tag :span, search_subscription.source_user.name, class: 'search-subscription-parameter' %>
+  <% end %>
+  <% if search_subscription.issue_status.present? || search_subscription.task_status.present? %>
+    with
+    <% if search_subscription.issue_status.present? %>
+      <%= content_tag :span, search_subscription.issue_status.titleize, class: 'search-subscription-parameter' %>
+    <% else %>
+      <%= content_tag :span, search_subscription.task_status.titleize, class: 'search-subscription-parameter' %>
+    <% end %>
+    status
+  <% end %>
+  <% if search_subscription.term.present? %>
+    that match
+    <%= content_tag :span, "\"#{search_subscription.term}\"", class: 'search-subscription-term' %>
+  <% end %>
+</p>

@@ -2,8 +2,6 @@
               html: { name: 'search_subscription_form',
                       class: 'search-subscription-form',
                       novalidate: 'novalidate' }) do |form| %>
-  <%= form_errors(form.object) %>
-
   <%= form.hidden_field :category_id %>
   <%= form.hidden_field :project_id %>
   <%= form.hidden_field :source_user_id %>
@@ -14,8 +12,6 @@
   <%= form.hidden_field :task_type_id %>
   <%= form.hidden_field :issue_status %>
   <%= form.hidden_field :task_status %>
-
-  <div class="actions">
-    <%= form.submit 'Save Search' %>
-  </div>
+  <%= form.submit 'Auto-Subscribe', class: 'button button-outline', title: 'Subscribe',
+                                    data: { turbo_submits_with: 'Subscribing...' } %>
 <% end %>

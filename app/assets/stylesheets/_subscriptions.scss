@@ -45,3 +45,17 @@
   justify-content: space-between;
   gap: 1rem;
 }
+
+.search-subscription-wrapper {
+  input {
+    margin: 0;
+  }
+
+  form {
+    margin-bottom: 2.5rem;
+  }
+
+  .search-subscription-parameters {
+    margin-bottom: 1.5rem;
+  }
+}
