@@ -355,6 +355,15 @@ RSpec.describe SearchResult, type: :model do
             .to contain_exactly(["Issue", first_issue.id])
         end
       end
+
+      context "is set as 'all'" do
+        it "returns results from any issue_status" do
+          search_results = SearchResult.filter_by(issue_status: "all")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Issue", second_issue.id])
+        end
+      end
     end
 
     context "when task_status" do
@@ -382,6 +391,15 @@ RSpec.describe SearchResult, type: :model do
           search_results = SearchResult.filter_by(task_status: "in_progress")
           expect(map_class_id(search_results))
             .to contain_exactly(["Task", first_task.id])
+        end
+      end
+
+      context "is set as 'all'" do
+        it "returns results from any task_status" do
+          search_results = SearchResult.filter_by(task_status: "all")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id],
+                                ["Task", second_task.id])
         end
       end
     end
@@ -414,6 +432,15 @@ RSpec.describe SearchResult, type: :model do
             .to contain_exactly(["Issue", first_issue.id])
         end
       end
+
+      context "is set as 'all'" do
+        it "returns results with any issue_type_id" do
+          search_results = SearchResult.filter_by(type_id: "all")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", first_issue.id],
+                                ["Issue", second_issue.id])
+        end
+      end
     end
 
     context "when task_type_id" do
@@ -442,6 +469,15 @@ RSpec.describe SearchResult, type: :model do
             SearchResult.filter_by(type_id: first_task_type.id)
           expect(map_class_id(search_results))
             .to contain_exactly(["Task", first_task.id])
+        end
+      end
+
+      context "is set as 'all'" do
+        it "returns results with any task_type_id" do
+          search_results = SearchResult.filter_by(type_id: "all")
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Task", first_task.id],
+                                ["Task", second_task.id])
         end
       end
     end

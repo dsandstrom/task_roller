@@ -27,7 +27,7 @@ class SearchResult < ApplicationRecord
     project_ids = filters[:project_ids]
     return none if project_ids&.none?
 
-    apply_filters(filters).order(
+    apply_filters(normalize_filters(filters)).order(
       build_order_param('search_results', DEFAULT_ORDER, filters[:order])
     )
   end
@@ -105,6 +105,14 @@ class SearchResult < ApplicationRecord
       .filter_by_class_name(filters[:class_name])
       .filter_by_status(filters[:issue_status], filters[:task_status])
       .filter_by_type(filters[:type_id])
+  end
+
+  private_class_method def self.normalize_filters(filters)
+    %i[issue_status task_status type_id].each do |key|
+      filters[key] = nil if filters[key] == 'all'
+    end
+
+    filters
   end
 
   # INSTANCE
