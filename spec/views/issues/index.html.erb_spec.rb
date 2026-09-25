@@ -11,16 +11,25 @@ RSpec.describe "issues/index", type: :view do
     before { enable_can(view, admin) }
 
     context "when category" do
+      let(:issue_type) { Fabricate(:issue_type) }
+
       let(:first_issue) do
-        Fabricate(:issue, project: Fabricate(:project, category: category))
+        Fabricate(:issue, issue_type: issue_type,
+                          project: Fabricate(:project, category: category))
       end
+
       let(:second_issue) do
-        Fabricate(:issue, project: Fabricate(:project, category: category))
+        Fabricate(:issue, issue_type: issue_type,
+                          project: Fabricate(:project, category: category))
       end
+
+      let(:url) { category_issues_path(category, issue_type_id: issue_type.id) }
 
       before(:each) do
         assign(:source, category)
         assign(:issues, page([first_issue, second_issue]))
+        controller.extra_params =
+          { category_id: category.id, issue_type_id: issue_type.id }
       end
 
       it "renders a list of issues" do
@@ -41,6 +50,121 @@ RSpec.describe "issues/index", type: :view do
         render
         assert_select "#issue-#{first_issue.id} .issue-notification", count: 0
         assert_select "#issue-#{second_issue.id} .issue-notification", count: 1
+      end
+
+      it "renders filter form" do
+        render
+
+        assert_select "form[action=?][method=?]", url, "get" do
+          assert_select "input[name=?]", "query"
+          assert_select "input[name=?]", "order"
+          assert_select "input[name=?]", "issue_status"
+          assert_select "input[name=?]", "issue_type_id"
+        end
+      end
+
+      context "when search subscription doesn't exist" do
+        let(:search_subscription) do
+          Fabricate.build(:search_subscription,
+                          user: admin,
+                          include_issues: true, include_tasks: false,
+                          term: nil, category_id: category.id,
+                          issue_type_id: issue_type.id)
+        end
+
+        before do
+          assign(:search_subscription, search_subscription)
+        end
+
+        it "renders new SearchSubscription form" do
+          render
+
+          assert_select "form[action=?][method=?]",
+                        search_subscriptions_path, "post" do
+            assert_select "input[type=hidden][name=?][value=?]",
+                          "search_subscription[category_id]", category.id
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[project_id]"
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[source_user_id]"
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[term]"
+            assert_select "input[type=hidden][name=?][value=?]",
+                          "search_subscription[include_issues]", "true"
+            assert_select "input[type=hidden][name=?][value=?]",
+                          "search_subscription[include_tasks]", "false"
+            assert_select "input[type=hidden][name=?][value=?]",
+                          "search_subscription[issue_type_id]", issue_type.id
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[task_type_id]"
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[issue_status]"
+            assert_select "input[type=hidden][name=?]",
+                          "search_subscription[task_status]"
+          end
+        end
+
+        it "renders link to all search_subscriptions" do
+          render
+
+          expect(rendered).to have_link(nil, href: search_subscriptions_path)
+        end
+      end
+
+      context "when active search subscription exists" do
+        let(:search_subscription) do
+          Fabricate(:search_subscription, user: admin, include_issues: true,
+                                          include_tasks: false, term: nil,
+                                          category_id: category.id,
+                                          issue_type_id: issue_type.id)
+        end
+
+        before do
+          assign(:search_subscription, search_subscription)
+        end
+
+        it "doesn't render new SearchSubscription form" do
+          render
+
+          assert_select "form[action=?][method=?]",
+                        search_subscriptions_path, "post", count: 0
+        end
+
+        it "renders search subscription unsubscribe form" do
+          render
+
+          assert_select "form[action=?][method=?]",
+                        toggle_search_subscription_path(search_subscription),
+                        "post"
+        end
+      end
+
+      context "when inactive search subscription exists" do
+        let(:search_subscription) do
+          Fabricate(:inactive_search_subscription,
+                    user: admin, include_issues: true, include_tasks: false,
+                    term: nil, category_id: category.id,
+                    issue_type_id: issue_type.id)
+        end
+
+        before do
+          assign(:search_subscription, search_subscription)
+        end
+
+        it "doesn't render new SearchSubscription form" do
+          render
+
+          assert_select "form[action=?][method=?]",
+                        search_subscriptions_path, "post", count: 0
+        end
+
+        it "renders search subscription unsubscribe form" do
+          render
+
+          assert_select "form[action=?][method=?]",
+                        toggle_search_subscription_path(search_subscription),
+                        "post"
+        end
       end
     end
 

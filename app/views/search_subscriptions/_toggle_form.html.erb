@@ -2,6 +2,7 @@
               url: toggle_search_subscription_path(search_subscription),
               html: { name: 'search_subscription_toggle_form',
                       class: 'search-subscription-form' },
+              method: 'patch',
               data: { turbo_method: 'patch' }) do |form| %>
   <div class="button-wrapper">
     <% if search_subscription.active %>

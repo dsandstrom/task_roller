@@ -1,4 +1,7 @@
-<% show_status_filter = true unless show_status_filter == false %>
+<%
+show_status_filter = true unless show_status_filter == false
+search_subscription ||= nil
+%>
 
 <% if tasks.any? || searching? %>
   <%= render 'shared/page_links', collection: tasks %>
@@ -18,7 +21,8 @@
   <div class="second-column">
     <% if tasks.any? || searching? %>
       <%= render 'tasks/filter_form',
-                 tasks: tasks, show_status_filter: show_status_filter %>
+                 tasks: tasks, show_status_filter: show_status_filter,
+                 search_subscription: search_subscription %>
     <% end %>
   </div>
 </div>

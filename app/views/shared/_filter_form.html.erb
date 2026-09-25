@@ -1,6 +1,9 @@
 <%
-  index_path ||= request.path
-  return unless index_path
+return unless path
+
+reset_path ||= path
+
+search_subscription ||= nil
 %>
 
 <div class="filters-wrapper">
@@ -8,14 +11,15 @@
     <h3>Filters</h3>
 
     <% if searching? %>
-      <%= link_to 'reset', index_path %>
+      <%= link_to 'reset', reset_path %>
     <% end %>
   </div>
 
-  <%= form_tag index_path, method: :get, class: "issue-filter-form" do %>
-    <%= render 'shared/string_filter_field', placeholder: 'issues' %>
-    <%= render 'issues/status_filter_field' if show_status_filter %>
-    <%= render 'issues/issue_type_filter_field' %>
+  <%= form_tag path,
+               method: :get, class: "search-form",
+               id: "search_form" do %>
+    <%= render 'shared/string_filter_field' %>
+    <%= render 'searches/type_filter_field' %>
     <%= render 'shared/order_filter_field' %>
 
     <div class="actions">

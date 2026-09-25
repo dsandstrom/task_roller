@@ -41,28 +41,8 @@
 
 <div class="columns">
   <div class="second-column">
-    <div class="filters-wrapper">
-      <div class="heading-and-link">
-        <h3>Filters</h3>
-
-        <% if searching? %>
-          <%= link_to 'reset', @category %>
-        <% end %>
-      </div>
-
-      <%= form_tag @category,
-                   method: :get, class: "search-form",
-                   id: "search_form" do %>
-        <%= render 'shared/string_filter_field' %>
-        <%= render 'searches/type_filter_field' %>
-        <%= render 'shared/order_filter_field' %>
-
-        <div class="actions">
-          <%= submit_tag 'Filter' %>
-        </div>
-      <% end %>
-
-    </div>
+    <%= render 'shared/filter_form', path: category_path(@category),
+                                     search_subscription: @search_subscription %>
   </div>
 
   <div class="first-column">
