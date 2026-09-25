@@ -39,18 +39,17 @@ class SearchSubscription < ApplicationRecord
   end
 
   def filter_params
-    attrs = {}
+    filters = convert_attrs_to_filters
+    filters.reverse_merge!(order: 'updated,desc')
+    return filters if include_issues && include_tasks
 
-    ATTR_MAP.each do |filter_key, search_key|
-      next if %i[category_id project_id user_id].include?(filter_key)
-
-      val = send(search_key)
-      next if val.blank?
-
-      attrs[filter_key] = val
+    if include_issues
+      filters.reverse_merge!(type: 'issues', issue_status: 'all', issue_type_id: 'all')
+    else
+      filters.reverse_merge!(type: 'tasks', task_status: 'all', task_type_id: 'all')
     end
 
-    attrs
+    filters
   end
 
   private
@@ -180,5 +179,20 @@ class SearchSubscription < ApplicationRecord
         end
 
       "#{text} status"
+    end
+
+    def convert_attrs_to_filters
+      attrs = {}
+
+      ATTR_MAP.each do |filter_key, search_key|
+        next if %i[category_id project_id user_id].include?(filter_key)
+
+        val = send(search_key)
+        next if val.blank?
+
+        attrs[filter_key] = val
+      end
+
+      attrs
     end
 end

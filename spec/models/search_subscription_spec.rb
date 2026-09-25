@@ -973,7 +973,8 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", order: "updated,desc" })
         end
       end
 
@@ -985,7 +986,8 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", order: "updated,desc" })
         end
       end
 
@@ -997,7 +999,8 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", order: "updated,desc" })
         end
       end
 
@@ -1009,7 +1012,8 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", order: "updated,desc" })
         end
       end
     end
@@ -1022,7 +1026,9 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", type: "issues", issue_type_id: "all",
+                     issue_status: "all", order: "updated,desc" })
         end
       end
 
@@ -1035,7 +1041,8 @@ RSpec.describe SearchSubscription, type: :model do
 
         it "converts attrs to filter params" do
           expect(search_subscription.filter_params)
-            .to eq({ query: "go", issue_status: "pending" })
+            .to eq({ query: "go", type: "issues", issue_status: "pending",
+                     issue_type_id: "all", order: "updated,desc" })
         end
       end
 
@@ -1050,7 +1057,8 @@ RSpec.describe SearchSubscription, type: :model do
 
         it "converts attrs to filter params" do
           expect(search_subscription.filter_params)
-            .to eq({ issue_status: "pending", issue_type_id: issue_type.id })
+            .to eq({ type: "issues", issue_status: "pending",
+                     issue_type_id: issue_type.id, order: "updated,desc" })
         end
       end
     end
@@ -1063,7 +1071,9 @@ RSpec.describe SearchSubscription, type: :model do
         end
 
         it "converts attrs to filter params" do
-          expect(search_subscription.filter_params).to eq({ query: "go" })
+          expect(search_subscription.filter_params)
+            .to eq({ query: "go", type: "tasks", task_status: "all",
+                     task_type_id: "all", order: "updated,desc" })
         end
       end
 
@@ -1076,7 +1086,8 @@ RSpec.describe SearchSubscription, type: :model do
 
         it "converts attrs to filter params" do
           expect(search_subscription.filter_params)
-            .to eq({ query: "go", task_status: "unassigned" })
+            .to eq({ query: "go", type: "tasks", task_status: "unassigned",
+                     task_type_id: "all", order: "updated,desc" })
         end
       end
 
@@ -1091,7 +1102,8 @@ RSpec.describe SearchSubscription, type: :model do
 
         it "converts attrs to filter params" do
           expect(search_subscription.filter_params)
-            .to eq({ task_status: "assigned", task_type_id: task_type.id })
+            .to eq({ type: "tasks", task_status: "assigned",
+                     task_type_id: task_type.id, order: "updated,desc" })
         end
       end
     end
