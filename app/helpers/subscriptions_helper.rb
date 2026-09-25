@@ -22,7 +22,52 @@ module SubscriptionsHelper
     def search_subscription_pages(search_subscription)
       [['Saved Searches', search_subscriptions_path],
        [search_subscription.title,
-        search_subscription_path(search_subscription)]]
+        search_subscription_path_to_source(search_subscription)]]
+    end
+
+    def search_subscription_path_to_source(search_subscription)
+      filters = search_subscription_filters(search_subscription)
+
+      if search_subscription.source_user
+        if search_subscription.include_issues
+          user_issues_path(search_subscription.source_user, filters)
+        else
+          user_tasks_path(search_subscription.source_user, filters)
+        end
+      elsif search_subscription.category
+        if search_subscription.include_issues && search_subscription.include_tasks
+          category_path(search_subscription.category, filters)
+        elsif search_subscription.include_issues
+          category_issues_path(search_subscription.category, filters)
+        else
+          category_tasks_path(search_subscription.category, filters)
+        end
+      elsif search_subscription.project
+        if search_subscription.include_issues && search_subscription.include_tasks
+          project_path(search_subscription.project, filters)
+        elsif search_subscription.include_issues
+          project_issues_path(search_subscription.project, filters)
+        else
+          project_tasks_path(search_subscription.project, filters)
+        end
+      else
+        search_results_path(filters)
+      end
+    end
+
+    def search_subscription_filters(search_subscription)
+      filters = search_subscription.filter_params
+      filters.reverse_merge!(order: 'updated,desc')
+      return filters if search_subscription.include_issues &&
+                        search_subscription.include_tasks
+
+      if search_subscription.include_issues
+        filters.reverse_merge!(type: 'issues', issue_status: 'all', issue_type_id: 'all')
+      else
+        filters.reverse_merge!(type: 'tasks', task_status: 'all', task_type_id: 'all')
+      end
+
+      filters
     end
 
     def search_subscription_first_column

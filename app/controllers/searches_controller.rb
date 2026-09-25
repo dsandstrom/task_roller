@@ -3,6 +3,11 @@ class SearchesController < ApplicationController
   before_action :verify_filters, only: :index
 
   def index
+    if params[:query].present?
+      @search_subscription = build_search_subscription(category_id: nil,
+                                                       project_id: nil,
+                                                       user_id: nil)
+    end
     @search_results = build_search_results.page(params[:page])
   end
 

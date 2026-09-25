@@ -22,6 +22,12 @@ class ProjectsController < ApplicationController
     when 'tasks'
       redirect_to project_tasks_path(@project, params: filters)
     else
+      if @project.totally_visible?
+        @search_subscription =
+          build_search_subscription(include_issues: true,
+                                    include_tasks: true,
+                                    project_id: @project.id)
+      end
       @search_results = build_search_results.page(params[:page])
     end
   end
