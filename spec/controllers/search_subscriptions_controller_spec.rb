@@ -38,6 +38,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
     %w[admin reviewer worker reporter].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
+        let(:filters) { { query: "search term", order: "updated,desc" } }
 
         before { sign_in(current_user) }
 
@@ -48,7 +49,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
 
           it "returns a success response" do
             get :show, params: { id: search_subscription.to_param }
-            expect(response).to be_successful
+            expect(response).to redirect_to(search_results_path(filters))
           end
         end
 
