@@ -48,7 +48,9 @@ class SearchSubscriptionsController < ApplicationController
 
     def normalize_search_subscription_params
       params[:search_subscription].each do |key, val|
+        # rubocop:disable Rails/StrongParametersExpect
         params[:search_subscription][key] = nil if val.blank?
+        # rubocop:enable Rails/StrongParametersExpect
       end
     end
 
@@ -59,33 +61,49 @@ class SearchSubscriptionsController < ApplicationController
       authorize! :create, @search_subscription
     end
 
-    def search_subscription_path_to_source
-      filters = @search_subscription.filter_params
+    def filter_params
+      @search_subscription.filter_params
+    end
 
+    def search_subscription_path_to_source
       if @search_subscription.source_user
-        if @search_subscription.include_issues
-          user_issues_url(@search_subscription.source_user, filters)
-        else
-          user_tasks_url(@search_subscription.source_user, filters)
-        end
+        search_subscription_path_to_user
       elsif @search_subscription.category
-        if @search_subscription.include_issues && @search_subscription.include_tasks
-          category_url(@search_subscription.category, filters)
-        elsif @search_subscription.include_issues
-          category_issues_url(@search_subscription.category, filters)
-        else
-          category_tasks_url(@search_subscription.category, filters)
-        end
+        search_subscription_path_to_category
       elsif @search_subscription.project
-        if @search_subscription.include_issues && @search_subscription.include_tasks
-          project_url(@search_subscription.project, filters)
-        elsif @search_subscription.include_issues
-          project_issues_url(@search_subscription.project, filters)
-        else
-          project_tasks_url(@search_subscription.project, filters)
-        end
+        search_subscription_path_to_project
       else
-        search_results_url(filters)
+        search_results_url(filter_params)
+      end
+    end
+
+    def search_subscription_path_to_user
+      if @search_subscription.include_issues
+        user_issues_url(@search_subscription.source_user, filter_params)
+      else
+        user_tasks_url(@search_subscription.source_user, filter_params)
+      end
+    end
+
+    def search_subscription_path_to_category
+      if @search_subscription.include_issues &&
+         @search_subscription.include_tasks
+        category_url(@search_subscription.category, filter_params)
+      elsif @search_subscription.include_issues
+        category_issues_url(@search_subscription.category, filter_params)
+      else
+        category_tasks_url(@search_subscription.category, filter_params)
+      end
+    end
+
+    def search_subscription_path_to_project
+      if @search_subscription.include_issues &&
+         @search_subscription.include_tasks
+        project_url(@search_subscription.project, filter_params)
+      elsif @search_subscription.include_issues
+        project_issues_url(@search_subscription.project, filter_params)
+      else
+        project_tasks_url(@search_subscription.project, filter_params)
       end
     end
 end
