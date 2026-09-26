@@ -227,7 +227,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_205310) do
     t.string "term"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id", "term", "issue_status", "task_status", "issue_type_id", "task_type_id", "project_id", "category_id"], name: "index_search_subscriptions_on_user_id_and_parameters", unique: true
+    t.index ["user_id", "term", "issue_status", "task_status", "issue_type_id", "task_type_id", "project_id", "category_id", "include_issues", "include_tasks", "source_user_id"], name: "index_search_subscriptions_on_user_id_and_parameters", unique: true
     t.index ["user_id"], name: "index_search_subscriptions_on_user_id"
   end
 
