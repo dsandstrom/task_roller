@@ -64,28 +64,28 @@ class SearchSubscriptionsController < ApplicationController
 
       if @search_subscription.source_user
         if @search_subscription.include_issues
-          user_issues_path(@search_subscription.source_user, filters)
+          user_issues_url(@search_subscription.source_user, filters)
         else
-          user_tasks_path(@search_subscription.source_user, filters)
+          user_tasks_url(@search_subscription.source_user, filters)
         end
       elsif @search_subscription.category
         if @search_subscription.include_issues && @search_subscription.include_tasks
-          category_path(@search_subscription.category, filters)
+          category_url(@search_subscription.category, filters)
         elsif @search_subscription.include_issues
-          category_issues_path(@search_subscription.category, filters)
+          category_issues_url(@search_subscription.category, filters)
         else
-          category_tasks_path(@search_subscription.category, filters)
+          category_tasks_url(@search_subscription.category, filters)
         end
       elsif @search_subscription.project
         if @search_subscription.include_issues && @search_subscription.include_tasks
-          project_path(@search_subscription.project, filters)
+          project_url(@search_subscription.project, filters)
         elsif @search_subscription.include_issues
-          project_issues_path(@search_subscription.project, filters)
+          project_issues_url(@search_subscription.project, filters)
         else
-          project_tasks_path(@search_subscription.project, filters)
+          project_tasks_url(@search_subscription.project, filters)
         end
       else
-        search_results_path(filters)
+        search_results_url(filters)
       end
     end
 end

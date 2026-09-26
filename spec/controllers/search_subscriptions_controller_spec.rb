@@ -35,7 +35,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
   end
 
   describe "GET #show" do
-    %w[admin reviewer worker reporter].each do |employee_type|
+    %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
         let(:filters) { { query: "search term", order: "updated,desc" } }
@@ -47,9 +47,9 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
             Fabricate(:search_subscription, user: current_user)
           end
 
-          it "returns a success response" do
+          it "redirects to search_results" do
             get :show, params: { id: search_subscription.to_param }
-            expect(response).to redirect_to(search_results_path(filters))
+            expect(response).to redirect_to(search_results_url(filters))
           end
         end
 
@@ -60,6 +60,262 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
             expect do
               get :show, params: { id: search_subscription.to_param }
             end.to raise_error(ActiveRecord::RecordNotFound)
+          end
+        end
+      end
+    end
+
+    context "for a reporter" do
+      let(:current_user) { Fabricate(:user_reporter) }
+      let(:source_user) { Fabricate(:user) }
+      let(:category) { Fabricate(:category) }
+      let(:project) { Fabricate(:project) }
+      let(:issue_type) { Fabricate(:issue_type) }
+      let(:task_type) { Fabricate(:task_type) }
+      let(:issue_status) { "addressed" }
+      let(:task_status) { "approved" }
+
+      let(:default_filters) do
+        { query: search_subscription.term, order: "updated,desc" }
+      end
+
+      let(:default_issue_filters) do
+        { query: search_subscription.term, type: "issues",
+          issue_status: "all", issue_type_id: "all",
+          order: "updated,desc" }
+      end
+
+      let(:default_task_filters) do
+        { query: search_subscription.term, type: "tasks",
+          task_status: "all", task_type_id: "all",
+          order: "updated,desc" }
+      end
+
+      before { sign_in(current_user) }
+
+      context "when no source" do
+        context "and only term is set" do
+          context "when the SearchSubscription belongs to them" do
+            let(:search_subscription) do
+              Fabricate(:search_subscription, user: current_user)
+            end
+
+            it "redirects to search_results_url" do
+              get :show, params: { id: search_subscription.to_param }
+              expect(response)
+                .to redirect_to(search_results_url(default_filters))
+            end
+          end
+
+          context "when the SearchSubscription doesn't belong to them" do
+            let(:search_subscription) { Fabricate(:search_subscription) }
+
+            it "should raise error" do
+              expect do
+                get :show, params: { id: search_subscription.to_param }
+              end.to raise_error(ActiveRecord::RecordNotFound)
+            end
+          end
+        end
+
+        context "and including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            include_tasks: false)
+          end
+
+          it "redirects to search_results_url" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response)
+              .to redirect_to(search_results_url(default_issue_filters))
+          end
+        end
+
+        context "and including issues with issue attrs" do
+          let(:filters) do
+            { query: search_subscription.term, type: "issues",
+              issue_status: issue_status, issue_type_id: issue_type.id,
+              order: "updated,desc" }
+          end
+
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            include_tasks: false,
+                                            issue_type: issue_type,
+                                            issue_status: issue_status)
+          end
+
+          it "redirects to search_results_url" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(search_results_url(filters))
+          end
+        end
+
+        context " and including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            include_issues: false)
+          end
+
+          it "redirects to search_results_url" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response)
+              .to redirect_to(search_results_url(default_task_filters))
+          end
+        end
+
+        context "and including tasks with task attrs" do
+          let(:filters) do
+            { query: search_subscription.term, type: "tasks",
+              task_status: task_status, task_type_id: task_type.id,
+              order: "updated,desc" }
+          end
+
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            include_issues: false,
+                                            task_type: task_type,
+                                            task_status: task_status)
+          end
+
+          it "redirects to search_results_url" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(search_results_url(filters))
+          end
+        end
+      end
+
+      context "when source user" do
+        context "and including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            source_user: source_user,
+                                            include_tasks: false)
+          end
+
+          it "redirects to user_issues" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              user_issues_url(source_user, default_issue_filters)
+            )
+          end
+        end
+
+        context "and including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            source_user: source_user,
+                                            include_issues: false)
+          end
+
+          it "redirects to user_tasks" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              user_tasks_url(source_user, default_task_filters)
+            )
+          end
+        end
+
+        context "and including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            source_user: source_user)
+          end
+
+          it "redirects to user_issues" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response)
+              .to redirect_to(user_issues_url(source_user, default_filters))
+          end
+        end
+      end
+
+      context "when source category" do
+        context "and including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            category: category,
+                                            include_tasks: false)
+          end
+
+          it "redirects to category_issues" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              category_issues_url(category, default_issue_filters)
+            )
+          end
+        end
+
+        context "and including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            category: category,
+                                            include_issues: false)
+          end
+
+          it "redirects to category_tasks" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              category_tasks_url(category, default_task_filters)
+            )
+          end
+        end
+
+        context "and including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            category: category)
+          end
+
+          it "redirects to category" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response)
+              .to redirect_to(category_url(category, default_filters))
+          end
+        end
+      end
+
+      context "when source project" do
+        context "and including only issues" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            project: project,
+                                            include_tasks: false)
+          end
+
+          it "redirects to project_issues" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              project_issues_url(project, default_issue_filters)
+            )
+          end
+        end
+
+        context "and including only tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            project: project,
+                                            include_issues: false)
+          end
+
+          it "redirects to project_tasks" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response).to redirect_to(
+              project_tasks_url(project, default_task_filters)
+            )
+          end
+        end
+
+        context "and including issues and tasks" do
+          let(:search_subscription) do
+            Fabricate(:search_subscription, user: current_user,
+                                            project: project)
+          end
+
+          it "redirects to project" do
+            get :show, params: { id: search_subscription.to_param }
+            expect(response)
+              .to redirect_to(project_url(project, default_filters))
           end
         end
       end
