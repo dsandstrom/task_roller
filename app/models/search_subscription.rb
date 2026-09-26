@@ -11,6 +11,12 @@ class SearchSubscription < ApplicationRecord
                     task_status: nil, category_id: nil, project_id: nil,
                     source_user_id: nil }.freeze
 
+  DEFAULT_ISSUE_PARAMS =
+    { type: 'issues', issue_status: 'all', issue_type_id: 'all' }.freeze
+
+  DEFAULT_TASK_PARAMS =
+    { type: 'tasks', task_status: 'all', task_type_id: 'all' }.freeze
+
   belongs_to :user
   belongs_to :source_user, class_name: 'User', optional: true
   belongs_to :category, optional: true
@@ -28,19 +34,6 @@ class SearchSubscription < ApplicationRecord
   validate :any_search_parameter
   validate :either_include_issues_or_tasks
   validate :either_issue_attrs_or_task_attrs
-
-  def self.convert_params_to_attrs(params, attrs = {})
-    attrs.reverse_merge!(DEFAULT_ATTRS)
-
-    ATTRS_TO_PARAMS_MAP.each do |search_key, param_key|
-      next if params[param_key].blank? || params[param_key] == 'all'
-
-      attrs[search_key] = params[param_key]
-    end
-    return attrs if params[:type].blank?
-
-    convert_type_param_to_attrs(attrs, params[:type])
-  end
 
   def toggle
     update(active: !active)
@@ -60,27 +53,12 @@ class SearchSubscription < ApplicationRecord
     return filters if include_issues && include_tasks
 
     if include_issues
-      filters.reverse_merge!(default_issue_params)
+      filters.reverse_merge!(DEFAULT_ISSUE_PARAMS)
     else
-      filters.reverse_merge!(default_task_params)
+      filters.reverse_merge!(DEFAULT_TASK_PARAMS)
     end
 
     filters
-  end
-
-  private_class_method def self.convert_type_param_to_attrs(attrs, type_param)
-    if type_param.in?(%w[issues all])
-      attrs[:task_type_id] = attrs[:task_status] = nil
-    end
-
-    if type_param.in?(%w[tasks all])
-      attrs[:issue_type_id] = attrs[:issue_status] = nil
-    end
-
-    attrs[:include_tasks] = false if type_param == 'issues'
-    attrs[:include_issues] = false if type_param == 'tasks'
-
-    attrs
   end
 
   private
@@ -225,13 +203,5 @@ class SearchSubscription < ApplicationRecord
       end
 
       attrs
-    end
-
-    def default_issue_params
-      { type: 'issues', issue_status: 'all', issue_type_id: 'all' }
-    end
-
-    def default_task_params
-      { type: 'tasks', task_status: 'all', task_type_id: 'all' }
     end
 end

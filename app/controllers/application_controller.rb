@@ -147,7 +147,7 @@ class ApplicationController < ActionController::Base
 
     def build_search_subscription(starting_attrs = {})
       current_user.search_subscriptions.find_or_initialize_by(
-        SearchSubscription.convert_params_to_attrs(params, starting_attrs)
+        SearchFiltersConverter.convert_params_to_attrs(params, starting_attrs)
       )
     end
 end
