@@ -34,11 +34,13 @@ RSpec.describe SearchSubscription, type: :model do
   it { is_expected.to be_valid }
 
   it { is_expected.to validate_length_of(:term).is_at_most(50) }
-  it do
+
+  it "validates uniqueness of parameters" do
     is_expected
       .to validate_uniqueness_of(:user_id)
-      .scoped_to(%i[term issue_status task_status issue_type_id task_type_id
-                    project_id category_id])
+      .scoped_to(%i[include_issues include_tasks term source_user_id
+                    category_id project_id issue_status task_status
+                    issue_type_id task_type_id])
   end
 
   describe "#validates" do
@@ -357,6 +359,244 @@ RSpec.describe SearchSubscription, type: :model do
       end
     end
   end
+
+  # CLASS
+
+  describe ".convert_params_to_attrs" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project) }
+    let(:source_user) { Fabricate(:user) }
+    let(:issue_type) { Fabricate(:issue_type) }
+    let(:task_type) { Fabricate(:task_type) }
+
+    context "when empty starting attrs" do
+      context "and empty params" do
+        let(:params) { {} }
+
+        it "returns default attrs" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: true, include_tasks: true, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "and params contains 'issues' type" do
+        let(:params) { { type: "issues" } }
+
+        it "returns attrs with include_tasks false" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: true, include_tasks: false, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "and params contains 'tasks' type" do
+        let(:params) { { type: "tasks" } }
+
+        it "returns attrs with include_issues false" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: false, include_tasks: true, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "and params contains 'issues' type with full params" do
+        let(:params) do
+          { type: "issues", issue_type_id: issue_type.id,
+            task_type_id: task_type.id, issue_status: "pending",
+            task_status: "assigned" }
+        end
+
+        it "clears task params" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: true, include_tasks: false, term: nil,
+                     issue_type_id: issue_type.id, issue_status: "pending",
+                     task_type_id: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "and params contains 'tasks' type with full params" do
+        let(:params) do
+          { type: "tasks", issue_type_id: issue_type.id,
+            task_type_id: task_type.id, issue_status: "pending",
+            task_status: "assigned" }
+        end
+
+        it "clears issue params" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: false, include_tasks: true, term: nil,
+                     task_type_id: task_type.id, task_status: "assigned",
+                     issue_type_id: nil, issue_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "and params contains 'all' type with full params" do
+        let(:params) do
+          { type: "all", issue_type_id: issue_type.id,
+            task_type_id: task_type.id, issue_status: "pending",
+            task_status: "assigned" }
+        end
+
+        it "clears issue and task params" do
+          expect(described_class.convert_params_to_attrs(params))
+            .to eq({ include_issues: true, include_tasks: true, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+    end
+
+    context "when starting attrs contains category_id" do
+      let(:attrs) { { category_id: category.id } }
+
+      context "for empty params" do
+        let(:params) { {} }
+
+        it "returns attrs with category_id" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: true, term: nil,
+                     category_id: category.id, issue_type_id: nil,
+                     task_type_id: nil, issue_status: nil, task_status: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for query param" do
+        let(:params) { { query: "query" } }
+
+        it "converts to attrs" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: true, term: "query",
+                     category_id: category.id, issue_type_id: nil,
+                     task_type_id: nil, issue_status: nil, task_status: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+    end
+
+    context "when starting attrs contains project_id" do
+      let(:attrs) { { project_id: project.id } }
+
+      context "for empty params" do
+        let(:params) { {} }
+
+        it "returns attrs with project_id" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: true,
+                     project_id: project.id, term: nil, issue_type_id: nil,
+                     task_type_id: nil, issue_status: nil, task_status: nil,
+                     category_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for query param" do
+        let(:params) { { query: "query" } }
+
+        it "converts to attrs" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: true, term: "query",
+                     project_id: project.id, issue_type_id: nil,
+                     task_type_id: nil, issue_status: nil, task_status: nil,
+                     category_id: nil, source_user_id: nil})
+        end
+      end
+    end
+
+    context "when starting attrs contains include_issues false" do
+      let(:attrs) { { include_issues: false } }
+
+      context "for empty params" do
+        let(:params) { {} }
+
+        it "returns attrs with include_issues false" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: false, include_tasks: true, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for task params" do
+        let(:params) do
+          { task_type_id: task_type.id, task_status: "in_progress" }
+        end
+
+        it "converts to attrs" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: false, include_tasks: true,
+                     task_status: "in_progress", task_type_id: task_type.id,
+                     term: nil, issue_type_id: nil, issue_status: nil,
+                     category_id: nil, project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for task_status all and task_type_id all" do
+        let(:params) { { task_type_id: "all", task_status: "all" } }
+
+        it "clears them" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: false, include_tasks: true, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+    end
+
+    context "when starting attrs contains include_tasks false" do
+      let(:attrs) { { include_tasks: false } }
+
+      context "for empty params" do
+        let(:params) { {} }
+
+        it "returns attrs with include_tasks false" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: false, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for issue params" do
+        let(:params) do
+          { issue_type_id: issue_type.id, issue_status: "in_progress" }
+        end
+
+        it "converts to attrs" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: false,
+                     issue_status: "in_progress", issue_type_id: issue_type.id,
+                     term: nil, task_type_id: nil, task_status: nil,
+                     category_id: nil, project_id: nil, source_user_id: nil})
+        end
+      end
+
+      context "for issue_status all and issue_type_id all" do
+        let(:params) { { issue_type_id: "all", issue_status: "all" } }
+
+        it "ignores them" do
+          expect(described_class.convert_params_to_attrs(params, attrs))
+            .to eq({ include_issues: true, include_tasks: false, term: nil,
+                     issue_type_id: nil, task_type_id: nil,
+                     issue_status: nil, task_status: nil, category_id: nil,
+                     project_id: nil, source_user_id: nil})
+        end
+      end
+    end
+  end
+
+  # INSTANCE
 
   describe "#search_results" do
     let(:first_category) { Fabricate(:category) }
