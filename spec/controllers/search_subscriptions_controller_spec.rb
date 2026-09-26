@@ -99,8 +99,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
 
           it "redirects to search_subscriptions" do
             post :create, params: { search_subscription: valid_attributes }
-            expect(response)
-              .to redirect_to(search_subscription_path(SearchSubscription.last))
+            expect(response).to redirect_to(search_subscriptions_url)
           end
         end
 
@@ -131,8 +130,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
 
           it "redirects to search_subscriptions" do
             post :create, params: { search_subscription: valid_attributes }
-            expect(response)
-              .to redirect_to(search_subscription_path(SearchSubscription.last))
+            expect(response).to redirect_to(search_subscriptions_url)
           end
         end
 
@@ -161,8 +159,7 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
 
           it "redirects to search_subscriptions" do
             post :create, params: { search_subscription: valid_attributes }
-            expect(response)
-              .to redirect_to(search_subscription_path(SearchSubscription.last))
+            expect(response).to redirect_to(search_subscriptions_url)
           end
         end
       end

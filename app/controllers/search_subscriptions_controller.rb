@@ -17,7 +17,7 @@ class SearchSubscriptionsController < ApplicationController
     end
 
     if @search_subscription.save
-      redirect_to @search_subscription
+      redirect_to search_subscriptions_url
     else
       render :new
     end
