@@ -145,25 +145,9 @@ class ApplicationController < ActionController::Base
       true
     end
 
-    def build_search_subscription(attrs = {})
-      SearchSubscription::ATTR_MAP.each do |filter_key, search_key|
-        next if params[filter_key].blank? || params[filter_key] == 'all'
-
-        attrs[search_key] = params[filter_key]
-      end
-      return if attrs.none?
-
-      if params[:type] == 'issues'
-        attrs[:include_tasks] = false
-        attrs[:task_type_id] = attrs[:task_status] = nil
-      elsif params[:type] == 'tasks'
-        attrs[:include_issues] = false
-        attrs[:issue_type_id] = attrs[:issue_status] = nil
-      elsif params[:type] == 'all'
-        attrs[:issue_type_id] = attrs[:issue_status] = nil
-        attrs[:task_type_id] = attrs[:task_status] = nil
-      end
-
-      current_user.search_subscriptions.find_or_initialize_by(attrs)
+    def build_search_subscription(starting_attrs = {})
+      current_user.search_subscriptions.find_or_initialize_by(
+        SearchSubscription.convert_params_to_attrs(params, starting_attrs)
+      )
     end
 end
