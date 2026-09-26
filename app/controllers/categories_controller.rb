@@ -20,13 +20,7 @@ class CategoriesController < ApplicationController
     when 'tasks'
       redirect_to category_tasks_path(@category, params: filters)
     else
-      if @category.visible?
-        @search_subscription =
-          build_search_subscription(include_issues: true,
-                                    include_tasks: true,
-                                    category_id: @category.id)
-      end
-      @search_results = build_search_results.page(params[:page])
+      build_subscription_and_results
     end
   end
 
@@ -71,6 +65,14 @@ class CategoriesController < ApplicationController
                   .filter_by(filters)
                   .preload(:project, :user, :issue, :assignees,
                            project: :category)
+    end
+
+    def build_subscription_and_results
+      if @category.visible?
+        @search_subscription =
+          build_search_subscription(category_id: @category.id)
+      end
+      @search_results = build_search_results.page(params[:page])
     end
 
     def redirect_url

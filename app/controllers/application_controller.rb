@@ -130,11 +130,11 @@ class ApplicationController < ActionController::Base
     end
 
     def visible_source
-      @visible_source = is_source_visible? if @visible_source.nil?
+      @visible_source = source_visible? if @visible_source.nil?
     end
 
-    def is_source_visible?
-      return false unless @source.present?
+    def source_visible?
+      return false if @source.blank?
 
       if @source.respond_to?(:totally_visible?)
         return @source.totally_visible?

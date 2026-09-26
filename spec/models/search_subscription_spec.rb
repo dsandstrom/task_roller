@@ -378,7 +378,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -390,7 +390,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: false, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -402,7 +402,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: false, include_tasks: true, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -418,7 +418,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: false, term: nil,
                      issue_type_id: issue_type.id, issue_status: "pending",
                      task_type_id: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -434,7 +434,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: false, include_tasks: true, term: nil,
                      task_type_id: task_type.id, task_status: "assigned",
                      issue_type_id: nil, issue_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -450,7 +450,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
     end
@@ -466,7 +466,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true, term: nil,
                      category_id: category.id, issue_type_id: nil,
                      task_type_id: nil, issue_status: nil, task_status: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -478,7 +478,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true, term: "query",
                      category_id: category.id, issue_type_id: nil,
                      task_type_id: nil, issue_status: nil, task_status: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
     end
@@ -494,7 +494,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true,
                      project_id: project.id, term: nil, issue_type_id: nil,
                      task_type_id: nil, issue_status: nil, task_status: nil,
-                     category_id: nil, source_user_id: nil})
+                     category_id: nil, source_user_id: nil })
         end
       end
 
@@ -506,7 +506,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: true, term: "query",
                      project_id: project.id, issue_type_id: nil,
                      task_type_id: nil, issue_status: nil, task_status: nil,
-                     category_id: nil, source_user_id: nil})
+                     category_id: nil, source_user_id: nil })
         end
       end
     end
@@ -522,7 +522,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: false, include_tasks: true, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -536,7 +536,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: false, include_tasks: true,
                      task_status: "in_progress", task_type_id: task_type.id,
                      term: nil, issue_type_id: nil, issue_status: nil,
-                     category_id: nil, project_id: nil, source_user_id: nil})
+                     category_id: nil, project_id: nil, source_user_id: nil })
         end
       end
 
@@ -548,7 +548,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: false, include_tasks: true, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
     end
@@ -564,7 +564,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: false, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
 
@@ -578,7 +578,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: false,
                      issue_status: "in_progress", issue_type_id: issue_type.id,
                      term: nil, task_type_id: nil, task_status: nil,
-                     category_id: nil, project_id: nil, source_user_id: nil})
+                     category_id: nil, project_id: nil, source_user_id: nil })
         end
       end
 
@@ -590,7 +590,7 @@ RSpec.describe SearchSubscription, type: :model do
             .to eq({ include_issues: true, include_tasks: false, term: nil,
                      issue_type_id: nil, task_type_id: nil,
                      issue_status: nil, task_status: nil, category_id: nil,
-                     project_id: nil, source_user_id: nil})
+                     project_id: nil, source_user_id: nil })
         end
       end
     end
