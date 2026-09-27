@@ -347,28 +347,64 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
         before { sign_in(current_user) }
 
         context "when valid params" do
-          it "creates a new SearchSubscription" do
-            expect do
+          context "for html request" do
+            it "creates a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes }
+              end.to change(current_user.search_subscriptions, :count).by(1)
+            end
+
+            it "redirects to search_subscriptions" do
               post :create, params: { search_subscription: valid_attributes }
-            end.to change(current_user.search_subscriptions, :count).by(1)
+              expect(response).to redirect_to(search_subscriptions_url)
+            end
           end
 
-          it "redirects to search_subscriptions" do
-            post :create, params: { search_subscription: valid_attributes }
-            expect(response).to redirect_to(search_subscriptions_url)
+          context "for turbo_stream request" do
+            it "creates a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes },
+                              format: :turbo_stream
+              end.to change(current_user.search_subscriptions, :count).by(1)
+            end
+
+            it "redirects to search_subscriptions" do
+              post :create, params: { search_subscription: valid_attributes },
+                            format: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
         context "when invalid params" do
-          it "doesn't create a SearchSubscription" do
-            expect do
+          context "for html request" do
+            it "doesn't create a SearchSubscription" do
+              expect do
+                post :create,
+                     params: { search_subscription: invalid_attributes }
+              end.not_to change(SearchSubscription, :count)
+            end
+
+            it "renders new" do
               post :create, params: { search_subscription: invalid_attributes }
-            end.not_to change(SearchSubscription, :count)
+              expect(response).to be_successful
+            end
           end
 
-          it "renders new" do
-            post :create, params: { search_subscription: invalid_attributes }
-            expect(response).to be_successful
+          context "for turbo_stream request" do
+            it "doesn't create a SearchSubscription" do
+              expect do
+                post :create,
+                     params: { search_subscription: invalid_attributes },
+                     format: :turbo_stream
+              end.not_to change(SearchSubscription, :count)
+            end
+
+            it "renders new" do
+              post :create, params: { search_subscription: invalid_attributes },
+                            format: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
@@ -378,15 +414,32 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
             valid_attributes.merge!(issue_status: "", task_status: "")
           end
 
-          it "doesn't create a new SearchSubscription" do
-            expect do
+          context "for an html request" do
+            it "doesn't create a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes }
+              end.not_to change(SearchSubscription, :count)
+            end
+
+            it "redirects to search_subscriptions" do
               post :create, params: { search_subscription: valid_attributes }
-            end.not_to change(SearchSubscription, :count)
+              expect(response).to redirect_to(search_subscriptions_url)
+            end
           end
 
-          it "redirects to search_subscriptions" do
-            post :create, params: { search_subscription: valid_attributes }
-            expect(response).to redirect_to(search_subscriptions_url)
+          context "for an turbo_stream request" do
+            it "doesn't create a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes },
+                              format: :turbo_stream
+              end.not_to change(SearchSubscription, :count)
+            end
+
+            it "renders :new" do
+              post :create, params: { search_subscription: valid_attributes },
+                            format: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
 
@@ -400,22 +453,47 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
             search_subscription.update(active: false)
           end
 
-          it "doesn't create a new SearchSubscription" do
-            expect do
+          context "for a html request" do
+            it "doesn't create a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes }
+              end.not_to change(SearchSubscription, :count)
+            end
+
+            it "activates the current SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes }
+                search_subscription.reload
+              end.to change(search_subscription, :active).to(true)
+            end
+
+            it "redirects to search_subscriptions" do
               post :create, params: { search_subscription: valid_attributes }
-            end.not_to change(SearchSubscription, :count)
+              expect(response).to redirect_to(search_subscriptions_url)
+            end
           end
 
-          it "activates the current SearchSubscription" do
-            expect do
-              post :create, params: { search_subscription: valid_attributes }
-              search_subscription.reload
-            end.to change(search_subscription, :active).to(true)
-          end
+          context "for a turbo_stream request" do
+            it "doesn't create a new SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes },
+                              format: :turbo_stream
+              end.not_to change(SearchSubscription, :count)
+            end
 
-          it "redirects to search_subscriptions" do
-            post :create, params: { search_subscription: valid_attributes }
-            expect(response).to redirect_to(search_subscriptions_url)
+            it "activates the current SearchSubscription" do
+              expect do
+                post :create, params: { search_subscription: valid_attributes },
+                              format: :turbo_stream
+                search_subscription.reload
+              end.to change(search_subscription, :active).to(true)
+            end
+
+            it "renders :new" do
+              post :create, params: { search_subscription: valid_attributes },
+                            format: :turbo_stream
+              expect(response).to be_successful
+            end
           end
         end
       end
@@ -435,16 +513,34 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
               Fabricate(:search_subscription, user: current_user)
             end
 
-            it "updates the SearchSubscription" do
-              expect do
+            context "when html request" do
+              it "updates the SearchSubscription" do
+                expect do
+                  patch :toggle, params: { id: search_subscription.to_param }
+                  search_subscription.reload
+                end.to change(search_subscription, :active).to(false)
+              end
+
+              it "redirects to search_subscriptions" do
                 patch :toggle, params: { id: search_subscription.to_param }
-                search_subscription.reload
-              end.to change(search_subscription, :active).to(false)
+                expect(response).to redirect_to(:search_subscriptions)
+              end
             end
 
-            it "redirects to search_subscriptions" do
-              patch :toggle, params: { id: search_subscription.to_param }
-              expect(response).to redirect_to(:search_subscriptions)
+            context "when turbo_stream request" do
+              it "updates the SearchSubscription" do
+                expect do
+                  patch :toggle, params: { id: search_subscription.to_param },
+                                 format: :turbo_stream
+                  search_subscription.reload
+                end.to change(search_subscription, :active).to(false)
+              end
+
+              it "renders :toggle" do
+                patch :toggle, params: { id: search_subscription.to_param },
+                               format: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
 
@@ -453,16 +549,34 @@ RSpec.describe SearchSubscriptionsController, type: :controller do
               Fabricate(:inactive_search_subscription, user: current_user)
             end
 
-            it "updates the SearchSubscription" do
-              expect do
+            context "for html request" do
+              it "updates the SearchSubscription" do
+                expect do
+                  patch :toggle, params: { id: search_subscription.to_param }
+                  search_subscription.reload
+                end.to change(search_subscription, :active).to(true)
+              end
+
+              it "redirects to search_subscriptions" do
                 patch :toggle, params: { id: search_subscription.to_param }
-                search_subscription.reload
-              end.to change(search_subscription, :active).to(true)
+                expect(response).to redirect_to(:search_subscriptions)
+              end
             end
 
-            it "redirects to search_subscriptions" do
-              patch :toggle, params: { id: search_subscription.to_param }
-              expect(response).to redirect_to(:search_subscriptions)
+            context "for turbo_stream request" do
+              it "updates the SearchSubscription" do
+                expect do
+                  patch :toggle, params: { id: search_subscription.to_param },
+                                 format: :turbo_stream
+                  search_subscription.reload
+                end.to change(search_subscription, :active).to(true)
+              end
+
+              it "redirects to search_subscriptions" do
+                patch :toggle, params: { id: search_subscription.to_param },
+                               format: :turbo_stream
+                expect(response).to be_successful
+              end
             end
           end
         end

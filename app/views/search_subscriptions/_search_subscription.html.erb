@@ -17,8 +17,10 @@
     </div>
 
     <div class="search-subscription-column">
-      <%= render 'search_subscriptions/toggle_form',
-                 search_subscription: search_subscription %>
+      <%= turbo_frame_tag "turbo_search_subscription_#{search_subscription.id}" do %>
+        <%= render 'search_subscriptions/toggle_form',
+                   search_subscription: search_subscription %>
+      <% end %>
     </div>
   </main>
 <% end %>

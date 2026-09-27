@@ -4,12 +4,14 @@
   <%= render 'search_subscriptions/title', search_subscription: search_subscription %>
 
   <div class="field">
-    <% if search_subscription.persisted? %>
-      <%= render 'search_subscriptions/toggle_form',
-                 search_subscription: search_subscription %>
-    <% else %>
-      <%= render 'search_subscriptions/form',
-                 search_subscription: search_subscription %>
+    <%= turbo_frame_tag :turbo_search_subscription_forms do %>
+      <% if search_subscription.persisted? %>
+        <%= render 'search_subscriptions/toggle_form_wrapper',
+                   search_subscription: search_subscription %>
+      <% else %>
+        <%= render 'search_subscriptions/form',
+                   search_subscription: search_subscription %>
+      <% end %>
     <% end %>
   </div>
 

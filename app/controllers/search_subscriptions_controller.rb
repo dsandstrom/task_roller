@@ -8,7 +8,6 @@ class SearchSubscriptionsController < ApplicationController
     redirect_to search_subscription_path_to_source
   end
 
-  # TODO: remove new?
   def new; end
 
   def create
@@ -17,16 +16,19 @@ class SearchSubscriptionsController < ApplicationController
     end
 
     if @search_subscription.save
-      redirect_to search_subscriptions_url
+      create_success
     else
-      render :new
+      create_failure
     end
   end
 
   def toggle
     @search_subscription.toggle
 
-    redirect_to search_subscriptions_url
+    respond_to do |format|
+      format.html { redirect_to search_subscriptions_url }
+      format.turbo_stream
+    end
   end
 
   def destroy
@@ -104,6 +106,20 @@ class SearchSubscriptionsController < ApplicationController
         project_issues_url(@search_subscription.project, filter_params)
       else
         project_tasks_url(@search_subscription.project, filter_params)
+      end
+    end
+
+    def create_success
+      respond_to do |format|
+        format.html { redirect_to search_subscriptions_url }
+        format.turbo_stream
+      end
+    end
+
+    def create_failure
+      respond_to do |format|
+        format.html { render :new }
+        format.turbo_stream { render :new }
       end
     end
 end
