@@ -234,4 +234,155 @@ RSpec.describe SearchFiltersConverter, type: :class do
       end
     end
   end
+
+  describe ".convert_attrs_to_filter_params" do
+    let(:source_user) { Fabricate(:user) }
+    let(:issue_type) { Fabricate(:issue_type) }
+    let(:task_type) { Fabricate(:task_type) }
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project) }
+
+    context "when include_issues and include_tasks are true" do
+      context "while term is set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true, term: "go")
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", order: "updated,desc" })
+        end
+      end
+
+      context "while source_user_id and term are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true, term: "go",
+                                          source_user: source_user)
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", order: "updated,desc" })
+        end
+      end
+
+      context "while category_id and term are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true, term: "go",
+                                          category: category)
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", order: "updated,desc" })
+        end
+      end
+
+      context "while project_id and term are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: true, term: "go",
+                                          project: project)
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", order: "updated,desc" })
+        end
+      end
+    end
+
+    context "when include_issues is true" do
+      context "while term is set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false, term: "go")
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", type: "issues", issue_type_id: "all",
+                     issue_status: "all", order: "updated,desc" })
+        end
+      end
+
+      context "while term and issue_status are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false, term: "go",
+                                          issue_status: "pending")
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", type: "issues", issue_status: "pending",
+                     issue_type_id: "all", order: "updated,desc" })
+        end
+      end
+
+      context "while issue_status and issue_type_id are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: true,
+                                          include_tasks: false,
+                                          term: "",
+                                          issue_status: "pending",
+                                          issue_type: issue_type)
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ type: "issues", issue_status: "pending",
+                     issue_type_id: issue_type.id, order: "updated,desc" })
+        end
+      end
+    end
+
+    context "when include_tasks is true" do
+      context "while term is set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true, term: "go")
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", type: "tasks", task_status: "all",
+                     task_type_id: "all", order: "updated,desc" })
+        end
+      end
+
+      context "while term and task_status are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true, term: "go",
+                                          task_status: "unassigned")
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ query: "go", type: "tasks", task_status: "unassigned",
+                     task_type_id: "all", order: "updated,desc" })
+        end
+      end
+
+      context "while task_status and task_type_id are set" do
+        let(:subscription) do
+          Fabricate(:search_subscription, include_issues: false,
+                                          include_tasks: true,
+                                          term: "",
+                                          task_status: "assigned",
+                                          task_type: task_type)
+        end
+
+        it "converts attrs to filter params" do
+          expect(described_class.convert_attrs_to_filter_params(subscription))
+            .to eq({ type: "tasks", task_status: "assigned",
+                     task_type_id: task_type.id, order: "updated,desc" })
+        end
+      end
+    end
+  end
 end

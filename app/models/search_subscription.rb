@@ -1,21 +1,4 @@
 class SearchSubscription < ApplicationRecord
-  ATTRS_TO_PARAMS_MAP = { term: :query, issue_status: :issue_status,
-                          task_status: :task_status,
-                          issue_type_id: :issue_type_id,
-                          task_type_id: :task_type_id, project_id: :project_id,
-                          category_id: :category_id, source_user_id:
-                          :user_id }.freeze
-
-  DEFAULT_ATTRS = { include_issues: true, include_tasks: true, term: nil,
-                    issue_type_id: nil, task_type_id: nil, issue_status: nil,
-                    task_status: nil, category_id: nil, project_id: nil,
-                    source_user_id: nil }.freeze
-
-  DEFAULT_ISSUE_PARAMS =
-    { type: 'issues', issue_status: 'all', issue_type_id: 'all' }.freeze
-
-  DEFAULT_TASK_PARAMS =
-    { type: 'tasks', task_status: 'all', task_type_id: 'all' }.freeze
 
   belongs_to :user
   belongs_to :source_user, class_name: 'User', optional: true
@@ -48,17 +31,7 @@ class SearchSubscription < ApplicationRecord
   end
 
   def filter_params
-    filters = convert_attrs_to_filters
-    filters.reverse_merge!(order: 'updated,desc')
-    return filters if include_issues && include_tasks
-
-    if include_issues
-      filters.reverse_merge!(DEFAULT_ISSUE_PARAMS)
-    else
-      filters.reverse_merge!(DEFAULT_TASK_PARAMS)
-    end
-
-    filters
+    SearchFiltersConverter.convert_attrs_to_filter_params(self)
   end
 
   private
@@ -188,20 +161,5 @@ class SearchSubscription < ApplicationRecord
         end
 
       "#{text} status"
-    end
-
-    def convert_attrs_to_filters
-      attrs = {}
-
-      ATTRS_TO_PARAMS_MAP.each do |search_key, filter_key|
-        next if %i[category_id project_id user_id].include?(filter_key)
-
-        val = send(search_key)
-        next if val.blank?
-
-        attrs[filter_key] = val
-      end
-
-      attrs
     end
 end
