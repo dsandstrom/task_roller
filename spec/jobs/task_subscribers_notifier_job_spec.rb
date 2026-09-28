@@ -20,6 +20,7 @@ RSpec.describe TaskSubscribersNotifierJob, type: :job do
         before do
           Fabricate(:task_subscription, task: task, user: current_user)
           Fabricate(:task_subscription, task: task, user: subscriber)
+          Fabricate(:inactive_task_subscription, task: task)
         end
 
         it "enqueues one TaskNotifierJob" do
@@ -38,6 +39,7 @@ RSpec.describe TaskSubscribersNotifierJob, type: :job do
         before do
           Fabricate(:task_subscription, task: task, user: current_user)
           Fabricate(:task_subscription, task: task, user: subscriber)
+          Fabricate(:inactive_task_subscription, task: task)
         end
 
         it "enqueues one TaskNotifierJob" do
