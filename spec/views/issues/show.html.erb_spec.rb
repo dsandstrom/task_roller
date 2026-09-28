@@ -329,7 +329,7 @@ RSpec.describe "issues/show", type: :view do
       end
     end
 
-    context "when subscribed to the issue" do
+    context "when active subscription with the issue" do
       before do
         @issue = assign(:issue, issue)
         @subscription = assign(:subscription, issue_subscription)
@@ -341,10 +341,33 @@ RSpec.describe "issues/show", type: :view do
         assert_select "form[action=?]", form_url, count: 0
       end
 
-      it "renders destroy issue_subscription form" do
+      it "renders toggle issue_subscription form" do
         render
-        form_url = issue_issue_subscription_path(@issue, @subscription)
-        assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
+        form_url = toggle_issue_issue_subscription_path(@issue, @subscription)
+        assert_select "form[action=?]", form_url
+      end
+    end
+
+    context "when inactive subscription with the issue" do
+      let(:issue_subscription) do
+        Fabricate(:inactive_issue_subscription, issue: issue, user: current_user)
+      end
+
+      before do
+        @issue = assign(:issue, issue)
+        @subscription = assign(:subscription, issue_subscription)
+      end
+
+      it "doesn't render new issue_subscription form" do
+        render
+        form_url = issue_issue_subscriptions_path(@issue)
+        assert_select "form[action=?]", form_url, count: 0
+      end
+
+      it "renders toggle issue_subscription form" do
+        render
+        form_url = toggle_issue_issue_subscription_path(@issue, @subscription)
+        assert_select "form[action=?]", form_url
       end
     end
 
@@ -605,11 +628,10 @@ RSpec.describe "issues/show", type: :view do
           assert_select "form[action=?]", form_url, count: 0
         end
 
-        it "renders destroy issue_subscription form" do
+        it "renders toggle issue_subscription form" do
           render
-          form_url = issue_issue_subscription_path(@issue, @subscription)
-          assert_select "form[action=?][data-turbo-method=?]", form_url,
-                        "delete"
+          form_url = toggle_issue_issue_subscription_path(@issue, @subscription)
+          assert_select "form[action=?]", form_url
         end
       end
 

@@ -1483,7 +1483,7 @@ RSpec.describe "tasks/show", type: :view do
       end
     end
 
-    context "when subscribed to the task" do
+    context "when active subscription with the task" do
       before do
         @task = assign(:task, task)
         @subscription = assign(:subscription, task_subscription)
@@ -1495,10 +1495,33 @@ RSpec.describe "tasks/show", type: :view do
         assert_select "form[action=?]", form_url, count: 0
       end
 
-      it "renders destroy task_subscription form" do
+      it "renders toggle task_subscription form" do
         render
-        form_url = task_task_subscription_path(@task, @subscription)
-        assert_select "form[action=?][data-turbo-method=?]", form_url, "delete"
+        form_url = toggle_task_task_subscription_path(@task, @subscription)
+        assert_select "form[action=?]", form_url
+      end
+    end
+
+    context "when inactive subscription with the task" do
+      let(:task_subscription) do
+        Fabricate(:inactive_task_subscription, task: task, user: reviewer)
+      end
+
+      before do
+        @task = assign(:task, task)
+        @subscription = assign(:subscription, task_subscription)
+      end
+
+      it "doesn't render new task_subscription form" do
+        render
+        form_url = task_task_subscriptions_path(@task)
+        assert_select "form[action=?]", form_url, count: 0
+      end
+
+      it "renders toggle task_subscription form" do
+        render
+        form_url = toggle_task_task_subscription_path(@task, @subscription)
+        assert_select "form[action=?]", form_url
       end
     end
 
@@ -1855,10 +1878,10 @@ RSpec.describe "tasks/show", type: :view do
           @subscription = assign(:subscription, task_subscription)
         end
 
-        it "doesn't render destroy task_subscription link" do
+        it "doesn't render toggle task_subscription link" do
           render template: subject, layout: "layouts/application"
-          task_task_subscription_path(@task, @subscription)
-          assert_select "form[data-turbo-method=?]", "delete", count: 0
+          form_url = toggle_task_task_subscription_path(@task, @subscription)
+          assert_select "form[action=?]", form_url, count: 0
         end
       end
 
@@ -2029,11 +2052,10 @@ RSpec.describe "tasks/show", type: :view do
           assert_select "form[action=?]", form_url, count: 0
         end
 
-        it "renders destroy task_subscription form" do
+        it "renders toggle task_subscription form" do
           render
-          form_url = task_task_subscription_path(@task, @subscription)
-          assert_select "form[action=?][data-turbo-method=?]", form_url,
-                        "delete"
+          form_url = toggle_task_task_subscription_path(@task, @subscription)
+          assert_select "form[action=?]", form_url
         end
       end
     end
