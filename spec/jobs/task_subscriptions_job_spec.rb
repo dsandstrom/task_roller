@@ -94,12 +94,77 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         end
       end
 
+      context "without any search subscribers" do
+        before do
+          Fabricate(:issues_search_subscription, term: nil, category: category)
+        end
+
+        it "doesn't generate any TaskSubscriptionJobs" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).not_to have_been_enqueued
+        end
+      end
+
+      context "with a category search subscriber" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:tasks_search_subscription, term: nil, category: category,
+                                                user: subscriber)
+        end
+
+        it "generates TaskSubscriptionJob for the task user" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionJob)
+            .to have_been_enqueued.with(task, subscriber, {})
+        end
+      end
+
+      context "with a project search subscriber" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:tasks_search_subscription, term: nil, project: project,
+                                                user: subscriber)
+        end
+
+        it "generates TaskSubscriptionJob for the task user" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionJob)
+            .to have_been_enqueued.with(task, subscriber, {})
+        end
+      end
+
+      context "with a category and project search subscriber" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:tasks_search_subscription, term: nil, category: category,
+                                                user: subscriber)
+          Fabricate(:tasks_search_subscription, term: nil, project: project,
+                                                user: subscriber)
+        end
+
+        it "generates TaskSubscriptionJob for the task user" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionJob)
+            .to have_been_enqueued.with(task, subscriber, {})
+        end
+      end
+
       context "when given options" do
         let(:subscriber) { Fabricate(:user_worker) }
 
         before do
-          Fabricate(:project_tasks_subscription, project: project,
-                                                 user: subscriber)
+          Fabricate(:tasks_search_subscription, term: nil, project: project,
+                                                user: subscriber)
         end
 
         it "generates IssueSubscriptionJob for the task user" do

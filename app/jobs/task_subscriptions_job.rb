@@ -5,7 +5,8 @@ class TaskSubscriptionsJob < ApplicationJob
     return unless task
 
     subscribers = task.category.task_subscribers |
-                  task.project.task_subscribers
+                  task.project.task_subscribers |
+                  task.search_subscribers
 
     subscribers.each do |u|
       TaskSubscriptionJob.perform_later(task, u, options)
