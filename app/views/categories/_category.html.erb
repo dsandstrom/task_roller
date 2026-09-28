@@ -30,12 +30,6 @@ in_progress_tasks_count = tasks.all_in_progress.count
 in_review_tasks_count = tasks.all_in_review.count
 closed_tasks_count = tasks.all_closed.count
 
-issues_subscription =
-  category.category_issues_subscriptions
-          .find_or_initialize_by(user_id: current_user.id)
-tasks_subscription =
-  category.category_tasks_subscriptions
-          .find_or_initialize_by(user_id: current_user.id)
 project_links = projects.map do |project|
   link_to_if can?(:read, project), content_tag(:strong, project.name), project
 end
@@ -130,11 +124,6 @@ end
                            class: 'button button-clear' %>
           </p>
         <% end %>
-
-        <%= content_tag :section,
-                        render(issues_subscription),
-                        class: "issues-subscription-wrapper",
-                        id: "issues_subscription_for_#{category.id}" %>
       </div>
 
       <div name="category_tasks_content" class="accordion-content">
@@ -186,11 +175,6 @@ end
                            class: 'button button-clear' %>
           </p>
         <% end %>
-
-        <%= content_tag :section,
-                        render(tasks_subscription),
-                        class: "tasks-subscription-wrapper",
-                        id: "tasks_subscription_for_#{category.id}" %>
       </div>
     </div>
   </div>
