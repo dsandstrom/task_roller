@@ -242,22 +242,26 @@ class Seeds
     end
 
     def create_category_issues_subscriptions(category)
+      options = { category_id: category.id, include_tasks: false }
+
       rand(5..8).times do
         user_id = random_user_id
-        while category.category_issues_subscriptions.find_by(user_id: user_id)
+        while SearchSubscription.find_by(options.merge(user_id: user_id))
           user_id = random_user_id
         end
-        category.category_issues_subscriptions.create(user_id: user_id)
+        SearchSubscription.create(options.merge(user_id: user_id))
       end
     end
 
     def create_category_tasks_subscriptions(category)
+      options = { category_id: category.id, include_issues: false }
+
       rand(5..8).times do
         user_id = random_user_id
-        while category.category_tasks_subscriptions.find_by(user_id: user_id)
+        while SearchSubscription.find_by(options.merge(user_id: user_id))
           user_id = random_user_id
         end
-        category.category_tasks_subscriptions.create(user_id: user_id)
+        SearchSubscription.create(options.merge(user_id: user_id))
       end
     end
 
@@ -282,22 +286,26 @@ class Seeds
     end
 
     def create_project_issues_subscriptions(project)
+      options = { project_id: project.id, include_tasks: false }
+
       rand(5..8).times do
         user_id = random_user_id
-        while project.project_issues_subscriptions.find_by(user_id: user_id)
+        while SearchSubscription.find_by(options.merge(user_id: user_id))
           user_id = random_user_id
         end
-        project.project_issues_subscriptions.create(user_id: user_id)
+        SearchSubscription.create(options.merge(user_id: user_id))
       end
     end
 
     def create_project_tasks_subscriptions(project)
+      options = { project_id: project.id, include_issues: false }
+
       rand(5..8).times do
         user_id = random_user_id
-        while project.project_tasks_subscriptions.find_by(user_id: user_id)
+        while SearchSubscription.find_by(options.merge(user_id: user_id))
           user_id = random_user_id
         end
-        project.project_tasks_subscriptions.create(user_id: user_id)
+        SearchSubscription.create(options.merge(user_id: user_id))
       end
     end
 
