@@ -2559,4 +2559,222 @@ RSpec.describe Task, type: :model do
       end
     end
   end
+
+  describe "#search_subscribers" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:task_type) { Fabricate(:task_type) }
+    let(:task) do
+      Fabricate(:task, user: source_user, project: project,
+                       task_type: task_type, status: "unassigned",
+                       summary: "Alpha Summary",
+                       description: "Description with beta word.")
+    end
+    let(:user) { Fabricate(:user) }
+    let(:source_user) { Fabricate(:user) }
+
+    context "when no matching search_subscriptions" do
+      before do
+        Fabricate(:issues_search_subscription)
+      end
+
+      it "returns []" do
+        expect(task.search_subscribers).to eq([])
+      end
+    end
+
+    context "when search_subscription matches the category" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user, category: category,
+                                              term: nil)
+        Fabricate(:tasks_search_subscription, user: user, category: category,
+                                              term: nil,
+                                              task_status: "pending")
+        Fabricate(:tasks_search_subscription, category: category,
+                                              term: nil,
+                                              task_status: "assigned")
+        Fabricate(:tasks_search_subscription, category: category, term: nil,
+                                              active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the project" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user, project: project,
+                                              term: nil)
+        Fabricate(:tasks_search_subscription, project: project, term: nil,
+                                              task_status: "assigned")
+        Fabricate(:tasks_search_subscription, project: Fabricate(:project),
+                                              term: nil)
+        Fabricate(:tasks_search_subscription, project: project, term: nil,
+                                              active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the source_user" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user,
+                                              source_user: source_user,
+                                              term: nil)
+        Fabricate(:tasks_search_subscription, source_user: Fabricate(:user),
+                                              term: nil)
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the status" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: nil,
+                                              task_status: "unassigned")
+        Fabricate(:tasks_search_subscription, term: nil,
+                                              task_status: "assigned")
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the task_type" do
+      before do
+        Fabricate(:tasks_search_subscription,
+                  term: nil, user: user, task_type: task_type)
+        Fabricate(:tasks_search_subscription,
+                  term: nil, task_type: Fabricate(:task_type))
+      end
+
+      it "returns the user" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the summary" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: "lpha")
+        Fabricate(:tasks_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the description" do
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: "beta Wor")
+        Fabricate(:tasks_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when task is open with 'unassigned' status" do
+      let(:task) do
+        Fabricate(:task, user: source_user, project: project,
+                         task_type: task_type, status: "unassigned")
+      end
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: nil,
+                                              task_status: "open")
+        Fabricate(:tasks_search_subscription, term: nil,
+                                              task_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when task is open with 'in_progress' status" do
+      let(:task) do
+        Fabricate(:task, user: source_user, project: project,
+                         task_type: task_type, status: "in_progress")
+      end
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: nil,
+                                              task_status: "open")
+        Fabricate(:tasks_search_subscription, term: nil,
+                                              task_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when task is closed with 'approved' status" do
+      let(:task) do
+        Fabricate(:closed_task, user: source_user, project: project,
+                                task_type: task_type, status: "approved")
+      end
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: nil,
+                                              task_status: "closed")
+        Fabricate(:tasks_search_subscription, term: nil, task_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when task is closed with 'duplicate' status" do
+      let(:task) do
+        Fabricate(:closed_task, user: source_user, project: project,
+                                task_type: task_type, status: "duplicate")
+      end
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, term: nil,
+                                              task_status: "closed")
+        Fabricate(:tasks_search_subscription, term: nil, task_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(task.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when task is from invisible category" do
+      let(:category) { Fabricate(:invisible_category) }
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, category: category,
+                                              term: nil)
+      end
+
+      it "returns []" do
+        expect(task.search_subscribers).to eq([])
+      end
+    end
+
+    context "when task is from invisible project" do
+      let(:project) { Fabricate(:invisible_project) }
+
+      before do
+        Fabricate(:tasks_search_subscription, user: user, project: project,
+                                              term: nil)
+      end
+
+      it "returns []" do
+        expect(task.search_subscribers).to eq([])
+      end
+    end
+  end
 end

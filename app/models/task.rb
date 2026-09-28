@@ -4,12 +4,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   include Filter
 
   DEFAULT_ORDER = 'tasks.updated_at desc'
+
   PRIORITY_LEVEL_OPTIONS = {
     4 => 'Low',
     3 => 'Medium',
     2 => 'High',
     1 => 'Critical'
   }.freeze
+
   STATUS_OPTIONS = {
     open: { color: 'green' },
     unassigned: { color: 'brown' },
@@ -20,6 +22,26 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     duplicate: { color: 'brown' },
     closed: { color: 'red' }
   }.freeze
+
+  SEARCH_SQL = <<~SQL.squish.freeze
+    search_subscriptions.include_tasks = TRUE
+    AND search_subscriptions.active = TRUE
+    AND (search_subscriptions.category_id IS NULL
+         OR search_subscriptions.category_id = :category_id)
+    AND (search_subscriptions.project_id IS NULL
+         OR search_subscriptions.project_id = :project_id)
+    AND (search_subscriptions.source_user_id IS NULL
+         OR search_subscriptions.source_user_id = :source_user_id)
+    AND (search_subscriptions.task_status IS NULL
+         OR search_subscriptions.task_status = :status
+         OR (search_subscriptions.task_status = 'open' AND :closed = FALSE)
+         OR (search_subscriptions.task_status = 'closed' AND :closed = TRUE))
+    AND (search_subscriptions.task_type_id IS NULL
+         OR search_subscriptions.task_type_id = :task_type_id)
+    AND (search_subscriptions.term IS NULL
+         OR :summary ILIKE CONCAT('%', search_subscriptions.term, '%')
+         OR :description ILIKE CONCAT('%', search_subscriptions.term, '%'))
+  SQL
 
   belongs_to :user
   belongs_to :task_type
@@ -365,6 +387,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     old_issue.update_priority_level
   end
 
+  def search_subscribers
+    return [] unless project.totally_visible?
+
+    User.joins(:search_subscriptions)
+        .where(SEARCH_SQL, search_subscribers_map)
+        .distinct
+  end
+
   private
 
     # - closed
@@ -471,5 +501,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
       tasks = issue.tasks
       tasks&.where&.not(id: id)
+    end
+
+    def search_subscribers_map
+      { category_id: category.id, project_id: project.id,
+        source_user_id: user.id, task_type_id: task_type.id, status: status,
+        summary: summary, description: description, closed: closed }
     end
 end
