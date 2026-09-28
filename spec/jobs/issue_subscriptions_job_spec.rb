@@ -32,7 +32,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                    user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
@@ -49,7 +49,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                   user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
@@ -68,27 +68,12 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                   user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(IssueSubscriptionJob)
             .to have_been_enqueued.with(issue, subscriber, {})
-        end
-      end
-
-      context "with the issue.user subscribed to the project" do
-        before do
-          Fabricate(:project_issues_subscription, project: project,
-                                                  user: issue.user)
-        end
-
-        it "generates IssueSubscriptionJob for the issue user" do
-          subject.perform_now issue
-
-          expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(IssueSubscriptionJob)
-            .to have_been_enqueued.with(issue, issue.user, {})
         end
       end
 
@@ -112,7 +97,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                  user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
@@ -129,7 +114,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                  user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
@@ -148,12 +133,46 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                  user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
           expect(IssueSubscriptionJob)
             .to have_been_enqueued.with(issue, subscriber, {})
+        end
+      end
+
+      context "with a search subscriber that is already subscribed" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:inactive_issue_subscription, issue: issue,
+                                                  user: subscriber)
+          Fabricate(:issues_search_subscription, term: nil, category: category,
+                                                 user: subscriber)
+        end
+
+        it "generates IssueSubscriptionJob for the user" do
+          subject.perform_now issue
+
+          expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionJob)
+            .to have_been_enqueued.with(issue, subscriber, {})
+        end
+      end
+
+      context "with a subscription for the issue's user" do
+        before do
+          Fabricate(:project_issues_subscription, project: project,
+                                                  user: issue.user)
+          Fabricate(:issues_search_subscription, term: nil, category: category,
+                                                 user: issue.user)
+        end
+
+        it "skips the user" do
+          subject.perform_now issue
+
+          expect(IssueSubscriptionJob).not_to have_been_enqueued
         end
       end
 
@@ -165,7 +184,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
                                                  user: subscriber)
         end
 
-        it "generates IssueSubscriptionJob for the issue user" do
+        it "forwards the options to IssueSubscriptionJob" do
           subject.perform_now issue, send_new: true
 
           expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)

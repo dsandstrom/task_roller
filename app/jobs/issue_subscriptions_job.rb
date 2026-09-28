@@ -8,8 +8,10 @@ class IssueSubscriptionsJob < ApplicationJob
                   issue.project.issue_subscribers |
                   issue.search_subscribers
 
-    subscribers.each do |u|
-      IssueSubscriptionJob.perform_later(issue, u, options)
+    subscribers.each do |subscriber|
+      next if subscriber == issue.user
+
+      IssueSubscriptionJob.perform_later(issue, subscriber, options)
     end
   end
 end
