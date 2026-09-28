@@ -109,7 +109,7 @@ RSpec.describe TaskSubscriptionsController, type: :controller do
     end
   end
 
-  describe "PATCH #toggle", focus: true do
+  describe "PATCH #toggle" do
     let(:params) { { task_id: task.to_param, id: task_subscription.to_param } }
 
     User::VALID_EMPLOYEE_TYPES.each do |employee_type|

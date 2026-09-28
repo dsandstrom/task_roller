@@ -1,5 +1,4 @@
 class SearchSubscription < ApplicationRecord
-
   belongs_to :user
   belongs_to :source_user, class_name: 'User', optional: true
   belongs_to :category, optional: true

@@ -97,6 +97,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user
+  has_many :active_task_subscriptions, -> { where(active: true) },
+           class_name: 'TaskSubscription', dependent: nil, inverse_of: :task
+  has_many :active_subscribers, through: :active_task_subscriptions,
+                                source: :user
   has_many :closures, class_name: 'TaskClosure', dependent: :destroy
   has_many :reopenings, class_name: 'TaskReopening', dependent: :destroy
   has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
