@@ -1,4 +1,5 @@
-Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/BlockLength
+Rails.application.routes.draw do
   resources :users, only: nil do
     resources :issues, only: :index
     resources :tasks, only: :index
@@ -214,3 +215,4 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'categories#index'
 end
+# rubocop:enable Metrics/BlockLength

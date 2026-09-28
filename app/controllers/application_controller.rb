@@ -151,5 +151,7 @@ class ApplicationController < ActionController::Base
           SearchFiltersConverter.convert_params_to_attrs(params, starting_attrs)
         )
       return search_subscription if search_subscription.valid?
+
+      nil
     end
 end
