@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe IssueSubscription, type: :model do
@@ -24,4 +22,28 @@ RSpec.describe IssueSubscription, type: :model do
 
   it { is_expected.to belong_to(:user).required }
   it { is_expected.to belong_to(:issue).required }
+
+  describe "#toggle" do
+    context "for an active IssueSubscription" do
+      let(:issue_subscription) { Fabricate(:issue_subscription) }
+
+      it "changes active to false" do
+        expect do
+          issue_subscription.toggle
+          issue_subscription.reload
+        end.to change(issue_subscription, :active).to(false)
+      end
+    end
+
+    context "for an inactive IssueSubscription" do
+      let(:issue_subscription) { Fabricate(:inactive_issue_subscription) }
+
+      it "changes active to true" do
+        expect do
+          issue_subscription.toggle
+          issue_subscription.reload
+        end.to change(issue_subscription, :active).to(true)
+      end
+    end
+  end
 end

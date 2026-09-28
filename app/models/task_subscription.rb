@@ -8,4 +8,8 @@ class TaskSubscription < ApplicationRecord
   belongs_to :task
 
   delegate :heading, to: :task
+
+  def toggle
+    update(active: !active)
+  end
 end

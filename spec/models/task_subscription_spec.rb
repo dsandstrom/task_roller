@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe TaskSubscription, type: :model do
@@ -28,4 +26,28 @@ RSpec.describe TaskSubscription, type: :model do
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to belong_to(:task) }
+
+  describe "#toggle" do
+    context "for an active TaskSubscription" do
+      let(:task_subscription) { Fabricate(:task_subscription) }
+
+      it "changes active to false" do
+        expect do
+          task_subscription.toggle
+          task_subscription.reload
+        end.to change(task_subscription, :active).to(false)
+      end
+    end
+
+    context "for an inactive TaskSubscription" do
+      let(:task_subscription) { Fabricate(:inactive_task_subscription) }
+
+      it "changes active to true" do
+        expect do
+          task_subscription.toggle
+          task_subscription.reload
+        end.to change(task_subscription, :active).to(true)
+      end
+    end
+  end
 end
