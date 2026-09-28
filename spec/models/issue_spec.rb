@@ -1828,6 +1828,18 @@ RSpec.describe Issue, type: :model do
           end.to change(IssueSubscription, :count).by(1)
         end
       end
+
+      context "that is already subscribed" do
+        before do
+          Fabricate(:issue_subscription, issue: issue, user: subscriber)
+        end
+
+        it "doesn't create a new issue_subscription" do
+          expect do
+            issue.subscribe_user(subscriber)
+          end.not_to change(IssueSubscription, :count)
+        end
+      end
     end
   end
 

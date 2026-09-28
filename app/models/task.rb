@@ -297,6 +297,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def subscribe_user(subscriber = nil)
     subscriber ||= user
     return unless subscriber
+    return if task_subscriptions.find_by(user: subscriber)
 
     task_subscriptions.create(user_id: subscriber.id)
   end

@@ -2267,6 +2267,18 @@ RSpec.describe Task, type: :model do
           end.to change(TaskSubscription, :count).by(1)
         end
       end
+
+      context "that is already subscribed" do
+        before do
+          Fabricate(:task_subscription, task: task, user: subscriber)
+        end
+
+        it "doesn't create a new task_subscription" do
+          expect do
+            task.subscribe_user(subscriber)
+          end.not_to change(TaskSubscription, :count)
+        end
+      end
     end
   end
 

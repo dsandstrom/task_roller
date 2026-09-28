@@ -243,6 +243,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def subscribe_user(subscriber = nil)
     subscriber ||= user
     return unless subscriber
+    return if issue_subscriptions.find_by(user: subscriber)
 
     issue_subscriptions.create(user_id: subscriber.id)
   end
