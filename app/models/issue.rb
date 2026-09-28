@@ -4,6 +4,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   include Filter
 
   DEFAULT_ORDER = 'issues.updated_at desc'
+
   STATUS_OPTIONS = {
     open: { color: 'green' },
     pending: { color: 'brown' },
@@ -13,6 +14,26 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     duplicate: { color: 'purple' },
     closed: { color: 'red' }
   }.freeze
+
+  SEARCH_SQL = <<~SQL.squish.freeze
+    search_subscriptions.include_issues = TRUE
+    AND search_subscriptions.active = TRUE
+    AND (search_subscriptions.category_id IS NULL
+         OR search_subscriptions.category_id = :category_id)
+    AND (search_subscriptions.project_id IS NULL
+         OR search_subscriptions.project_id = :project_id)
+    AND (search_subscriptions.source_user_id IS NULL
+         OR search_subscriptions.source_user_id = :source_user_id)
+    AND (search_subscriptions.issue_status IS NULL
+         OR search_subscriptions.issue_status = :status
+         OR (search_subscriptions.issue_status = 'open' AND :closed = FALSE)
+         OR (search_subscriptions.issue_status = 'closed' AND :closed = TRUE))
+    AND (search_subscriptions.issue_type_id IS NULL
+         OR search_subscriptions.issue_type_id = :issue_type_id)
+    AND (search_subscriptions.term IS NULL
+         OR :summary ILIKE CONCAT('%', search_subscriptions.term, '%')
+         OR :description ILIKE CONCAT('%', search_subscriptions.term, '%'))
+  SQL
 
   belongs_to :user # reporter
   belongs_to :issue_type
@@ -309,6 +330,14 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     update(priority_level: tasks.minimum(:priority_level))
   end
 
+  def search_subscribers
+    return [] unless project.totally_visible?
+
+    User.joins(:search_subscriptions)
+        .where(SEARCH_SQL, search_subscribers_map)
+        .distinct
+  end
+
   private
 
     def set_opened_at
@@ -418,5 +447,12 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return message unless url
 
       "#{message}\n\nPlease visit for more info: #{url}"
+    end
+
+    def search_subscribers_map
+      { category_id: category.id, project_id: project.id,
+        source_user_id: user.id, issue_type_id: issue_type.id,
+        status: status, summary: summary, description: description,
+        closed: closed }
     end
 end

@@ -2200,4 +2200,222 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#search_subscribers" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:issue_type) { Fabricate(:issue_type) }
+    let(:issue) do
+      Fabricate(:issue, user: source_user, project: project,
+                        issue_type: issue_type, status: "pending",
+                        summary: "Alpha Summary",
+                        description: "Description with beta word.")
+    end
+    let(:user) { Fabricate(:user) }
+    let(:source_user) { Fabricate(:user) }
+
+    context "when no matching search_subscriptions" do
+      before do
+        Fabricate(:tasks_search_subscription)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
+      end
+    end
+
+    context "when search_subscription matches the category" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil,
+                                               issue_status: "pending")
+        Fabricate(:issues_search_subscription, category: category,
+                                               term: nil,
+                                               issue_status: "resolved")
+        Fabricate(:issues_search_subscription, category: category, term: nil,
+                                               active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the project" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, project: project,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, project: project, term: nil,
+                                               issue_status: "assigned")
+        Fabricate(:issues_search_subscription, project: Fabricate(:project),
+                                               term: nil)
+        Fabricate(:issues_search_subscription, project: project, term: nil,
+                                               active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the source_user" do
+      before do
+        Fabricate(:issues_search_subscription, user: user,
+                                               source_user: source_user,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, source_user: Fabricate(:user),
+                                               term: nil)
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the status" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "pending")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "assigned")
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the issue_type" do
+      before do
+        Fabricate(:issues_search_subscription,
+                  term: nil, user: user, issue_type: issue_type)
+        Fabricate(:issues_search_subscription,
+                  term: nil, issue_type: Fabricate(:issue_type))
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the summary" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: "lpha")
+        Fabricate(:issues_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the description" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: "beta Wor")
+        Fabricate(:issues_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is open with 'pending' status" do
+      let(:issue) do
+        Fabricate(:issue, user: source_user, project: project,
+                          issue_type: issue_type, status: "pending")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "open")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is open with 'being_worked_on' status" do
+      let(:issue) do
+        Fabricate(:issue, user: source_user, project: project,
+                          issue_type: issue_type, status: "being_worked_on")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "open")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is closed with 'addressed' status" do
+      let(:issue) do
+        Fabricate(:closed_issue, user: source_user, project: project,
+                                 issue_type: issue_type, status: "addressed")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "closed")
+        Fabricate(:issues_search_subscription, term: nil, issue_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is closed with 'duplicate' status" do
+      let(:issue) do
+        Fabricate(:closed_issue, user: source_user, project: project,
+                                 issue_type: issue_type, status: "duplicate")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "closed")
+        Fabricate(:issues_search_subscription, term: nil, issue_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is from invisible category" do
+      let(:category) { Fabricate(:invisible_category) }
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
+      end
+    end
+
+    context "when issue is from invisible project" do
+      let(:project) { Fabricate(:invisible_project) }
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, project: project,
+                                               term: nil)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
+      end
+    end
+  end
 end
