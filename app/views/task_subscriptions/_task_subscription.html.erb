@@ -3,14 +3,8 @@
 <% if task_subscription.persisted? %>
   <% return unless can?(:destroy, task_subscription) %>
 
-  <div class="button-wrapper">
-    <%= link_to 'Subscribed',
-                task_task_subscription_path(task, task_subscription),
-                method: :delete,
-                class: 'button button-success button-disabled' %>
-    <%= render 'task_subscriptions/destroy_form',
-               task_subscription: task_subscription, task: task %>
-  </div>
+  <%= render 'task_subscriptions/toggle_form',
+             task_subscription: task_subscription, task: task %>
 <% elsif can?(:create, task_subscription) %>
   <%= render 'task_subscriptions/form',
              task_subscription: task_subscription, task: task %>

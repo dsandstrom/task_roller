@@ -17,6 +17,17 @@ class IssueSubscriptionsController < ApplicationController
     end
   end
 
+  def toggle
+    @issue_subscription.toggle
+
+    respond_to do |format|
+      format.html do
+        redirect_back_or_to(@issue, notice: destroy_notice)
+      end
+      format.turbo_stream { redirect_back_or_to(@issue) }
+    end
+  end
+
   def destroy
     @issue_subscription.destroy
 

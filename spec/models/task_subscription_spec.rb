@@ -5,7 +5,8 @@ RSpec.describe TaskSubscription, type: :model do
   let(:user) { Fabricate(:user_reporter) }
 
   before do
-    @task_subscription = TaskSubscription.new(user_id: user.id,
+    @task_subscription = TaskSubscription.new(active: true,
+                                              user_id: user.id,
                                               task_id: task.id)
   end
 
@@ -20,6 +21,12 @@ RSpec.describe TaskSubscription, type: :model do
   context "when a duplicate" do
     it "shouldn't be valid" do
       subject.dup.save
+      expect(subject).not_to be_valid
+    end
+
+    it "shouldn't be valid when active is false" do
+      subject.dup.save
+      subject.active = false
       expect(subject).not_to be_valid
     end
   end

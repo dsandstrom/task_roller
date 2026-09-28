@@ -41,7 +41,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       get :pending
     end
     resources :issue_comments, except: :index
-    resources :issue_subscriptions, only: %i[new create destroy]
+    resources :issue_subscriptions, only: %i[new create destroy] do
+      member do
+        patch :toggle
+      end
+    end
     resources :task_previews, only: :index
     resources :resolutions, only: %i[new create destroy] do
       collection do
@@ -62,7 +66,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
     resources :task_assignees, only: %i[new create destroy]
     resources :task_comments, except: :index
-    resources :task_subscriptions, only: %i[new create destroy]
+    resources :task_subscriptions, only: %i[new create destroy] do
+      member do
+        patch :toggle
+      end
+    end
     resources :issue_previews, only: :index
     resources :assignments, only: :new
     resources :progressions, only: %i[new create destroy] do
