@@ -11,72 +11,6 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
   describe "#perform" do
     context "when given task" do
-      context "without any category and project subscribers" do
-        before do
-          Fabricate(:category_issues_subscription, category: category)
-          Fabricate(:project_issues_subscription, project: project)
-        end
-
-        it "doesn't generate any TaskSubscriptionJobs" do
-          subject.perform_now task
-
-          expect(TaskSubscriptionJob).not_to have_been_enqueued
-        end
-      end
-
-      context "with a category subscriber" do
-        let(:subscriber) { Fabricate(:user_worker) }
-
-        before do
-          Fabricate(:category_tasks_subscription, category: category,
-                                                  user: subscriber)
-        end
-
-        it "generates TaskSubscriptionJob for the user" do
-          subject.perform_now task
-
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber, {})
-        end
-      end
-
-      context "with a project subscriber" do
-        let(:subscriber) { Fabricate(:user_worker) }
-
-        before do
-          Fabricate(:project_tasks_subscription, project: project,
-                                                 user: subscriber)
-        end
-
-        it "generates TaskSubscriptionJob for the user" do
-          subject.perform_now task
-
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber, {})
-        end
-      end
-
-      context "with a category and project subscriber" do
-        let(:subscriber) { Fabricate(:user_worker) }
-
-        before do
-          Fabricate(:category_tasks_subscription, category: category,
-                                                  user: subscriber)
-          Fabricate(:project_tasks_subscription, project: project,
-                                                 user: subscriber)
-        end
-
-        it "generates TaskSubscriptionJob for the user" do
-          subject.perform_now task
-
-          expect(TaskSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(TaskSubscriptionJob)
-            .to have_been_enqueued.with(task, subscriber, {})
-        end
-      end
-
       context "without any search subscribers" do
         before do
           Fabricate(:issues_search_subscription, term: nil, category: category)
@@ -146,8 +80,6 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         let(:subscriber) { Fabricate(:user_worker) }
 
         before do
-          Fabricate(:project_tasks_subscription, project: project,
-                                                 user: task.user)
           Fabricate(:tasks_search_subscription, term: nil, project: project,
                                                 user: task.user)
         end
