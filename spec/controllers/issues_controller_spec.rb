@@ -1634,8 +1634,6 @@ RSpec.describe IssuesController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:job_options) { { event: "new", current_user: current_user } }
-
     %w[admin reviewer worker].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
@@ -1665,19 +1663,11 @@ RSpec.describe IssuesController, type: :controller do
               end.to change(current_user.issue_subscriptions, :count).by(1)
             end
 
-            it "enqueues IssueSubscriptionsJob" do
+            it "runs update_status on the new issue" do
+              expect_any_instance_of(Issue)
+                .to receive(:update_status).with(current_user)
+
               post :create, params: { issue: valid_attributes }
-
-              expect(IssueSubscriptionsJob)
-                .to have_been_enqueued.exactly(:once)
-              expect(IssueSubscriptionsJob)
-                .to have_been_enqueued.with(Issue.last, send_new: true)
-            end
-
-            it "doesn't enqueue IssueSubscribersNotifierJob" do
-              post :create, params: { issue: valid_attributes }
-
-              expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
             end
 
             it "redirects to the created issue" do
@@ -1840,19 +1830,11 @@ RSpec.describe IssuesController, type: :controller do
             end.to change(current_user.issue_subscriptions, :count).by(1)
           end
 
-          it "enqueues IssueSubscriptionsJob" do
+          it "runs update_status on the new issue" do
+            expect_any_instance_of(Issue)
+              .to receive(:update_status).with(current_user)
+
             post :create, params: { issue: valid_attributes }
-
-            expect(IssueSubscriptionsJob)
-              .to have_been_enqueued.exactly(:once)
-            expect(IssueSubscriptionsJob)
-              .to have_been_enqueued.with(Issue.last, send_new: true)
-          end
-
-          it "doesn't enqueue IssueSubscribersNotifierJob" do
-            post :create, params: { issue: valid_attributes }
-
-            expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
           end
 
           it "redirects to the created issue" do
@@ -1959,10 +1941,10 @@ RSpec.describe IssuesController, type: :controller do
       before { sign_in(admin) }
 
       context "for their own Issue" do
+        let!(:issue) { Fabricate(:issue, project: project, user: admin) }
+
         context "with valid params" do
           it "updates the requested issue summary" do
-            issue = Fabricate(:issue, project: project, user: admin)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -1971,7 +1953,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "updates the requested issue status" do
-            issue = Fabricate(:issue, project: project, user: admin)
             issue.update_attribute :closed, true
             Fabricate(:approved_resolution, issue: issue)
 
@@ -1982,8 +1963,13 @@ RSpec.describe IssuesController, type: :controller do
             end.to change(issue, :status).to("resolved")
           end
 
+          it "runs update_status on the issue" do
+            expect_any_instance_of(Issue).to receive(:update_status).with(admin)
+
+            put :update, params: { id: issue.to_param, issue: new_attributes }
+          end
+
           it "redirects to the issue" do
-            issue = Fabricate(:issue, project: project, user: admin)
             url = issue_url(issue)
 
             put :update, params: { id: issue.to_param,
@@ -1994,7 +1980,6 @@ RSpec.describe IssuesController, type: :controller do
 
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
-            issue = Fabricate(:issue, project: project, user: admin)
             put :update, params: { id: issue.to_param,
                                    issue: invalid_attributes }
             expect(response).to be_successful
@@ -2003,9 +1988,10 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       context "for someone else's Issue" do
+        let!(:issue) { Fabricate(:issue, project: project) }
+
         context "with valid params" do
           it "updates the requested issue" do
-            issue = Fabricate(:issue, project: project)
 
             expect do
               put :update, params: { id: issue.to_param,
@@ -2014,8 +2000,13 @@ RSpec.describe IssuesController, type: :controller do
             end.to change(issue, :summary).to("New Summary")
           end
 
+          it "runs update_status on the issue" do
+            expect_any_instance_of(Issue).to receive(:update_status).with(admin)
+
+            put :update, params: { id: issue.to_param, issue: new_attributes }
+          end
+
           it "redirects to the issue" do
-            issue = Fabricate(:issue, project: project)
             url = issue_url(issue)
 
             put :update, params: { id: issue.to_param,
@@ -2026,7 +2017,6 @@ RSpec.describe IssuesController, type: :controller do
 
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
-            issue = Fabricate(:issue, project: project)
             put :update, params: { id: issue.to_param,
                                    issue: invalid_attributes }
             expect(response).to be_successful
@@ -2039,8 +2029,6 @@ RSpec.describe IssuesController, type: :controller do
           before { new_attributes[:project_id] = new_project.id }
 
           it "doesn't update the project" do
-            issue = Fabricate(:issue, project: project)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2053,10 +2041,10 @@ RSpec.describe IssuesController, type: :controller do
       context "for Issue from internal project" do
         let(:project) { Fabricate(:internal_project) }
 
+        let!(:issue) { Fabricate(:issue, project: project, user: admin) }
+
         context "with valid params" do
           it "updates the requested issue summary" do
-            issue = Fabricate(:issue, project: project, user: admin)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2065,7 +2053,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "updates the requested issue status" do
-            issue = Fabricate(:issue, project: project, user: admin)
             issue.update_attribute :closed, true
             Fabricate(:approved_resolution, issue: issue)
 
@@ -2077,7 +2064,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "redirects to the issue" do
-            issue = Fabricate(:issue, project: project, user: admin)
             url = issue_url(issue)
 
             put :update, params: { id: issue.to_param,
@@ -2090,10 +2076,10 @@ RSpec.describe IssuesController, type: :controller do
       context "for Issue from invisible project" do
         let(:project) { Fabricate(:invisible_project) }
 
+        let!(:issue) { Fabricate(:issue, project: project, user: admin) }
+
         context "with valid params" do
           it "updates the requested issue summary" do
-            issue = Fabricate(:issue, project: project, user: admin)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2102,7 +2088,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "updates the requested issue status" do
-            issue = Fabricate(:issue, project: project, user: admin)
             issue.update_attribute :closed, true
             Fabricate(:approved_resolution, issue: issue)
 
@@ -2114,7 +2099,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "redirects to the issue" do
-            issue = Fabricate(:issue, project: project, user: admin)
             url = issue_url(issue)
 
             put :update, params: { id: issue.to_param,
@@ -2132,10 +2116,12 @@ RSpec.describe IssuesController, type: :controller do
         before { sign_in(current_user) }
 
         context "for their own Issue" do
+          let!(:issue) do
+            Fabricate(:issue, project: project, user: current_user)
+          end
+
           context "with valid params" do
             it "updates the requested issue" do
-              issue = Fabricate(:issue, project: project, user: current_user)
-
               expect do
                 put :update, params: { id: issue.to_param,
                                        issue: new_attributes }
@@ -2143,8 +2129,14 @@ RSpec.describe IssuesController, type: :controller do
               end.to change(issue, :summary).to("New Summary")
             end
 
+            it "runs update_status on the issue" do
+              expect_any_instance_of(Issue)
+                .to receive(:update_status).with(current_user)
+
+              put :update, params: { id: issue.to_param, issue: new_attributes }
+            end
+
             it "redirects to the issue" do
-              issue = Fabricate(:issue, project: project, user: current_user)
               url = issue_url(issue)
 
               put :update, params: { id: issue.to_param,
@@ -2155,7 +2147,6 @@ RSpec.describe IssuesController, type: :controller do
 
           context "with invalid params" do
             it "returns a success response ('edit' template)" do
-              issue = Fabricate(:issue, project: project, user: current_user)
               put :update, params: { id: issue.to_param,
                                      issue: invalid_attributes }
               expect(response).to be_successful
@@ -2175,10 +2166,12 @@ RSpec.describe IssuesController, type: :controller do
         context "for Issue from internal project" do
           let(:project) { Fabricate(:internal_project) }
 
+          let!(:issue) do
+            Fabricate(:issue, project: project, user: current_user)
+          end
+
           context "with valid params" do
             it "updates the requested issue" do
-              issue = Fabricate(:issue, project: project, user: current_user)
-
               expect do
                 put :update, params: { id: issue.to_param,
                                        issue: new_attributes }
@@ -2187,7 +2180,6 @@ RSpec.describe IssuesController, type: :controller do
             end
 
             it "redirects to the issue" do
-              issue = Fabricate(:issue, project: project, user: current_user)
               url = issue_url(issue)
 
               put :update, params: { id: issue.to_param,
@@ -2200,10 +2192,12 @@ RSpec.describe IssuesController, type: :controller do
         context "for Issue from invisible project" do
           let(:project) { Fabricate(:invisible_project) }
 
+          let!(:issue) do
+            Fabricate(:issue, project: project, user: current_user)
+          end
+
           context "with valid params" do
             it "doesn't update the requested issue" do
-              issue = Fabricate(:issue, project: project, user: current_user)
-
               expect do
                 put :update, params: { id: issue.to_param,
                                        issue: new_attributes }
@@ -2212,8 +2206,6 @@ RSpec.describe IssuesController, type: :controller do
             end
 
             it "redirects to unauthorized" do
-              issue = Fabricate(:issue, project: project, user: current_user)
-
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
               expect_to_be_unauthorized(response)
@@ -2229,10 +2221,10 @@ RSpec.describe IssuesController, type: :controller do
       before { sign_in(current_user) }
 
       context "for their own Issue" do
+        let!(:issue) { Fabricate(:issue, project: project, user: current_user) }
+
         context "with valid params" do
           it "updates the requested issue" do
-            issue = Fabricate(:issue, project: project, user: current_user)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2240,8 +2232,14 @@ RSpec.describe IssuesController, type: :controller do
             end.to change(issue, :summary).to("New Summary")
           end
 
+          it "runs update_status on the issue" do
+            expect_any_instance_of(Issue)
+              .to receive(:update_status).with(current_user)
+
+            put :update, params: { id: issue.to_param, issue: new_attributes }
+          end
+
           it "redirects to the issue" do
-            issue = Fabricate(:issue, project: project, user: current_user)
             url = issue_url(issue)
 
             put :update, params: { id: issue.to_param,
@@ -2252,7 +2250,6 @@ RSpec.describe IssuesController, type: :controller do
 
         context "with invalid params" do
           it "returns a success response ('edit' template)" do
-            issue = Fabricate(:issue, project: project, user: current_user)
             put :update, params: { id: issue.to_param,
                                    issue: invalid_attributes }
             expect(response).to be_successful
@@ -2272,10 +2269,10 @@ RSpec.describe IssuesController, type: :controller do
       context "for Issue from internal project" do
         let(:project) { Fabricate(:internal_project) }
 
+        let!(:issue) { Fabricate(:issue, project: project, user: current_user) }
+
         context "with valid params" do
           it "doesn't update the requested issue" do
-            issue = Fabricate(:issue, project: project, user: current_user)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2284,8 +2281,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "redirects to unauthorized" do
-            issue = Fabricate(:issue, project: project, user: current_user)
-
             put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect_to_be_unauthorized(response)
@@ -2296,10 +2291,10 @@ RSpec.describe IssuesController, type: :controller do
       context "for Issue from invisible project" do
         let(:project) { Fabricate(:invisible_project) }
 
+        let!(:issue) { Fabricate(:issue, project: project, user: current_user) }
+
         context "with valid params" do
           it "doesn't update the requested issue" do
-            issue = Fabricate(:issue, project: project, user: current_user)
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }
@@ -2308,8 +2303,6 @@ RSpec.describe IssuesController, type: :controller do
           end
 
           it "redirects to unauthorized" do
-            issue = Fabricate(:issue, project: project, user: current_user)
-
             put :update, params: { id: issue.to_param,
                                    issue: new_attributes }
             expect_to_be_unauthorized(response)
