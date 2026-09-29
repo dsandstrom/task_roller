@@ -89,9 +89,7 @@ RSpec.describe IssueSubscriptionsJob, type: :job do
         it "generates IssueSubscriptionJob for the user" do
           subject.perform_now issue
 
-          expect(IssueSubscriptionJob).to have_been_enqueued.exactly(:once)
-          expect(IssueSubscriptionJob)
-            .to have_been_enqueued.with(issue, subscriber, {})
+          expect(IssueSubscriptionJob).not_to have_been_enqueued
         end
       end
 

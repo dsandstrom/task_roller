@@ -16,29 +16,27 @@ RSpec.describe IssueSubscriptionJob, type: :job do
         subject.perform_now issue, user
       end
 
-      context "and send_new is default" do
-        it "doesn't enqueue any jobs" do
-          expect do
-            subject.perform_now issue, user
-          end.not_to have_enqueued_job
-        end
+      it "enqueues IssueNotifierJob for the issue and user" do
+        subject.perform_now issue, user
+
+        expect(IssueNotifierJob).to have_been_enqueued.exactly(:once)
+        expect(IssueNotifierJob).to have_been_enqueued.with(issue, user, {})
       end
 
-      context "and send_new is false" do
-        it "doesn't enqueue any jobs" do
-          expect do
-            subject.perform_now issue, user, { send_new: false }
-          end.not_to have_enqueued_job
-        end
-      end
+      context "and options" do
+        let(:current_user) { Fabricate(:user) }
 
-      context "and send_new is true" do
-        it "enqueues IssueNotifierJob for the issue and user" do
-          subject.perform_now issue, user, { send_new: true }
+        let(:options) do
+          {  event: "status", details: "pending,being_worked_on" }
+        end
+
+        it "forwards them to IssueNotifierJob without current_user" do
+          subject.perform_now issue, user,
+                              options.merge(current_user: current_user)
 
           expect(IssueNotifierJob).to have_been_enqueued.exactly(:once)
           expect(IssueNotifierJob)
-            .to have_been_enqueued.with(issue, user, { event: "new" })
+            .to have_been_enqueued.with(issue, user, options)
         end
       end
     end

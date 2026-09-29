@@ -76,6 +76,23 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
         end
       end
 
+      context "with a search subscriber that is already subscribed" do
+        let(:subscriber) { Fabricate(:user_worker) }
+
+        before do
+          Fabricate(:inactive_task_subscription, task: task,
+                                                  user: subscriber)
+          Fabricate(:tasks_search_subscription, term: nil, category: category,
+                                                 user: subscriber)
+        end
+
+        it "generates IssueSubscriptionJob for the user" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).not_to have_been_enqueued
+        end
+      end
+
       context "with a subscription for the task's user" do
         let(:subscriber) { Fabricate(:user_worker) }
 

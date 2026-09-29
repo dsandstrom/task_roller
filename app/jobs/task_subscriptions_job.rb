@@ -6,6 +6,7 @@ class TaskSubscriptionsJob < ApplicationJob
 
     task.search_subscribers.each do |subscriber|
       next if subscriber == task.user
+      next if task.task_subscriptions.find_by(user: subscriber)
 
       TaskSubscriptionJob.perform_later(task, subscriber, options)
     end
