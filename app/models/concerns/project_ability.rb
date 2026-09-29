@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
 class ProjectAbility < BaseAbility
-  CLASSES = [ProjectTasksSubscription, ProjectIssuesSubscription].freeze
-
   def activate
     if user.admin? || user.reviewer?
       activate_reviewer
@@ -25,25 +21,13 @@ class ProjectAbility < BaseAbility
       ability.can :read, Project
       ability.can :create, Project, category: { visible: true }
       ability.can %i[read update], Project
-      CLASSES.each do |name|
-        ability.can :manage, name, user_id: user_id,
-                                   project: Ability::VISIBLE_PROJECT_OPTIONS
-      end
     end
 
     def activate_worker
       ability.can :read, Project, Ability::VISIBLE_PROJECT_OPTIONS
-      CLASSES.each do |name|
-        ability.can :manage, name, user_id: user_id,
-                                   project: Ability::VISIBLE_PROJECT_OPTIONS
-      end
     end
 
     def activate_reporter
       ability.can :read, Project, Ability::EXTERNAL_PROJECT_OPTIONS
-      CLASSES.each do |name|
-        ability.can :manage, name, user_id: user_id,
-                                   project: Ability::EXTERNAL_PROJECT_OPTIONS
-      end
     end
 end

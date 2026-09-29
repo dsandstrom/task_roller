@@ -37,20 +37,6 @@ RSpec.describe User, type: :model do
   it do
     is_expected.to have_many(:source_search_subscriptions).dependent(:destroy)
   end
-  it do
-    is_expected.to have_many(:category_issues_subscriptions).dependent(:destroy)
-  end
-  it do
-    is_expected.to have_many(:category_tasks_subscriptions).dependent(:destroy)
-  end
-  it do
-    is_expected.to have_many(:project_issues_subscriptions).dependent(:destroy)
-  end
-  it do
-    is_expected.to have_many(:project_tasks_subscriptions).dependent(:destroy)
-  end
-  it { is_expected.to have_many(:subscribed_issue_categories) }
-  it { is_expected.to have_many(:subscribed_task_categories) }
   it { is_expected.to have_many(:issue_closures) }
   it { is_expected.to have_many(:task_closures) }
   it { is_expected.to have_many(:issue_reopenings) }
