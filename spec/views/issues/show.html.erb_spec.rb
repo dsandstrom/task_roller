@@ -350,7 +350,8 @@ RSpec.describe "issues/show", type: :view do
 
     context "when inactive subscription with the issue" do
       let(:issue_subscription) do
-        Fabricate(:inactive_issue_subscription, issue: issue, user: current_user)
+        Fabricate(:inactive_issue_subscription, issue: issue,
+                                                user: current_user)
       end
 
       before do
