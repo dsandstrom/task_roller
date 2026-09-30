@@ -1319,7 +1319,6 @@ RSpec.describe TasksController, type: :controller do
 
   describe "POST #create" do
     let(:source_task) { Fabricate(:task, project: project) }
-    let(:job_options) { { event: "new", current_user: current_user } }
 
     let(:valid_task_branch_attributes) do
       { source_task_id: source_task.to_param }
@@ -1372,31 +1371,12 @@ RSpec.describe TasksController, type: :controller do
                   valid_attributes.merge! assignee_ids: [worker.id]
                 end
 
-                it "enqueues TaskAssigneesSubscriptionsJob" do
+                it "runs update_status on the new task" do
+                  expect_any_instance_of(Task)
+                    .to receive(:update_status).with(current_user)
+
                   post :create, params: { project_id: project.to_param,
                                           task: valid_attributes }
-
-                  expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.exactly(:once)
-                  expect(TaskAssigneesSubscriptionsJob)
-                    .to have_been_enqueued.with(Task.last, send_new: true)
-                end
-
-                it "enqueues TaskSubscriptionsJob" do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-
-                  expect(TaskSubscriptionsJob)
-                    .to have_been_enqueued.exactly(:once)
-                  expect(TaskSubscriptionsJob)
-                    .to have_been_enqueued.with(Task.last, send_new: true)
-                end
-
-                it "doesn't enqueue TaskSubscribersNotifierJob" do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-
-                  expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
                 end
               end
 
@@ -1421,11 +1401,11 @@ RSpec.describe TasksController, type: :controller do
                 end.not_to change(Task, :count)
               end
 
-              it "doesn't enqueue any jobs" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: invalid_attributes }
-                end.not_to have_enqueued_job
+              it "doesn't run update_status" do
+                expect_any_instance_of(Task).not_to receive(:update_status)
+
+                post :create, params: { project_id: project.to_param,
+                                        task: invalid_attributes }
               end
 
               it "returns a success response ('new' template)" do
@@ -1751,6 +1731,14 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(task, :status).to("in_progress")
               end
 
+              it "runs update_status on the task" do
+                expect_any_instance_of(Task)
+                  .to receive(:update_status).with(current_user)
+
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
+              end
+
               it "redirects to the task" do
                 put :update, params: { id: task.to_param,
                                        task: new_attributes }
@@ -1941,6 +1929,14 @@ RSpec.describe TasksController, type: :controller do
                                        task: new_attributes }
                 url = task_url(task)
                 expect(response).to redirect_to(url)
+              end
+
+              it "runs update_status on the task" do
+                expect_any_instance_of(Task)
+                  .to receive(:update_status).with(current_user)
+
+                put :update, params: { id: task.to_param,
+                                       task: new_attributes }
               end
 
               context "when changing priority_level" do

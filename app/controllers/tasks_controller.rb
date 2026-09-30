@@ -154,7 +154,7 @@ class TasksController < ApplicationController
     def create_html
       if @task.save
         create_task_branch
-        subscribe_users
+        @task.subscribe_user
         update_statuses
         redirect_to @task, success: 'Task was successfully added.'
       else
@@ -186,12 +186,6 @@ class TasksController < ApplicationController
         set_form_options
         render :edit
       end
-    end
-
-    def subscribe_users
-      @task.subscribe_user
-      TaskSubscriptionsJob.perform_later(@task, send_new: true)
-      TaskAssigneesSubscriptionsJob.perform_later(@task, send_new: true)
     end
 
     def create_task_branch
