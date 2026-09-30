@@ -27,7 +27,7 @@ RSpec.describe IssueSubscriptionJob, type: :job do
         let(:current_user) { Fabricate(:user) }
 
         let(:options) do
-          {  event: "status", details: "pending,being_worked_on" }
+          { event: "status", details: "pending,being_worked_on" }
         end
 
         it "forwards them to IssueNotifierJob without current_user" do

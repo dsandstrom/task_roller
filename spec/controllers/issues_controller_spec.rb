@@ -1992,7 +1992,6 @@ RSpec.describe IssuesController, type: :controller do
 
         context "with valid params" do
           it "updates the requested issue" do
-
             expect do
               put :update, params: { id: issue.to_param,
                                      issue: new_attributes }

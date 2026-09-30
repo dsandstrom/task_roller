@@ -81,9 +81,9 @@ RSpec.describe TaskSubscriptionsJob, type: :job do
 
         before do
           Fabricate(:inactive_task_subscription, task: task,
-                                                  user: subscriber)
-          Fabricate(:tasks_search_subscription, term: nil, category: category,
                                                  user: subscriber)
+          Fabricate(:tasks_search_subscription, term: nil, category: category,
+                                                user: subscriber)
         end
 
         it "generates IssueSubscriptionJob for the user" do

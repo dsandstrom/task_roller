@@ -20,7 +20,7 @@ RSpec.describe TaskSubscriptionJob, type: :job do
         subject.perform_now task, user
 
         expect(TaskNotifierJob).to have_been_enqueued.exactly(:once)
-        expect(TaskNotifierJob) .to have_been_enqueued.with(task, user, {})
+        expect(TaskNotifierJob).to have_been_enqueued.with(task, user, {})
       end
 
       context "and options" do
