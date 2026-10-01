@@ -273,14 +273,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return self if old_status == status
 
-    enqueue_repo_job(old_status)
-    return self if old_status.blank? # sending via SubsciptionJob
+    if old_status == status
+      old_status = nil
+    else
+      enqueue_repo_job(old_status)
+    end
 
-    options = notification_options(old_status)
-    options[:current_user] = current_user if current_user.present?
-    IssueSubscribersNotifierJob.perform_later(self, options)
+    subscribe_and_notify(old_status, current_user)
+
     self
   end
 
@@ -319,14 +320,6 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def task?
     false
-  end
-
-  def notification_options(old_status)
-    if old_status.present?
-      { event: 'status', details: "#{old_status},#{status}" }
-    else
-      { event: 'new' }
-    end
   end
 
   def update_priority_level
@@ -452,6 +445,27 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return message unless url
 
       "#{message}\n\nPlease visit for more info: #{url}"
+    end
+
+    def notification_options(old_status, current_user = nil)
+      options =
+        if old_status.present?
+          { event: 'status', details: "#{old_status},#{status}" }
+        else
+          { event: 'new' }
+        end
+      return options if current_user.nil?
+
+      options.merge(current_user: current_user)
+    end
+
+    def subscribe_and_notify(old_status, current_user)
+      options = notification_options(old_status, current_user)
+
+      unless old_status.nil?
+        IssueSubscribersNotifierJob.perform_later(self, options)
+      end
+      IssueSubscriptionsJob.perform_later(self, options)
     end
 
     def search_subscribers_map
