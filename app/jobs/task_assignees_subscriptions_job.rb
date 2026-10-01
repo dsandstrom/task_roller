@@ -6,8 +6,10 @@ class TaskAssigneesSubscriptionsJob < ApplicationJob
   def perform(task, **options)
     return unless task
 
-    task.assignees.each do |u|
-      TaskSubscriptionJob.perform_later(task, u, options)
+    task.assignees.each do |user|
+      next if task.task_subscriptions.find_by(user: user)
+
+      TaskSubscriptionJob.perform_later(task, user, options)
     end
   end
 end

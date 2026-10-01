@@ -30,6 +30,21 @@ RSpec.describe TaskAssigneesSubscriptionsJob, type: :job do
         end
       end
 
+      context "with a subscribed assignee" do
+        let(:assignee) { Fabricate(:user_worker) }
+        let(:task) { Fabricate(:task, assignees: [assignee]) }
+
+        before do
+          Fabricate(:task_subscription, task: task, user: assignee)
+        end
+
+        it "doesn't generate a TaskSubscriptionJob" do
+          subject.perform_now task
+
+          expect(TaskSubscriptionJob).not_to have_been_enqueued
+        end
+      end
+
       context "when given options" do
         let(:assignee) { Fabricate(:user_worker) }
         let(:task) { Fabricate(:task, assignees: [assignee]) }
