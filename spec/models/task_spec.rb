@@ -1369,6 +1369,8 @@ RSpec.describe Task, type: :model do
   end
 
   describe "#update_status" do
+    let(:new_job_options) { { event: "new" } }
+
     context "when status is originally nil" do
       let(:task) { Fabricate(:task, status: nil) }
       let(:subscriber) { Fabricate(:user_worker) }
@@ -1386,10 +1388,28 @@ RSpec.describe Task, type: :model do
           end.not_to change(task, :status)
         end
 
-        it "doesn't enqueue any jobs" do
-          expect do
-            task.update_status
-          end.not_to have_enqueued_job
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
+          task.update_status
+
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
+        end
+
+        it "enqueues TaskSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
+        end
+
+        it "enqueues TaskAssigneesSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
         end
       end
 
@@ -1410,11 +1430,27 @@ RSpec.describe Task, type: :model do
 
           expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
         end
+
+        it "enqueues TaskSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
+        end
+
+        it "enqueues TaskAssigneesSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
+        end
       end
 
       context "and changes to 'closed'" do
-        let(:job_options) { { event: "new" } }
-
         before { allow(task).to receive(:build_status) { "closed" } }
 
         it "changes status" do
@@ -1428,6 +1464,24 @@ RSpec.describe Task, type: :model do
           task.update_status
 
           expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
+        end
+
+        it "enqueues TaskSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
+        end
+
+        it "enqueues TaskAssigneesSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
         end
       end
     end
@@ -1448,10 +1502,28 @@ RSpec.describe Task, type: :model do
           end.not_to change(task, :status)
         end
 
-        it "doesn't enqueue any jobs" do
-          expect do
-            task.update_status
-          end.not_to have_enqueued_job
+        it "doesn't enqueue TaskSubscribersNotifierJob" do
+          task.update_status
+
+          expect(TaskSubscribersNotifierJob).not_to have_been_enqueued
+        end
+
+        it "enqueues TaskSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
+        end
+
+        it "enqueues TaskAssigneesSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.with(task, new_job_options)
         end
       end
 
@@ -1475,6 +1547,24 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscribersNotifierJob)
             .to have_been_enqueued.exactly(:once)
           expect(TaskSubscribersNotifierJob)
+            .to have_been_enqueued.with(task, job_options)
+        end
+
+        it "enqueues TaskSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskSubscriptionsJob)
+            .to have_been_enqueued.with(task, job_options)
+        end
+
+        it "enqueues TaskAssigneesSubscriptionsJob" do
+          task.update_status
+
+          expect(TaskAssigneesSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(TaskAssigneesSubscriptionsJob)
             .to have_been_enqueued.with(task, job_options)
         end
       end
@@ -1508,6 +1598,24 @@ RSpec.describe Task, type: :model do
             expect(TaskSubscribersNotifierJob)
               .to have_been_enqueued.with(task, job_options)
           end
+
+          it "enqueues TaskSubscriptionsJob" do
+            task.update_status
+
+            expect(TaskSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscriptionsJob)
+              .to have_been_enqueued.with(task, job_options)
+          end
+
+          it "enqueues TaskAssigneesSubscriptionsJob" do
+            task.update_status
+
+            expect(TaskAssigneesSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskAssigneesSubscriptionsJob)
+              .to have_been_enqueued.with(task, job_options)
+          end
         end
 
         context "with a similar notification" do
@@ -1532,6 +1640,24 @@ RSpec.describe Task, type: :model do
             expect(TaskSubscribersNotifierJob)
               .to have_been_enqueued.exactly(:once)
             expect(TaskSubscribersNotifierJob)
+              .to have_been_enqueued.with(task, job_options)
+          end
+
+          it "enqueues TaskSubscriptionsJob" do
+            task.update_status
+
+            expect(TaskSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskSubscriptionsJob)
+              .to have_been_enqueued.with(task, job_options)
+          end
+
+          it "enqueues TaskAssigneesSubscriptionsJob" do
+            task.update_status
+
+            expect(TaskAssigneesSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(TaskAssigneesSubscriptionsJob)
               .to have_been_enqueued.with(task, job_options)
           end
         end
@@ -1563,6 +1689,24 @@ RSpec.describe Task, type: :model do
         expect(TaskSubscribersNotifierJob)
           .to have_been_enqueued.exactly(:once)
         expect(TaskSubscribersNotifierJob)
+          .to have_been_enqueued.with(task, job_options)
+      end
+
+      it "enqueues TaskSubscriptionsJob" do
+        task.update_status(subscriber)
+
+        expect(TaskSubscriptionsJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(TaskSubscriptionsJob)
+          .to have_been_enqueued.with(task, job_options)
+      end
+
+      it "enqueues TaskAssigneesSubscriptionsJob" do
+        task.update_status(subscriber)
+
+        expect(TaskAssigneesSubscriptionsJob)
+          .to have_been_enqueued.exactly(:once)
+        expect(TaskAssigneesSubscriptionsJob)
           .to have_been_enqueued.with(task, job_options)
       end
     end
@@ -1739,13 +1883,10 @@ RSpec.describe Task, type: :model do
         end.to change(task, :status).to("closed")
       end
 
-      it "enqueues TaskSubscribersNotifierJob" do
-        task.close?(current_user)
+      it "runs update_status" do
+        expect(task).to receive(:update_status)
 
-        expect(TaskSubscribersNotifierJob)
-          .to have_been_enqueued.exactly(:once)
-        expect(TaskSubscribersNotifierJob)
-          .to have_been_enqueued.with(task, job_options)
+        task.close?(current_user)
       end
     end
 
@@ -1766,11 +1907,10 @@ RSpec.describe Task, type: :model do
         end.not_to change(task, :status)
       end
 
-      it "doesn't enqueue any jobs" do
-        task.subscribers << subscriber
-        expect do
-          task.close?
-        end.not_to have_enqueued_job
+      it "runs update_status" do
+        expect(task).to receive(:update_status)
+
+        task.close?(current_user)
       end
     end
 
@@ -2483,21 +2623,6 @@ RSpec.describe Task, type: :model do
   describe "#task?" do
     it "returns true" do
       expect(subject.task?).to eq(true)
-    end
-  end
-
-  describe "#notification_options" do
-    context "when given nil" do
-      it "returns new status" do
-        expect(subject.notification_options(nil)).to eq({ event: "new" })
-      end
-    end
-
-    context "when given a status" do
-      it "returns both statuses" do
-        expect(subject.notification_options("old"))
-          .to eq({ event: "status", details: "old,#{subject.status}" })
-      end
     end
   end
 

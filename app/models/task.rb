@@ -350,11 +350,17 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return self if old_status.blank? || old_status == status
 
-    options = notification_options(old_status)
-    options[:current_user] = current_user if current_user.present?
-    TaskSubscribersNotifierJob.perform_later(self, options)
+    old_status = nil if old_status == status
+
+    options = notification_options(old_status, current_user)
+
+    if old_status.present?
+      TaskSubscribersNotifierJob.perform_later(self, options)
+    end
+
+    TaskSubscriptionsJob.perform_later(self, options)
+    TaskAssigneesSubscriptionsJob.perform_later(self, options)
     self
   end
 
@@ -373,23 +379,15 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     true
   end
 
-  def notification_options(old_status)
-    if old_status.present?
-      { event: 'status', details: "#{old_status},#{status}" }
-    else
-      { event: 'new' }
-    end
-  end
-
   def update_issues(old_issue, user)
     if issue
-      issue.update_status(user)
       issue.update_priority_level
+      issue.update_status(user)
     end
     return unless old_issue && old_issue != issue
 
-    old_issue.update_status(user)
     old_issue.update_priority_level
+    old_issue.update_status(user)
   end
 
   def search_subscribers
@@ -440,6 +438,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         'closed'
       end
+    end
+
+    def notification_options(old_status, current_user)
+      options =
+        if old_status.present?
+          { event: 'status', details: "#{old_status},#{status}" }
+        else
+          { event: 'new' }
+        end
+      return options if current_user.nil?
+
+      options.merge(current_user: current_user)
     end
 
     def any_pending_reviews?
