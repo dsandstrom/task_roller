@@ -112,6 +112,12 @@ class SearchResult < ApplicationRecord
       filters[key] = nil if filters[key] == 'all'
     end
 
+    if filters[:type] == 'all'
+      %i[issue_status task_status issue_type_id task_type_id].each do |key|
+        filters[key] = nil
+      end
+    end
+
     filters
   end
 

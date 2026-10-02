@@ -519,6 +519,64 @@ RSpec.describe SearchResult, type: :model do
       end
     end
 
+    context "when type is 'all'" do
+      let!(:issue) { Fabricate(:issue) }
+      let!(:task) { Fabricate(:task) }
+      let(:filters) { { type: "all" } }
+
+      context "and issue_status is 'open'" do
+        before do
+          filters.merge!(issue_status: "open")
+        end
+
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by(filters)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+
+      context "and task_status is 'open'" do
+        before do
+          filters.merge!(task_status: "open")
+        end
+
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by(filters)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+
+      context "and issue_type_id is set" do
+        let(:issue_type) { Fabricate(:issue_type) }
+
+        before do
+          filters.merge!(issue_type_id: issue_type.id)
+        end
+
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by(filters)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+
+      context "and task_type_id is set" do
+        let(:task_type) { Fabricate(:task_type) }
+
+        before do
+          filters.merge!(task_type_id: task_type.id)
+        end
+
+        it "returns all issues and tasks" do
+          search_results = SearchResult.filter_by(filters)
+          expect(map_class_id(search_results))
+            .to contain_exactly(["Issue", issue.id], ["Task", task.id])
+        end
+      end
+    end
+
     context "when :order" do
       let(:task) { Fabricate(:task, summary: "Test", priority_level: 3) }
       let(:issue) { Fabricate(:issue, summary: "Test", priority_level: 2) }
