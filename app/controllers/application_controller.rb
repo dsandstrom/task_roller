@@ -128,4 +128,30 @@ class ApplicationController < ActionController::Base
     def redirect_to_categories
       redirect_to root_url, alert: 'App Error: Projects are required'
     end
+
+    def visible_source
+      @visible_source = source_visible? if @visible_source.nil?
+    end
+
+    def source_visible?
+      return false if @source.blank?
+
+      if @source.respond_to?(:totally_visible?)
+        return @source.totally_visible?
+      elsif @source.respond_to?(:visible?)
+        return @source.visible?
+      end
+
+      true
+    end
+
+    def build_search_subscription(starting_attrs = {})
+      search_subscription =
+        current_user.search_subscriptions.find_or_initialize_by(
+          SearchFiltersConverter.convert_params_to_attrs(params, starting_attrs)
+        )
+      return search_subscription if search_subscription.valid?
+
+      nil
+    end
 end

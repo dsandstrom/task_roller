@@ -20,6 +20,7 @@ RSpec.describe IssueSubscribersNotifierJob, type: :job do
         before do
           Fabricate(:issue_subscription, issue: issue, user: current_user)
           Fabricate(:issue_subscription, issue: issue, user: subscriber)
+          Fabricate(:inactive_issue_subscription, issue: issue)
         end
 
         it "enqueues one IssueNotifierJob" do
@@ -38,6 +39,7 @@ RSpec.describe IssueSubscribersNotifierJob, type: :job do
         before do
           Fabricate(:issue_subscription, issue: issue, user: current_user)
           Fabricate(:issue_subscription, issue: issue, user: subscriber)
+          Fabricate(:inactive_issue_subscription, issue: issue)
         end
 
         it "enqueues one IssueNotifierJob" do

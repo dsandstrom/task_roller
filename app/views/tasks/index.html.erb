@@ -15,4 +15,5 @@
   </header>
 <% end %>
 
-<%= render 'tasks/filtered_tasks', tasks: @tasks %>
+<%= render 'tasks/filtered_tasks', tasks: @tasks,
+                                   search_subscription: @search_subscription %>

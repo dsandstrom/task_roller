@@ -22,7 +22,7 @@ class ProjectsController < ApplicationController
     when 'tasks'
       redirect_to project_tasks_path(@project, params: filters)
     else
-      @search_results = build_search_results.page(params[:page])
+      build_subscription_and_results
     end
   end
 
@@ -73,5 +73,13 @@ class ProjectsController < ApplicationController
                   .filter_by(filters)
                   .preload(:project, :user, :issue, :assignees,
                            project: :category)
+    end
+
+    def build_subscription_and_results
+      if @project.totally_visible?
+        @search_subscription =
+          build_search_subscription(project_id: @project.id)
+      end
+      @search_results = build_search_results.page(params[:page])
     end
 end

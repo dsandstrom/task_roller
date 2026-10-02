@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # See the wiki for details:
 # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
@@ -22,7 +20,8 @@ class Ability
     return unless user && user.employee_type.present?
 
     [CategoryAbility, ProjectAbility, UserAbility, IssueAbility,
-     TaskAbility, SearchResultAbility].each do |klass|
+     TaskAbility, SearchResultAbility,
+     SearchSubscriptionAbility].each do |klass|
       ability = klass.new(ability: self, user: user)
       ability.activate
     end

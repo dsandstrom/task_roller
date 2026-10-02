@@ -19,7 +19,7 @@ module BreadcrumbsHelper
 
     def breadcrumb(text, url, options = {})
       content_tag :span, class: 'breadcrumb' do
-        link_to text, url, options
+        link_to_unless_current text, url, options
       end
     end
 end

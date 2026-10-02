@@ -33,20 +33,10 @@ RSpec.describe User, type: :model do
   it { is_expected.to have_many(:subscribed_issues) }
   it { is_expected.to have_many(:task_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribed_tasks) }
+  it { is_expected.to have_many(:search_subscriptions).dependent(:destroy) }
   it do
-    is_expected.to have_many(:category_issues_subscriptions).dependent(:destroy)
+    is_expected.to have_many(:source_search_subscriptions).dependent(:destroy)
   end
-  it do
-    is_expected.to have_many(:category_tasks_subscriptions).dependent(:destroy)
-  end
-  it do
-    is_expected.to have_many(:project_issues_subscriptions).dependent(:destroy)
-  end
-  it do
-    is_expected.to have_many(:project_tasks_subscriptions).dependent(:destroy)
-  end
-  it { is_expected.to have_many(:subscribed_issue_categories) }
-  it { is_expected.to have_many(:subscribed_task_categories) }
   it { is_expected.to have_many(:issue_closures) }
   it { is_expected.to have_many(:task_closures) }
   it { is_expected.to have_many(:issue_reopenings) }
@@ -692,6 +682,62 @@ RSpec.describe User, type: :model do
         user = User.new_with_session(params, session)
         expect(user).to be_a_new(User)
         expect(user.email).to eq(example_user.email)
+      end
+    end
+  end
+
+  describe "#not_subscribed_to_issue" do
+    let(:first_user) { Fabricate(:user) }
+    let(:second_user) { Fabricate(:user) }
+    let(:issue) { Fabricate(:issue, user: first_user) }
+    let(:second_issue) { Fabricate(:issue, user: first_user) }
+    let(:third_issue) { Fabricate(:issue, user: second_user) }
+
+    context "when issue has no subscriptions" do
+      it "returns users without an issue_subscription for the issue" do
+        expect(described_class.not_subscribed_to_issue(issue))
+          .to contain_exactly(first_user)
+      end
+    end
+
+    context "when issue has subscriptions" do
+      before do
+        Fabricate(:issue_subscription, issue: second_issue, user: second_user)
+        Fabricate(:issue_subscription, issue: third_issue, user: second_user)
+        Fabricate(:issue_subscription, issue: issue)
+      end
+
+      it "returns users without an issue_subscription for the issue" do
+        expect(described_class.not_subscribed_to_issue(issue))
+          .to contain_exactly(first_user, second_user)
+      end
+    end
+  end
+
+  describe "#not_subscribed_to_task" do
+    let(:first_user) { Fabricate(:user) }
+    let(:second_user) { Fabricate(:user) }
+    let(:task) { Fabricate(:task, user: first_user) }
+    let(:second_task) { Fabricate(:task, user: first_user) }
+    let(:third_task) { Fabricate(:task, user: second_user) }
+
+    context "when task has no subscriptions" do
+      it "returns users without an task_subscription for the task" do
+        expect(described_class.not_subscribed_to_task(task))
+          .to contain_exactly(first_user)
+      end
+    end
+
+    context "when task has subscriptions" do
+      before do
+        Fabricate(:task_subscription, task: second_task, user: second_user)
+        Fabricate(:task_subscription, task: third_task, user: second_user)
+        Fabricate(:task_subscription, task: task)
+      end
+
+      it "returns users without an task_subscription for the task" do
+        expect(described_class.not_subscribed_to_task(task))
+          .to contain_exactly(first_user, second_user)
       end
     end
   end

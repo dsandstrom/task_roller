@@ -1,0 +1,61 @@
+.search-subscription {
+  margin-bottom: 1.5rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  color: $dark-gray;
+
+  header {
+    margin: 0;
+    padding: 1rem;
+    border-bottom: 1px solid $border-color;
+    background-color: $off-white;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .button-wrapper {
+    margin: 0;
+  }
+
+  form,
+  .button {
+    margin: 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.search-subscription-parameter {
+  color: $ink;
+  font-weight: bold;
+}
+
+.search-subscription-term {
+  color: $color-quinary;
+  font-family: $code-font;
+}
+
+.search-subscription-columns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.search-subscription-wrapper {
+  input {
+    margin: 0;
+  }
+
+  form {
+    margin-bottom: 2.5rem;
+  }
+
+  .search-subscription-parameters {
+    margin-bottom: 1.5rem;
+  }
+}

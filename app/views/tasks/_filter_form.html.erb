@@ -1,8 +1,6 @@
 <%
 path ||= request.path
 return unless path
-
-show_status_filter = true unless show_status_filter == false
 %>
 
 <div class="filters-wrapper">
@@ -25,3 +23,7 @@ show_status_filter = true unless show_status_filter == false
     </div>
   <% end %>
 </div>
+
+<% if search_subscription.present? %>
+  <%= render('search_subscriptions/forms', search_subscription: search_subscription) %>
+<% end %>

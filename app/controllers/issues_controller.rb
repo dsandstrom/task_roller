@@ -12,6 +12,10 @@ class IssuesController < ApplicationController
     @source = build_source
     authorize! :read, @source
 
+    if visible_source
+      @search_subscription = build_search_subscription(include_tasks: false)
+    end
+
     @issues = build_issues.accessible_by(current_ability)
                           .with_notifications(current_user, order_by: order_by)
                           .filter_by(build_filters).page(params[:page])
@@ -53,7 +57,6 @@ class IssuesController < ApplicationController
     if @issue.save
       create_issue_branch
       @issue.subscribe_user
-      IssueSubscriptionsJob.perform_later(@issue, send_new: true)
       @issue.update_status(current_user)
       redirect_to @issue, success: 'Issue was successfully created.'
     else
@@ -112,15 +115,9 @@ class IssuesController < ApplicationController
     end
 
     def build_issues
-      issues = @source.issues
-      if @source.respond_to?(:totally_visible?)
-        issues = issues.all_visible if @source.totally_visible?
-      elsif @source.respond_to?(:visible?)
-        issues = issues.all_visible if @source.visible?
-      elsif @source.is_a?(User)
-        issues = issues.all_visible
-      end
-      issues
+      return @source.issues unless visible_source
+
+      @source.issues.all_visible
     end
 
     def build_issue

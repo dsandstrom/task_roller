@@ -1,4 +1,5 @@
-Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/BlockLength
+Rails.application.routes.draw do
   resources :users, only: nil do
     resources :issues, only: :index
     resources :tasks, only: :index
@@ -41,7 +42,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       get :pending
     end
     resources :issue_comments, except: :index
-    resources :issue_subscriptions, only: %i[new create destroy]
+    resources :issue_subscriptions, only: %i[new create destroy] do
+      member do
+        patch :toggle
+      end
+    end
     resources :task_previews, only: :index
     resources :resolutions, only: %i[new create destroy] do
       collection do
@@ -62,7 +67,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
     resources :task_assignees, only: %i[new create destroy]
     resources :task_comments, except: :index
-    resources :task_subscriptions, only: %i[new create destroy]
+    resources :task_subscriptions, only: %i[new create destroy] do
+      member do
+        patch :toggle
+      end
+    end
     resources :issue_previews, only: :index
     resources :assignments, only: :new
     resources :progressions, only: %i[new create destroy] do
@@ -84,6 +93,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   resources :subscriptions, only: :index
+  resources :search_subscriptions, except: %i[edit update] do
+    member do
+      patch :toggle
+    end
+  end
 
   resources :issue_notifications, only: :destroy
   resources :task_notifications, only: :destroy
@@ -201,3 +215,4 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'categories#index'
 end
+# rubocop:enable Metrics/BlockLength

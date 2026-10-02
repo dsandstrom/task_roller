@@ -112,48 +112,6 @@ RSpec.describe "categories/index", type: :view do
       end
     end
 
-    context "when subscribed to second category" do
-      let!(:issues_subscription) do
-        Fabricate(:category_issues_subscription, category: second_category,
-                                                 user: reviewer)
-      end
-      let!(:tasks_subscription) do
-        Fabricate(:category_tasks_subscription, category: second_category,
-                                                user: reviewer)
-      end
-
-      it "renders subscribe links" do
-        render
-
-        first_issues_url = category_issues_subscriptions_path(first_category)
-        first_tasks_url = category_tasks_subscriptions_path(first_category)
-        second_issues_url = category_issues_subscriptions_path(second_category)
-        second_tasks_url = category_tasks_subscriptions_path(second_category)
-
-        assert_select "form[action=?][method=?]", first_issues_url, "post"
-        assert_select "form[action=?][method=?]", first_tasks_url, "post"
-        assert_select "form[action=?][method=?]", second_issues_url, "post",
-                      count: 0
-        assert_select "form[action=?][method=?]", second_tasks_url, "post",
-                      count: 0
-      end
-
-      it "renders unsubscribe links" do
-        render
-
-        second_issues_url =
-          category_issues_subscription_path(second_category,
-                                            issues_subscription)
-        second_tasks_url =
-          category_tasks_subscription_path(second_category, tasks_subscription)
-
-        assert_select "form[action=?][data-turbo-method=?]", second_issues_url,
-                      "delete"
-        assert_select "form[action=?][data-turbo-method=?]", second_tasks_url,
-                      "delete"
-      end
-    end
-
     it "renders new issue menu link" do
       render template: subject, layout: "layouts/application"
 

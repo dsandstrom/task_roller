@@ -12,6 +12,9 @@ class TasksController < ApplicationController
     @source = build_source
     authorize! :read, @source
 
+    if visible_source
+      @search_subscription = build_search_subscription(include_issues: false)
+    end
     @tasks = build_tasks.accessible_by(current_ability)
                         .with_notifications(current_user, order_by: order_by)
                         .filter_by(build_filters).page(params[:page])
@@ -91,15 +94,9 @@ class TasksController < ApplicationController
     end
 
     def build_tasks
-      tasks = @source.tasks
-      if @source.respond_to?(:totally_visible?)
-        tasks = tasks.all_visible if @source.totally_visible?
-      elsif @source.respond_to?(:visible?)
-        tasks = tasks.all_visible if @source.visible?
-      elsif @source.is_a?(User)
-        tasks = tasks.all_visible
-      end
-      tasks
+      return @source.tasks unless visible_source
+
+      @source.tasks.all_visible
     end
 
     def build_task_branch
@@ -157,7 +154,8 @@ class TasksController < ApplicationController
     def create_html
       if @task.save
         create_task_branch
-        subscribe_users
+        @task.subscribe_user
+        @task.subscribe_assignees
         update_statuses
         redirect_to @task, success: 'Task was successfully added.'
       else
@@ -189,12 +187,6 @@ class TasksController < ApplicationController
         set_form_options
         render :edit
       end
-    end
-
-    def subscribe_users
-      @task.subscribe_user
-      TaskSubscriptionsJob.perform_later(@task, send_new: true)
-      TaskAssigneesSubscriptionsJob.perform_later(@task, send_new: true)
     end
 
     def create_task_branch

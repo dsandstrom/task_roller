@@ -15,4 +15,5 @@
   </header>
 <% end %>
 
-<%= render 'issues/filtered_issues', issues: @issues %>
+<%= render 'issues/filtered_issues', issues: @issues,
+                                     search_subscription: @search_subscription %>

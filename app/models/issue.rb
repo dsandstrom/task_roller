@@ -4,6 +4,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   include Filter
 
   DEFAULT_ORDER = 'issues.updated_at desc'
+
   STATUS_OPTIONS = {
     open: { color: 'green' },
     pending: { color: 'brown' },
@@ -13,6 +14,26 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     duplicate: { color: 'purple' },
     closed: { color: 'red' }
   }.freeze
+
+  SEARCH_SQL = <<~SQL.squish.freeze
+    search_subscriptions.include_issues = TRUE
+    AND search_subscriptions.active = TRUE
+    AND (search_subscriptions.category_id IS NULL
+         OR search_subscriptions.category_id = :category_id)
+    AND (search_subscriptions.project_id IS NULL
+         OR search_subscriptions.project_id = :project_id)
+    AND (search_subscriptions.source_user_id IS NULL
+         OR search_subscriptions.source_user_id = :source_user_id)
+    AND (search_subscriptions.issue_status IS NULL
+         OR search_subscriptions.issue_status = :status
+         OR (search_subscriptions.issue_status = 'open' AND :closed = FALSE)
+         OR (search_subscriptions.issue_status = 'closed' AND :closed = TRUE))
+    AND (search_subscriptions.issue_type_id IS NULL
+         OR search_subscriptions.issue_type_id = :issue_type_id)
+    AND (search_subscriptions.term IS NULL
+         OR :summary ILIKE CONCAT('%', search_subscriptions.term, '%')
+         OR :description ILIKE CONCAT('%', search_subscriptions.term, '%'))
+  SQL
 
   belongs_to :user # reporter
   belongs_to :issue_type
@@ -62,6 +83,10 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :issue_subscriptions, dependent: :destroy
   has_many :subscribers, through: :issue_subscriptions, foreign_key: :user_id,
                          source: :user
+  has_many :active_issue_subscriptions, -> { where(active: true) },
+           class_name: 'IssueSubscription', dependent: nil, inverse_of: :issue
+  has_many :active_subscribers, through: :active_issue_subscriptions,
+                                foreign_key: :user_id, source: :user
   has_many :closures, class_name: 'IssueClosure', dependent: :destroy
   has_many :reopenings, class_name: 'IssueReopening', dependent: :destroy
   has_many :notifications, class_name: 'IssueNotification', dependent: :destroy
@@ -218,6 +243,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def subscribe_user(subscriber = nil)
     subscriber ||= user
     return unless subscriber
+    return if issue_subscriptions.find_by(user: subscriber)
 
     issue_subscriptions.create(user_id: subscriber.id)
   end
@@ -247,14 +273,15 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return self if old_status == status
 
-    enqueue_repo_job(old_status)
-    return self if old_status.blank? # sending via SubsciptionJob
+    if old_status == status
+      old_status = nil
+    else
+      enqueue_repo_job(old_status)
+    end
 
-    options = notification_options(old_status)
-    options[:current_user] = current_user if current_user.present?
-    IssueSubscribersNotifierJob.perform_later(self, options)
+    subscribe_and_notify(old_status, current_user)
+
     self
   end
 
@@ -295,18 +322,18 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     false
   end
 
-  def notification_options(old_status)
-    if old_status.present?
-      { event: 'status', details: "#{old_status},#{status}" }
-    else
-      { event: 'new' }
-    end
-  end
-
   def update_priority_level
     return unless tasks
 
     update(priority_level: tasks.minimum(:priority_level))
+  end
+
+  def search_subscribers
+    return User.none unless project.totally_visible?
+
+    User.joins(:search_subscriptions)
+        .where(SEARCH_SQL, search_subscribers_map)
+        .distinct
   end
 
   private
@@ -418,5 +445,33 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
       return message unless url
 
       "#{message}\n\nPlease visit for more info: #{url}"
+    end
+
+    def notification_options(old_status, current_user = nil)
+      options =
+        if old_status.present?
+          { event: 'status', details: "#{old_status},#{status}" }
+        else
+          { event: 'new' }
+        end
+      return options if current_user.nil?
+
+      options.merge(current_user: current_user)
+    end
+
+    def subscribe_and_notify(old_status, current_user)
+      options = notification_options(old_status, current_user)
+
+      unless old_status.nil?
+        IssueSubscribersNotifierJob.perform_later(self, options)
+      end
+      IssueSubscriptionsJob.perform_later(self, options)
+    end
+
+    def search_subscribers_map
+      { category_id: category.id, project_id: project.id,
+        source_user_id: user.id, issue_type_id: issue_type.id,
+        status: status, summary: summary, description: description,
+        closed: closed }
     end
 end

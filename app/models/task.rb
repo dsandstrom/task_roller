@@ -4,12 +4,14 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   include Filter
 
   DEFAULT_ORDER = 'tasks.updated_at desc'
+
   PRIORITY_LEVEL_OPTIONS = {
     4 => 'Low',
     3 => 'Medium',
     2 => 'High',
     1 => 'Critical'
   }.freeze
+
   STATUS_OPTIONS = {
     open: { color: 'green' },
     unassigned: { color: 'brown' },
@@ -20,6 +22,26 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     duplicate: { color: 'brown' },
     closed: { color: 'red' }
   }.freeze
+
+  SEARCH_SQL = <<~SQL.squish.freeze
+    search_subscriptions.include_tasks = TRUE
+    AND search_subscriptions.active = TRUE
+    AND (search_subscriptions.category_id IS NULL
+         OR search_subscriptions.category_id = :category_id)
+    AND (search_subscriptions.project_id IS NULL
+         OR search_subscriptions.project_id = :project_id)
+    AND (search_subscriptions.source_user_id IS NULL
+         OR search_subscriptions.source_user_id = :source_user_id)
+    AND (search_subscriptions.task_status IS NULL
+         OR search_subscriptions.task_status = :status
+         OR (search_subscriptions.task_status = 'open' AND :closed = FALSE)
+         OR (search_subscriptions.task_status = 'closed' AND :closed = TRUE))
+    AND (search_subscriptions.task_type_id IS NULL
+         OR search_subscriptions.task_type_id = :task_type_id)
+    AND (search_subscriptions.term IS NULL
+         OR :summary ILIKE CONCAT('%', search_subscriptions.term, '%')
+         OR :description ILIKE CONCAT('%', search_subscriptions.term, '%'))
+  SQL
 
   belongs_to :user
   belongs_to :task_type
@@ -75,6 +97,10 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribers, through: :task_subscriptions, source: :user
+  has_many :active_task_subscriptions, -> { where(active: true) },
+           class_name: 'TaskSubscription', dependent: nil, inverse_of: :task
+  has_many :active_subscribers, through: :active_task_subscriptions,
+                                source: :user
   has_many :closures, class_name: 'TaskClosure', dependent: :destroy
   has_many :reopenings, class_name: 'TaskReopening', dependent: :destroy
   has_many :notifications, class_name: 'TaskNotification', dependent: :destroy
@@ -271,6 +297,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def subscribe_user(subscriber = nil)
     subscriber ||= user
     return unless subscriber
+    return if task_subscriptions.find_by(user: subscriber)
 
     task_subscriptions.create(user_id: subscriber.id)
   end
@@ -323,11 +350,16 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     # rubocop:disable Rails/SkipsModelValidations
     update_column :status, build_status
     # rubocop:enable Rails/SkipsModelValidations
-    return self if old_status.blank? || old_status == status
 
-    options = notification_options(old_status)
-    options[:current_user] = current_user if current_user.present?
-    TaskSubscribersNotifierJob.perform_later(self, options)
+    old_status = nil if old_status == status
+
+    options = notification_options(old_status, current_user)
+
+    if old_status.present?
+      TaskSubscribersNotifierJob.perform_later(self, options)
+    end
+
+    TaskSubscriptionsJob.perform_later(self, options)
     self
   end
 
@@ -346,23 +378,23 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     true
   end
 
-  def notification_options(old_status)
-    if old_status.present?
-      { event: 'status', details: "#{old_status},#{status}" }
-    else
-      { event: 'new' }
-    end
-  end
-
   def update_issues(old_issue, user)
     if issue
-      issue.update_status(user)
       issue.update_priority_level
+      issue.update_status(user)
     end
     return unless old_issue && old_issue != issue
 
-    old_issue.update_status(user)
     old_issue.update_priority_level
+    old_issue.update_status(user)
+  end
+
+  def search_subscribers
+    return User.none unless project.totally_visible?
+
+    User.joins(:search_subscriptions)
+        .where(SEARCH_SQL, search_subscribers_map)
+        .distinct
   end
 
   private
@@ -405,6 +437,18 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
       else
         'closed'
       end
+    end
+
+    def notification_options(old_status, current_user)
+      options =
+        if old_status.present?
+          { event: 'status', details: "#{old_status},#{status}" }
+        else
+          { event: 'new' }
+        end
+      return options if current_user.nil?
+
+      options.merge(current_user: current_user)
     end
 
     def any_pending_reviews?
@@ -471,5 +515,11 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
       tasks = issue.tasks
       tasks&.where&.not(id: id)
+    end
+
+    def search_subscribers_map
+      { category_id: category.id, project_id: project.id,
+        source_user_id: user.id, task_type_id: task_type.id, status: status,
+        summary: summary, description: description, closed: closed }
     end
 end

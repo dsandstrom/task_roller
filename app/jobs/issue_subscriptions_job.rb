@@ -1,14 +1,13 @@
 class IssueSubscriptionsJob < ApplicationJob
   queue_as :default
 
-  def perform(issue, **options)
+  def perform(issue, options)
     return unless issue
 
-    subscribers = issue.category.issue_subscribers |
-                  issue.project.issue_subscribers
+    issue.search_subscribers.not_subscribed_to_issue(issue).each do |subscriber|
+      next if subscriber == issue.user
 
-    subscribers.each do |u|
-      IssueSubscriptionJob.perform_later(issue, u, options)
+      IssueSubscriptionJob.perform_later(issue, subscriber, options)
     end
   end
 end

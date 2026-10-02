@@ -300,6 +300,15 @@ a {
       flex: 0 0 30rem;
       order: 2;
       margin-top: 0;
+
+      &.button-column {
+        flex: 0 0 auto;
+
+        form,
+        .button {
+          margin: 0;
+        }
+      }
     }
 
     > .half-column {

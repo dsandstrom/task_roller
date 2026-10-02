@@ -33,32 +33,34 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to respond_to(:status) }
   it { is_expected.to respond_to(:octokit) }
 
-  it { is_expected.to validate_presence_of(:summary) }
-  it { is_expected.to validate_length_of(:summary).is_at_most(200) }
-  it { is_expected.to validate_presence_of(:description) }
-  it { is_expected.to validate_length_of(:description).is_at_most(2000) }
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:summary) }
+    it { is_expected.to validate_length_of(:summary).is_at_most(200) }
+    it { is_expected.to validate_presence_of(:description) }
+    it { is_expected.to validate_length_of(:description).is_at_most(2000) }
 
-  describe "#status" do
-    context "when a valid value" do
-      %w[open pending being_worked_on addressed
-         resolved duplicate closed].each do |value|
-        before { subject.status = value }
+    describe "for status" do
+      context "when a valid value" do
+        %w[open pending being_worked_on addressed
+           resolved duplicate closed].each do |value|
+          before { subject.status = value }
+
+          it { is_expected.to be_valid }
+        end
+      end
+
+      context "when value is nil" do
+        before { subject.status = nil }
 
         it { is_expected.to be_valid }
       end
-    end
 
-    context "when value is nil" do
-      before { subject.status = nil }
+      context "when an invalid value" do
+        ["notopen", "", "being worked on"].each do |value|
+          before { subject.status = value }
 
-      it { is_expected.to be_valid }
-    end
-
-    context "when an invalid value" do
-      ["notopen", "", "being worked on"].each do |value|
-        before { subject.status = value }
-
-        it { is_expected.not_to be_valid }
+          it { is_expected.not_to be_valid }
+        end
       end
     end
   end
@@ -72,6 +74,8 @@ RSpec.describe Issue, type: :model do
   it { is_expected.to have_many(:resolutions) }
   it { is_expected.to have_many(:issue_subscriptions).dependent(:destroy) }
   it { is_expected.to have_many(:subscribers) }
+  it { is_expected.to have_many(:active_issue_subscriptions) }
+  it { is_expected.to have_many(:active_subscribers) }
   it { is_expected.to have_many(:closures) }
   it { is_expected.to have_many(:reopenings) }
 
@@ -1247,6 +1251,9 @@ RSpec.describe Issue, type: :model do
   end
 
   describe "#update_status" do
+    let(:new_job_options) { { event: "new" } }
+    let(:octokit_client) { Octokit::Client.new(access_token: "token") }
+
     context "when closed is false" do
       context "and no tasks" do
         let(:issue) { Fabricate(:issue, status: "closed") }
@@ -1258,6 +1265,11 @@ RSpec.describe Issue, type: :model do
         context "when not given current_user" do
           let(:job_options) { { event: "status", details: "closed,pending" } }
 
+          before do
+            issue.subscribers << reporter
+            Fabricate(:user_reporter)
+          end
+
           it "changes status to 'pending'" do
             expect do
               issue.update_status
@@ -1266,14 +1278,20 @@ RSpec.describe Issue, type: :model do
           end
 
           it "enqueues IssueSubscribersNotifierJob" do
-            issue.subscribers << reporter
-            Fabricate(:user_reporter)
-
             issue.update_status
 
             expect(IssueSubscribersNotifierJob)
               .to have_been_enqueued.exactly(:once)
             expect(IssueSubscribersNotifierJob)
+              .to have_been_enqueued.with(issue, job_options)
+          end
+
+          it "enqueues IssueSubscriptionsJob" do
+            issue.update_status
+
+            expect(IssueSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(IssueSubscriptionsJob)
               .to have_been_enqueued.with(issue, job_options)
           end
         end
@@ -1284,6 +1302,11 @@ RSpec.describe Issue, type: :model do
               current_user: reporter }
           end
 
+          before do
+            issue.subscribers << reporter
+            Fabricate(:user_reporter)
+          end
+
           it "changes status to 'pending'" do
             expect do
               issue.update_status(reporter)
@@ -1292,14 +1315,20 @@ RSpec.describe Issue, type: :model do
           end
 
           it "enqueues IssueSubscribersNotifierJob" do
-            issue.subscribers << reporter
-            Fabricate(:user_reporter)
-
             issue.update_status(reporter)
 
             expect(IssueSubscribersNotifierJob)
               .to have_been_enqueued.exactly(:once)
             expect(IssueSubscribersNotifierJob)
+              .to have_been_enqueued.with(issue, job_options)
+          end
+
+          it "enqueues IssueSubscriptionsJob" do
+            issue.update_status(reporter)
+
+            expect(IssueSubscriptionsJob)
+              .to have_been_enqueued.exactly(:once)
+            expect(IssueSubscriptionsJob)
               .to have_been_enqueued.with(issue, job_options)
           end
         end
@@ -1313,6 +1342,8 @@ RSpec.describe Issue, type: :model do
 
         before do
           allow(issue).to receive(:open_tasks?) { true }
+          issue.subscribers << reporter
+          Fabricate(:user_reporter)
         end
 
         it "changes status to 'being_worked_on'" do
@@ -1323,14 +1354,20 @@ RSpec.describe Issue, type: :model do
         end
 
         it "enqueues IssueSubscribersNotifierJob" do
-          issue.subscribers << reporter
-          Fabricate(:user_reporter)
-
           issue.update_status
 
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.exactly(:once)
           expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
             .to have_been_enqueued.with(issue, job_options)
         end
       end
@@ -1340,6 +1377,8 @@ RSpec.describe Issue, type: :model do
 
         before do
           allow(issue).to receive(:open_tasks?) { false }
+          issue.subscribers << reporter
+          Fabricate(:user_reporter)
         end
 
         it "doesn't change status" do
@@ -1349,17 +1388,29 @@ RSpec.describe Issue, type: :model do
           end.not_to change(issue, :status)
         end
 
-        it "doesn't enqueue any jobs" do
-          issue.subscribers << reporter
+        it "doesn't enqueue IssueSubscribersNotifierJob" do
+          issue.update_status
 
-          expect do
-            issue.update_status
-          end.not_to have_enqueued_job
+          expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
+        end
+
+        it "enqueues IssueSubscriptionsJob with new event" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, new_job_options)
         end
       end
 
       context "and is originally nil status" do
         let(:issue) { Fabricate(:issue, status: nil) }
+
+        before do
+          issue.subscribers << reporter
+          Fabricate(:user_reporter)
+        end
 
         it "changes status to 'pending'" do
           expect do
@@ -1369,12 +1420,18 @@ RSpec.describe Issue, type: :model do
         end
 
         it "doesn't enqueue IssueSubscribersNotifierJob" do
-          issue.subscribers << reporter
-
           issue.update_status
 
-          expect(IssueSubscribersNotifierJob)
-            .not_to have_been_enqueued
+          expect(IssueSubscribersNotifierJob).not_to have_been_enqueued
+        end
+
+        it "enqueues IssueSubscriptionsJob with new event" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, new_job_options)
         end
       end
 
@@ -1413,6 +1470,15 @@ RSpec.describe Issue, type: :model do
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.with(issue, job_options)
         end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
       end
 
       context "and user already has a 'new' notification" do
@@ -1440,13 +1506,20 @@ RSpec.describe Issue, type: :model do
         end
 
         it "enqueues IssueSubscribersNotifierJob" do
-          Fabricate(:user_reporter)
-
           issue.update_status
 
           expect(IssueSubscribersNotifierJob)
             .to have_been_enqueued.exactly(:once)
           expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
             .to have_been_enqueued.with(issue, job_options)
         end
       end
@@ -1458,6 +1531,10 @@ RSpec.describe Issue, type: :model do
       before { issue.update_attribute :status, "almostclosed" }
 
       context "and without tasks" do
+        let(:job_options) do
+          { event: "status", details: "almostclosed,closed" }
+        end
+
         before do
           allow(issue).to receive(:tasks_approved?) { false }
         end
@@ -1468,9 +1545,31 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
+
+        it "enqueues IssueSubscribersNotifierJob" do
+          issue.update_status
+
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
       end
 
       context "and tasks_approved? returns true" do
+        let(:job_options) do
+          { event: "status", details: "almostclosed,addressed" }
+        end
+
         before do
           allow(issue).to receive(:tasks_approved?) { true }
           allow(issue).to receive(:resolution_approved?) { false }
@@ -1482,9 +1581,31 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("addressed")
         end
+
+        it "enqueues IssueSubscribersNotifierJob" do
+          issue.update_status
+
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
       end
 
       context "and resolved? returns true" do
+        let(:job_options) do
+          { event: "status", details: "almostclosed,resolved" }
+        end
+
         before do
           allow(issue).to receive(:tasks_approved?) { false }
           allow(issue).to receive(:resolution_approved?) { true }
@@ -1496,9 +1617,31 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("resolved")
         end
+
+        it "enqueues IssueSubscribersNotifierJob" do
+          issue.update_status
+
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
       end
 
       context "and tasks_approved?, resolved? return false" do
+        let(:job_options) do
+          { event: "status", details: "almostclosed,closed" }
+        end
+
         before do
           allow(issue).to receive(:tasks_approved?) { false }
           allow(issue).to receive(:resolution_approved?) { false }
@@ -1510,9 +1653,31 @@ RSpec.describe Issue, type: :model do
             issue.reload
           end.to change(issue, :status).to("closed")
         end
+
+        it "enqueues IssueSubscribersNotifierJob" do
+          issue.update_status
+
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
       end
 
       context "and duplicate? returns true" do
+        let(:job_options) do
+          { event: "status", details: "almostclosed,duplicate" }
+        end
+
         before do
           allow(issue).to receive(:source_connection?) { true }
         end
@@ -1522,6 +1687,183 @@ RSpec.describe Issue, type: :model do
             issue.update_status
             issue.reload
           end.to change(issue, :status).to("duplicate")
+        end
+
+        it "enqueues IssueSubscribersNotifierJob" do
+          issue.update_status
+
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscribersNotifierJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+
+        it "enqueues IssueSubscriptionsJob" do
+          issue.update_status
+
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.exactly(:once)
+          expect(IssueSubscriptionsJob)
+            .to have_been_enqueued.with(issue, job_options)
+        end
+      end
+    end
+
+    context "for issue starting with nil status" do
+      let(:issue) { Fabricate(:issue, status: nil) }
+
+      context "when octokit set" do
+        before do
+          allow(issue).to receive(:octokit).and_return(octokit_client)
+        end
+
+        it "enqueues OpenRepoIssueJob" do
+          issue.update_status
+
+          expect(OpenRepoIssueJob).to have_been_enqueued.exactly(:once)
+          expect(OpenRepoIssueJob).to have_been_enqueued.with(issue)
+        end
+
+        it "doesn't enqueue any other Repo jobs" do
+          issue.update_status
+
+          expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          expect(CloseRepoIssueJob).not_to have_been_enqueued
+        end
+      end
+
+      context "when octokit nil" do
+        it "doesn't enqueue OpenRepoIssueJob" do
+          issue.update_status
+
+          expect(OpenRepoIssueJob).not_to have_been_enqueued
+          expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          expect(CloseRepoIssueJob).not_to have_been_enqueued
+        end
+      end
+    end
+
+    context "for issue starting with pending status" do
+      let(:issue) { Fabricate(:issue, status: "pending") }
+
+      context "and staying pending" do
+        before do
+          allow(issue).to receive(:octokit).and_return(octokit_client)
+        end
+
+        it "doesn't enqueue any Repo jobs" do
+          issue.update_status
+
+          expect(OpenRepoIssueJob).not_to have_been_enqueued
+          expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          expect(CloseRepoIssueJob).not_to have_been_enqueued
+        end
+      end
+
+      context "and now being_worked_on" do
+        before do
+          allow(issue).to receive(:octokit).and_return(octokit_client)
+          Fabricate(:task, issue: issue)
+        end
+
+        it "doesn't enqueue any Repo jobs" do
+          issue.update_status
+
+          expect(OpenRepoIssueJob).not_to have_been_enqueued
+          expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          expect(CloseRepoIssueJob).not_to have_been_enqueued
+        end
+      end
+
+      context "and now closed" do
+        before do
+          Fabricate(:approved_task, issue: issue)
+          issue.update(closed: true)
+        end
+
+        context "when octokit set" do
+          before do
+            allow(issue).to receive(:octokit).and_return(octokit_client)
+          end
+
+          it "enqueues CloseRepoIssueJob" do
+            issue.update_status
+
+            expect(CloseRepoIssueJob).to have_been_enqueued.exactly(:once)
+            expect(CloseRepoIssueJob).to have_been_enqueued.with(issue)
+          end
+
+          it "doesn't enqueue any other Repo jobs" do
+            issue.update_status
+
+            expect(OpenRepoIssueJob).not_to have_been_enqueued
+            expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          end
+        end
+
+        context "when octokit nil" do
+          it "doesn't enqueue repo jobs" do
+            issue.update_status
+
+            expect(OpenRepoIssueJob).not_to have_been_enqueued
+            expect(ReopenRepoIssueJob).not_to have_been_enqueued
+            expect(CloseRepoIssueJob).not_to have_been_enqueued
+          end
+        end
+      end
+    end
+
+    context "for issue starting with resolved status" do
+      let(:issue) { Fabricate(:resolved_issue) }
+
+      context "and reopened" do
+        before do
+          issue.update(closed: false)
+        end
+
+        context "when octokit set" do
+          before do
+            allow(issue).to receive(:octokit).and_return(octokit_client)
+          end
+
+          it "enqueues ReopenRepoIssueJob" do
+            issue.update_status
+
+            expect(ReopenRepoIssueJob).to have_been_enqueued.exactly(:once)
+            expect(ReopenRepoIssueJob).to have_been_enqueued.with(issue)
+          end
+
+          it "doesn't enqueue any other Repo jobs" do
+            issue.update_status
+
+            expect(OpenRepoIssueJob).not_to have_been_enqueued
+            expect(CloseRepoIssueJob).not_to have_been_enqueued
+          end
+        end
+
+        context "when octokit nil" do
+          it "doesn't enqueue repo jobs" do
+            issue.update_status
+
+            expect(OpenRepoIssueJob).not_to have_been_enqueued
+            expect(ReopenRepoIssueJob).not_to have_been_enqueued
+            expect(CloseRepoIssueJob).not_to have_been_enqueued
+          end
+        end
+      end
+
+      context "and staying closed" do
+        before do
+          allow(issue).to receive(:octokit)
+            .and_return(octokit_client)
+        end
+
+        it "doesn't enqueue repo jobs" do
+          issue.update_status
+
+          expect(OpenRepoIssueJob).not_to have_been_enqueued
+          expect(ReopenRepoIssueJob).not_to have_been_enqueued
+          expect(CloseRepoIssueJob).not_to have_been_enqueued
         end
       end
     end
@@ -1826,6 +2168,18 @@ RSpec.describe Issue, type: :model do
           end.to change(IssueSubscription, :count).by(1)
         end
       end
+
+      context "that is already subscribed" do
+        before do
+          Fabricate(:issue_subscription, issue: issue, user: subscriber)
+        end
+
+        it "doesn't create a new issue_subscription" do
+          expect do
+            issue.subscribe_user(subscriber)
+          end.not_to change(IssueSubscription, :count)
+        end
+      end
     end
   end
 
@@ -2124,21 +2478,6 @@ RSpec.describe Issue, type: :model do
     end
   end
 
-  describe "#notification_options" do
-    context "when given nil" do
-      it "returns new status" do
-        expect(subject.notification_options(nil)).to eq({ event: "new" })
-      end
-    end
-
-    context "when given a status" do
-      it "returns both statuses" do
-        expect(subject.notification_options("old"))
-          .to eq({ event: "status", details: "old,#{subject.status}" })
-      end
-    end
-  end
-
   describe "#update_priority_level" do
     context "when issue has no tasks" do
       let(:issue) { Fabricate(:issue) }
@@ -2197,6 +2536,286 @@ RSpec.describe Issue, type: :model do
             end.not_to change(issue, :priority_level).from(3)
           end
         end
+      end
+    end
+  end
+
+  describe "#octokit" do
+    before do
+      ENV["GITHUB_USER_TOKEN"] = "token"
+    end
+
+    context "when github repo set" do
+      let(:issue) do
+        Fabricate(:issue, github_repo_id: 27, github_id: 11, github_number: 111)
+      end
+
+      it "returns an Octokit Client" do
+        expect(issue.octokit).to be_a(Octokit::Client)
+      end
+    end
+
+    context "when no token" do
+      before do
+        ENV["GITHUB_USER_TOKEN"] = nil
+      end
+
+      let(:issue) do
+        Fabricate(:issue, github_repo_id: 27, github_id: 11, github_number: 111)
+      end
+
+      it "returns nil" do
+        expect(issue.octokit).to be_nil
+      end
+    end
+
+    context "when no github_repo_id" do
+      let(:issue) do
+        Fabricate(:issue, github_repo_id: nil, github_id: 11,
+                          github_number: 111)
+      end
+
+      it "returns nil" do
+        expect(issue.octokit).to be_nil
+      end
+    end
+
+    context "when no github_id" do
+      let(:issue) do
+        Fabricate(:issue, github_repo_id: 27, github_id: nil,
+                          github_number: 111)
+      end
+
+      it "returns nil" do
+        expect(issue.octokit).to be_nil
+      end
+    end
+
+    context "when no github_number" do
+      let(:issue) do
+        Fabricate(:issue, github_repo_id: 27, github_id: 11, github_number: nil)
+      end
+
+      it "returns nil" do
+        expect(issue.octokit).to be_nil
+      end
+    end
+  end
+
+  describe "#search_subscribers" do
+    let(:category) { Fabricate(:category) }
+    let(:project) { Fabricate(:project, category: category) }
+    let(:issue_type) { Fabricate(:issue_type) }
+    let(:issue) do
+      Fabricate(:issue, user: source_user, project: project,
+                        issue_type: issue_type, status: "pending",
+                        summary: "Alpha Summary",
+                        description: "Description with beta word.")
+    end
+    let(:user) { Fabricate(:user) }
+    let(:source_user) { Fabricate(:user) }
+
+    context "when no matching search_subscriptions" do
+      before do
+        Fabricate(:tasks_search_subscription)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
+      end
+    end
+
+    context "when search_subscription matches the category" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil,
+                                               issue_status: "pending")
+        Fabricate(:issues_search_subscription, category: category,
+                                               term: nil,
+                                               issue_status: "resolved")
+        Fabricate(:issues_search_subscription, category: category, term: nil,
+                                               active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the project" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, project: project,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, project: project, term: nil,
+                                               issue_status: "assigned")
+        Fabricate(:issues_search_subscription, project: Fabricate(:project),
+                                               term: nil)
+        Fabricate(:issues_search_subscription, project: project, term: nil,
+                                               active: false)
+      end
+
+      it "returns the users with active search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the source_user" do
+      before do
+        Fabricate(:issues_search_subscription, user: user,
+                                               source_user: source_user,
+                                               term: nil)
+        Fabricate(:issues_search_subscription, source_user: Fabricate(:user),
+                                               term: nil)
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the status" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "pending")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "assigned")
+      end
+
+      it "returns the users with matching search_subscriptions" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the issue_type" do
+      before do
+        Fabricate(:issues_search_subscription,
+                  term: nil, user: user, issue_type: issue_type)
+        Fabricate(:issues_search_subscription,
+                  term: nil, issue_type: Fabricate(:issue_type))
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the summary" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: "lpha")
+        Fabricate(:issues_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when search_subscription matches the description" do
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: "beta Wor")
+        Fabricate(:issues_search_subscription, term: "notamatch")
+      end
+
+      it "returns the user" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is open with 'pending' status" do
+      let(:issue) do
+        Fabricate(:issue, user: source_user, project: project,
+                          issue_type: issue_type, status: "pending")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "open")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is open with 'being_worked_on' status" do
+      let(:issue) do
+        Fabricate(:issue, user: source_user, project: project,
+                          issue_type: issue_type, status: "being_worked_on")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "open")
+        Fabricate(:issues_search_subscription, term: nil,
+                                               issue_status: "closed")
+      end
+
+      it "returns users with open status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is closed with 'addressed' status" do
+      let(:issue) do
+        Fabricate(:closed_issue, user: source_user, project: project,
+                                 issue_type: issue_type, status: "addressed")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "closed")
+        Fabricate(:issues_search_subscription, term: nil, issue_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is closed with 'duplicate' status" do
+      let(:issue) do
+        Fabricate(:closed_issue, user: source_user, project: project,
+                                 issue_type: issue_type, status: "duplicate")
+      end
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, term: nil,
+                                               issue_status: "closed")
+        Fabricate(:issues_search_subscription, term: nil, issue_status: "open")
+      end
+
+      it "returns users with closed status search_subscription" do
+        expect(issue.search_subscribers).to eq([user])
+      end
+    end
+
+    context "when issue is from invisible category" do
+      let(:category) { Fabricate(:invisible_category) }
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, category: category,
+                                               term: nil)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
+      end
+    end
+
+    context "when issue is from invisible project" do
+      let(:project) { Fabricate(:invisible_project) }
+
+      before do
+        Fabricate(:issues_search_subscription, user: user, project: project,
+                                               term: nil)
+      end
+
+      it "returns []" do
+        expect(issue.search_subscribers).to eq([])
       end
     end
   end

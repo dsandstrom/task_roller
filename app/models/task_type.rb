@@ -8,6 +8,7 @@ class TaskType < ApplicationRecord
   attr_accessor :new_position
 
   has_many :search_results, dependent: nil
+  has_many :search_subscriptions, dependent: :destroy
 
   validates :icon, presence: true, inclusion: { in: ICON_OPTIONS }
   validates :name, presence: true, length: { maximum: 100 },

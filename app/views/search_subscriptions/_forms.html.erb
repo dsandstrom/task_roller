@@ -1,0 +1,19 @@
+<div class="filters-wrapper search-subscription-wrapper">
+  <h3>Save &amp; Subscribe</h3>
+
+  <%= render 'search_subscriptions/title', search_subscription: search_subscription %>
+
+  <div class="field">
+    <%= turbo_frame_tag :turbo_search_subscription_forms do %>
+      <% if search_subscription.persisted? %>
+        <%= render 'search_subscriptions/toggle_form_wrapper',
+                   search_subscription: search_subscription %>
+      <% else %>
+        <%= render 'search_subscriptions/form',
+                   search_subscription: search_subscription %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <p><%= link_to 'All Saved Searches', search_subscriptions_path %></p>
+</div>

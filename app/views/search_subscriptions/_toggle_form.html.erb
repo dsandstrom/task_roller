@@ -1,0 +1,24 @@
+<%= form_with(model: search_subscription,
+              url: toggle_search_subscription_path(search_subscription),
+              html: { name: 'search_subscription_toggle_form',
+                      class: 'search-subscription-form' },
+              method: 'patch',
+              data: { turbo_method: 'patch' }) do |form| %>
+  <div class="button-wrapper">
+    <% if search_subscription.active %>
+      <%= link_to 'Subscribed',
+                  search_subscription_path(search_subscription),
+                  class: 'button button-success button-disabled' %>
+      <%= button_tag class: 'button button-success button-unsubscribe button-icon',
+                     title: 'Unsubscribe',
+                     data: { turbo_submits_with: '...' } do %>
+        <%= icon('close') %>
+      <% end %>
+    <% else %>
+      <%= form.submit 'Auto-Subscribe',
+                      class: 'button button-outline',
+                      title: 'Subscribe',
+                      data: { disable_with: 'Subscribing...', turbo_submits_with: 'Subscribing...' } %>
+    <% end %>
+  </div>
+<% end %>

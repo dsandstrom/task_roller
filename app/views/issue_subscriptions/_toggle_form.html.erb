@@ -1,0 +1,31 @@
+<% if issue_subscription.active %>
+  <div class="button-wrapper">
+    <%= link_to 'Subscribed',
+                  issue_issue_subscription_path(issue, issue_subscription),
+                  method: :patch,
+                  class: 'button button-success button-disabled' %>
+    <%= form_with(model: issue_subscription,
+                  url: toggle_issue_issue_subscription_path(issue, issue_subscription),
+                  method: :patch,
+                  html: { name: 'issue_subscription_destroy_form',
+                          class: 'issue-subscription-form' },
+                  data: { turbo_method: 'patch' }) do |form| %>
+      <%= button_tag class: 'button button-success button-unsubscribe button-icon',
+                     title: 'Unsubscribe',
+                     data: { turbo_submits_with: '...' } do %>
+        <%= icon('close') %>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <%= form_with(model: issue_subscription,
+              url: toggle_issue_issue_subscription_path(issue, issue_subscription),
+              html: { name: 'issue_subscription_form',
+                      class: 'issue-subscription-form' },
+              data: { turbo_method: 'patch' }) do |form| %>
+    <%= form.submit 'Subscribe to issue',
+                    class: 'button button-outline',
+                    title: 'Subscribe',
+                    data: { turbo_submits_with: 'Subscribing...' } %>
+  <% end %>
+<% end %>

@@ -114,46 +114,6 @@ RSpec.describe "projects/index", type: :view do
         expect(rendered).not_to have_link(nil, href: new_project_url)
       end
     end
-
-    context "when not subscribed to project" do
-      before do
-        Fabricate(:project_issues_subscription, project: project)
-        Fabricate(:project_tasks_subscription, project: project)
-      end
-
-      it "renders subscribe buttons" do
-        render
-
-        issues_url = project_issues_subscriptions_path(project)
-        tasks_url = project_tasks_subscriptions_path(project)
-
-        assert_select "form[action=?][method=?]", issues_url, "post"
-        assert_select "form[action=?][method=?]", tasks_url, "post"
-      end
-    end
-
-    context "when subscribed to project" do
-      let!(:issues_subscription) do
-        Fabricate(:project_issues_subscription, project: project,
-                                                user: current_user)
-      end
-      let!(:tasks_subscription) do
-        Fabricate(:project_tasks_subscription, project: project,
-                                               user: current_user)
-      end
-
-      it "renders unsubscribe links" do
-        render
-
-        issues_url =
-          project_issues_subscription_path(project, issues_subscription)
-        tasks_url = project_tasks_subscription_path(project, tasks_subscription)
-
-        assert_select "form[action=?][data-turbo-method=?]", issues_url,
-                      "delete"
-        assert_select "form[action=?][data-turbo-method=?]", tasks_url, "delete"
-      end
-    end
   end
 
   %w[worker reporter].each do |employee_type|

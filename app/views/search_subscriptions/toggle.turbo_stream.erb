@@ -1,0 +1,5 @@
+<%=
+  turbo_stream.update "turbo_search_subscription_#{@search_subscription.id}",
+                      partial: 'search_subscriptions/toggle_form',
+                      locals: { search_subscription: @search_subscription }
+%>

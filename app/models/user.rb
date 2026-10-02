@@ -24,16 +24,6 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :subscribed_issues, through: :issue_subscriptions, source: :issue
   has_many :task_subscriptions, dependent: :destroy
   has_many :subscribed_tasks, through: :task_subscriptions, source: :task
-  has_many :category_issues_subscriptions, dependent: :destroy
-  has_many :category_tasks_subscriptions, dependent: :destroy
-  has_many :subscribed_issue_categories,
-           through: :category_issues_subscriptions,
-           source: :category
-  has_many :subscribed_task_categories,
-           through: :category_tasks_subscriptions,
-           source: :category
-  has_many :project_issues_subscriptions, dependent: :destroy
-  has_many :project_tasks_subscriptions, dependent: :destroy
   has_many :issue_closures, dependent: :nullify
   has_many :task_closures, dependent: :nullify
   has_many :issue_reopenings, dependent: :nullify
@@ -45,6 +35,12 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
   has_many :notifying_issues, through: :issue_notifications,
                               class_name: 'Issue', source: :issue
   has_many :repo_callouts, dependent: :nullify
+  has_many :search_subscriptions, -> { order(:created_at) }, inverse_of: :user,
+                                                             dependent: :destroy
+  has_many :source_search_subscriptions, dependent: :destroy,
+                                         class_name: 'SearchSubscription',
+                                         foreign_key: :source_user_id,
+                                         inverse_of: :source_user
 
   validates :name, presence: true, length: { maximum: 150 },
                    format: { without: NAME_DISALLOW_REGEX }
@@ -160,6 +156,20 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
         user.email = data['email']
       end
     end
+  end
+
+  def self.not_subscribed_to_issue(issue)
+    left_joins(:issue_subscriptions)
+      .where('issue_subscriptions.issue_id IS NULL ' \
+             'OR issue_subscriptions.issue_id != ?', issue.id)
+      .distinct
+  end
+
+  def self.not_subscribed_to_task(task)
+    left_joins(:task_subscriptions)
+      .where('task_subscriptions.task_id IS NULL ' \
+             'OR task_subscriptions.task_id != ?', task.id)
+      .distinct
   end
 
   # INSTANCE

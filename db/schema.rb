@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_29_004029) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,22 +23,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
     t.boolean "visible", default: true
     t.index ["internal"], name: "index_categories_on_internal"
     t.index ["visible"], name: "index_categories_on_visible"
-  end
-
-  create_table "category_issues_subscriptions", force: :cascade do |t|
-    t.integer "category_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["category_id", "user_id"], name: "index_category_issues_subscriptions_on_category_id_and_user_id", unique: true
-  end
-
-  create_table "category_tasks_subscriptions", force: :cascade do |t|
-    t.integer "category_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["category_id", "user_id"], name: "index_category_tasks_subscriptions_on_category_id_and_user_id", unique: true
   end
 
   create_table "issue_branches", force: :cascade do |t|
@@ -95,6 +79,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
   end
 
   create_table "issue_subscriptions", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.integer "issue_id", null: false
     t.datetime "updated_at", null: false
@@ -150,22 +135,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
     t.integer "user_id"
   end
 
-  create_table "project_issues_subscriptions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "project_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["project_id", "user_id"], name: "index_project_issues_subscriptions_on_project_id_and_user_id", unique: true
-  end
-
-  create_table "project_tasks_subscriptions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "project_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["project_id", "user_id"], name: "index_project_tasks_subscriptions_on_project_id_and_user_id", unique: true
-  end
-
   create_table "projects", force: :cascade do |t|
     t.integer "category_id"
     t.datetime "created_at", precision: nil, null: false
@@ -210,6 +179,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
     t.integer "task_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+  end
+
+  create_table "search_subscriptions", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.integer "category_id"
+    t.datetime "created_at", null: false
+    t.boolean "include_issues", default: true, null: false
+    t.boolean "include_tasks", default: true, null: false
+    t.string "issue_status"
+    t.integer "issue_type_id"
+    t.integer "project_id"
+    t.integer "source_user_id"
+    t.string "task_status"
+    t.integer "task_type_id"
+    t.string "term"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "term", "issue_status", "task_status", "issue_type_id", "task_type_id", "project_id", "category_id", "include_issues", "include_tasks", "source_user_id"], name: "index_search_subscriptions_on_user_id_and_parameters", unique: true
+    t.index ["user_id"], name: "index_search_subscriptions_on_user_id"
   end
 
   create_table "task_assignees", force: :cascade do |t|
@@ -274,6 +262,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_050820) do
   end
 
   create_table "task_subscriptions", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.integer "task_id", null: false
     t.datetime "updated_at", null: false

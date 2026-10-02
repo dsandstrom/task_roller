@@ -17,6 +17,17 @@ class TaskSubscriptionsController < ApplicationController
     end
   end
 
+  def toggle
+    @task_subscription.toggle
+
+    respond_to do |format|
+      format.html do
+        redirect_back_or_to(@task, notice: destroy_notice)
+      end
+      format.turbo_stream { redirect_back_or_to(@task) }
+    end
+  end
+
   def destroy
     @task_subscription.destroy
 

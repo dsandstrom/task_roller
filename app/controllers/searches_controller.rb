@@ -3,6 +3,7 @@ class SearchesController < ApplicationController
   before_action :verify_filters, only: :index
 
   def index
+    @search_subscription = build_search_subscription
     @search_results = build_search_results.page(params[:page])
   end
 

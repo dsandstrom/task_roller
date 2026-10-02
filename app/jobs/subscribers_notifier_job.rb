@@ -6,10 +6,9 @@ class SubscribersNotifierJob < ApplicationJob
   private
 
     def subscribers_except(ignored_user = nil)
-      if ignored_user
-        source.subscribers.where.not(id: ignored_user.id)
-      else
-        source.subscribers
-      end
+      subscribers = source.active_subscribers
+      return subscribers unless ignored_user
+
+      subscribers.where.not(id: ignored_user.id)
     end
 end

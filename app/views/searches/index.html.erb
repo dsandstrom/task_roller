@@ -7,17 +7,8 @@
 
 <div class="columns">
   <div class="second-column">
-    <div class="filters-wrapper">
-      <div class="heading-and-link">
-        <h3>Filters</h3>
-
-        <% if searching? %>
-          <%= link_to 'reset', search_path %>
-        <% end %>
-      </div>
-
-      <%= render 'searches/form', results: @search_results %>
-    </div>
+    <%= render 'shared/filter_form', path: search_results_path, reset_path: search_path,
+                                     search_subscription: @search_subscription %>
   </div>
 
   <div class="first-column">

@@ -1,0 +1,9 @@
+<%= subscriptions_header('Saved Searches') %>
+
+<div class="search-subscriptions">
+  <% if @search_subscriptions.any? %>
+    <%= render @search_subscriptions %>
+  <% else %>
+    <p id="no-search-subscriptions">None yet</p>
+  <% end %>
+</div>

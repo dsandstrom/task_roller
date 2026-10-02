@@ -1,14 +1,8 @@
 <% if issue_subscription.persisted? %>
-  <% return unless can?(:destroy, issue_subscription) %>
+  <% return unless can?(:update, issue_subscription) %>
 
-  <div class="button-wrapper">
-    <%= link_to 'Subscribed',
-                issue_issue_subscription_path(issue, issue_subscription),
-                method: :delete,
-                class: 'button button-success button-disabled' %>
-    <%= render 'issue_subscriptions/destroy_form',
-               issue_subscription: issue_subscription, issue: issue %>
-  </div>
+  <%= render 'issue_subscriptions/toggle_form',
+             issue_subscription: issue_subscription, issue: issue %>
 <% elsif issue && can?(:create, issue_subscription) %>
   <%= render 'issue_subscriptions/form',
              issue_subscription: issue_subscription, issue: issue %>

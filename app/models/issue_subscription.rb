@@ -6,4 +6,8 @@ class IssueSubscription < ApplicationRecord
 
   belongs_to :user, class_name: 'User'
   belongs_to :issue, class_name: 'Issue'
+
+  def toggle
+    update(active: !active)
+  end
 end

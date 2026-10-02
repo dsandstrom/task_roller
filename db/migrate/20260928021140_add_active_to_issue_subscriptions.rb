@@ -1,0 +1,8 @@
+class AddActiveToIssueSubscriptions < ActiveRecord::Migration[8.1]
+  def change
+    add_column :issue_subscriptions, :active, :boolean, default: true,
+                                                        null: false
+    add_column :task_subscriptions, :active, :boolean, default: true,
+                                                       null: false
+  end
+end

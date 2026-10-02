@@ -1,0 +1,26 @@
+<%= content_tag :div, id: "search-subscription-#{search_subscription.id}",
+                      class: 'search-subscription' do %>
+  <header class="search-subscription-header">
+    <%= render 'search_subscriptions/title', search_subscription: search_subscription %>
+  </header>
+
+  <main class="search-subscription-columns">
+    <div class="search-subscription-column">
+      <p class="search-subscription-links">
+        <%= link_to 'current results', search_subscription %>
+        <%= divider %>
+        <%= link_to 'remove', search_subscription_path(search_subscription),
+                              class: 'destroy-link',
+                              data: { turbo_method: :delete,
+                                      turbo_confirm: 'Are you sure you want to remove this saved search?' } %>
+      </p>
+    </div>
+
+    <div class="search-subscription-column">
+      <%= turbo_frame_tag "turbo_search_subscription_#{search_subscription.id}" do %>
+        <%= render 'search_subscriptions/toggle_form',
+                   search_subscription: search_subscription %>
+      <% end %>
+    </div>
+  </main>
+<% end %>
