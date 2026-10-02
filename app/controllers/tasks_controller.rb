@@ -155,6 +155,7 @@ class TasksController < ApplicationController
       if @task.save
         create_task_branch
         @task.subscribe_user
+        @task.subscribe_assignees
         update_statuses
         redirect_to @task, success: 'Task was successfully added.'
       else

@@ -1402,15 +1402,6 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscriptionsJob)
             .to have_been_enqueued.with(task, new_job_options)
         end
-
-        it "enqueues TaskAssigneesSubscriptionsJob" do
-          task.update_status
-
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.with(task, new_job_options)
-        end
       end
 
       context "and changes to 'unassigned'" do
@@ -1439,15 +1430,6 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscriptionsJob)
             .to have_been_enqueued.with(task, new_job_options)
         end
-
-        it "enqueues TaskAssigneesSubscriptionsJob" do
-          task.update_status
-
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.with(task, new_job_options)
-        end
       end
 
       context "and changes to 'closed'" do
@@ -1472,15 +1454,6 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscriptionsJob)
             .to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionsJob)
-            .to have_been_enqueued.with(task, new_job_options)
-        end
-
-        it "enqueues TaskAssigneesSubscriptionsJob" do
-          task.update_status
-
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskAssigneesSubscriptionsJob)
             .to have_been_enqueued.with(task, new_job_options)
         end
       end
@@ -1516,15 +1489,6 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscriptionsJob)
             .to have_been_enqueued.with(task, new_job_options)
         end
-
-        it "enqueues TaskAssigneesSubscriptionsJob" do
-          task.update_status
-
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.with(task, new_job_options)
-        end
       end
 
       context "and changes to 'in_progress'" do
@@ -1556,15 +1520,6 @@ RSpec.describe Task, type: :model do
           expect(TaskSubscriptionsJob)
             .to have_been_enqueued.exactly(:once)
           expect(TaskSubscriptionsJob)
-            .to have_been_enqueued.with(task, job_options)
-        end
-
-        it "enqueues TaskAssigneesSubscriptionsJob" do
-          task.update_status
-
-          expect(TaskAssigneesSubscriptionsJob)
-            .to have_been_enqueued.exactly(:once)
-          expect(TaskAssigneesSubscriptionsJob)
             .to have_been_enqueued.with(task, job_options)
         end
       end
@@ -1607,15 +1562,6 @@ RSpec.describe Task, type: :model do
             expect(TaskSubscriptionsJob)
               .to have_been_enqueued.with(task, job_options)
           end
-
-          it "enqueues TaskAssigneesSubscriptionsJob" do
-            task.update_status
-
-            expect(TaskAssigneesSubscriptionsJob)
-              .to have_been_enqueued.exactly(:once)
-            expect(TaskAssigneesSubscriptionsJob)
-              .to have_been_enqueued.with(task, job_options)
-          end
         end
 
         context "with a similar notification" do
@@ -1649,15 +1595,6 @@ RSpec.describe Task, type: :model do
             expect(TaskSubscriptionsJob)
               .to have_been_enqueued.exactly(:once)
             expect(TaskSubscriptionsJob)
-              .to have_been_enqueued.with(task, job_options)
-          end
-
-          it "enqueues TaskAssigneesSubscriptionsJob" do
-            task.update_status
-
-            expect(TaskAssigneesSubscriptionsJob)
-              .to have_been_enqueued.exactly(:once)
-            expect(TaskAssigneesSubscriptionsJob)
               .to have_been_enqueued.with(task, job_options)
           end
         end
@@ -1698,15 +1635,6 @@ RSpec.describe Task, type: :model do
         expect(TaskSubscriptionsJob)
           .to have_been_enqueued.exactly(:once)
         expect(TaskSubscriptionsJob)
-          .to have_been_enqueued.with(task, job_options)
-      end
-
-      it "enqueues TaskAssigneesSubscriptionsJob" do
-        task.update_status(subscriber)
-
-        expect(TaskAssigneesSubscriptionsJob)
-          .to have_been_enqueued.exactly(:once)
-        expect(TaskAssigneesSubscriptionsJob)
           .to have_been_enqueued.with(task, job_options)
       end
     end

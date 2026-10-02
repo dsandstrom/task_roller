@@ -76,9 +76,9 @@ class Seeds
                            summary: Faker::Company.catch_phrase,
                            description: issue_description)
       issue = Issue.create!(attrs)
+      issue.reload
       issue.subscribe_user
-      IssueSubscriptionsJob.perform_later(issue, send_new: true)
-      issue.reload.update_status
+      issue.update_status
       issue
     end
 
@@ -463,15 +463,15 @@ class Seeds
     end
 
     def update_task_status(task)
+      task.reload
       task.subscribe_user
-      TaskSubscriptionsJob.perform_later(task, send_new: true)
-      TaskAssigneesSubscriptionsJob.perform_later(task, send_new: true)
-      task.reload.update_status
+      task.subscribe_assignees
+      task.update_status
       return unless task.issue
 
       task.issue.reload
-      task.issue.update_status
       task.issue.update_priority_level
+      task.issue.update_status
     end
 
     def sample_task_attrs

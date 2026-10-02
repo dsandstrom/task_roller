@@ -1358,6 +1358,14 @@ RSpec.describe TasksController, type: :controller do
                 end.to change(current_user.task_subscriptions, :count).by(1)
               end
 
+              it "runs update_status on the new task" do
+                expect_any_instance_of(Task)
+                  .to receive(:update_status).with(current_user)
+
+                post :create, params: { project_id: project.to_param,
+                                        task: valid_attributes }
+              end
+
               it "redirects to the created task" do
                 post :create, params: { project_id: project.to_param,
                                         task: valid_attributes }
@@ -1371,12 +1379,11 @@ RSpec.describe TasksController, type: :controller do
                   valid_attributes.merge! assignee_ids: [worker.id]
                 end
 
-                it "runs update_status on the new task" do
-                  expect_any_instance_of(Task)
-                    .to receive(:update_status).with(current_user)
-
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
+                it "subscribes the assignee" do
+                  expect do
+                    post :create, params: { project_id: project.to_param,
+                                            task: valid_attributes }
+                  end.to change(worker.task_subscriptions, :count).by(1)
                 end
               end
 
@@ -1412,19 +1419,6 @@ RSpec.describe TasksController, type: :controller do
                 post :create, params: { project_id: project.to_param,
                                         task: invalid_attributes }
                 expect(response).to be_successful
-              end
-            end
-
-            context "when assigning" do
-              let(:user) { Fabricate(:user_worker) }
-
-              before { valid_attributes.merge!(assignee_ids: [user.id]) }
-
-              it "creates an assignment" do
-                expect do
-                  post :create, params: { project_id: project.to_param,
-                                          task: valid_attributes }
-                end.to change(user.assignments, :count).by(1)
               end
             end
           end

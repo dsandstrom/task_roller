@@ -360,7 +360,6 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
 
     TaskSubscriptionsJob.perform_later(self, options)
-    TaskAssigneesSubscriptionsJob.perform_later(self, options)
     self
   end
 
