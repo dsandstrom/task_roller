@@ -390,7 +390,7 @@ class Task < ApplicationRecord # rubocop:disable Metrics/ClassLength
   end
 
   def search_subscribers
-    return [] unless project.totally_visible?
+    return User.none unless project.totally_visible?
 
     User.joins(:search_subscriptions)
         .where(SEARCH_SQL, search_subscribers_map)
