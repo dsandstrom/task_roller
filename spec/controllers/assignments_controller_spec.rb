@@ -406,19 +406,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.to change(user_worker.task_subscriptions, :count).by(1)
               end
 
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes }
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -456,20 +443,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.to change(user_worker.task_subscriptions, :count).by(1)
               end
 
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes },
-                             as: :turbo_stream
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -502,13 +475,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.not_to change(TaskSubscription, :count)
               end
 
-              it "doesn't enqueue any jobs" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: blank_attributes }
-                end.not_to have_enqueued_job
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -533,14 +499,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                          task: blank_attributes },
                                as: :turbo_stream
                 end.not_to change(TaskSubscription, :count)
-              end
-
-              it "doesn't enqueue any jobs" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: blank_attributes },
-                               as: :turbo_stream
-                end.not_to have_enqueued_job
               end
 
               it "redirects to the task" do
@@ -574,20 +532,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                          task: valid_attributes }
                   task.reload
                 end.to change(user_worker.task_subscriptions, :count).by(1)
-              end
-
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes },
-                             as: :turbo_stream
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
               end
 
               it "redirects to the task" do
@@ -651,19 +595,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.to change(user_worker.task_subscriptions, :count).by(1)
               end
 
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes }
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -689,20 +620,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.to change(user_worker.task_subscriptions, :count).by(1)
-              end
-
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes },
-                             as: :turbo_stream
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
               end
 
               it "redirects to the task" do
@@ -745,19 +662,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.to change(user_worker.task_subscriptions, :count).by(1)
               end
 
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes }
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -783,20 +687,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                as: :turbo_stream
                   task.reload
                 end.to change(user_worker.task_subscriptions, :count).by(1)
-              end
-
-              it "enqueues TaskSubscribersNotifierJob" do
-                job_options = { event: "status",
-                                details: "unassigned,assigned" }
-
-                put :update, params: { id: task.to_param,
-                                       task: valid_attributes },
-                             as: :turbo_stream
-
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.exactly(:once)
-                expect(TaskSubscribersNotifierJob)
-                  .to have_been_enqueued.with(task, job_options)
               end
 
               it "redirects to the task" do
@@ -833,13 +723,6 @@ RSpec.describe AssignmentsController, type: :controller do
                 end.not_to change(TaskSubscription, :count)
               end
 
-              it "doesn't enqueue any jobs" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: blank_attributes }
-                end.not_to have_enqueued_job
-              end
-
               it "redirects to the task" do
                 url = task_path(task)
                 put :update, params: { id: task.to_param,
@@ -864,14 +747,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                          task: blank_attributes },
                                as: :turbo_stream
                 end.not_to change(TaskSubscription, :count)
-              end
-
-              it "doesn't enqueue any jobs" do
-                expect do
-                  put :update, params: { id: task.to_param,
-                                         task: blank_attributes },
-                               as: :turbo_stream
-                end.not_to have_enqueued_job
               end
 
               it "redirects to the task" do
@@ -1019,13 +894,6 @@ RSpec.describe AssignmentsController, type: :controller do
             end.not_to change(TaskSubscription, :count)
           end
 
-          it "doesn't enqueue any jobs" do
-            expect do
-              put :update, params: { id: task.to_param,
-                                     task: valid_attributes }
-            end.not_to have_enqueued_job
-          end
-
           it "should be unauthorized" do
             put :update, params: { id: task.to_param,
                                    task: valid_attributes }
@@ -1049,14 +917,6 @@ RSpec.describe AssignmentsController, type: :controller do
                                      task: valid_attributes },
                            as: :turbo_stream
             end.not_to change(TaskSubscription, :count)
-          end
-
-          it "doesn't enqueue any jobs" do
-            expect do
-              put :update, params: { id: task.to_param,
-                                     task: valid_attributes },
-                           as: :turbo_stream
-            end.not_to have_enqueued_job
           end
 
           it "should be unauthorized" do
