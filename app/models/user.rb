@@ -158,6 +158,20 @@ class User < ApplicationRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def self.not_subscribed_to_issue(issue)
+    left_joins(:issue_subscriptions)
+      .where('issue_subscriptions.issue_id IS NULL ' \
+             'OR issue_subscriptions.issue_id != ?', issue.id)
+      .distinct
+  end
+
+  def self.not_subscribed_to_task(task)
+    left_joins(:task_subscriptions)
+      .where('task_subscriptions.task_id IS NULL ' \
+             'OR task_subscriptions.task_id != ?', task.id)
+      .distinct
+  end
+
   # INSTANCE
 
   def add_omniauth(auth)

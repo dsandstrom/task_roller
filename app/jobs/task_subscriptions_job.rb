@@ -4,9 +4,8 @@ class TaskSubscriptionsJob < ApplicationJob
   def perform(task, **options)
     return unless task
 
-    task.search_subscribers.each do |subscriber|
+    task.search_subscribers.not_subscribed_to_task(task).each do |subscriber|
       next if subscriber == task.user
-      next if task.task_subscriptions.find_by(user: subscriber)
 
       TaskSubscriptionJob.perform_later(task, subscriber, options)
     end

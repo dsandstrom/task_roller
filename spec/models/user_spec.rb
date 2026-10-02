@@ -686,6 +686,62 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#not_subscribed_to_issue" do
+    let(:first_user) { Fabricate(:user) }
+    let(:second_user) { Fabricate(:user) }
+    let(:issue) { Fabricate(:issue, user: first_user) }
+    let(:second_issue) { Fabricate(:issue, user: first_user) }
+    let(:third_issue) { Fabricate(:issue, user: second_user) }
+
+    context "when issue has no subscriptions" do
+      it "returns users without an issue_subscription for the issue" do
+        expect(described_class.not_subscribed_to_issue(issue))
+          .to contain_exactly(first_user)
+      end
+    end
+
+    context "when issue has subscriptions" do
+      before do
+        Fabricate(:issue_subscription, issue: second_issue, user: second_user)
+        Fabricate(:issue_subscription, issue: third_issue, user: second_user)
+        Fabricate(:issue_subscription, issue: issue)
+      end
+
+      it "returns users without an issue_subscription for the issue" do
+        expect(described_class.not_subscribed_to_issue(issue))
+          .to contain_exactly(first_user, second_user)
+      end
+    end
+  end
+
+  describe "#not_subscribed_to_task" do
+    let(:first_user) { Fabricate(:user) }
+    let(:second_user) { Fabricate(:user) }
+    let(:task) { Fabricate(:task, user: first_user) }
+    let(:second_task) { Fabricate(:task, user: first_user) }
+    let(:third_task) { Fabricate(:task, user: second_user) }
+
+    context "when task has no subscriptions" do
+      it "returns users without an task_subscription for the task" do
+        expect(described_class.not_subscribed_to_task(task))
+          .to contain_exactly(first_user)
+      end
+    end
+
+    context "when task has subscriptions" do
+      before do
+        Fabricate(:task_subscription, task: second_task, user: second_user)
+        Fabricate(:task_subscription, task: third_task, user: second_user)
+        Fabricate(:task_subscription, task: task)
+      end
+
+      it "returns users without an task_subscription for the task" do
+        expect(described_class.not_subscribed_to_task(task))
+          .to contain_exactly(first_user, second_user)
+      end
+    end
+  end
+
   # INSTANCE
 
   describe "#add_omniauth" do
