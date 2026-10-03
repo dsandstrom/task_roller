@@ -23,6 +23,32 @@ RSpec.describe "categories/show", type: :view do
 
     before { enable_can(view, current_user) }
 
+    context "when empty project" do
+      before do
+        project
+        assign(:search_results, [])
+      end
+
+      it "renders project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: project_path(project))
+      end
+
+      it "renders edit project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_project_path(project))
+      end
+
+      it "renders destroy project link" do
+        render
+
+        assert_select "a[data-turbo-method=?][href=?]", 'delete',
+                      category_project_path(category, project)
+      end
+    end
+
     context "when tasks and issues" do
       before do
         first_issue
@@ -66,6 +92,25 @@ RSpec.describe "categories/show", type: :view do
           url = archived_category_projects_path(@category)
           expect(rendered).not_to have_link(nil, href: url)
         end
+      end
+
+      it "renders project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: project_path(project))
+      end
+
+      it "renders edit project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_project_path(project))
+      end
+
+      it "renders destroy project link" do
+        render
+
+        assert_select "a[data-turbo-method=?][href=?]", 'delete',
+                      category_project_path(category, project)
       end
 
       it "renders a list of issues" do
@@ -123,6 +168,33 @@ RSpec.describe "categories/show", type: :view do
 
     before { enable_can(view, current_user) }
 
+    context "when empty project" do
+      before do
+        project
+        assign(:search_results, [])
+      end
+
+      it "renders project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: project_path(project))
+      end
+
+      it "renders edit project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_project_path(project))
+      end
+
+      it "doesn't render destroy project link" do
+        render
+
+        assert_select "a[data-turbo-method=?][href=?]", 'delete',
+                      category_project_path(category, project),
+                      count: 0
+      end
+    end
+
     context "when tasks and issues" do
       before(:each) do
         first_issue
@@ -136,6 +208,18 @@ RSpec.describe "categories/show", type: :view do
         render template: subject, layout: "layouts/application"
 
         expect(rendered).to have_link(nil, href: edit_url)
+      end
+
+      it "renders project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: project_path(project))
+      end
+
+      it "renders edit project link" do
+        render
+
+        expect(rendered).to have_link(nil, href: edit_project_path(project))
       end
 
       it "renders a list of issues and tasks " do
@@ -230,6 +314,33 @@ RSpec.describe "categories/show", type: :view do
       let(:current_user) { Fabricate("user_#{employee_type}") }
 
       before { enable_can(view, current_user) }
+
+      context "when empty project" do
+        before do
+          project
+          assign(:search_results, [])
+        end
+
+        it "renders project link" do
+          render
+
+          expect(rendered).to have_link(nil, href: project_path(project))
+        end
+
+        it "doesn't render edit project link" do
+          render
+
+          expect(rendered).not_to have_link(nil, href: edit_project_path(project))
+        end
+
+        it "doesn't render destroy project link" do
+          render
+
+          assert_select "a[data-turbo-method=?][href=?]", 'delete',
+                        category_project_path(category, project),
+                        count: 0
+        end
+      end
 
       context "when tasks and issues" do
         before(:each) do

@@ -166,8 +166,10 @@ closed_tasks_count = tasks.all_closed.count
     <% end %>
     <% if can?(:destroy, project) %>
       <%= link_to 'Delete',
-                  project_path(project),
-                  method: :delete, data: { turbo_confirm: 'Are you sure?' },
+                  category_project_path(category, project),
+                  method: :delete,
+                  data: { turbo_method: :delete,
+                          turbo_confirm: "Are you sure you want to remove the #{project.name} project?" },
                   class: 'button button-outline button-warning' %>
     <% end %>
   </div>
