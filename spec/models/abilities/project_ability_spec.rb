@@ -20,6 +20,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
 
             context "and internal" do
@@ -29,6 +30,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
           end
 
@@ -40,6 +42,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
           end
         end
@@ -55,6 +58,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
           end
 
@@ -66,6 +70,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
           end
         end
@@ -83,6 +88,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.to be_able_to(:destroy, project) }
+              it { is_expected.to be_able_to(:migrate, project) }
             end
           end
         end
@@ -106,6 +112,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
 
             context "and internal" do
@@ -115,6 +122,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
           end
 
@@ -126,6 +134,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
           end
         end
@@ -141,6 +150,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
           end
 
@@ -152,6 +162,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
           end
         end
@@ -169,6 +180,7 @@ RSpec.describe Ability do
               it { is_expected.to be_able_to(:read, project) }
               it { is_expected.to be_able_to(:update, project) }
               it { is_expected.not_to be_able_to(:destroy, project) }
+              it { is_expected.not_to be_able_to(:migrate, project) }
             end
           end
         end
@@ -190,6 +202,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, project) }
             it { is_expected.not_to be_able_to(:update, project) }
             it { is_expected.not_to be_able_to(:destroy, project) }
+            it { is_expected.not_to be_able_to(:migrate, project) }
           end
 
           context "and internal" do
@@ -201,6 +214,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, project) }
             it { is_expected.not_to be_able_to(:update, project) }
             it { is_expected.not_to be_able_to(:destroy, project) }
+            it { is_expected.not_to be_able_to(:migrate, project) }
           end
         end
 
@@ -237,6 +251,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, project) }
             it { is_expected.not_to be_able_to(:update, project) }
             it { is_expected.not_to be_able_to(:destroy, project) }
+            it { is_expected.not_to be_able_to(:migrate, project) }
           end
         end
 
@@ -271,6 +286,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, project) }
             it { is_expected.not_to be_able_to(:update, project) }
             it { is_expected.not_to be_able_to(:destroy, project) }
+            it { is_expected.not_to be_able_to(:migrate, project) }
           end
 
           context "and internal" do
