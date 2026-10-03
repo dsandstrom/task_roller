@@ -6,7 +6,7 @@ class Project < ApplicationRecord
 
   acts_as_list scope: :category_id
 
-  attr_accessor :new_position
+  attr_accessor :new_position, :migration_id
 
   validates :name, presence: true, length: { maximum: 250 },
                    uniqueness: { scope: :category_id, case_sensitive: false }

@@ -164,10 +164,17 @@ closed_tasks_count = tasks.all_closed.count
       <%= link_to 'Edit', edit_project_path(project),
                   class: 'button button-outline' %>
     <% end %>
-    <% if can?(:destroy, project) %>
+    <% if project.issues.any? || project.tasks.any? %>
+      <% if can?(:migrate, project) %>
+        <%= link_to 'Migrate Issues & Tasks', new_project_migration_path(project),
+                    class: 'button button-outline button-warning' %>
+      <% end %>
+    <% elsif can?(:destroy, project) %>
       <%= link_to 'Delete',
-                  project_path(project),
-                  method: :delete, data: { turbo_confirm: 'Are you sure?' },
+                  category_project_path(category, project),
+                  method: :delete,
+                  data: { turbo_method: :delete,
+                          turbo_confirm: "Are you sure you want to remove the #{project.name} project?" },
                   class: 'button button-outline button-warning' %>
     <% end %>
   </div>

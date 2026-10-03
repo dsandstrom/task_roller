@@ -14,7 +14,7 @@ class ProjectAbility < BaseAbility
   private
 
     def activate_admin
-      ability.can :destroy, Project
+      ability.can %i[destroy migrate], Project
     end
 
     def activate_reviewer

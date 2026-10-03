@@ -15,6 +15,7 @@ RSpec.describe Project, type: :model do
   it { is_expected.to respond_to(:category_id) }
   it { is_expected.to respond_to(:position) }
   it { is_expected.to respond_to(:new_position) }
+  it { is_expected.to respond_to(:migration_id) }
 
   it { is_expected.to belong_to(:category).required }
 

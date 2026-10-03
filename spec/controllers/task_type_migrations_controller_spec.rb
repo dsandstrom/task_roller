@@ -8,18 +8,30 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
   describe "GET #new" do
     let(:task_type) { Fabricate(:task_type) }
 
-    before { Fabricate(:task_type) }
-
     %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         before { sign_in(current_user) }
 
-        it "returns a success response" do
-          get :new, params: { task_type_id: task_type.id }
+        context "when another project" do
+          before do
+            Fabricate(:task_type)
+          end
 
-          expect(response).to be_successful
+          it "returns a success response" do
+            get :new, params: { task_type_id: task_type.id }
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no other task types" do
+          it "redirects to root" do
+            get :new, params: { task_type_id: task_type.id }
+
+            expect(response).to redirect_to(issue_types_url)
+          end
         end
       end
     end
@@ -40,8 +52,8 @@ RSpec.describe TaskTypeMigrationsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:task_type) { Fabricate(:task_type) }
-    let(:new_task_type) { Fabricate(:task_type) }
+    let!(:task_type) { Fabricate(:task_type) }
+    let!(:new_task_type) { Fabricate(:task_type) }
 
     let(:valid_params) { { new_task_type_id: new_task_type.to_param } }
     let(:invalid_params) { { new_task_type_id: "" } }

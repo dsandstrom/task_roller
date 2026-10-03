@@ -1,0 +1,15 @@
+<%= content_for :header do %>
+  <h1>Project Migrator</h1>
+  <%= app_setup_nav %>
+<% end %>
+
+<%= content_tag :h2, "Issues and Tasks from #{@project.name}" %>
+
+<% if @project_options.any? %>
+  <%= render 'form', project: @project,
+                     project_options: @project_options %>
+<% else %>
+  <p>Add another project first</p>
+<% end %>
+
+<p><%= link_to 'Back', :back %></p>

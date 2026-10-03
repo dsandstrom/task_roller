@@ -28,6 +28,6 @@ class MoveIssuesController < ApplicationController
       @project_options = build_all_project_options(@issue.project)
       return if @project_options.any?
 
-      raise ApplicationError::MissingProjects, 'Another projects is required'
+      raise ApplicationError::MissingProjects, 'Another project is required'
     end
 end
