@@ -1,7 +1,7 @@
 class IssueTypeMigrationsController < ApplicationController
   load_resource :issue_type
   before_action :authorize_migrate
-  before_action :build_issue_type_options, only: :new
+  before_action :set_issue_types, only: :new
 
   def new; end
 
@@ -15,7 +15,7 @@ class IssueTypeMigrationsController < ApplicationController
     # rubocop:enable Rails/SkipsModelValidations
     redirect_to issue_types_path, notice: notice
   rescue ActiveRecord::RecordNotFound
-    build_issue_type_options
+    set_issue_types
     @issue_type.errors.add(:new_issue_type_id, 'not found')
     render :new
   end
@@ -30,12 +30,16 @@ class IssueTypeMigrationsController < ApplicationController
       params.expect(issue_type: %i[new_issue_type_id])
     end
 
-    def build_issue_type_options
+    def set_issue_types
       @issue_types = IssueType.where.not(id: @issue_type.id)
+      return if @issue_types.any?
+
+      raise ApplicationError::MissingIssueTypes,
+           'Another Issue Type is required'
     end
 
     def notice
-      "'#{@issue_type.name}' issues where successfully migrated to " \
+      "'#{@issue_type.name}' issues were successfully migrated to " \
         "'#{@new_issue_type.name}' type"
     end
 end

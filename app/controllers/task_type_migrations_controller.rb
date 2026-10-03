@@ -1,7 +1,7 @@
 class TaskTypeMigrationsController < ApplicationController
   load_resource :task_type
   before_action :authorize_migrate
-  before_action :build_task_type_options, only: :new
+  before_action :set_task_types, only: :new
 
   def new; end
 
@@ -15,7 +15,7 @@ class TaskTypeMigrationsController < ApplicationController
     # rubocop:enable Rails/SkipsModelValidations
     redirect_to issue_types_path, notice: notice
   rescue ActiveRecord::RecordNotFound
-    build_task_type_options
+    set_task_types
     @task_type.errors.add(:new_task_type_id, 'not found')
     render :new
   end
@@ -30,12 +30,15 @@ class TaskTypeMigrationsController < ApplicationController
       params.expect(task_type: %i[new_task_type_id])
     end
 
-    def build_task_type_options
+    def set_task_types
       @task_types = TaskType.where.not(id: @task_type.id)
+      return if @task_types.any?
+
+      raise ApplicationError::MissingTaskTypes, 'Another Task Type is required'
     end
 
     def notice
-      "'#{@task_type.name}' tasks where successfully migrated to " \
+      "'#{@task_type.name}' tasks were successfully migrated to " \
         "'#{@new_task_type.name}' type"
     end
 end

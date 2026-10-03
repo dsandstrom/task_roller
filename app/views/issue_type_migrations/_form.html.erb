@@ -5,7 +5,7 @@
   <%= form_errors(form.object) %>
 
   <div class="field">
-    <%= required_field_label form, :new_issue_type_id %>
+    <%= form.label :new_issue_type_id, 'Move to different issue type' %>
     <%= form.collection_select :new_issue_type_id, issue_types, :id, :name,
                                html: { id: :new_issue_type, include_blank: true } %>
   </div>

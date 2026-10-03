@@ -8,18 +8,30 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
   describe "GET #new" do
     let(:issue_type) { Fabricate(:issue_type) }
 
-    before { Fabricate(:issue_type) }
-
     %w[admin].each do |employee_type|
       context "for a #{employee_type}" do
         let(:current_user) { Fabricate("user_#{employee_type.downcase}") }
 
         before { sign_in(current_user) }
 
-        it "returns a success response" do
-          get :new, params: { issue_type_id: issue_type.id }
+        context "when another issue type" do
+          before do
+            Fabricate(:issue_type)
+          end
 
-          expect(response).to be_successful
+          it "returns a success response" do
+            get :new, params: { issue_type_id: issue_type.id }
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when no other issue types" do
+          it "redirects to issue_types" do
+            get :new, params: { issue_type_id: issue_type.id }
+
+            expect(response).to redirect_to(:issue_types)
+          end
         end
       end
     end
@@ -40,8 +52,8 @@ RSpec.describe IssueTypeMigrationsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:issue_type) { Fabricate(:issue_type) }
-    let(:new_issue_type) { Fabricate(:issue_type) }
+    let!(:issue_type) { Fabricate(:issue_type) }
+    let!(:new_issue_type) { Fabricate(:issue_type) }
 
     let(:valid_params) { { new_issue_type_id: new_issue_type.to_param } }
     let(:invalid_params) { { new_issue_type_id: "" } }
