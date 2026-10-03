@@ -89,7 +89,7 @@ RSpec.describe Category, type: :model do
 
     it "returns categories with true visible" do
       category = Fabricate(:category)
-      expect(Category.all_visible).to eq([category])
+      expect(described_class.all_visible).to eq([category])
     end
   end
 
@@ -98,7 +98,29 @@ RSpec.describe Category, type: :model do
 
     it "returns categories with false visible" do
       category = Fabricate(:invisible_category)
-      expect(Category.all_invisible).to eq([category])
+      expect(described_class.all_invisible).to eq([category])
+    end
+  end
+
+  describe ".with_projects" do
+    context "when no categories" do
+      it "returns none" do
+        # category = Fabricate(:invisible_category)
+        expect(described_class.with_projects).to eq([])
+      end
+    end
+
+    context "when categories" do
+      let(:category) { Fabricate(:category) }
+
+      before do
+        Fabricate(:category)
+        Fabricate(:project, category: category)
+      end
+
+      it "returns only categories with projects" do
+        expect(described_class.with_projects).to eq([category])
+      end
     end
   end
 

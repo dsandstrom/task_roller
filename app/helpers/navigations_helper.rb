@@ -2,7 +2,8 @@ module NavigationsHelper
   def app_setup_nav
     return unless can?(:read, IssueType)
 
-    links = [['Issue & Task Types', issue_types_path]]
+    links = [['Issue & Task Types', issue_types_path],
+             ['Project Migator', projects_migrations_path]]
 
     content_tag :p, class: 'page-nav user-nav' do
       safe_join(navitize(links))
