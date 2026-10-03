@@ -1,0 +1,18 @@
+<%= form_with(model: project,
+              url: project_migrations_path(project),
+              method: :post,
+              html: { name: 'project_migration_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :migration_id, "Move to different project" %>
+    <%= form.select :migration_id,
+                    grouped_options_for_select(project_options, project.migration_id),
+                    {}, id: :project_migration_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Migrate", class: 'button button-warning',
+                               data: { turbo_confirm: "Are you sure, this action can't be reversed?" } %>
+  </div>
+<% end %>
