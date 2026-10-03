@@ -41,10 +41,17 @@ RSpec.describe "categories/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_project_path(project))
       end
 
+      it "doesn't render project migrations link" do
+        render
+
+        expect(rendered)
+          .not_to have_link(nil, href: new_project_migration_path(project))
+      end
+
       it "renders destroy project link" do
         render
 
-        assert_select "a[data-turbo-method=?][href=?]", 'delete',
+        assert_select "a[data-turbo-method=?][href=?]", "delete",
                       category_project_path(category, project)
       end
     end
@@ -106,11 +113,18 @@ RSpec.describe "categories/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_project_path(project))
       end
 
-      it "renders destroy project link" do
+      it "renders project migrations link" do
         render
 
-        assert_select "a[data-turbo-method=?][href=?]", 'delete',
-                      category_project_path(category, project)
+        expect(rendered)
+          .to have_link(nil, href: new_project_migration_path(project))
+      end
+
+      it "doesn't render destroy project link" do
+        render
+
+        assert_select "a[data-turbo-method=?][href=?]", "delete",
+                      category_project_path(category, project), count: 0
       end
 
       it "renders a list of issues" do
@@ -186,10 +200,17 @@ RSpec.describe "categories/show", type: :view do
         expect(rendered).to have_link(nil, href: edit_project_path(project))
       end
 
+      it "doesn't render project migrations link" do
+        render
+
+        expect(rendered)
+          .not_to have_link(nil, href: new_project_migration_path(project))
+      end
+
       it "doesn't render destroy project link" do
         render
 
-        assert_select "a[data-turbo-method=?][href=?]", 'delete',
+        assert_select "a[data-turbo-method=?][href=?]", "delete",
                       category_project_path(category, project),
                       count: 0
       end
@@ -330,13 +351,14 @@ RSpec.describe "categories/show", type: :view do
         it "doesn't render edit project link" do
           render
 
-          expect(rendered).not_to have_link(nil, href: edit_project_path(project))
+          expect(rendered)
+            .not_to have_link(nil, href: edit_project_path(project))
         end
 
         it "doesn't render destroy project link" do
           render
 
-          assert_select "a[data-turbo-method=?][href=?]", 'delete',
+          assert_select "a[data-turbo-method=?][href=?]", "delete",
                         category_project_path(category, project),
                         count: 0
         end
