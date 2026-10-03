@@ -35,7 +35,7 @@ class IssueTypeMigrationsController < ApplicationController
       return if @issue_types.any?
 
       raise ApplicationError::MissingIssueTypes,
-           'Another Issue Type is required'
+            'Another Issue Type is required'
     end
 
     def notice
