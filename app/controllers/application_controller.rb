@@ -18,6 +18,8 @@ class ApplicationController < ActionController::Base
               with: :redirect_to_issue_types
   rescue_from ApplicationError::MissingProjects,
               with: :redirect_to_categories
+  rescue_from ApplicationError::MissingCategories,
+              with: :redirect_to_categories
 
   private
 
@@ -126,7 +128,8 @@ class ApplicationController < ActionController::Base
     end
 
     def redirect_to_categories
-      redirect_to root_url, alert: 'App Error: Projects are required'
+      redirect_to root_url,
+                  alert: 'App Error: Categories & Projects are required'
     end
 
     def visible_source

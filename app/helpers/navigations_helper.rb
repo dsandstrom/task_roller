@@ -43,6 +43,6 @@ module NavigationsHelper
       links = [['Issue & Task Types', issue_types_path]]
       return links unless can?(:migrate, Project)
 
-      links << ['Project Migator', projects_migrations_path]
+      links << ['Project Migator', migrations_path]
     end
 end

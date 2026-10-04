@@ -1,0 +1,30 @@
+<%= content_for :header do %>
+  <h1>Project Migrator</h1>
+  <%= app_setup_nav %>
+<% end %>
+
+<%= content_tag :h2, "All Categories & Projects" %>
+
+<p>
+  Pick a <strong>category</strong> to start migrating all of it's projects or pick a
+  <strong>project</strong> to start migrating all of it's issues and tasks:
+</p>
+
+<% if @categories.any? %>
+  <ul>
+    <% @categories.each do |category| %>
+      <li>
+        <%= link_to category.name_and_tag, new_category_migration_path(category) %>
+        <ul>
+          <% category.projects.order(:position).each do |project| %>
+            <li>
+              <%= link_to project.name_and_tag, new_project_migration_path(project) %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<p><%= link_to 'Back', :back %></p>

@@ -184,9 +184,15 @@ end
       <%= link_to 'Edit', edit_category_path(category),
                   class: 'button button-outline' %>
     <% end %>
-    <% if can?(:destroy, category) %>
+    <% if category.projects.any? %>
+      <% if can?(:migrate, category) %>
+        <%= link_to 'Migrate Projects', new_category_migration_path(category),
+                    class: 'button button-outline button-success' %>
+      <% end %>
+    <% elsif can?(:destroy, category) %>
       <%= link_to 'Delete', category_path(category),
-                  method: :delete, data: { turbo_confirm: 'Are you sure?' },
+                  method: :delete,
+                  data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this category?' },
                   class: 'button button-outline button-warning' %>
     <% end %>
   </p>

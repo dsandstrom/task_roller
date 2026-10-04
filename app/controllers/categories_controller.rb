@@ -46,7 +46,7 @@ class CategoriesController < ApplicationController
 
   def destroy
     @category.destroy
-    redirect_to root_url, notice: 'Category was successfully destroyed.'
+    redirect_to root_url, notice: 'Category was successfully deleted.'
   end
 
   private

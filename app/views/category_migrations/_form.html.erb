@@ -1,0 +1,16 @@
+<%= form_with(model: category,
+              url: category_migrations_path(category),
+              method: :post,
+              html: { name: 'category_migration_form' }) do |form| %>
+  <%= form_errors(form.object) %>
+
+  <div class="field">
+    <%= form.label :migration_id, "Move to different category" %>
+    <%= form.collection_select :migration_id, @categories, :id, :name_and_tag %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Migrate", class: 'button button-warning',
+                               data: { turbo_confirm: "Are you sure, this action can't be reversed?" } %>
+  </div>
+<% end %>
