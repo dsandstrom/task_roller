@@ -21,10 +21,6 @@ class Category < ApplicationRecord
     where(visible: false).order(position: :asc)
   end
 
-  def self.with_projects
-    joins(:projects).order(:position)
-  end
-
   # INSTANCE
 
   def name_and_tag

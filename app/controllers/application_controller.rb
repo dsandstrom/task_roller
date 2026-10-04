@@ -99,7 +99,7 @@ class ApplicationController < ActionController::Base
     end
 
     def build_all_project_options(excluded_project)
-      Category.accessible_by(current_ability).map do |category|
+      Category.order(:position).accessible_by(current_ability).map do |category|
         projects = category.projects_except(excluded_project)
                            .accessible_by(current_ability).map do |project|
           [project.name_and_tag, project.id]

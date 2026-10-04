@@ -130,8 +130,6 @@ Rails.application.routes.draw do
   post '/task_types/:task_type_id/migration' => 'task_type_migrations#create',
        as: :task_type_migrations
 
-  get '/projects_migrations' => 'project_migrations#index',
-      as: :projects_migrations
   get '/projects/:project_id/migration' => 'project_migrations#new',
       as: :new_project_migration
   post '/projects/:project_id/migration' => 'project_migrations#create',

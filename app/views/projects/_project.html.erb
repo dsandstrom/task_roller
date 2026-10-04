@@ -167,7 +167,7 @@ closed_tasks_count = tasks.all_closed.count
     <% if project.issues.any? || project.tasks.any? %>
       <% if can?(:migrate, project) %>
         <%= link_to 'Migrate Issues & Tasks', new_project_migration_path(project),
-                    class: 'button button-outline button-warning' %>
+                    class: 'button button-outline button-success' %>
       <% end %>
     <% elsif can?(:destroy, project) %>
       <%= link_to 'Delete',
