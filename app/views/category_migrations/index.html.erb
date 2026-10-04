@@ -5,13 +5,16 @@
 
 <%= content_tag :h2, "All Categories & Projects" %>
 
-<p>Pick a project to start migrating all of it's issues and tasks:</p>
+<p>
+  Pick a <strong>category</strong> to start migrating all of it's projects or pick a
+  <strong>project</strong> to start migrating all of it's issues and tasks:
+</p>
 
 <% if @categories.any? %>
   <ul>
     <% @categories.each do |category| %>
       <li>
-        <%= category.name %>
+        <%= link_to category.name_and_tag, new_category_migration_path(category) %>
         <ul>
           <% category.projects.order(:position).each do |project| %>
             <li>

@@ -1,11 +1,7 @@
 class ProjectMigrationsController < ApplicationController
-  load_resource :project, except: :index
+  load_resource :project
   before_action :authorize_migrate
   before_action :set_project_options, only: :new
-
-  def index
-    @categories = Category.with_projects
-  end
 
   def new; end
 
@@ -27,7 +23,7 @@ class ProjectMigrationsController < ApplicationController
   private
 
     def authorize_migrate
-      authorize! :migrate, (@project || Project)
+      authorize! :migrate, @project
     end
 
     def project_params

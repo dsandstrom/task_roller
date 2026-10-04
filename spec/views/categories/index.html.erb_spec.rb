@@ -10,7 +10,10 @@ RSpec.describe "categories/index", type: :view do
   context "for an admin" do
     let(:admin) { Fabricate(:user_admin) }
 
-    before { enable_can(view, admin) }
+    before do
+      enable_can(view, admin)
+      Fabricate(:project, category: first_category)
+    end
 
     it "renders a list of categories" do
       render
@@ -19,12 +22,19 @@ RSpec.describe "categories/index", type: :view do
                     text: first_category.name
       expect(rendered)
         .to have_link(nil, href: edit_category_path(first_category))
-      assert_select "#category-#{first_category.id} a[data-method=\"delete\"]"
+      expect(rendered)
+        .to have_link(nil, href: new_category_migration_path(first_category))
+      assert_select "#category-#{first_category.id} a[data-method=\"delete\"]",
+                    count: 0
 
       assert_select "#category-#{second_category.id} .category-name",
                     text: second_category.name
       expect(rendered)
         .to have_link(nil, href: edit_category_path(second_category))
+      expect(rendered).not_to have_link(
+        nil,
+        href: new_category_migration_path(second_category)
+      )
       assert_select "#category-#{second_category.id} a[data-method=\"delete\"]"
     end
 
@@ -85,6 +95,8 @@ RSpec.describe "categories/index", type: :view do
         expect(rendered).to have_link(nil, href: edit_category_path(category))
         assert_select "#category-#{category.id} a[data-method=\"delete\"]",
                       count: 0
+        expect(rendered)
+          .not_to have_link(nil, href: new_category_migration_path(category))
       end
     end
 

@@ -15,6 +15,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.to be_able_to(:update, category) }
           it { is_expected.to be_able_to(:destroy, category) }
+          it { is_expected.to be_able_to(:migrate, category) }
         end
 
         context "and internal is false" do
@@ -26,6 +27,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.to be_able_to(:update, category) }
           it { is_expected.to be_able_to(:destroy, category) }
+          it { is_expected.to be_able_to(:migrate, category) }
         end
       end
 
@@ -39,6 +41,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.to be_able_to(:update, category) }
           it { is_expected.to be_able_to(:destroy, category) }
+          it { is_expected.to be_able_to(:migrate, category) }
         end
 
         context "and internal is false" do
@@ -50,6 +53,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.to be_able_to(:update, category) }
           it { is_expected.to be_able_to(:destroy, category) }
+          it { is_expected.to be_able_to(:migrate, category) }
         end
       end
     end
@@ -69,6 +73,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
 
           context "and internal is false" do
@@ -80,6 +85,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
         end
 
@@ -93,6 +99,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
 
           context "and internal is false" do
@@ -104,6 +111,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
         end
       end
@@ -124,6 +132,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.not_to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
 
           context "and internal is false" do
@@ -135,6 +144,7 @@ RSpec.describe Ability do
             it { is_expected.to be_able_to(:read, category) }
             it { is_expected.not_to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
         end
 
@@ -148,6 +158,7 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, category) }
             it { is_expected.not_to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
 
           context "and internal is false" do
@@ -159,6 +170,7 @@ RSpec.describe Ability do
             it { is_expected.not_to be_able_to(:read, category) }
             it { is_expected.not_to be_able_to(:update, category) }
             it { is_expected.not_to be_able_to(:destroy, category) }
+            it { is_expected.not_to be_able_to(:migrate, category) }
           end
         end
       end
@@ -176,6 +188,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.not_to be_able_to(:update, category) }
           it { is_expected.not_to be_able_to(:destroy, category) }
+          it { is_expected.not_to be_able_to(:migrate, category) }
         end
 
         context "when visible is false" do
@@ -185,6 +198,7 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, category) }
           it { is_expected.not_to be_able_to(:update, category) }
           it { is_expected.not_to be_able_to(:destroy, category) }
+          it { is_expected.not_to be_able_to(:migrate, category) }
         end
 
         context "when internal is true" do
@@ -194,6 +208,7 @@ RSpec.describe Ability do
           it { is_expected.not_to be_able_to(:read, category) }
           it { is_expected.not_to be_able_to(:update, category) }
           it { is_expected.not_to be_able_to(:destroy, category) }
+          it { is_expected.not_to be_able_to(:migrate, category) }
         end
 
         context "when internal is false" do
@@ -203,6 +218,7 @@ RSpec.describe Ability do
           it { is_expected.to be_able_to(:read, category) }
           it { is_expected.not_to be_able_to(:update, category) }
           it { is_expected.not_to be_able_to(:destroy, category) }
+          it { is_expected.not_to be_able_to(:migrate, category) }
         end
       end
     end

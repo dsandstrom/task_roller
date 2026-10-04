@@ -14,7 +14,7 @@ class CategoryAbility < BaseAbility
   private
 
     def activate_admin
-      ability.can :destroy, Category
+      ability.can %i[destroy migrate], Category
     end
 
     def activate_reviewer

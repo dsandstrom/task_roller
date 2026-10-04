@@ -6,7 +6,7 @@ class Category < ApplicationRecord
 
   acts_as_list
 
-  attr_accessor :new_position
+  attr_accessor :new_position, :migration_id
 
   validates :name, presence: true, length: { maximum: 200 }
   validate :new_position_numericality
@@ -19,10 +19,6 @@ class Category < ApplicationRecord
 
   def self.all_invisible
     where(visible: false).order(position: :asc)
-  end
-
-  def self.with_projects
-    joins(:projects).order(:position)
   end
 
   # INSTANCE

@@ -1,0 +1,14 @@
+<%= content_for :header do %>
+  <h1>Category Migrator</h1>
+  <%= app_setup_nav %>
+<% end %>
+
+<%= content_tag :h2, "Projects from #{@category.name}" %>
+
+<% if @categories.any? %>
+  <%= render 'form', category: @category, categories: @categories %>
+<% else %>
+  <p>Add another category first</p>
+<% end %>
+
+<p><%= link_to 'Back', :back %></p>

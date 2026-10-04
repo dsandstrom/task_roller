@@ -130,12 +130,16 @@ Rails.application.routes.draw do
   post '/task_types/:task_type_id/migration' => 'task_type_migrations#create',
        as: :task_type_migrations
 
-  get '/projects_migrations' => 'project_migrations#index',
-      as: :projects_migrations
+  get '/migrations' => 'category_migrations#index',
+      as: :migrations
   get '/projects/:project_id/migration' => 'project_migrations#new',
       as: :new_project_migration
   post '/projects/:project_id/migration' => 'project_migrations#create',
        as: :project_migrations
+  get '/categories/:category_id/migration' => 'category_migrations#new',
+      as: :new_category_migration
+  post '/categories/:category_id/migration' => 'category_migrations#create',
+       as: :category_migrations
 
   get 'search' => 'searches#new', as: :search
   get 'search/results' => 'searches#index', as: :search_results
