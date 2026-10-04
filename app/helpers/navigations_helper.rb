@@ -2,11 +2,8 @@ module NavigationsHelper
   def app_setup_nav
     return unless can?(:read, IssueType)
 
-    links = [['Issue & Task Types', issue_types_path],
-             ['Project Migator', projects_migrations_path]]
-
     content_tag :p, class: 'page-nav user-nav' do
-      safe_join(navitize(links))
+      safe_join(navitize(app_setup_nav_links))
     end
   end
 
@@ -40,5 +37,12 @@ module NavigationsHelper
         else
           ['Account Level', new_user_employee_type_path(user)]
         end
+    end
+
+    def app_setup_nav_links
+      links = [['Issue & Task Types', issue_types_path]]
+      return links unless can?(:migrate, Project)
+
+      links << ['Project Migator', projects_migrations_path]
     end
 end
