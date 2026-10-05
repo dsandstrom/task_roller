@@ -4,7 +4,10 @@
   category = issue.category
   tasks = issue.tasks
   notifications = current_user.issue_notifications.where(issue_id: issue.id)
+  has_footer = can?(:update, issue)
+
   css_class = 'issue'
+  css_class += ' hide-footer' if has_footer
   css_class += ' with-notification' if notifications.any?
 %>
 
@@ -81,7 +84,7 @@
     </dl>
   </main>
 
-  <% if can?(:update, issue) %>
+  <% if has_footer %>
     <footer>
       <%= link_to 'Edit', edit_issue_path(issue), data: { turbo_frame: '_top' } %>
     </footer>
