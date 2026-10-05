@@ -5,8 +5,10 @@
   category = task.category
   assignees = task.assignees
   notifications = current_user.task_notifications.where(task_id: task.id)
+  has_footer = can?(:update, task)
 
   css_class = 'task'
+  css_class += ' hide-footer' if has_footer
   css_class += ' with-notification' if notifications.any?
 
   container ||= nil
@@ -96,7 +98,7 @@
   </main>
 
 
-  <% if can?(:update, task) %>
+  <% if has_footer %>
     <footer>
       <%= link_to 'Edit', edit_task_path(task), data: { turbo_frame: '_top' } %>
     </footer>
