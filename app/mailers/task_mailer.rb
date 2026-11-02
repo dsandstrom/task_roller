@@ -40,6 +40,6 @@ class TaskMailer < ApplicationMailer
     end
 
     def subject(prefix)
-      "Task Roller: #{prefix} Task##{task.id}"
+      "Task Shipper: #{prefix} Task##{task.id}"
     end
 end

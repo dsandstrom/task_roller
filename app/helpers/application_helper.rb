@@ -69,7 +69,7 @@ module ApplicationHelper
   private
 
     def enable_page_title(title)
-      title = "Task Roller | #{title}"
+      title = "Task Shipper | #{title}"
       content_for(:title, truncate(title, length: 70, omission: ''))
     end
 

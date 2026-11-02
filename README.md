@@ -89,7 +89,7 @@ When a callout is added last in a commit message. It is picked up by Task Shippe
 * App can be set to allow anyone to sign up or limited to invite only.
 
 ## Live App
-Please feel free to check out a [live version](https://production.task-roller.net) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_shipper).
+Please feel free to check out a [live version](https://production.taskshipper.com) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_shipper).
 
 ## Local Setup
 
@@ -155,4 +155,4 @@ bin/dev # start server (port 3000) and rails_live_reload watcher
 ```
 
 ## App Hosting
-The app is open source and you are free to run on your own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@task-roller.net if interested.
+The app is open source and you are free to run on your own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@taskshipper.com if interested.

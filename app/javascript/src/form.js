@@ -2,7 +2,7 @@
 import FormValidator from './../src/validate.js';
 import {MarkdownEditor} from './../src/markdown_editor';
 
-// https://production.task-roller.net/issues/17
+// https://production.taskshipper.com/issues/17
 
 export class Form {
   constructor(elem) {
