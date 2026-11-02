@@ -2394,7 +2394,7 @@ RSpec.describe Issue, type: :model do
     let(:message) do
       "###### Automated Message\n\n" \
         "Thank you for the report. " \
-        "We've opened an Issue on our TaskRoller app to address this " \
+        "We've opened an Issue on our Task Shipper app to address this " \
         "GitHub Issue."
     end
 
