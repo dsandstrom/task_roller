@@ -1,5 +1,5 @@
 {
-  "name": "task_roller",
+  "name": "task_shipper",
   "private": true,
   "dependencies": {
     "@hotwired/turbo-rails": "^8.0.23",
