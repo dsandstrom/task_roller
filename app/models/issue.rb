@@ -299,7 +299,7 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
   def github_open_message(url = nil)
     message =
       'Thank you for the report. ' \
-      "We've opened an Issue on our TaskRoller app to address this " \
+      "We've opened an Issue on our Task Shipper app to address this " \
       'GitHub Issue.'
     github_message message, url
   end

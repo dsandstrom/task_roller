@@ -70,7 +70,7 @@ Rails.application.configure do
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options =
-    { host: ENV['FRONTEND_URL'] || 'task-roller.net', port: 80 }
+    { host: ENV['FRONTEND_URL'] || 'taskshipper.com', port: 80 }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via
   # bin/rails credentials:edit.

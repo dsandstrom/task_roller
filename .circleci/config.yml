@@ -21,7 +21,7 @@ parameters:
     default: 2
   postgres_database:
     type: string
-    default: task_roller_test
+    default: task_shipper_test
   postgres_username:
     type: string
     default: postgres-user

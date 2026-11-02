@@ -1,12 +1,12 @@
-# TaskRoller
+# Task Shipper
 ###### Issue and Task Manager
 
-[![dsandstrom](https://circleci.com/gh/dsandstrom/task_roller.svg?style=svg)](https://circleci.com/gh/dsandstrom/task_roller)
+[![dsandstrom](https://circleci.com/gh/dsandstrom/task_shipper.svg?style=svg)](https://circleci.com/gh/dsandstrom/task_shipper)
 
-[![Rubocop Actions Status](https://github.com/dsandstrom/task_roller/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_roller/actions?query=workflow%3ARubocop)
+[![Rubocop Actions Status](https://github.com/dsandstrom/task_shipper/workflows/Rubocop/badge.svg)](https://github.com/dsandstrom/task_shipper/actions?query=workflow%3ARubocop)
 
 ## Introduction
-TaskRoller is an issue tracking app with the added ability to assign tasks to address your projects' bugs and feature requests.
+Task Shipper is an issue tracking app with the added ability to assign tasks to address your projects' bugs and feature requests.
 
 ## Technologies
 * Built using Ruby on Rails, JavaScript, HTML, and CSS.
@@ -62,10 +62,10 @@ This part is up to you and must be added initially by an Admin.  However, it's e
 
 ## GitHub API Integration
 
-Connect your TaskRoller app to a GitHub repo to simplify things:
-* When a new issue is added on github.com, an Issue is added to your TaskRoller app.
+Connect your Task Shipper app to a GitHub repo to simplify things:
+* When a new issue is added on github.com, an Issue is added to your Task Shipper app.
 * Tasks can be created from this Issue, which can be progressed with commit message callouts.
-* When the TaskRoller Issue is closed, the issue on GitHub is also closed.
+* When the Task Shipper Issue is closed, the issue on GitHub is also closed.
 * Automated comments are added to the GitHub issues which provide info and links.
 
 ### Commit Message Callouts
@@ -83,13 +83,13 @@ This commit fixes the color of the widgets.
 Fixes Task#12
 ```
 
-When a callout is added last in a commit message. It is picked up by TaskRoller and updates the corresponding Task.  For the above example, it will mark Task#12 done and ready for review. In addition, different callout formats and tenses are allowed. These all perform the same action: `Fix Task 12`, `Completed Task #12`, `completes task-12`
+When a callout is added last in a commit message. It is picked up by Task Shipper and updates the corresponding Task.  For the above example, it will mark Task#12 done and ready for review. In addition, different callout formats and tenses are allowed. These all perform the same action: `Fix Task 12`, `Completed Task #12`, `completes task-12`
 
 ## Options
 * App can be set to allow anyone to sign up or limited to invite only.
 
 ## Live App
-Please feel free to check out a [live version](https://production.task-roller.net) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_roller).
+Please feel free to check out a [live version](https://production.taskshipper.com) of the app. It houses issues and tasks for this app and connected to this [GitHub repo](https://github.com/dsandstrom/task_shipper).
 
 ## Local Setup
 
@@ -155,4 +155,4 @@ bin/dev # start server (port 3000) and rails_live_reload watcher
 ```
 
 ## App Hosting
-The app is open source and you are free to run on your own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@task-roller.net if interested.
+The app is open source and you are free to run on your own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@taskshipper.com if interested.

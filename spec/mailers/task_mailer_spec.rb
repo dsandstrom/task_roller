@@ -17,9 +17,9 @@ RSpec.describe TaskMailer, type: :mailer do
     end
 
     it "renders the headers" do
-      expect(mail.from).to eq(["noreply@task-roller.net"])
+      expect(mail.from).to eq(["noreply@taskshipper.com"])
       expect(mail.to).to eq([user.email])
-      expect(mail.subject).to eq("Task Roller: Update for Task##{task.id}")
+      expect(mail.subject).to eq("Task Shipper: Update for Task##{task.id}")
     end
 
     it "renders the body" do
@@ -34,9 +34,9 @@ RSpec.describe TaskMailer, type: :mailer do
     end
 
     it "renders the headers" do
-      expect(mail.from).to eq(["noreply@task-roller.net"])
+      expect(mail.from).to eq(["noreply@taskshipper.com"])
       expect(mail.to).to eq([user.email])
-      expect(mail.subject).to eq("Task Roller: Comment for Task##{task.id}")
+      expect(mail.subject).to eq("Task Shipper: Comment for Task##{task.id}")
     end
 
     it "renders the body" do
@@ -52,9 +52,9 @@ RSpec.describe TaskMailer, type: :mailer do
     end
 
     it "renders the headers" do
-      expect(mail.from).to eq(["noreply@task-roller.net"])
+      expect(mail.from).to eq(["noreply@taskshipper.com"])
       expect(mail.to).to eq([user.email])
-      expect(mail.subject).to eq("Task Roller: New Task##{task.id}")
+      expect(mail.subject).to eq("Task Shipper: New Task##{task.id}")
     end
 
     it "renders the body" do
