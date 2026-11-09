@@ -187,6 +187,7 @@ a {
   height: 3rem;
   margin-right: .2rem;
   margin-bottom: 0;
+  fill: $color-quinary;
 }
 
 @include breakpoint(medium up) {
