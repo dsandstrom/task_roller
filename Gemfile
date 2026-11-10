@@ -7,7 +7,7 @@ end
 
 ruby '3.4.10'
 
-gem 'rack', '~> 3.0'
+gem 'rack', '~> 3.2'
 
 gem 'rails', '~> 8.0'
 # Use postgresql as the database for Active Record
