@@ -38,7 +38,7 @@ gem 'concurrent-ruby', '~> 1.3.8'
 gem 'solid_queue', '~> 1.6'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
+gem 'bootsnap', '~> 1.26', require: false
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
