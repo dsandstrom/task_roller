@@ -50,7 +50,7 @@ gem 'acts_as_list', '~> 1.2.6'
 
 gem 'redcarpet', '~> 3.6.1'
 
-gem 'cancancan', '~> 3.6.1'
+gem 'cancancan', '~> 3.7.0'
 gem 'devise', '~> 5.0'
 # GitHub API
 gem 'octokit', '~> 10.0'
