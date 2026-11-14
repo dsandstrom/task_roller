@@ -105,7 +105,7 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
-  gem 'rubocop', '~> 1.89.0', require: false
+  gem 'rubocop', '~> 1.92.2', require: false
   gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false
