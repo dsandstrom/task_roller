@@ -2284,9 +2284,8 @@ RSpec.describe Issue, type: :model do
 
     context "when 2 approved tasks" do
       it "returns latest review date" do
-        first_task = nil
         Timecop.freeze(2.days.ago) do
-          first_task = Fabricate(:approved_task, issue: issue)
+          Fabricate(:approved_task, issue: issue)
         end
         second_task = Fabricate(:approved_task, issue: issue)
 
