@@ -11,7 +11,7 @@ gem 'rack', '~> 3.0'
 
 gem 'rails', '~> 8.0'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 1.6.3'
+gem 'pg', '~> 1.7.0'
 # Use Puma as the app server
 gem 'puma', '~> 8.0'
 # Use cssbundling for stylesheets
