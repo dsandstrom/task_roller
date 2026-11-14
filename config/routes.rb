@@ -1,4 +1,4 @@
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 Rails.application.routes.draw do
   resources :users, only: nil do
     resources :issues, only: :index
@@ -226,4 +226,3 @@ Rails.application.routes.draw do
   get '/unauthorized' => 'static#unauthorized', as: :unauthorized
   root to: 'categories#index'
 end
-# rubocop:enable Metrics/BlockLength

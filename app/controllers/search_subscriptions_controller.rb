@@ -50,9 +50,8 @@ class SearchSubscriptionsController < ApplicationController
 
     def normalize_search_subscription_params
       params[:search_subscription].each do |key, val|
-        # rubocop:disable Rails/StrongParametersExpect
+        # rubocop:disable-next Rails/StrongParametersExpect
         params[:search_subscription][key] = nil if val.blank?
-        # rubocop:enable Rails/StrongParametersExpect
       end
     end
 
