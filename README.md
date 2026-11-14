@@ -156,3 +156,64 @@ bin/dev # start server (port 3000) and rails_live_reload watcher
 
 ## App Hosting
 The app is open source and you are free to run on your own servers. However, database/web hosting and custom features can be provided with a moderate fee. Please contact darrell@taskshipper.com if interested.
+
+### Production Environment Variables
+Add these variables to your host's app settings:
+
+<dl>
+  <dt>DATABASE_URL</dt>
+  <dd>
+    Instead of using <code>PG_DATABASE</code>, <code>PG_USERNAME</code>, and <code>PG_PASSWORD</code>, simply add a url that includes these values. It should be provided by your PostgreSQL database host. Example: <code>postgresql://database-user:abcd1234@5678.database-host.com:11111/database-name?sslmode=require</code>
+  </dd>
+  <dt>QUEUE_DATABASE_URL</dt>
+  <dd>
+    Similar to <code>DATABASE_URL</code>, but a separate database for the queueing system is required
+  </dd>
+</dl>
+<dl>
+  <dt>EMAIL_DOMAIN</dt>
+  <dd>
+    Used by the mailer to send email verifications and subscription notifications. Example: <code>example.net</code>
+  </dd>
+  <dt>EMAIL_PASSWORD</dt>
+  <dt>EMAIL_USER_NAME</dt>
+  <dd>
+    Example: <code>noreply@example.net</code>
+  </dd>
+  <dt>FRONTEND_URL</dt>
+  <dd>
+    Example: <code>example.net</code>
+  </dd>
+</dl>
+<dl>
+  <dt>GITHUB_KEY</dt>
+  <dt>GITHUB_SECRET</dt>
+  <dd>
+    Provided by GitHub if allowing logging in with GitHub accounts
+  </dd>
+</dl>
+<dl>
+  <dt>GITHUB_USER_TOKEN</dt>
+  <dt>GITHUB_WEBHOOK_SECRET</dt>
+  <dd>
+    Provided by GitHub if using the optional commit callout integration
+  </dd>
+</dl>
+<dl>
+  <dt>RACK_ENV</dt>
+  <dd>
+    Set to <code>production</code>
+  </dd>
+</dl>
+<dl>
+  <dt>SECRET_KEY_BASE</dt>
+  <dd>
+    Used to encrypt the browser cookies. Generate one by running `bin/rails secret` or an online generator.
+  </dd>
+</dl>
+<dl>
+  <dt>USER_REGISTRATION</dt>
+  <dd>
+    Set to <code>enabled</code> to allow public registration. Default is disabled so not required if invite only.
+  </dd>
+</dl>
