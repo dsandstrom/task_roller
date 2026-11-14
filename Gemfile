@@ -28,7 +28,6 @@ gem 'turbo-rails', '~> 2.0'
 gem 'irb', '~> 1.18'
 gem 'syslog', '~> 0.4'
 
-# 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
 gem 'concurrent-ruby', '~> 1.3.8'
 
