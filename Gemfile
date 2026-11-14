@@ -61,7 +61,7 @@ gem 'omniauth-rails_csrf_protection', '~> 2.0'
 # Not in faraday anymore (used by octokit)
 gem 'faraday-retry', '~> 2.4'
 
-gem 'kaminari', '~> 1.2.2'
+gem 'kaminari', '~> 1.3.3'
 
 gem 'faker', '~> 3.8', require: false
 
