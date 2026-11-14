@@ -89,8 +89,7 @@ class MoveTasksController < ApplicationController
       assignee_ids = params[:task][:assignee_ids]
       return unless assignee_ids.present? && assignee_ids.size == 1
 
-      # rubocop:disable Rails/StrongParametersExpect
+      # rubocop:disable-next Rails/StrongParametersExpect
       params[:task][:assignee_ids] = assignee_ids[0].split(/,\s?/)
-      # rubocop:enable Rails/StrongParametersExpect
     end
 end

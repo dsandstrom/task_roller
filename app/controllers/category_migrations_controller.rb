@@ -11,10 +11,9 @@ class CategoryMigrationsController < ApplicationController
 
   def create
     @new_category = Category.find(category_params[:migration_id])
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     Project.where(category: @category)
            .update_all(category_id: @new_category.id)
-    # rubocop:enable Rails/SkipsModelValidations
     redirect_to root_url, notice: notice
   rescue ActiveRecord::RecordNotFound
     set_categories

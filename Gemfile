@@ -11,7 +11,7 @@ gem 'rack', '~> 3.0'
 
 gem 'rails', '~> 8.0'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 1.6.3'
+gem 'pg', '~> 1.7.0'
 # Use Puma as the app server
 gem 'puma', '~> 8.0'
 # Use cssbundling for stylesheets
@@ -28,7 +28,6 @@ gem 'turbo-rails', '~> 2.0'
 gem 'irb', '~> 1.18'
 gem 'syslog', '~> 0.4'
 
-# 1.3.7 has error uninitialized constant
 # ActiveSupport::LoggerThreadSafeLevel::Logger
 gem 'concurrent-ruby', '~> 1.3.8'
 
@@ -39,7 +38,7 @@ gem 'concurrent-ruby', '~> 1.3.8'
 gem 'solid_queue', '~> 1.6'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
+gem 'bootsnap', '~> 1.26', require: false
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -51,7 +50,7 @@ gem 'acts_as_list', '~> 1.2.6'
 
 gem 'redcarpet', '~> 3.6.1'
 
-gem 'cancancan', '~> 3.6.1'
+gem 'cancancan', '~> 3.7.0'
 gem 'devise', '~> 5.0'
 # GitHub API
 gem 'octokit', '~> 10.0'
@@ -62,7 +61,7 @@ gem 'omniauth-rails_csrf_protection', '~> 2.0'
 # Not in faraday anymore (used by octokit)
 gem 'faraday-retry', '~> 2.4'
 
-gem 'kaminari', '~> 1.2.2'
+gem 'kaminari', '~> 1.3.3'
 
 gem 'faker', '~> 3.8', require: false
 
@@ -106,7 +105,7 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
   gem 'rails_live_reload', '~> 0.5'
-  gem 'rubocop', '~> 1.89.0', require: false
+  gem 'rubocop', '~> 1.92.2', require: false
   gem 'rubocop-rails', '~> 2', require: false
   gem 'scss_lint', '~> 0.59', require: false
   gem 'scss_lint_reporter_junit', '~> 0.1', require: false

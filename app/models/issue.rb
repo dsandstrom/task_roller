@@ -270,9 +270,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   def update_status(current_user = nil)
     old_status = status
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     update_column :status, build_status
-    # rubocop:enable Rails/SkipsModelValidations
 
     if old_status == status
       old_status = nil
@@ -341,9 +340,8 @@ class Issue < ApplicationRecord # rubocop:disable Metrics/ClassLength
     def set_opened_at
       return if opened_at.present? || created_at.nil?
 
-      # rubocop:disable Rails/SkipsModelValidations
+      # rubocop:disable-next Rails/SkipsModelValidations
       update_column :opened_at, updated_at
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # - closed
